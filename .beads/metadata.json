@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "destiny",
+  "project_id": "0f91c083-8da3-4241-9bc6-3b595c7432bc"
+}
