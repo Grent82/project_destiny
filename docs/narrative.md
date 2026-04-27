@@ -905,6 +905,22 @@ Entering the Hollows is a choice with consequences. The place is not neutral —
 - pre-Breach artifact discovery
 - the city's history visible in cross-section: layers of what Valdenmoor was built on and over
 
+## Antagonist Roster
+
+### Rival Organizations
+
+**The Gilded Hand** — A private enforcement company funded by Court capital to operate where the Compact declines to go officially. Deniable, professional, and expensive. Their presence in the Pale and Hollows represents the Court's attempt to consolidate post-House power through contractors rather than institutions — which makes them harder to oppose through official channels and easier to oppose through the same grey-zone methods the player uses.
+
+**The Ashen Compact** — A direct rival organization competing for the same contracts, territory, and recruits. Founded by someone who worked for House Valdric and left badly. They know what the house was, which means they know what the player is trying to build — and they have a head start on some of it. The conflict is not ideological. It is structural: the city's grey zone is not large enough for two of them at full strength.
+
+### Key Recurring Antagonists
+
+**Cassia Vorne** — The Court interrogator who built the case that destroyed House Valdric. She has no personal grievance against the player — what she did was professional, documented, and entirely legal. That is precisely what makes her dangerous: she is not a villain who can be morally discredited, and she will do it again if the player gives her the same materials to work with. Her recurring presence forces the player to stay clean in ways the game does not always reward.
+
+**Commander Oric Fell** — Gilded Hand field commander who approaches the player's operations the way an engineer approaches a structural problem: find the load-bearing elements and remove them. He carries no ideology and no animosity. He has been given a contract. The player is an obstacle in that contract. If the player becomes expensive enough, the contract may be renegotiated — but Fell will not be the one who tells them that.
+
+**Director Mael Forn** — Leader of the Ashen Compact and former House Valdric associate whose departure was, by his account, necessary. He knows enough about the house's methods to understand the player's institutional logic — and enough about its failure to believe he knows what the player is doing wrong. His ambition is not abstract. He wants the same district footholds, the same kind of crew, the same grey-zone legitimacy. The difference is that he started earlier and has fewer constraints. Whether he is an enemy, a rival, or a cautionary mirror depends on how the player plays it.
+
 ## Voice Guide
 
 ### General style

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "rival-org-gilded-hand",
+    "name": "The Gilded Hand",
+    "description": "A private enforcement company backed by Court capital, operating where the Compact won't go officially. Deniable, professional, and expensive.",
+    "factionAlignment": "faction-gilded-court",
+    "districtPresence": ["district-the-pale", "district-the-hollows", "district-gilded-heights"],
+    "currentPriority": "Expanding operations into the Pale to fill the vacuum left by declining House activity",
+    "rosterNpcIds": ["npc-enemy-commander-fell", "npc-enemy-specialist-nem", "npc-enemy-bruiser-katch"]
+  },
+  {
+    "id": "rival-org-ashen-compact",
+    "name": "The Ashen Compact",
+    "description": "A rival organization occupying the same grey space as the player — competing for the same contracts, the same recruits, and the same territory. They were founded by someone who once worked for House Valdric.",
+    "factionAlignment": null,
+    "districtPresence": ["district-the-pale", "district-the-warrens", "district-ironworks"],
+    "currentPriority": "Establishing district presence before the player consolidates. Director Forn wants what the player has.",
+    "rosterNpcIds": ["npc-enemy-director-forn", "npc-enemy-operative-weld", "npc-enemy-contacts-rhen"]
+  }
+]
