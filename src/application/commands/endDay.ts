@@ -6,6 +6,7 @@ import {
 } from '../../domain/npcStateModifiers'
 import { appendActivityLogEntry } from './activityLog'
 import { evaluateEvents } from './evaluateEvents'
+import { expireHireOffers } from './recruitment'
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -121,6 +122,28 @@ export function endDay(state: GameState): GameState {
         'economy',
         `${rosterEntry.name} draws no wages today. The debt grows.`,
       )
+    }
+  }
+
+  // Step 1b: Loyalty decay for unpaid NPCs
+  for (const npc of next.roster) {
+    if (npc.wagesOwedDays >= 2) {
+      const newLoyalty = Math.max(0, npc.traits.loyalty - 15)
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? { ...r, traits: { ...r.traits, loyalty: newLoyalty } }
+            : r,
+        ),
+      }
+      if (newLoyalty < 20) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${npc.name}'s loyalty is failing. Unpaid debts leave marks on the house.`,
+        )
+      }
     }
   }
 
@@ -286,5 +309,5 @@ export function endDay(state: GameState): GameState {
   next = appendActivityLogEntry(next, 'system', `The day turns. Day ${nextDay}.`)
 
   // Step 7: Evaluate world events
-  return evaluateEvents(next)
+  return evaluateEvents(expireHireOffers(next))
 }

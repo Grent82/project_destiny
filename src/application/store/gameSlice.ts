@@ -9,6 +9,7 @@ import {
 import { purchaseItemFromShop } from '../commands/purchase'
 import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from '../commands/squad'
 import { endDay as endDayCommand } from '../commands/endDay'
+import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../commands/recruitment'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { contentCatalog } from '../content/contentCatalog'
@@ -48,6 +49,15 @@ const gameSlice = createSlice({
     },
     endDay(state) {
       return endDayCommand(state)
+    },
+    recruitNpc(state, action: PayloadAction<{ npcId: string }>) {
+      return recruitNpcCommand(state, action.payload.npcId)
+    },
+    dismissNpc(state, action: PayloadAction<{ npcId: string }>) {
+      return dismissNpcCommand(state, action.payload.npcId)
+    },
+    expireHireOffers(state) {
+      return expireHireOffersCommand(state)
     },
     adjustCityResource(
       state,
@@ -108,6 +118,35 @@ const gameSlice = createSlice({
     },
     travelToDistrict(state, action: PayloadAction<string>) {
       return travelToDistrictCommand(state, action.payload)
+    },
+    assignTitle(state, action: PayloadAction<{ npcId: string; titleId: string }>) {
+      const { npcId, titleId } = action.payload
+      const npc = state.roster.find((r) => r.npcId === npcId)
+      if (!npc) return
+      npc.activeTitle = titleId
+      const roleLabel = titleId.replace('title-', '').replace('-', ' ')
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `A title conferred. The house has a new ${roleLabel}.`,
+      })
+      if (state.activityLog.length > 100) state.activityLog.pop()
+    },
+    revokeTitle(state, action: PayloadAction<{ npcId: string }>) {
+      const { npcId } = action.payload
+      const npc = state.roster.find((r) => r.npcId === npcId)
+      if (!npc) return
+      npc.activeTitle = null
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `The title is revoked. The role sits empty.`,
+      })
+      if (state.activityLog.length > 100) state.activityLog.pop()
     },
   },
 })

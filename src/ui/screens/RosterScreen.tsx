@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { selectRosterDetail, selectRosterEntries } from '../../application'
+import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
 
@@ -39,6 +40,11 @@ export function RosterScreen() {
               <span className="text-muted">{entry.assignment.replace('_', ' ')}</span>
               <div className="badge-row">
                 <span className="badge">{entry.status}</span>
+                {entry.activeTitle && (
+                  <span className="badge badge-positive" title={contentCatalog.titlesById.get(entry.activeTitle)?.name}>
+                    {contentCatalog.titlesById.get(entry.activeTitle)?.name ?? entry.activeTitle}
+                  </span>
+                )}
                 <span className={entry.health < 40 ? 'badge badge-warning' : 'badge'}>
                   HP {entry.health}
                 </span>

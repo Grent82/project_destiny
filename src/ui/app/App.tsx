@@ -11,6 +11,7 @@ import { EventLogScreen } from '../screens/EventLogScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
 import { MissionPrepScreen } from '../screens/MissionPrepScreen'
 import { OpeningScreen } from '../screens/OpeningScreen'
+import { RecruitmentScreen } from '../screens/RecruitmentScreen'
 import { RosterScreen } from '../screens/RosterScreen'
 import { ShopsScreen } from '../screens/ShopsScreen'
 import { screenCatalog } from '../screens/screenCatalog'
@@ -74,6 +75,7 @@ export function App() {
             <Route path="/" element={<Navigate replace to="/dashboard" />} />
             <Route path="/dashboard" element={<DashboardScreen />} />
             <Route path="/roster" element={<RosterScreen />} />
+            <Route path="/recruitment" element={<RecruitmentScreen />} />
             <Route path="/district-map" element={<DistrictMapScreen />} />
             <Route path="/districts" element={<DistrictsScreen />} />
             <Route path="/factions" element={<FactionsScreen />} />
@@ -87,6 +89,7 @@ export function App() {
                   ![
                     '/dashboard',
                     '/roster',
+                    '/recruitment',
                     '/district-map',
                     '/districts',
                     '/factions',

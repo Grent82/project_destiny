@@ -258,5 +258,43 @@
         "corruption": 60
     },
     "pendingEvents": [],
-    "currentDistrictId": null
+    "currentDistrictId": null,
+    "availableForHire": [
+        {
+            "npcId": "npc-verek-holst",
+            "discoveredInDistrictId": "district-harbor",
+            "wagePerDay": 18,
+            "signingBonus": 0,
+            "requiredFactionId": null,
+            "requiredFactionStanding": 0,
+            "turnsAvailable": 3
+        },
+        {
+            "npcId": "npc-sable-wrent",
+            "discoveredInDistrictId": "district-ironworks",
+            "wagePerDay": 14,
+            "signingBonus": 50,
+            "requiredFactionId": null,
+            "requiredFactionStanding": 0,
+            "turnsAvailable": 3
+        },
+        {
+            "npcId": "npc-cress-aldmoor",
+            "discoveredInDistrictId": null,
+            "wagePerDay": 20,
+            "signingBonus": 75,
+            "requiredFactionId": null,
+            "requiredFactionStanding": 0,
+            "turnsAvailable": 3
+        },
+        {
+            "npcId": "npc-oswin-farr",
+            "discoveredInDistrictId": "district-harbor",
+            "wagePerDay": 12,
+            "signingBonus": 0,
+            "requiredFactionId": null,
+            "requiredFactionStanding": 0,
+            "turnsAvailable": 3
+        }
+    ]
 }

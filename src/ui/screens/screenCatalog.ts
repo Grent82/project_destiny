@@ -1,5 +1,10 @@
 export const screenCatalog = [
   {
+    path: '/recruitment',
+    title: 'Recruitment',
+    summary: 'Those seeking arrangement with the house. An offer not taken today may not stand.',
+  },
+  {
     path: '/dashboard',
     title: 'Operations',
     summary: 'The house ledger. Roster pressure, Marks, and city standing at a glance.',

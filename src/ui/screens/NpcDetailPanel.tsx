@@ -1,7 +1,11 @@
 import { useState } from 'react'
 
 import type { selectRosterDetail } from '../../application'
+import { selectTitleEligibilityForNpc } from '../../application'
+import { gameActions } from '../../application/store/gameSlice'
+import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 
@@ -54,6 +58,72 @@ function portraitInitials(name: string) {
 
 interface NpcDetailPanelProps {
   detail: NpcDetail
+}
+
+function TitlePanel({ detail }: { detail: NpcDetail }) {
+  const [showList, setShowList] = useState(false)
+  const dispatch = useAppDispatch()
+  const eligibility = useAppSelector(selectTitleEligibilityForNpc(detail.npcId))
+  const activeTitleDef = detail.activeTitle
+    ? contentCatalog.titlesById.get(detail.activeTitle)
+    : null
+
+  return (
+    <div className="title-panel">
+      {activeTitleDef ? (
+        <div className="title-active">
+          <span className="badge badge-positive" title={activeTitleDef.dailyEffect}>
+            {activeTitleDef.name}
+          </span>
+          <button
+            className="action-button action-button-sm"
+            type="button"
+            onClick={() => dispatch(gameActions.revokeTitle({ npcId: detail.npcId }))}
+          >
+            Revoke
+          </button>
+        </div>
+      ) : (
+        <button
+          className="action-button"
+          type="button"
+          onClick={() => setShowList((v) => !v)}
+        >
+          {showList ? 'Cancel' : 'Assign Title'}
+        </button>
+      )}
+
+      {showList && !activeTitleDef && (
+        <div className="title-list">
+          {eligibility.eligible.length === 0 && eligibility.ineligible.length === 0 && (
+            <p className="text-muted">No titles defined.</p>
+          )}
+          {eligibility.eligible.map((title) => (
+            <button
+              key={title.id}
+              className="title-option"
+              type="button"
+              title={title.dailyEffect}
+              onClick={() => {
+                dispatch(gameActions.assignTitle({ npcId: detail.npcId, titleId: title.id }))
+                setShowList(false)
+              }}
+            >
+              <strong>{title.name}</strong>
+              <span className="text-muted"> — {title.description}</span>
+            </button>
+          ))}
+          {eligibility.ineligible.map((title) => (
+            <div key={title.id} className="title-option title-option-ineligible" title={title.reason}>
+              <strong>{title.name}</strong>
+              <span className="text-muted"> — {title.description}</span>
+              <small className="title-ineligible-reason">{title.reason}</small>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
@@ -144,9 +214,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         </div>
 
         <div className="npc-quick-actions">
-          <button className="action-button" type="button" disabled>
-            Assign title
-          </button>
+          <TitlePanel detail={detail} />
           <button className="action-button" type="button" disabled>
             Equip gear
           </button>

@@ -7,6 +7,7 @@ export function selectRosterEntries(state: RootState) {
     name: contentCatalog.npcsById.get(npc.npcId)?.name ?? npc.npcId,
     status: contentCatalog.npcsById.get(npc.npcId)?.status ?? 'citizen',
     assignment: npc.assignment,
+    activeTitle: npc.activeTitle,
     health: npc.states.health,
     morale: npc.states.morale,
     stress: npc.states.stress,
@@ -33,6 +34,7 @@ export function selectRosterDetail(state: RootState, npcId: string) {
     background: definition?.background ?? 'Unknown',
     status: definition?.status ?? 'citizen',
     assignment: runtime.assignment,
+    activeTitle: runtime.activeTitle,
     factionAffinity,
     allowedTitleIds: definition?.allowedTitleIds ?? [],
     attributes: {
