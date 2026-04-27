@@ -26,6 +26,8 @@ import { performCombatAction, startCombatEncounter } from './combat'
 
 const BASE_NPC_STATE = {
   npcId: 'npc-1',
+  name: 'Mira',
+  status: 'mercenary' as const,
   assignment: 'idle' as const,
   activeTitle: null,
   wagesOwedDays: 0,
@@ -94,10 +96,13 @@ const BASE_GAME_STATE = {
   protagonistName: 'Valdric',
   hasSeenOpening: true,
   politicalDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
+  cityDials: { control: 45, prosperity: 35, unrest: 55, corruption: 60 },
+  factionStandings: {},
   factionStates: [],
   districts: [],
   roster: [BASE_NPC_STATE, { ...BASE_NPC_STATE, npcId: 'npc-2' }],
   inventory: [],
+  cityResources: { foodSecurity: 62, waterAccess: 70, materialStock: 50, corridorStatus: 'open' as const },
   activityLog: [],
   activeQuestIds: [],
   selectedSquadNpcIds: ['npc-1', 'npc-2'],
@@ -226,7 +231,7 @@ describe('combat resolution with equipment', () => {
   })
 
   it('unarmed fallback: combat starts and produces log entries', () => {
-    const state = startCombatEncounter(BASE_GAME_STATE as Parameters<typeof startCombatEncounter>[0])
+    const state = startCombatEncounter(BASE_GAME_STATE as unknown as Parameters<typeof startCombatEncounter>[0])
     expect(state.activeCombat).not.toBeNull()
     const nextState = performCombatAction(state, 'attack')
     expect(nextState.activeCombat?.log.length).toBeGreaterThan(
@@ -242,7 +247,7 @@ describe('combat resolution with equipment', () => {
     }
     // Force hit by mocking Math.random to low value
     vi.spyOn(Math, 'random').mockReturnValue(0.01)
-    const nextState = performCombatAction(state as Parameters<typeof performCombatAction>[0], 'attack')
+    const nextState = performCombatAction(state as unknown as unknown as Parameters<typeof performCombatAction>[0], 'attack')
     const enemy = nextState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
     expect(enemy?.health).toBeLessThan(50)
   })
@@ -272,7 +277,7 @@ describe('combat resolution with equipment', () => {
     })
 
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
       'attack',
     )
     const target = nextState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
@@ -280,26 +285,31 @@ describe('combat resolution with equipment', () => {
   })
 
   it('crit doubles damage — log contains "telling blow"', () => {
+    // Mock sequence: hit, damage roll, crit triggers, no stagger, phrase select (ignored), then always-hit for enemy
     vi.spyOn(Math, 'random')
-      .mockReturnValueOnce(0.01)  // hit
-      .mockReturnValueOnce(0.5)   // damage roll
-      .mockReturnValueOnce(0.01)  // crit triggers
-      .mockReturnValueOnce(0.99)  // no stagger
+      .mockReturnValueOnce(0.01)  // ally hit → hits
+      .mockReturnValueOnce(0.5)   // ally damage roll
+      .mockReturnValueOnce(0.01)  // ally crit → triggers (critChance=2, 1 < 2)
+      .mockReturnValueOnce(0.99)  // ally stagger → no stagger
+      .mockReturnValue(0.01)      // all remaining (phrase picks, enemy turn)
 
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
       'attack',
     )
-    const lastLog = nextState.activeCombat?.log.at(-1)?.summary ?? ''
-    expect(lastLog.toLowerCase()).toContain('telling blow')
+    // Find ally's attack log entry
+    const allyLog = nextState.activeCombat?.log.find(
+      (l) => l.actorId === 'ally-1' && l.summary.toLowerCase().includes('damage'),
+    )
+    expect(allyLog?.summary.toLowerCase()).toContain('telling blow')
   })
 
   it('log uses Valdenmoor vocabulary (strikes/lands a blow/connects)', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.01)
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
       'attack',
     )
     const lastLog = nextState.activeCombat?.log.at(-1)?.summary ?? ''
@@ -310,7 +320,7 @@ describe('combat resolution with equipment', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.99)  // always miss
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
       'attack',
     )
     const lastLog = nextState.activeCombat?.log.at(-1)?.summary ?? ''

@@ -47,6 +47,9 @@ function buildAllyCombatant(npc: NpcRuntimeState): CombatantState {
     soak: Math.floor(npc.attributes.endurance / 4),
     speed: Math.max(1, Math.floor((npc.attributes.agility + npc.attributes.resolve) / 18)),
     guarding: false,
+    staggered: false,
+    equippedWeaponId: npc.loadout.primaryWeaponId,
+    equippedArmorId: npc.loadout.armorId,
   }
 }
 
@@ -81,6 +84,9 @@ function buildEnemyCombatant(index: number, allies: CombatantState[]): Combatant
     soak: 10 + index * 2,
     speed: 4 + (index % 2),
     guarding: false,
+    staggered: false,
+    equippedWeaponId: null,
+    equippedArmorId: null,
   }
 }
 

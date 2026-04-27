@@ -71,6 +71,24 @@ const gameSlice = createSlice({
     setHasSeenOpening(state, action: PayloadAction<boolean>) {
       state.hasSeenOpening = action.payload
     },
+    adjustFactionStanding(
+      state,
+      action: PayloadAction<{ factionId: string; delta: number }>,
+    ) {
+      const { factionId, delta } = action.payload
+      const current = state.factionStandings[factionId] ?? 0
+      state.factionStandings[factionId] = Math.max(-100, Math.min(100, current + delta))
+    },
+    adjustCityDial(
+      state,
+      action: PayloadAction<{
+        dial: 'control' | 'prosperity' | 'unrest' | 'corruption'
+        delta: number
+      }>,
+    ) {
+      const { dial, delta } = action.payload
+      state.cityDials[dial] = Math.max(0, Math.min(100, state.cityDials[dial] + delta))
+    },
   },
 })
 

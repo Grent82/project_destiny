@@ -15,3 +15,21 @@ export function selectFactionSummaries(state: RootState) {
     activePressure: faction.activePressure,
   }))
 }
+
+export const selectFactionStandings = (state: RootState) => state.game.factionStandings
+
+export const selectFactionStanding =
+  (factionId: string) =>
+  (state: RootState): number =>
+    state.game.factionStandings[factionId] ?? 0
+
+export const selectCityDials = (state: RootState) => state.game.cityDials
+
+export function selectAllFactions(state: RootState) {
+  return contentCatalog.factions.map((faction) => ({
+    factionId: faction.id,
+    name: faction.name,
+    agenda: faction.agenda,
+    standing: state.game.factionStandings[faction.id] ?? 0,
+  }))
+}
