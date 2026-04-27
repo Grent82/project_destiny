@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { activeCombatStateSchema } from '../combat/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
 import {
@@ -9,6 +10,7 @@ import {
   weaponDefinitionSchema,
 } from '../items/contracts'
 import { npcDefinitionSchema, npcRuntimeStateSchema } from '../npc/contracts'
+import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
 
 export const districtRuntimeStateSchema = z
@@ -20,6 +22,18 @@ export const districtRuntimeStateSchema = z
   })
   .strict()
 
+export const activityCategorySchema = z.enum(['economy', 'combat', 'system'])
+
+export const activityLogEntrySchema = z
+  .object({
+    id: entityIdSchema,
+    day: positiveIntegerSchema,
+    timeSlot: timeSlotSchema,
+    category: activityCategorySchema,
+    message: z.string().min(1),
+  })
+  .strict()
+
 export const gameContentCatalogSchema = z
   .object({
     districts: z.array(districtDefinitionSchema),
@@ -28,6 +42,7 @@ export const gameContentCatalogSchema = z
     weapons: z.array(weaponDefinitionSchema),
     armor: z.array(armorDefinitionSchema),
     factions: z.array(factionDefinitionSchema),
+    shops: z.array(shopDefinitionSchema),
   })
   .strict()
 
@@ -41,11 +56,15 @@ export const gameStateSchema = z
     districts: z.array(districtRuntimeStateSchema),
     roster: z.array(npcRuntimeStateSchema),
     inventory: z.array(inventoryEntrySchema),
+    activityLog: z.array(activityLogEntrySchema).max(100),
     activeQuestIds: z.array(entityIdSchema),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
+    activeCombat: activeCombatStateSchema.nullable(),
   })
   .strict()
 
+export type ActivityCategory = z.infer<typeof activityCategorySchema>
+export type ActivityLogEntry = z.infer<typeof activityLogEntrySchema>
 export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>
 export type GameContentCatalog = z.infer<typeof gameContentCatalogSchema>
 export type GameState = z.infer<typeof gameStateSchema>

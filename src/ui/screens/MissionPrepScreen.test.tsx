@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
 import { AppProviders } from '../app/AppProviders'
 import { MissionPrepScreen } from './MissionPrepScreen'
@@ -10,12 +11,15 @@ describe('MissionPrepScreen', () => {
 
     render(
       <AppProviders>
-        <MissionPrepScreen />
+        <MemoryRouter>
+          <MissionPrepScreen />
+        </MemoryRouter>
       </AppProviders>,
     )
 
     expect(screen.getByRole('heading', { name: 'Mission Prep' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Selected Squad' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy to encounter' })).toBeInTheDocument()
     expect(screen.getByText('Marion Vale')).toBeInTheDocument()
     expect(screen.getByText(/All seeded operatives are currently assigned/i)).toBeInTheDocument()
 

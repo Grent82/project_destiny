@@ -216,6 +216,8 @@
       "quantity": 3
     }
   ],
+  "activityLog": [],
   "activeQuestIds": [],
-  "selectedSquadNpcIds": ["npc-marion-vale", "npc-ida-rhys"]
+  "selectedSquadNpcIds": ["npc-marion-vale", "npc-ida-rhys"],
+  "activeCombat": null
 }

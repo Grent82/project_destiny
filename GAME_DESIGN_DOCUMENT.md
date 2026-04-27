@@ -11,6 +11,7 @@ This document translates the high-level structure of *Masters of Raana* into an 
 - jobs, titles, economy, and equipment
 - faction politics and city-level world changes
 - lightweight tactical combat
+- relationship, household, and generational systems
 
 The intended result is a browser game with strong systemic depth, data-driven content, and a practical implementation scope for an MVP.
 
@@ -19,8 +20,10 @@ The intended result is a browser game with strong systemic depth, data-driven co
 ### Primary goals
 
 - Build a character-driven simulation RPG for the browser.
+- Build a dark medieval fantasy roleplaying game with strong systemic depth.
 - Make NPCs matter across multiple systems at once.
 - Let combat, economy, politics, and relationships affect each other.
+- Make attraction, partnership, and lineage strategically meaningful without displacing the broader roleplaying focus.
 - Prefer menu- and panel-driven gameplay over expensive real-time simulation.
 - Keep the game highly data-driven so content can scale without rewriting systems.
 
@@ -35,11 +38,14 @@ The intended result is a browser game with strong systemic depth, data-driven co
 
 The player runs a small organization inside a living city. That organization may be a mercenary house, trading household, academy, investigation bureau, smuggling ring, noble estate, or hybrid faction depending on narrative framing.
 
+The overall fantasy should read as dark medieval roleplaying first: dangerous districts, political tension, material scarcity, status struggle, and expedition or household management inside a harsh world.
+
 The player manages:
 
 - a roster of NPCs
 - equipment and inventory
 - jobs and assignments
+- relationships, households, and heirs
 - city navigation and district access
 - faction reputation and political pressure
 - tactical missions and conflicts
@@ -83,6 +89,7 @@ The player must manage:
 - district-specific shopping
 - production or work output
 - household or organization bonuses from assigned titles
+- family growth, upbringing, and inheritance tradeoffs
 
 The management game should create tradeoffs:
 
@@ -109,6 +116,25 @@ World values affect:
 - taxes and costs
 - recruitment pools
 - quest availability
+
+### 3.5 Relationships, Households, and Lineage
+
+Relationships are not flavor-only. They are one major progression system inside a broader roleplaying simulation.
+
+The player should be able to shape:
+
+- attraction and courtship
+- trust and attachment
+- partnership and household stability
+- fertility and timing
+- children, heirs, and dynastic plans
+
+These systems should create both emotional and strategic incentives:
+
+- visually attractive and socially desirable characters become meaningful targets for alliance and partnership
+- strong pairings can produce stronger heirs
+- households gain long-term value through compatible traits, stable bonds, and good upbringing
+- relationship choices can conflict with faction strategy, economics, and combat readiness
 
 ### 3.4 Tactical Combat
 
@@ -148,8 +174,10 @@ This gives meaningful tactics without needing a grid or heavy pathfinding.
 1. Improve organization capacity.
 2. Build faction ties or opposition.
 3. Grow NPC specialization and loyalty.
-4. Unlock districts, shops, events, and rare recruits.
-5. Shape city politics toward preferred outcomes.
+4. Form pairings, households, and bloodlines.
+5. Raise, train, or politically place children and heirs.
+6. Unlock districts, shops, events, and rare recruits.
+7. Shape city politics toward preferred outcomes.
 
 ## 5. System Breakdown
 
@@ -162,6 +190,7 @@ Each NPC should include the following data groups.
 - `id`
 - `name`
 - `age`
+- `sex`
 - `origin`
 - `portrait`
 - `background`
@@ -322,8 +351,52 @@ Relationship values influence:
 - title effectiveness
 - betrayal risk
 - dialogue outcomes
-- romance or rivalry arcs if desired
+- attraction, romance, jealousy, and rivalry arcs
 - squad cohesion in combat
+
+#### Attraction and Compatibility
+
+Attraction should be a first-class system, not hidden flavor text.
+
+Recommended data:
+
+- `orientation`
+- `romanticPreferenceTags`
+- `sexualPreferenceTags`
+- `attractionBiases`
+- `fertility`
+- `pairBondStrength`
+- `jealousySensitivity`
+- `familyGoal`
+
+These values influence:
+
+- who is considered desirable
+- how quickly attraction grows
+- which partnerships are stable
+- how rivalry and possessiveness emerge
+- which pairings are practical for lineage planning
+
+#### Reproduction and Lineage
+
+NPCs should be able to become part of family trees over time.
+
+Recommended lineage data:
+
+- `lineageId`
+- `parents`
+- `children`
+- `householdId`
+- `pregnancyState`
+- `upbringingFocus`
+- `inheritedPotential`
+
+Lineage design rules:
+
+- children should inherit part of their baseline potential from their parents
+- inherited outcomes should be probabilistic rather than fully deterministic
+- upbringing, health, and household quality should modify inherited potential
+- lineage systems should produce both narrative attachment and long-term roster strategy
 
 #### Equipment and loadout
 
@@ -378,6 +451,14 @@ Each item should define:
 - `tags`
 - `effects`
 - `requirements`
+
+Additional item families that become important once relationships and lineage matter:
+
+- `gifts`
+- `luxuryGoods`
+- `fertilityAids`
+- `upbringingSupplies`
+- `householdFurnishings`
 
 ### 5.3 Weapons
 
@@ -506,6 +587,12 @@ Example effects:
 - `trainer`: passive skill gain for idle NPCs
 - `spymaster`: reveals hidden faction or district events
 
+Additional relationship-facing title examples:
+
+- `house steward`: improves household stability and child wellbeing
+- `tutor`: improves child skill growth and trait development
+- `companion`: improves social recovery and relationship momentum
+
 Titles should depend on skills, traits, and relationships, not only raw level.
 
 ### 5.7 Factions and Politics
@@ -542,6 +629,12 @@ These values affect:
 - faction event frequency
 - recruitment pool quality
 
+Faction ideologies should also affect relationship and lineage play:
+
+- elite factions may reward marriage alliances and heirs
+- industrial factions may value productivity over family stability
+- religious or moralist factions may pressure acceptable pairings and child-rearing norms
+
 ### 5.8 Quests and Events
 
 Quests should be event-driven and lightweight to author.
@@ -556,6 +649,7 @@ Recommended event types:
 - injuries or illnesses
 - theft or sabotage
 - political shifts
+- courtship, jealousy, family pressure, and inheritance disputes
 
 Each event can key off:
 
@@ -629,6 +723,7 @@ Recommended runtime state:
 - city political dials
 - NPC roster and statuses
 - relationship matrix
+- family trees and household memberships
 - district conditions
 - faction standings
 - inventory and equipment durability
@@ -654,6 +749,7 @@ The first playable version should be intentionally narrow.
 - `20-30 event templates`
 - `10-15 quests`
 - `2-range combat`
+- `1 lineage and inheritance loop`
 
 ### MVP must-have systems
 
@@ -667,6 +763,8 @@ The first playable version should be intentionally narrow.
 - faction standing
 - political dials
 - basic combat missions
+- relationship progression
+- lineage and inheritance hooks
 - save/load
 
 ### MVP cut list
@@ -675,7 +773,6 @@ Do not include these in the first version unless they are trivial:
 
 - multiplayer
 - base building with custom map placement
-- romance-heavy narrative branching
 - procedural map exploration
 - advanced crafting trees
 - full voice or animation systems
@@ -704,6 +801,7 @@ Recommended screens:
 - `Roster`
 - `NPC Detail`
 - `District Map`
+- `Household and Family`
 - `Shops`
 - `Factions`
 - `Mission Prep`
@@ -755,6 +853,16 @@ Mitigation:
 
 - keep the two-range combat model first
 
+### Risk 5: Sexualization without system depth
+
+If sensual presentation is only decorative, it weakens the product instead of strengthening it.
+
+Mitigation:
+
+- connect attractiveness, courtship, household play, and inheritance to real mechanics
+- make character styling, wardrobe, and intimacy choices feed actual relationship outcomes
+- keep presentation character-driven rather than generic pin-up filler
+
 ## 10. First Milestone Proposal
 
 The first milestone should prove the game’s identity with the least amount of code.
@@ -765,13 +873,16 @@ A playable prototype where the player can:
 
 - manage `6-8 NPCs`
 - equip weapons and armor
+- inspect attraction and compatibility indicators
 - assign one passive title
 - visit `3 districts`
 - shop in `3 specialized stores`
+- form at least `1` meaningful pairing
 - accept one mission
 - fight one turn-based combat encounter
 - resolve end-of-day state changes
 - see faction and relationship changes
+- see the first lineage or household hooks
 
 If this milestone is fun, the project is viable.
 
@@ -785,5 +896,8 @@ The defining feature of this design is not any single mechanic. It is the fact t
 - jobs and titles turn roster choices into strategy
 - shops and politics make the city feel alive
 - combat turns preparation into consequence
+- relationships and heirs turn attachment into long-term strategy
+
+The visual layer should support that spine by making characters feel desirable, distinct, and worth investing in across generations.
 
 That is the design spine for Project Destiny.

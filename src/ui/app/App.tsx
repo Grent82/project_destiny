@@ -1,11 +1,14 @@
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
 
 import './App.css'
+import { CombatScreen } from '../screens/CombatScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DistrictsScreen } from '../screens/DistrictsScreen'
+import { EventLogScreen } from '../screens/EventLogScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
 import { MissionPrepScreen } from '../screens/MissionPrepScreen'
 import { RosterScreen } from '../screens/RosterScreen'
+import { ShopsScreen } from '../screens/ShopsScreen'
 import { screenCatalog } from '../screens/screenCatalog'
 
 function ScreenPlaceholder(props: { title: string; summary: string }) {
@@ -65,10 +68,22 @@ export function App() {
           <Route path="/districts" element={<DistrictsScreen />} />
           <Route path="/factions" element={<FactionsScreen />} />
           <Route path="/missions" element={<MissionPrepScreen />} />
+          <Route path="/shops" element={<ShopsScreen />} />
+          <Route path="/combat" element={<CombatScreen />} />
+          <Route path="/event-log" element={<EventLogScreen />} />
           {screenCatalog
             .filter(
               (screen) =>
-                !['/dashboard', '/roster', '/districts', '/factions', '/missions'].includes(
+                ![
+                  '/dashboard',
+                  '/roster',
+                  '/districts',
+                  '/factions',
+                  '/missions',
+                  '/shops',
+                  '/combat',
+                  '/event-log',
+                ].includes(
                   screen.path,
                 ),
             )

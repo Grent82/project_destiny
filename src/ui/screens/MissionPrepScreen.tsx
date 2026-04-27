@@ -1,5 +1,8 @@
+import { useNavigate } from 'react-router-dom'
+
 import {
   gameActions,
+  selectCombatScreenState,
   selectMissionPrepSummary,
   squadRules,
 } from '../../application'
@@ -7,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function MissionPrepScreen() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const combatState = useAppSelector(selectCombatScreenState)
   const summary = useAppSelector(selectMissionPrepSummary)
 
   return (
@@ -14,13 +19,27 @@ export function MissionPrepScreen() {
       <p className="eyebrow">Project Destiny</p>
       <h1>Mission Prep</h1>
       <p className="summary">
-        Review the seeded squad and bench through application selectors. This
-        screen stays read-only until mission assignment and combat flows are
-        introduced at the application layer.
+        Review the seeded squad and bench, then deploy directly into the first
+        two-range encounter flow.
       </p>
       <p className="summary">
         Squad size: {summary.selectedSquad.length}/{squadRules.maxSquadSize}
       </p>
+      <div className="session-actions">
+        <button
+          className="action-button"
+          disabled={summary.selectedSquad.length === 0}
+          onClick={() => {
+            dispatch(gameActions.startCombatEncounter())
+            navigate('/combat')
+          }}
+          type="button"
+        >
+          {combatState.hasActiveCombat && combatState.outcome === 'ongoing'
+            ? 'Resume encounter'
+            : 'Deploy to encounter'}
+        </button>
+      </div>
 
       <div className="mission-prep-layout">
         <article className="detail-panel">

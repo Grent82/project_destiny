@@ -10,6 +10,7 @@ This directory separates immutable content definitions from mutable runtime stat
 - factions
 - items
 - NPC definitions
+- shops
 
 These files should validate against the domain contracts.
 

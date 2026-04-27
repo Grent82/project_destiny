@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  activeCombatStateSchema,
   gameStateSchema,
   npcRuntimeStateSchema,
   weaponDefinitionSchema,
@@ -145,10 +146,63 @@ describe('gameStateSchema', () => {
       ],
       roster: [],
       inventory: [],
+      activityLog: [],
       activeQuestIds: [],
       selectedSquadNpcIds: [],
+      activeCombat: null,
     })
 
     expect(result.success).toBe(true)
+  })
+})
+
+describe('activeCombatStateSchema', () => {
+  it('rejects a combatant whose health exceeds maxHealth', () => {
+    const result = activeCombatStateSchema.safeParse({
+      encounterId: 'encounter-1',
+      round: 1,
+      range: 'close',
+      outcome: 'ongoing',
+      activeCombatantId: 'ally-1',
+      combatants: [
+        {
+          combatantId: 'ally-1',
+          sourceNpcId: 'npc-1',
+          name: 'Ally',
+          side: 'allies',
+          maxHealth: 40,
+          health: 45,
+          morale: 70,
+          skill: 52,
+          accuracy: 68,
+          damageMin: 8,
+          damageMax: 12,
+          effectiveRange: 'close',
+          soak: 12,
+          speed: 4,
+          guarding: false,
+        },
+        {
+          combatantId: 'enemy-1',
+          sourceNpcId: null,
+          name: 'Enemy',
+          side: 'enemies',
+          maxHealth: 38,
+          health: 38,
+          morale: 55,
+          skill: 44,
+          accuracy: 62,
+          damageMin: 7,
+          damageMax: 11,
+          effectiveRange: 'distant',
+          soak: 8,
+          speed: 3,
+          guarding: false,
+        },
+      ],
+      log: [],
+    })
+
+    expect(result.success).toBe(false)
   })
 })

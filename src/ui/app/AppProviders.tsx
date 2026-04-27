@@ -1,12 +1,15 @@
-import type { PropsWithChildren } from 'react'
+import { useState, type PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
 
-import { createGameStore } from '../../application'
+import { createGameStore, type GameStore } from '../../application'
 
-const store = createGameStore()
+interface AppProvidersProps extends PropsWithChildren {
+  store?: GameStore
+}
 
-export function AppProviders(props: PropsWithChildren) {
-  const { children } = props
+export function AppProviders(props: AppProvidersProps) {
+  const { children, store } = props
+  const [resolvedStore] = useState<GameStore>(() => store ?? createGameStore())
 
-  return <Provider store={store}>{children}</Provider>
+  return <Provider store={resolvedStore}>{children}</Provider>
 }

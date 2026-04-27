@@ -2,6 +2,7 @@ import districts from '../../../data/definitions/districts.json'
 import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
 import npcs from '../../../data/definitions/npcs.json'
+import shops from '../../../data/definitions/shops.json'
 import initialGameState from '../../../data/runtime/initial-game-state.json'
 import {
   districtDefinitionSchema,
@@ -9,6 +10,7 @@ import {
   gameStateSchema,
   itemDefinitionSchema,
   npcDefinitionSchema,
+  shopDefinitionSchema,
 } from '../../domain'
 
 describe('seed content', () => {
@@ -32,6 +34,12 @@ describe('seed content', () => {
 
   it('validates npc definitions', () => {
     const result = npcDefinitionSchema.array().safeParse(npcs)
+
+    expect(result.success).toBe(true)
+  })
+
+  it('validates shop definitions', () => {
+    const result = shopDefinitionSchema.array().safeParse(shops)
 
     expect(result.success).toBe(true)
   })

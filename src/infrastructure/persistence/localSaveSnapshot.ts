@@ -7,6 +7,32 @@ interface StorageLike {
   removeItem(key: string): void
 }
 
+function createMemoryStorage(): StorageLike {
+  const store = new Map<string, string>()
+
+  return {
+    getItem(key: string) {
+      return store.get(key) ?? null
+    },
+    setItem(key: string, value: string) {
+      store.set(key, value)
+    },
+    removeItem(key: string) {
+      store.delete(key)
+    },
+  }
+}
+
+function isStorageLike(value: unknown): value is StorageLike {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as StorageLike).getItem === 'function' &&
+    typeof (value as StorageLike).setItem === 'function' &&
+    typeof (value as StorageLike).removeItem === 'function'
+  )
+}
+
 export class LocalSaveSnapshotStore implements SaveGameStore {
   private readonly storage: StorageLike
   private readonly key: string
@@ -40,5 +66,9 @@ export class LocalSaveSnapshotStore implements SaveGameStore {
 }
 
 export function createBrowserSaveSnapshotStore(key?: string) {
-  return new LocalSaveSnapshotStore(window.localStorage, key)
+  const storage = isStorageLike(window.localStorage)
+    ? window.localStorage
+    : createMemoryStorage()
+
+  return new LocalSaveSnapshotStore(storage, key)
 }

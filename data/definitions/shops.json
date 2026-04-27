@@ -1,0 +1,57 @@
+[
+  {
+    "id": "shop-harbor-provisions",
+    "districtId": "district-harbor",
+    "name": "Harbor Provisions",
+    "shopType": "general_store",
+    "summary": "A practical supply counter serving crews, runners, and anyone who needs reliable kit fast.",
+    "offerItemIds": ["item-medkit-field", "item-ledger-bureau"],
+    "offers": [
+      {
+        "itemId": "item-medkit-field",
+        "price": 95,
+        "order": 0
+      },
+      {
+        "itemId": "item-ledger-bureau",
+        "price": 45,
+        "order": 1
+      }
+    ]
+  },
+  {
+    "id": "shop-heights-ledger-house",
+    "districtId": "district-gilded-heights",
+    "name": "Ledger House Atelier",
+    "shopType": "bookshop",
+    "summary": "A polished boutique for contracts, records, and curated paper goods used by clerks and patrons.",
+    "offerItemIds": ["item-ledger-bureau"],
+    "offers": [
+      {
+        "itemId": "item-ledger-bureau",
+        "price": 55,
+        "order": 0
+      }
+    ]
+  },
+  {
+    "id": "shop-ironworks-supply",
+    "districtId": "district-ironworks",
+    "name": "Foundry Supply Cage",
+    "shopType": "workshop",
+    "summary": "A hard-edged counter for repair stock, field consumables, and workshop extras.",
+    "offerItemIds": ["item-medkit-field", "item-spare-parts"],
+    "offers": [
+      {
+        "itemId": "item-medkit-field",
+        "price": 90,
+        "order": 0
+      },
+      {
+        "itemId": "item-spare-parts",
+        "price": 70,
+        "order": 1
+      }
+    ]
+  }
+]

@@ -1,16 +1,21 @@
+import { createSelector } from '@reduxjs/toolkit'
+
 import type { RootState } from '../store/gameStore'
 
-export function selectDashboardSummary(state: RootState) {
-  const roster = state.game.roster
+const selectGame = (state: RootState) => state.game
+
+export const selectDashboardSummary = createSelector([selectGame], (game) => {
+  const roster = game.roster
 
   return {
-    day: state.game.day,
-    timeSlot: state.game.timeSlot,
-    money: state.game.money,
+    day: game.day,
+    timeSlot: game.timeSlot,
+    money: game.money,
     rosterCount: roster.length,
     deployedCount: roster.filter((npc) => npc.assignment === 'deployed').length,
     recoveringCount: roster.filter((npc) => npc.assignment === 'recovering').length,
-    assignedSquadCount: state.game.selectedSquadNpcIds.length,
-    politicalDials: state.game.politicalDials,
+    assignedSquadCount: game.selectedSquadNpcIds.length,
+    politicalDials: game.politicalDials,
+    recentActivity: game.activityLog.slice(0, 3),
   }
-}
+})
