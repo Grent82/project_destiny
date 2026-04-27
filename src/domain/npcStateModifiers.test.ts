@@ -97,7 +97,7 @@ describe('endDay threshold events', () => {
     }
     const next = endDay(hungryState)
     const hungerWarning = next.activityLog.find((e) =>
-      e.message.includes('too hungry to fight effectively'),
+      e.message.includes('Fighting will cost more than it should'),
     )
     expect(hungerWarning).toBeDefined()
   })
@@ -116,7 +116,7 @@ describe('endDay threshold events', () => {
     const stressedNpc = next.roster[0]!
     expect(stressedNpc.states.morale).toBe(45) // 50 - 5
     const stressWarning = next.activityLog.find((e) =>
-      e.message.includes('high stress is wearing down morale'),
+      e.message.includes('carries the weight'),
     )
     expect(stressWarning).toBeDefined()
   })

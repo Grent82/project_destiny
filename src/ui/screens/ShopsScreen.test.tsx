@@ -14,15 +14,15 @@ describe('ShopsScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Shops' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'The Market' })).toBeInTheDocument()
     expect(screen.getByText('Harbor Provisions')).toBeInTheDocument()
-    expect(screen.getByText('Available funds: 300 credits')).toBeInTheDocument()
+    expect(screen.getByText('Available funds: 300 Marks')).toBeInTheDocument()
 
     await user.click(screen.getAllByRole('button', { name: 'Buy' })[0])
 
-    expect(screen.getByText('Available funds: 205 credits')).toBeInTheDocument()
+    expect(screen.getByText('Available funds: 205 Marks')).toBeInTheDocument()
     expect(screen.getAllByText(/Owned 3/).length).toBeGreaterThan(0)
-    expect(screen.getByText(/Purchased Field Medkit from Harbor Provisions/i)).toBeInTheDocument()
+    expect(screen.getByText(/Purchased Field Medkit from Harbor Provisions for \d+ Marks/i)).toBeInTheDocument()
     expect(screen.getAllByText('Best price').length).toBeGreaterThan(0)
   })
 })

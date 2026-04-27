@@ -6,11 +6,10 @@ export function DistrictsScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
+      <p className="eyebrow">House Valdric</p>
       <h1>Districts</h1>
       <p className="summary">
-        District visibility now comes from application selectors that combine
-        seeded definitions with runtime market and danger values.
+        Valdenmoor's wards. Each district is controlled by someone. Market pressure and danger reflect the current state of things.
       </p>
 
       <div className="overview-grid">

@@ -31,7 +31,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   return (
     <section className="screen-panel">
       <p className="eyebrow">House Valdric</p>
-      <h1>Dashboard — {protagonistName}</h1>
+      <h1>Operations — {protagonistName}</h1>
       <div className="day-header">
         <p className="day-display">
           Day {summary.day} —{' '}
@@ -81,22 +81,22 @@ export function DashboardScreen(props: DashboardScreenProps) {
       {sessionMessage ? <p className="purchase-feedback">{sessionMessage}</p> : null}
       <div className="stats-grid">
         <article>
-          <h2>Cycle</h2>
+          <h2>The Day</h2>
           <p>
             Day {summary.day}, {summary.timeSlot}
           </p>
         </article>
         <article>
-          <h2>Funds</h2>
+          <h2>Marks</h2>
           <p>{summary.money} Marks</p>
         </article>
         <article>
-          <h2>Roster</h2>
-          <p>{summary.rosterCount} operatives tracked</p>
+          <h2>Personnel</h2>
+          <p>{summary.rosterCount} in house service</p>
         </article>
         <article>
-          <h2>Squad</h2>
-          <p>{summary.assignedSquadCount} assigned</p>
+          <h2>Deployed</h2>
+          <p>{summary.assignedSquadCount} in the field</p>
         </article>
       </div>
       <ResourceStatusPanel />
@@ -118,7 +118,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
         ))}
       </article>
       <article className="detail-panel dashboard-activity-panel">
-        <h2>Recent Activity</h2>
+        <h2>The Log</h2>
         <div className="combat-log-list">
           {summary.recentActivity.length > 0 ? (
             summary.recentActivity.map((entry) => (
@@ -133,7 +133,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
               </div>
             ))
           ) : (
-            <p className="summary">No recent activity has been recorded yet.</p>
+            <p className="summary">Nothing has been logged yet. The ledger is empty.</p>
           )}
         </div>
       </article>

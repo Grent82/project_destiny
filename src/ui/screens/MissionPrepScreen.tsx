@@ -21,11 +21,10 @@ export function MissionPrepScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
-      <h1>Mission Prep</h1>
+      <p className="eyebrow">House Valdric</p>
+      <h1>Contracts</h1>
       <p className="summary">
-        Review the seeded squad and bench, then deploy directly into the first
-        two-range encounter flow.
+        Available work in Valdenmoor. Review the stakes, confirm the squad, commit.
       </p>
       <p className="summary">
         Squad size: {summary.selectedSquad.length}/{squadRules.maxSquadSize}
@@ -55,7 +54,7 @@ export function MissionPrepScreen() {
 
       <div className="mission-prep-layout">
         <article className="detail-panel">
-          <h2>Available Missions</h2>
+          <h2>Available Contracts</h2>
           <div className="mission-list">
             {missions.map((mission) => (
               <div key={mission.id} className="mission-row">
@@ -77,7 +76,7 @@ export function MissionPrepScreen() {
         </article>
 
         <article className="detail-panel">
-          <h2>Selected Squad</h2>
+          <h2>The Deployed</h2>
           <div className="mission-list">
             {summary.selectedSquad.map((entry) => (
               <div key={entry.npcId} className="mission-row">
@@ -100,7 +99,7 @@ export function MissionPrepScreen() {
         </article>
 
         <article className="detail-panel">
-          <h2>Available Roster</h2>
+          <h2>On Hand</h2>
           <div className="mission-list">
             {summary.availableRoster.length > 0 ? (
               summary.availableRoster.map((entry) => (

@@ -78,7 +78,7 @@ describe('endDay', () => {
 
   it('logs a day-separator entry in the activity log', () => {
     const next = endDay(initialGameStateSnapshot)
-    const dayEntry = next.activityLog.find((e) => e.message.includes('Day 2 begins'))
+    const dayEntry = next.activityLog.find((e) => e.message.includes('Day 2'))
     expect(dayEntry).toBeDefined()
     expect(dayEntry?.category).toBe('system')
   })
@@ -86,7 +86,7 @@ describe('endDay', () => {
   it('logs a warning when credits are insufficient for wages', () => {
     const brokeState = { ...initialGameStateSnapshot, money: 5 }
     const next = endDay(brokeState)
-    const warning = next.activityLog.find((e) => e.message.includes('Warning'))
+    const warning = next.activityLog.find((e) => e.message.includes('draws no wages'))
     expect(warning).toBeDefined()
   })
 

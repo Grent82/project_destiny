@@ -19,18 +19,16 @@ export function CombatScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
-      <h1>Combat</h1>
+      <p className="eyebrow">House Valdric</p>
+      <h1>Engagement</h1>
       <p className="summary">
-        Resolve the first tactical encounter through a compact two-range action
-        loop.
+        Two-range encounters. The ground belongs to whoever holds it longest.
       </p>
 
       {!combat.hasActiveCombat ? (
         <div className="combat-empty-state">
           <p className="summary">
-            No encounter is active. Start a seeded patrol clash from here or via
-            mission prep.
+            No encounter is active. The squad is waiting. Start a patrol clash here or commit from Contracts.
           </p>
           <button
             className="action-button"
@@ -128,7 +126,7 @@ export function CombatScreen() {
 
           <div className="combat-layout">
             <article className="detail-panel">
-              <h2>Allied Squad</h2>
+              <h2>Your Side</h2>
               <div className="mission-list">
                 {combat.allies.map((combatant) => (
                   <div key={combatant.combatantId} className="mission-row">
@@ -181,7 +179,7 @@ export function CombatScreen() {
           </div>
 
           <article className="detail-panel combat-log-panel">
-            <h2>Recent Log</h2>
+            <h2>The Log</h2>
             <div className="combat-log-list">
               {combat.log.map((entry, index) => {
                 const prevEntry = combat.log[index + 1]

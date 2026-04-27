@@ -16,11 +16,10 @@ export function RosterScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
-      <h1>Roster</h1>
+      <p className="eyebrow">House Valdric</p>
+      <h1>The Roster</h1>
       <p className="summary">
-        Select an operative to inspect their full stat profile across attributes,
-        skills, states, and traits.
+        Personnel in house service. Their condition — health, morale, loyalty — is yours to account for.
       </p>
 
       <div className="roster-layout">
@@ -57,7 +56,7 @@ export function RosterScreen() {
           </article>
         ) : (
           <article className="detail-panel">
-            <p className="text-muted">Select an operative to view their profile.</p>
+            <p className="text-muted">Select a name to view their standing.</p>
           </article>
         )}
       </div>

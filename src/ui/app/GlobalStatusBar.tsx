@@ -15,7 +15,7 @@ export function GlobalStatusBar() {
       </span>
       <span className="status-bar-divider" aria-hidden="true" />
       <span className="status-bar-item">
-        {summary.assignedSquadCount} in squad
+        {summary.assignedSquadCount} in the field
       </span>
       {summary.deployedCount > 0 && (
         <>

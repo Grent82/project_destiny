@@ -22,9 +22,9 @@ describe('EventLogScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Event Log' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'The Record' })).toBeInTheDocument()
     expect(screen.getByText(/Purchased item-medkit-field/i)).toBeInTheDocument()
-    expect(screen.getByText(/deploys into a hostile patrol encounter/i)).toBeInTheDocument()
+    expect(screen.getByText(/moves out.*hostile patrol|hostile patrol stands in the way/i)).toBeInTheDocument()
     expect(screen.getByText(/Current encounter state/i)).toBeInTheDocument()
   })
 })

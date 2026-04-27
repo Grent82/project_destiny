@@ -10,13 +10,12 @@ export function ShopsScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
-      <h1>Shops</h1>
+      <p className="eyebrow">House Valdric</p>
+      <h1>The Market</h1>
       <p className="summary">
-        Browse seeded district-specific offers and buy items through the
-        application purchase flow.
+        District vendors. What they carry depends on who controls the ward and how much pressure the market is under.
       </p>
-      <p className="summary">Available funds: {overview.money} credits</p>
+      <p className="summary">Available funds: {overview.money} Marks</p>
       {lastPurchaseMessage ? (
         <p className="purchase-feedback">{lastPurchaseMessage}</p>
       ) : null}
@@ -72,7 +71,7 @@ export function ShopsScreen() {
                     </div>
                   </div>
                   <div className="shop-offer-actions">
-                    <span>{offer.price} cr</span>
+                    <span>{offer.price} Mk</span>
                     <button
                       className="action-button"
                       disabled={!offer.affordable}
@@ -85,7 +84,7 @@ export function ShopsScreen() {
                             }),
                           )
                           setLastPurchaseMessage(
-                            `Purchased ${offer.itemName} from ${shop.name} for ${offer.price} credits.`,
+                            `Purchased ${offer.itemName} from ${shop.name} for ${offer.price} Marks.`,
                           )
                         }
                       }

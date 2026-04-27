@@ -6,15 +6,15 @@ export function EventLogScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
-      <h1>Event Log</h1>
+      <p className="eyebrow">House Valdric</p>
+      <h1>The Record</h1>
       <p className="summary">
-        Review the latest systemic changes across economy and combat.
+        What has been logged. Economy shifts, encounters, the state of things as the days turn.
       </p>
 
       <div className="overview-grid">
         <article>
-          <h2>Activity Feed</h2>
+          <h2>The Log</h2>
           <div className="combat-log-list">
             {summary.activityLog.length > 0 ? (
               summary.activityLog.map((entry) => (
@@ -29,7 +29,7 @@ export function EventLogScreen() {
                 </div>
               ))
             ) : (
-              <p className="summary">No major events have been recorded yet.</p>
+              <p className="summary">Nothing recorded yet. The ledger is clean.</p>
             )}
           </div>
         </article>
@@ -55,7 +55,7 @@ export function EventLogScreen() {
             </>
           ) : (
             <p className="summary">
-              No combat recap is available until an encounter has been started.
+              No combat recap available. The squad has not deployed yet.
             </p>
           )}
         </article>

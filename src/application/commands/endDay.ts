@@ -119,7 +119,7 @@ export function endDay(state: GameState): GameState {
       next = appendActivityLogEntry(
         next,
         'economy',
-        `Warning: could not pay ${rosterEntry.name}'s wage of ${wage} Marks.`,
+        `${rosterEntry.name} draws no wages today. The debt grows.`,
       )
     }
   }
@@ -168,7 +168,7 @@ export function endDay(state: GameState): GameState {
       next = appendActivityLogEntry(
         next,
         'system',
-        `${npc.name}: high stress is wearing down morale.`,
+        `${npc.name} carries the weight. Morale slips.`,
       )
     }
 
@@ -177,7 +177,7 @@ export function endDay(state: GameState): GameState {
       next = appendActivityLogEntry(
         next,
         'system',
-        `${npc.name} is too hungry to fight effectively.`,
+        `${npc.name} is hungry. Fighting will cost more than it should.`,
       )
     }
 
@@ -187,7 +187,7 @@ export function endDay(state: GameState): GameState {
       next = appendActivityLogEntry(
         next,
         'system',
-        `${npc.name}'s loyalty is dangerously low — they may refuse orders.`,
+        `${npc.name} is pulling back. Orders may not hold.`,
       )
     }
   }
@@ -283,7 +283,7 @@ export function endDay(state: GameState): GameState {
   // Step 6: Advance time
   const nextDay = next.day + 1
   next = { ...next, day: nextDay, timeSlot: 'morning' }
-  next = appendActivityLogEntry(next, 'system', `Day ${nextDay} begins.`)
+  next = appendActivityLogEntry(next, 'system', `The day turns. Day ${nextDay}.`)
 
   // Step 7: Evaluate world events
   return evaluateEvents(next)

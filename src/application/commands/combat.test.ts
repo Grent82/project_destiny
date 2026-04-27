@@ -15,7 +15,7 @@ describe('combat commands', () => {
     expect(nextState.activeCombat?.combatants).toHaveLength(4)
     expect(nextState.activeCombat?.range).toBe('distant')
     expect(nextState.activeCombat?.outcome).toBe('ongoing')
-    expect(nextState.activityLog[0]?.message).toMatch(/deploys into a hostile patrol encounter/i)
+    expect(nextState.activityLog[0]?.message).toMatch(/moves out.*hostile patrol|hostile patrol stands in the way/i)
   })
 
   it('does not start combat without a selected squad', () => {

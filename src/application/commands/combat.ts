@@ -467,7 +467,7 @@ export function startCombatEncounter(state: GameState): GameState {
       {
         round: 1,
         actorId: combatants[0]?.combatantId ?? 'system',
-        summary: 'A hostile patrol intercepts the squad at range.',
+        summary: 'A patrol moves to cut the squad off. Distance holds, for now.',
       },
     ],
     factionId: 'faction-civic-compact',
@@ -482,7 +482,7 @@ export function startCombatEncounter(state: GameState): GameState {
     encounter,
     ),
     'combat',
-    'The squad deploys into a hostile patrol encounter.',
+    'The squad moves out. A hostile patrol stands in the way.',
   )
 }
 
@@ -543,7 +543,7 @@ export function performCombatAction(
     nextState = appendActivityLogEntry(
       nextState,
       'combat',
-      'The squad wins the encounter.',
+      'The squad holds the ground. The patrol does not.',
     )
   }
 
@@ -551,7 +551,7 @@ export function performCombatAction(
     nextState = appendActivityLogEntry(
       nextState,
       'combat',
-      'The squad is forced out of the encounter.',
+      'The patrol holds. The squad falls back.',
     )
   }
 
@@ -621,5 +621,5 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
   }
 
-  return appendActivityLogEntry(nextState, 'system', 'The encounter is concluded and the squad returns to operations.')
+  return appendActivityLogEntry(nextState, 'system', 'The encounter is concluded. The squad returns.')
 }

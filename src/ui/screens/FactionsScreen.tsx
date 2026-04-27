@@ -30,10 +30,10 @@ export function FactionsScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
+      <p className="eyebrow">House Valdric</p>
       <h1>Factions</h1>
       <p className="summary">
-        Political standing tracks House Valdric's relationships across all five factions.
+        Where House Valdric stands with each power in Valdenmoor. Standing shifts with every choice.
       </p>
 
       <div className="overview-grid">

@@ -14,7 +14,7 @@ describe('RosterScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Roster' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'The Roster' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Marion Vale/i })).toBeInTheDocument()
     expect(screen.getByText(/A former dock broker/i)).toBeInTheDocument()
 

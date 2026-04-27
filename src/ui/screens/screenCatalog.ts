@@ -1,13 +1,13 @@
 export const screenCatalog = [
   {
     path: '/dashboard',
-    title: 'Dashboard',
-    summary: 'Operational overview for roster pressure, finances, and city status.',
+    title: 'Operations',
+    summary: 'The house ledger. Roster pressure, Marks, and city standing at a glance.',
   },
   {
     path: '/roster',
-    title: 'Roster',
-    summary: 'Inspect NPC roles, assignments, traits, and current readiness.',
+    title: 'The Roster',
+    summary: 'Personnel in house service. Their condition is yours to account for.',
   },
   {
     path: '/districts',
@@ -16,27 +16,27 @@ export const screenCatalog = [
   },
   {
     path: '/shops',
-    title: 'Shops',
-    summary: 'Compare specialized vendors and district-specific supply.',
+    title: 'The Market',
+    summary: 'District vendors and what they will part with today.',
   },
   {
     path: '/factions',
     title: 'Factions',
-    summary: 'Track faction power, pressure, and player standing.',
+    summary: 'Where House Valdric stands with each faction in Valdenmoor.',
   },
   {
     path: '/missions',
-    title: 'Mission Prep',
-    summary: 'Assemble a squad, confirm loadout, and review encounter stakes.',
+    title: 'Contracts',
+    summary: 'Review available work, assemble a squad, and confirm the stakes.',
   },
   {
     path: '/combat',
-    title: 'Combat',
-    summary: 'Resolve two-range tactical encounters through clear action choices.',
+    title: 'Engagement',
+    summary: 'Two-range tactical encounters. The ground belongs to whoever holds it.',
   },
   {
     path: '/event-log',
-    title: 'Event Log',
-    summary: 'Review outcomes, shifts in relationships, and daily state changes.',
+    title: 'The Record',
+    summary: 'What has been logged: economy shifts, encounters, and the state of things.',
   },
 ] as const

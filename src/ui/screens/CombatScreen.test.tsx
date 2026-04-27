@@ -15,7 +15,7 @@ describe('CombatScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Combat' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Engagement' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Start seeded encounter' }))
 

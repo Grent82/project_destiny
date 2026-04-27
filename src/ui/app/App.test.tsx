@@ -21,9 +21,9 @@ describe('App', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: /Dashboard/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Roster' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Combat' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Operations/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'The Roster' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Engagement' })).toBeInTheDocument()
     expect(screen.getByText('300 Marks')).toBeInTheDocument()
   })
 
@@ -40,7 +40,7 @@ describe('App', () => {
 
     await user.click(screen.getByRole('button', { name: 'Deploy to encounter' }))
 
-    expect(screen.getByRole('heading', { name: 'Combat' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Engagement' })).toBeInTheDocument()
     expect(screen.getAllByText(/Round 1/i).length).toBeGreaterThan(0)
   })
 })
