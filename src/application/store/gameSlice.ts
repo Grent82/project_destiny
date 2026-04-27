@@ -8,6 +8,7 @@ import {
 } from '../commands/combat'
 import { purchaseItemFromShop } from '../commands/purchase'
 import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from '../commands/squad'
+import { endDay as endDayCommand } from '../commands/endDay'
 import { initialGameStateSnapshot } from './initialGameState'
 
 const gameSlice = createSlice({
@@ -42,8 +43,17 @@ const gameSlice = createSlice({
     concludeCombatEncounter(state) {
       return concludeCombatEncounter(state)
     },
+    endDay(state) {
+      return endDayCommand(state)
+    },
     replaceGameState(_state, action: PayloadAction<GameState>) {
       return action.payload
+    },
+    setProtagonistName(state, action: PayloadAction<string>) {
+      state.protagonistName = action.payload
+    },
+    setHasSeenOpening(state, action: PayloadAction<boolean>) {
+      state.hasSeenOpening = action.payload
     },
   },
 })

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { loadoutSchema } from '../items/contracts'
 import {
   entityIdSchema,
+  nonNegativeIntegerSchema,
   percentageSchema,
   raritySchema,
   signedStandingSchema,
@@ -125,6 +126,8 @@ export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
     assignment: npcAssignmentSchema,
+    activeTitle: entityIdSchema.nullable(),
+    wagesOwedDays: nonNegativeIntegerSchema,
     attributes: attributesSchema,
     skills: skillsSchema,
     traits: traitsSchema,

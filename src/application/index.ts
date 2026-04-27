@@ -1,4 +1,5 @@
 export * from './commands/combat'
+export * from './commands/endDay'
 export * from './content/contentCatalog'
 export * from './commands/purchase'
 export * from './commands/squad'

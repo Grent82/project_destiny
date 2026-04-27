@@ -1,14 +1,16 @@
 import { useState } from 'react'
 
 import {
+  gameActions,
   hasSavedSession,
   loadSavedSession,
   type SaveGameStore,
   saveCurrentSession,
   selectDashboardSummary,
+  selectProtagonistName,
 } from '../../application'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
-import { useAppSelector, useAppStore } from '../app/hooks'
+import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
 
 interface DashboardScreenProps {
   saveStore?: SaveGameStore
@@ -17,7 +19,9 @@ interface DashboardScreenProps {
 export function DashboardScreen(props: DashboardScreenProps) {
   const { saveStore = createBrowserSaveSnapshotStore() } = props
   const store = useAppStore()
+  const dispatch = useAppDispatch()
   const summary = useAppSelector(selectDashboardSummary)
+  const protagonistName = useAppSelector(selectProtagonistName)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
   const [canLoadSavedSession, setCanLoadSavedSession] = useState(() =>
     hasSavedSession(saveStore),
@@ -25,11 +29,24 @@ export function DashboardScreen(props: DashboardScreenProps) {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">Project Destiny</p>
-      <h1>Dashboard</h1>
+      <p className="eyebrow">House Valdric</p>
+      <h1>Dashboard — {protagonistName}</h1>
+      <div className="day-header">
+        <p className="day-display">
+          Day {summary.day} —{' '}
+          {summary.timeSlot.charAt(0).toUpperCase() + summary.timeSlot.slice(1)}
+        </p>
+        <button
+          className="action-button action-button--primary"
+          onClick={() => dispatch(gameActions.endDay())}
+          type="button"
+        >
+          End Day →
+        </button>
+      </div>
       <p className="summary">
-        Application state is now flowing through the store boundary rather than
-        raw seed files in the UI.
+        The debt claim against House Valdric is active. Marion is waiting. The ledgers are in
+        worse shape than they look.
       </p>
       <div className="session-actions">
         <button
@@ -70,7 +87,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
         </article>
         <article>
           <h2>Funds</h2>
-          <p>{summary.money} credits</p>
+          <p>{summary.money} Marks</p>
         </article>
         <article>
           <h2>Roster</h2>

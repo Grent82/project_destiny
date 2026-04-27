@@ -2,6 +2,8 @@
   "day": 1,
   "timeSlot": "morning",
   "money": 300,
+  "protagonistName": "Valdric",
+  "hasSeenOpening": false,
   "politicalDials": {
     "control": 58,
     "prosperity": 46,
@@ -58,6 +60,8 @@
     {
       "npcId": "npc-marion-vale",
       "assignment": "working",
+      "activeTitle": null,
+      "wagesOwedDays": 0,
       "attributes": {
         "might": 38,
         "agility": 47,
@@ -131,6 +135,8 @@
     {
       "npcId": "npc-ida-rhys",
       "assignment": "idle",
+      "activeTitle": null,
+      "wagesOwedDays": 0,
       "attributes": {
         "might": 54,
         "agility": 42,

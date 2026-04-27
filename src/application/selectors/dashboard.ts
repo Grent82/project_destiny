@@ -19,3 +19,13 @@ export const selectDashboardSummary = createSelector([selectGame], (game) => {
     recentActivity: game.activityLog.slice(0, 3),
   }
 })
+
+export const selectProtagonistName = createSelector(
+  [selectGame],
+  (game) => game.protagonistName,
+)
+
+export const selectHasSeenOpening = createSelector(
+  [selectGame],
+  (game) => game.hasSeenOpening,
+)

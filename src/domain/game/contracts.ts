@@ -51,6 +51,8 @@ export const gameStateSchema = z
     day: positiveIntegerSchema,
     timeSlot: timeSlotSchema,
     money: nonNegativeIntegerSchema,
+    protagonistName: z.string().min(1),
+    hasSeenOpening: z.boolean(),
     politicalDials: politicalDialsSchema,
     factionStates: z.array(factionRuntimeStateSchema),
     districts: z.array(districtRuntimeStateSchema),

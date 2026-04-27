@@ -2,15 +2,18 @@ import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
 
 import './App.css'
 import { GlobalStatusBar } from './GlobalStatusBar'
+import { useAppSelector } from './hooks'
 import { CombatScreen } from '../screens/CombatScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DistrictsScreen } from '../screens/DistrictsScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
 import { MissionPrepScreen } from '../screens/MissionPrepScreen'
+import { OpeningScreen } from '../screens/OpeningScreen'
 import { RosterScreen } from '../screens/RosterScreen'
 import { ShopsScreen } from '../screens/ShopsScreen'
 import { screenCatalog } from '../screens/screenCatalog'
+import { selectHasSeenOpening } from '../../application'
 
 function ScreenPlaceholder(props: { title: string; summary: string }) {
   const { summary, title } = props
@@ -35,6 +38,12 @@ function ScreenPlaceholder(props: { title: string; summary: string }) {
 }
 
 export function App() {
+  const hasSeenOpening = useAppSelector(selectHasSeenOpening)
+
+  if (!hasSeenOpening) {
+    return <OpeningScreen />
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">

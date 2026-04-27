@@ -2,30 +2,36 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
+import { createGameStore } from '../../application'
+import { initialGameStateSnapshot } from '../../application/store/initialGameState'
 import { App } from './App'
 import { AppProviders } from './AppProviders'
+
+function makeStoreWithOpeningSeen() {
+  return createGameStore({ ...initialGameStateSnapshot, hasSeenOpening: true })
+}
 
 describe('App', () => {
   it('renders the route-level navigation shell', () => {
     render(
-      <AppProviders>
+      <AppProviders store={makeStoreWithOpeningSeen()}>
         <MemoryRouter initialEntries={['/dashboard']}>
           <App />
         </MemoryRouter>
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Dashboard/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Roster' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Combat' })).toBeInTheDocument()
-    expect(screen.getByText('300 credits')).toBeInTheDocument()
+    expect(screen.getByText('300 Marks')).toBeInTheDocument()
   })
 
   it('deploys from mission prep into the combat route', async () => {
     const user = userEvent.setup()
 
     render(
-      <AppProviders>
+      <AppProviders store={makeStoreWithOpeningSeen()}>
         <MemoryRouter initialEntries={['/missions']}>
           <App />
         </MemoryRouter>

@@ -11,7 +11,7 @@ export function GlobalStatusBar() {
       </span>
       <span className="status-bar-divider" aria-hidden="true" />
       <span className="status-bar-item">
-        {summary.money} <abbr title="credits">cr</abbr>
+        {summary.money} <abbr title="Marks">Mk</abbr>
       </span>
       <span className="status-bar-divider" aria-hidden="true" />
       <span className="status-bar-item">

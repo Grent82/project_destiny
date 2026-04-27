@@ -120,6 +120,8 @@ describe('gameStateSchema', () => {
       day: 1,
       timeSlot: 'morning',
       money: 250,
+      protagonistName: 'Valdric',
+      hasSeenOpening: false,
       politicalDials: {
         control: 58,
         prosperity: 44,
