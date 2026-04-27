@@ -16,10 +16,13 @@ export const itemCategorySchema = z.enum([
   'accessory',
   'consumable',
   'trade_good',
+  'tradeGood',
   'tool',
   'document',
   'module',
+  'householdModule',
   'material',
+  'gift',
 ])
 
 export const itemDefinitionSchema = z
@@ -32,6 +35,8 @@ export const itemDefinitionSchema = z
     weight: nonNegativeNumberSchema,
     rarity: raritySchema,
     tags: z.array(z.string().min(1)).default([]),
+    description: z.string().optional(),
+    effects: z.array(z.record(z.string(), z.unknown())).optional(),
   })
   .strict()
 

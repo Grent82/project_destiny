@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import {
@@ -31,8 +31,12 @@ describe('combat commands', () => {
 
   it('resolves a player action and advances the encounter state', () => {
     const startedState = startCombatEncounter(initialGameStateSnapshot)
+    // Mock Math.random to guarantee a hit (low value = below accuracy threshold)
+    vi.spyOn(Math, 'random').mockReturnValue(0.01)
 
     const nextState = performCombatAction(startedState, 'attack')
+
+    vi.restoreAllMocks()
 
     expect(nextState.activeCombat).not.toBeNull()
     expect(nextState.activeCombat?.log.length).toBeGreaterThan(
