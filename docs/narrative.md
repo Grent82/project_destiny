@@ -14,7 +14,7 @@ Valdenmoor sits where three rivers used to meet. Two of the rivers are fouled. T
 
 ### 2. The Collapse — The Breach
 
-**In-world reckoning:** Year Zero of current calendars is called the First Silence. The Breach occurred forty-three years ago.
+**In-world reckoning:** Year Zero of current calendars is called the First Silence. The Breach occurred eighty-five years ago.
 
 What anyone knows with certainty: in the span of a single season, six of the twelve known major cities went dark. Roads maintained for generations were abandoned inside weeks. Supply caravans stopped returning. Survivors who reached Valdenmoor described burning, mass flight, structural collapse, and something they could not agree on — shapes in the smoke, things moving in the ruins, sounds from below the earth at night. The word *breach* entered common speech because it described what witnesses reported: something had opened. Not a war. Not a plague. Something older and less legible than either.
 
@@ -62,13 +62,13 @@ Valdenmoor has no external expansion. It cannot grow outward. Every resource, ev
 
 **House history:**
 
-The Valdrics were not old money. They were two-generation wealth, built in the first decade after the Breach by a grandfather who understood before most people did that the new city needed labor brokerage as much as it needed food. Gregor Valdric, the founder, positioned the house as a mid-tier Bond-Holder operation with a reputation for functional conditions: reasonable contracts, honest intake, documented placements. This was both genuine conviction and strategy. A Bound who came willingly worked harder and ran less. Valdric contracts were considered acceptable in the Bound community — not the best available, but honest by the standards of the market.
+The Valdrics were not old money. They were two-generation wealth, built in the rubble of the post-Breach decade by a grandfather who had been a young man when the First Silence fell. Gregor Valdric came to Valdenmoor with nothing — no property, no family name, no capital — in the years immediately after the Breach, when the city was absorbing refugees and the social order was still being invented by whoever moved fastest. He understood before most that the new city needed labor brokerage as much as it needed food. Gregor founded House Valdric roughly seventy years ago, positioning it as a mid-tier Bond-Holder operation with a reputation for functional conditions: reasonable contracts, honest intake, documented placements. This was both genuine conviction and strategy. A Bound who came willingly worked harder and ran less. Valdric contracts were considered acceptable in the Bound community — not the best available, but honest by the standards of the market.
 
 Over two generations, the house accumulated eleven properties, two workshop operations, a share in a mercantile expedition company, and enough political connections to hold three ward-council seats. They were not at the top of Valdenmoor's hierarchy. They were approaching it — and that made them dangerous to those already there.
 
 **The father — Edric Valdric:**
 
-Methodical, cautious, better at holding things together than building them. He spent the last years of his life trying to convert the house's labor-brokerage wealth into political legitimacy. He was partway there when the Court moved against him. He is dead. The official cause is heart failure. His body was unavailable for independent examination.
+Gregor's son. Born into the post-Breach world — the Register, the binding system, and the Compact's authority were simply the shape of things for him; he never knew the city any other way. Methodical, cautious, better at holding things together than building them. He spent the last years of his life trying to convert the house's labor-brokerage wealth into political legitimacy. He was partway there when the Court moved against him. He is dead. The official cause is heart failure. His body was unavailable for independent examination.
 
 **The sister — Mira Valdric:**
 
@@ -80,7 +80,7 @@ Killed in the Harbor Ward three days after the father's death. Officially a stre
 
 **The protagonist:**
 
-Youngest. Least visible. Off-district the night the father died — which is the only reason they are standing. By the time they returned, the house was in legal siege, the staff had been dismissed, and the Gilded Court had made its position clear without ever saying anything that could be quoted back to them.
+Third generation. The Breach is history to them, not lived experience — a founding myth, not a memory. Youngest child. Least visible. Off-district the night the father died — which is the only reason they are standing. By the time they returned, the house was in legal siege, the staff had been dismissed, and the Gilded Court had made its position clear without ever saying anything that could be quoted back to them.
 
 **The intrigue that destroyed them:**
 
@@ -100,7 +100,11 @@ Two properties tied in litigation by the manufactured debt claim. Two workshop o
 
 ### 5. The Four Paths
 
-The game does not determine the protagonist's personality or morality. It fixes their situation. The paths describe opening focus, not fate. All four use the same game systems.
+The game opens with the protagonist already inside the ruined house. Marion is waiting. The debt claim is filed. The family is gone. Nothing has been decided yet — and nothing asks the player to decide in advance.
+
+The four paths are not a selection screen. They are descriptions of what different players will naturally do when given the same broken situation and a full set of tools. They emerge from action, not from a menu. A player who immediately pursues the evidence trail is walking toward Revenge. A player who starts stabilizing finances and renegotiating contracts is walking toward Business. Neither player was told to go that way.
+
+The game does not ask which path. It watches which one the player walks.
 
 **Business:** Treat the house as an institution worth rebuilding. Restore contracts, clear the debt claim, recover properties, rebuild the labor-brokerage operation. The fastest path to resources. Also requires engaging with the economic systems of Valdenmoor — including binding contracts and labor markets — as pragmatic tools. The moral weight of those choices belongs to the player.
 
@@ -360,7 +364,7 @@ Writers working on Project Destiny content must use these terms consistently. Wh
 | Term | Meaning |
 |------|---------|
 | **Valdenmoor** | The city. Never "the city" in proper nouns. |
-| **The Breach** | The cataclysmic event, forty-three years ago. Capitalized always. |
+| **The Breach** | The cataclysmic event, eighty-five years ago. Capitalized always. |
 | **First Silence** | Year Zero of current reckoning; the season the Breach began. |
 | **the Waste** | Everything outside the walls that is not a road or waystation. Lowercase "the." |
 | **the Gray** | Colloquial term for the Waste; used when emphasizing danger or hopelessness. |
@@ -387,6 +391,100 @@ Writers working on Project Destiny content must use these terms consistently. Wh
 ### 9. Voice North Star
 
 Valdenmoor is a city where most people made a compromise they did not want to make and are still living with it. The politics are not good versus evil — they are interested parties competing over the same fixed resources using whatever tools they were born near. The protagonist is not a hero arriving to fix this. They are a survivor of a specific political murder, holding a specific set of assets and liabilities, with specific options for what to do next. Write every line — NPC dialogue, event text, quest framing — from inside that reality. The moral weight of the world is not delivered by the narrator. It lives in the gap between what characters say their reasons are and what the player can see those reasons actually are. Keep that gap visible. Do not close it.
+
+---
+
+### 10. City Governance
+
+The city has no ruler. It has a council that emerged from the power vacuum after the Breach and has been consolidating ever since.
+
+**The Valdenmoor Council** — five permanent seats plus rotating ward representation:
+
+- **Civic Compact:** 3 seats (Head Magistrate, Permit Commissioner, Harbor Master)
+- **Gilded Court:** 2 seats (Senior Bond-Holder representative, Market Overseer)
+- **Foundry League:** 2 seats (Chief Guild Master, Labor Commissioner)
+- **Common Wards:** 1 seat (rotating every two years, elected by ward councils, largely symbolic)
+- **No seat:** Tallow Ring, The Restored — they exist outside the institutional framework
+
+The Council governs: wall maintenance and garrison, water distribution rights, Corridor trade agreements, district zoning and licensing, Breeding Register policy. Effectively: whoever can align two of the three major factions passes whatever they want. The Common Ward seat is used for legitimacy theater.
+
+House Valdric held three ward-council seats before the intrigue. Those seats were stripped during the manufactured debt claim proceedings. The protagonist may pursue re-entry into institutional politics — but it requires rebuilding from outside the system that expelled them.
+
+**What each faction controls institutionally:**
+
+- **Compact:** Breeding Register enforcement, policing, permits, water rights
+- **Court:** Slave-market licensing, property courts, debt adjudication, social legitimacy
+- **League:** Production licenses, wall repair contracts, outside-the-walls labor operations (farms, logging)
+
+---
+
+### 11. The Resource Economy
+
+**Food:**
+
+Valdenmoor cannot feed itself from within the walls. The math does not work. The population is too large, the arable space too small.
+
+*Inside the walls:* cellar farms (mushrooms, root vegetables, low yield), rooftop gardens (limited, seasonal), livestock pens in lower districts (noise, smell, disease pressure — necessary). These supply perhaps 20% of caloric needs.
+
+*The fortified fields:* A ring of Compact-licensed, League-operated farmland immediately adjacent to the walls — within crossbow range of the battlements. Guards rotate constantly. Monster raids on the fields happen regularly. The Bound work these fields because free citizens will not accept the casualty rate and the Bond-Holders can absorb the loss contractually. This supplies roughly 30% of caloric needs.
+
+*The Corridor:* The remaining 50% arrives via the Green Corridor from Carrath's Fold and the waystation network. This is the city's existential vulnerability. If the Corridor closes for more than two weeks, rationing begins. At three weeks, the lower districts begin to starve. At six weeks, the city begins to fracture.
+
+**Water:**
+
+One clean river. Two fouled. The Civic Compact holds the water distribution rights and uses them. Neighborhoods that fall behind on permit payments receive degraded water quality first, full cutoff second. The lower districts — Harbor Ward, the tenement zones — drink from cisterns that are never quite clean. Chronic intestinal illness is background noise in the lower city. The Gilded Heights has private wells maintained by the Court. This is not an accident.
+
+**Wood and Materials:**
+
+Fresh lumber requires an armed logging operation outside the walls. The League runs four camps, all within four kilometers of the gates, all under regular monster pressure. Fresh wood is expensive. Most construction in Valdenmoor uses salvage — material stripped from abandoned buildings, collapsed floors, sealed cellars. The city is slowly consuming its own past to maintain its present. There is a point, not precisely calculable, at which the structural salvage runs out and nothing is left to strip.
+
+**What this means politically:**
+
+Food security, water access, and material supply are power. The Compact controls water. The League controls production and outside-the-walls labor. The Corridor — technically managed by an expedition-company coalition — is the city's blind spot: nobody fully controls it, which means it is the most contested informal power in Valdenmoor. The Tallow Ring moves significant goods through the Corridor under false manifests.
+
+**What this means for the player:**
+
+Expeditions bring back materials not available inside the walls. Disrupting the Corridor (through faction conflict or monster events) triggers city-wide price shocks. A siege — monster surge that cuts the fields from the walls — is a crisis event that reorganizes all faction priorities temporarily.
+
+---
+
+### 12. Faction Dynamics and Inter-Faction Play
+
+**The stable arrangement:**
+
+The three major factions have maintained a rough equilibrium for decades. Not because they trust each other — because open warfare between them would destroy the city they all need to operate in. The equilibrium is maintained through mutual deterrence: the Compact can shut down the League's production licenses; the Court can foreclose on the Compact's magistrate salaries; the League can halt wall repairs in winter.
+
+**How they move:**
+
+- **Compact** moves through *process*: regulatory burdens, permit delays, targeted enforcement. They almost never use direct force against other factions — they don't need to.
+- **Court** moves through *debt and reputation*: manufactured financial instruments, character assassination, strategic marriages and introductions that create obligation. Their most dangerous tool is patience.
+- **League** moves through *supply*: production slowdowns, repair delays, labor availability shifts. They are the only faction that can credibly threaten physical infrastructure.
+- **Tallow Ring** moves through *information*: they sell intelligence to all three major factions and none of them can be entirely sure what the Ring has sold to the others. This is the Ring's protection.
+- **Restored** moves through *people*: they organize the constituencies the other factions need to remain stable — wage workers, the Bound community, the desperate poor. They are the only faction that can credibly threaten to make the city ungovernable from below.
+
+**How the player's actions shift the balance:**
+
+Every player action with faction consequences tips the equilibrium. The factions respond — not always immediately, not always directly, but they respond. A player who rises too fast triggers a collective response from whoever feels most threatened. A player who destabilizes one faction creates opportunities for the others. A player who builds genuine leverage over the Corridor becomes everyone's problem simultaneously.
+
+**NPC opinion dynamics:**
+
+NPCs do not exist outside the faction system. Their reactions to events are shaped by:
+
+1. Their faction affinity — which faction's logic feels true to them
+2. Their traits — high empathy makes Bound mistreatment personal; high prudence makes unrest alarming regardless of cause; high ruthlessness sees opportunity where others see crisis
+3. Their personal stake — an NPC with Bound family reacts differently to Ring crackdowns than one without
+4. Their relationship with the player — high loyalty means they bend their faction logic toward the player's interest; low loyalty means faction logic wins
+
+*Example — when the Court raises slave-market prices:*
+
+- Marion (Compact-affin, prudent): neutral-concerned, watches cashflows.
+- Ida (League-affin, direct): angry about production costs, wants to solve it practically.
+- A Ring-affiliated NPC: quiet satisfaction — this creates demand for their services.
+- A Restored-affiliated NPC: public outrage, private fundraising.
+
+**The city as a pressure system:**
+
+Valdenmoor is not background. It is a system under load. The political dials (Control, Prosperity, Unrest, Security) represent the current load state. High Unrest makes Restored recruitment easier and Compact enforcement more aggressive simultaneously. Low Security makes expeditions more dangerous and wall-adjacent farms lower-yield. Low Prosperity raises Tallow Ring business and lowers Compact tax revenue. These interactions are not linear — they cascade.
 
 ---
 
