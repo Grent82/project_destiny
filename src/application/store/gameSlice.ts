@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
-import type { GameState } from '../../domain'
+import type { CorridorStatus, GameState } from '../../domain'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -45,6 +45,22 @@ const gameSlice = createSlice({
     },
     endDay(state) {
       return endDayCommand(state)
+    },
+    adjustCityResource(
+      state,
+      action: PayloadAction<{
+        resource: 'foodSecurity' | 'waterAccess' | 'materialStock'
+        delta: number
+      }>,
+    ) {
+      const { resource, delta } = action.payload
+      state.cityResources[resource] = Math.max(
+        0,
+        Math.min(100, state.cityResources[resource] + delta),
+      )
+    },
+    setCorridorStatus(state, action: PayloadAction<CorridorStatus>) {
+      state.cityResources.corridorStatus = action.payload
     },
     replaceGameState(_state, action: PayloadAction<GameState>) {
       return action.payload

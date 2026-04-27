@@ -1,6 +1,57 @@
 import type { GameState, NpcStatus, Skills } from '../../domain'
-import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+
+export function applyEndOfDayResources(state: GameState): GameState {
+  let next = state
+
+  // Low food security → extra hunger decay for all NPCs
+  if (next.cityResources.foodSecurity < 40) {
+    next = {
+      ...next,
+      roster: next.roster.map((npc) => ({
+        ...npc,
+        states: {
+          ...npc.states,
+          hunger: Math.min(100, npc.states.hunger + 10),
+        },
+      })),
+    }
+    // Push unrest up if cityDials exists (added by destiny-suq)
+    if ('cityDials' in next && next.cityDials != null) {
+      const dials = next.cityDials as { unrest: number }
+      next = {
+        ...next,
+        cityDials: { ...dials, unrest: Math.min(100, dials.unrest + 5) },
+      } as GameState
+    }
+  }
+
+  // Corridor status → food supply impact
+  if (next.cityResources.corridorStatus === 'blocked') {
+    next = {
+      ...next,
+      cityResources: {
+        ...next.cityResources,
+        foodSecurity: Math.max(0, next.cityResources.foodSecurity - 10),
+      },
+    }
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      'The Green Corridor remains sealed. Food reserves dwindle.',
+    )
+  } else if (next.cityResources.corridorStatus === 'disrupted') {
+    next = {
+      ...next,
+      cityResources: {
+        ...next.cityResources,
+        foodSecurity: Math.max(0, next.cityResources.foodSecurity - 3),
+      },
+    }
+  }
+
+  return next
+}
 
 const SKILL_KEYS: (keyof Skills)[] = [
   'melee',
@@ -45,9 +96,7 @@ export function endDay(state: GameState): GameState {
 
   // Step 1: Wage deduction
   for (const rosterEntry of state.roster) {
-    const definition = contentCatalog.npcsById.get(rosterEntry.npcId)
-    if (!definition) continue
-    const wage = wageForStatus(definition.status)
+    const wage = wageForStatus(rosterEntry.status)
     if (wage === 0) continue
 
     if (next.money >= wage) {
@@ -64,7 +113,7 @@ export function endDay(state: GameState): GameState {
       next = appendActivityLogEntry(
         next,
         'economy',
-        `Warning: could not pay ${definition.name}'s wage of ${wage} Marks.`,
+        `Warning: could not pay ${rosterEntry.name}'s wage of ${wage} Marks.`,
       )
     }
   }
@@ -93,8 +142,7 @@ export function endDay(state: GameState): GameState {
   // Step 3: Title effects
   for (const npc of next.roster) {
     if (!npc.activeTitle) continue
-    const definition = contentCatalog.npcsById.get(npc.npcId)
-    const npcName = definition?.name ?? npc.npcId
+    const npcName = npc.name
 
     switch (npc.activeTitle) {
       case 'title-medic': {
@@ -102,8 +150,7 @@ export function endDay(state: GameState): GameState {
           .filter((r) => r.states.health < 100)
           .sort((a, b) => a.states.health - b.states.health)[0]
         if (injured) {
-          const patientDef = contentCatalog.npcsById.get(injured.npcId)
-          const patientName = patientDef?.name ?? injured.npcId
+          const patientName = injured.name
           next = {
             ...next,
             roster: next.roster.map((r) =>
@@ -152,8 +199,7 @@ export function endDay(state: GameState): GameState {
                 : r,
             ),
           }
-          const targetDef = contentCatalog.npcsById.get(target.npcId)
-          const targetName = targetDef?.name ?? target.npcId
+          const targetName = target.name
           next = appendActivityLogEntry(
             next,
             'system',
@@ -178,7 +224,10 @@ export function endDay(state: GameState): GameState {
     }
   }
 
-  // Step 4: Advance time
+  // Step 4: Resource consequences
+  next = applyEndOfDayResources(next)
+
+  // Step 5: Advance time
   const nextDay = next.day + 1
   next = { ...next, day: nextDay, timeSlot: 'morning' }
   next = appendActivityLogEntry(next, 'system', `Day ${nextDay} begins.`)

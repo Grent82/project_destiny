@@ -46,6 +46,17 @@ export const gameContentCatalogSchema = z
   })
   .strict()
 
+export const corridorStatusSchema = z.enum(['open', 'disrupted', 'blocked'])
+
+export const cityResourcesSchema = z
+  .object({
+    foodSecurity: z.number().min(0).max(100),
+    waterAccess: z.number().min(0).max(100),
+    materialStock: z.number().min(0).max(100),
+    corridorStatus: corridorStatusSchema,
+  })
+  .strict()
+
 export const gameStateSchema = z
   .object({
     day: positiveIntegerSchema,
@@ -58,6 +69,7 @@ export const gameStateSchema = z
     districts: z.array(districtRuntimeStateSchema),
     roster: z.array(npcRuntimeStateSchema),
     inventory: z.array(inventoryEntrySchema),
+    cityResources: cityResourcesSchema,
     activityLog: z.array(activityLogEntrySchema).max(100),
     activeQuestIds: z.array(entityIdSchema),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
@@ -67,6 +79,8 @@ export const gameStateSchema = z
 
 export type ActivityCategory = z.infer<typeof activityCategorySchema>
 export type ActivityLogEntry = z.infer<typeof activityLogEntrySchema>
+export type CityResources = z.infer<typeof cityResourcesSchema>
+export type CorridorStatus = z.infer<typeof corridorStatusSchema>
 export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>
 export type GameContentCatalog = z.infer<typeof gameContentCatalogSchema>
 export type GameState = z.infer<typeof gameStateSchema>

@@ -125,6 +125,8 @@ export const npcDefinitionSchema = z
 export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
+    name: z.string().min(1),
+    status: npcStatusSchema,
     assignment: npcAssignmentSchema,
     activeTitle: entityIdSchema.nullable(),
     wagesOwedDays: nonNegativeIntegerSchema,

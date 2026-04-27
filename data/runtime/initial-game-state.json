@@ -59,6 +59,8 @@
   "roster": [
     {
       "npcId": "npc-marion-vale",
+      "name": "Marion Vale",
+      "status": "retainer",
       "assignment": "working",
       "activeTitle": null,
       "wagesOwedDays": 0,
@@ -134,6 +136,8 @@
     },
     {
       "npcId": "npc-ida-rhys",
+      "name": "Ida Rhys",
+      "status": "mercenary",
       "assignment": "idle",
       "activeTitle": null,
       "wagesOwedDays": 0,
@@ -222,6 +226,12 @@
       "quantity": 3
     }
   ],
+  "cityResources": {
+    "foodSecurity": 62,
+    "waterAccess": 70,
+    "materialStock": 50,
+    "corridorStatus": "open"
+  },
   "activityLog": [],
   "activeQuestIds": [],
   "selectedSquadNpcIds": ["npc-marion-vale", "npc-ida-rhys"],

@@ -125,3 +125,24 @@ export type InventoryEntry = z.infer<typeof inventoryEntrySchema>
 export type ItemDefinition = z.infer<typeof itemDefinitionSchema>
 export type Loadout = z.infer<typeof loadoutSchema>
 export type WeaponDefinition = z.infer<typeof weaponDefinitionSchema>
+
+export interface WeaponProfile {
+  id: string
+  damageMin: number
+  damageMax: number
+  accuracy: number
+  armorPiercing: number
+  critChance: number
+  staggerChance: number
+  rangeTypePreference: 'close' | 'medium' | 'distant'
+  rangeModifierClose: number
+  rangeModifierMedium: number
+  rangeModifierDistant: number
+}
+
+export interface ArmorProfile {
+  id: string
+  soak: number
+  evasionPenalty: number
+  speedPenalty: number
+}

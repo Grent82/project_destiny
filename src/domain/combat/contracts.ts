@@ -38,6 +38,9 @@ export const combatantStateSchema = z
     soak: percentageSchema,
     speed: positiveIntegerSchema,
     guarding: z.boolean(),
+    staggered: z.boolean(),
+    equippedWeaponId: entityIdSchema.nullable(),
+    equippedArmorId: entityIdSchema.nullable(),
   })
   .strict()
   .superRefine((combatant, context) => {

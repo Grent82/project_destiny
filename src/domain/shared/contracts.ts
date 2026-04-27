@@ -14,7 +14,7 @@ export const nonNegativeNumberSchema = z.number().finite().min(0)
 
 export const raritySchema = z.enum(['common', 'uncommon', 'rare', 'elite', 'legendary'])
 
-export const combatRangeSchema = z.enum(['close', 'distant'])
+export const combatRangeSchema = z.enum(['close', 'medium', 'distant'])
 
 export const timeSlotSchema = z.enum(['morning', 'afternoon', 'evening', 'night'])
 
