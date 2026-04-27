@@ -752,6 +752,10 @@ Everything moves quickly, deals are provisional, and the same dock can host a le
 - shipping disputes
 - introductions to pragmatic power
 
+#### Contested Zones
+
+**The Slip** — the narrow streets between the dock warehouses and the Pale boundary. Compact patrols stop at the warehouse line. Ring territory starts there. Neither side acknowledges this openly. The Slip is where freight that cannot survive a manifest inspection passes between handlers, and where the Ring's Harbor Ward contacts receive visitors the Compact is not supposed to know about. A player who treats the Slip as Harbor Ward will find the rules have changed without announcement.
+
 ### Gilded Heights
 
 #### Function
@@ -808,6 +812,99 @@ Power here is measured in output, endurance, and who can keep a failing system r
 - shortage events
 - labor and leverage stories
 
+#### Contested Zones
+
+**The Scrapyard** — a massive salvage lot on the Ironworks/Hollows border, formally registered to a League-affiliated reclamation contractor. The League uses it to strip and sort salvage material for workshop resupply. The Ring uses it as a transit point, moving goods between the Hollows and the active city without crossing a Compact checkpoint. Squatters have built semi-permanent shelter inside the structural debris at the far end, beyond where the League's workers operate. All three uses proceed simultaneously and in studied ignorance of each other. The League foreman sees nothing he isn't paid to see.
+
+### The Pale
+
+#### Function
+
+The grey economy's residential and operational hub — the settlement that grew up in the space between the Compact's jurisdiction and the Ring's logistics network.
+
+#### Emotional character
+
+Provisional, adaptive, wary, and alive with the specific energy of people who have stopped waiting for permission.
+
+#### Dominant pressures
+
+- absence of enforceable law
+- Ring operational presence (open, unashamed)
+- Restored community infrastructure competing with Ring social control
+- Compact permit harassment during election periods and assessment cycles
+
+#### What the player should feel here
+
+Every service is available, every price is negotiable, and every contact comes with an unspoken ledger of obligations that isn't explained until it matters. The Pale rewards the person who learns the rules faster than the rules can change.
+
+#### Narrative use
+
+- Ring contact introductions and grey-market procurement
+- recruits who fall outside formal faction pipelines
+- Restored community workers with anti-Compact sympathies
+- Compact crackdown events that affect Ring and Restored simultaneously
+- grey-zone contracts: legal cover for illegal work, illegal cover for legal work
+
+### The Warrens
+
+#### Function
+
+Where the city's actual population lives — wage workers, lower-tier free citizens, Bound on limited-mobility contracts, domestic workers, tradespeople, and the honest poor in one overbuilt, underdrained mass.
+
+#### Emotional character
+
+Exhausted, resilient, quietly angry, and more organized than the Compact prefers to admit.
+
+#### Dominant pressures
+
+- structural decay (seasonal collapses are an accepted risk)
+- chronic illness from degraded water quality
+- Breeding Register assessment periods that put every family under scrutiny
+- Compact enforcement surges that feel like occupation, followed by long periods of complete absence
+
+#### What the player should feel here
+
+The people here are not victims waiting for rescue. They have developed their own systems of mutual support, dispute resolution, and survival — the Restored formalized much of it, but the instinct precedes the institution. The hostility toward faction players is earned and specific. Trust here must be built, not assumed.
+
+#### Narrative use
+
+- working-class character recruitment
+- Restored faction introduction and community missions
+- Breeding Register stories and moral weight
+- Bound with walking contracts as NPCs with specific, limited agency
+- Compact assessment events as pressure moments
+- infrastructure collapse as both literal crisis and political flashpoint
+
+### The Hollows
+
+#### Function
+
+The city's wound and its memory — condemned, officially empty, functionally occupied by everyone the city has decided not to see.
+
+#### Emotional character
+
+Desolate, dangerous, quietly beautiful in the way that ruins are, and charged with the specific freedom of a place where no one is keeping records.
+
+#### Dominant pressures
+
+- physical danger (structural instability, environmental hazard)
+- Ring dead drops and cache sites that attract unwanted attention
+- Restored extremist cells using the absence of law as organizational cover
+- pre-Breach salvage buried deep enough to justify expedition-scale risk
+
+#### What the player should feel here
+
+Entering the Hollows is a choice with consequences. The place is not neutral — it has its own informal politics, its own dangers that do not announce themselves, and its own rewards for preparation and caution. Going alone is a risk event. Going with the right people is a tactical operation.
+
+#### Narrative use
+
+- salvage expedition staging
+- Ring dead drop retrieval and cache-site conflicts
+- Restored extremist faction threads
+- desperate recruits available at near-zero cost, high personal risk
+- pre-Breach artifact discovery
+- the city's history visible in cross-section: layers of what Valdenmoor was built on and over
+
 ## Voice Guide
 
 ### General style
@@ -828,6 +925,9 @@ Power here is measured in output, endurance, and who can keep a failing system r
 - Harbor Ward: kinetic, transactional
 - Gilded Heights: controlled, status-aware
 - Ironworks: pressurized, work-centered
+- The Pale: provisional, sideways, nothing stated directly
+- The Warrens: blunt, tired, specific — no abstractions
+- The Hollows: sparse, flat, observation-first
 
 ## Writing Standards for Future Content
 
