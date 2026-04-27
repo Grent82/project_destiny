@@ -1,0 +1,127 @@
+import { z } from 'zod'
+
+import {
+  combatRangeSchema,
+  entityIdSchema,
+  nonNegativeIntegerSchema,
+  nonNegativeNumberSchema,
+  percentageSchema,
+  positiveIntegerSchema,
+  raritySchema,
+} from '../shared/contracts'
+
+export const itemCategorySchema = z.enum([
+  'weapon',
+  'armor',
+  'accessory',
+  'consumable',
+  'trade_good',
+  'tool',
+  'document',
+  'module',
+  'material',
+])
+
+export const itemDefinitionSchema = z
+  .object({
+    id: entityIdSchema,
+    name: z.string().min(1),
+    category: itemCategorySchema,
+    tier: positiveIntegerSchema,
+    value: nonNegativeIntegerSchema,
+    weight: nonNegativeNumberSchema,
+    rarity: raritySchema,
+    tags: z.array(z.string().min(1)).default([]),
+  })
+  .strict()
+
+export const weaponClassSchema = z.enum([
+  'dagger',
+  'sword',
+  'spear',
+  'hammer',
+  'pistol',
+  'rifle',
+  'shotgun',
+  'crossbow',
+  'staff',
+  'special',
+])
+
+export const weaponDefinitionSchema = itemDefinitionSchema
+  .extend({
+    category: z.literal('weapon'),
+    weaponClass: weaponClassSchema,
+    effectiveRange: combatRangeSchema,
+    damageMin: nonNegativeIntegerSchema,
+    damageMax: nonNegativeIntegerSchema,
+    accuracy: percentageSchema,
+    armorPiercing: percentageSchema,
+    speed: positiveIntegerSchema,
+    rangeModifier: z
+      .object({
+        close: z.number().int().min(-100).max(100),
+        distant: z.number().int().min(-100).max(100),
+      })
+      .strict(),
+    critChance: percentageSchema,
+    staggerChance: percentageSchema,
+    ammoType: z.string().min(1).nullable(),
+    durability: positiveIntegerSchema,
+  })
+  .strict()
+  .superRefine((weapon, context) => {
+    if (weapon.damageMax < weapon.damageMin) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'damageMax must be greater than or equal to damageMin',
+        path: ['damageMax'],
+      })
+    }
+  })
+
+export const armorClassSchema = z.enum(['light', 'medium', 'heavy', 'specialized'])
+
+export const armorDefinitionSchema = itemDefinitionSchema
+  .extend({
+    category: z.literal('armor'),
+    armorClass: armorClassSchema,
+    soak: percentageSchema,
+    evasionPenalty: percentageSchema,
+    speedPenalty: percentageSchema,
+    durability: positiveIntegerSchema,
+    repairCost: nonNegativeIntegerSchema,
+    slotCoverage: z.array(z.string().min(1)).min(1),
+    resistances: z.record(z.string().min(1), percentageSchema).default({}),
+  })
+  .strict()
+
+export const equipmentDefinitionSchema = z.discriminatedUnion('category', [
+  weaponDefinitionSchema,
+  armorDefinitionSchema,
+])
+
+export const loadoutSchema = z
+  .object({
+    primaryWeaponId: entityIdSchema.nullable(),
+    secondaryWeaponId: entityIdSchema.nullable(),
+    armorId: entityIdSchema.nullable(),
+    accessoryIds: z.array(entityIdSchema).max(2),
+    consumableIds: z.array(entityIdSchema).max(3),
+  })
+  .strict()
+
+export const inventoryEntrySchema = z
+  .object({
+    itemId: entityIdSchema,
+    quantity: positiveIntegerSchema,
+    currentDurability: positiveIntegerSchema.optional(),
+  })
+  .strict()
+
+export type ArmorDefinition = z.infer<typeof armorDefinitionSchema>
+export type EquipmentDefinition = z.infer<typeof equipmentDefinitionSchema>
+export type InventoryEntry = z.infer<typeof inventoryEntrySchema>
+export type ItemDefinition = z.infer<typeof itemDefinitionSchema>
+export type Loadout = z.infer<typeof loadoutSchema>
+export type WeaponDefinition = z.infer<typeof weaponDefinitionSchema>

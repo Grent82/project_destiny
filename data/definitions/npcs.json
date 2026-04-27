@@ -1,0 +1,92 @@
+[
+  {
+    "id": "npc-marion-vale",
+    "name": "Marion Vale",
+    "origin": "Harbor Ward",
+    "background": "A former dock broker who learned to keep crews loyal and manifests flexible.",
+    "rarity": "uncommon",
+    "status": "retainer",
+    "factionAffinityId": "faction-civic-compact",
+    "baseAttributes": {
+      "might": 38,
+      "agility": 47,
+      "endurance": 44,
+      "intellect": 63,
+      "perception": 58,
+      "presence": 66,
+      "resolve": 61
+    },
+    "startingSkills": {
+      "melee": 22,
+      "ranged": 19,
+      "medicine": 14,
+      "administration": 61,
+      "engineering": 18,
+      "negotiation": 68,
+      "survival": 20,
+      "security": 25,
+      "crafting": 12,
+      "performance": 10,
+      "academics": 24,
+      "intrigue": 41
+    },
+    "startingTraits": {
+      "discipline": 62,
+      "ambition": 71,
+      "empathy": 43,
+      "ruthlessness": 34,
+      "prudence": 67,
+      "curiosity": 48,
+      "dominance": 56,
+      "loyalty": 52,
+      "vanity": 31,
+      "zeal": 22
+    },
+    "allowedTitleIds": ["title-quartermaster", "title-steward"]
+  },
+  {
+    "id": "npc-ida-rhys",
+    "name": "Ida Rhys",
+    "origin": "Ironworks",
+    "background": "A line mechanic turned field engineer with a habit of solving problems under pressure.",
+    "rarity": "rare",
+    "status": "mercenary",
+    "factionAffinityId": "faction-foundry-league",
+    "baseAttributes": {
+      "might": 54,
+      "agility": 42,
+      "endurance": 59,
+      "intellect": 57,
+      "perception": 49,
+      "presence": 35,
+      "resolve": 64
+    },
+    "startingSkills": {
+      "melee": 39,
+      "ranged": 33,
+      "medicine": 12,
+      "administration": 18,
+      "engineering": 73,
+      "negotiation": 16,
+      "survival": 28,
+      "security": 31,
+      "crafting": 69,
+      "performance": 6,
+      "academics": 22,
+      "intrigue": 11
+    },
+    "startingTraits": {
+      "discipline": 74,
+      "ambition": 48,
+      "empathy": 29,
+      "ruthlessness": 38,
+      "prudence": 59,
+      "curiosity": 64,
+      "dominance": 27,
+      "loyalty": 46,
+      "vanity": 8,
+      "zeal": 35
+    },
+    "allowedTitleIds": ["title-chief-engineer", "title-trainer"]
+  }
+]

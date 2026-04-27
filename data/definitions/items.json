@@ -1,0 +1,32 @@
+[
+  {
+    "id": "item-medkit-field",
+    "name": "Field Medkit",
+    "category": "consumable",
+    "tier": 1,
+    "value": 85,
+    "weight": 1.2,
+    "rarity": "common",
+    "tags": ["healing", "mission"]
+  },
+  {
+    "id": "item-ledger-bureau",
+    "name": "Bureau Ledger",
+    "category": "document",
+    "tier": 1,
+    "value": 40,
+    "weight": 0.4,
+    "rarity": "common",
+    "tags": ["administration", "intel"]
+  },
+  {
+    "id": "item-spare-parts",
+    "name": "Spare Parts Crate",
+    "category": "material",
+    "tier": 1,
+    "value": 65,
+    "weight": 5.5,
+    "rarity": "uncommon",
+    "tags": ["repair", "crafting"]
+  }
+]

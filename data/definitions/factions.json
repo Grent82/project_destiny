@@ -1,0 +1,26 @@
+[
+  {
+    "id": "faction-civic-compact",
+    "name": "Civic Compact",
+    "agenda": "Maintain order, secure trade routes, and suppress open unrest.",
+    "description": "A pragmatic alliance of magistrates, captains, and merchants who treat stability as the city's highest good.",
+    "territory": ["district-harbor"],
+    "tags": ["law", "trade", "stability"]
+  },
+  {
+    "id": "faction-gilded-court",
+    "name": "Gilded Court",
+    "agenda": "Expand elite influence through patronage, debt, and ceremonial prestige.",
+    "description": "A network of nobles and financiers who shape the city through soft power and curated loyalty.",
+    "territory": ["district-gilded-heights"],
+    "tags": ["nobility", "wealth", "influence"]
+  },
+  {
+    "id": "faction-foundry-league",
+    "name": "Foundry League",
+    "agenda": "Control industrial output, skilled labor, and the city's repair economy.",
+    "description": "An alliance of workshop owners, engineers, and labor organizers with a hard-edged view of leverage.",
+    "territory": ["district-ironworks"],
+    "tags": ["industry", "labor", "production"]
+  }
+]

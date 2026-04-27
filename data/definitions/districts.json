@@ -1,0 +1,26 @@
+[
+  {
+    "id": "district-harbor",
+    "name": "Harbor Ward",
+    "summary": "A noisy trade district where dock labor, black-market goods, and mercenary traffic overlap.",
+    "controllingFactionId": "faction-civic-compact",
+    "shopTypes": ["general_store", "weapon_dealer", "black_market"],
+    "tags": ["trade", "high-risk", "entry-zone"]
+  },
+  {
+    "id": "district-gilded-heights",
+    "name": "Gilded Heights",
+    "summary": "A wealthy district of salons, estates, and political favors.",
+    "controllingFactionId": "faction-gilded-court",
+    "shopTypes": ["tailor", "bookshop", "apothecary"],
+    "tags": ["wealthy", "political", "prestige"]
+  },
+  {
+    "id": "district-ironworks",
+    "name": "Ironworks",
+    "summary": "A district of mills, workshops, and industrial contractors under constant pressure.",
+    "controllingFactionId": "faction-foundry-league",
+    "shopTypes": ["workshop", "armorer", "general_store"],
+    "tags": ["industrial", "labor", "repair"]
+  }
+]

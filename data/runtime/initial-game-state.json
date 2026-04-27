@@ -1,0 +1,221 @@
+{
+  "day": 1,
+  "timeSlot": "morning",
+  "money": 300,
+  "politicalDials": {
+    "control": 58,
+    "prosperity": 46,
+    "unrest": 24,
+    "corruption": 29
+  },
+  "factionStates": [
+    {
+      "factionId": "faction-civic-compact",
+      "power": 64,
+      "wealth": 56,
+      "security": 72,
+      "standingWithPlayer": 5,
+      "activePressure": 18
+    },
+    {
+      "factionId": "faction-gilded-court",
+      "power": 51,
+      "wealth": 70,
+      "security": 44,
+      "standingWithPlayer": 0,
+      "activePressure": 26
+    },
+    {
+      "factionId": "faction-foundry-league",
+      "power": 55,
+      "wealth": 49,
+      "security": 52,
+      "standingWithPlayer": 10,
+      "activePressure": 21
+    }
+  ],
+  "districts": [
+    {
+      "districtId": "district-harbor",
+      "controllingFactionId": "faction-civic-compact",
+      "danger": 42,
+      "marketPressure": 57
+    },
+    {
+      "districtId": "district-gilded-heights",
+      "controllingFactionId": "faction-gilded-court",
+      "danger": 18,
+      "marketPressure": 46
+    },
+    {
+      "districtId": "district-ironworks",
+      "controllingFactionId": "faction-foundry-league",
+      "danger": 35,
+      "marketPressure": 62
+    }
+  ],
+  "roster": [
+    {
+      "npcId": "npc-marion-vale",
+      "assignment": "working",
+      "attributes": {
+        "might": 38,
+        "agility": 47,
+        "endurance": 44,
+        "intellect": 63,
+        "perception": 58,
+        "presence": 66,
+        "resolve": 61
+      },
+      "skills": {
+        "melee": 22,
+        "ranged": 19,
+        "medicine": 14,
+        "administration": 61,
+        "engineering": 18,
+        "negotiation": 68,
+        "survival": 20,
+        "security": 25,
+        "crafting": 12,
+        "performance": 10,
+        "academics": 24,
+        "intrigue": 41
+      },
+      "traits": {
+        "discipline": 62,
+        "ambition": 71,
+        "empathy": 43,
+        "ruthlessness": 34,
+        "prudence": 67,
+        "curiosity": 48,
+        "dominance": 56,
+        "loyalty": 52,
+        "vanity": 31,
+        "zeal": 22
+      },
+      "states": {
+        "health": 96,
+        "fatigue": 12,
+        "stress": 21,
+        "morale": 66,
+        "fear": 8,
+        "anger": 10,
+        "hunger": 18,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 72
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": ["item-medkit-field"]
+      },
+      "relationships": {
+        "npc-ida-rhys": {
+          "affinity": 48,
+          "respect": 57,
+          "fear": 12,
+          "loyalty": 50,
+          "trust": 46
+        }
+      },
+      "factionRelationships": [
+        {
+          "factionId": "faction-civic-compact",
+          "standing": 18
+        }
+      ]
+    },
+    {
+      "npcId": "npc-ida-rhys",
+      "assignment": "idle",
+      "attributes": {
+        "might": 54,
+        "agility": 42,
+        "endurance": 59,
+        "intellect": 57,
+        "perception": 49,
+        "presence": 35,
+        "resolve": 64
+      },
+      "skills": {
+        "melee": 39,
+        "ranged": 33,
+        "medicine": 12,
+        "administration": 18,
+        "engineering": 73,
+        "negotiation": 16,
+        "survival": 28,
+        "security": 31,
+        "crafting": 69,
+        "performance": 6,
+        "academics": 22,
+        "intrigue": 11
+      },
+      "traits": {
+        "discipline": 74,
+        "ambition": 48,
+        "empathy": 29,
+        "ruthlessness": 38,
+        "prudence": 59,
+        "curiosity": 64,
+        "dominance": 27,
+        "loyalty": 46,
+        "vanity": 8,
+        "zeal": 35
+      },
+      "states": {
+        "health": 91,
+        "fatigue": 16,
+        "stress": 18,
+        "morale": 61,
+        "fear": 9,
+        "anger": 14,
+        "hunger": 20,
+        "injury": 4,
+        "intoxication": 0,
+        "hygiene": 68
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": ["item-medkit-field"]
+      },
+      "relationships": {
+        "npc-marion-vale": {
+          "affinity": 42,
+          "respect": 63,
+          "fear": 9,
+          "loyalty": 39,
+          "trust": 40
+        }
+      },
+      "factionRelationships": [
+        {
+          "factionId": "faction-foundry-league",
+          "standing": 24
+        }
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "itemId": "item-medkit-field",
+      "quantity": 2
+    },
+    {
+      "itemId": "item-ledger-bureau",
+      "quantity": 1
+    },
+    {
+      "itemId": "item-spare-parts",
+      "quantity": 3
+    }
+  ],
+  "activeQuestIds": [],
+  "selectedSquadNpcIds": ["npc-marion-vale", "npc-ida-rhys"]
+}
