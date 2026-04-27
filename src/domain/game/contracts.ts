@@ -81,6 +81,7 @@ export const gameStateSchema = z
 
 export type ActivityCategory = z.infer<typeof activityCategorySchema>
 export type ActivityLogEntry = z.infer<typeof activityLogEntrySchema>
+export type CityDials = z.infer<typeof politicalDialsSchema>
 export type CityResources = z.infer<typeof cityResourcesSchema>
 export type CorridorStatus = z.infer<typeof corridorStatusSchema>
 export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>

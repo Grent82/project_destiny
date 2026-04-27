@@ -100,6 +100,23 @@ export function DashboardScreen(props: DashboardScreenProps) {
         </article>
       </div>
       <ResourceStatusPanel />
+      <article className="detail-panel">
+        <h2>City Dials</h2>
+        {(['control', 'prosperity', 'unrest', 'corruption'] as const).map((dial) => (
+          <div key={dial} className="stat-row">
+            <span className="stat-label" style={{ textTransform: 'capitalize' }}>
+              {dial}
+            </span>
+            <span className="stat-value">{summary.cityDials[dial]}</span>
+            <div className="stat-bar">
+              <div
+                className="stat-bar-fill"
+                style={{ width: `${summary.cityDials[dial]}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </article>
       <article className="detail-panel dashboard-activity-panel">
         <h2>Recent Activity</h2>
         <div className="combat-log-list">
