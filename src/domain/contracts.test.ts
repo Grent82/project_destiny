@@ -148,6 +148,21 @@ describe('gameStateSchema', () => {
       ],
       roster: [],
       inventory: [],
+      cityResources: {
+        foodSecurity: 62,
+        waterAccess: 70,
+        materialStock: 50,
+        corridorStatus: 'open',
+      },
+      factionStandings: {
+        'faction-civic': 10,
+      },
+      cityDials: {
+        control: 45,
+        prosperity: 35,
+        unrest: 55,
+        corruption: 60,
+      },
       activityLog: [],
       activeQuestIds: [],
       selectedSquadNpcIds: [],

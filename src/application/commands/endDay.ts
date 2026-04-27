@@ -1,4 +1,9 @@
 import type { GameState, NpcStatus, Skills } from '../../domain'
+import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import {
+  getLoyaltyDeployStatus,
+  getStressMoraleDecay,
+} from '../../domain/npcStateModifiers'
 import { appendActivityLogEntry } from './activityLog'
 
 export function applyEndOfDayResources(state: GameState): GameState {
@@ -139,7 +144,54 @@ export function endDay(state: GameState): GameState {
     }),
   }
 
-  // Step 3: Title effects
+  // Step 3: Threshold event checks
+  for (const npc of next.roster) {
+    const snap = {
+      stress: npc.states.stress,
+      morale: npc.states.morale,
+      hunger: npc.states.hunger,
+      loyalty: npc.traits.loyalty,
+    }
+
+    // Stress → extra morale decay
+    const moraleDecay = getStressMoraleDecay(snap)
+    if (moraleDecay < 0) {
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? { ...r, states: { ...r.states, morale: Math.max(0, r.states.morale + moraleDecay) } }
+            : r,
+        ),
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name}: high stress is wearing down morale.`,
+      )
+    }
+
+    // Hunger threshold warning
+    if (snap.hunger > NPC_STATE_THRESHOLDS.HUNGER_COMBAT_PENALTY_THRESHOLD) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name} is too hungry to fight effectively.`,
+      )
+    }
+
+    // Loyalty warning
+    const loyaltyStatus = getLoyaltyDeployStatus(snap)
+    if (loyaltyStatus === 'warning' || loyaltyStatus === 'blocked') {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name}'s loyalty is dangerously low — they may refuse orders.`,
+      )
+    }
+  }
+
+  // Step 4: Title effects
   for (const npc of next.roster) {
     if (!npc.activeTitle) continue
     const npcName = npc.name
@@ -224,10 +276,10 @@ export function endDay(state: GameState): GameState {
     }
   }
 
-  // Step 4: Resource consequences
+  // Step 5: Resource consequences
   next = applyEndOfDayResources(next)
 
-  // Step 5: Advance time
+  // Step 6: Advance time
   const nextDay = next.day + 1
   next = { ...next, day: nextDay, timeSlot: 'morning' }
   next = appendActivityLogEntry(next, 'system', `Day ${nextDay} begins.`)

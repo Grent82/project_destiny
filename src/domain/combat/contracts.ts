@@ -70,6 +70,7 @@ export const activeCombatStateSchema = z
     activeCombatantId: entityIdSchema.nullable(),
     combatants: z.array(combatantStateSchema).min(2),
     log: z.array(combatLogEntrySchema),
+    factionId: entityIdSchema.optional(),
   })
   .strict()
 

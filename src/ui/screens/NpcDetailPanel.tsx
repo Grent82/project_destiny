@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import type { selectRosterDetail } from '../../application'
+import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 
@@ -17,6 +18,24 @@ function StatRow({ label, value }: { label: string; value: number }) {
     <div className="stat-row">
       <span className="stat-label">{label}</span>
       <span className="stat-value">{value}</span>
+      <div className="stat-bar">
+        <div className={fillClass} style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function StateStatRow({ label, value, warn }: { label: string; value: number; warn: boolean }) {
+  const fillClass =
+    value < 20 ? 'stat-bar-fill stat-bar-fill-crit'
+    : value < 40 ? 'stat-bar-fill stat-bar-fill-low'
+    : 'stat-bar-fill'
+
+  return (
+    <div className="stat-row">
+      <span className="stat-label">{label}</span>
+      <span className="stat-value">{value}</span>
+      {warn && <span title="Threshold exceeded — consequences active">⚠</span>}
       <div className="stat-bar">
         <div className={fillClass} style={{ width: `${value}%` }} />
       </div>
@@ -90,9 +109,21 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             ))}
 
           {activeTab === 'States' &&
-            Object.entries(detail.states).map(([key, val]) => (
-              <StatRow key={key} label={key.charAt(0).toUpperCase() + key.slice(1)} value={val} />
-            ))}
+            Object.entries(detail.states).map(([key, val]) => {
+              const warn =
+                (key === 'hunger' && val > NPC_STATE_THRESHOLDS.HUNGER_COMBAT_PENALTY_THRESHOLD) ||
+                (key === 'fear' && val > NPC_STATE_THRESHOLDS.FEAR_REFUSE_ADVANCE_THRESHOLD) ||
+                (key === 'stress' && val > NPC_STATE_THRESHOLDS.STRESS_MORALE_DECAY_THRESHOLD) ||
+                (key === 'fatigue' && val > NPC_STATE_THRESHOLDS.FATIGUE_ACCURACY_PENALTY_THRESHOLD)
+              return (
+                <StateStatRow
+                  key={key}
+                  label={key.charAt(0).toUpperCase() + key.slice(1)}
+                  value={val}
+                  warn={warn}
+                />
+              )
+            })}
 
           {activeTab === 'Traits' &&
             Object.entries(detail.traits).map(([key, val]) => (

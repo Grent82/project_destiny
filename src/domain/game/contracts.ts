@@ -65,6 +65,8 @@ export const gameStateSchema = z
     protagonistName: z.string().min(1),
     hasSeenOpening: z.boolean(),
     politicalDials: politicalDialsSchema,
+    cityDials: politicalDialsSchema,
+    factionStandings: z.record(z.string(), z.number().min(-100).max(100)),
     factionStates: z.array(factionRuntimeStateSchema),
     districts: z.array(districtRuntimeStateSchema),
     roster: z.array(npcRuntimeStateSchema),

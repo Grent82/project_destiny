@@ -1,4 +1,5 @@
 import type { GameState } from '../../domain'
+import { getLoyaltyDeployStatus } from '../../domain/npcStateModifiers'
 
 const MAX_SQUAD_SIZE = 6
 
@@ -6,7 +7,9 @@ export function addNpcToSelectedSquad(
   state: GameState,
   npcId: string,
 ): GameState {
-  if (!state.roster.some((entry) => entry.npcId === npcId)) {
+  const npc = state.roster.find((entry) => entry.npcId === npcId)
+
+  if (!npc) {
     return state
   }
 
@@ -15,6 +18,12 @@ export function addNpcToSelectedSquad(
   }
 
   if (state.selectedSquadNpcIds.length >= MAX_SQUAD_SIZE) {
+    return state
+  }
+
+  // Hard block on loyalty
+  const loyaltyStatus = getLoyaltyDeployStatus({ loyalty: npc.traits.loyalty })
+  if (loyaltyStatus === 'blocked') {
     return state
   }
 

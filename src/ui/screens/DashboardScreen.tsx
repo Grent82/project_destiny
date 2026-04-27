@@ -11,6 +11,7 @@ import {
 } from '../../application'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
+import { ResourceStatusPanel } from '../components/ResourceStatusPanel'
 
 interface DashboardScreenProps {
   saveStore?: SaveGameStore
@@ -98,6 +99,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
           <p>{summary.assignedSquadCount} assigned</p>
         </article>
       </div>
+      <ResourceStatusPanel />
       <article className="detail-panel dashboard-activity-panel">
         <h2>Recent Activity</h2>
         <div className="combat-log-list">

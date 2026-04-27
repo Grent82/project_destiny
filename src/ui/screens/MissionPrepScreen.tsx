@@ -6,6 +6,7 @@ import {
   selectMissionPrepSummary,
   squadRules,
 } from '../../application'
+import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function MissionPrepScreen() {
@@ -73,9 +74,19 @@ export function MissionPrepScreen() {
                 <div key={entry.npcId} className="mission-row">
                   <strong>{entry.name}</strong>
                   <span>{entry.assignment}</span>
-                  <span>Loyalty {entry.loyalty}</span>
+                  <span>
+                    Loyalty {entry.loyalty}
+                    {entry.loyalty <= NPC_STATE_THRESHOLDS.LOYALTY_REFUSE_DEPLOY_THRESHOLD && (
+                      <span className="badge badge-crit" title="Loyalty too low — deployment blocked">⛔</span>
+                    )}
+                    {entry.loyalty > NPC_STATE_THRESHOLDS.LOYALTY_REFUSE_DEPLOY_THRESHOLD &&
+                      entry.loyalty <= NPC_STATE_THRESHOLDS.LOYALTY_DEPLOY_WARNING_THRESHOLD && (
+                      <span className="badge badge-warning" title="Low loyalty — may refuse orders">⚠</span>
+                    )}
+                  </span>
                   <button
                     className="action-button"
+                    disabled={entry.loyalty <= NPC_STATE_THRESHOLDS.LOYALTY_REFUSE_DEPLOY_THRESHOLD}
                     onClick={() =>
                       dispatch(gameActions.addNpcToSelectedSquad(entry.npcId))
                     }
