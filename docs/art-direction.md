@@ -271,20 +271,86 @@ Examples:
 - `ui_material_dark_brass_v1`
 - `npc_port_merchantbroker_v1`
 
+## Character and Portrait Direction
+
+### Portrait as primary identity anchor
+
+Character portraits are the most important single asset class in Project Destiny. The player manages people, not stat arrays. The portrait is the first thing that creates attachment, and it persists across every NPC detail tab. A weak or inconsistent portrait undermines the entire relationship and roster system.
+
+All portrait work must be treated as a system, not as individual commissions.
+
+### Portrait style constraints
+
+Every NPC portrait must share the same:
+
+- **Framing**: bust or three-quarter view, consistent crop height
+- **Aspect ratio**: fixed (3:4 or 2:3 — to be confirmed in a dedicated style guide bead)
+- **Background treatment**: neutral dark or district-contextual, not random per character
+- **Lighting language**: consistent with the art direction palette — controlled, slightly dramatic, urban
+- **Line and rendering style**: consistent stylization level across all characters — no mixing photorealistic and illustrated styles in the same roster
+
+Style guide must be produced and approved before generating NPC art at volume.
+
+### Character-consistent sensual presentation
+
+Sensual or revealing presentation is a deliberate product pillar in Project Destiny. It is connected to the relationship, attraction, and household systems — not used as generic decoration.
+
+The rules for sensual presentation are:
+
+**Present through character, not through uniform exposure.**
+
+A court-affiliated character, a mercenary, and a dockworker occupy different social and visual registers. Their presentation — dress, posture, styling, degree of exposure — should reflect who they are inside the world. Forced uniform sexualization collapses character distinction and weakens the setting.
+
+**Attraction should be readable before it is explicit.**
+
+The primary tool for sensual appeal is expressiveness, posture, and styling. Characters should feel desirable and distinct at the portrait stage before any explicit content is introduced. A strong character read at the portrait level makes later relationship or intimacy content feel earned.
+
+**Visual appeal should serve the systems.**
+
+Attraction, courtship, compatibility, and household mechanics depend on the player caring about specific characters. Portraits that create personality investment are more valuable than portraits that are visually intense but interchangeable. Both goals should be pursued together, not traded off.
+
+**Presentation should scale with relationship progression.**
+
+Initial portrait framing can be characterful and evocative without being explicit. Deeper relationship states may unlock more intimate presentation. This creates progression incentive and avoids front-loading content that has not been earned through gameplay.
+
+**Avoid:**
+
+- Uniform body type across all characters
+- Identical pose or composition regardless of personality
+- Explicit presentation as a default state for low-relationship NPCs
+- Pin-up framing that removes personality from the portrait
+- Styles inconsistent with the world's material language (generic fantasy lingerie in a dark industrial city)
+
+### NPC visual classes
+
+Characters should be designed with distinct visual registers that reflect their role and background:
+
+| Class | Framing cues | Styling notes |
+|-------|-------------|---------------|
+| Combat-trained | Strong posture, visible gear or scarring, direct gaze | Materials: leather, metal, practical cloth |
+| Administrative or scholarly | Composed, slightly reserved, formal dress details | Materials: paper, ink, tailored fabric |
+| Elite or court-adjacent | Deliberate presentation, refined styling, controlled affect | Materials: curated cloth, jewelry, lacquer |
+| Working class or underworld | Practical, harder-worn, more direct expression | Materials: rougher fabric, wear marks, functional tools |
+| Intimate or household role | Warmer expression, softer framing, personal styling | Setting-appropriate dress rather than generic exposure |
+
+These are not archetypes that lock design — they are baseline registers. Individual characters should deviate in ways that create interest and signal backstory.
+
 ## Priority Asset Backlog
 
 The first useful asset direction outputs should be:
 
-- faction mark explorations
-- district mood boards
-- UI material references
-- icon style references
+1. Portrait style guide (framing, lighting, aspect ratio, background treatment)
+2. Faction mark explorations
+3. District mood boards
+4. UI material references
+5. Icon style references
 
-Portrait sets and decorative illustrations come after the visual system is stable.
+Portrait sets follow the style guide. Decorative illustrations come after the visual system is stable.
 
 ## Expected Future Content
 
 - type direction
 - icon style guide
-- portrait style guide
+- portrait style guide (priority — must precede portrait generation)
 - export and naming rules
+- intimacy and relationship progression asset guidelines
