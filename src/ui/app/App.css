@@ -8,6 +8,12 @@
   color: #f3f4f6;
 }
 
+.main-column {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
 .sidebar {
   display: grid;
   gap: 2rem;
@@ -18,12 +24,50 @@
   backdrop-filter: blur(12px);
 }
 
-.brand {
+.sidebar-brand {
   margin: 0;
-  font-size: 1.5rem;
+  padding: 0.25rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #d7bf82;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
-.sidebar-copy,
+.global-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 2rem;
+  border-bottom: 1px solid rgba(243, 244, 246, 0.1);
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(8px);
+  font-size: 0.83rem;
+  color: #d1d5db;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.status-bar-item {
+  white-space: nowrap;
+}
+
+.status-bar-slot {
+  color: #9ca3af;
+}
+
+.status-bar-divider {
+  width: 1px;
+  height: 1rem;
+  background: rgba(243, 244, 246, 0.15);
+  flex-shrink: 0;
+}
+
+.status-bar-alert {
+  margin-left: auto;
+}
+
 .summary,
 .placeholder-grid p {
   color: #d1d5db;
@@ -329,6 +373,10 @@
 @media (max-width: 860px) {
   .app-shell {
     grid-template-columns: 1fr;
+  }
+
+  .main-column {
+    grid-template-rows: auto auto 1fr;
   }
 
   .sidebar {

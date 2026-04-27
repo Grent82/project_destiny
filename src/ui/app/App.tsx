@@ -1,6 +1,7 @@
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
 
 import './App.css'
+import { GlobalStatusBar } from './GlobalStatusBar'
 import { CombatScreen } from '../screens/CombatScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DistrictsScreen } from '../screens/DistrictsScreen'
@@ -37,13 +38,7 @@ export function App() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div>
-          <p className="eyebrow">Project Destiny</p>
-          <h2 className="brand">Operations Shell</h2>
-          <p className="sidebar-copy">
-            Route-level placeholders for the first browser-game feature areas.
-          </p>
-        </div>
+        <p className="sidebar-brand">Project Destiny</p>
 
         <nav aria-label="Primary" className="nav-list">
           {screenCatalog.map((screen) => (
@@ -60,42 +55,43 @@ export function App() {
         </nav>
       </aside>
 
-      <main className="content">
-        <Routes>
-          <Route path="/" element={<Navigate replace to="/dashboard" />} />
-          <Route path="/dashboard" element={<DashboardScreen />} />
-          <Route path="/roster" element={<RosterScreen />} />
-          <Route path="/districts" element={<DistrictsScreen />} />
-          <Route path="/factions" element={<FactionsScreen />} />
-          <Route path="/missions" element={<MissionPrepScreen />} />
-          <Route path="/shops" element={<ShopsScreen />} />
-          <Route path="/combat" element={<CombatScreen />} />
-          <Route path="/event-log" element={<EventLogScreen />} />
-          {screenCatalog
-            .filter(
-              (screen) =>
-                ![
-                  '/dashboard',
-                  '/roster',
-                  '/districts',
-                  '/factions',
-                  '/missions',
-                  '/shops',
-                  '/combat',
-                  '/event-log',
-                ].includes(
-                  screen.path,
-                ),
-            )
-            .map((screen) => (
-              <Route
-                key={screen.path}
-                path={screen.path}
-                element={<ScreenPlaceholder {...screen} />}
-              />
-            ))}
-        </Routes>
-      </main>
+      <div className="main-column">
+        <GlobalStatusBar />
+        <main className="content">
+          <Routes>
+            <Route path="/" element={<Navigate replace to="/dashboard" />} />
+            <Route path="/dashboard" element={<DashboardScreen />} />
+            <Route path="/roster" element={<RosterScreen />} />
+            <Route path="/districts" element={<DistrictsScreen />} />
+            <Route path="/factions" element={<FactionsScreen />} />
+            <Route path="/missions" element={<MissionPrepScreen />} />
+            <Route path="/shops" element={<ShopsScreen />} />
+            <Route path="/combat" element={<CombatScreen />} />
+            <Route path="/event-log" element={<EventLogScreen />} />
+            {screenCatalog
+              .filter(
+                (screen) =>
+                  ![
+                    '/dashboard',
+                    '/roster',
+                    '/districts',
+                    '/factions',
+                    '/missions',
+                    '/shops',
+                    '/combat',
+                    '/event-log',
+                  ].includes(screen.path),
+              )
+              .map((screen) => (
+                <Route
+                  key={screen.path}
+                  path={screen.path}
+                  element={<ScreenPlaceholder {...screen} />}
+                />
+              ))}
+          </Routes>
+        </main>
+      </div>
     </div>
   )
 }
