@@ -1,9 +1,21 @@
 import { gameActions, selectCombatScreenState } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
+const RANGE_LABELS: Record<string, { label: string; description: string }> = {
+  close: {
+    label: 'Close Range',
+    description: 'Melee and short-range weapons have full effect. Rifles and crossbows are penalized.',
+  },
+  distant: {
+    label: 'Distant Range',
+    description: 'Ranged weapons operate at full effect. Melee weapons suffer a penalty.',
+  },
+}
+
 export function CombatScreen() {
   const dispatch = useAppDispatch()
   const combat = useAppSelector(selectCombatScreenState)
+  const rangeInfo = combat.range ? RANGE_LABELS[combat.range] : null
 
   return (
     <section className="screen-panel">
@@ -30,11 +42,17 @@ export function CombatScreen() {
         </div>
       ) : (
         <>
+          {rangeInfo && (
+            <div className={`range-indicator range-indicator-${combat.range}`}>
+              <span className="range-indicator-label">{rangeInfo.label}</span>
+              <span className="range-indicator-description">{rangeInfo.description}</span>
+            </div>
+          )}
+
           <div className="stats-grid">
             <article>
               <h2>Encounter State</h2>
               <p>Round {combat.round}</p>
-              <p>Range: {combat.range}</p>
               <p>
                 Outcome:{' '}
                 <span
@@ -120,7 +138,9 @@ export function CombatScreen() {
                     </span>
                     <span>Morale {combatant.morale}</span>
                     <div className="badge-row">
-                      <span className="badge">{combatant.effectiveRange}</span>
+                      <span className={`badge ${combatant.effectiveRange === combat.range ? 'badge-positive' : ''}`}>
+                        {combatant.effectiveRange === combat.range ? '✓ ' : '✗ '}{combatant.effectiveRange}
+                      </span>
                       <span className="badge">Damage {combatant.damageLabel}</span>
                       {combatant.guarding ? (
                         <span className="badge badge-positive">Guarding</span>
@@ -163,12 +183,21 @@ export function CombatScreen() {
           <article className="detail-panel combat-log-panel">
             <h2>Recent Log</h2>
             <div className="combat-log-list">
-              {combat.log.map((entry) => (
-                <div key={`${entry.round}-${entry.actorId}-${entry.summary}`} className="combat-log-entry">
-                  <strong>Round {entry.round}</strong>
-                  <p>{entry.summary}</p>
-                </div>
-              ))}
+              {combat.log.map((entry, index) => {
+                const prevEntry = combat.log[index + 1]
+                const isNewRound = !prevEntry || prevEntry.round !== entry.round
+
+                return (
+                  <div key={`${entry.round}-${entry.actorId}-${entry.summary}`}>
+                    {isNewRound && (
+                      <div className="combat-round-separator">Round {entry.round}</div>
+                    )}
+                    <div className="combat-log-entry">
+                      <p>{entry.summary}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </article>
         </>
