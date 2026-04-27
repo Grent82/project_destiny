@@ -4,12 +4,6 @@
     "money": 300,
     "protagonistName": "",
     "hasSeenOpening": false,
-    "politicalDials": {
-        "control": 58,
-        "prosperity": 46,
-        "unrest": 24,
-        "corruption": 29
-    },
     "factionStates": [
         {
             "factionId": "faction-civic-compact",

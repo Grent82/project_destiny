@@ -95,7 +95,6 @@ const BASE_GAME_STATE = {
   money: 500,
   protagonistName: 'Valdric',
   hasSeenOpening: true,
-  politicalDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
   cityDials: { control: 45, prosperity: 35, unrest: 55, corruption: 60 },
   factionStandings: {},
   factionStates: [],

@@ -68,11 +68,11 @@ export function DistrictMapScreen() {
           return (
             <article
               key={district.id}
-              style={{
-                opacity: district.accessRestricted ? 0.55 : 1,
-                outline: isCurrent ? '2px solid var(--color-accent, #aaa)' : undefined,
-                cursor: district.accessRestricted ? 'not-allowed' : 'pointer',
-              }}
+              className={[
+                isCurrent ? 'district-card--current' : '',
+                district.accessRestricted ? 'district-card--restricted' : '',
+              ].filter(Boolean).join(' ') || undefined}
+              style={{ cursor: district.accessRestricted ? undefined : 'pointer' }}
               onClick={() => handleTravel(district.id, district.accessRestricted)}
               role="button"
               tabIndex={district.accessRestricted ? -1 : 0}
@@ -89,13 +89,9 @@ export function DistrictMapScreen() {
               <h2>{district.name}</h2>
 
               <p>
-                <span
-                  className="badge"
-                  style={{ marginRight: '0.5rem' }}
-                >
+                <span className="badge" style={{ marginRight: '0.5rem' }}>
                   {badge}
                 </span>
-
                 <span style={{ color: dangerColor, fontWeight: 'bold' }}>
                   {'▲'.repeat(district.dangerLevel)}
                 </span>
@@ -104,29 +100,29 @@ export function DistrictMapScreen() {
               </p>
 
               {isHighDanger && !district.accessRestricted && (
-                <p className="badge badge-warning" style={{ display: 'inline-block' }}>
+                <p className="badge badge-warning badge--inline">
                   Hostile territory
                 </p>
               )}
 
               {district.accessRestricted && (
-                <p className="badge badge-warning" style={{ display: 'inline-block' }}>
+                <p className="badge badge-warning badge--inline">
                   Access restricted
                 </p>
               )}
 
               {isCompactBlacklisted && district.controllingFactionId === 'faction-civic-compact' && !district.accessRestricted && (
-                <p className="badge badge-warning" style={{ display: 'inline-block', background: 'rgba(239, 68, 68, 0.85)' }}>
+                <p className="badge badge-warning badge--inline badge--enforcement">
                   Compact enforcement active — travel is dangerous
                 </p>
               )}
 
-              <p style={{ fontSize: '0.85em', marginTop: '0.5rem', color: 'var(--color-text-secondary, #999)' }}>
+              <p className="district-narrative">
                 {district.narrativeSummary}
               </p>
 
               {isCurrent && (
-                <p className="badge" style={{ display: 'inline-block', marginTop: '0.25rem' }}>
+                <p className="badge badge--inline badge--mt">
                   You are here
                 </p>
               )}

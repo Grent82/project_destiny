@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
+import type { InstitutionalTier } from '../../domain/governance/contracts'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -311,10 +312,10 @@ const gameSlice = createSlice({
 
     setInstitutionalStanding(
       state,
-      action: PayloadAction<{ factionId: string; tier: string }>,
+      action: PayloadAction<{ factionId: string; tier: InstitutionalTier }>,
     ) {
       const { factionId, tier } = action.payload
-      state.institutionalStanding[factionId] = tier as any
+      state.institutionalStanding[factionId] = tier
       if (tier === 'blacklisted') {
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
@@ -342,19 +343,11 @@ const gameSlice = createSlice({
 
     resolveCouncilVote(
       state,
-      action: PayloadAction<{ voteId: string; playerInfluenced: boolean }>,
+      action: PayloadAction<{ voteId: string; playerInfluenced: boolean; passes: boolean }>,
     ) {
-      const { voteId, playerInfluenced } = action.payload
+      const { voteId, passes } = action.payload
       const vote = state.activeCouncilVotes.find((v) => v.id === voteId)
       if (!vote) return
-
-      const proposingSeats = state.councilSeats[vote.proposingFactionId] ?? 0
-      const totalSeats = 8
-      const baseProbability = proposingSeats / totalSeats
-
-      const passes = playerInfluenced
-        ? (state.factionStandings[vote.proposingFactionId] ?? 0) > vote.playerInfluenceThreshold
-        : Math.random() < baseProbability
 
       vote.outcome = passes ? 'passed' : 'failed'
 

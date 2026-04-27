@@ -11,7 +11,7 @@ export function selectFactionSummaries(state: RootState) {
     power: faction.power,
     wealth: faction.wealth,
     security: faction.security,
-    standingWithPlayer: faction.standingWithPlayer,
+    standingWithPlayer: state.game.factionStandings[faction.factionId] ?? 0,
     activePressure: faction.activePressure,
   }))
 }

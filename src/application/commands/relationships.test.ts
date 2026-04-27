@@ -14,7 +14,6 @@ function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
     money: 100,
     protagonistName: '',
     hasSeenOpening: false,
-    politicalDials: { control: 50, prosperity: 50, unrest: 50, corruption: 50 },
     cityDials: { control: 50, prosperity: 50, unrest: 50, corruption: 50 },
     factionStandings: {},
     factionStates: [],

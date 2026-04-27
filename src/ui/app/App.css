@@ -688,6 +688,362 @@ strong { color: var(--text-secondary); }
   }
 }
 
+/* ── Day header (DashboardScreen) ───────────────────────── */
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.day-display {
+  color: var(--text-secondary);
+  font-size: var(--size-sm);
+}
+
+/* ── Status note ─────────────────────────────────────────── */
+.status-note {
+  color: var(--text-tertiary);
+  font-size: var(--size-sm);
+  margin: 0.5rem 0;
+}
+
+/* ── Action button variants ──────────────────────────────── */
+.action-button--primary {
+  border-color: rgba(215, 191, 130, 0.6);
+  background: rgba(215, 191, 130, 0.22);
+  color: #fff8e6;
+  font-weight: 600;
+}
+
+.action-button--primary:hover {
+  background: rgba(215, 191, 130, 0.32);
+}
+
+.action-button--danger {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.14);
+  color: #fca5a5;
+}
+
+.action-button--danger:hover {
+  background: rgba(239, 68, 68, 0.24);
+}
+
+.action-button--secondary {
+  border-color: rgba(243, 244, 246, 0.2);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.action-button--secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.action-button-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: var(--size-xs);
+}
+
+/* ── Durability panel ────────────────────────────────────── */
+.durability-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.durability-panel h4 {
+  font-size: var(--size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  margin: 0 0 0.35rem;
+}
+
+.durability-bar-container {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.durability-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 200ms ease;
+}
+
+.durability-bar--good    { background: rgba(74, 222, 128, 0.65); }
+.durability-bar--worn    { background: rgba(251, 191, 36, 0.65); }
+.durability-bar--damaged { background: rgba(249, 115, 22, 0.65); }
+.durability-bar--broken  { background: rgba(107, 114, 128, 0.55); }
+
+.durability-label {
+  color: var(--text-tertiary);
+  font-size: var(--size-xs);
+  white-space: nowrap;
+}
+
+.durability-tier {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-tertiary);
+}
+
+/* ── Title panel ─────────────────────────────────────────── */
+.title-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title-list {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.title-option {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 3px;
+  border: 1px solid rgba(243, 244, 246, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+  font-size: var(--size-sm);
+  transition: background 120ms, border-color 120ms;
+}
+
+.title-option:hover {
+  background: rgba(215, 191, 130, 0.08);
+  border-color: rgba(215, 191, 130, 0.3);
+}
+
+.title-active {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title-option-ineligible {
+  opacity: 0.5;
+  cursor: default;
+  display: grid;
+  gap: 0.1rem;
+}
+
+.title-option-ineligible:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(243, 244, 246, 0.1);
+}
+
+.title-ineligible-reason {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.title-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  background: rgba(215, 191, 130, 0.15);
+  color: #d7bf82;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Repair section (ShopsScreen) ────────────────────────── */
+.repair-section {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(243, 244, 246, 0.08);
+}
+
+.repair-npc-row {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(243, 244, 246, 0.06);
+  display: grid;
+  gap: 0.4rem;
+}
+
+.repair-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+/* ── Resource status panel ───────────────────────────────── */
+.resource-status-panel {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.resource-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.resource-bar__label {
+  color: var(--text-tertiary);
+  font-size: var(--size-sm);
+  min-width: 7.5rem;
+}
+
+.resource-bar__track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.resource-bar__fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 300ms ease;
+}
+
+.resource-bar--stable   .resource-bar__fill { background: rgba(74, 222, 128, 0.6); }
+.resource-bar--stressed .resource-bar__fill { background: rgba(251, 191, 36, 0.6); }
+.resource-bar--critical .resource-bar__fill { background: rgba(239, 68, 68, 0.6); }
+
+/* aliases matching task spec names */
+.resource-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.resource-bar-fill  { height: 100%; border-radius: 2px; transition: width 300ms ease; }
+.resource-bar--food      .resource-bar-fill { background: rgba(251, 191, 36, 0.6); }
+.resource-bar--water     .resource-bar-fill { background: rgba(56, 189, 248, 0.6); }
+.resource-bar--materials .resource-bar-fill { background: rgba(156, 163, 175, 0.6); }
+
+.resource-bar__value {
+  color: var(--text-primary);
+  font-size: var(--size-sm);
+  font-weight: 600;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.resource-corridor {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 0.25rem;
+}
+
+/* badge variants: corridor status and resource levels */
+.badge--stable,
+.resource-corridor--open      { background: rgba(74, 222, 128, 0.18); color: #bbf7d0; }
+.badge--stressed,
+.resource-corridor--disrupted { background: rgba(251, 191, 36, 0.18); color: #fde68a; }
+.badge--critical,
+.resource-corridor--blocked   { background: rgba(239, 68, 68, 0.18);  color: #fca5a5; }
+
+/* ── District map ─────────────────────────────────────────── */
+.district-card--current {
+  outline: 2px solid rgba(215, 191, 130, 0.6);
+  outline-offset: -1px;
+}
+
+.district-card--restricted {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.district-narrative {
+  font-size: 0.85em;
+  margin-top: 0.5rem;
+  color: var(--text-tertiary);
+}
+
+.badge--inline {
+  display: inline-block;
+}
+
+.badge--mt {
+  margin-top: 0.25rem;
+}
+
+.badge--enforcement {
+  background: rgba(239, 68, 68, 0.85);
+  color: #fff;
+}
+
+/* ── Contract board ──────────────────────────────────────── */
+.faction-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.75em;
+  color: #fff;
+  font-weight: 600;
+}
+
+.faction-badge--civic-compact  { background: rgba(74, 144, 217, 0.85); }
+.faction-badge--gilded-court   { background: rgba(201, 168, 76, 0.85); }
+.faction-badge--foundry-league { background: rgba(122, 158, 90, 0.85); }
+.faction-badge--tallow-ring    { background: rgba(176, 80, 80, 0.85); }
+.faction-badge--restored       { background: rgba(138, 106, 191, 0.85); }
+
+.quest-briefing {
+  margin: 0;
+  font-style: italic;
+  font-size: 0.9em;
+  color: var(--text-tertiary);
+}
+
+.quest-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.quest-closed-label {
+  font-size: 0.85em;
+  color: var(--text-tertiary);
+}
+
+.badge--closed {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.75em;
+  background: rgba(58, 122, 58, 0.6);
+  color: #bbf7d0;
+}
+
+.mission-row-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Focus ring (accessibility) ──────────────────────────── */
+:focus-visible,
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid rgba(215, 191, 130, 0.7);
+  outline-offset: 2px;
+}
+
 .event-modal-overlay {
   position: fixed;
   inset: 0;

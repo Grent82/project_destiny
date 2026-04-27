@@ -79,7 +79,7 @@ describe('resolveCouncilVote', () => {
     }
     const next = gameSliceReducer(
       stateWithVote,
-      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: false }),
+      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: false, passes: false }),
     )
     expect(next.activeCouncilVotes).toHaveLength(0)
   })
@@ -91,7 +91,7 @@ describe('resolveCouncilVote', () => {
     }
     const next = gameSliceReducer(
       stateWithVote,
-      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: false }),
+      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: false, passes: true }),
     )
     expect(next.activityLog[0]?.message).toContain('Test Levy')
     expect(next.activityLog[0]?.message).toMatch(/passed|failed/)
@@ -104,7 +104,7 @@ describe('resolveCouncilVote', () => {
     }
     const next = gameSliceReducer(
       stateWithVote,
-      gameActions.resolveCouncilVote({ voteId: 'nonexistent', playerInfluenced: false }),
+      gameActions.resolveCouncilVote({ voteId: 'nonexistent', playerInfluenced: false, passes: false }),
     )
     expect(next.activeCouncilVotes).toHaveLength(1)
   })
@@ -120,7 +120,7 @@ describe('resolveCouncilVote', () => {
     }
     const next = gameSliceReducer(
       stateWithHighStanding,
-      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: true }),
+      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: true, passes: true }),
     )
     expect(next.activityLog[0]?.message).toContain('passed')
   })
@@ -136,7 +136,7 @@ describe('resolveCouncilVote', () => {
     }
     const next = gameSliceReducer(
       stateWithLowStanding,
-      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: true }),
+      gameActions.resolveCouncilVote({ voteId: 'test-vote-001', playerInfluenced: true, passes: false }),
     )
     expect(next.activityLog[0]?.message).toContain('failed')
   })

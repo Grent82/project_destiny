@@ -122,12 +122,6 @@ describe('gameStateSchema', () => {
       money: 250,
       protagonistName: 'Valdric',
       hasSeenOpening: false,
-      politicalDials: {
-        control: 58,
-        prosperity: 44,
-        unrest: 22,
-        corruption: 31,
-      },
       factionStates: [
         {
           factionId: 'faction-civic',

@@ -80,7 +80,6 @@ export const gameStateSchema = z
     money: nonNegativeIntegerSchema,
     protagonistName: z.string(),
     hasSeenOpening: z.boolean(),
-    politicalDials: politicalDialsSchema,
     cityDials: politicalDialsSchema,
     factionStandings: z.record(z.string(), z.number().min(-100).max(100)),
     factionStates: z.array(factionRuntimeStateSchema),

@@ -20,7 +20,12 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         break
       case 'adjustCityDial':
         if (outcome.target && outcome.delta !== undefined) {
-          const dial = outcome.target as keyof typeof next.cityDials
+          const validDials = ['control', 'prosperity', 'unrest', 'corruption'] as const
+          if (!validDials.includes(outcome.target as typeof validDials[number])) {
+            console.warn(`applyEventOutcome: invalid dial target "${outcome.target}"`)
+            break
+          }
+          const dial = outcome.target as typeof validDials[number]
           next = {
             ...next,
             cityDials: {

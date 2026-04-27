@@ -15,7 +15,6 @@ export const selectDashboardSummary = createSelector([selectGame], (game) => {
     deployedCount: roster.filter((npc) => npc.assignment === 'deployed').length,
     recoveringCount: roster.filter((npc) => npc.assignment === 'recovering').length,
     assignedSquadCount: game.selectedSquadNpcIds.length,
-    politicalDials: game.politicalDials,
     cityDials: game.cityDials,
     recentActivity: game.activityLog.slice(0, 3),
   }
