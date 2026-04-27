@@ -1,0 +1,67 @@
+[
+  {
+    "id": "mission-compact-patrol-suppression",
+    "title": "Suppress a Ward Disturbance",
+    "description": "The Civic Compact needs a discreet hand. A Warrens tenement block has organized a rent dispute that has turned ugly. Move in, disperse the hardliners, and make clear that the Compact's word is law. They want minimal witnesses and no Compact uniforms at the scene.",
+    "employerFactionId": "faction-civic-compact",
+    "enemyFactionId": "faction-restored",
+    "district": "district-the-warrens",
+    "rewardCredits": 180,
+    "rewardStanding": 12,
+    "penaltyStanding": 8,
+    "difficulty": "easy",
+    "tags": ["enforcement", "political"]
+  },
+  {
+    "id": "mission-ring-cargo-recovery",
+    "title": "Recover Lost Cargo",
+    "description": "A Tallow Ring shipment went missing between the Pale and the Harbor. The Ring suspects a rival crew operating out of a condemned building near the Scrapyard. Find the cargo, remove the crew, and return what belongs to the Ring. Discretion expected. Payment in full upon delivery.",
+    "employerFactionId": "faction-tallow-ring",
+    "enemyFactionId": "faction-civic-compact",
+    "district": "district-the-pale",
+    "rewardCredits": 240,
+    "rewardStanding": 10,
+    "penaltyStanding": 6,
+    "difficulty": "standard",
+    "tags": ["retrieval", "criminal"]
+  },
+  {
+    "id": "mission-league-ironworks-security",
+    "title": "Ironworks Night Security",
+    "description": "The Foundry League needs overnight security at a forge complex in the Ironworks. Equipment has gone missing — suspected inside job with outside help. Hold the perimeter, identify any intruders, and report what you find. The League pays for results.",
+    "employerFactionId": "faction-foundry-league",
+    "enemyFactionId": "faction-tallow-ring",
+    "district": "district-ironworks",
+    "rewardCredits": 160,
+    "rewardStanding": 8,
+    "penaltyStanding": 5,
+    "difficulty": "easy",
+    "tags": ["security", "industrial"]
+  },
+  {
+    "id": "mission-court-asset-retrieval",
+    "title": "A Gilded Errand",
+    "description": "House Aurevaine requires an item recovered from a private residence in the Pale. The occupant is no longer cooperative. The Court requires the item intact, the occupant unharmed — if possible. The phrase 'if possible' is doing significant work in that sentence.",
+    "employerFactionId": "faction-gilded-court",
+    "enemyFactionId": "faction-tallow-ring",
+    "district": "district-the-pale",
+    "rewardCredits": 320,
+    "rewardStanding": 15,
+    "penaltyStanding": 10,
+    "difficulty": "hard",
+    "tags": ["retrieval", "political", "sensitive"]
+  },
+  {
+    "id": "mission-hollows-salvage-run",
+    "title": "Salvage the Hollows Cache",
+    "description": "A pre-Breach cache has been located in the eastern Hollows — structural maps, a sealed box, and what looks like working tools from before the catastrophe. Someone else has found it too. Get there first, clear out whoever's already inside, and bring back what you can carry.",
+    "employerFactionId": "faction-restored",
+    "enemyFactionId": "faction-tallow-ring",
+    "district": "district-the-hollows",
+    "rewardCredits": 200,
+    "rewardStanding": 12,
+    "penaltyStanding": 4,
+    "difficulty": "hard",
+    "tags": ["salvage", "exploration"]
+  }
+]

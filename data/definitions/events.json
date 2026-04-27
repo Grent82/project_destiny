@@ -1,0 +1,256 @@
+[
+  {
+    "id": "event-unpaid-wages-unrest",
+    "title": "Grumbling in the Ranks",
+    "description": "Word travels fast in the Warrens. You haven't paid your people on time, and resentment is building. A Compact inspector has taken notice.",
+    "triggerConditions": {
+      "minUnrest": 60,
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-pay-extra",
+        "label": "Pay a goodwill bonus (50 Marks)",
+        "outcomes": [
+          { "type": "addCredits", "delta": -50 },
+          { "type": "adjustCityDial", "target": "unrest", "delta": -8 },
+          { "type": "addActivityLogEntry", "message": "A goodwill bonus quiets the complaints for now." }
+        ]
+      },
+      {
+        "id": "choice-ignore",
+        "label": "Ignore it — they'll manage",
+        "outcomes": [
+          { "type": "adjustCityDial", "target": "unrest", "delta": 5 },
+          { "type": "adjustFactionStanding", "target": "faction-civic-compact", "delta": -5 },
+          { "type": "addActivityLogEntry", "message": "The complaints are ignored. The Compact files a note." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["economy", "social"]
+  },
+  {
+    "id": "event-gilded-court-approach",
+    "title": "A Gilded Messenger",
+    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting — on their terms. You are not foolish enough to think this is a kindness.",
+    "triggerConditions": {
+      "factionStandingAbove": { "factionId": "faction-gilded-court", "threshold": -30 },
+      "dayMin": 5,
+      "probability": 0.4
+    },
+    "choices": [
+      {
+        "id": "choice-accept-meeting",
+        "label": "Accept the meeting",
+        "outcomes": [
+          { "type": "adjustFactionStanding", "target": "faction-gilded-court", "delta": 10 },
+          { "type": "adjustCityDial", "target": "corruption", "delta": 5 },
+          { "type": "addActivityLogEntry", "message": "You attend. The Court notes your cooperation — and your face." }
+        ]
+      },
+      {
+        "id": "choice-decline",
+        "label": "Decline — send a polite refusal",
+        "outcomes": [
+          { "type": "adjustFactionStanding", "target": "faction-gilded-court", "delta": -5 },
+          { "type": "addActivityLogEntry", "message": "The messenger leaves without a word. The silence is its own answer." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["faction", "political"]
+  },
+  {
+    "id": "event-corridor-disruption",
+    "title": "Scouts Report Movement in the Corridor",
+    "description": "League outriders have spotted a large beast-pack moving through the Green Corridor approach roads. Convoys are halting. The city will feel it within days.",
+    "triggerConditions": {
+      "corridorStatus": "open",
+      "maxFoodSecurity": 70,
+      "probability": 0.35
+    },
+    "choices": [
+      {
+        "id": "choice-report-to-league",
+        "label": "Report to the Foundry League",
+        "outcomes": [
+          { "type": "setCorridorStatus", "value": "disrupted" },
+          { "type": "adjustFactionStanding", "target": "faction-foundry-league", "delta": 8 },
+          { "type": "addActivityLogEntry", "message": "The League thanks you. The Corridor is placed under watch — disrupted but not closed." }
+        ]
+      },
+      {
+        "id": "choice-ignore-corridor",
+        "label": "Keep it quiet — not your problem",
+        "outcomes": [
+          { "type": "setCorridorStatus", "value": "disrupted" },
+          { "type": "adjustCityDial", "target": "unrest", "delta": 3 },
+          { "type": "addActivityLogEntry", "message": "The pack hits a convoy two days later. The disruption spreads." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["resource", "crisis"]
+  },
+  {
+    "id": "event-ring-smuggler-contact",
+    "title": "A Ring Offer",
+    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods — restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
+    "triggerConditions": {
+      "factionStandingAbove": { "factionId": "faction-tallow-ring", "threshold": 5 },
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-buy-from-ring",
+        "label": "Make the purchase (30 Marks)",
+        "outcomes": [
+          { "type": "addCredits", "delta": -30 },
+          { "type": "adjustFactionStanding", "target": "faction-tallow-ring", "delta": 5 },
+          { "type": "adjustFactionStanding", "target": "faction-civic-compact", "delta": -3 },
+          { "type": "addActivityLogEntry", "message": "The goods arrive wrapped in waxcloth. No receipt, no record." }
+        ]
+      },
+      {
+        "id": "choice-decline-ring",
+        "label": "Decline",
+        "outcomes": [
+          { "type": "addActivityLogEntry", "message": "You decline. The broker nods and disappears into the Pale." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["faction", "economy", "black-market"]
+  },
+  {
+    "id": "event-restored-appeal",
+    "title": "A Petition from the Warrens",
+    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help — money, testimony, or a distraction that buys them time.",
+    "triggerConditions": {
+      "minUnrest": 40,
+      "probability": 0.45
+    },
+    "choices": [
+      {
+        "id": "choice-help-restored",
+        "label": "Provide 40 Marks toward legal costs",
+        "outcomes": [
+          { "type": "addCredits", "delta": -40 },
+          { "type": "adjustFactionStanding", "target": "faction-the-restored", "delta": 15 },
+          { "type": "adjustCityDial", "target": "unrest", "delta": -5 },
+          { "type": "addActivityLogEntry", "message": "The Restored accept your help quietly. Word will spread — in the right places." }
+        ]
+      },
+      {
+        "id": "choice-neutral-restored",
+        "label": "Express sympathy but decline involvement",
+        "outcomes": [
+          { "type": "addActivityLogEntry", "message": "They leave without comment. Another door that didn't open." }
+        ]
+      },
+      {
+        "id": "choice-report-restored",
+        "label": "Report the meeting to the Compact",
+        "outcomes": [
+          { "type": "adjustFactionStanding", "target": "faction-civic-compact", "delta": 8 },
+          { "type": "adjustFactionStanding", "target": "faction-the-restored", "delta": -20 },
+          { "type": "adjustCityDial", "target": "unrest", "delta": 8 },
+          { "type": "addActivityLogEntry", "message": "The Compact thanks you. The Restored learn who talked. The Warrens remembers." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["faction", "social", "moral"]
+  },
+  {
+    "id": "event-market-price-spike",
+    "title": "Supply Shortage in the Harbor",
+    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week — but this week it matters.",
+    "triggerConditions": {
+      "probability": 0.3,
+      "dayMin": 3
+    },
+    "choices": [
+      {
+        "id": "choice-buy-ahead",
+        "label": "Buy supplies before prices peak (60 Marks)",
+        "outcomes": [
+          { "type": "addCredits", "delta": -60 },
+          { "type": "adjustCityDial", "target": "prosperity", "delta": -3 },
+          { "type": "addActivityLogEntry", "message": "You buy in. The supplies arrive before the worst of the spike." }
+        ]
+      },
+      {
+        "id": "choice-ride-out-spike",
+        "label": "Ride it out",
+        "outcomes": [
+          { "type": "adjustCityDial", "target": "prosperity", "delta": -6 },
+          { "type": "addActivityLogEntry", "message": "The prices bite. You manage, but the margin is thinner than you would like." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["economy", "market"]
+  },
+  {
+    "id": "event-foundry-inspection",
+    "title": "League Safety Inspection",
+    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current — but inspections have a way of finding things.",
+    "triggerConditions": {
+      "factionStandingAbove": { "factionId": "faction-foundry-league", "threshold": -20 },
+      "probability": 0.35,
+      "dayMin": 7
+    },
+    "choices": [
+      {
+        "id": "choice-cooperate-fully",
+        "label": "Cooperate fully — nothing to hide",
+        "outcomes": [
+          { "type": "adjustFactionStanding", "target": "faction-foundry-league", "delta": 5 },
+          { "type": "addActivityLogEntry", "message": "The inspectors leave satisfied. The League marks your file as cooperative." }
+        ]
+      },
+      {
+        "id": "choice-expedite-inspection",
+        "label": "Expedite the inspection (25 Marks)",
+        "outcomes": [
+          { "type": "addCredits", "delta": -25 },
+          { "type": "adjustCityDial", "target": "corruption", "delta": 3 },
+          { "type": "addActivityLogEntry", "message": "A small consideration changes hands. The inspection concludes quickly." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["faction", "legal"]
+  },
+  {
+    "id": "event-auto-npc-injury-complication",
+    "title": "Injury Complications",
+    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover — but it will take time and rest.",
+    "triggerConditions": {
+      "probability": 0.25,
+      "dayMin": 4
+    },
+    "choices": [
+      {
+        "id": "choice-pay-medic",
+        "label": "Hire a proper medic (35 Marks)",
+        "outcomes": [
+          { "type": "addCredits", "delta": -35 },
+          { "type": "addActivityLogEntry", "message": "The medic works through the night. Recovery time halved." }
+        ]
+      },
+      {
+        "id": "choice-rest-only",
+        "label": "Rest and time",
+        "outcomes": [
+          { "type": "adjustCityDial", "target": "unrest", "delta": 2 },
+          { "type": "addActivityLogEntry", "message": "They rest. It takes longer, but they pull through." }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["npc", "injury"]
+  }
+]

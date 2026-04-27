@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { activeCombatStateSchema } from '../combat/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
+import { pendingEventSchema } from '../events/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
 import {
   armorDefinitionSchema,
@@ -76,6 +77,8 @@ export const gameStateSchema = z
     activeQuestIds: z.array(entityIdSchema),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
     activeCombat: activeCombatStateSchema.nullable(),
+    activeMissionId: entityIdSchema.nullable(),
+    pendingEvents: z.array(pendingEventSchema).default([]),
   })
   .strict()
 

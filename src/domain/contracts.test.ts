@@ -167,6 +167,8 @@ describe('gameStateSchema', () => {
       activeQuestIds: [],
       selectedSquadNpcIds: [],
       activeCombat: null,
+      activeMissionId: null,
+      pendingEvents: [],
     })
 
     expect(result.success).toBe(true)

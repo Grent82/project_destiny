@@ -13,6 +13,7 @@ import { OpeningScreen } from '../screens/OpeningScreen'
 import { RosterScreen } from '../screens/RosterScreen'
 import { ShopsScreen } from '../screens/ShopsScreen'
 import { screenCatalog } from '../screens/screenCatalog'
+import { EventModal } from '../components/EventModal'
 import { selectHasSeenOpening } from '../../application'
 
 function ScreenPlaceholder(props: { title: string; summary: string }) {
@@ -46,6 +47,7 @@ export function App() {
 
   return (
     <div className="app-shell">
+      <EventModal />
       <aside className="sidebar">
         <p className="sidebar-brand">Project Destiny</p>
 

@@ -9,6 +9,8 @@ import {
 import { purchaseItemFromShop } from '../commands/purchase'
 import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from '../commands/squad'
 import { endDay as endDayCommand } from '../commands/endDay'
+import { applyOutcomes } from '../commands/applyEventOutcome'
+import { contentCatalog } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 
 const gameSlice = createSlice({
@@ -71,6 +73,9 @@ const gameSlice = createSlice({
     setHasSeenOpening(state, action: PayloadAction<boolean>) {
       state.hasSeenOpening = action.payload
     },
+    selectMission(state, action: PayloadAction<string | null>) {
+      state.activeMissionId = action.payload
+    },
     adjustFactionStanding(
       state,
       action: PayloadAction<{ factionId: string; delta: number }>,
@@ -88,6 +93,17 @@ const gameSlice = createSlice({
     ) {
       const { dial, delta } = action.payload
       state.cityDials[dial] = Math.max(0, Math.min(100, state.cityDials[dial] + delta))
+    },
+    resolveEvent(state, action: PayloadAction<{ eventId: string; choiceId: string }>) {
+      const { eventId, choiceId } = action.payload
+      const template = contentCatalog.eventsById.get(eventId)
+      if (!template) return state
+
+      const choice = template.choices.find((c) => c.id === choiceId)
+      if (!choice) return state
+
+      const next = { ...state, pendingEvents: state.pendingEvents.filter((e) => e.eventId !== eventId) }
+      return applyOutcomes(next, choice.outcomes)
     },
   },
 })

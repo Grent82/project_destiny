@@ -559,30 +559,67 @@ export function performCombatAction(
 }
 
 export function concludeCombatEncounter(state: GameState): GameState {
-  if (!state.activeCombat || state.activeCombat.outcome === 'ongoing') {
-    return state
-  }
+  if (!state.activeCombat || state.activeCombat.outcome === 'ongoing') return state
 
   const combat = state.activeCombat
+  const mission = state.activeMissionId
+    ? contentCatalog.missionsById.get(state.activeMissionId)
+    : null
   let nextState: GameState = { ...state, activeCombat: null }
 
-  if (combat.outcome === 'victory' && combat.factionId) {
-    const factionId = combat.factionId
-    const current = nextState.factionStandings[factionId] ?? 0
-    nextState = {
-      ...nextState,
-      factionStandings: {
-        ...nextState.factionStandings,
-        [factionId]: Math.max(-100, Math.min(100, current + 5)),
-      },
+  if (combat.outcome === 'victory') {
+    const reward = mission?.rewardCredits ?? 0
+    if (reward > 0) nextState = { ...nextState, money: nextState.money + reward }
+
+    if (mission) {
+      const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
+      const enemyCurrent = nextState.factionStandings[mission.enemyFactionId] ?? 0
+      nextState = {
+        ...nextState,
+        factionStandings: {
+          ...nextState.factionStandings,
+          [mission.employerFactionId]: Math.max(-100, Math.min(100, employerCurrent + mission.rewardStanding)),
+          [mission.enemyFactionId]: Math.max(-100, Math.min(100, enemyCurrent - mission.penaltyStanding)),
+        },
+        activeMissionId: null,
+      }
+      const employerName = contentCatalog.factionsById.get(mission.employerFactionId)?.name ?? mission.employerFactionId
+      const enemyName = contentCatalog.factionsById.get(mission.enemyFactionId)?.name ?? mission.enemyFactionId
+      nextState = appendActivityLogEntry(nextState, 'economy',
+        `Mission complete: "${mission.title}". +${reward} Marks. Standing with ${employerName} improved; ${enemyName} will remember this.`)
+    } else {
+      const factionId = combat.factionId
+      if (factionId) {
+        const current = nextState.factionStandings[factionId] ?? 0
+        nextState = {
+          ...nextState,
+          factionStandings: {
+            ...nextState.factionStandings,
+            [factionId]: Math.max(-100, Math.min(100, current + 5)),
+          },
+        }
+        const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
+        nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved.`)
+      }
     }
-    const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-    nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved.`)
   }
 
-  return appendActivityLogEntry(
-    nextState,
-    'system',
-    'The encounter is concluded and the squad returns to operations.',
-  )
+  if (combat.outcome === 'defeat') {
+    if (mission) {
+      const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
+      nextState = {
+        ...nextState,
+        factionStandings: {
+          ...nextState.factionStandings,
+          [mission.employerFactionId]: Math.max(-100, Math.min(100, employerCurrent - mission.penaltyStanding)),
+        },
+        activeMissionId: null,
+      }
+      const employerName = contentCatalog.factionsById.get(mission.employerFactionId)?.name ?? mission.employerFactionId
+      nextState = appendActivityLogEntry(nextState, 'combat',
+        `The squad was driven back. "${mission.title}" failed. Standing with ${employerName} suffers.`)
+    }
+  }
+
+  return appendActivityLogEntry(nextState, 'system', 'The encounter is concluded and the squad returns to operations.')
 }

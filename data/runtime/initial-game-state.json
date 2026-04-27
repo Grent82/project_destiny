@@ -243,6 +243,7 @@
         "npc-ida-rhys"
     ],
     "activeCombat": null,
+    "activeMissionId": null,
     "factionStandings": {
         "faction-civic-compact": 10,
         "faction-gilded-court": -20,
@@ -255,5 +256,6 @@
         "prosperity": 35,
         "unrest": 55,
         "corruption": 60
-    }
+    },
+    "pendingEvents": []
 }

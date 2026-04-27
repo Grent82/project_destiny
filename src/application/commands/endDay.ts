@@ -5,6 +5,7 @@ import {
   getStressMoraleDecay,
 } from '../../domain/npcStateModifiers'
 import { appendActivityLogEntry } from './activityLog'
+import { evaluateEvents } from './evaluateEvents'
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -284,5 +285,6 @@ export function endDay(state: GameState): GameState {
   next = { ...next, day: nextDay, timeSlot: 'morning' }
   next = appendActivityLogEntry(next, 'system', `Day ${nextDay} begins.`)
 
-  return next
+  // Step 7: Evaluate world events
+  return evaluateEvents(next)
 }

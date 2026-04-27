@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 
 import {
   gameActions,
+  selectActiveMission,
+  selectAvailableMissions,
   selectCombatScreenState,
   selectMissionPrepSummary,
   squadRules,
@@ -14,6 +16,8 @@ export function MissionPrepScreen() {
   const navigate = useNavigate()
   const combatState = useAppSelector(selectCombatScreenState)
   const summary = useAppSelector(selectMissionPrepSummary)
+  const activeMission = useAppSelector(selectActiveMission)
+  const missions = useAppSelector(selectAvailableMissions)
 
   return (
     <section className="screen-panel">
@@ -26,6 +30,13 @@ export function MissionPrepScreen() {
       <p className="summary">
         Squad size: {summary.selectedSquad.length}/{squadRules.maxSquadSize}
       </p>
+
+      {activeMission && (
+        <p className="summary">
+          <strong>Active mission:</strong> {activeMission.title}
+        </p>
+      )}
+
       <div className="session-actions">
         <button
           className="action-button"
@@ -43,6 +54,28 @@ export function MissionPrepScreen() {
       </div>
 
       <div className="mission-prep-layout">
+        <article className="detail-panel">
+          <h2>Available Missions</h2>
+          <div className="mission-list">
+            {missions.map((mission) => (
+              <div key={mission.id} className="mission-row">
+                <strong>{mission.title}</strong>
+                <span>Difficulty: {mission.difficulty}</span>
+                <span>Reward: {mission.rewardCredits} Marks</span>
+                <span>+{mission.rewardStanding} / -{mission.penaltyStanding} standing</span>
+                <span>District: {mission.district}</span>
+                <button
+                  className="action-button"
+                  onClick={() => dispatch(gameActions.selectMission(mission.id))}
+                  type="button"
+                >
+                  {activeMission?.id === mission.id ? 'Selected' : 'Select'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </article>
+
         <article className="detail-panel">
           <h2>Selected Squad</h2>
           <div className="mission-list">
