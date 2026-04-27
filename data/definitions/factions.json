@@ -22,5 +22,21 @@
     "description": "An alliance of workshop owners, engineers, and labor organizers with a hard-edged view of leverage.",
     "territory": ["district-ironworks"],
     "tags": ["industry", "labor", "production"]
+  },
+  {
+    "id": "faction-tallow-ring",
+    "name": "The Tallow Ring",
+    "agenda": "Profit from the gaps the law creates: false papers, contraband, slave-escape logistics, unregistered births.",
+    "description": "A decentralized criminal network operating in Valdenmoor's lower districts and Harbor Ward. They move goods and people the Compact has decided should not move. Their escape-network services make them, accidentally, the city's only functional slave-liberation infrastructure — though they charge accordingly.",
+    "territory": ["district-harbor"],
+    "tags": ["criminal", "smuggling", "underground", "black-market", "escape-network"]
+  },
+  {
+    "id": "faction-restored",
+    "name": "The Restored",
+    "agenda": "Abolish birth controls, end binding contracts, and reclaim the world outside the walls through natural repopulation and voluntary community labor.",
+    "description": "A faith-adjacent ideological movement holding that the Breach was consequence of human overreach and that the Compact's Breeding Register repeats the same error. They provide community support in working districts, preach against the binding system, and establish dangerous outside-wall settlements as doctrine-in-practice. Their extremist wing has moved from disruption to violence.",
+    "territory": [],
+    "tags": ["ideology", "anti-compact", "zealot", "community", "outside-expansion"]
   }
 ]

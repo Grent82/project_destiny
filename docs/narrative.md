@@ -1,5 +1,395 @@
 # Narrative
 
+---
+
+## World Bible
+
+---
+
+### 1. The City — Valdenmoor
+
+Valdenmoor sits where three rivers used to meet. Two of the rivers are fouled. The third still runs. The city predates the Breach by at least two centuries — you can read it in the depth of the foundation stones and the age of the lower-district wells. It has been layered over itself so many times that the oldest architecture is underground: collapsed floors, sealed cellars, buried markets that once served a larger world. The walls are too big for the city that lives inside them now and too small for the population that forced itself through the gates after the Breach. The result is vertical density, contested floors, entire neighborhoods built into spaces not designed for habitation — former warehouses, the shells of civic buildings, stacked lean-to settlements on the inner wall face. Valdenmoor smells like coal smoke, river mud, and too many people with too few drains. It does not feel like a triumph. It feels like the last thing standing, which is approximately what it is.
+
+---
+
+### 2. The Collapse — The Breach
+
+**In-world reckoning:** Year Zero of current calendars is called the First Silence. The Breach occurred forty-three years ago.
+
+What anyone knows with certainty: in the span of a single season, six of the twelve known major cities went dark. Roads maintained for generations were abandoned inside weeks. Supply caravans stopped returning. Survivors who reached Valdenmoor described burning, mass flight, structural collapse, and something they could not agree on — shapes in the smoke, things moving in the ruins, sounds from below the earth at night. The word *breach* entered common speech because it described what witnesses reported: something had opened. Not a war. Not a plague. Something older and less legible than either.
+
+What the scholars argue: the Breach may have been geological — deep fault movements releasing something trapped below. It may have been astronomical — an alignment that weakened barriers between the material world and something adjacent to it. It may have been the consequence of forbidden research conducted at the academies of Threnwall and Cor Annex, both of which are now rubble. No theory has definitive proof. All of them have advocates. The Civic Compact discourages public debate on the question because debate tends to produce unrest.
+
+What the monsters are: unknown. They are not animals. They are not quite human. They vary in form, behavior, and apparent intelligence. They do not communicate in any language anyone has successfully translated. They claim and patrol territory outside the walls but do not press into populated cities in organized waves — they hunt, surge occasionally, and seem to treat ruins differently from open ground in ways no one has fully explained. Why some ruins remain unoccupied and others are dense with monster presence is still unresolved. Scholars call this the Settlement Problem. Common people call it "don't go there."
+
+What survived: Valdenmoor. The smaller city of Carrath's Fold, eighty kilometers northeast. A handful of fortified waystations on the main corridor roads. The trade connecting them. Everything else is the Waste.
+
+---
+
+### 3. The City Now — Social Reality
+
+**The hierarchy of Valdenmoor is not hidden. It is enforced in law and practice simultaneously.**
+
+At the top sit the Noble Houses and the major Bond-Holder families — often the same people, connected through forty years of marriage, debt, and institutional consolidation. They hold land, property rights, industrial licenses, and the slave-contract markets. Their position was cemented in the decade immediately after the Breach, when whoever could feed and shelter people could name the terms for that shelter.
+
+Below them: Guild Masters and senior Compact officials. They hold real power through institutional control — production, law, permits, licensed security. But they answer to the Houses when it matters.
+
+Below that: Free Citizens. People who own their own labor contracts and hold registered names with the Compact. They can vote in ward councils, bring suits before magistrates, and are not subject to involuntary binding. They constitute roughly thirty percent of the city's registered population and the share is declining each decade.
+
+Below that: Wage Workers. Free in law, not in practice. They depend on employment from Houses and Guilds and have few protections. Many cycle in and out of indentured status when work contracts lapse.
+
+At the bottom: the Bound — servants, contract laborers, and full slaves on a legal continuum that Valdenmoor's law treats with deliberate ambiguity. A *binding contract* can range from a seasonal indenture to a full life-sale. Most of the Bound entered binding voluntarily, in the sense that they chose it over the available alternatives: destitution, illegal residency, the Waste, or watching their children be assessed by the Compact. Not all Bond-Holders honor the implicit terms. Some treat the Bound as persons with functional rights; some treat them as inventory. The law does not require either.
+
+**Birth control — the Breeding Register:**
+
+The Civic Compact administers the Breeding Register. A first child is a routine civil registration — nominal fee, automatic record. A second child requires a Compact-issued Reproduction Permit, which costs approximately eight months of a wage worker's salary. A third child is a financial penalty equivalent to full indentured debt. Children born outside permit limits to registered citizens face Compact assessment: the family pays the penalty within ninety days, or the child is placed — meaning the Compact auctions a binding contract on the child's behalf. The Bond-Holders have lobbied for this system continuously for three decades. It is the cleanest pipeline their labor supply has.
+
+Children born to Bound parents inherit no citizen status. Their status is determined at birth by the Bond-Holder who holds their parent's contract. Most remain bound. Some are sold. Children born of a Bond-Holder and a Bound person exist in legal gray territory — if acknowledged and registered by the Bond-Holder, they may be elevated to citizen status. Most are not acknowledged. The decision belongs entirely to the Bond-Holder.
+
+**Slavery as survival institution:**
+
+The Bound are not primarily the product of kidnapping or conquest. Most entered binding voluntarily or were born into it. This matters. The Bond-Holders did not create the conditions that make binding attractive — the Breach did. The Bond-Holders occupied the institutional space that desperate conditions produced. This does not make exploitation less real. It makes it harder to fix with a clean conscience. The phrase a city guard uses: *better a roof and a collar than open sky and teeth.*
+
+The moral friction is constant. Someone chose this. Someone profits from that choice. Someone enforces it. Someone benefits from not looking too closely. All of these people live on the same street.
+
+**Why organizations compete so fiercely:**
+
+Valdenmoor has no external expansion. It cannot grow outward. Every resource, every political position, every contract and customer and district is a fixed-size game. The factions are not competing for a growing pie. They are competing to control the same pie that existed yesterday and will exist tomorrow. The intensity is structural.
+
+---
+
+### 4. The Protagonist — House Valdric
+
+**House history:**
+
+The Valdrics were not old money. They were two-generation wealth, built in the first decade after the Breach by a grandfather who understood before most people did that the new city needed labor brokerage as much as it needed food. Gregor Valdric, the founder, positioned the house as a mid-tier Bond-Holder operation with a reputation for functional conditions: reasonable contracts, honest intake, documented placements. This was both genuine conviction and strategy. A Bound who came willingly worked harder and ran less. Valdric contracts were considered acceptable in the Bound community — not the best available, but honest by the standards of the market.
+
+Over two generations, the house accumulated eleven properties, two workshop operations, a share in a mercantile expedition company, and enough political connections to hold three ward-council seats. They were not at the top of Valdenmoor's hierarchy. They were approaching it — and that made them dangerous to those already there.
+
+**The father — Edric Valdric:**
+
+Methodical, cautious, better at holding things together than building them. He spent the last years of his life trying to convert the house's labor-brokerage wealth into political legitimacy. He was partway there when the Court moved against him. He is dead. The official cause is heart failure. His body was unavailable for independent examination.
+
+**The sister — Mira Valdric:**
+
+Eldest child. Sharp, politically capable, the one the father was grooming as heir. Witnesses describe armed men in unmarked livery taking her the same night Edric died. Her current location is unknown. She is probably alive — if she were dead, the Court would have no leverage in her and leverage is always the point.
+
+**The eldest brother — Cael Valdric:**
+
+Killed in the Harbor Ward three days after the father's death. Officially a street robbery. The circumstances fit only if you do not look at them carefully.
+
+**The protagonist:**
+
+Youngest. Least visible. Off-district the night the father died — which is the only reason they are standing. By the time they returned, the house was in legal siege, the staff had been dismissed, and the Gilded Court had made its position clear without ever saying anything that could be quoted back to them.
+
+**The intrigue that destroyed them:**
+
+The Gilded Court moved against House Valdric eighteen months ago. The proximate cause was commercial: the Valdrics had begun quietly partnering with independent merchants who were undercutting Court-aligned distributors in the market district. The real cause was longer — the Valdrics were accumulating the kind of multi-district leverage that, within a decade, would have made them a political force the Court could not manage through normal social pressure.
+
+The method was clean. A manufactured debt claim — a forged promissory note backed by enough legitimate-looking documentation to survive initial scrutiny — was presented to the Compact's financial magistrates. Before the Valdrics could mount a legal challenge, the father was dead, Mira was taken, and Cael was killed. The protagonist was the only piece that didn't fit neatly into the Court's plan, because no one thought the youngest was worth planning around.
+
+**The one who stayed — Marion Vale:**
+
+Marion ran contract administration for House Valdric for six years. She is not sentimental. She did not stay out of loyalty to an abstract idea of the family name. She stayed because she understood the shape of what happened and concluded that helping rebuild from this specific ruin was a better professional position than competing in an already-crowded city as a former Bond-Holder administrator with no current employer to reference. She is also, through six years of contract work, in possession of more knowledge about the Gilded Court's methods and finances than they know she has. She is keeping that knowledge close until she understands what the protagonist intends to do with it. She will not wait indefinitely.
+
+**The state of the house:**
+
+Two properties tied in litigation by the manufactured debt claim. Two workshop operations seized pending resolution. The family estate is accessible but legally encumbered — the protagonist lives there, but cannot sell, mortgage, or formally transfer it until the claim resolves. Clear title to one secondary building in a working district. Moveable assets that Marion relocated before the seizure inventory was completed. Three active binding contracts: individuals who chose to remain because their Valdric terms were better than the available alternatives. Significant informal debts to people who helped during the crisis and have not mentioned it yet. A ruined reputation in elite circles. A cautious sympathy in working districts — "the house that the Court hit" reads, to many people, as a credential.
+
+---
+
+### 5. The Four Paths
+
+The game does not determine the protagonist's personality or morality. It fixes their situation. The paths describe opening focus, not fate. All four use the same game systems.
+
+**Business:** Treat the house as an institution worth rebuilding. Restore contracts, clear the debt claim, recover properties, rebuild the labor-brokerage operation. The fastest path to resources. Also requires engaging with the economic systems of Valdenmoor — including binding contracts and labor markets — as pragmatic tools. The moral weight of those choices belongs to the player.
+
+**Revenge:** Target the Gilded Court and the specific individuals responsible for the intrigue. Requires building influence, gathering evidence, and making dangerous allies. Slower to generate resources, faster to generate enemies. The sister's location is available through this path before it is available through others.
+
+**Power:** Position House Valdric as a genuine city-level political force. The longest path. Requires engaging all factions, building institutional leverage, and thinking dynastically. Players who pursue this path long enough will find themselves making decisions indistinguishable from the people who destroyed the family.
+
+**Adventure:** Look outward — past the walls, toward the Waste. Generates unique resources, lost pre-Breach knowledge, and non-city contacts unavailable through other means. The highest personal risk. The most narratively unpredictable. What is learned outside Valdenmoor sometimes changes what is possible inside it.
+
+---
+
+### 6. The World Outside
+
+**The Waste:**
+
+The common name for everything beyond the city walls that is not a maintained road or fortified waystation. The Waste begins approximately two hours' walk from any gate and extends without mapped edge. It was once farmland, villages, and the outskirts of larger cities. Now: monster-patrolled in the most active areas, reclaimed by dense growth in others, simply empty where neither applies. Traveling the Waste requires preparation, route knowledge, and honest expectations about what happens when something goes wrong. Most people who die outside the walls are not killed dramatically — they become lost, injured, or separated from their group and then the Waste finishes the work.
+
+**The Ashfields:**
+
+The ruins of Threnwall, the second-largest city before the Breach. Forty kilometers south of Valdenmoor. The Ashfields are heavily monster-occupied, but Threnwall's academic quarter — partially collapsed, partially standing — contains the most concentrated pre-Breach knowledge repository known to exist. Expedition companies sell routes to the outer ruins. Nobody admits to knowing a reliable route to the inner academies. The knowledge inside them, if recoverable, would materially change what Valdenmoor's scholars understand about the Breach itself. This is partly why the Compact has never officially funded an expedition — some questions destabilize regardless of the answer.
+
+**The Green Corridor:**
+
+A stretch of maintained road connecting Valdenmoor to Carrath's Fold, eighty kilometers northeast. "Maintained" means cleared of the heaviest obstacles, marked with waystation shelters at intervals, and covered by a loose expedition-company coalition that has negotiated a functional (and fragile) arrangement with the monster populations on either side. The arrangement costs a modest toll per party. The Corridor is how most outside goods reach Valdenmoor and how most rumors travel in the other direction.
+
+**Carrath's Fold:**
+
+A surviving settlement, smaller than Valdenmoor, that developed differently: less social stratification, more immediate danger, a significant independent expedition culture. Traders from Carrath's Fold carry goods unavailable in Valdenmoor and information about regions further out that Valdenmoor's merchants never reach. The relationship between the two cities is commercial and mutually suspicious. Carrath's Fold resents Valdenmoor's size and considers its social hierarchy a symptom of cowardice. Valdenmoor's elite mostly prefers to act as though Carrath's Fold is a supplier rather than a peer.
+
+**The Deep Ruin:**
+
+A location in expedition reports and Harbor Ward dock-bar rumor. No current map agrees on its location. Reports describe a large pre-Breach facility — possibly industrial, possibly academic, possibly both — that is apparently free of active monster presence but exhibits environmental phenomena that survivors describe in contradictory terms: light that doesn't match the sun's position, structural materials not found in any current catalog, a sound at certain approaches that some describe as mechanical and others as biological. Two expedition companies have announced expeditions toward it in the last decade. Neither returned in a condition to make a complete report.
+
+**What comes in from outside:**
+
+Refugees still arrive, in smaller numbers than the Breach decades. Most are turned away — the Compact's intake process is managed by Bond-Holders who must certify a binding offer before a new arrival receives legal registration. Without a binding offer, a refugee is technically illegal. The Tallow Ring runs a significant side business in false citizen registrations for people who cannot or will not accept binding terms.
+
+Independent merchants brave the Corridor regularly. They bring materials that don't exist inside the walls, raw information not filtered through the Compact or the Court, and a quality of rumor that comes only from people who have been places most Valdenmoor residents have not.
+
+---
+
+### 7. The City's Factions
+
+---
+
+#### Civic Compact
+
+**Core identity:**
+
+A coalition of magistrates, captains, permit officers, and trade-minded administrators who believe stability is the only thing preventing the city from fracturing under its own weight. They also administer the Breeding Register — which means they have direct authority over who can legally have children and at what cost. This makes them, simultaneously, the city's most bureaucratic faction and its most intimate one.
+
+**Operating logic:**
+
+If routes stay open, crowds stay controlled, disputes stay contained, and population growth stays within registered limits, the city remains governable. The Compact does not require justice to achieve this. It requires compliance.
+
+**Social base:**
+
+- magistrates and permit officers
+- harbor administrators
+- merchant houses dependent on predictable transport
+- licensed security personnel
+- Breeding Register administrators
+
+**Method of power:**
+
+- regulation, permits, inspections
+- Breeding Register enforcement
+- policing and selective protection
+- child placement authority over unregistered births
+
+**Hidden flaw:**
+
+They have confused containment with justice for so long that most of them no longer see a difference. The Breeding Register is not, in their view, a tool of social control — it is population management. The fact that it primarily generates labor for Bond-Holders is, to them, a downstream consequence they did not design and do not feel responsible for.
+
+**Conflict posture:**
+
+They dislike chaos, ideological grandstanding, and any challenge to their regulatory authority. They will bargain with almost anyone — including criminals — if bargaining avoids disorder. They rarely start fights. They are very good at ending them on their own terms.
+
+**Writing note:**
+
+Compact characters sound procedural, measured, and consequence-focused. They are not cruel by disposition. They are incurious by training.
+
+---
+
+#### Gilded Court
+
+**Core identity:**
+
+A social machine of noble households, financiers, patrons, and brokers who convert prestige into leverage and leverage into obligation. They are also the dominant operators in Valdenmoor's slave market — controlling the auction houses, the premium contract brokerage, and the social norms that determine which Bond-Holders are considered reputable and which are considered embarrassments to the institution.
+
+**Operating logic:**
+
+People obey what they aspire to, fear losing, or cannot afford to offend. Debt and social exclusion are more durable control mechanisms than guards. Guards quit. Debt does not.
+
+**Social base:**
+
+- old families and new-wealth Bond-Holders
+- patrons of culture and ceremony
+- debtors with no other path to legitimacy
+- career climbers who need introductions
+- premium slave-market operators
+
+**Method of power:**
+
+- patronage and debt
+- reputation shaping and character assassination
+- ceremonial legitimacy
+- slave-market control and premium contract brokerage
+- manufactured legal instruments (the Valdric debt claim is not their first)
+
+**Hidden flaw:**
+
+They are strategically patient and morally hollow. Loyalty inside the Court is transactional. The Court did not destroy House Valdric out of cruelty. They did it out of prudence, which is worse — it means they will do it again to the next house that grows inconveniently large.
+
+**Conflict posture:**
+
+They prefer influence over force and humiliation over open war. They can quietly ruin lives and markets when challenged and will do so without the kind of dramatic tells that make it easy to prove afterward.
+
+**Writing note:**
+
+Court characters sound poised, selective, and socially predatory without descending into caricature. They are not evil. They are optimizing for a system they built and intend to maintain.
+
+---
+
+#### Foundry League
+
+**Core identity:**
+
+An alliance of workshop masters, engineers, industrial operators, and labor organizers who understand that whoever controls repair, production, and skilled hands controls the tempo of everything else. They are the faction most dependent on the Bound labor supply and the most pragmatic about it — they do not attach moral language to the binding system and resent other factions that do.
+
+**Operating logic:**
+
+Nothing in Valdenmoor lasts without maintenance. Whoever keeps systems running can extract payment for continuity. Sentiment is a luxury that production schedules cannot accommodate.
+
+**Social base:**
+
+- foremen, engineers, workshop owners
+- skilled workers with institutional leverage
+- logistics contractors
+- Bound laborers in skilled industrial roles (a specific sub-population they treat relatively well by economic necessity — damaged skilled labor is expensive to replace)
+
+**Method of power:**
+
+- production control and repair bottlenecks
+- technical dependency
+- labor coordination and slowdowns
+- supply leverage over the other factions
+
+**Hidden flaw:**
+
+Their practicality can become coercive. Internal solidarity weakens rapidly when monopoly opportunity appears, and individual League operators will undercut each other when it is profitable. They talk about collective interest but behave, under pressure, like individual operators.
+
+**Conflict posture:**
+
+They respect demonstrated capability and respond poorly to elite interference, civic moralizing, and any political action that threatens labor supply or pricing. They have no interest in ideology and significant interest in whoever will let them work in peace.
+
+**Writing note:**
+
+League characters sound direct, functional, and materially aware. They do not speak in abstractions. They speak in costs, outputs, and what it would take to make something work.
+
+---
+
+#### The Tallow Ring
+
+**Core identity:**
+
+A decentralized criminal network operating primarily in the Harbor Ward and the lower districts. The Ring moves goods and people that the Compact has decided should not move: false citizen papers, unregistered births, contraband, smuggled goods from outside the walls, and — their most politically significant service — slave-escape logistics. They did not build an escape network out of ideology. They built it because people with means will pay extremely well to disappear themselves or someone they care about, and the Compact's enforcement creates a permanent market for that service.
+
+**Operating logic:**
+
+Every law the Compact writes creates something illegal. Illegal things have prices. The Ring sets the price.
+
+**Social base:**
+
+- Harbor Ward dock workers and freight handlers
+- false-document forgers and registrars
+- former Bound who bought or escaped their contracts
+- independent merchants who need goods moved without permits
+- Compact clerks who supplement their income with selective blindness
+
+**Method of power:**
+
+- information (they know what moves through the Harbor Ward and who moves it)
+- social infrastructure in the lower districts (they are often the first people residents go to for problems the Compact will not solve)
+- false-paper production that creates legal identity for people who otherwise have none
+- the escape network, which is morally complicated — it is also the Ring's most profitable service line
+
+**Public image:**
+
+Officially: smugglers and criminals. In the lower districts: the people who can sometimes actually help. Among the Bound community: the most important institution in Valdenmoor that nobody admits exists.
+
+**Hidden flaw:**
+
+The Ring is not a liberation organization. It is a business. It will extract every mark the market will bear for its services, and it has no interest in fixing the systems that generate its revenue. A Valdenmoor where the Compact did not over-regulate births and the Bond-Holders did not hold slave contracts would be a Valdenmoor where the Ring's most profitable services had no buyers. They are aware of this. Most of them have made their peace with it.
+
+**Conflict posture:**
+
+They avoid direct confrontation with anyone who can hurt them. They are excellent at disappearing. They are poor at anything requiring coordination above a small-team level, which is structural — the decentralization that protects them also limits their capacity for organized response.
+
+**Writing note:**
+
+Ring characters sound practical, a little tired, and fluent in the gap between what the law says and what actually happens. They do not moralize. They do not perform sentiment. They have seen too much of what sentiment costs people who cannot back it up.
+
+**Faction mark guidance:** Shape language: coiled rope, hollow ring, knotted cord, a candle in a closed fist. Meaning: concealment, movement, the value of a small and portable light source.
+
+---
+
+#### The Restored
+
+**Core identity:**
+
+A faith-adjacent ideological movement holding that the Breach was judgment — not divine punishment in any traditional sense, but consequence. The world broke because humanity overreached: too many cities, too much extraction, too much control imposed on natural processes. The Restored believe that birth control is the clearest current symptom of this overreach. They also oppose the binding system — not primarily from compassion, but from doctrine: voluntary labor in service of community restoration is sacred; coerced labor for individual profit is the same error that produced the Breach.
+
+**Operating logic:**
+
+The world outside the walls can be reclaimed. The process is spiritual and physical simultaneously: repopulate naturally, restore abandoned territory, rebuild the world that was lost. The Compact's population management is not pragmatism — it is the same category of mistake, repeated. The Restored are not waiting for permission to demonstrate an alternative.
+
+**Social base:**
+
+- working-class citizens and Wage Workers who find the Compact's authority personally intrusive
+- former Bound who attribute their circumstances to the binding system's existence
+- people with surviving relatives in the Waste who want ideological justification for going to find them
+- fringe scholars who believe the Breach has a recoverable cause
+- a significant minority of the poor who cannot afford Reproduction Permits and find the Restored's doctrine practically convenient as well as genuinely compelling
+
+**Method of power:**
+
+- public preaching and community organization in lower districts
+- providing practical support (food, shelter, childcare) that makes their social doctrine tangible
+- establishing small outside-the-walls settlements as proof-of-concept — dangerous, often short-lived, but persistent in message
+- political disruption of Compact events, particularly Breeding Register enforcement actions
+
+**Public image:**
+
+To the Compact: a disruptive and potentially dangerous ideological faction with anti-regulatory doctrine and a pattern of interfering with lawful enforcement. To the Bond-Holders: the people trying to abolish their labor supply. To working-district residents: complicated — they are genuinely helpful in some ways and genuinely frightening in others. Their extremist wing has burned properties and attacked Compact officials. The mainstream leadership does not endorse this and does not condemn it loudly enough to matter.
+
+**Hidden flaw:**
+
+Their doctrine is coherent at the level of values and chaotic at the level of implementation. Restoring natural population growth without the infrastructure to support it produces hunger. Establishing outside settlements without adequate preparation produces casualties. Their leadership knows this and continues to authorize it because ideological momentum requires demonstrations, and demonstrations that fail quietly are better than demonstrations that never happen. Their extremists have concluded that if the moderate approach is failing, the next step is escalation. They are not wrong that it is failing.
+
+**Conflict posture:**
+
+The mainstream Restored is a street-level political organization that prefers public confrontation to private violence. Their extremist wing has no such preference. The Compact and the Bond-Holders have learned to treat any Restored-affiliated crowd as potentially containing people with different tactical doctrines than the speaker at the front.
+
+**Writing note:**
+
+Mainstream Restored characters sound earnest, community-oriented, and genuinely convinced that they are fighting for something real. They are not wrong about what is broken. They are frequently wrong about how to fix it. Extremist Restored characters sound the same way, except that they have concluded the time for patient wrongness has passed.
+
+**Faction mark guidance:** Shape language: an open hand holding a seed, a cracked wall with growth through it, an unbroken circle without locks or links. Meaning: natural process, growth outside imposed limits, restoration through persistence.
+
+---
+
+### 8. Naming Conventions
+
+Writers working on Project Destiny content must use these terms consistently. When in doubt, default to this list.
+
+| Term | Meaning |
+|------|---------|
+| **Valdenmoor** | The city. Never "the city" in proper nouns. |
+| **The Breach** | The cataclysmic event, forty-three years ago. Capitalized always. |
+| **First Silence** | Year Zero of current reckoning; the season the Breach began. |
+| **the Waste** | Everything outside the walls that is not a road or waystation. Lowercase "the." |
+| **the Gray** | Colloquial term for the Waste; used when emphasizing danger or hopelessness. |
+| **beyond the gates** | Neutral term for traveling outside. Used by merchants, expeditioners. |
+| **Marks** | Standard silver currency. Single coin is "a Mark." Plural "Marks." |
+| **Weights** | Heavy gold currency, used for large transactions and property transfers. |
+| **Tallies** | Written credit/debt certificates. Used between institutions. |
+| **the Bound** | Official collective term for enslaved and indentured people. |
+| **iron** | Derogatory slang for a Bound person. Do not use in narration; use in NPC dialogue where it reveals character. |
+| **wards** | How Bond-Holders refer to the Bound in polite company. |
+| **Bond-Holder** | Official term for someone who holds binding contracts. Hyphenated. |
+| **Keeper** | How Bond-Holders refer to themselves informally and in social contexts. |
+| **binding contract** | The legal instrument covering any form of servitude. Ranges from seasonal indenture to life-sale. |
+| **a Leaf** | Slang for a Reproduction Permit (named for the green paper the Compact uses). |
+| **gray child** | Unofficial term for a child born without a registered Leaf. Used by the Compact as a bureaucratic category; used by everyone else as a social marker. |
+| **the Register** | Short form for the Breeding Register. Everyone knows what it means. |
+| **assessment** | What happens to a gray child or a child the parents cannot pay the penalty for. Neutral bureaucratic term; the Compact prefers it. |
+| **placed** | What the Compact calls it when a child is auctioned into a binding contract. |
+| **the Fold** | Short form for Carrath's Fold. Used by travelers and merchants. |
+| **the Settlement Problem** | Academic term for why monster distribution in ruins is uneven and unpredictable. |
+
+---
+
+### 9. Voice North Star
+
+Valdenmoor is a city where most people made a compromise they did not want to make and are still living with it. The politics are not good versus evil — they are interested parties competing over the same fixed resources using whatever tools they were born near. The protagonist is not a hero arriving to fix this. They are a survivor of a specific political murder, holding a specific set of assets and liabilities, with specific options for what to do next. Write every line — NPC dialogue, event text, quest framing — from inside that reality. The moral weight of the world is not delivered by the narrator. It lives in the gap between what characters say their reasons are and what the player can see those reasons actually are. Keep that gap visible. Do not close it.
+
+---
+
 ## Purpose
 
 This document is the narrative source of truth for Project Destiny.
