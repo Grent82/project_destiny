@@ -7,6 +7,8 @@ import {
 import { appendActivityLogEntry } from './activityLog'
 import { evaluateEvents } from './evaluateEvents'
 import { expireHireOffers } from './recruitment'
+import { getCouncilVoteTemplates } from '../content/contentCatalog'
+import { applyPassiveDrift, applyProximityGains, applyRelationshipDelta } from './adjustRelationship'
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -102,12 +104,16 @@ export function endDay(state: GameState): GameState {
   let next = state
 
   // Step 1: Wage deduction
+  // Pre-spread relationships for mutation in this section
+  next = { ...next, relationships: { ...next.relationships } }
   for (const rosterEntry of state.roster) {
     const wage = wageForStatus(rosterEntry.status)
     if (wage === 0) continue
 
     if (next.money >= wage) {
       next = { ...next, money: next.money - wage }
+      // Paid on time → loyalty +2
+      applyRelationshipDelta(next, 'player', rosterEntry.npcId, 'loyalty', 2)
     } else {
       next = {
         ...next,
@@ -137,11 +143,19 @@ export function endDay(state: GameState): GameState {
             : r,
         ),
       }
+      // Relationship loyalty penalty for unpaid wages
+      const relResult = applyRelationshipDelta(next, 'player', npc.npcId, 'loyalty', -5)
       if (newLoyalty < 20) {
         next = appendActivityLogEntry(
           next,
           'system',
           `${npc.name}'s loyalty is failing. Unpaid debts leave marks on the house.`,
+        )
+      } else if (relResult.significant) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${npc.name} grows resentful. The unpaid debt strains their loyalty.`,
         )
       }
     }
@@ -303,11 +317,46 @@ export function endDay(state: GameState): GameState {
   // Step 5: Resource consequences
   next = applyEndOfDayResources(next)
 
+  // Step 5b: Passive relationship drift and proximity gains
+  next = { ...next, relationships: { ...next.relationships } }
+  applyPassiveDrift(next)
+  const deployedNpcIds = next.roster
+    .filter((r) => r.assignment === 'deployed')
+    .map((r) => r.npcId)
+  if (deployedNpcIds.length > 0) {
+    applyProximityGains(next, deployedNpcIds)
+  }
+
   // Step 6: Advance time
   const nextDay = next.day + 1
   next = { ...next, day: nextDay, timeSlot: 'morning' }
   next = appendActivityLogEntry(next, 'system', `The day turns. Day ${nextDay}.`)
 
-  // Step 7: Evaluate world events
+  // Step 7: Periodic council vote — fire one every 5 days if none active
+  if (nextDay % 5 === 0 && next.activeCouncilVotes.length === 0) {
+    const templates = getCouncilVoteTemplates()
+    if (templates.length > 0) {
+      const template = templates[Math.floor(Math.random() * templates.length)]!
+      next = {
+        ...next,
+        activeCouncilVotes: [
+          ...next.activeCouncilVotes,
+          {
+            ...template,
+            id: `${template.id}-day-${nextDay}`,
+            expiresOnDay: nextDay + 7,
+            outcome: 'pending' as const,
+          },
+        ],
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `The council convenes. A vote is called: "${template.title}".`,
+      )
+    }
+  }
+
+  // Step 8: Evaluate world events
   return evaluateEvents(expireHireOffers(next))
 }

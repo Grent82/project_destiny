@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
-import type { CorridorStatus, GameState } from '../../domain'
+import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -14,6 +14,7 @@ import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
+import { applyRelationshipDelta } from '../commands/adjustRelationship'
 
 const gameSlice = createSlice({
   name: 'game',
@@ -79,7 +80,10 @@ const gameSlice = createSlice({
       return afterDay
     },
     recruitNpc(state, action: PayloadAction<{ npcId: string }>) {
-      return recruitNpcCommand(state, action.payload.npcId)
+      const nextState = recruitNpcCommand(state, action.payload.npcId)
+      // Trust gain: they chose to join
+      applyRelationshipDelta(nextState, 'player', action.payload.npcId, 'trust', 5)
+      return nextState
     },
     dismissNpc(state, action: PayloadAction<{ npcId: string }>) {
       return dismissNpcCommand(state, action.payload.npcId)
@@ -161,6 +165,7 @@ const gameSlice = createSlice({
         message: `A title conferred. The house has a new ${roleLabel}.`,
       })
       if (state.activityLog.length > 100) state.activityLog.pop()
+      applyRelationshipDelta(state, 'player', npcId, 'respect', 8)
     },
     revokeTitle(state, action: PayloadAction<{ npcId: string }>) {
       const { npcId } = action.payload
@@ -175,6 +180,7 @@ const gameSlice = createSlice({
         message: `The title is revoked. The role sits empty.`,
       })
       if (state.activityLog.length > 100) state.activityLog.pop()
+      applyRelationshipDelta(state, 'player', npcId, 'respect', -5)
     },
 
     acceptQuest(state, action: PayloadAction<{ questId: string }>) {
@@ -277,6 +283,90 @@ const gameSlice = createSlice({
         })
         if (state.activityLog.length > 100) state.activityLog.pop()
       }
+    },
+    adjustRelationship(
+      state,
+      action: PayloadAction<{
+        fromId: string
+        toId: string
+        axis: 'affinity' | 'respect' | 'fear' | 'trust' | 'loyalty'
+        delta: number
+        reason?: string
+      }>,
+    ) {
+      const { fromId, toId, axis, delta, reason } = action.payload
+      const result = applyRelationshipDelta(state, fromId, toId, axis, delta)
+      if (result.significant && reason) {
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-rel-${state.activityLog.length + 1}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: reason,
+        })
+        if (state.activityLog.length > 100) state.activityLog.pop()
+      }
+    },
+
+    setInstitutionalStanding(
+      state,
+      action: PayloadAction<{ factionId: string; tier: string }>,
+    ) {
+      const { factionId, tier } = action.payload
+      state.institutionalStanding[factionId] = tier as any
+      if (tier === 'blacklisted') {
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: `House Valdric has been blacklisted by ${factionId}. Enforcement will follow.`,
+        })
+        if (state.activityLog.length > 100) state.activityLog.pop()
+      } else if (tier === 'hostile') {
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: `The institutional arm of ${factionId} has turned against the house.`,
+        })
+        if (state.activityLog.length > 100) state.activityLog.pop()
+      }
+    },
+
+    addCouncilVote(state, action: PayloadAction<CouncilVoteEvent>) {
+      state.activeCouncilVotes.push(action.payload)
+    },
+
+    resolveCouncilVote(
+      state,
+      action: PayloadAction<{ voteId: string; playerInfluenced: boolean }>,
+    ) {
+      const { voteId, playerInfluenced } = action.payload
+      const vote = state.activeCouncilVotes.find((v) => v.id === voteId)
+      if (!vote) return
+
+      const proposingSeats = state.councilSeats[vote.proposingFactionId] ?? 0
+      const totalSeats = 8
+      const baseProbability = proposingSeats / totalSeats
+
+      const passes = playerInfluenced
+        ? (state.factionStandings[vote.proposingFactionId] ?? 0) > vote.playerInfluenceThreshold
+        : Math.random() < baseProbability
+
+      vote.outcome = passes ? 'passed' : 'failed'
+
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `Council vote: "${vote.title}" — ${passes ? 'passed' : 'failed'}.${passes ? ` ${vote.effect}` : ''}`,
+      })
+      if (state.activityLog.length > 100) state.activityLog.pop()
+
+      state.activeCouncilVotes = state.activeCouncilVotes.filter((v) => v.id !== voteId)
     },
   },
 })

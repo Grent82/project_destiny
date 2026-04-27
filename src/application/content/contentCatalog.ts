@@ -1,4 +1,5 @@
 import districts from '../../../data/definitions/districts.json'
+import councilVotesData from '../../../data/definitions/council-votes.json'
 import events from '../../../data/definitions/events.json'
 import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
@@ -18,9 +19,11 @@ import {
 } from '../../domain'
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
 import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
+import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
 
 const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
 const parsedQuests = questTemplateSchema.array().parse(questsData)
+const parsedCouncilVotes = councilVoteEventSchema.array().parse(councilVotesData)
 const parsedNpcs = npcDefinitionSchema.array().parse(npcs)
 const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
@@ -52,6 +55,7 @@ export const contentCatalog = {
   shopsById: toMap(parsedShops),
   events: parsedEvents,
   eventsById: toMap(parsedEvents),
+  councilVotes: parsedCouncilVotes,
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {
@@ -60,4 +64,8 @@ export function getTitleDefinitions(): TitleDefinition[] {
 
 export function getQuestTemplates(): QuestTemplate[] {
   return contentCatalog.quests
+}
+
+export function getCouncilVoteTemplates(): CouncilVoteEvent[] {
+  return contentCatalog.councilVotes
 }

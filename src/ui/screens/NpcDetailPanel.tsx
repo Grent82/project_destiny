@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import type { selectRosterDetail } from '../../application'
-import { selectTitleEligibilityForNpc } from '../../application'
+import { selectRelationshipWithPlayer, selectTitleEligibilityForNpc } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 
-const TABS = ['Attributes', 'Skills', 'States', 'Traits'] as const
+const TABS = ['Attributes', 'Skills', 'States', 'Traits', 'Relations'] as const
 type Tab = (typeof TABS)[number]
 
 function StatRow({ label, value }: { label: string; value: number }) {
@@ -42,6 +42,29 @@ function StateStatRow({ label, value, warn }: { label: string; value: number; wa
       {warn && <span title="Threshold exceeded — consequences active">⚠</span>}
       <div className="stat-bar">
         <div className={fillClass} style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function RelationshipBar({ label, value }: { label: string; value: number }) {
+  const isPositive = value > 0
+  const isNegative = value < 0
+  const fillStyle: React.CSSProperties = {
+    width: `${Math.abs(value)}%`,
+    backgroundColor: isPositive ? '#4caf50' : isNegative ? '#f44336' : '#9e9e9e',
+  }
+  const sign = value > 0 ? '+' : ''
+
+  return (
+    <div className="stat-row">
+      <span className="stat-label">{label}</span>
+      <span className="stat-value">
+        {sign}
+        {value}
+      </span>
+      <div className="stat-bar">
+        <div className="stat-bar-fill" style={fillStyle} />
       </div>
     </div>
   )
@@ -128,6 +151,7 @@ function TitlePanel({ detail }: { detail: NpcDetail }) {
 
 export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Attributes')
+  const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
 
   return (
     <div className="npc-detail-panel">
@@ -211,6 +235,15 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 )}
               </div>
             ))}
+          {activeTab === 'Relations' && (
+            <div>
+              <RelationshipBar label="Affinity" value={relationship.affinity} />
+              <RelationshipBar label="Respect" value={relationship.respect} />
+              <RelationshipBar label="Fear" value={relationship.fear} />
+              <RelationshipBar label="Trust" value={relationship.trust} />
+              <RelationshipBar label="Loyalty" value={relationship.loyalty} />
+            </div>
+          )}
         </div>
 
         <div className="npc-quick-actions">

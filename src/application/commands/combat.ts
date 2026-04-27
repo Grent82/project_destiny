@@ -14,6 +14,7 @@ import {
 import { contentCatalog } from '../content/contentCatalog'
 import { getArmorProfile, getWeaponProfile } from '../content/equipmentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { applyRelationshipDelta } from './adjustRelationship'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
 
@@ -571,6 +572,14 @@ export function concludeCombatEncounter(state: GameState): GameState {
     const reward = mission?.rewardCredits ?? 0
     if (reward > 0) nextState = { ...nextState, money: nextState.money + reward }
 
+    // Relationship gains for victory
+    const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
+    nextState = { ...nextState, relationships: { ...nextState.relationships } }
+    for (const ally of allyCombatants) {
+      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 3)
+      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 2)
+    }
+
     if (mission) {
       const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
       const enemyCurrent = nextState.factionStandings[mission.enemyFactionId] ?? 0
@@ -605,6 +614,20 @@ export function concludeCombatEncounter(state: GameState): GameState {
   }
 
   if (combat.outcome === 'defeat') {
+    // Relationship penalties for defeat
+    const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
+    nextState = { ...nextState, relationships: { ...nextState.relationships } }
+    for (const ally of allyCombatants) {
+      const result = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', -2)
+      if (result.significant) {
+        nextState = appendActivityLogEntry(
+          nextState,
+          'system',
+          `${ally.name} questions the player's leadership after the defeat.`,
+        )
+      }
+    }
+
     if (mission) {
       const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
       nextState = {

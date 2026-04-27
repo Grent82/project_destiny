@@ -299,5 +299,23 @@
     ],
     "availableQuests": ["quest-harborwatch", "quest-foundry-escort"],
     "activeQuests": [],
-    "completedQuestIds": []
+    "completedQuestIds": [],
+    "councilSeats": {
+        "faction-civic-compact": 3,
+        "faction-gilded-court": 2,
+        "faction-foundry-league": 2,
+        "faction-tallow-ring": 0,
+        "faction-restored": 0
+    },
+    "institutionalStanding": {
+        "faction-civic-compact": "neutral",
+        "faction-gilded-court": "watched",
+        "faction-foundry-league": "neutral",
+        "faction-tallow-ring": "neutral",
+        "faction-restored": "neutral"
+    },
+    "activeCouncilVotes": [],
+    "relationships": {
+        "player-npc-marion-vale": { "affinity": 15, "respect": 20, "fear": 0, "trust": 25, "loyalty": 30 }
+    }
 }

@@ -1,4 +1,4 @@
-import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries } from '../../application'
+import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
@@ -35,6 +35,8 @@ export function DistrictMapScreen() {
   const dispatch = useAppDispatch()
   const districts = useAppSelector(selectDistrictMapEntries)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
+  const institutionalStanding = useAppSelector(selectInstitutionalStanding)
+  const isCompactBlacklisted = institutionalStanding['faction-civic-compact'] === 'blacklisted'
 
   function handleTravel(districtId: string, accessRestricted: boolean) {
     if (accessRestricted) return
@@ -110,6 +112,12 @@ export function DistrictMapScreen() {
               {district.accessRestricted && (
                 <p className="badge badge-warning" style={{ display: 'inline-block' }}>
                   Access restricted
+                </p>
+              )}
+
+              {isCompactBlacklisted && district.controllingFactionId === 'faction-civic-compact' && !district.accessRestricted && (
+                <p className="badge badge-warning" style={{ display: 'inline-block', background: 'rgba(239, 68, 68, 0.85)' }}>
+                  Compact enforcement active — travel is dangerous
                 </p>
               )}
 

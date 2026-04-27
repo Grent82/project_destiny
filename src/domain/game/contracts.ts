@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
 import { activeCombatStateSchema } from '../combat/contracts'
+import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
+import { relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
 import { pendingEventSchema } from '../events/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
@@ -97,6 +99,10 @@ export const gameStateSchema = z
     availableQuests: z.array(z.string()).default([]),
     activeQuests: z.array(questRuntimeSchema).default([]),
     completedQuestIds: z.array(z.string()).default([]),
+    councilSeats: councilSeatCountSchema.default({}),
+    institutionalStanding: z.record(z.string(), institutionalTierSchema).default({}),
+    activeCouncilVotes: z.array(councilVoteEventSchema).default([]),
+    relationships: z.record(z.string(), gameRelationshipAxesSchema).default({}),
   })
   .strict()
 
