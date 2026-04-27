@@ -36,6 +36,14 @@ describe('assignTitle', () => {
     const next = gameSliceReducer(state, gameActions.assignTitle({ npcId: 'npc-unknown', titleId: testTitleId }))
     expect(next.roster).toEqual(state.roster)
   })
+
+  it('replaces existing title when NPC already has one', () => {
+    const state = initialGameStateSnapshot
+    const firstAssign = gameSliceReducer(state, gameActions.assignTitle({ npcId: firstNpcId, titleId: testTitleId }))
+    const secondAssign = gameSliceReducer(firstAssign, gameActions.assignTitle({ npcId: firstNpcId, titleId: 'title-steward' }))
+    const npc = secondAssign.roster.find((r) => r.npcId === firstNpcId)!
+    expect(npc.activeTitle).toBe('title-steward')
+  })
 })
 
 describe('revokeTitle', () => {

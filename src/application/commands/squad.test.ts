@@ -76,4 +76,17 @@ describe('squad commands', () => {
     expect(nextState.selectedSquadNpcIds).toHaveLength(squadRules.maxSquadSize)
     expect(nextState.selectedSquadNpcIds).not.toContain('npc-ida-rhys')
   })
+
+  it('does not add a duplicate npc to the selected squad', () => {
+    const nextState = addNpcToSelectedSquad(initialGameStateSnapshot, 'npc-marion-vale')
+
+    expect(nextState.selectedSquadNpcIds).toHaveLength(initialGameStateSnapshot.selectedSquadNpcIds.length)
+    expect(nextState.selectedSquadNpcIds.filter((id) => id === 'npc-marion-vale')).toHaveLength(1)
+  })
+
+  it('is a no-op when removing an npc not in the squad', () => {
+    const nextState = removeNpcFromSelectedSquad(initialGameStateSnapshot, 'npc-not-in-squad')
+
+    expect(nextState.selectedSquadNpcIds).toEqual(initialGameStateSnapshot.selectedSquadNpcIds)
+  })
 })

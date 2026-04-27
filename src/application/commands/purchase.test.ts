@@ -43,4 +43,14 @@ describe('purchaseItemFromShop', () => {
 
     expect(nextState).toEqual(initialGameStateSnapshot)
   })
+
+  it('does not change state when the shopId does not exist', () => {
+    const nextState = purchaseItemFromShop(
+      initialGameStateSnapshot,
+      'shop-does-not-exist',
+      'item-spare-parts',
+    )
+
+    expect(nextState).toEqual(initialGameStateSnapshot)
+  })
 })

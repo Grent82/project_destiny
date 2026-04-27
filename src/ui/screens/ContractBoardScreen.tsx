@@ -14,20 +14,13 @@ const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-restored': 'Restored',
 }
 
-const FACTION_COLORS: Record<string, string> = {
-  'faction-civic-compact': '#4a90d9',
-  'faction-gilded-court': '#c9a84c',
-  'faction-foundry-league': '#7a9e5a',
-  'faction-tallow-ring': '#b05050',
-  'faction-restored': '#8a6abf',
-}
-
 function FactionBadge({ factionId }: { factionId: string | null }) {
   if (!factionId) return <span className="badge">Independent</span>
   const label = FACTION_SHORT_NAMES[factionId] ?? factionId
-  const color = FACTION_COLORS[factionId] ?? '#888'
+  const modifierKey = factionId.replace('faction-', '')
+  const modifierClass = `faction-badge--${modifierKey}`
   return (
-    <span className="badge" style={{ backgroundColor: color, color: '#fff', padding: '1px 6px', borderRadius: 3, fontSize: '0.75em' }}>
+    <span className={`faction-badge ${modifierClass}`}>
       {label}
     </span>
   )
@@ -56,20 +49,20 @@ export function ContractBoardScreen() {
           ) : (
             <div className="mission-list">
               {availableQuests.map((quest) => (
-                <div key={quest.id} className="mission-row" style={{ gap: '0.4rem', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div key={quest.id} className="mission-row">
+                  <div className="mission-row-header">
                     <strong>{quest.title}</strong>
                     <FactionBadge factionId={quest.employerFactionId} />
                     {quest.districtId && (
-                      <span className="badge" style={{ fontSize: '0.75em' }}>
+                      <span className="badge">
                         {quest.districtId.replace('district-', '').replace(/-/g, ' ')}
                       </span>
                     )}
                   </div>
-                  <p style={{ margin: 0, fontStyle: 'italic', fontSize: '0.9em', color: 'var(--color-text-muted, #aaa)' }}>
+                  <p className="quest-briefing">
                     {quest.briefing}
                   </p>
-                  <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85em' }}>
+                  <div className="quest-meta">
                     <span>Reward: <strong>{quest.rewardMarks} Marks</strong></span>
                     {quest.timeLimitDays != null && (
                       <span>Time limit: <strong>{quest.timeLimitDays} days</strong></span>
@@ -96,14 +89,14 @@ export function ContractBoardScreen() {
           ) : (
             <div className="mission-list">
               {activeQuests.map(({ runtime, template }) => (
-                <div key={runtime.questId} className="mission-row" style={{ gap: '0.4rem', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div key={runtime.questId} className="mission-row">
+                  <div className="mission-row-header">
                     <strong>{template?.title ?? runtime.questId}</strong>
                     <FactionBadge factionId={template?.employerFactionId ?? null} />
                     <span className="badge badge-warning">Active</span>
                   </div>
                   {template?.timeLimitDays != null && (
-                    <span style={{ fontSize: '0.85em' }}>
+                    <span className="quest-meta">
                       Time limit: {template.timeLimitDays} days (accepted day {runtime.acceptedOnDay})
                     </span>
                   )}
@@ -117,7 +110,7 @@ export function ContractBoardScreen() {
                     </button>
                   )}
                   {template?.objectiveType !== 'investigation' && (
-                    <p style={{ margin: 0, fontSize: '0.85em', color: 'var(--color-text-muted, #aaa)' }}>
+                    <p className="quest-briefing">
                       Resolves through deployment.
                     </p>
                   )}
@@ -132,9 +125,9 @@ export function ContractBoardScreen() {
             <h2>Closed Contracts</h2>
             <div className="mission-list">
               {completedQuestIds.map((id) => (
-                <div key={id} className="mission-row" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.85em', color: 'var(--color-text-muted, #aaa)' }}>{id.replace('quest-', '').replace(/-/g, ' ')}</span>
-                  <span className="badge" style={{ fontSize: '0.75em', backgroundColor: '#3a7a3a', color: '#fff', padding: '1px 5px', borderRadius: 3 }}>
+                <div key={id} className="mission-row mission-row-header">
+                  <span className="quest-closed-label">{id.replace('quest-', '').replace(/-/g, ' ')}</span>
+                  <span className="badge--closed">
                     Closed
                   </span>
                 </div>

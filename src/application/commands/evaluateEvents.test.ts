@@ -132,6 +132,37 @@ describe('applyOutcomes', () => {
     const next = applyOutcomes(state, [{ type: 'adjustCityDial', target: 'unrest', delta: -20 }])
     expect(next.cityDials.unrest).toBe(0)
   })
+
+  it('adjustCityResource changes a city resource value', () => {
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: -15 }])
+    expect(next.cityResources.foodSecurity).toBe(65)
+  })
+
+  it('adjustCityResource clamps at 0', () => {
+    const state = makeState({ cityResources: { foodSecurity: 5, waterAccess: 80, materialStock: 80, corridorStatus: 'open' } })
+    const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: -20 }])
+    expect(next.cityResources.foodSecurity).toBe(0)
+  })
+
+  it('adjustCityResource clamps at 100', () => {
+    const state = makeState({ cityResources: { foodSecurity: 95, waterAccess: 80, materialStock: 80, corridorStatus: 'open' } })
+    const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: 20 }])
+    expect(next.cityResources.foodSecurity).toBe(100)
+  })
+
+  it('setCorridorStatus updates the corridor status', () => {
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'setCorridorStatus', value: 'blocked' }])
+    expect(next.cityResources.corridorStatus).toBe('blocked')
+  })
+
+  it('addActivityLogEntry appends a log message', () => {
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'addActivityLogEntry', message: 'Something happened.' }])
+    expect(next.activityLog[0]?.message).toBe('Something happened.')
+    expect(next.activityLog[0]?.category).toBe('system')
+  })
 })
 
 describe('resolveEvent reducer', () => {

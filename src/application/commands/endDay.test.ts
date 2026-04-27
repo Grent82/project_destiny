@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { endDay, wageForStatus } from './endDay'
@@ -95,5 +95,71 @@ describe('endDay', () => {
     const next = endDay(brokeState)
     const npcWithDebt = next.roster.find((r) => r.wagesOwedDays > 0)
     expect(npcWithDebt).toBeDefined()
+  })
+
+  it('trainer title trains a random idle NPC on a random skill', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    const stateWithTrainer = {
+      ...initialGameStateSnapshot,
+      roster: initialGameStateSnapshot.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? { ...npc, activeTitle: 'title-trainer', assignment: 'idle' as const }
+          : npc,
+      ),
+    }
+
+    const next = endDay(stateWithTrainer)
+
+    // With Math.random=0: first idle NPC (Ida Rhys) receives +1 in first skill (melee)
+    const idaAfter = next.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const idaBefore = stateWithTrainer.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    expect(idaAfter.skills.melee).toBe(Math.min(100, idaBefore.skills.melee + 1))
+    const trainerLog = next.activityLog.find((e) => e.message.includes('ran drills'))
+    expect(trainerLog).toBeDefined()
+
+    vi.restoreAllMocks()
+  })
+
+  it('council vote fires every 5 days when no active vote is present', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    // day 4 → endDay → day 5 → 5 % 5 === 0 triggers vote
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 4,
+      activeCouncilVotes: [],
+    }
+    const next = endDay(state)
+    expect(next.activeCouncilVotes.length).toBeGreaterThan(0)
+    const logEntry = next.activityLog.find((e) => e.message.includes('vote is called'))
+    expect(logEntry).toBeDefined()
+
+    vi.restoreAllMocks()
+  })
+
+  it('does not crash when roster is empty', () => {
+    const emptyRosterState = {
+      ...initialGameStateSnapshot,
+      roster: [],
+      selectedSquadNpcIds: [],
+    }
+    expect(() => endDay(emptyRosterState)).not.toThrow()
+    const next = endDay(emptyRosterState)
+    expect(next.day).toBe(initialGameStateSnapshot.day + 1)
+  })
+
+  it('evaluateEvents: fires pending events when conditions are met after endDay', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0) // probability check always passes
+
+    const state = {
+      ...initialGameStateSnapshot,
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      pendingEvents: [],
+    }
+    const next = endDay(state)
+    expect(next.pendingEvents.length).toBeGreaterThan(0)
+
+    vi.restoreAllMocks()
   })
 })
