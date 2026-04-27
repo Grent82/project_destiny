@@ -7,7 +7,7 @@ import { useAppDispatch } from '../app/hooks'
 export function OpeningScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const [name, setName] = useState('Valdric')
+  const [name, setName] = useState('')
 
   function confirm() {
     const trimmed = name.trim() || 'Valdric'
@@ -42,7 +42,7 @@ export function OpeningScreen() {
           />
         </div>
         <button className="opening-confirm action-button" onClick={confirm} type="button">
-          Take stock →
+          Take the Ledger →
         </button>
       </div>
     </div>
