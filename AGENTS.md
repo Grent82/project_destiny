@@ -1,40 +1,47 @@
 # Agent Instructions
 
-This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
+Project Destiny uses a coordinator-led multi-agent workflow with Beads as the only backlog system.
 
-## Quick Reference
+## Start Here
+
+- Read [docs/agent-operating-model.md](docs/agent-operating-model.md).
+- Follow [docs/engineering-standards.md](docs/engineering-standards.md).
+- Use the task structure in [docs/task-contract.md](docs/task-contract.md).
+- Respect role boundaries in [docs/roles](docs/roles).
+- Use [docs/workflows](docs/workflows) when the task is narrative, UI-heavy, or art-direction-heavy.
+
+## Required Workflow
 
 ```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work atomically
-bd close <id>         # Complete work
-bd dolt push          # Push beads data to remote
+bd prime
+bd ready
+bd show <id>
+bd update <id> --claim
 ```
+
+Do not start implementation before the task is claimed and its ownership is clear.
+
+## Core Rules
+
+- Use `bd` for all backlog and dependency tracking.
+- Prefer small, testable tasks with explicit file ownership.
+- Follow clean architecture boundaries.
+- Use TDD for domain and application behavior by default.
+- Treat `Narrative`, `UI/UX`, and `Art Direction` as explicit project roles, not ad hoc creative side work.
+- Record blockers and assumptions in the active Bead instead of leaving them in chat only.
+- Create a new Bead for follow-up work rather than silently expanding scope.
 
 ## Non-Interactive Shell Commands
 
-**ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.
+Always use non-interactive flags with commands that may prompt.
 
-Shell commands like `cp`, `mv`, and `rm` may be aliased to include `-i` (interactive) mode on some systems, causing the agent to hang indefinitely waiting for y/n input.
-
-**Use these forms instead:**
 ```bash
-# Force overwrite without prompting
-cp -f source dest           # NOT: cp source dest
-mv -f source dest           # NOT: mv source dest
-rm -f file                  # NOT: rm file
-
-# For recursive operations
-rm -rf directory            # NOT: rm -r directory
-cp -rf source dest          # NOT: cp -r source dest
+cp -f source dest
+mv -f source dest
+rm -f file
+rm -rf directory
+cp -rf source dest
 ```
-
-**Other commands that may prompt:**
-- `scp` - use `-o BatchMode=yes` for non-interactive
-- `ssh` - use `-o BatchMode=yes` to fail instead of prompting
-- `apt-get` - use `-y` flag
-- `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker

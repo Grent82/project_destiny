@@ -2,6 +2,21 @@
 
 This file provides instructions and context for AI coding agents working on this project.
 
+## Project Workflow
+
+- Read `docs/agent-operating-model.md` before starting significant work.
+- Follow `docs/engineering-standards.md` for architecture and code quality rules.
+- Use `docs/task-contract.md` when creating or refining tasks.
+- Treat Beads as the only backlog and dependency tracker.
+
+## Architecture and Quality Priorities
+
+- Clean architecture with inward dependency flow
+- Strong testability and extensibility
+- TDD for domain and application behavior
+- Small, bounded tasks with clear ownership
+- No business rules hidden in UI components
+
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
 
@@ -52,18 +67,23 @@ bd close <id>         # Complete work
 
 ## Build & Test
 
-_Add your build and test commands here_
+Use the baseline validation loop below.
 
 ```bash
-# Example:
-# npm install
-# npm test
+pnpm lint
+pnpm format
+pnpm test
+pnpm test:run
+pnpm typecheck
+pnpm build
 ```
 
 ## Architecture Overview
 
-_Add a brief overview of your project architecture_
+The architecture docs will be created and maintained through the Architect role. Until then, use the design intent from `GAME_DESIGN_DOCUMENT.md` and the operating constraints in `docs/engineering-standards.md`.
 
 ## Conventions & Patterns
 
-_Add your project-specific conventions here_
+- Domain logic should remain framework-agnostic.
+- Business behavior should be covered by tests first when changed.
+- Use explicit contracts and narrow write scopes for agent tasks.
