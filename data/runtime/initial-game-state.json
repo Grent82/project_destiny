@@ -296,5 +296,8 @@
             "requiredFactionStanding": 0,
             "turnsAvailable": 3
         }
-    ]
+    ],
+    "availableQuests": ["quest-harborwatch", "quest-foundry-escort"],
+    "activeQuests": [],
+    "completedQuestIds": []
 }

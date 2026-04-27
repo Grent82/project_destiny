@@ -4,6 +4,7 @@ import './App.css'
 import { GlobalStatusBar } from './GlobalStatusBar'
 import { useAppSelector } from './hooks'
 import { CombatScreen } from '../screens/CombatScreen'
+import { ContractBoardScreen } from '../screens/ContractBoardScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DistrictMapScreen } from '../screens/DistrictMapScreen'
 import { DistrictsScreen } from '../screens/DistrictsScreen'
@@ -79,6 +80,7 @@ export function App() {
             <Route path="/district-map" element={<DistrictMapScreen />} />
             <Route path="/districts" element={<DistrictsScreen />} />
             <Route path="/factions" element={<FactionsScreen />} />
+            <Route path="/contracts" element={<ContractBoardScreen />} />
             <Route path="/missions" element={<MissionPrepScreen />} />
             <Route path="/shops" element={<ShopsScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
@@ -93,6 +95,7 @@ export function App() {
                     '/district-map',
                     '/districts',
                     '/factions',
+                    '/contracts',
                     '/missions',
                     '/shops',
                     '/combat',

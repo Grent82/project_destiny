@@ -35,8 +35,13 @@ export const screenCatalog = [
     summary: 'Where House Valdric stands with each faction in Valdenmoor.',
   },
   {
-    path: '/missions',
+    path: '/contracts',
     title: 'Contracts',
+    summary: 'Structured engagements — briefings, obligations, and what the house stands to gain or lose.',
+  },
+  {
+    path: '/missions',
+    title: 'Missions',
     summary: 'Review available work, assemble a squad, and confirm the stakes.',
   },
   {

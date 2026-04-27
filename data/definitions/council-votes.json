@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cvote-register-fee-increase",
+    "title": "Register Fee Increase",
+    "description": "The Court proposes raising the Register fee for all operating licenses by 15 Marks.",
+    "proposingFactionId": "faction-gilded-court",
+    "targetFactionId": null,
+    "effect": "All shop prices increase by 5% for 7 days.",
+    "playerInfluenceThreshold": 30,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-expanded-field-licenses",
+    "title": "Expanded Field Licenses",
+    "description": "The League proposes allowing licensed operators to conduct work in the outer districts without additional permits.",
+    "proposingFactionId": "faction-foundry-league",
+    "targetFactionId": null,
+    "effect": "High-danger district access restrictions reduced for 5 days.",
+    "playerInfluenceThreshold": 20,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-compact-patrol-expansion",
+    "title": "Compact Patrol Expansion",
+    "description": "The Compact proposes doubling patrol frequency in the Warrens and Hollows.",
+    "proposingFactionId": "faction-civic-compact",
+    "targetFactionId": null,
+    "effect": "Tallow Ring standing decreases by 10. Hollows access temporarily restricted.",
+    "playerInfluenceThreshold": 25,
+    "expiresOnDay": -1
+  }
+]

@@ -1,0 +1,29 @@
+import { z } from 'zod'
+
+export const questObjectiveTypeSchema = z.enum(['combat', 'delivery', 'investigation', 'survival'])
+
+export const questTemplateSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  employerFactionId: z.string().nullable(),
+  enemyFactionId: z.string().nullable(),
+  districtId: z.string().nullable(),
+  briefing: z.string(),
+  objectiveType: questObjectiveTypeSchema,
+  rewardMarks: z.number().default(0),
+  rewardStandingFactionId: z.string().nullable().default(null),
+  rewardStandingDelta: z.number().default(0),
+  penaltyStandingDelta: z.number().default(0),
+  timeLimitDays: z.number().nullable().default(null),
+  linkedMissionId: z.string().nullable().default(null),
+})
+
+export const questRuntimeSchema = z.object({
+  questId: z.string(),
+  acceptedOnDay: z.number(),
+  status: z.enum(['active', 'completed', 'failed']),
+  objectiveMet: z.boolean().default(false),
+})
+
+export type QuestTemplate = z.infer<typeof questTemplateSchema>
+export type QuestRuntime = z.infer<typeof questRuntimeSchema>

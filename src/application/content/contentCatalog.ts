@@ -4,6 +4,7 @@ import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
 import missions from '../../../data/definitions/missions.json'
 import npcs from '../../../data/definitions/npcs.json'
+import questsData from '../../../data/definitions/quests.json'
 import shops from '../../../data/definitions/shops.json'
 import titlesData from '../../../data/definitions/titles.json'
 import {
@@ -16,8 +17,10 @@ import {
   shopDefinitionSchema,
 } from '../../domain'
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
+import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
 
 const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
+const parsedQuests = questTemplateSchema.array().parse(questsData)
 const parsedNpcs = npcDefinitionSchema.array().parse(npcs)
 const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
@@ -33,6 +36,8 @@ function toMap<T extends { id: string }>(entries: T[]) {
 export const contentCatalog = {
   titles: parsedTitles,
   titlesById: toMap(parsedTitles),
+  quests: parsedQuests,
+  questsById: toMap(parsedQuests),
   districts: parsedDistricts,
   districtsById: toMap(parsedDistricts),
   factions: parsedFactions,
@@ -51,4 +56,8 @@ export const contentCatalog = {
 
 export function getTitleDefinitions(): TitleDefinition[] {
   return contentCatalog.titles
+}
+
+export function getQuestTemplates(): QuestTemplate[] {
+  return contentCatalog.quests
 }
