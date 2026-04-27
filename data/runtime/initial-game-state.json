@@ -257,5 +257,6 @@
         "unrest": 55,
         "corruption": 60
     },
-    "pendingEvents": []
+    "pendingEvents": [],
+    "currentDistrictId": null
 }

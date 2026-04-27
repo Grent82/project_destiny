@@ -5,6 +5,7 @@ import items from '../../../data/definitions/items.json'
 import missions from '../../../data/definitions/missions.json'
 import npcs from '../../../data/definitions/npcs.json'
 import shops from '../../../data/definitions/shops.json'
+import titlesData from '../../../data/definitions/titles.json'
 import {
   districtDefinitionSchema,
   eventTemplateSchema,
@@ -14,7 +15,9 @@ import {
   npcDefinitionSchema,
   shopDefinitionSchema,
 } from '../../domain'
+import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
 
+const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
 const parsedNpcs = npcDefinitionSchema.array().parse(npcs)
 const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
@@ -28,6 +31,8 @@ function toMap<T extends { id: string }>(entries: T[]) {
 }
 
 export const contentCatalog = {
+  titles: parsedTitles,
+  titlesById: toMap(parsedTitles),
   districts: parsedDistricts,
   districtsById: toMap(parsedDistricts),
   factions: parsedFactions,
@@ -42,4 +47,8 @@ export const contentCatalog = {
   shopsById: toMap(parsedShops),
   events: parsedEvents,
   eventsById: toMap(parsedEvents),
+}
+
+export function getTitleDefinitions(): TitleDefinition[] {
+  return contentCatalog.titles
 }

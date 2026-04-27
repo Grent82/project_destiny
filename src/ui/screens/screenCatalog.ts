@@ -10,6 +10,11 @@ export const screenCatalog = [
     summary: 'Personnel in house service. Their condition is yours to account for.',
   },
   {
+    path: '/district-map',
+    title: 'The City',
+    summary: 'Navigate Valdenmoor. Six districts — each held by someone, each with a cost.',
+  },
+  {
     path: '/districts',
     title: 'Districts',
     summary: 'Survey city districts, access levels, and market pressure.',

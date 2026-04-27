@@ -1,0 +1,42 @@
+[
+  {
+    "id": "title-medic",
+    "name": "House Medic",
+    "description": "Tends to injuries and illness within the house. Reduces health recovery time.",
+    "requiredSkill": "medicine",
+    "requiredSkillThreshold": 45,
+    "dailyEffect": "Deployed medics restore health daily to the most injured roster member."
+  },
+  {
+    "id": "title-steward",
+    "name": "House Steward",
+    "description": "Manages the day-to-day accounts and provisioning. Reduces waste and overhead.",
+    "requiredSkill": "administration",
+    "requiredSkillThreshold": 45,
+    "dailyEffect": "Manages the accounts. +15 Marks per day."
+  },
+  {
+    "id": "title-trainer",
+    "name": "House Trainer",
+    "description": "Maintains discipline and readiness among the roster.",
+    "requiredSkill": "melee",
+    "requiredSkillThreshold": 55,
+    "dailyEffect": "Runs drills. Idle roster members gain skill points over time."
+  },
+  {
+    "id": "title-quartermaster",
+    "name": "Quartermaster",
+    "description": "Oversees equipment maintenance and inventory distribution.",
+    "requiredSkill": "logistics",
+    "requiredSkillThreshold": 40,
+    "dailyEffect": "Extends equipment durability (future system)."
+  },
+  {
+    "id": "title-chief-engineer",
+    "name": "Chief Engineer",
+    "description": "Manages structural repairs and technical projects for the house.",
+    "requiredSkill": "engineering",
+    "requiredSkillThreshold": 50,
+    "dailyEffect": "Oversees workshop output. Reduces material costs on district projects."
+  }
+]

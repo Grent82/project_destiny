@@ -5,6 +5,7 @@ import { GlobalStatusBar } from './GlobalStatusBar'
 import { useAppSelector } from './hooks'
 import { CombatScreen } from '../screens/CombatScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
+import { DistrictMapScreen } from '../screens/DistrictMapScreen'
 import { DistrictsScreen } from '../screens/DistrictsScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
@@ -73,6 +74,7 @@ export function App() {
             <Route path="/" element={<Navigate replace to="/dashboard" />} />
             <Route path="/dashboard" element={<DashboardScreen />} />
             <Route path="/roster" element={<RosterScreen />} />
+            <Route path="/district-map" element={<DistrictMapScreen />} />
             <Route path="/districts" element={<DistrictsScreen />} />
             <Route path="/factions" element={<FactionsScreen />} />
             <Route path="/missions" element={<MissionPrepScreen />} />
@@ -85,6 +87,7 @@ export function App() {
                   ![
                     '/dashboard',
                     '/roster',
+                    '/district-map',
                     '/districts',
                     '/factions',
                     '/missions',

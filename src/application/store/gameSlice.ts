@@ -10,6 +10,7 @@ import { purchaseItemFromShop } from '../commands/purchase'
 import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from '../commands/squad'
 import { endDay as endDayCommand } from '../commands/endDay'
 import { applyOutcomes } from '../commands/applyEventOutcome'
+import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { contentCatalog } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 
@@ -104,6 +105,9 @@ const gameSlice = createSlice({
 
       const next = { ...state, pendingEvents: state.pendingEvents.filter((e) => e.eventId !== eventId) }
       return applyOutcomes(next, choice.outcomes)
+    },
+    travelToDistrict(state, action: PayloadAction<string>) {
+      return travelToDistrictCommand(state, action.payload)
     },
   },
 })

@@ -58,6 +58,18 @@ export const cityResourcesSchema = z
   })
   .strict()
 
+export const hireOfferSchema = z
+  .object({
+    npcId: z.string(),
+    discoveredInDistrictId: z.string().nullable(),
+    wagePerDay: z.number(),
+    signingBonus: z.number().default(0),
+    requiredFactionId: z.string().nullable().default(null),
+    requiredFactionStanding: z.number().default(0),
+    turnsAvailable: z.number().default(3),
+  })
+  .strict()
+
 export const gameStateSchema = z
   .object({
     day: positiveIntegerSchema,
@@ -79,6 +91,8 @@ export const gameStateSchema = z
     activeCombat: activeCombatStateSchema.nullable(),
     activeMissionId: entityIdSchema.nullable(),
     pendingEvents: z.array(pendingEventSchema).default([]),
+    currentDistrictId: z.string().nullable().default(null),
+    availableForHire: z.array(hireOfferSchema).default([]),
   })
   .strict()
 
@@ -90,3 +104,4 @@ export type CorridorStatus = z.infer<typeof corridorStatusSchema>
 export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>
 export type GameContentCatalog = z.infer<typeof gameContentCatalogSchema>
 export type GameState = z.infer<typeof gameStateSchema>
+export type HireOffer = z.infer<typeof hireOfferSchema>
