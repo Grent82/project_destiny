@@ -107,6 +107,7 @@ const BASE_GAME_STATE = {
   activeQuestIds: [],
   selectedSquadNpcIds: ['npc-1', 'npc-2'],
   activeCombat: null,
+  equippedItemDurabilities: {},
 }
 
 function makeCombatant(overrides: Partial<CombatantState> = {}): CombatantState {

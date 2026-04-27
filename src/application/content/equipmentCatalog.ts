@@ -53,3 +53,45 @@ export function getArmorProfile(armorId: string | null): ArmorProfile {
 }
 
 export { UNARMED_PROFILE, UNARMORED_PROFILE }
+
+interface RawWeapon {
+  id: string
+  durabilityMax?: number
+  repairCost?: number
+  [key: string]: unknown
+}
+
+interface RawArmor {
+  id: string
+  durabilityMax?: number
+  repairCost?: number
+  [key: string]: unknown
+}
+
+const rawWeaponsById = new Map<string, RawWeapon>(
+  (rawWeapons as RawWeapon[]).map((w) => [w.id, w])
+)
+
+const rawArmorById = new Map<string, RawArmor>(
+  (rawArmor as RawArmor[]).map((a) => [a.id, a])
+)
+
+export function getWeaponRepairCost(weaponId: string | null): number {
+  if (!weaponId) return 0
+  return rawWeaponsById.get(weaponId)?.repairCost ?? 40
+}
+
+export function getWeaponDurabilityMax(weaponId: string | null): number {
+  if (!weaponId) return 100
+  return rawWeaponsById.get(weaponId)?.durabilityMax ?? 100
+}
+
+export function getArmorRepairCost(armorId: string | null): number {
+  if (!armorId) return 0
+  return rawArmorById.get(armorId)?.repairCost ?? 40
+}
+
+export function getArmorDurabilityMax(armorId: string | null): number {
+  if (!armorId) return 100
+  return rawArmorById.get(armorId)?.durabilityMax ?? 100
+}

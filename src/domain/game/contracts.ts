@@ -103,6 +103,10 @@ export const gameStateSchema = z
     institutionalStanding: z.record(z.string(), institutionalTierSchema).default({}),
     activeCouncilVotes: z.array(councilVoteEventSchema).default([]),
     relationships: z.record(z.string(), gameRelationshipAxesSchema).default({}),
+    equippedItemDurabilities: z.record(
+      z.string(),
+      z.record(z.enum(['weapon', 'armor']), z.number().min(0).max(200))
+    ).default({}),
   })
   .strict()
 
@@ -115,3 +119,5 @@ export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>
 export type GameContentCatalog = z.infer<typeof gameContentCatalogSchema>
 export type GameState = z.infer<typeof gameStateSchema>
 export type HireOffer = z.infer<typeof hireOfferSchema>
+
+export type EquippedItemDurabilities = z.infer<typeof gameStateSchema>['equippedItemDurabilities']

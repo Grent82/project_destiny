@@ -317,5 +317,6 @@
     "activeCouncilVotes": [],
     "relationships": {
         "player-npc-marion-vale": { "affinity": 15, "respect": 20, "fear": 0, "trust": 25, "loyalty": 30 }
-    }
+    },
+    "equippedItemDurabilities": {}
 }

@@ -24,7 +24,8 @@
     "critChance": 16,
     "staggerChance": 4,
     "durabilityMax": 55,
-    "description": "A short, full-tang blade carried by those who travel beyond the gates — ground from salvaged rail-iron and kept sharp out of necessity rather than pride.",
+    "repairCost": 20,
+    "description": "A short, full-tang blade carried by those who travel beyond the gates \u2014 ground from salvaged rail-iron and kept sharp out of necessity rather than pride.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -8
   },
@@ -54,6 +55,7 @@
     "critChance": 19,
     "staggerChance": 3,
     "durabilityMax": 65,
+    "repairCost": 30,
     "description": "A narrow stiletto with a filed-down crossguard, purpose-built for concealment under a courier's coat; the Ring issues these to operatives who are not supposed to be armed.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -7
@@ -85,6 +87,7 @@
     "critChance": 20,
     "staggerChance": 4,
     "durabilityMax": 75,
+    "repairCost": 50,
     "description": "A Compact magistrate's personal-defense blade, etched with a ward seal and kept in a spring-loaded wrist sheath; common enough among investigators that it has become an informal rank marker.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -5
@@ -114,7 +117,8 @@
     "critChance": 9,
     "staggerChance": 8,
     "durabilityMax": 70,
-    "description": "A broad, single-edged blade stamped out of League-controlled foundries in bulk — reliable, unlovely, and present in almost every ironworks guard's scabbard.",
+    "repairCost": 35,
+    "description": "A broad, single-edged blade stamped out of League-controlled foundries in bulk \u2014 reliable, unlovely, and present in almost every ironworks guard's scabbard.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -3
   },
@@ -144,6 +148,7 @@
     "critChance": 11,
     "staggerChance": 9,
     "durabilityMax": 80,
+    "repairCost": 50,
     "description": "The standard sidearm of a Compact watch officer: a curved, clipped-point saber with a full hand-guard, issued on promotion and expected to be returned on dismissal.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -2
@@ -175,6 +180,7 @@
     "critChance": 12,
     "staggerChance": 7,
     "durabilityMax": 85,
+    "repairCost": 75,
     "description": "A slender, fluted rapier with a gilded shell-guard, carried by Gilded Heights nobles less as a weapon than as a legally permitted declaration of station and grievance.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": 2
@@ -205,6 +211,7 @@
     "critChance": 6,
     "staggerChance": 12,
     "durabilityMax": 75,
+    "repairCost": 25,
     "description": "A two-meter ash shaft tipped with a socketed iron head, issued to League workshop floor-guards who are expected to control crowds rather than fight duels.",
     "rangeTypePreference": "medium",
     "rangeModifierMedium": 12
@@ -235,7 +242,8 @@
     "critChance": 7,
     "staggerChance": 15,
     "durabilityMax": 70,
-    "description": "Recovered from a sealed pre-Breach armory in the lower districts — the steel is better than anything made in Valdenmoor today, though the shaft has been replaced twice and the mounting bracket is a patch job.",
+    "repairCost": 40,
+    "description": "Recovered from a sealed pre-Breach armory in the lower districts \u2014 the steel is better than anything made in Valdenmoor today, though the shaft has been replaced twice and the mounting bracket is a patch job.",
     "rangeTypePreference": "medium",
     "rangeModifierMedium": 12
   },
@@ -265,6 +273,7 @@
     "critChance": 5,
     "staggerChance": 22,
     "durabilityMax": 90,
+    "repairCost": 35,
     "description": "A single-face sledge from a League smelting floor, repurposed as a weapon with minimal modification; the flat face leaves shaped impressions in whatever it strikes.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -12
@@ -295,6 +304,7 @@
     "critChance": 6,
     "staggerChance": 25,
     "durabilityMax": 95,
+    "repairCost": 50,
     "description": "League debt-collectors carry these weighted short-handles to demonstrate, without language, what happens when a workshop contract lapses; the head is stamped with the League seal.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -12
@@ -325,6 +335,7 @@
     "critChance": 7,
     "staggerChance": 30,
     "durabilityMax": 100,
+    "repairCost": 70,
     "description": "Originally a port-authority boarding tool for breaking jammed cargo hatches, this double-faced maul has been fitted with a weighted steel head and is now sold to anyone who asks the right people in the Harbor Ward.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -15
@@ -355,6 +366,7 @@
     "critChance": 8,
     "staggerChance": 10,
     "durabilityMax": 72,
+    "repairCost": 45,
     "description": "The standard issue of Harbor Ward dock-wardens: a short-draw, recurve crossbow designed for one-hand cocking along wharf railings, loaded with flat-head suppression bolts.",
     "rangeTypePreference": "medium",
     "rangeModifierMedium": 15
@@ -386,7 +398,8 @@
     "critChance": 10,
     "staggerChance": 9,
     "durabilityMax": 80,
-    "description": "A workshop-engineered crossbow built to tolerances the Foundry League charges separately for — the limbs are laminated bone and spring-iron, the track is machined, and the trigger has two stages.",
+    "repairCost": 65,
+    "description": "A workshop-engineered crossbow built to tolerances the Foundry League charges separately for \u2014 the limbs are laminated bone and spring-iron, the track is machined, and the trigger has two stages.",
     "rangeTypePreference": "medium",
     "rangeModifierMedium": 15
   },
@@ -417,6 +430,7 @@
     "critChance": 7,
     "staggerChance": 8,
     "durabilityMax": 68,
+    "repairCost": 40,
     "description": "A flintlock sidearm with a broad wooden grip, issued to Compact watchmen on beat assignment; the barrel is marked with the ward number and the weapon must be returned or explained.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -3
@@ -449,6 +463,7 @@
     "critChance": 9,
     "staggerChance": 9,
     "durabilityMax": 80,
+    "repairCost": 80,
     "description": "A silver-chased, single-shot dueling pistol carried by Gilded Heights nobles as both a functional weapon and a social instrument; the engraving on the grip panel identifies the house.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -2
@@ -480,7 +495,8 @@
     "critChance": 8,
     "staggerChance": 12,
     "durabilityMax": 75,
-    "description": "Issued to Valdenmoor wall-post sentries for engagement beyond the outer ditch — a long-barreled percussion piece, heavy to carry and slow to reload, that earns its keep at two hundred meters.",
+    "repairCost": 55,
+    "description": "Issued to Valdenmoor wall-post sentries for engagement beyond the outer ditch \u2014 a long-barreled percussion piece, heavy to carry and slow to reload, that earns its keep at two hundred meters.",
     "rangeTypePreference": "distant",
     "rangeModifierMedium": 5
   },
@@ -512,6 +528,7 @@
     "critChance": 10,
     "staggerChance": 11,
     "durabilityMax": 82,
+    "repairCost": 85,
     "description": "A hand-fitted, octagonal-barrel long rifle that entered Valdenmoor through the Ring's smuggling corridors from some pre-Breach manufacturing source that no one has successfully identified.",
     "rangeTypePreference": "distant",
     "rangeModifierMedium": 5
@@ -543,7 +560,8 @@
     "critChance": 5,
     "staggerChance": 18,
     "durabilityMax": 65,
-    "description": "A sawn-down double-barrel flintlock used by warehouse guards and dock sentries — imprecise and devastating in the close quarters of a cargo hold.",
+    "repairCost": 35,
+    "description": "A sawn-down double-barrel flintlock used by warehouse guards and dock sentries \u2014 imprecise and devastating in the close quarters of a cargo hold.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -10
   },
@@ -574,7 +592,8 @@
     "critChance": 6,
     "staggerChance": 20,
     "durabilityMax": 72,
-    "description": "A purpose-built workshop-floor scatter-gun produced by League armorer shops, with a reinforced breech-block and a wider choke than the Harbor standard — designed to be lethal in smelting-hall corridors.",
+    "repairCost": 50,
+    "description": "A purpose-built workshop-floor scatter-gun produced by League armorer shops, with a reinforced breech-block and a wider choke than the Harbor standard \u2014 designed to be lethal in smelting-hall corridors.",
     "rangeTypePreference": "close",
     "rangeModifierMedium": -10
   }

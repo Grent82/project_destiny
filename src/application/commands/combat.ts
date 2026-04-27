@@ -13,6 +13,7 @@ import {
 } from '../../domain/npcStateModifiers'
 import { contentCatalog } from '../content/contentCatalog'
 import { getArmorProfile, getWeaponProfile } from '../content/equipmentCatalog'
+import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 
@@ -22,7 +23,7 @@ function isAlive(combatant: CombatantState) {
   return combatant.health > 0
 }
 
-function buildAllyCombatant(npc: NpcRuntimeState): CombatantState {
+function buildAllyCombatant(npc: NpcRuntimeState, equippedItemDurabilities: GameState['equippedItemDurabilities']): CombatantState {
   const definition = contentCatalog.npcsById.get(npc.npcId)
   const skill = Math.max(npc.skills.melee, npc.skills.ranged)
   const effectiveRange: CombatRange =
@@ -31,6 +32,11 @@ function buildAllyCombatant(npc: NpcRuntimeState): CombatantState {
   const snap = { hunger: npc.states.hunger, fatigue: npc.states.fatigue }
   const statePenalty = getHungerCombatPenalty(snap) + getFatigueAccuracyPenalty(snap)
   const baseAccuracy = Math.min(95, skill + Math.floor(npc.attributes.perception / 3))
+
+  const weaponDurability = equippedItemDurabilities[npc.npcId]?.['weapon'] ?? 100
+  const weaponDurMod = getDurabilityAccuracyModifier(weaponDurability)
+  const armorDurability = equippedItemDurabilities[npc.npcId]?.['armor'] ?? 100
+  const armorDurMod = getDurabilityArmorModifier(armorDurability)
 
   return {
     combatantId: `ally-${npc.npcId}`,
@@ -41,11 +47,11 @@ function buildAllyCombatant(npc: NpcRuntimeState): CombatantState {
     health: Math.max(35, npc.states.health),
     morale: npc.states.morale,
     skill,
-    accuracy: Math.max(1, baseAccuracy + statePenalty),
+    accuracy: Math.max(1, Math.floor(Math.max(1, baseAccuracy + statePenalty) * weaponDurMod)),
     damageMin: Math.max(8, Math.floor((npc.attributes.might + skill) / 12)),
     damageMax: Math.max(12, Math.floor((npc.attributes.might + skill) / 9)),
     effectiveRange,
-    soak: Math.floor(npc.attributes.endurance / 4),
+    soak: Math.floor(Math.floor(npc.attributes.endurance / 4) * armorDurMod),
     speed: Math.max(1, Math.floor((npc.attributes.agility + npc.attributes.resolve) / 18)),
     guarding: false,
     staggered: false,
@@ -451,7 +457,7 @@ export function startCombatEncounter(state: GameState): GameState {
     return state
   }
 
-  const allies = squad.map(buildAllyCombatant)
+  const allies = squad.map((npc) => buildAllyCombatant(npc, state.equippedItemDurabilities))
   const enemies = allies.map((_, index) => buildEnemyCombatant(index, allies))
   const combatants = [...allies, ...enemies].sort(
     (left, right) => right.speed - left.speed || right.skill - left.skill,
@@ -537,6 +543,26 @@ export function performCombatAction(
     },
     nextEncounter,
   )
+
+  // Durability degradation for ally equipment (5% chance per action)
+  if (activeCombatant.side === 'allies' && activeCombatant.sourceNpcId) {
+    const npcId = activeCombatant.sourceNpcId
+    const durabilities = { ...nextState.equippedItemDurabilities }
+    const npcDur = { ...(durabilities[npcId] ?? {}) } as Record<'weapon' | 'armor', number>
+
+    if (action === 'attack' && activeCombatant.equippedWeaponId && Math.random() < 0.05) {
+      const amount = 3 + Math.floor(Math.random() * 3)
+      npcDur['weapon'] = Math.max(0, (npcDur['weapon'] ?? 100) - amount)
+    }
+
+    if (activeCombatant.equippedArmorId && Math.random() < 0.05) {
+      const amount = 2 + Math.floor(Math.random() * 3)
+      npcDur['armor'] = Math.max(0, (npcDur['armor'] ?? 100) - amount)
+    }
+
+    durabilities[npcId] = npcDur
+    nextState = { ...nextState, equippedItemDurabilities: durabilities }
+  }
 
   nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
 

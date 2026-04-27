@@ -1,12 +1,34 @@
 import { useState } from 'react'
 
 import { gameActions, selectShopOverview } from '../../application'
+import { getDurabilityTier } from '../../application/commands/durability'
+import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+
+function DurabilityBar({ current, max }: { current: number; max: number }) {
+  const pct = max > 0 ? (current / max) * 100 : 0
+  const tier = getDurabilityTier(current)
+  const color =
+    tier === 'good' ? '#4caf50'
+    : tier === 'worn' ? '#ff9800'
+    : tier === 'damaged' ? '#f44336'
+    : '#9e9e9e'
+  return (
+    <div className="stat-bar" style={{ width: 80 }}>
+      <div className="stat-bar-fill" style={{ width: `${pct}%`, backgroundColor: color }} />
+    </div>
+  )
+}
 
 export function ShopsScreen() {
   const dispatch = useAppDispatch()
   const overview = useAppSelector(selectShopOverview)
   const [lastPurchaseMessage, setLastPurchaseMessage] = useState<string | null>(null)
+  const gameState = useAppSelector((state) => state.game)
+  const roster = gameState.roster
+  const durabilities = gameState.equippedItemDurabilities
+  const money = gameState.money
+  const hasQuartermaster = roster.some((r) => r.activeTitle === 'title-quartermaster')
 
   return (
     <section className="screen-panel">
@@ -99,6 +121,60 @@ export function ShopsScreen() {
           </article>
         ))}
       </div>
+      <section className="repair-section">
+        <h2>Equipment Repair</h2>
+        {hasQuartermaster && (
+          <p className="badge badge-positive">Quartermaster active — 20% repair discount</p>
+        )}
+        {roster.map((npc) => {
+          const weaponId = npc.loadout.primaryWeaponId
+          const armorId = npc.loadout.armorId
+          if (!weaponId && !armorId) return null
+
+          const weaponDurability = durabilities[npc.npcId]?.['weapon'] ?? 100
+          const armorDurability = durabilities[npc.npcId]?.['armor'] ?? 100
+          const weaponMax = getWeaponDurabilityMax(weaponId)
+          const armorMax = getArmorDurabilityMax(armorId)
+          const weaponRepairCost = Math.floor(getWeaponRepairCost(weaponId) * (hasQuartermaster ? 0.8 : 1.0))
+          const armorRepairCost = Math.floor(getArmorRepairCost(armorId) * (hasQuartermaster ? 0.8 : 1.0))
+
+          return (
+            <div key={npc.npcId} className="repair-npc-row">
+              <strong>{npc.name}</strong>
+              {weaponId && (
+                <div className="repair-item-row">
+                  <span>Weapon</span>
+                  <DurabilityBar current={weaponDurability} max={weaponMax} />
+                  <span>{weaponDurability}/{weaponMax}</span>
+                  <button
+                    className="action-button action-button-sm"
+                    disabled={weaponDurability >= weaponMax || money < weaponRepairCost}
+                    onClick={() => dispatch(gameActions.repairItem({ npcId: npc.npcId, slot: 'weapon' }))}
+                    type="button"
+                  >
+                    Repair ({weaponRepairCost} Mk)
+                  </button>
+                </div>
+              )}
+              {armorId && (
+                <div className="repair-item-row">
+                  <span>Armor</span>
+                  <DurabilityBar current={armorDurability} max={armorMax} />
+                  <span>{armorDurability}/{armorMax}</span>
+                  <button
+                    className="action-button action-button-sm"
+                    disabled={armorDurability >= armorMax || money < armorRepairCost}
+                    onClick={() => dispatch(gameActions.repairItem({ npcId: npc.npcId, slot: 'armor' }))}
+                    type="button"
+                  >
+                    Repair ({armorRepairCost} Mk)
+                  </button>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </section>
     </section>
   )
 }

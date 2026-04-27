@@ -327,6 +327,30 @@ export function endDay(state: GameState): GameState {
     applyProximityGains(next, deployedNpcIds)
   }
 
+  // Step 5c: Durability warnings
+  for (const npc of next.roster) {
+    const npcDur = next.equippedItemDurabilities[npc.npcId]
+    if (!npcDur) continue
+
+    if (npc.loadout.primaryWeaponId) {
+      const weaponDur = npcDur['weapon'] ?? 100
+      if (weaponDur === 0) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s weapon is broken and needs repair.`)
+      } else if (weaponDur <= 20) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s weapon needs repair.`)
+      }
+    }
+
+    if (npc.loadout.armorId) {
+      const armorDur = npcDur['armor'] ?? 100
+      if (armorDur === 0) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s armor is broken and needs repair.`)
+      } else if (armorDur <= 20) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s armor needs repair.`)
+      }
+    }
+  }
+
   // Step 6: Advance time
   const nextDay = next.day + 1
   next = { ...next, day: nextDay, timeSlot: 'morning' }

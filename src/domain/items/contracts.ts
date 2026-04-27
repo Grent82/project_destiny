@@ -73,6 +73,8 @@ export const weaponDefinitionSchema = itemDefinitionSchema
     staggerChance: percentageSchema,
     ammoType: z.string().min(1).nullable(),
     durability: positiveIntegerSchema,
+    repairCost: nonNegativeIntegerSchema.optional(),
+    durabilityMax: positiveIntegerSchema.optional(),
   })
   .strict()
   .superRefine((weapon, context) => {
@@ -96,6 +98,7 @@ export const armorDefinitionSchema = itemDefinitionSchema
     speedPenalty: percentageSchema,
     durability: positiveIntegerSchema,
     repairCost: nonNegativeIntegerSchema,
+    durabilityMax: positiveIntegerSchema.optional(),
     slotCoverage: z.array(z.string().min(1)).min(1),
     resistances: z.record(z.string().min(1), percentageSchema).default({}),
   })

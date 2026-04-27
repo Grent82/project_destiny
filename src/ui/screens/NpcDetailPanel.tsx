@@ -6,6 +6,8 @@ import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { getDurabilityTier } from '../../application/commands/durability'
+import { getWeaponDurabilityMax, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 
@@ -81,6 +83,49 @@ function portraitInitials(name: string) {
 
 interface NpcDetailPanelProps {
   detail: NpcDetail
+}
+
+function DurabilityPanel({ npcId }: { npcId: string }) {
+  const gameState = useAppSelector((state) => state.game)
+  const npc = gameState.roster.find((r) => r.npcId === npcId)
+  if (!npc) return null
+
+  const weaponId = npc.loadout.primaryWeaponId
+  const armorId = npc.loadout.armorId
+  if (!weaponId && !armorId) return null
+
+  const durabilities = gameState.equippedItemDurabilities
+  const weaponDurability = durabilities[npcId]?.['weapon'] ?? 100
+  const armorDurability = durabilities[npcId]?.['armor'] ?? 100
+
+  function tierColor(tier: string) {
+    if (tier === 'good') return '#4caf50'
+    if (tier === 'worn') return '#ff9800'
+    if (tier === 'damaged') return '#f44336'
+    return '#9e9e9e'
+  }
+
+  return (
+    <div className="durability-panel">
+      <h4>Equipment Condition</h4>
+      {weaponId && (
+        <div className="stat-row">
+          <span className="stat-label">Weapon</span>
+          <span className="stat-value" style={{ color: tierColor(getDurabilityTier(weaponDurability)) }}>
+            {weaponDurability}/{getWeaponDurabilityMax(weaponId)} ({getDurabilityTier(weaponDurability)})
+          </span>
+        </div>
+      )}
+      {armorId && (
+        <div className="stat-row">
+          <span className="stat-label">Armor</span>
+          <span className="stat-value" style={{ color: tierColor(getDurabilityTier(armorDurability)) }}>
+            {armorDurability}/{getArmorDurabilityMax(armorId)} ({getDurabilityTier(armorDurability)})
+          </span>
+        </div>
+      )}
+    </div>
+  )
 }
 
 function TitlePanel({ detail }: { detail: NpcDetail }) {
@@ -247,6 +292,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         </div>
 
         <div className="npc-quick-actions">
+          <DurabilityPanel npcId={detail.npcId} />
           <TitlePanel detail={detail} />
           <button className="action-button" type="button" disabled>
             Equip gear

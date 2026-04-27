@@ -12,6 +12,7 @@ import { endDay as endDayCommand } from '../commands/endDay'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../commands/recruitment'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
+import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
 import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
@@ -367,6 +368,46 @@ const gameSlice = createSlice({
       if (state.activityLog.length > 100) state.activityLog.pop()
 
       state.activeCouncilVotes = state.activeCouncilVotes.filter((v) => v.id !== voteId)
+    },
+
+    repairItem(state, action: PayloadAction<{ npcId: string; slot: 'weapon' | 'armor' }>) {
+      const { npcId, slot } = action.payload
+      const npc = state.roster.find((r) => r.npcId === npcId)
+      if (!npc) return
+
+      const itemId = slot === 'weapon' ? npc.loadout.primaryWeaponId : npc.loadout.armorId
+      if (!itemId) return
+
+      const baseRepairCost = slot === 'weapon'
+        ? getWeaponRepairCost(itemId)
+        : getArmorRepairCost(itemId)
+
+      const hasQuartermaster = state.roster.some((r) => r.activeTitle === 'title-quartermaster')
+      const repairDiscount = hasQuartermaster ? 0.8 : 1.0
+      const finalRepairCost = Math.floor(baseRepairCost * repairDiscount)
+
+      if (state.money < finalRepairCost) return
+
+      const durabilityMax = slot === 'weapon'
+        ? getWeaponDurabilityMax(itemId)
+        : getArmorDurabilityMax(itemId)
+
+      state.money -= finalRepairCost
+
+      if (!state.equippedItemDurabilities[npcId]) {
+        state.equippedItemDurabilities[npcId] = {} as Record<'weapon' | 'armor', number>
+      }
+      state.equippedItemDurabilities[npcId]![slot] = durabilityMax
+
+      const logId = `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`
+      state.activityLog.unshift({
+        id: logId,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'economy',
+        message: `Equipment repaired. Cost: ${finalRepairCost} Marks.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
+      })
+      if (state.activityLog.length > 100) state.activityLog.pop()
     },
   },
 })
