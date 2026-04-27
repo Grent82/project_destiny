@@ -24,10 +24,29 @@ export function ShopsScreen() {
       <div className="overview-grid">
         {overview.shops.map((shop) => (
           <article key={shop.id}>
-            <h2>{shop.name}</h2>
-            <p>
-              {shop.districtName} · {shop.shopType}
-            </p>
+            <header className="shop-district-header">
+              <div>
+                <h2>{shop.name}</h2>
+                <p className="shop-district-context">
+                  {shop.districtName}
+                  {shop.controllingFactionName ? ` · ${shop.controllingFactionName}` : ''}
+                  {' · '}
+                  {shop.shopType.replace('_', ' ')}
+                </p>
+              </div>
+              <div className="badge-row shop-district-badges">
+                {shop.danger !== null && (
+                  <span className={shop.danger > 50 ? 'badge badge-warning' : 'badge'}>
+                    Danger {shop.danger}
+                  </span>
+                )}
+                {shop.marketPressure !== null && shop.marketPressure > 40 && (
+                  <span className="badge badge-warning">
+                    Market pressure {shop.marketPressure}
+                  </span>
+                )}
+              </div>
+            </header>
             <p>{shop.summary}</p>
             <div className="shop-offer-list">
               {shop.offers.map((offer) => (

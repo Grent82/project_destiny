@@ -281,6 +281,30 @@
   margin-top: 1rem;
 }
 
+.shop-district-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.shop-district-header h2 {
+  margin: 0 0 0.2rem;
+}
+
+.shop-district-context {
+  margin: 0;
+  font-size: 0.83rem;
+  color: #9ca3af;
+  text-transform: capitalize;
+}
+
+.shop-district-badges {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
 .purchase-feedback {
   margin-top: 1rem;
   padding: 0.85rem 1rem;

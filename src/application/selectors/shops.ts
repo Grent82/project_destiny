@@ -5,12 +5,14 @@ import type { RootState } from '../store/gameStore'
 
 const selectMoney = (state: RootState) => state.game.money
 const selectInventory = (state: RootState) => state.game.inventory
+const selectDistrictStates = (state: RootState) => state.game.districts
 
 export const selectShopOverview = createSelector(
-  [selectMoney, selectInventory],
-  (money, inventory) => {
+  [selectMoney, selectInventory, selectDistrictStates],
+  (money, inventory, districtStates) => {
     const quantities = new Map(inventory.map((entry) => [entry.itemId, entry.quantity]))
     const lowestPriceByItem = new Map<string, number>()
+    const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
 
     for (const shop of contentCatalog.shops) {
       for (const offer of shop.offers) {
@@ -26,6 +28,10 @@ export const selectShopOverview = createSelector(
       money,
       shops: contentCatalog.shops.map((shop) => {
         const district = contentCatalog.districtsById.get(shop.districtId)
+        const districtState = districtStateById.get(shop.districtId)
+        const controllingFaction = districtState
+          ? contentCatalog.factionsById.get(districtState.controllingFactionId)
+          : null
 
         return {
           id: shop.id,
@@ -34,6 +40,9 @@ export const selectShopOverview = createSelector(
           districtName: district?.name ?? shop.districtId,
           shopType: shop.shopType,
           summary: shop.summary,
+          controllingFactionName: controllingFaction?.name ?? null,
+          danger: districtState?.danger ?? null,
+          marketPressure: districtState?.marketPressure ?? null,
           offers: shop.offers
             .slice()
             .sort((left, right) => left.order - right.order)
