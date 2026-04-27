@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { selectRosterDetail, selectRosterEntries } from '../../application'
 import { useAppSelector } from '../app/hooks'
+import { NpcDetailPanel } from './NpcDetailPanel'
 
 export function RosterScreen() {
   const rosterEntries = useAppSelector(selectRosterEntries)
@@ -18,9 +19,8 @@ export function RosterScreen() {
       <p className="eyebrow">Project Destiny</p>
       <h1>Roster</h1>
       <p className="summary">
-        Inspect seeded operatives through application selectors and switch
-        between summary and detail views without importing content files into UI
-        components.
+        Select an operative to inspect their full stat profile across attributes,
+        skills, states, and traits.
       </p>
 
       <div className="roster-layout">
@@ -37,53 +37,29 @@ export function RosterScreen() {
               type="button"
             >
               <span className="roster-row-title">{entry.name}</span>
-              <span>{entry.assignment}</span>
-              <span>{entry.status}</span>
-              <span>Health {entry.health}</span>
+              <span className="text-muted">{entry.assignment.replace('_', ' ')}</span>
+              <div className="badge-row">
+                <span className="badge">{entry.status}</span>
+                <span className={entry.health < 40 ? 'badge badge-warning' : 'badge'}>
+                  HP {entry.health}
+                </span>
+                <span className={entry.morale < 40 ? 'badge badge-warning' : 'badge'}>
+                  Mor {entry.morale}
+                </span>
+              </div>
             </button>
           ))}
         </div>
 
         {detail ? (
           <article className="detail-panel">
-            <h2>{detail.name}</h2>
-            <p className="summary">{detail.background}</p>
-            <div className="detail-grid">
-              <div>
-                <strong>Status</strong>
-                <p>{detail.status}</p>
-              </div>
-              <div>
-                <strong>Assignment</strong>
-                <p>{detail.assignment}</p>
-              </div>
-              <div>
-                <strong>Origin</strong>
-                <p>{detail.origin}</p>
-              </div>
-              <div>
-                <strong>Resolve</strong>
-                <p>{detail.resolve}</p>
-              </div>
-              <div>
-                <strong>Morale</strong>
-                <p>{detail.morale}</p>
-              </div>
-              <div>
-                <strong>Stress</strong>
-                <p>{detail.stress}</p>
-              </div>
-              <div>
-                <strong>Loyalty</strong>
-                <p>{detail.loyalty}</p>
-              </div>
-              <div>
-                <strong>Title Paths</strong>
-                <p>{detail.allowedTitleIds.join(', ') || 'None assigned yet'}</p>
-              </div>
-            </div>
+            <NpcDetailPanel detail={detail} />
           </article>
-        ) : null}
+        ) : (
+          <article className="detail-panel">
+            <p className="text-muted">Select an operative to view their profile.</p>
+          </article>
+        )}
       </div>
     </section>
   )

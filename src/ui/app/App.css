@@ -1,3 +1,71 @@
+/* ── Design tokens ───────────────────────────────────────── */
+:root {
+  --text-primary:   #f9fafb;
+  --text-secondary: #e5e7eb;
+  --text-tertiary:  #9ca3af;
+  --text-accent:    #d7bf82;
+
+  --size-xl: clamp(2rem, 4vw, 3rem);
+  --size-lg: 1.25rem;
+  --size-md: 1rem;
+  --size-sm: 0.875rem;
+  --size-xs: 0.78rem;
+}
+
+/* ── Global type defaults ────────────────────────────────── */
+h1 { color: var(--text-primary);   font-size: var(--size-xl); margin: 0; }
+h2 { color: var(--text-secondary); font-size: var(--size-lg); margin: 0 0 0.5rem; }
+h3 { color: var(--text-secondary); font-size: var(--size-md); margin: 0 0 0.35rem; }
+p  { color: var(--text-tertiary);  margin: 0.35rem 0; }
+strong { color: var(--text-secondary); }
+
+/* ── Utility text classes ────────────────────────────────── */
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-tertiary); font-size: var(--size-sm); }
+.text-accent    { color: var(--text-accent); }
+
+/* ── Stat row (label + value + bar) ─────────────────────── */
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+}
+
+.stat-label {
+  color: var(--text-tertiary);
+  font-size: var(--size-sm);
+  min-width: 7.5rem;
+}
+
+.stat-value {
+  color: var(--text-primary);
+  font-size: var(--size-sm);
+  font-weight: 600;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.stat-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: rgba(215, 191, 130, 0.55);
+  border-radius: 2px;
+  transition: width 200ms ease;
+}
+
+.stat-bar-fill-low  { background: rgba(251, 191, 36, 0.5); }
+.stat-bar-fill-crit { background: rgba(239, 68, 68, 0.55); }
+
+/* ── App shell ───────────────────────────────────────────── */
 .app-shell {
   min-height: 100vh;
   display: grid;
@@ -134,11 +202,6 @@
   backdrop-filter: blur(12px);
 }
 
-.screen-panel h1 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
-}
-
 .placeholder-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -225,6 +288,98 @@
   display: grid;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+/* ── NPC detail panel ────────────────────────────────────── */
+.npc-detail-panel {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: 1.25rem;
+  height: 100%;
+}
+
+.npc-portrait-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.npc-portrait-placeholder {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(243, 244, 246, 0.12);
+  background: linear-gradient(160deg, rgba(215, 191, 130, 0.12), rgba(17, 24, 39, 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba(215, 191, 130, 0.5);
+  letter-spacing: -0.02em;
+}
+
+.npc-identity-name {
+  font-size: var(--size-md);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.npc-stats-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.npc-tab-bar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid rgba(243, 244, 246, 0.1);
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.npc-tab {
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: var(--size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 120ms, background 120ms;
+}
+
+.npc-tab:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.npc-tab-active {
+  color: var(--text-accent);
+  border-color: rgba(243, 244, 246, 0.1);
+  background: rgba(215, 191, 130, 0.06);
+}
+
+.npc-tab-content {
+  display: grid;
+  gap: 0;
+  overflow-y: auto;
+}
+
+.npc-quick-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(243, 244, 246, 0.08);
+  grid-column: 1 / -1;
 }
 
 .combat-action-row {

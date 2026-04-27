@@ -22,6 +22,9 @@ export function selectRosterDetail(state: RootState, npcId: string) {
   }
 
   const definition = contentCatalog.npcsById.get(npcId)
+  const factionAffinity = definition?.factionAffinityId
+    ? contentCatalog.factionsById.get(definition.factionAffinityId)?.name ?? null
+    : null
 
   return {
     npcId,
@@ -30,11 +33,54 @@ export function selectRosterDetail(state: RootState, npcId: string) {
     background: definition?.background ?? 'Unknown',
     status: definition?.status ?? 'citizen',
     assignment: runtime.assignment,
-    health: runtime.states.health,
-    morale: runtime.states.morale,
-    stress: runtime.states.stress,
-    resolve: runtime.attributes.resolve,
-    loyalty: runtime.traits.loyalty,
+    factionAffinity,
     allowedTitleIds: definition?.allowedTitleIds ?? [],
+    attributes: {
+      might: runtime.attributes.might,
+      agility: runtime.attributes.agility,
+      endurance: runtime.attributes.endurance,
+      intellect: runtime.attributes.intellect,
+      perception: runtime.attributes.perception,
+      presence: runtime.attributes.presence,
+      resolve: runtime.attributes.resolve,
+    },
+    skills: {
+      melee: runtime.skills.melee,
+      ranged: runtime.skills.ranged,
+      medicine: runtime.skills.medicine,
+      administration: runtime.skills.administration,
+      engineering: runtime.skills.engineering,
+      negotiation: runtime.skills.negotiation,
+      survival: runtime.skills.survival,
+      security: runtime.skills.security,
+      crafting: runtime.skills.crafting,
+      performance: runtime.skills.performance,
+      academics: runtime.skills.academics,
+      intrigue: runtime.skills.intrigue,
+    },
+    traits: {
+      discipline: runtime.traits.discipline,
+      ambition: runtime.traits.ambition,
+      empathy: runtime.traits.empathy,
+      ruthlessness: runtime.traits.ruthlessness,
+      prudence: runtime.traits.prudence,
+      curiosity: runtime.traits.curiosity,
+      dominance: runtime.traits.dominance,
+      loyalty: runtime.traits.loyalty,
+      vanity: runtime.traits.vanity,
+      zeal: runtime.traits.zeal,
+    },
+    states: {
+      health: runtime.states.health,
+      fatigue: runtime.states.fatigue,
+      stress: runtime.states.stress,
+      morale: runtime.states.morale,
+      fear: runtime.states.fear,
+      anger: runtime.states.anger,
+      hunger: runtime.states.hunger,
+      injury: runtime.states.injury,
+      intoxication: runtime.states.intoxication,
+      hygiene: runtime.states.hygiene,
+    },
   }
 }
