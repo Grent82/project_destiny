@@ -85,8 +85,40 @@ interface NpcDetailPanelProps {
   detail: NpcDetail
 }
 
-function DurabilityPanel({ npcId }: { npcId: string }) {
-  const gameState = useAppSelector((state) => state.game)
+const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as const
+
+function AssignmentSelector({ detail }: { detail: NpcDetail }) {
+  const dispatch = useAppDispatch()
+  const isSystemControlled = detail.assignment === 'deployed' || detail.assignment === 'assigned_title'
+
+  if (isSystemControlled) {
+    return (
+      <div className="assignment-selector">
+        <span className="text-muted">Assignment: {detail.assignment.replace('_', ' ')} (system)</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="assignment-selector">
+      <span className="stat-label">Assignment</span>
+      <div className="badge-row">
+        {PLAYER_ASSIGNMENTS.map((a) => (
+          <button
+            key={a}
+            type="button"
+            className={detail.assignment === a ? 'badge badge-positive' : 'badge'}
+            onClick={() => dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: a }))}
+          >
+            {a}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DurabilityPanel({ npcId }: { npcId: string }) {  const gameState = useAppSelector((state) => state.game)
   const npc = gameState.roster.find((r) => r.npcId === npcId)
   if (!npc) return null
 
@@ -292,6 +324,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         </div>
 
         <div className="npc-quick-actions">
+          <AssignmentSelector detail={detail} />
           <DurabilityPanel npcId={detail.npcId} />
           <TitlePanel detail={detail} />
           <button className="action-button" type="button" disabled>

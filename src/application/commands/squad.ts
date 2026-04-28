@@ -13,6 +13,11 @@ export function addNpcToSelectedSquad(
     return state
   }
 
+  // Cannot deploy recovering NPCs
+  if (npc.assignment === 'recovering') {
+    return state
+  }
+
   if (state.selectedSquadNpcIds.includes(npcId)) {
     return state
   }
@@ -27,8 +32,15 @@ export function addNpcToSelectedSquad(
     return state
   }
 
+  const updatedRoster = state.roster.map((r) =>
+    r.npcId === npcId && r.assignment === 'idle'
+      ? { ...r, assignment: 'deployed' as const }
+      : r,
+  )
+
   return {
     ...state,
+    roster: updatedRoster,
     selectedSquadNpcIds: [...state.selectedSquadNpcIds, npcId],
   }
 }

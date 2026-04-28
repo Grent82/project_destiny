@@ -37,8 +37,24 @@ export function RosterScreen() {
               type="button"
             >
               <span className="roster-row-title">{entry.name}</span>
-              <span className="text-muted">{entry.assignment.replace('_', ' ')}</span>
               <div className="badge-row">
+                {entry.assignment === 'deployed' && (
+                  <span className="badge assignment-badge assignment-badge--deployed">Deployed</span>
+                )}
+                {entry.assignment === 'recovering' && (
+                  <span className="badge assignment-badge assignment-badge--recovering">Recovering</span>
+                )}
+                {entry.assignment === 'working' && (
+                  <span className="badge assignment-badge assignment-badge--working">Working</span>
+                )}
+                {entry.assignment === 'training' && (
+                  <span className="badge assignment-badge assignment-badge--training">Training</span>
+                )}
+                {entry.assignment === 'assigned_title' && entry.activeTitle && (
+                  <span className="badge assignment-badge assignment-badge--assigned-title">
+                    {contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled'}
+                  </span>
+                )}
                 <span className="badge">{entry.status}</span>
                 {entry.activeTitle && (
                   <span className="badge badge-positive" title={contentCatalog.titlesById.get(entry.activeTitle)?.name}>

@@ -1099,3 +1099,36 @@ a:focus-visible,
   color: var(--color-text-secondary, #888);
   text-align: right;
 }
+
+/* Assignment badges */
+.assignment-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.assignment-badge--deployed {
+  background: rgba(74, 144, 217, 0.25);
+  color: #7eb8f7;
+  border: 1px solid rgba(74, 144, 217, 0.4);
+}
+.assignment-badge--recovering {
+  background: rgba(200, 80, 60, 0.25);
+  color: #f79070;
+  border: 1px solid rgba(200, 80, 60, 0.4);
+}
+.assignment-badge--working {
+  background: rgba(80, 170, 90, 0.25);
+  color: #7fcc8a;
+  border: 1px solid rgba(80, 170, 90, 0.4);
+}
+.assignment-badge--training {
+  background: rgba(210, 170, 50, 0.25);
+  color: #e0c060;
+  border: 1px solid rgba(210, 170, 50, 0.4);
+}
+.assignment-badge--assigned-title {
+  background: rgba(160, 100, 200, 0.25);
+  color: #c09ae0;
+  border: 1px solid rgba(160, 100, 200, 0.4);
+}
