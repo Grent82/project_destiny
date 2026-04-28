@@ -16,6 +16,10 @@ export const questTemplateSchema = z.object({
   penaltyStandingDelta: z.number().default(0),
   timeLimitDays: z.number().nullable().default(null),
   linkedMissionId: z.string().nullable().default(null),
+  requiredFactionStanding: z.object({
+    factionId: z.string(),
+    minStanding: z.number(),
+  }).nullable().default(null),
 })
 
 export const questRuntimeSchema = z.object({

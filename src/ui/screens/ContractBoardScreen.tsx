@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import {
   gameActions,
   selectActiveQuests,
@@ -28,6 +30,7 @@ function FactionBadge({ factionId }: { factionId: string | null }) {
 
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const availableQuests = useAppSelector(selectAvailableQuests)
   const activeQuests = useAppSelector(selectActiveQuests)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
@@ -103,10 +106,13 @@ export function ContractBoardScreen() {
                   {template?.objectiveType === 'investigation' && (
                     <button
                       className="action-button"
-                      onClick={() => dispatch(gameActions.completeQuest({ questId: runtime.questId }))}
+                      onClick={() => {
+                        dispatch(gameActions.startInvestigation({ questId: runtime.questId }))
+                        navigate('/investigation')
+                      }}
                       type="button"
                     >
-                      Mark Complete
+                      Investigate
                     </button>
                   )}
                   {template?.objectiveType !== 'investigation' && (

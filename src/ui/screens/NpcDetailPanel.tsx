@@ -1,12 +1,11 @@
 import { useState } from 'react'
 
 import type { selectRosterDetail } from '../../application'
-import { selectRelationshipWithPlayer, selectTitleEligibilityForNpc } from '../../application'
+import { selectRelationshipWithPlayer, selectTitleEligibilityForNpc, selectDurabilityTierForNpc } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { getDurabilityTier } from '../../application/commands/durability'
 import { getWeaponDurabilityMax, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
@@ -118,7 +117,10 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
   )
 }
 
-function DurabilityPanel({ npcId }: { npcId: string }) {  const gameState = useAppSelector((state) => state.game)
+function DurabilityPanel({ npcId }: { npcId: string }) {
+  const gameState = useAppSelector((state) => state.game)
+  const weaponTier = useAppSelector(selectDurabilityTierForNpc(npcId, 'weapon'))
+  const armorTier = useAppSelector(selectDurabilityTierForNpc(npcId, 'armor'))
   const npc = gameState.roster.find((r) => r.npcId === npcId)
   if (!npc) return null
 
@@ -143,16 +145,16 @@ function DurabilityPanel({ npcId }: { npcId: string }) {  const gameState = useA
       {weaponId && (
         <div className="stat-row">
           <span className="stat-label">Weapon</span>
-          <span className="stat-value" style={{ color: tierColor(getDurabilityTier(weaponDurability)) }}>
-            {weaponDurability}/{getWeaponDurabilityMax(weaponId)} ({getDurabilityTier(weaponDurability)})
+          <span className="stat-value" style={{ color: tierColor(weaponTier) }}>
+            {weaponDurability}/{getWeaponDurabilityMax(weaponId)} ({weaponTier})
           </span>
         </div>
       )}
       {armorId && (
         <div className="stat-row">
           <span className="stat-label">Armor</span>
-          <span className="stat-value" style={{ color: tierColor(getDurabilityTier(armorDurability)) }}>
-            {armorDurability}/{getArmorDurabilityMax(armorId)} ({getDurabilityTier(armorDurability)})
+          <span className="stat-value" style={{ color: tierColor(armorTier) }}>
+            {armorDurability}/{getArmorDurabilityMax(armorId)} ({armorTier})
           </span>
         </div>
       )}

@@ -53,5 +53,154 @@
         "order": 1
       }
     ]
+  },
+  {
+    "id": "shop-gilded-register",
+    "districtId": "district-gilded-heights",
+    "name": "The Gilded Register",
+    "shopType": "tailor",
+    "summary": "A discreet salon offering court-grade equipment, fine documents, and luxury commissions to those with the standing to afford them.",
+    "offerItemIds": [
+      "weapon-sword-court-dueling-blade",
+      "weapon-pistol-court-calling-piece",
+      "armor-specialized-compact-assessor-coat",
+      "item-ledger-bureau",
+      "item-gift-fine-ink"
+    ],
+    "offers": [
+      { "itemId": "weapon-sword-court-dueling-blade", "price": 500, "order": 0 },
+      { "itemId": "weapon-pistol-court-calling-piece", "price": 580, "order": 1 },
+      { "itemId": "armor-specialized-compact-assessor-coat", "price": 300, "order": 2 },
+      { "itemId": "item-ledger-bureau", "price": 55, "order": 3 },
+      { "itemId": "item-gift-fine-ink", "price": 40, "order": 4 }
+    ]
+  },
+  {
+    "id": "shop-ironworks-armorer",
+    "districtId": "district-ironworks",
+    "name": "The Ironmonger",
+    "shopType": "armorer",
+    "summary": "Heavy plate, industrial tools, and field-ready weapons sourced direct from League forges. No credit, no returns.",
+    "offerItemIds": [
+      "armor-heavy-league-armory-chest",
+      "armor-medium-league-foreman-halfplate",
+      "weapon-hammer-foundry-maul",
+      "item-caliper-league-engineering",
+      "item-spare-parts"
+    ],
+    "offers": [
+      { "itemId": "armor-heavy-league-armory-chest", "price": 480, "order": 0 },
+      { "itemId": "armor-medium-league-foreman-halfplate", "price": 260, "order": 1 },
+      { "itemId": "weapon-hammer-foundry-maul", "price": 50, "order": 2 },
+      { "itemId": "item-caliper-league-engineering", "price": 35, "order": 3 },
+      { "itemId": "item-spare-parts", "price": 65, "order": 4 }
+    ]
+  },
+  {
+    "id": "shop-pale-provisions",
+    "districtId": "district-the-pale",
+    "name": "The Back Counter",
+    "shopType": "general_store",
+    "summary": "A cramped stall where no one checks your papers. Cheap goods, serviceable weapons, and enough supplies to get by.",
+    "offerItemIds": [
+      "item-ration-compact-brick",
+      "item-dressing-league-surplus",
+      "weapon-dagger-wasterunner",
+      "item-lockpick-ringcut",
+      "armor-light-tallow-work-coat"
+    ],
+    "offers": [
+      { "itemId": "item-ration-compact-brick", "price": 8, "order": 0 },
+      { "itemId": "item-dressing-league-surplus", "price": 10, "order": 1 },
+      { "itemId": "weapon-dagger-wasterunner", "price": 40, "order": 2 },
+      { "itemId": "item-lockpick-ringcut", "price": 40, "order": 3 },
+      { "itemId": "armor-light-tallow-work-coat", "price": 50, "order": 4 }
+    ]
+  },
+  {
+    "id": "shop-pale-apothecary",
+    "districtId": "district-the-pale",
+    "name": "The Pale Apothecary",
+    "shopType": "apothecary",
+    "summary": "A narrow counter dispensing remedies from mismatched jars. The proprietor asks no names and holds no ledger.",
+    "offerItemIds": [
+      "item-antitoxin-riverpurge",
+      "item-poultice-tarthatch",
+      "item-tincture-wound-close",
+      "item-graydust"
+    ],
+    "offers": [
+      { "itemId": "item-antitoxin-riverpurge", "price": 15, "order": 0 },
+      { "itemId": "item-poultice-tarthatch", "price": 8, "order": 1 },
+      { "itemId": "item-tincture-wound-close", "price": 25, "order": 2 },
+      { "itemId": "item-graydust", "price": 28, "order": 3 }
+    ]
+  },
+  {
+    "id": "shop-warrens-supply",
+    "districtId": "district-the-warrens",
+    "name": "The Wardhouse Supply",
+    "shopType": "general_store",
+    "summary": "A Compact-licensed provisions counter. Standard kit, permit forms, and the cheapest rations in the city. Stock arrives when it arrives.",
+    "offerItemIds": [
+      "item-ration-compact-brick",
+      "item-form-ward-petition",
+      "item-dressing-league-surplus",
+      "weapon-spear-ironworks-pike",
+      "armor-light-waste-runner-vest"
+    ],
+    "offers": [
+      { "itemId": "item-ration-compact-brick", "price": 6, "order": 0 },
+      { "itemId": "item-form-ward-petition", "price": 12, "order": 1 },
+      { "itemId": "item-dressing-league-surplus", "price": 10, "order": 2 },
+      { "itemId": "weapon-spear-ironworks-pike", "price": 60, "order": 3 },
+      { "itemId": "armor-light-waste-runner-vest", "price": 65, "order": 4 }
+    ]
+  },
+  {
+    "id": "shop-warrens-apothecary",
+    "districtId": "district-the-warrens",
+    "name": "The Restored Dispensary",
+    "shopType": "apothecary",
+    "summary": "Run by a Restored volunteer out of a ground-floor flat. The remedies are genuine and the prices are fair.",
+    "offerItemIds": [
+      "item-medkit-field",
+      "item-antitoxin-riverpurge",
+      "item-poultice-tarthatch",
+      "item-tincture-wound-close",
+      "item-salve-burngrade"
+    ],
+    "offers": [
+      { "itemId": "item-medkit-field", "price": 90, "order": 0 },
+      { "itemId": "item-antitoxin-riverpurge", "price": 14, "order": 1 },
+      { "itemId": "item-poultice-tarthatch", "price": 7, "order": 2 },
+      { "itemId": "item-tincture-wound-close", "price": 22, "order": 3 },
+      { "itemId": "item-salve-burngrade", "price": 11, "order": 4 }
+    ]
+  },
+  {
+    "id": "shop-hollows-stall",
+    "districtId": "district-the-hollows",
+    "name": "The Unmarked Stall",
+    "shopType": "black_market",
+    "summary": "A folding table behind a collapsed wall. No sign, no fixed hours. The goods are questionable; the prices are not.",
+    "requiredFactionId": "faction-tallow-ring",
+    "minFactionStanding": -10,
+    "offerItemIds": [
+      "item-graydust",
+      "item-forgery-scribe-kit",
+      "item-papers-false-citizen",
+      "item-stimulant-combat",
+      "item-lockpick-ringcut",
+      "weapon-dagger-ring-flicker"
+    ],
+    "offers": [
+      { "itemId": "item-graydust", "price": 30, "order": 0 },
+      { "itemId": "item-forgery-scribe-kit", "price": 100, "order": 1 },
+      { "itemId": "item-papers-false-citizen", "price": 70, "order": 2 },
+      { "itemId": "item-stimulant-combat", "price": 30, "order": 3 },
+      { "itemId": "item-lockpick-ringcut", "price": 40, "order": 4 },
+      { "itemId": "weapon-dagger-ring-flicker", "price": 130, "order": 5 }
+    ]
   }
 ]

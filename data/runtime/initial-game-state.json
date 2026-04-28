@@ -1,316 +1,327 @@
 {
-    "day": 1,
-    "timeSlot": "morning",
-    "money": 500,
-    "protagonistName": "",
-    "hasSeenOpening": false,
-    "factionStates": [
-        {
-            "factionId": "faction-civic-compact",
-            "power": 64,
-            "wealth": 56,
-            "security": 72,
-            "standingWithPlayer": 5,
-            "activePressure": 18
-        },
-        {
-            "factionId": "faction-gilded-court",
-            "power": 51,
-            "wealth": 70,
-            "security": 44,
-            "standingWithPlayer": 0,
-            "activePressure": 26
-        },
-        {
-            "factionId": "faction-foundry-league",
-            "power": 55,
-            "wealth": 49,
-            "security": 52,
-            "standingWithPlayer": 10,
-            "activePressure": 21
+  "day": 1,
+  "timeSlot": "morning",
+  "money": 500,
+  "protagonistName": "",
+  "hasSeenOpening": false,
+  "factionStates": [
+    {
+      "factionId": "faction-civic-compact",
+      "power": 64,
+      "wealth": 56,
+      "security": 72,
+      "standingWithPlayer": 5,
+      "activePressure": 18
+    },
+    {
+      "factionId": "faction-gilded-court",
+      "power": 51,
+      "wealth": 70,
+      "security": 44,
+      "standingWithPlayer": 0,
+      "activePressure": 26
+    },
+    {
+      "factionId": "faction-foundry-league",
+      "power": 55,
+      "wealth": 49,
+      "security": 52,
+      "standingWithPlayer": 10,
+      "activePressure": 21
+    }
+  ],
+  "districts": [
+    {
+      "districtId": "district-harbor",
+      "controllingFactionId": "faction-civic-compact",
+      "danger": 42,
+      "marketPressure": 57
+    },
+    {
+      "districtId": "district-gilded-heights",
+      "controllingFactionId": "faction-gilded-court",
+      "danger": 18,
+      "marketPressure": 46
+    },
+    {
+      "districtId": "district-ironworks",
+      "controllingFactionId": "faction-foundry-league",
+      "danger": 35,
+      "marketPressure": 62
+    }
+  ],
+  "roster": [
+    {
+      "npcId": "npc-marion-vale",
+      "name": "Marion Vale",
+      "status": "retainer",
+      "assignment": "working",
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "attributes": {
+        "might": 38,
+        "agility": 47,
+        "endurance": 44,
+        "intellect": 63,
+        "perception": 58,
+        "presence": 66,
+        "resolve": 61
+      },
+      "skills": {
+        "melee": 22,
+        "ranged": 19,
+        "medicine": 14,
+        "administration": 61,
+        "engineering": 18,
+        "negotiation": 68,
+        "survival": 20,
+        "security": 25,
+        "crafting": 12,
+        "performance": 10,
+        "academics": 24,
+        "intrigue": 41
+      },
+      "traits": {
+        "discipline": 62,
+        "ambition": 71,
+        "empathy": 43,
+        "ruthlessness": 34,
+        "prudence": 67,
+        "curiosity": 48,
+        "dominance": 56,
+        "loyalty": 52,
+        "vanity": 31,
+        "zeal": 22
+      },
+      "states": {
+        "health": 96,
+        "fatigue": 12,
+        "stress": 21,
+        "morale": 66,
+        "fear": 8,
+        "anger": 10,
+        "hunger": 18,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 72
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": [
+          "item-medkit-field"
+        ]
+      },
+      "relationships": {
+        "npc-ida-rhys": {
+          "affinity": 48,
+          "respect": 57,
+          "fear": 12,
+          "loyalty": 50,
+          "trust": 46
         }
-    ],
-    "districts": [
+      },
+      "factionRelationships": [
         {
-            "districtId": "district-harbor",
-            "controllingFactionId": "faction-civic-compact",
-            "danger": 42,
-            "marketPressure": 57
-        },
-        {
-            "districtId": "district-gilded-heights",
-            "controllingFactionId": "faction-gilded-court",
-            "danger": 18,
-            "marketPressure": 46
-        },
-        {
-            "districtId": "district-ironworks",
-            "controllingFactionId": "faction-foundry-league",
-            "danger": 35,
-            "marketPressure": 62
+          "factionId": "faction-civic-compact",
+          "standing": 18
         }
-    ],
-    "roster": [
-        {
-            "npcId": "npc-marion-vale",
-            "name": "Marion Vale",
-            "status": "retainer",
-            "assignment": "working",
-            "activeTitle": null,
-            "wagesOwedDays": 0,
-            "attributes": {
-                "might": 38,
-                "agility": 47,
-                "endurance": 44,
-                "intellect": 63,
-                "perception": 58,
-                "presence": 66,
-                "resolve": 61
-            },
-            "skills": {
-                "melee": 22,
-                "ranged": 19,
-                "medicine": 14,
-                "administration": 61,
-                "engineering": 18,
-                "negotiation": 68,
-                "survival": 20,
-                "security": 25,
-                "crafting": 12,
-                "performance": 10,
-                "academics": 24,
-                "intrigue": 41
-            },
-            "traits": {
-                "discipline": 62,
-                "ambition": 71,
-                "empathy": 43,
-                "ruthlessness": 34,
-                "prudence": 67,
-                "curiosity": 48,
-                "dominance": 56,
-                "loyalty": 52,
-                "vanity": 31,
-                "zeal": 22
-            },
-            "states": {
-                "health": 96,
-                "fatigue": 12,
-                "stress": 21,
-                "morale": 66,
-                "fear": 8,
-                "anger": 10,
-                "hunger": 18,
-                "injury": 0,
-                "intoxication": 0,
-                "hygiene": 72
-            },
-            "loadout": {
-                "primaryWeaponId": null,
-                "secondaryWeaponId": null,
-                "armorId": null,
-                "accessoryIds": [],
-                "consumableIds": [
-                    "item-medkit-field"
-                ]
-            },
-            "relationships": {
-                "npc-ida-rhys": {
-                    "affinity": 48,
-                    "respect": 57,
-                    "fear": 12,
-                    "loyalty": 50,
-                    "trust": 46
-                }
-            },
-            "factionRelationships": [
-                {
-                    "factionId": "faction-civic-compact",
-                    "standing": 18
-                }
-            ]
-        },
-        {
-            "npcId": "npc-ida-rhys",
-            "name": "Ida Rhys",
-            "status": "mercenary",
-            "assignment": "idle",
-            "activeTitle": null,
-            "wagesOwedDays": 0,
-            "attributes": {
-                "might": 54,
-                "agility": 42,
-                "endurance": 59,
-                "intellect": 57,
-                "perception": 49,
-                "presence": 35,
-                "resolve": 64
-            },
-            "skills": {
-                "melee": 39,
-                "ranged": 33,
-                "medicine": 12,
-                "administration": 18,
-                "engineering": 73,
-                "negotiation": 16,
-                "survival": 28,
-                "security": 31,
-                "crafting": 69,
-                "performance": 6,
-                "academics": 22,
-                "intrigue": 11
-            },
-            "traits": {
-                "discipline": 74,
-                "ambition": 48,
-                "empathy": 29,
-                "ruthlessness": 38,
-                "prudence": 59,
-                "curiosity": 64,
-                "dominance": 27,
-                "loyalty": 46,
-                "vanity": 8,
-                "zeal": 35
-            },
-            "states": {
-                "health": 91,
-                "fatigue": 16,
-                "stress": 18,
-                "morale": 61,
-                "fear": 9,
-                "anger": 14,
-                "hunger": 20,
-                "injury": 4,
-                "intoxication": 0,
-                "hygiene": 68
-            },
-            "loadout": {
-                "primaryWeaponId": null,
-                "secondaryWeaponId": null,
-                "armorId": null,
-                "accessoryIds": [],
-                "consumableIds": [
-                    "item-medkit-field"
-                ]
-            },
-            "relationships": {
-                "npc-marion-vale": {
-                    "affinity": 42,
-                    "respect": 63,
-                    "fear": 9,
-                    "loyalty": 39,
-                    "trust": 40
-                }
-            },
-            "factionRelationships": [
-                {
-                    "factionId": "faction-foundry-league",
-                    "standing": 24
-                }
-            ]
+      ]
+    },
+    {
+      "npcId": "npc-ida-rhys",
+      "name": "Ida Rhys",
+      "status": "mercenary",
+      "assignment": "idle",
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "attributes": {
+        "might": 54,
+        "agility": 42,
+        "endurance": 59,
+        "intellect": 57,
+        "perception": 49,
+        "presence": 35,
+        "resolve": 64
+      },
+      "skills": {
+        "melee": 39,
+        "ranged": 33,
+        "medicine": 12,
+        "administration": 18,
+        "engineering": 73,
+        "negotiation": 16,
+        "survival": 28,
+        "security": 31,
+        "crafting": 69,
+        "performance": 6,
+        "academics": 22,
+        "intrigue": 11
+      },
+      "traits": {
+        "discipline": 74,
+        "ambition": 48,
+        "empathy": 29,
+        "ruthlessness": 38,
+        "prudence": 59,
+        "curiosity": 64,
+        "dominance": 27,
+        "loyalty": 46,
+        "vanity": 8,
+        "zeal": 35
+      },
+      "states": {
+        "health": 91,
+        "fatigue": 16,
+        "stress": 18,
+        "morale": 61,
+        "fear": 9,
+        "anger": 14,
+        "hunger": 20,
+        "injury": 4,
+        "intoxication": 0,
+        "hygiene": 68
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": [
+          "item-medkit-field"
+        ]
+      },
+      "relationships": {
+        "npc-marion-vale": {
+          "affinity": 42,
+          "respect": 63,
+          "fear": 9,
+          "loyalty": 39,
+          "trust": 40
         }
-    ],
-    "inventory": [
+      },
+      "factionRelationships": [
         {
-            "itemId": "item-medkit-field",
-            "quantity": 2
-        },
-        {
-            "itemId": "item-ledger-bureau",
-            "quantity": 1
-        },
-        {
-            "itemId": "item-spare-parts",
-            "quantity": 3
+          "factionId": "faction-foundry-league",
+          "standing": 24
         }
-    ],
-    "cityResources": {
-        "foodSecurity": 62,
-        "waterAccess": 70,
-        "materialStock": 50,
-        "corridorStatus": "open"
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "itemId": "item-medkit-field",
+      "quantity": 2
     },
-    "activityLog": [],
-    "activeQuestIds": [],
-    "selectedSquadNpcIds": [
-        "npc-marion-vale",
-        "npc-ida-rhys"
-    ],
-    "activeCombat": null,
-    "activeMissionId": null,
-    "factionStandings": {
-        "faction-civic-compact": 10,
-        "faction-gilded-court": -20,
-        "faction-foundry-league": 5,
-        "faction-tallow-ring": 15,
-        "faction-restored": 0
+    {
+      "itemId": "item-ledger-bureau",
+      "quantity": 1
     },
-    "cityDials": {
-        "control": 45,
-        "prosperity": 35,
-        "unrest": 55,
-        "corruption": 60
+    {
+      "itemId": "item-spare-parts",
+      "quantity": 3
+    }
+  ],
+  "cityResources": {
+    "foodSecurity": 62,
+    "waterAccess": 70,
+    "materialStock": 50,
+    "corridorStatus": "open"
+  },
+  "activityLog": [],
+  "activeQuestIds": [],
+  "selectedSquadNpcIds": [
+    "npc-marion-vale",
+    "npc-ida-rhys"
+  ],
+  "activeCombat": null,
+  "activeMissionId": null,
+  "factionStandings": {
+    "faction-civic-compact": 10,
+    "faction-gilded-court": -20,
+    "faction-foundry-league": 5,
+    "faction-tallow-ring": 15,
+    "faction-restored": 0
+  },
+  "cityDials": {
+    "control": 45,
+    "prosperity": 35,
+    "unrest": 55,
+    "corruption": 60
+  },
+  "pendingEvents": [],
+  "currentDistrictId": "district-harbor",
+  "availableForHire": [
+    {
+      "npcId": "npc-verek-holst",
+      "discoveredInDistrictId": "district-harbor",
+      "wagePerDay": 18,
+      "signingBonus": 0,
+      "requiredFactionId": null,
+      "requiredFactionStanding": 0,
+      "turnsAvailable": 3
     },
-    "pendingEvents": [],
-    "currentDistrictId": null,
-    "availableForHire": [
-        {
-            "npcId": "npc-verek-holst",
-            "discoveredInDistrictId": "district-harbor",
-            "wagePerDay": 18,
-            "signingBonus": 0,
-            "requiredFactionId": null,
-            "requiredFactionStanding": 0,
-            "turnsAvailable": 3
-        },
-        {
-            "npcId": "npc-sable-wrent",
-            "discoveredInDistrictId": "district-ironworks",
-            "wagePerDay": 14,
-            "signingBonus": 50,
-            "requiredFactionId": null,
-            "requiredFactionStanding": 0,
-            "turnsAvailable": 3
-        },
-        {
-            "npcId": "npc-cress-aldmoor",
-            "discoveredInDistrictId": null,
-            "wagePerDay": 20,
-            "signingBonus": 75,
-            "requiredFactionId": null,
-            "requiredFactionStanding": 0,
-            "turnsAvailable": 3
-        },
-        {
-            "npcId": "npc-oswin-farr",
-            "discoveredInDistrictId": "district-harbor",
-            "wagePerDay": 12,
-            "signingBonus": 0,
-            "requiredFactionId": null,
-            "requiredFactionStanding": 0,
-            "turnsAvailable": 3
-        }
-    ],
-    "availableQuests": ["quest-harborwatch", "quest-foundry-escort"],
-    "activeQuests": [],
-    "completedQuestIds": [],
-    "councilSeats": {
-        "faction-civic-compact": 3,
-        "faction-gilded-court": 2,
-        "faction-foundry-league": 2,
-        "faction-tallow-ring": 0,
-        "faction-restored": 0
+    {
+      "npcId": "npc-sable-wrent",
+      "discoveredInDistrictId": "district-ironworks",
+      "wagePerDay": 14,
+      "signingBonus": 50,
+      "requiredFactionId": null,
+      "requiredFactionStanding": 0,
+      "turnsAvailable": 3
     },
-    "institutionalStanding": {
-        "faction-civic-compact": "neutral",
-        "faction-gilded-court": "watched",
-        "faction-foundry-league": "neutral",
-        "faction-tallow-ring": "neutral",
-        "faction-restored": "neutral"
+    {
+      "npcId": "npc-cress-aldmoor",
+      "discoveredInDistrictId": null,
+      "wagePerDay": 20,
+      "signingBonus": 75,
+      "requiredFactionId": null,
+      "requiredFactionStanding": 0,
+      "turnsAvailable": 3
     },
-    "activeCouncilVotes": [],
-    "relationships": {
-        "player-npc-marion-vale": { "affinity": 15, "respect": 20, "fear": 0, "trust": 25, "loyalty": 30 }
-    },
-    "equippedItemDurabilities": {}
+    {
+      "npcId": "npc-oswin-farr",
+      "discoveredInDistrictId": "district-harbor",
+      "wagePerDay": 12,
+      "signingBonus": 0,
+      "requiredFactionId": null,
+      "requiredFactionStanding": 0,
+      "turnsAvailable": 3
+    }
+  ],
+  "availableQuests": [
+    "quest-harborwatch",
+    "quest-foundry-escort"
+  ],
+  "activeQuests": [],
+  "completedQuestIds": [],
+  "councilSeats": {
+    "faction-civic-compact": 3,
+    "faction-gilded-court": 2,
+    "faction-foundry-league": 2,
+    "faction-tallow-ring": 0,
+    "faction-restored": 0
+  },
+  "institutionalStanding": {
+    "faction-civic-compact": "neutral",
+    "faction-gilded-court": "watched",
+    "faction-foundry-league": "neutral",
+    "faction-tallow-ring": "neutral",
+    "faction-restored": "neutral"
+  },
+  "activeCouncilVotes": [],
+  "relationships": {
+    "player-npc-marion-vale": {
+      "affinity": 15,
+      "respect": 20,
+      "fear": 0,
+      "trust": 25,
+      "loyalty": 30
+    }
+  },
+  "equippedItemDurabilities": {},
+  "activeInvestigation": null,
+  "firedEventIds": []
 }

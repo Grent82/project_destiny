@@ -34,6 +34,8 @@ export const shopDefinitionSchema = z
     summary: z.string().min(1),
     offerItemIds: z.array(entityIdSchema).default([]),
     offers: z.array(shopOfferSchema).min(1),
+    requiredFactionId: z.string().nullable().optional(),
+    minFactionStanding: z.number().optional(),
   })
   .strict()
 

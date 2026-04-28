@@ -42,6 +42,10 @@ export function ShopsScreen() {
         <p className="purchase-feedback">{lastPurchaseMessage}</p>
       ) : null}
 
+      {overview.shops.length === 0 && (
+        <p className="empty-state-message">No traders operate in this district. Find a market district to buy and sell.</p>
+      )}
+
       <div className="overview-grid">
         {overview.shops.map((shop) => (
           <article key={shop.id}>

@@ -409,7 +409,7 @@ export function endDay(state: GameState): GameState {
 
   // Step 6: Advance time
   const nextDay = next.day + 1
-  next = { ...next, day: nextDay, timeSlot: 'morning' }
+  next = { ...next, day: nextDay, timeSlot: 'morning', firedEventIds: [] }
   next = appendActivityLogEntry(next, 'system', `The day turns. Day ${nextDay}.`)
 
   // Step 7: Periodic council vote — fire one every 5 days if none active

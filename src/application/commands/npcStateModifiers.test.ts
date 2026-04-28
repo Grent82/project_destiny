@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
-import { initialGameStateSnapshot } from '../application/store/initialGameState'
-import { endDay } from '../application/commands/endDay'
+import { initialGameStateSnapshot } from '../store/initialGameState'
+import { endDay } from './endDay'
 import {
   checkFearRefuseAdvance,
   getFatigueAccuracyPenalty,
   getHungerCombatPenalty,
   getLoyaltyDeployStatus,
   getStressMoraleDecay,
-} from './npcStateModifiers'
+} from '../../domain/npcStateModifiers'
 
 describe('getFatigueAccuracyPenalty', () => {
   it('returns -10 when fatigue is above threshold', () => {

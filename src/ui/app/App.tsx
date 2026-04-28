@@ -10,6 +10,7 @@ import { DistrictMapScreen } from '../screens/DistrictMapScreen'
 import { DistrictsScreen } from '../screens/DistrictsScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
+import { InvestigationScreen } from '../screens/InvestigationScreen'
 import { MissionPrepScreen } from '../screens/MissionPrepScreen'
 import { OpeningScreen } from '../screens/OpeningScreen'
 import { RecruitmentScreen } from '../screens/RecruitmentScreen'
@@ -81,6 +82,7 @@ export function App() {
             <Route path="/districts" element={<DistrictsScreen />} />
             <Route path="/factions" element={<FactionsScreen />} />
             <Route path="/contracts" element={<ContractBoardScreen />} />
+            <Route path="/investigation" element={<InvestigationScreen />} />
             <Route path="/missions" element={<MissionPrepScreen />} />
             <Route path="/shops" element={<ShopsScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
@@ -96,6 +98,7 @@ export function App() {
                     '/districts',
                     '/factions',
                     '/contracts',
+                    '/investigation',
                     '/missions',
                     '/shops',
                     '/combat',

@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { gameActions, selectAvailableForHire } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -5,6 +7,7 @@ export function RecruitmentScreen() {
   const dispatch = useAppDispatch()
   const offers = useAppSelector(selectAvailableForHire)
   const marks = useAppSelector((state) => state.game.money)
+  const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
 
   return (
     <section className="screen-panel">
@@ -13,6 +16,10 @@ export function RecruitmentScreen() {
       <p className="summary">
         Those seeking arrangement with the house. An offer not taken today may not stand tomorrow.
       </p>
+
+      {lastRecruitedName && (
+        <p className="recruit-confirmation">{lastRecruitedName} has joined the house.</p>
+      )}
 
       {offers.length === 0 ? (
         <p className="text-muted">
@@ -49,9 +56,11 @@ export function RecruitmentScreen() {
                         ? `Not enough Marks. Signing cost is ${offer.signingBonus} Marks.`
                         : undefined
                     }
-                    onClick={() =>
+                    onClick={() => {
                       dispatch(gameActions.recruitNpc({ npcId: offer.npcId }))
-                    }
+                      setLastRecruitedName(offer.name)
+                      setTimeout(() => setLastRecruitedName(null), 3000)
+                    }}
                   >
                     Take them on
                   </button>

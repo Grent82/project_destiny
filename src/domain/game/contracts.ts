@@ -106,6 +106,12 @@ export const gameStateSchema = z
       z.string(),
       z.record(z.enum(['weapon', 'armor']), z.number().min(0).max(200))
     ).default({}),
+    activeInvestigation: z.object({
+      questId: z.string(),
+      districtId: z.string().nullable(),
+      rollResult: z.enum(['pending', 'success', 'partial', 'failure']).default('pending'),
+    }).nullable().default(null),
+    firedEventIds: z.array(z.string()).default([]),
   })
   .strict()
 

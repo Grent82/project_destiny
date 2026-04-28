@@ -90,10 +90,80 @@ describe('evaluateEvents', () => {
       originalEvents.map((e) => [e.id, e]),
     )
   })
+
+  it('skips events already in firedEventIds', () => {
+    const state = makeState({
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      firedEventIds: ['event-unpaid-wages-unrest'],
+    })
+    const next = evaluateEvents(state)
+    const ids = next.pendingEvents.map((e) => e.eventId)
+    expect(ids).not.toContain('event-unpaid-wages-unrest')
+  })
+
+  it('populates firedEventIds after evaluateEvents runs', () => {
+    const state = makeState({
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      firedEventIds: [],
+    })
+    const next = evaluateEvents(state)
+    expect(next.firedEventIds).toContain('event-unpaid-wages-unrest')
+  })
+
+  it('does not re-fire same event within same day even if conditions still met', () => {
+    const state = makeState({
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      firedEventIds: ['event-unpaid-wages-unrest'],
+    })
+    const next1 = evaluateEvents(state)
+    const next2 = evaluateEvents(next1)
+    const matches = next2.pendingEvents.filter((e) => e.eventId === 'event-unpaid-wages-unrest')
+    expect(matches).toHaveLength(0)
+  })
 })
 
-describe('applyOutcomes', () => {
-  it('adjustFactionStanding applies delta and clamps', () => {
+describe('district travel event triggers', () => {
+  beforeEach(() => {
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('fires district events after travelToDistrict dispatch', () => {
+    const initialState = makeState({ firedEventIds: [], day: 1 })
+    const next = gameSliceReducer(
+      initialState,
+      gameActions.travelToDistrict('district-the-hollows'),
+    )
+    const ids = next.pendingEvents.map((e) => e.eventId)
+    expect(ids).toContain('event-hollows-entry')
+  })
+
+  it('fires pale approach event when travelling to The Pale', () => {
+    const initialState = makeState({ firedEventIds: [], day: 1 })
+    const next = gameSliceReducer(
+      initialState,
+      gameActions.travelToDistrict('district-the-pale'),
+    )
+    const ids = next.pendingEvents.map((e) => e.eventId)
+    expect(ids).toContain('event-pale-approach')
+  })
+
+  it('does not re-fire district event when travelling to same district again on same day', () => {
+    const initialState = makeState({ firedEventIds: [], day: 1 })
+    const after1 = gameSliceReducer(
+      initialState,
+      gameActions.travelToDistrict('district-the-hollows'),
+    )
+    const after2 = gameSliceReducer(after1, gameActions.travelToDistrict('district-the-hollows'))
+    const matches = after2.pendingEvents.filter((e) => e.eventId === 'event-hollows-entry')
+    expect(matches).toHaveLength(1)
+  })
+})
+
+describe('resolveEvent reducer', () => {
+  it('removes event from pendingEvents and applies outcomes', () => {
     const state = makeState({ factionStandings: { 'faction-civic-compact': 95 } })
     const next = applyOutcomes(state, [
       { type: 'adjustFactionStanding', target: 'faction-civic-compact', delta: 10 },
@@ -166,7 +236,6 @@ describe('applyOutcomes', () => {
 })
 
 describe('resolveEvent reducer', () => {
-  it('removes event from pendingEvents and applies outcomes', () => {
     const initialState = makeState({
       pendingEvents: [{ eventId: 'event-unpaid-wages-unrest', firedOnDay: 1 }],
       money: 500,

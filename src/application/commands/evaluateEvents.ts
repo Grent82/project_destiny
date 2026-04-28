@@ -11,6 +11,8 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
   if (cond.maxFoodSecurity !== undefined && state.cityResources.foodSecurity > cond.maxFoodSecurity) return false
   if (cond.corridorStatus !== undefined && state.cityResources.corridorStatus !== cond.corridorStatus) return false
   if (cond.dayMin !== undefined && state.day < cond.dayMin) return false
+  if (cond.currentDistrict !== undefined && state.currentDistrictId !== cond.currentDistrict) return false
+  if (cond.activeQuestId !== undefined && !state.activeQuests.some((q) => q.questId === cond.activeQuestId)) return false
 
   if (cond.factionStandingBelow) {
     const standing = state.factionStandings[cond.factionStandingBelow.factionId] ?? 0
@@ -28,12 +30,16 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
 
 export function evaluateEvents(state: GameState): GameState {
   const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
+  const alreadyFired = new Set(state.firedEventIds ?? [])
   const newPending: typeof state.pendingEvents = []
+  const newFiredIds: string[] = []
 
   for (const template of contentCatalog.events) {
     if (alreadyPending.has(template.id)) continue
+    if (alreadyFired.has(template.id)) continue
     if (checkConditions(template, state)) {
       newPending.push({ eventId: template.id, firedOnDay: state.day })
+      newFiredIds.push(template.id)
     }
   }
 
@@ -42,5 +48,6 @@ export function evaluateEvents(state: GameState): GameState {
   return {
     ...state,
     pendingEvents: [...state.pendingEvents, ...newPending],
+    firedEventIds: [...(state.firedEventIds ?? []), ...newFiredIds],
   }
 }

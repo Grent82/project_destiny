@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
@@ -13,8 +13,9 @@ import { endDay as endDayCommand } from '../commands/endDay'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../commands/recruitment'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
+import { evaluateEvents } from '../commands/evaluateEvents'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
-import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
+import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
 
@@ -199,6 +200,11 @@ const gameSlice = createSlice({
         message: `Contract accepted: ${quest?.title ?? questId}.`,
       })
       if (state.activityLog.length > 100) state.activityLog.pop()
+
+      const snapshot = current(state)
+      const updated = evaluateEvents(snapshot)
+      state.pendingEvents = updated.pendingEvents
+      state.firedEventIds = updated.firedEventIds
     },
 
     completeQuest(state, action: PayloadAction<{ questId: string }>) {
@@ -401,6 +407,94 @@ const gameSlice = createSlice({
         message: `Equipment repaired. Cost: ${finalRepairCost} Marks.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
       })
       if (state.activityLog.length > 100) state.activityLog.pop()
+    },
+
+    startInvestigation(state, action: PayloadAction<{ questId: string }>) {
+      const quest = getQuestTemplates().find((q) => q.id === action.payload.questId)
+      if (!quest || quest.objectiveType !== 'investigation') return
+      state.activeInvestigation = {
+        questId: action.payload.questId,
+        districtId: quest.districtId,
+        rollResult: 'pending',
+      }
+    },
+
+    resolveInvestigation(state, action: PayloadAction<{ npcIds: string[] }>) {
+      if (!state.activeInvestigation) return
+      const { questId } = state.activeInvestigation
+      const quest = getQuestTemplates().find((q) => q.id === questId)
+      if (!quest) return
+
+      const investigationSkills = ['intrigue', 'security', 'administration', 'negotiation'] as const
+
+      let bestSkillValue = 0
+      action.payload.npcIds.forEach((npcId) => {
+        const rosterNpc = state.roster.find((r) => r.npcId === npcId)
+        if (!rosterNpc) return
+        investigationSkills.forEach((skill) => {
+          const val = rosterNpc.skills[skill] ?? 0
+          if (val > bestSkillValue) bestSkillValue = val
+        })
+      })
+
+      const difficulty = 55
+      const roll = Math.random() * 100
+      const effectiveRoll = roll + (bestSkillValue - difficulty)
+
+      let result: 'success' | 'partial' | 'failure'
+      if (effectiveRoll >= 20) result = 'success'
+      else if (effectiveRoll >= 0) result = 'partial'
+      else result = 'failure'
+
+      state.activeInvestigation.rollResult = result
+
+      if (result === 'success') {
+        state.money += quest.rewardMarks
+        if (quest.rewardStandingFactionId) {
+          state.factionStandings[quest.rewardStandingFactionId] = Math.min(
+            100,
+            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.rewardStandingDelta,
+          )
+        }
+        state.completedQuestIds.push(questId)
+        state.activeQuests = state.activeQuests.filter((q) => q.questId !== questId)
+        state.activityLog.unshift({
+          id: `log-inv-success-${questId}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'economy',
+          message: `The investigation concludes. ${quest.rewardMarks} Marks received.`,
+        })
+      } else if (result === 'partial') {
+        const halfReward = Math.floor(quest.rewardMarks / 2)
+        state.money += halfReward
+        state.completedQuestIds.push(questId)
+        state.activeQuests = state.activeQuests.filter((q) => q.questId !== questId)
+        state.activityLog.unshift({
+          id: `log-inv-partial-${questId}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'economy',
+          message: `The investigation yields something, though not everything. ${halfReward} Marks.`,
+        })
+      } else {
+        if (quest.rewardStandingFactionId) {
+          state.factionStandings[quest.rewardStandingFactionId] = Math.max(
+            -100,
+            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.penaltyStandingDelta,
+          )
+        }
+        state.activeQuests = state.activeQuests.filter((q) => q.questId !== questId)
+        state.activityLog.unshift({
+          id: `log-inv-fail-${questId}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: `The investigation goes nowhere. The opportunity is lost.`,
+        })
+      }
+      if (state.activityLog.length > 100) state.activityLog.pop()
+      state.activeInvestigation = null
     },
 
     setNpcAssignment(state, action: PayloadAction<{ npcId: string; assignment: string }>) {

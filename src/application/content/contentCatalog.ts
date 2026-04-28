@@ -66,6 +66,10 @@ export function getQuestTemplates(): QuestTemplate[] {
   return contentCatalog.quests
 }
 
+export function getNpcDefinitions() {
+  return contentCatalog.npcs
+}
+
 export function getCouncilVoteTemplates(): CouncilVoteEvent[] {
   return contentCatalog.councilVotes
 }

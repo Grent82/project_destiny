@@ -42,6 +42,8 @@ export const eventTriggerConditionsSchema = z
       .object({ factionId: z.string(), threshold: z.number() })
       .optional(),
     dayMin: z.number().optional(),
+    currentDistrict: z.string().optional(),
+    activeQuestId: z.string().optional(),
     probability: z.number().min(0).max(1).default(1),
   })
   .strict()
