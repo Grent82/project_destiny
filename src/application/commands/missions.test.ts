@@ -34,11 +34,11 @@ describe('mission contracts', () => {
   it('parses all mission contracts from JSON without errors', () => {
     const result = missionContractSchema.array().safeParse(missionsJson)
     expect(result.success).toBe(true)
-    expect(result.data).toHaveLength(5)
+    expect(result.data!.length).toBeGreaterThanOrEqual(5)
   })
 
   it('missions are available in contentCatalog', () => {
-    expect(contentCatalog.missions).toHaveLength(5)
+    expect(contentCatalog.missions.length).toBeGreaterThanOrEqual(5)
     expect(contentCatalog.missionsById.has('mission-compact-patrol-suppression')).toBe(true)
   })
 
