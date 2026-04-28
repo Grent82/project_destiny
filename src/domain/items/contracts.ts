@@ -32,6 +32,7 @@ export const itemDefinitionSchema = z
     category: itemCategorySchema,
     tier: positiveIntegerSchema,
     value: nonNegativeIntegerSchema,
+    shopPrice: z.number().min(0).default(0),
     weight: nonNegativeNumberSchema,
     rarity: raritySchema,
     tags: z.array(z.string().min(1)).default([]),

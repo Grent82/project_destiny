@@ -5,24 +5,29 @@ import { endDay, wageForStatus } from './endDay'
 
 describe('wageForStatus', () => {
   it('returns correct wages for each status', () => {
-    expect(wageForStatus('retainer')).toBe(6)
-    expect(wageForStatus('mercenary')).toBe(12)
-    expect(wageForStatus('citizen')).toBe(8)
-    expect(wageForStatus('servant')).toBe(3)
-    expect(wageForStatus('apprentice')).toBe(4)
-    expect(wageForStatus('noble')).toBe(20)
-    expect(wageForStatus('criminal')).toBe(8)
+    expect(wageForStatus('retainer')).toBe(4)
+    expect(wageForStatus('mercenary')).toBe(8)
+    expect(wageForStatus('citizen')).toBe(5)
+    expect(wageForStatus('servant')).toBe(2)
+    expect(wageForStatus('apprentice')).toBe(3)
+    expect(wageForStatus('noble')).toBe(14)
+    expect(wageForStatus('criminal')).toBe(5)
     expect(wageForStatus('prisoner')).toBe(0)
     expect(wageForStatus('family')).toBe(0)
   })
 })
 
 describe('endDay', () => {
-  // Marion Vale: retainer (6 Marks), Ida Rhys: mercenary (12 Marks)
-  // Total daily wage: 18 Marks
+  // Marion Vale: retainer (4 Marks), Ida Rhys: mercenary (8 Marks)
+  // Marion Vale has assignment='working', so she also earns passive income
+  // Total daily wage: 12 Marks
   it('wage deduction reduces credits by the combined daily wage', () => {
-    const next = endDay(initialGameStateSnapshot)
-    expect(next.money).toBe(initialGameStateSnapshot.money - 18)
+    const stateNoWorking = {
+      ...initialGameStateSnapshot,
+      roster: initialGameStateSnapshot.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
+    }
+    const next = endDay(stateNoWorking)
+    expect(next.money).toBe(stateNoWorking.money - 12)
   })
 
   it('hunger rises by 8 each day for non-deployed NPCs', () => {
@@ -57,12 +62,12 @@ describe('endDay', () => {
     const stateWithSteward = {
       ...initialGameStateSnapshot,
       roster: initialGameStateSnapshot.roster.map((npc) =>
-        npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward' } : npc,
+        npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward', assignment: 'idle' as const } : { ...npc, assignment: 'idle' as const },
       ),
     }
     const next = endDay(stateWithSteward)
-    // 300 - 18 wages + 15 steward = 297
-    expect(next.money).toBe(initialGameStateSnapshot.money - 18 + 15)
+    // 500 - 12 wages + 15 steward = 503
+    expect(next.money).toBe(stateWithSteward.money - 12 + 15)
   })
 
   it('day counter increments by 1', () => {

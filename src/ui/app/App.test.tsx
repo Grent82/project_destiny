@@ -24,7 +24,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: /Operations/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'The Roster' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Engagement' })).toBeInTheDocument()
-    expect(screen.getByText('300 Marks')).toBeInTheDocument()
+    expect(screen.getByText('500 Marks')).toBeInTheDocument()
   })
 
   it('deploys from mission prep into the combat route', async () => {

@@ -8,13 +8,19 @@
     "value": 45,
     "weight": 2.0,
     "rarity": "common",
-    "tags": ["light", "coat", "faction-ring", "worker-wear"],
+    "tags": [
+      "light",
+      "coat",
+      "faction-ring",
+      "worker-wear"
+    ],
     "soak": 2,
     "evasionPenalty": 2,
     "speedPenalty": 1,
     "durabilityMax": 60,
     "repairCost": 10,
-    "description": "A heavy waxed canvas coat worn by Tallow Ring workers handling hot product — the multiple layered panels at the torso offer modest protection without advertising armor to anyone looking."
+    "description": "A heavy waxed canvas coat worn by Tallow Ring workers handling hot product — the multiple layered panels at the torso offer modest protection without advertising armor to anyone looking.",
+    "shopPrice": 40
   },
   {
     "id": "armor-light-waste-runner-vest",
@@ -25,13 +31,19 @@
     "value": 60,
     "weight": 1.5,
     "rarity": "common",
-    "tags": ["light", "vest", "expedition", "salvage"],
+    "tags": [
+      "light",
+      "vest",
+      "expedition",
+      "salvage"
+    ],
     "soak": 3,
     "evasionPenalty": 3,
     "speedPenalty": 2,
     "durabilityMax": 55,
     "repairCost": 12,
-    "description": "A salvaged garment rebuilt from layered cloth, raw leather, and whatever rigid scrap could be stitched inside the panels — standard kit for anyone who goes beyond the gates and expects to come back."
+    "description": "A salvaged garment rebuilt from layered cloth, raw leather, and whatever rigid scrap could be stitched inside the panels — standard kit for anyone who goes beyond the gates and expects to come back.",
+    "shopPrice": 45
   },
   {
     "id": "armor-light-apothecary-duster",
@@ -42,13 +54,19 @@
     "value": 130,
     "weight": 1.8,
     "rarity": "uncommon",
-    "tags": ["light", "coat", "treated", "chemical-resistant"],
+    "tags": [
+      "light",
+      "coat",
+      "treated",
+      "chemical-resistant"
+    ],
     "soak": 4,
     "evasionPenalty": 3,
     "speedPenalty": 2,
     "durabilityMax": 65,
     "repairCost": 22,
-    "description": "A long leather coat impregnated with alum, coal-tar oil, and one other compound its maker has not disclosed — worn by compound workers and black-market chemists who expect proximity to reactive substances."
+    "description": "A long leather coat impregnated with alum, coal-tar oil, and one other compound its maker has not disclosed — worn by compound workers and black-market chemists who expect proximity to reactive substances.",
+    "shopPrice": 65
   },
   {
     "id": "armor-medium-compact-chainmail",
@@ -59,13 +77,19 @@
     "value": 180,
     "weight": 5.5,
     "rarity": "common",
-    "tags": ["medium", "mail", "faction-compact", "watch-issue"],
+    "tags": [
+      "medium",
+      "mail",
+      "faction-compact",
+      "watch-issue"
+    ],
     "soak": 6,
     "evasionPenalty": 8,
     "speedPenalty": 5,
     "durabilityMax": 85,
     "repairCost": 35,
-    "description": "Issued to active Compact watchmen on district assignment — a riveted mail vest worn under a tabard with the ward colors, returned to the armory at end of service rotation or recovered from the body."
+    "description": "Issued to active Compact watchmen on district assignment — a riveted mail vest worn under a tabard with the ward colors, returned to the armory at end of service rotation or recovered from the body.",
+    "shopPrice": 90
   },
   {
     "id": "armor-medium-league-foreman-halfplate",
@@ -76,13 +100,19 @@
     "value": 240,
     "weight": 6.0,
     "rarity": "uncommon",
-    "tags": ["medium", "plate", "faction-league", "workshop-issue"],
+    "tags": [
+      "medium",
+      "plate",
+      "faction-league",
+      "workshop-issue"
+    ],
     "soak": 8,
     "evasionPenalty": 11,
     "speedPenalty": 6,
     "durabilityMax": 90,
     "repairCost": 45,
-    "description": "A composite of brigandine chest-panels and spaulders issued to League floor-supervisors who need to walk the smelting halls during labor disputes — not elegant, but made by people who know what metal can do."
+    "description": "A composite of brigandine chest-panels and spaulders issued to League floor-supervisors who need to walk the smelting halls during labor disputes — not elegant, but made by people who know what metal can do.",
+    "shopPrice": 120
   },
   {
     "id": "armor-medium-harbor-boarding-coat",
@@ -93,13 +123,20 @@
     "value": 160,
     "weight": 4.8,
     "rarity": "uncommon",
-    "tags": ["medium", "coat", "faction-compact", "dock-security", "water-resistant"],
+    "tags": [
+      "medium",
+      "coat",
+      "faction-compact",
+      "dock-security",
+      "water-resistant"
+    ],
     "soak": 5,
     "evasionPenalty": 7,
     "speedPenalty": 4,
     "durabilityMax": 78,
     "repairCost": 30,
-    "description": "Oiled canvas over a hidden layer of ring-mail, shaped for movement on wet dock planking — Harbor ward enforcers use these when they board vessels for compliance inspections that sometimes end badly."
+    "description": "Oiled canvas over a hidden layer of ring-mail, shaped for movement on wet dock planking — Harbor ward enforcers use these when they board vessels for compliance inspections that sometimes end badly.",
+    "shopPrice": 85
   },
   {
     "id": "armor-heavy-breach-plate-salvaged",
@@ -110,13 +147,20 @@
     "value": 520,
     "weight": 9.5,
     "rarity": "rare",
-    "tags": ["heavy", "plate", "salvage", "pre-breach", "incomplete"],
+    "tags": [
+      "heavy",
+      "plate",
+      "salvage",
+      "pre-breach",
+      "incomplete"
+    ],
     "soak": 13,
     "evasionPenalty": 18,
     "speedPenalty": 12,
     "durabilityMax": 110,
     "repairCost": 90,
-    "description": "Chest, gorget, and pauldrons recovered from a sealed lower-district armory — the steel predates the Breach and is visibly superior to current production, though the matching leg-harness was not found."
+    "description": "Chest, gorget, and pauldrons recovered from a sealed lower-district armory — the steel predates the Breach and is visibly superior to current production, though the matching leg-harness was not found.",
+    "shopPrice": 180
   },
   {
     "id": "armor-heavy-league-armory-chest",
@@ -127,13 +171,19 @@
     "value": 460,
     "weight": 8.8,
     "rarity": "rare",
-    "tags": ["heavy", "plate", "faction-league", "engineered"],
+    "tags": [
+      "heavy",
+      "plate",
+      "faction-league",
+      "engineered"
+    ],
     "soak": 15,
     "evasionPenalty": 20,
     "speedPenalty": 14,
     "durabilityMax": 120,
     "repairCost": 80,
-    "description": "A full breastplate produced by the League's private armorers for senior enforcement officers — the design borrows from pre-Breach technical drawings and is not commercially available, only issued or confiscated."
+    "description": "A full breastplate produced by the League's private armorers for senior enforcement officers — the design borrows from pre-Breach technical drawings and is not commercially available, only issued or confiscated.",
+    "shopPrice": 200
   },
   {
     "id": "armor-specialized-ring-courier-leather",
@@ -144,13 +194,20 @@
     "value": 310,
     "weight": 1.2,
     "rarity": "uncommon",
-    "tags": ["specialized", "light", "faction-ring", "stealth", "courier"],
+    "tags": [
+      "specialized",
+      "light",
+      "faction-ring",
+      "stealth",
+      "courier"
+    ],
     "soak": 2,
     "evasionPenalty": -8,
     "speedPenalty": -3,
     "durabilityMax": 58,
     "repairCost": 50,
-    "description": "A precisely fitted leather harness made by a Ring-affiliated cobbler — the sole inlays muffle footfall on stone, the cut allows full arm rotation, and the fit is taken from measurements, not stock sizes."
+    "description": "A precisely fitted leather harness made by a Ring-affiliated cobbler — the sole inlays muffle footfall on stone, the cut allows full arm rotation, and the fit is taken from measurements, not stock sizes.",
+    "shopPrice": 110
   },
   {
     "id": "armor-specialized-compact-assessor-coat",
@@ -161,12 +218,18 @@
     "value": 280,
     "weight": 3.5,
     "rarity": "uncommon",
-    "tags": ["specialized", "medium", "faction-compact", "concealed-protection"],
+    "tags": [
+      "specialized",
+      "medium",
+      "faction-compact",
+      "concealed-protection"
+    ],
     "soak": 7,
     "evasionPenalty": 4,
     "speedPenalty": 3,
     "durabilityMax": 72,
     "repairCost": 48,
-    "description": "A formal-cut wool coat worn by Compact property assessors in contested districts — the inner panels are padded with layers of densely woven scrap-metal rings, invisible unless the wearer is searched."
+    "description": "A formal-cut wool coat worn by Compact property assessors in contested districts — the inner panels are padded with layers of densely woven scrap-metal rings, invisible unless the wearer is searched.",
+    "shopPrice": 100
   }
 ]

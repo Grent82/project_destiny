@@ -7,9 +7,13 @@
     "value": 85,
     "weight": 1.2,
     "rarity": "common",
-    "tags": ["healing", "mission"],
+    "tags": [
+      "healing",
+      "mission"
+    ],
     "effects": [],
-    "description": "A sealed canvas roll of League-surplus dressings, thread, and a small vial of antiseptic wash — standard expedition kit, sold at most general stores without documentation."
+    "description": "A sealed canvas roll of League-surplus dressings, thread, and a small vial of antiseptic wash — standard expedition kit, sold at most general stores without documentation.",
+    "shopPrice": 15
   },
   {
     "id": "item-ledger-bureau",
@@ -19,9 +23,13 @@
     "value": 40,
     "weight": 0.4,
     "rarity": "common",
-    "tags": ["administration", "intel"],
+    "tags": [
+      "administration",
+      "intel"
+    ],
     "effects": [],
-    "description": "A Compact-stamped bound ledger with ward-council formatting printed on every page — useful as evidence, cover, or raw intelligence on whichever bureau's name appears on the cover."
+    "description": "A Compact-stamped bound ledger with ward-council formatting printed on every page — useful as evidence, cover, or raw intelligence on whichever bureau's name appears on the cover.",
+    "shopPrice": 30
   },
   {
     "id": "item-spare-parts",
@@ -31,9 +39,13 @@
     "value": 65,
     "weight": 5.5,
     "rarity": "uncommon",
-    "tags": ["repair", "crafting"],
+    "tags": [
+      "repair",
+      "crafting"
+    ],
     "effects": [],
-    "description": "A crate of unsorted mechanical salvage — gears, brackets, fasteners, and cut lengths of rod — sourced from workshop floor sweepings and sold by weight at the League margin."
+    "description": "A crate of unsorted mechanical salvage — gears, brackets, fasteners, and cut lengths of rod — sourced from workshop floor sweepings and sold by weight at the League margin.",
+    "shopPrice": 20
   },
   {
     "id": "item-dressing-league-surplus",
@@ -43,9 +55,19 @@
     "value": 30,
     "weight": 0.6,
     "rarity": "common",
-    "tags": ["healing", "wound-care", "expedition"],
-    "effects": [{"type": "heal", "value": 8}],
-    "description": "A waxed-paper packet of linen strips, a bone needle, and a small tin of pine-tar wound paste — the League prints these in bulk and they turn up in almost every district market."
+    "tags": [
+      "healing",
+      "wound-care",
+      "expedition"
+    ],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 8
+      }
+    ],
+    "description": "A waxed-paper packet of linen strips, a bone needle, and a small tin of pine-tar wound paste — the League prints these in bulk and they turn up in almost every district market.",
+    "shopPrice": 8
   },
   {
     "id": "item-tincture-wound-close",
@@ -55,9 +77,23 @@
     "value": 75,
     "weight": 0.3,
     "rarity": "uncommon",
-    "tags": ["healing", "wound-care", "bleed-stop"],
-    "effects": [{"type": "heal", "value": 15}, {"type": "removeStatus", "value": "bleeding"}],
-    "description": "A dark glass vial of fermented alum and herb-ash solution, carried by field surgeons and sold quietly by apothecaries who ask what happened to the other person."
+    "tags": [
+      "healing",
+      "wound-care",
+      "bleed-stop"
+    ],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 15
+      },
+      {
+        "type": "removeStatus",
+        "value": "bleeding"
+      }
+    ],
+    "description": "A dark glass vial of fermented alum and herb-ash solution, carried by field surgeons and sold quietly by apothecaries who ask what happened to the other person.",
+    "shopPrice": 20
   },
   {
     "id": "item-ration-compact-brick",
@@ -67,9 +103,20 @@
     "value": 12,
     "weight": 0.5,
     "rarity": "common",
-    "tags": ["food", "hunger", "field-use"],
-    "effects": [{"type": "reduceStat", "stat": "hunger", "value": -30}],
-    "description": "A dense block of ground grain, rendered fat, and salt pressed into a waxy rectangle — designed by Compact nutritionists to sustain a watchman through a twelve-hour shift and no more."
+    "tags": [
+      "food",
+      "hunger",
+      "field-use"
+    ],
+    "effects": [
+      {
+        "type": "reduceStat",
+        "stat": "hunger",
+        "value": -30
+      }
+    ],
+    "description": "A dense block of ground grain, rendered fat, and salt pressed into a waxy rectangle — designed by Compact nutritionists to sustain a watchman through a twelve-hour shift and no more.",
+    "shopPrice": 5
   },
   {
     "id": "item-tonic-fatigue-ironworks",
@@ -79,9 +126,20 @@
     "value": 20,
     "weight": 0.2,
     "rarity": "common",
-    "tags": ["fatigue", "stamina", "stimulant"],
-    "effects": [{"type": "reduceStat", "stat": "fatigue", "value": -25}],
-    "description": "A bitter brown liquid brewed by League workshop apothecaries for extended production shifts — it works for about four hours, then the collapse is worse than the original fatigue."
+    "tags": [
+      "fatigue",
+      "stamina",
+      "stimulant"
+    ],
+    "effects": [
+      {
+        "type": "reduceStat",
+        "stat": "fatigue",
+        "value": -25
+      }
+    ],
+    "description": "A bitter brown liquid brewed by League workshop apothecaries for extended production shifts — it works for about four hours, then the collapse is worse than the original fatigue.",
+    "shopPrice": 8
   },
   {
     "id": "item-graydust",
@@ -91,9 +149,25 @@
     "value": 55,
     "weight": 0.1,
     "rarity": "uncommon",
-    "tags": ["narcotic", "stress-relief", "controlled", "faction-ring"],
-    "effects": [{"type": "reduceStat", "stat": "stress", "value": -40}, {"type": "addStatus", "value": "mild-impairment"}],
-    "description": "A pale powder sold by Tallow Ring distributors as a ceremonial compound and used primarily as a stress suppressant — the Compact classifies it as a controlled substance without making meaningful effort to restrict it."
+    "tags": [
+      "narcotic",
+      "stress-relief",
+      "controlled",
+      "faction-ring"
+    ],
+    "effects": [
+      {
+        "type": "reduceStat",
+        "stat": "stress",
+        "value": -40
+      },
+      {
+        "type": "addStatus",
+        "value": "mild-impairment"
+      }
+    ],
+    "description": "A pale powder sold by Tallow Ring distributors as a ceremonial compound and used primarily as a stress suppressant — the Compact classifies it as a controlled substance without making meaningful effort to restrict it.",
+    "shopPrice": 25
   },
   {
     "id": "item-antitoxin-riverpurge",
@@ -103,9 +177,25 @@
     "value": 35,
     "weight": 0.2,
     "rarity": "common",
-    "tags": ["antitoxin", "water", "expedition", "poison-cure"],
-    "effects": [{"type": "removeStatus", "value": "fouled-water-sickness"}, {"type": "reduceStat", "stat": "toxin", "value": -20}],
-    "description": "A small brown bottle of activated charcoal suspension and binding agents, taken after consuming water from the two fouled rivers or any unsanctioned well below the third district tier."
+    "tags": [
+      "antitoxin",
+      "water",
+      "expedition",
+      "poison-cure"
+    ],
+    "effects": [
+      {
+        "type": "removeStatus",
+        "value": "fouled-water-sickness"
+      },
+      {
+        "type": "reduceStat",
+        "stat": "toxin",
+        "value": -20
+      }
+    ],
+    "description": "A small brown bottle of activated charcoal suspension and binding agents, taken after consuming water from the two fouled rivers or any unsanctioned well below the third district tier.",
+    "shopPrice": 12
   },
   {
     "id": "item-stimulant-combat",
@@ -115,9 +205,26 @@
     "value": 90,
     "weight": 0.1,
     "rarity": "uncommon",
-    "tags": ["stimulant", "combat", "strength", "controlled"],
-    "effects": [{"type": "boostStat", "stat": "strength", "value": 8, "duration": 3}, {"type": "addStatus", "value": "combat-stimulated"}],
-    "description": "A chalk-white pressed tablet smuggled in from a pre-Breach pharmaceutical source; the Tallow Ring sells them to dockhands, guards, and anyone who knows the right knock — the crash afterward lasts a day."
+    "tags": [
+      "stimulant",
+      "combat",
+      "strength",
+      "controlled"
+    ],
+    "effects": [
+      {
+        "type": "boostStat",
+        "stat": "strength",
+        "value": 8,
+        "duration": 3
+      },
+      {
+        "type": "addStatus",
+        "value": "combat-stimulated"
+      }
+    ],
+    "description": "A chalk-white pressed tablet smuggled in from a pre-Breach pharmaceutical source; the Tallow Ring sells them to dockhands, guards, and anyone who knows the right knock — the crash afterward lasts a day.",
+    "shopPrice": 25
   },
   {
     "id": "item-poultice-tarthatch",
@@ -127,9 +234,24 @@
     "value": 18,
     "weight": 0.4,
     "rarity": "common",
-    "tags": ["healing", "wound-care", "cheap", "infection-risk"],
-    "effects": [{"type": "heal", "value": 5}, {"type": "addStatus", "value": "infection-risk"}],
-    "description": "A cheap wound covering made from pine pitch, rendered tallow, and dried herb pulp — it seals the wound and may or may not seal the infection inside, but it costs six Marks and is available everywhere."
+    "tags": [
+      "healing",
+      "wound-care",
+      "cheap",
+      "infection-risk"
+    ],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 5
+      },
+      {
+        "type": "addStatus",
+        "value": "infection-risk"
+      }
+    ],
+    "description": "A cheap wound covering made from pine pitch, rendered tallow, and dried herb pulp — it seals the wound and may or may not seal the infection inside, but it costs six Marks and is available everywhere.",
+    "shopPrice": 6
   },
   {
     "id": "item-salve-burngrade",
@@ -139,9 +261,23 @@
     "value": 28,
     "weight": 0.3,
     "rarity": "common",
-    "tags": ["healing", "burn-care", "faction-league"],
-    "effects": [{"type": "heal", "value": 6}, {"type": "removeStatus", "value": "burn"}],
-    "description": "A greasy white compound issued in small tins by League workshop medics — it draws out burn heat, reduces scarring when applied within the hour, and is sold in bulk to anyone working near smelting pits."
+    "tags": [
+      "healing",
+      "burn-care",
+      "faction-league"
+    ],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 6
+      },
+      {
+        "type": "removeStatus",
+        "value": "burn"
+      }
+    ],
+    "description": "A greasy white compound issued in small tins by League workshop medics — it draws out burn heat, reduces scarring when applied within the hour, and is sold in bulk to anyone working near smelting pits.",
+    "shopPrice": 10
   },
   {
     "id": "item-lockpick-ringcut",
@@ -151,9 +287,21 @@
     "value": 110,
     "weight": 0.3,
     "rarity": "uncommon",
-    "tags": ["tool", "lock", "covert", "faction-ring"],
-    "effects": [{"type": "skillBonus", "skill": "lockpicking", "value": 15}],
-    "description": "Seven picks, two tension bars, and a rake, ground from high-carbon steel wire by a Ring-affiliated locksmith who does not write receipts — the case is a folded strip of soft leather that makes no sound."
+    "tags": [
+      "tool",
+      "lock",
+      "covert",
+      "faction-ring"
+    ],
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "lockpicking",
+        "value": 15
+      }
+    ],
+    "description": "Seven picks, two tension bars, and a rake, ground from high-carbon steel wire by a Ring-affiliated locksmith who does not write receipts — the case is a folded strip of soft leather that makes no sound.",
+    "shopPrice": 35
   },
   {
     "id": "item-caliper-league-engineering",
@@ -163,9 +311,21 @@
     "value": 85,
     "weight": 0.8,
     "rarity": "uncommon",
-    "tags": ["tool", "engineering", "precision", "faction-league"],
-    "effects": [{"type": "skillBonus", "skill": "engineering", "value": 12}],
-    "description": "A vernier caliper in a fitted wooden case, stamped with the Foundry League's calibration mark — used for precision measurement in workshop fitting, structural assessment, and mechanical repair."
+    "tags": [
+      "tool",
+      "engineering",
+      "precision",
+      "faction-league"
+    ],
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "engineering",
+        "value": 12
+      }
+    ],
+    "description": "A vernier caliper in a fitted wooden case, stamped with the Foundry League's calibration mark — used for precision measurement in workshop fitting, structural assessment, and mechanical repair.",
+    "shopPrice": 30
   },
   {
     "id": "item-forgery-scribe-kit",
@@ -175,9 +335,22 @@
     "value": 220,
     "weight": 1.0,
     "rarity": "rare",
-    "tags": ["tool", "forgery", "faction-ring", "covert", "document-crime"],
-    "effects": [{"type": "skillBonus", "skill": "forgery", "value": 20}],
-    "description": "A flat case containing four nib sizes, three ink blends matched to Compact paper stock, a wax-seal press with interchangeable dies, and a folded reference sheet of official document layouts."
+    "tags": [
+      "tool",
+      "forgery",
+      "faction-ring",
+      "covert",
+      "document-crime"
+    ],
+    "effects": [
+      {
+        "type": "skillBonus",
+        "skill": "forgery",
+        "value": 20
+      }
+    ],
+    "description": "A flat case containing four nib sizes, three ink blends matched to Compact paper stock, a wax-seal press with interchangeable dies, and a folded reference sheet of official document layouts.",
+    "shopPrice": 80
   },
   {
     "id": "item-lamp-signal-expedition",
@@ -187,9 +360,20 @@
     "value": 70,
     "weight": 1.5,
     "rarity": "uncommon",
-    "tags": ["tool", "light", "signaling", "expedition"],
-    "effects": [{"type": "enableAction", "action": "long-range-signal"}],
-    "description": "A shuttered oil lantern with a mirrored back-plate and a hand-operated baffles for coded light signaling — standard equipment for expedition teams operating beyond wall-sight distance."
+    "tags": [
+      "tool",
+      "light",
+      "signaling",
+      "expedition"
+    ],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "long-range-signal"
+      }
+    ],
+    "description": "A shuttered oil lantern with a mirrored back-plate and a hand-operated baffles for coded light signaling — standard equipment for expedition teams operating beyond wall-sight distance.",
+    "shopPrice": 25
   },
   {
     "id": "item-permit-reproduction",
@@ -199,9 +383,21 @@
     "value": 900,
     "weight": 0.1,
     "rarity": "rare",
-    "tags": ["document", "legal", "faction-compact", "permit", "high-value"],
-    "effects": [{"type": "grantRight", "right": "second-child-legal"}],
-    "description": "A watermarked vellum certificate issued by the Compact Breeding Register authorizing the holder to register one additional child without penalty — eight months of a wage worker's salary, available only through proper channels, and transferable to whoever holds it."
+    "tags": [
+      "document",
+      "legal",
+      "faction-compact",
+      "permit",
+      "high-value"
+    ],
+    "effects": [
+      {
+        "type": "grantRight",
+        "right": "second-child-legal"
+      }
+    ],
+    "description": "A watermarked vellum certificate issued by the Compact Breeding Register authorizing the holder to register one additional child without penalty — eight months of a wage worker's salary, available only through proper channels, and transferable to whoever holds it.",
+    "shopPrice": 80
   },
   {
     "id": "item-papers-false-citizen",
@@ -211,9 +407,21 @@
     "value": 250,
     "weight": 0.1,
     "rarity": "uncommon",
-    "tags": ["document", "forgery", "illegal", "identity", "faction-ring"],
-    "effects": [{"type": "grantStatus", "status": "false-citizen-identity"}],
-    "description": "A complete set of forged Compact registration documents — name, ward assignment, and citizen classification — produced on genuine paper stock using ink that matches archived entries; detectable only by deep cross-reference."
+    "tags": [
+      "document",
+      "forgery",
+      "illegal",
+      "identity",
+      "faction-ring"
+    ],
+    "effects": [
+      {
+        "type": "grantStatus",
+        "status": "false-citizen-identity"
+      }
+    ],
+    "description": "A complete set of forged Compact registration documents — name, ward assignment, and citizen classification — produced on genuine paper stock using ink that matches archived entries; detectable only by deep cross-reference.",
+    "shopPrice": 60
   },
   {
     "id": "item-tally-debt-instrument",
@@ -223,9 +431,20 @@
     "value": 400,
     "weight": 0.1,
     "rarity": "uncommon",
-    "tags": ["document", "currency", "credit", "tally"],
-    "effects": [{"type": "tradeValue", "value": 400}],
-    "description": "A written credit certificate payable to the bearer at a named counting-house, signed and wax-sealed — functionally currency for transactions too large to carry in coin, and difficult to trace if the original issuer has reason to look away."
+    "tags": [
+      "document",
+      "currency",
+      "credit",
+      "tally"
+    ],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 400
+      }
+    ],
+    "description": "A written credit certificate payable to the bearer at a named counting-house, signed and wax-sealed — functionally currency for transactions too large to carry in coin, and difficult to trace if the original issuer has reason to look away.",
+    "shopPrice": 50
   },
   {
     "id": "item-form-ward-petition",
@@ -235,9 +454,20 @@
     "value": 15,
     "weight": 0.1,
     "rarity": "common",
-    "tags": ["document", "legal", "faction-compact", "civic"],
-    "effects": [{"type": "enableAction", "action": "file-ward-petition"}],
-    "description": "A pre-stamped Compact petition form authorizing a ward-council submission — blank, genuine, and technically requiring a forty-day response window that is observed in the breach more than in fact."
+    "tags": [
+      "document",
+      "legal",
+      "faction-compact",
+      "civic"
+    ],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "file-ward-petition"
+      }
+    ],
+    "description": "A pre-stamped Compact petition form authorizing a ward-council submission — blank, genuine, and technically requiring a forty-day response window that is observed in the breach more than in fact.",
+    "shopPrice": 10
   },
   {
     "id": "item-iron-raw-ingots",
@@ -247,9 +477,15 @@
     "value": 50,
     "weight": 6.0,
     "rarity": "common",
-    "tags": ["material", "iron", "faction-league", "trade"],
+    "tags": [
+      "material",
+      "iron",
+      "faction-league",
+      "trade"
+    ],
     "effects": [],
-    "description": "A stack of thumb-shaped iron ingots poured at a League smelter and stamped with the foundry mark — valued by independent smiths, workshop operators, and anyone who needs to buy League cooperation without saying so directly."
+    "description": "A stack of thumb-shaped iron ingots poured at a League smelter and stamped with the foundry mark — valued by independent smiths, workshop operators, and anyone who needs to buy League cooperation without saying so directly.",
+    "shopPrice": 20
   },
   {
     "id": "item-mechanism-pre-breach",
@@ -259,9 +495,16 @@
     "value": 380,
     "weight": 2.2,
     "rarity": "rare",
-    "tags": ["salvage", "pre-breach", "mechanism", "expedition", "high-value"],
+    "tags": [
+      "salvage",
+      "pre-breach",
+      "mechanism",
+      "expedition",
+      "high-value"
+    ],
     "effects": [],
-    "description": "A sealed metal housing recovered from a pre-Breach site beyond the walls — the internal gearing moves with tolerances no current workshop can match, and three different factions have standing purchase interest for this category of find."
+    "description": "A sealed metal housing recovered from a pre-Breach site beyond the walls — the internal gearing moves with tolerances no current workshop can match, and three different factions have standing purchase interest for this category of find.",
+    "shopPrice": 50
   },
   {
     "id": "item-tallow-bricks",
@@ -271,9 +514,15 @@
     "value": 25,
     "weight": 4.0,
     "rarity": "common",
-    "tags": ["fuel", "tallow", "faction-ring", "trade"],
+    "tags": [
+      "fuel",
+      "tallow",
+      "faction-ring",
+      "trade"
+    ],
     "effects": [],
-    "description": "Rendered animal fat pressed into standard fuel bricks, sourced through Tallow Ring distribution channels — the primary heating and lamp fuel in lower-district households, controlled by the Ring and priced accordingly."
+    "description": "Rendered animal fat pressed into standard fuel bricks, sourced through Tallow Ring distribution channels — the primary heating and lamp fuel in lower-district households, controlled by the Ring and priced accordingly.",
+    "shopPrice": 10
   },
   {
     "id": "item-salt-block",
@@ -283,9 +532,15 @@
     "value": 140,
     "weight": 3.0,
     "rarity": "uncommon",
-    "tags": ["food-preservation", "salt", "trade", "scarce"],
+    "tags": [
+      "food-preservation",
+      "salt",
+      "trade",
+      "scarce"
+    ],
     "effects": [],
-    "description": "A dense block of compressed salt — scarce since the trade roads beyond the gates collapsed, valued for food preservation, medical use, and the simple fact that very little of it enters the city in any given month."
+    "description": "A dense block of compressed salt — scarce since the trade roads beyond the gates collapsed, valued for food preservation, medical use, and the simple fact that very little of it enters the city in any given month.",
+    "shopPrice": 35
   },
   {
     "id": "item-tradegood-coal-sack",
@@ -295,9 +550,15 @@
     "value": 35,
     "weight": 8.0,
     "rarity": "common",
-    "tags": ["fuel", "coal", "faction-league", "industrial"],
+    "tags": [
+      "fuel",
+      "coal",
+      "faction-league",
+      "industrial"
+    ],
     "effects": [],
-    "description": "A sealed burlap sack of certified-weight metallurgical coal with the League assay stamp — the only coal in Valdenmoor that comes with legal weight guarantee, and therefore the only kind League workshops accept without argument."
+    "description": "A sealed burlap sack of certified-weight metallurgical coal with the League assay stamp — the only coal in Valdenmoor that comes with legal weight guarantee, and therefore the only kind League workshops accept without argument.",
+    "shopPrice": 15
   },
   {
     "id": "item-gift-fine-ink",
@@ -307,9 +568,22 @@
     "value": 95,
     "weight": 0.2,
     "rarity": "uncommon",
-    "tags": ["gift", "luxury", "affinity", "scholar", "scribe"],
-    "effects": [{"type": "affinityBonus", "target": "scholar-npc", "value": 12}],
-    "description": "A sealed glass vial of deep-black iron-gall ink, ground with lamp-black for permanence — a meaningful gift to any scribe, magistrate, or scholar, representing about a month of their professional supply."
+    "tags": [
+      "gift",
+      "luxury",
+      "affinity",
+      "scholar",
+      "scribe"
+    ],
+    "effects": [
+      {
+        "type": "affinityBonus",
+        "target": "scholar-npc",
+        "value": 12
+      }
+    ],
+    "description": "A sealed glass vial of deep-black iron-gall ink, ground with lamp-black for permanence — a meaningful gift to any scribe, magistrate, or scholar, representing about a month of their professional supply.",
+    "shopPrice": 40
   },
   {
     "id": "item-gift-pressed-flower-fold",
@@ -319,9 +593,21 @@
     "value": 60,
     "weight": 0.1,
     "rarity": "uncommon",
-    "tags": ["gift", "sentimental", "affinity", "rarity"],
-    "effects": [{"type": "affinityBonus", "target": "any-npc", "value": 8}],
-    "description": "A dried flower pressed between waxed paper, sourced from the small settlement at Carrath's Fold — rare in Valdenmoor and valued as proof that something living survives beyond the walls."
+    "tags": [
+      "gift",
+      "sentimental",
+      "affinity",
+      "rarity"
+    ],
+    "effects": [
+      {
+        "type": "affinityBonus",
+        "target": "any-npc",
+        "value": 8
+      }
+    ],
+    "description": "A dried flower pressed between waxed paper, sourced from the small settlement at Carrath's Fold — rare in Valdenmoor and valued as proof that something living survives beyond the walls.",
+    "shopPrice": 25
   },
   {
     "id": "item-gift-bone-token",
@@ -331,9 +617,22 @@
     "value": 28,
     "weight": 0.1,
     "rarity": "common",
-    "tags": ["gift", "charm", "affinity", "ward-culture", "luck"],
-    "effects": [{"type": "affinityBonus", "target": "working-district-npc", "value": 6}],
-    "description": "A small disc of carved bone incised with ward-specific luck marks — sold by market stall carvers in working districts, given between neighbors, coworkers, and people who want to say they're thinking of someone without spending words."
+    "tags": [
+      "gift",
+      "charm",
+      "affinity",
+      "ward-culture",
+      "luck"
+    ],
+    "effects": [
+      {
+        "type": "affinityBonus",
+        "target": "working-district-npc",
+        "value": 6
+      }
+    ],
+    "description": "A small disc of carved bone incised with ward-specific luck marks — sold by market stall carvers in working districts, given between neighbors, coworkers, and people who want to say they're thinking of someone without spending words.",
+    "shopPrice": 12
   },
   {
     "id": "item-gift-calling-token",
@@ -343,9 +642,26 @@
     "value": 300,
     "weight": 0.1,
     "rarity": "rare",
-    "tags": ["gift", "status", "affinity", "faction-court", "social"],
-    "effects": [{"type": "affinityBonus", "target": "noble-npc", "value": 20}, {"type": "grantAccess", "location": "gilded-heights-events"}],
-    "description": "A small gold-alloy disc engraved with a House crest and the bearer's name — given between Gilded Heights families as an acknowledgment of social standing; receiving one implies an invitation is possible."
+    "tags": [
+      "gift",
+      "status",
+      "affinity",
+      "faction-court",
+      "social"
+    ],
+    "effects": [
+      {
+        "type": "affinityBonus",
+        "target": "noble-npc",
+        "value": 20
+      },
+      {
+        "type": "grantAccess",
+        "location": "gilded-heights-events"
+      }
+    ],
+    "description": "A small gold-alloy disc engraved with a House crest and the bearer's name — given between Gilded Heights families as an acknowledgment of social standing; receiving one implies an invitation is possible.",
+    "shopPrice": 80
   },
   {
     "id": "item-module-water-purifier",
@@ -355,9 +671,21 @@
     "value": 160,
     "weight": 5.0,
     "rarity": "uncommon",
-    "tags": ["household", "water", "health", "base-improvement"],
-    "effects": [{"type": "baseImprovement", "stat": "water-quality", "value": 2}],
-    "description": "A three-stage ceramic filtration stack packed with activated char and clean sand — installed over a collection basin, it removes the primary contaminants from fouled-source water well enough to drink without antitoxin."
+    "tags": [
+      "household",
+      "water",
+      "health",
+      "base-improvement"
+    ],
+    "effects": [
+      {
+        "type": "baseImprovement",
+        "stat": "water-quality",
+        "value": 2
+      }
+    ],
+    "description": "A three-stage ceramic filtration stack packed with activated char and clean sand — installed over a collection basin, it removes the primary contaminants from fouled-source water well enough to drink without antitoxin.",
+    "shopPrice": 55
   },
   {
     "id": "item-module-herb-garden",
@@ -367,9 +695,21 @@
     "value": 45,
     "weight": 3.5,
     "rarity": "common",
-    "tags": ["household", "food", "medicine", "base-improvement"],
-    "effects": [{"type": "baseImprovement", "stat": "herb-supply", "value": 1}],
-    "description": "A deep window-mounted planting box with a soil mix already conditioned — grows medicinal and culinary herbs from seed in a south-facing opening, producing enough to meaningfully supplement consumable costs per season."
+    "tags": [
+      "household",
+      "food",
+      "medicine",
+      "base-improvement"
+    ],
+    "effects": [
+      {
+        "type": "baseImprovement",
+        "stat": "herb-supply",
+        "value": 1
+      }
+    ],
+    "description": "A deep window-mounted planting box with a soil mix already conditioned — grows medicinal and culinary herbs from seed in a south-facing opening, producing enough to meaningfully supplement consumable costs per season.",
+    "shopPrice": 20
   },
   {
     "id": "item-module-lock-reinforcement",
@@ -379,9 +719,20 @@
     "value": 30,
     "weight": 4.0,
     "rarity": "common",
-    "tags": ["household", "security", "base-improvement"],
-    "effects": [{"type": "baseImprovement", "stat": "entry-security", "value": 1}],
-    "description": "A fitted iron bar that brackets across a door frame on the interior, preventing forced entry without cutting through the wall — sold at League ironmongers and installed in about an hour."
+    "tags": [
+      "household",
+      "security",
+      "base-improvement"
+    ],
+    "effects": [
+      {
+        "type": "baseImprovement",
+        "stat": "entry-security",
+        "value": 1
+      }
+    ],
+    "description": "A fitted iron bar that brackets across a door frame on the interior, preventing forced entry without cutting through the wall — sold at League ironmongers and installed in about an hour.",
+    "shopPrice": 15
   },
   {
     "id": "item-material-scrap-cloth",
@@ -391,9 +742,15 @@
     "value": 10,
     "weight": 2.0,
     "rarity": "common",
-    "tags": ["material", "cloth", "crafting", "repair"],
+    "tags": [
+      "material",
+      "cloth",
+      "crafting",
+      "repair"
+    ],
     "effects": [],
-    "description": "A bundle of mixed-weight fabric offcuts from tailor floors and salvage piles — used in padding, patching, and cheap wound dressing when nothing better is available."
+    "description": "A bundle of mixed-weight fabric offcuts from tailor floors and salvage piles — used in padding, patching, and cheap wound dressing when nothing better is available.",
+    "shopPrice": 5
   },
   {
     "id": "item-material-charcoal-bricks",
@@ -403,8 +760,14 @@
     "value": 22,
     "weight": 1.5,
     "rarity": "common",
-    "tags": ["material", "chemical", "medical", "crafting"],
+    "tags": [
+      "material",
+      "chemical",
+      "medical",
+      "crafting"
+    ],
     "effects": [],
-    "description": "Compressed blocks of activated wood-char, used in water filtration, antitoxin preparation, and a half-dozen apothecary compound recipes — sold by weight at most chemistry stalls in the market district."
+    "description": "Compressed blocks of activated wood-char, used in water filtration, antitoxin preparation, and a half-dozen apothecary compound recipes — sold by weight at most chemistry stalls in the market district.",
+    "shopPrice": 8
   }
 ]

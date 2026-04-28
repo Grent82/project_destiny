@@ -24,7 +24,7 @@ describe('game store integration', () => {
     expect(selectDashboardSummary(state)).toMatchObject({
       day: 1,
       timeSlot: 'morning',
-      money: 300,
+      money: 500,
       rosterCount: 2,
       assignedSquadCount: 2,
     })

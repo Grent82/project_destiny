@@ -402,6 +402,13 @@ const gameSlice = createSlice({
       })
       if (state.activityLog.length > 100) state.activityLog.pop()
     },
+
+    setNpcAssignment(state, action: PayloadAction<{ npcId: string; assignment: string }>) {
+      const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+      if (!npc) return
+      if (npc.assignment === 'deployed' || npc.assignment === 'assigned_title') return
+      npc.assignment = action.payload.assignment as typeof npc.assignment
+    },
   },
 })
 

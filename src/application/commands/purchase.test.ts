@@ -11,7 +11,7 @@ describe('purchaseItemFromShop', () => {
       'item-spare-parts',
     )
 
-    expect(nextState.money).toBe(230)
+    expect(nextState.money).toBe(430)
     expect(
       nextState.inventory.find((entry) => entry.itemId === 'item-spare-parts')
         ?.quantity,
