@@ -41,6 +41,8 @@ export const combatantStateSchema = z
     staggered: z.boolean(),
     equippedWeaponId: entityIdSchema.nullable(),
     equippedArmorId: entityIdSchema.nullable(),
+    lore: z.string().optional(),
+    creatureType: z.enum(['human', 'beast', 'undead', 'corrupted']).optional(),
   })
   .strict()
   .superRefine((combatant, context) => {

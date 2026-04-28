@@ -35,6 +35,7 @@ export function selectDistrictMapEntries(state: RootState) {
     dangerLevel: def.dangerLevel,
     accessRestricted: def.accessRestricted,
     narrativeSummary: def.narrativeSummary,
+    narrativeHook: def.narrativeHook,
     isCurrent: def.id === currentId,
   }))
 }

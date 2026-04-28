@@ -15,6 +15,7 @@ function toCombatantSummary(combatant: CombatantState) {
     effectiveRange: combatant.effectiveRange,
     damageLabel: `${combatant.damageMin}-${combatant.damageMax}`,
     defeated: combatant.health === 0,
+    lore: combatant.lore,
   }
 }
 

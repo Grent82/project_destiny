@@ -121,6 +121,10 @@ export function DistrictMapScreen() {
                 {district.narrativeSummary}
               </p>
 
+              {district.narrativeHook && (
+                <p className="district-narrative-hook">{district.narrativeHook}</p>
+              )}
+
               {isCurrent && (
                 <p className="badge badge--inline badge--mt">
                   You are here

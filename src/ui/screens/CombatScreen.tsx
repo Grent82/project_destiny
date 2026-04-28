@@ -162,6 +162,9 @@ export function CombatScreen() {
                       Health {combatant.health}/{combatant.maxHealth}
                     </span>
                     <span>Morale {combatant.morale}</span>
+                    {combatant.lore && (
+                      <p className="enemy-lore">{combatant.lore}</p>
+                    )}
                     <div className="badge-row">
                       <span className="badge">{combatant.effectiveRange}</span>
                       <span className="badge">Damage {combatant.damageLabel}</span>

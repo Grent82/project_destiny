@@ -4,12 +4,23 @@
     "name": "Harbor Ward",
     "summary": "A noisy trade district where dock labor, black-market goods, and mercenary traffic overlap.",
     "controllingFactionId": "faction-civic-compact",
-    "contestedByFactionIds": ["faction-tallow-ring"],
-    "shopTypes": ["general_store", "weapon_dealer", "black_market"],
-    "tags": ["trade", "high-risk", "entry-zone"],
+    "contestedByFactionIds": [
+      "faction-tallow-ring"
+    ],
+    "shopTypes": [
+      "general_store",
+      "weapon_dealer",
+      "black_market"
+    ],
+    "tags": [
+      "trade",
+      "high-risk",
+      "entry-zone"
+    ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes — goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else."
+    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes — goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
+    "narrativeHook": "The trade roads run south. Bandits own them after the third milestone."
   },
   {
     "id": "district-gilded-heights",
@@ -17,11 +28,20 @@
     "summary": "A wealthy district of salons, estates, and political favors.",
     "controllingFactionId": "faction-gilded-court",
     "contestedByFactionIds": [],
-    "shopTypes": ["tailor", "bookshop", "apothecary"],
-    "tags": ["wealthy", "political", "prestige"],
+    "shopTypes": [
+      "tailor",
+      "bookshop",
+      "apothecary"
+    ],
+    "tags": [
+      "wealthy",
+      "political",
+      "prestige"
+    ],
     "dangerLevel": 1,
     "accessRestricted": true,
-    "narrativeSummary": "Gilded Heights does not have guards at the gate — it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission."
+    "narrativeSummary": "Gilded Heights does not have guards at the gate — it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
+    "narrativeHook": "The highland passes are nominally under Civic Compact jurisdiction. Nominally."
   },
   {
     "id": "district-ironworks",
@@ -29,35 +49,69 @@
     "summary": "A district of mills, workshops, and industrial contractors under constant pressure.",
     "controllingFactionId": "faction-foundry-league",
     "contestedByFactionIds": [],
-    "shopTypes": ["workshop", "armorer", "general_store"],
-    "tags": ["industrial", "labor", "repair"],
+    "shopTypes": [
+      "workshop",
+      "armorer",
+      "general_store"
+    ],
+    "tags": [
+      "industrial",
+      "labor",
+      "repair"
+    ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here — on paper; in practice, the terms are set by who can keep the furnaces lit."
+    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here — on paper; in practice, the terms are set by who can keep the furnaces lit.",
+    "narrativeHook": "The mines are three days east. Some still produce. Most are haunted."
   },
   {
     "id": "district-the-pale",
     "name": "The Pale",
     "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks — nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
     "controllingFactionId": null,
-    "contestedByFactionIds": ["faction-civic-compact", "faction-tallow-ring", "faction-restored"],
-    "shopTypes": ["black_market", "general_store", "apothecary"],
-    "tags": ["grey-zone", "contested", "informal-economy", "high-opportunity"],
+    "contestedByFactionIds": [
+      "faction-civic-compact",
+      "faction-tallow-ring",
+      "faction-restored"
+    ],
+    "shopTypes": [
+      "black_market",
+      "general_store",
+      "apothecary"
+    ],
+    "tags": [
+      "grey-zone",
+      "contested",
+      "informal-economy",
+      "high-opportunity"
+    ],
     "dangerLevel": 3,
     "accessRestricted": false,
-    "narrativeSummary": "The Pale is where the city's accounting breaks down — too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet."
+    "narrativeSummary": "The Pale is where the city's accounting breaks down — too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
+    "narrativeHook": "The old garrison road leads to the ruins of the previous city. Nobody comes back unchanged."
   },
   {
     "id": "district-the-warrens",
     "name": "The Warrens",
     "summary": "The oldest residential district — six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
     "controllingFactionId": "faction-civic-compact",
-    "contestedByFactionIds": ["faction-restored"],
-    "shopTypes": ["general_store", "apothecary"],
-    "tags": ["residential", "underclass", "high-unrest", "restored-influence"],
+    "contestedByFactionIds": [
+      "faction-restored"
+    ],
+    "shopTypes": [
+      "general_store",
+      "apothecary"
+    ],
+    "tags": [
+      "residential",
+      "underclass",
+      "high-unrest",
+      "restored-influence"
+    ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives — crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver."
+    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives — crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
+    "narrativeHook": "The sewers connect to the undercroft. Older than the city. Darker too."
   },
   {
     "id": "district-the-hollows",
@@ -65,10 +119,19 @@
     "summary": "A condemned easternmost district, officially evacuated after structural collapse twenty years ago. Unofficially: squatters, Ring caches, Restored extremist cells, and a staging point for wall-adjacent expeditions into the Waste.",
     "controllingFactionId": null,
     "contestedByFactionIds": [],
-    "shopTypes": ["black_market"],
-    "tags": ["ruined", "dangerous", "contested", "salvage-rich", "no-law"],
+    "shopTypes": [
+      "black_market"
+    ],
+    "tags": [
+      "ruined",
+      "dangerous",
+      "contested",
+      "salvage-rich",
+      "no-law"
+    ],
     "dangerLevel": 5,
     "accessRestricted": true,
-    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching — collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go."
+    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching — collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
+    "narrativeHook": "The Hollows backs up against the outer wall. There are doors in that wall. Unofficial ones."
   }
 ]

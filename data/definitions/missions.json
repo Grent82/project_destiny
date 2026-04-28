@@ -10,7 +10,10 @@
     "rewardStanding": 12,
     "penaltyStanding": 8,
     "difficulty": "easy",
-    "tags": ["enforcement", "political"]
+    "tags": [
+      "enforcement",
+      "political"
+    ]
   },
   {
     "id": "mission-ring-cargo-recovery",
@@ -23,7 +26,10 @@
     "rewardStanding": 10,
     "penaltyStanding": 6,
     "difficulty": "standard",
-    "tags": ["retrieval", "criminal"]
+    "tags": [
+      "retrieval",
+      "criminal"
+    ]
   },
   {
     "id": "mission-league-ironworks-security",
@@ -36,7 +42,10 @@
     "rewardStanding": 8,
     "penaltyStanding": 5,
     "difficulty": "easy",
-    "tags": ["security", "industrial"]
+    "tags": [
+      "security",
+      "industrial"
+    ]
   },
   {
     "id": "mission-court-asset-retrieval",
@@ -49,7 +58,11 @@
     "rewardStanding": 15,
     "penaltyStanding": 10,
     "difficulty": "hard",
-    "tags": ["retrieval", "political", "sensitive"]
+    "tags": [
+      "retrieval",
+      "political",
+      "sensitive"
+    ]
   },
   {
     "id": "mission-hollows-salvage-run",
@@ -62,6 +75,60 @@
     "rewardStanding": 12,
     "penaltyStanding": 4,
     "difficulty": "hard",
-    "tags": ["salvage", "exploration"]
+    "tags": [
+      "salvage",
+      "exploration"
+    ]
+  },
+  {
+    "id": "mission-ruined-outpost",
+    "title": "The Ruined Outpost",
+    "description": "A former supply depot, three hours east of the gates. Word is there's still equipment inside. Word is also that something moved in.",
+    "employerFactionId": "faction-restored",
+    "enemyFactionId": "faction-tallow-ring",
+    "district": "district-the-pale",
+    "rewardCredits": 300,
+    "rewardStanding": 10,
+    "penaltyStanding": 5,
+    "difficulty": "standard",
+    "tags": [
+      "salvage",
+      "beyond-walls",
+      "exploration"
+    ]
+  },
+  {
+    "id": "mission-collapsed-mine",
+    "title": "The Collapsed Mine",
+    "description": "Three days out. Iron ore still runs rich in the lower shafts — if you can clear what's nesting there.",
+    "employerFactionId": "faction-foundry-league",
+    "enemyFactionId": "faction-civic-compact",
+    "district": "district-ironworks",
+    "rewardCredits": 500,
+    "rewardStanding": 15,
+    "penaltyStanding": 8,
+    "difficulty": "hard",
+    "tags": [
+      "extraction",
+      "beyond-walls",
+      "industrial"
+    ]
+  },
+  {
+    "id": "mission-fallen-caravan",
+    "title": "The Fallen Caravan",
+    "description": "A merchant convoy went dark two days ago on the Westway. The cargo manifest is valuable even if the merchants aren't.",
+    "employerFactionId": "faction-tallow-ring",
+    "enemyFactionId": "faction-civic-compact",
+    "district": "district-harbor",
+    "rewardCredits": 350,
+    "rewardStanding": 12,
+    "penaltyStanding": 6,
+    "difficulty": "standard",
+    "tags": [
+      "retrieval",
+      "beyond-walls",
+      "criminal"
+    ]
   }
 ]

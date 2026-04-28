@@ -14,6 +14,7 @@ export const districtDefinitionSchema = z
     dangerLevel: z.number().int().min(1).max(5),
     accessRestricted: z.boolean(),
     narrativeSummary: z.string().min(1),
+    narrativeHook: z.string().optional(),
   })
   .strict()
 

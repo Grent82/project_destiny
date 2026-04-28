@@ -48,7 +48,9 @@
     "encounterRole": "schemer",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "A Court interrogator who dismantles houses through paperwork and patience. She does not need to threaten — the documentation does it for her.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-tomas-rell",
@@ -99,7 +101,9 @@
     "encounterRole": "leader",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated in a confrontation; offer him a contract with terms he can respect and payment that arrives on time",
-    "loyaltyOnRecruit": 20
+    "loyaltyOnRecruit": 20,
+    "lore": "Muscle for hire on a Court contract. Professional enough not to enjoy the work, experienced enough not to need to.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-petra-ashford",
@@ -150,7 +154,9 @@
     "encounterRole": "specialist",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated; offer her a position managing accounts, with clear scope and access to proper records",
-    "loyaltyOnRecruit": 35
+    "loyaltyOnRecruit": 35,
+    "lore": "Debt collector who brings both the ledger and the consequences. She finds disorder genuinely offensive.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-warden-morrow",
@@ -201,7 +207,9 @@
     "encounterRole": "leader",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "A Compact warden who has outlasted every investigation into his conduct. The Warrens are his district in every sense that matters.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-inquisitor-vath",
@@ -252,7 +260,9 @@
     "encounterRole": "specialist",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "She has never raised her voice. A filed form is slower than a blade and leaves fewer questions.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-deputy-heller",
@@ -303,7 +313,9 @@
     "encounterRole": "muscle",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated; show him a better path than sergeant — something that rewards his competence without requiring him to stop thinking",
-    "loyaltyOnRecruit": 45
+    "loyaltyOnRecruit": 45,
+    "lore": "A junior enforcer still learning to stop thinking. That education is progressing on schedule.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-rack",
@@ -354,7 +366,9 @@
     "encounterRole": "muscle",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated in combat; offer him work with a clear chain of command and no requirement to explain himself to people below him",
-    "loyaltyOnRecruit": 25
+    "loyaltyOnRecruit": 25,
+    "lore": "Tallow Ring protection on the Pale circuit. He prefers impressions that last — corpses stop paying rent.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-sira-cole",
@@ -405,7 +419,9 @@
     "encounterRole": "schemer",
     "recruitableOnDefeat": true,
     "recruitCondition": "Outmaneuvered in a logistics conflict; offer her actual authority over supply operations and a cut that reflects what she contributes",
-    "loyaltyOnRecruit": 40
+    "loyaltyOnRecruit": 40,
+    "lore": "The Ring's logistics coordinator for the Harbor-to-Hollows run. She organized a mess into a network they depend on without admitting it.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-dovel",
@@ -456,7 +472,9 @@
     "encounterRole": "specialist",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "A Ring fixer who resolves disputes the brokers can't. He arrives, listens, and tells you what will happen. He is usually right.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-commander-fell",
@@ -507,7 +525,9 @@
     "encounterRole": "leader",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "Gilded Hand field commander. No personal grievance, only objectives and resources. The damage is a contract outcome, not a choice.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-specialist-nem",
@@ -558,7 +578,9 @@
     "encounterRole": "specialist",
     "recruitableOnDefeat": true,
     "recruitCondition": "Outmaneuvered or exposed; offer her a contract with genuine operational independence and no requirement to report everything she knows",
-    "loyaltyOnRecruit": 15
+    "loyaltyOnRecruit": 15,
+    "lore": "Gilded Hand infiltrator who has been inside three organizations and kept what she found. She does not trust easily. She has reasons.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-bruiser-katch",
@@ -609,7 +631,9 @@
     "encounterRole": "muscle",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated in combat; offer him a fair wage and work that is straightforward — no politics, no complications",
-    "loyaltyOnRecruit": 50
+    "loyaltyOnRecruit": 50,
+    "lore": "Gilded Hand muscle. Straightforward work, done cleanly. He has been on enforcement contracts since seventeen and is not surprised by where they lead.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-director-forn",
@@ -660,7 +684,9 @@
     "encounterRole": "leader",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "Director of the Ashen Compact, and former House Valdric employee. He doesn't specify what changed. He is building something that survives.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-operative-weld",
@@ -711,7 +737,9 @@
     "encounterRole": "specialist",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated on a field operation; offer him work that is genuinely interesting for once — he will consider it",
-    "loyaltyOnRecruit": 35
+    "loyaltyOnRecruit": 35,
+    "lore": "Ashen Compact field operative. He has worked three organizations and the work is always the same — only the justification differs.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-contacts-rhen",
@@ -762,7 +790,9 @@
     "encounterRole": "schemer",
     "recruitableOnDefeat": true,
     "recruitCondition": "Outmaneuvered socially; demonstrate that the player's network has doors hers doesn't, and offer access",
-    "loyaltyOnRecruit": 40
+    "loyaltyOnRecruit": 40,
+    "lore": "Ashen Compact social operative. She knows which doors open for money and which for information, and how to convert between them.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-warden-captain-ruk",
@@ -813,7 +843,9 @@
     "encounterRole": "schemer",
     "recruitableOnDefeat": false,
     "recruitCondition": null,
-    "loyaltyOnRecruit": null
+    "loyaltyOnRecruit": null,
+    "lore": "A Compact official who takes a cut from the Ring and the Court both. He has survived four investigations. He does not think of himself as corrupt.",
+    "creatureType": "human"
   },
   {
     "id": "npc-enemy-marsh",
@@ -864,6 +896,8 @@
     "encounterRole": "muscle",
     "recruitableOnDefeat": true,
     "recruitCondition": "Defeated; offer them work and a way out of the Hollows",
-    "loyaltyOnRecruit": 55
+    "loyaltyOnRecruit": 55,
+    "lore": "Mercenary turned opportunist in the Hollows. He took a contract that went wrong and has been improvising since. He is tired in a way that sleep doesn't fix.",
+    "creatureType": "human"
   }
 ]
