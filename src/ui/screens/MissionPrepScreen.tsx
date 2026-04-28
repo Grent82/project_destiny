@@ -6,6 +6,7 @@ import {
   selectAvailableMissions,
   selectCombatScreenState,
   selectMissionPrepSummary,
+  selectSquadCohesion,
   squadRules,
 } from '../../application'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -18,6 +19,7 @@ export function MissionPrepScreen() {
   const summary = useAppSelector(selectMissionPrepSummary)
   const activeMission = useAppSelector(selectActiveMission)
   const missions = useAppSelector(selectAvailableMissions)
+  const cohesion = useAppSelector(selectSquadCohesion)
 
   return (
     <section className="screen-panel">
@@ -29,6 +31,7 @@ export function MissionPrepScreen() {
       <p className="summary">
         Squad size: {summary.selectedSquad.length}/{squadRules.maxSquadSize}
       </p>
+      <p className="squad-cohesion">Squad cohesion: {cohesion}/100</p>
 
       {activeMission && (
         <p className="summary">

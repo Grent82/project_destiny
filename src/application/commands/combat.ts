@@ -11,6 +11,7 @@ import {
   getFatigueAccuracyPenalty,
   getHungerCombatPenalty,
 } from '../../domain/npcStateModifiers'
+import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { getArmorProfile, getWeaponProfile } from '../content/equipmentCatalog'
 import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
@@ -24,7 +25,31 @@ function isAlive(combatant: CombatantState) {
   return combatant.health > 0
 }
 
-function buildAllyCombatant(npc: NpcRuntimeState, equippedItemDurabilities: GameState['equippedItemDurabilities']): CombatantState {
+/**
+ * Compute hit chance bonus/penalty from relationships.
+ * Called when building ally combatants.
+ * Returns a modifier in range [-0.15, +0.15].
+ */
+export function getRelationshipCombatModifier(
+  npcId: string,
+  relationships: Record<string, RelationshipAxes>
+): number {
+  const key = buildRelationshipKey('player', npcId)
+  const rel = relationships[key]
+  if (!rel) return 0
+
+  const loyaltyBonus = (rel.loyalty - 50) / 1000  // ±0.05 max
+  const trustBonus = (rel.trust - 50) / 1000       // ±0.05 max
+  const fearPenalty = rel.fear > 70 ? -(rel.fear - 70) / 1000 : 0 // up to -0.03
+
+  return Math.max(-0.15, Math.min(0.15, loyaltyBonus + trustBonus + fearPenalty))
+}
+
+function buildAllyCombatant(
+  npc: NpcRuntimeState,
+  equippedItemDurabilities: GameState['equippedItemDurabilities'],
+  relationships: Record<string, RelationshipAxes> = {},
+): CombatantState {
   const definition = contentCatalog.npcsById.get(npc.npcId)
   const skill = Math.max(npc.skills.melee, npc.skills.ranged)
   const effectiveRange: CombatRange =
@@ -39,6 +64,10 @@ function buildAllyCombatant(npc: NpcRuntimeState, equippedItemDurabilities: Game
   const armorDurability = equippedItemDurabilities[npc.npcId]?.['armor'] ?? 100
   const armorDurMod = getDurabilityArmorModifier(armorDurability)
 
+  const relModifier = getRelationshipCombatModifier(npc.npcId, relationships)
+  const skillAccuracy = Math.max(1, Math.floor(Math.max(1, baseAccuracy + statePenalty) * weaponDurMod))
+  const hitChance = Math.max(0.05, Math.min(0.95, skillAccuracy / 100 + relModifier))
+
   return {
     combatantId: `ally-${npc.npcId}`,
     sourceNpcId: npc.npcId,
@@ -48,7 +77,7 @@ function buildAllyCombatant(npc: NpcRuntimeState, equippedItemDurabilities: Game
     health: Math.max(35, npc.states.health),
     morale: npc.states.morale,
     skill,
-    accuracy: Math.max(1, Math.floor(Math.max(1, baseAccuracy + statePenalty) * weaponDurMod)),
+    accuracy: Math.max(0, Math.min(100, Math.round(hitChance * 100))),
     damageMin: Math.max(8, Math.floor((npc.attributes.might + skill) / 12)),
     damageMax: Math.max(12, Math.floor((npc.attributes.might + skill) / 9)),
     effectiveRange,
@@ -458,7 +487,7 @@ export function startCombatEncounter(state: GameState): GameState {
     return state
   }
 
-  const allies = squad.map((npc) => buildAllyCombatant(npc, state.equippedItemDurabilities))
+  const allies = squad.map((npc) => buildAllyCombatant(npc, state.equippedItemDurabilities, state.relationships))
   const enemies = allies.map((_, index) => buildEnemyCombatant(index, allies))
   const combatants = [...allies, ...enemies].sort(
     (left, right) => right.speed - left.speed || right.skill - left.skill,
@@ -628,6 +657,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
               requiredFactionId: null,
               requiredFactionStanding: 0,
               turnsAvailable: 3,
+              source: 'combat' as const,
             },
           ],
         }
@@ -706,6 +736,18 @@ export function concludeCombatEncounter(state: GameState): GameState {
   // Write health, assignment, and emotional aftermath back to roster
   const isVictory = combat.outcome === 'victory'
   const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
+
+  // Post-combat relationship boosts for surviving allies (shared experience)
+  nextState = { ...nextState, relationships: { ...nextState.relationships } }
+  for (const ally of allyCombatants) {
+    if (ally.health > 0) {
+      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'affinity', 2)
+      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 1)
+      if (isVictory && mission) {
+        applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 3)
+      }
+    }
+  }
 
   nextState = {
     ...nextState,
