@@ -31,8 +31,8 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
 function isOnCooldown(template: EventTemplate, state: GameState): boolean {
   const lastDay = state.lastFiredDay[template.id]
   if (lastDay === undefined) return false
-  if (!template.repeatable) return true
-  return state.day - lastDay < template.cooldownDays
+  if (!(template.repeatable ?? false)) return true
+  return state.day - lastDay < (template.cooldownDays ?? 7)
 }
 
 export function evaluateEvents(state: GameState): GameState {
