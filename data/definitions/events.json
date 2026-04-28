@@ -560,5 +560,183 @@
       "npc",
       "social"
     ]
+  },
+  {
+    "id": "event-loyal-npc-milestone",
+    "title": "A Reliable Hand",
+    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "triggerConditions": {
+      "dayMin": 10,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-bonus",
+        "label": "Pay a loyalty bonus (30 Marks)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -30
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The bonus is delivered without ceremony. The work continues — better than before."
+          }
+        ]
+      },
+      {
+        "id": "choice-acknowledge-words",
+        "label": "Acknowledge the work — no payment",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You say something brief. They nod. Neither of you makes more of it than it is."
+          }
+        ]
+      },
+      {
+        "id": "choice-ignore-milestone",
+        "label": "Say nothing",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 2
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The moment passes. They noticed."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "loyalty",
+      "social"
+    ]
+  },
+  {
+    "id": "event-stressed-npc-warning",
+    "title": "Someone Is Close to Breaking",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
+    "triggerConditions": {
+      "minUnrest": 55,
+      "probability": 0.45
+    },
+    "choices": [
+      {
+        "id": "choice-give-rest",
+        "label": "Give them two days off — no assignments",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "They take the time. They come back steadier. The gap in the roster costs you, but less than a breakdown would have."
+          }
+        ]
+      },
+      {
+        "id": "choice-pay-recovery",
+        "label": "Pay for proper rest and a physician (25 Marks)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -25
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -8
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The physician signs off in two days. The rest does the rest. They return without the hollow look."
+          }
+        ]
+      },
+      {
+        "id": "choice-push-through",
+        "label": "Push through — the work does not wait",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 6
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The work continues. So does the damage. You will deal with the consequences when they arrive."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "stress",
+      "social"
+    ]
+  },
+  {
+    "id": "event-harbor-windfall",
+    "title": "Shipment Without a Manifest",
+    "description": "A rare cargo arrived in the Harbor Ward last night ahead of any announced schedule. The dock broker is selling quickly and quietly before the Compact inspectors arrive. The price will not last the morning.",
+    "triggerConditions": {
+      "probability": 0.2,
+      "dayMin": 2
+    },
+    "choices": [
+      {
+        "id": "choice-invest-shipment",
+        "label": "Buy in — invest 80 Marks",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -80
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "prosperity",
+            "delta": 6
+          },
+          {
+            "type": "adjustCityResource",
+            "target": "materialStock",
+            "delta": 8
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
+          }
+        ]
+      },
+      {
+        "id": "choice-pass-windfall",
+        "label": "Pass — the timing is suspicious",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You decline. The cargo moves without you. Someone else made the margin."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "economy",
+      "market",
+      "harbor"
+    ]
   }
 ]
