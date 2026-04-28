@@ -6,7 +6,7 @@ import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { getWeaponDurabilityMax, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
+import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
@@ -355,21 +355,21 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               type="button"
               onClick={() => setEquipSlot('primaryWeaponId')}
             >
-              Primary Weapon {detail.loadout?.primaryWeaponId ? '✓' : '—'}
+              Primary: {getWeaponName(detail.loadout?.primaryWeaponId ?? null) ?? '— None'}
             </button>
             <button
               className="action-button"
               type="button"
               onClick={() => setEquipSlot('secondaryWeaponId')}
             >
-              Secondary Weapon {detail.loadout?.secondaryWeaponId ? '✓' : '—'}
+              Secondary: {getWeaponName(detail.loadout?.secondaryWeaponId ?? null) ?? '— None'}
             </button>
             <button
               className="action-button"
               type="button"
               onClick={() => setEquipSlot('armorId')}
             >
-              Armor {detail.loadout?.armorId ? '✓' : '—'}
+              Armor: {getArmorName(detail.loadout?.armorId ?? null) ?? '— None'}
             </button>
           </div>
           {equipSlot && (

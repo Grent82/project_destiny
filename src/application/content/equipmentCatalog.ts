@@ -56,6 +56,7 @@ export { UNARMED_PROFILE, UNARMORED_PROFILE }
 
 interface RawWeapon {
   id: string
+  name?: string
   durabilityMax?: number
   repairCost?: number
   [key: string]: unknown
@@ -63,6 +64,7 @@ interface RawWeapon {
 
 interface RawArmor {
   id: string
+  name?: string
   durabilityMax?: number
   repairCost?: number
   [key: string]: unknown
@@ -94,4 +96,14 @@ export function getArmorRepairCost(armorId: string | null): number {
 export function getArmorDurabilityMax(armorId: string | null): number {
   if (!armorId) return 100
   return rawArmorById.get(armorId)?.durabilityMax ?? 100
+}
+
+export function getWeaponName(weaponId: string | null): string | null {
+  if (!weaponId) return null
+  return (rawWeaponsById.get(weaponId)?.name as string | undefined) ?? null
+}
+
+export function getArmorName(armorId: string | null): string | null {
+  if (!armorId) return null
+  return (rawArmorById.get(armorId)?.name as string | undefined) ?? null
 }
