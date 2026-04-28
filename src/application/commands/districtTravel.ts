@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { generateDistrictHireOffers } from './generateHireOffers'
 
 function buildTravelMessage(name: string, dangerLevel: number): string {
   if (dangerLevel >= 5) return `You move through ${name}. The street remembers you.`
@@ -13,9 +14,9 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
   const name = district?.name ?? districtId
   const dangerLevel = district?.dangerLevel ?? 1
   const message = buildTravelMessage(name, dangerLevel)
-  return appendActivityLogEntry(
-    { ...state, currentDistrictId: districtId },
-    'system',
-    message,
-  )
+
+  const nextState: GameState = { ...state, currentDistrictId: districtId, availableForHire: [...state.availableForHire] }
+  generateDistrictHireOffers(nextState, districtId)
+
+  return appendActivityLogEntry(nextState, 'system', message)
 }

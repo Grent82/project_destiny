@@ -7,8 +7,9 @@ import {
 import { appendActivityLogEntry } from './activityLog'
 import { evaluateEvents } from './evaluateEvents'
 import { expireHireOffers } from './recruitment'
-import { getCouncilVoteTemplates } from '../content/contentCatalog'
+import { getCouncilVoteTemplates, contentCatalog } from '../content/contentCatalog'
 import { applyPassiveDrift, applyProximityGains, applyRelationshipDelta } from './adjustRelationship'
+import { generateDistrictHireOffers } from './generateHireOffers'
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -80,19 +81,19 @@ const SKILL_KEYS: (keyof Skills)[] = [
 export function wageForStatus(status: NpcStatus): number {
   switch (status) {
     case 'retainer':
-      return 6
-    case 'mercenary':
-      return 12
-    case 'citizen':
-      return 8
-    case 'servant':
-      return 3
-    case 'apprentice':
       return 4
-    case 'noble':
-      return 20
-    case 'criminal':
+    case 'mercenary':
       return 8
+    case 'citizen':
+      return 5
+    case 'servant':
+      return 2
+    case 'apprentice':
+      return 3
+    case 'noble':
+      return 14
+    case 'criminal':
+      return 5
     case 'prisoner':
       return 0
     case 'family':
@@ -180,6 +181,40 @@ export function endDay(state: GameState): GameState {
         },
       }
     }),
+  }
+
+  // Step 2b: Recovering NPCs regain health each day
+  const hasMedic = next.roster.some(
+    (r) => r.activeTitle === 'title-medic' && r.assignment !== 'deployed',
+  )
+  const baseRecovery = 15
+  const medicBonus = hasMedic ? 10 : 0
+
+  for (const npc of next.roster.filter((r) => r.assignment === 'recovering')) {
+    const newHealth = Math.min(100, npc.states.health + baseRecovery + medicBonus)
+    const fullyRecovered = newHealth >= 80
+    const npcDef = contentCatalog.npcsById.get(npc.npcId)
+
+    next = {
+      ...next,
+      roster: next.roster.map((r) =>
+        r.npcId === npc.npcId
+          ? {
+              ...r,
+              assignment: fullyRecovered ? ('idle' as const) : r.assignment,
+              states: { ...r.states, health: newHealth },
+            }
+          : r,
+      ),
+    }
+
+    if (fullyRecovered) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npcDef?.name ?? npc.npcId} is recovered. Back on roster.`,
+      )
+    }
   }
 
   // Step 3: Threshold event checks
@@ -314,6 +349,27 @@ export function endDay(state: GameState): GameState {
     }
   }
 
+  // Step 4b: Working NPC passive income
+  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  for (const runtimeNpc of workingNpcs) {
+    const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
+    if (!npcDef) continue
+
+    const skills = npcDef.startingSkills as Record<string, number>
+    const nonCombatSkills = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
+    const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
+    const income = Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
+    next = { ...next, money: next.money + income }
+
+    if (income >= 10) {
+      next = appendActivityLogEntry(
+        next,
+        'economy',
+        `${npcDef.name} brings in ${income} Marks from day work.`,
+      )
+    }
+  }
+
   // Step 5: Resource consequences
   next = applyEndOfDayResources(next)
 
@@ -382,5 +438,14 @@ export function endDay(state: GameState): GameState {
   }
 
   // Step 8: Evaluate world events
-  return evaluateEvents(expireHireOffers(next))
+  const afterExpiry = expireHireOffers(next)
+
+  // Step 9: Every 3 days, refresh hire offers for the current district
+  if (nextDay % 3 === 0 && afterExpiry.currentDistrictId) {
+    const refreshed: GameState = { ...afterExpiry, availableForHire: [...afterExpiry.availableForHire] }
+    generateDistrictHireOffers(refreshed, afterExpiry.currentDistrictId)
+    return evaluateEvents(refreshed)
+  }
+
+  return evaluateEvents(afterExpiry)
 }

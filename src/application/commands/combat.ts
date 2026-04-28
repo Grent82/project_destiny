@@ -16,6 +16,7 @@ import { getArmorProfile, getWeaponProfile } from '../content/equipmentCatalog'
 import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
+import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
 
@@ -606,6 +607,38 @@ export function concludeCombatEncounter(state: GameState): GameState {
       applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 2)
     }
 
+    // Recruitable defeated enemies
+    const recruitableDefs = (enemyNpcsData as Array<{ id: string; name: string; recruitableOnDefeat: boolean }>)
+      .filter((en) => en.recruitableOnDefeat)
+    if (recruitableDefs.length > 0) {
+      const alreadyOffered = new Set(nextState.availableForHire.map((o) => o.npcId))
+      const alreadyHired = new Set(nextState.roster.map((r) => r.npcId))
+      const eligible = recruitableDefs.filter((en) => !alreadyOffered.has(en.id) && !alreadyHired.has(en.id))
+      if (eligible.length > 0) {
+        const pick = eligible[Math.floor(Math.random() * eligible.length)]!
+        nextState = {
+          ...nextState,
+          availableForHire: [
+            ...nextState.availableForHire,
+            {
+              npcId: pick.id,
+              discoveredInDistrictId: nextState.currentDistrictId,
+              wagePerDay: 10,
+              signingBonus: 0,
+              requiredFactionId: null,
+              requiredFactionStanding: 0,
+              turnsAvailable: 3,
+            },
+          ],
+        }
+        nextState = appendActivityLogEntry(
+          nextState,
+          'system',
+          `${pick.name} is defeated but alive. They may be willing to talk.`,
+        )
+      }
+    }
+
     if (mission) {
       const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
       const enemyCurrent = nextState.factionStandings[mission.enemyFactionId] ?? 0
@@ -668,6 +701,54 @@ export function concludeCombatEncounter(state: GameState): GameState {
       nextState = appendActivityLogEntry(nextState, 'combat',
         `The squad was driven back. "${mission.title}" failed. Standing with ${employerName} suffers.`)
     }
+  }
+
+  // Write health, assignment, and emotional aftermath back to roster
+  const isVictory = combat.outcome === 'victory'
+  const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
+
+  nextState = {
+    ...nextState,
+    roster: nextState.roster.map((npc) => {
+      const ally = allyCombatants.find((c) => c.sourceNpcId === npc.npcId)
+      if (!ally) return npc
+
+      const newHealth = Math.max(0, Math.min(100, ally.health))
+      const isKO = newHealth <= 0
+
+      let newStress = npc.states.stress
+      let newMorale = npc.states.morale
+
+      // Victory/defeat emotional response
+      if (isVictory) {
+        newMorale = Math.min(100, newMorale + 5)
+        newStress = Math.max(0, newStress - 3)
+      } else {
+        newMorale = Math.max(0, newMorale - 8)
+        newStress = Math.min(100, newStress + 8)
+      }
+
+      // Combat is stressful regardless
+      newStress = Math.min(100, newStress + 3)
+
+      // High-injury stress spike
+      if (newHealth < 30 && !isKO) {
+        newStress = Math.min(100, newStress + 5)
+      }
+
+      return {
+        ...npc,
+        assignment: isKO ? 'recovering' : 'idle',
+        states: {
+          ...npc.states,
+          health: newHealth,
+          morale: newMorale,
+          stress: newStress,
+          injury: Math.min(100, npc.states.injury + Math.max(0, npc.states.health - newHealth)),
+        },
+      }
+    }),
+    selectedSquadNpcIds: [],
   }
 
   return appendActivityLogEntry(nextState, 'system', 'The encounter is concluded. The squad returns.')
