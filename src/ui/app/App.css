@@ -747,6 +747,7 @@ strong { color: var(--text-secondary); }
 }
 
 @media (max-width: 860px) {
+  .app-shell {
     grid-template-columns: 1fr;
   }
 

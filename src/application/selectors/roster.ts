@@ -2,17 +2,21 @@ import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 
 export function selectRosterEntries(state: RootState) {
-  return state.game.roster.map((npc) => ({
-    npcId: npc.npcId,
-    name: contentCatalog.npcsById.get(npc.npcId)?.name ?? npc.npcId,
-    status: contentCatalog.npcsById.get(npc.npcId)?.status ?? 'citizen',
-    assignment: npc.assignment,
-    activeTitle: npc.activeTitle,
-    health: npc.states.health,
-    morale: npc.states.morale,
-    stress: npc.states.stress,
-    loyalty: npc.traits.loyalty,
-  }))
+  return state.game.roster.map((npc) => {
+    const def = contentCatalog.npcsById.get(npc.npcId)
+      ?? contentCatalog.enemyNpcsById.get(npc.npcId)
+    return {
+      npcId: npc.npcId,
+      name: def?.name ?? npc.npcId,
+      status: (def as any)?.status ?? 'operative',
+      assignment: npc.assignment,
+      activeTitle: npc.activeTitle,
+      health: npc.states.health,
+      morale: npc.states.morale,
+      stress: npc.states.stress,
+      loyalty: npc.traits.loyalty,
+    }
+  })
 }
 
 export function selectRosterDetail(state: RootState, npcId: string) {

@@ -28,6 +28,22 @@
       "security": 52,
       "standingWithPlayer": 10,
       "activePressure": 21
+    },
+    {
+      "factionId": "faction-tallow-ring",
+      "power": 45,
+      "wealth": 60,
+      "security": 50,
+      "standingWithPlayer": 0,
+      "activePressure": 5
+    },
+    {
+      "factionId": "faction-restored",
+      "power": 30,
+      "wealth": 25,
+      "security": 35,
+      "standingWithPlayer": 0,
+      "activePressure": 0
     }
   ],
   "districts": [
@@ -48,6 +64,24 @@
       "controllingFactionId": "faction-foundry-league",
       "danger": 35,
       "marketPressure": 62
+    },
+    {
+      "districtId": "district-the-pale",
+      "controllingFactionId": "faction-restored",
+      "danger": 65,
+      "marketPressure": 40
+    },
+    {
+      "districtId": "district-the-warrens",
+      "controllingFactionId": "faction-tallow-ring",
+      "danger": 70,
+      "marketPressure": 55
+    },
+    {
+      "districtId": "district-the-hollows",
+      "controllingFactionId": "uncontrolled",
+      "danger": 80,
+      "marketPressure": 30
     }
   ],
   "roster": [

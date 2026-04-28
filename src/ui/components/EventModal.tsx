@@ -1,10 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { gameActions, selectPendingEvents } from '../../application'
 
 export function EventModal() {
-  const dispatch = useDispatch()
-  const pendingEvents = useSelector(selectPendingEvents)
+  const dispatch = useAppDispatch()
+  const pendingEvents = useAppSelector(selectPendingEvents)
 
   if (pendingEvents.length === 0) return null
 

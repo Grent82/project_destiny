@@ -52,6 +52,7 @@ export function RecruitmentScreen() {
                 </div>
                 <div style={{ marginTop: '0.5rem' }}>
                   <button
+                    className="action-button"
                     type="button"
                     disabled={!canAfford}
                     title={

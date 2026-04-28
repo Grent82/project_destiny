@@ -1,5 +1,6 @@
 import districts from '../../../data/definitions/districts.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
+import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import events from '../../../data/definitions/events.json'
 import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
@@ -51,6 +52,8 @@ export const contentCatalog = {
   missionsById: new Map(parsedMissions.map((m) => [m.id, m])),
   npcs: parsedNpcs,
   npcsById: toMap(parsedNpcs),
+  enemyNpcs: enemyNpcsData as Array<{ id: string; name: string; [key: string]: unknown }>,
+  enemyNpcsById: new Map((enemyNpcsData as Array<{ id: string; name: string }>).map((e) => [e.id, e])),
   shops: parsedShops,
   shopsById: toMap(parsedShops),
   events: parsedEvents,
