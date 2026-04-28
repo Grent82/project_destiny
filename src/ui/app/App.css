@@ -261,6 +261,12 @@ strong { color: var(--text-secondary); }
   color: #fff8e6;
 }
 
+.nav-link-step::before {
+  content: '↳ ';
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
 .content {
   padding: 2rem;
 }
@@ -1275,4 +1281,20 @@ a:focus-visible,
   border-left: 2px solid var(--accent, #8b6e4e);
   padding-left: 0.6rem;
   margin-top: 0.5rem;
+}
+
+.status-bar-events-alert {
+  color: #d7bf82;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-bar-end-day {
+  margin-left: auto;
+  font-size: var(--size-sm);
+  padding: 0.25rem 0.75rem;
 }

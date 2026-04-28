@@ -51,7 +51,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
       </p>
       <div className="session-actions">
         <button
-          className="action-button"
+          className="action-button action-button--secondary"
           onClick={() => {
             saveCurrentSession(store, saveStore)
             setCanLoadSavedSession(true)
@@ -62,7 +62,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
           Save session
         </button>
         <button
-          className="action-button"
+          className="action-button action-button--secondary"
           disabled={!canLoadSavedSession}
           onClick={() => {
             const didLoad = loadSavedSession(store, saveStore)
@@ -80,16 +80,6 @@ export function DashboardScreen(props: DashboardScreenProps) {
       <p className="summary">Loading replaces the current in-memory session.</p>
       {sessionMessage ? <p className="purchase-feedback">{sessionMessage}</p> : null}
       <div className="stats-grid">
-        <article>
-          <h2>The Day</h2>
-          <p>
-            Day {summary.day}, {summary.timeSlot}
-          </p>
-        </article>
-        <article>
-          <h2>Marks</h2>
-          <p>{summary.money} Marks</p>
-        </article>
         <article>
           <h2>Personnel</h2>
           <p>{summary.rosterCount} in house service</p>

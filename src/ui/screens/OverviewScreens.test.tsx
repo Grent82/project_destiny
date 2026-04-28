@@ -1,20 +1,20 @@
 import { render, screen } from '@testing-library/react'
 
 import { AppProviders } from '../app/AppProviders'
-import { DistrictsScreen } from './DistrictsScreen'
+import { DistrictMapScreen } from './DistrictMapScreen'
 import { FactionsScreen } from './FactionsScreen'
 
 describe('overview screens', () => {
-  it('renders seeded district overview entries', () => {
+  it('renders seeded district map entries', () => {
     render(
       <AppProviders>
-        <DistrictsScreen />
+        <DistrictMapScreen />
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Districts' })).toBeInTheDocument()
-    expect(screen.getByText('Harbor Ward')).toBeInTheDocument()
-    expect(screen.getByText(/Civic Compact/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'The City' })).toBeInTheDocument()
+    expect(screen.getAllByText('Harbor Ward').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Compact').length).toBeGreaterThan(0)
   })
 
   it('renders seeded faction overview entries', () => {

@@ -54,8 +54,6 @@ describe('DashboardScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByText('500 Marks')).toBeInTheDocument()
-
     await user.click(screen.getByRole('button', { name: 'Save session' }))
 
     expect(screen.getByRole('button', { name: 'Load session' })).toBeEnabled()
@@ -69,12 +67,10 @@ describe('DashboardScreen', () => {
       )
     })
 
-    expect(screen.getByText('405 Marks')).toBeInTheDocument()
     expect(screen.getByText(/Purchased item-medkit-field/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Load session' }))
 
-    expect(screen.getByText('500 Marks')).toBeInTheDocument()
     expect(screen.getByText('Session restored from local snapshot.')).toBeInTheDocument()
   })
 })
