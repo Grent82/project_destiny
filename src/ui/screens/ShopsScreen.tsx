@@ -30,6 +30,13 @@ export function ShopsScreen() {
   const money = gameState.money
   const hasQuartermaster = roster.some((r) => r.activeTitle === 'title-quartermaster')
 
+  const priceNote =
+    overview.corridorStatus === 'blocked'
+      ? 'Prices +30% (corridor blocked)'
+      : overview.corridorStatus === 'disrupted'
+        ? 'Prices +15% (corridor disrupted)'
+        : null
+
   return (
     <section className="screen-panel">
       <p className="eyebrow">House Valdric</p>
@@ -38,93 +45,108 @@ export function ShopsScreen() {
         District vendors. What they carry depends on who controls the ward and how much pressure the market is under.
       </p>
       <p className="summary">Available funds: {overview.money} Marks</p>
+      {priceNote ? (
+        <p className="badge badge-warning">{priceNote}</p>
+      ) : null}
       {lastPurchaseMessage ? (
         <p className="purchase-feedback">{lastPurchaseMessage}</p>
       ) : null}
 
-      {overview.shops.length === 0 && (
-        <p className="empty-state-message">No traders operate in this district. Find a market district to buy and sell.</p>
-      )}
-
-      <div className="overview-grid">
-        {overview.shops.map((shop) => (
-          <article key={shop.id}>
-            <header className="shop-district-header">
-              <div>
-                <h2>{shop.name}</h2>
-                <p className="shop-district-context">
-                  {shop.districtName}
-                  {shop.controllingFactionName ? ` · ${shop.controllingFactionName}` : ''}
-                  {' · '}
-                  {shop.shopType.replace('_', ' ')}
-                </p>
-              </div>
-              <div className="badge-row shop-district-badges">
-                {shop.danger !== null && (
-                  <span className={shop.danger > 50 ? 'badge badge-warning' : 'badge'}>
-                    Danger {shop.danger}
-                  </span>
-                )}
-                {shop.marketPressure !== null && shop.marketPressure > 40 && (
-                  <span className="badge badge-warning">
-                    Market pressure {shop.marketPressure}
-                  </span>
-                )}
-              </div>
-            </header>
-            <p>{shop.summary}</p>
-            <div className="shop-offer-list">
-              {shop.offers.map((offer) => (
-                <div key={`${shop.id}-${offer.itemId}`} className="shop-offer-row">
-                  <div>
-                    <strong>{offer.itemName}</strong>
-                    <p>
-                      {offer.category} · Owned {offer.ownedQuantity}
-                    </p>
-                    <div className="badge-row">
-                      {offer.bestPrice ? (
-                        <span className="badge badge-positive">Best price</span>
-                      ) : (
-                        <span className="badge">+{offer.priceDelta} over best</span>
-                      )}
-                      <span
-                        className={
-                          offer.affordable ? 'badge badge-positive' : 'badge badge-warning'
-                        }
-                      >
-                        {offer.affordable ? 'Affordable' : 'Insufficient funds'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="shop-offer-actions">
-                    <span>{offer.price} Mk</span>
-                    <button
-                      className="action-button"
-                      disabled={!offer.affordable}
-                      onClick={() =>
-                        {
-                          dispatch(
-                            gameActions.purchaseItemFromShop({
-                              shopId: shop.id,
-                              itemId: offer.itemId,
-                            }),
-                          )
-                          setLastPurchaseMessage(
-                            `Purchased ${offer.itemName} from ${shop.name} for ${offer.price} Marks.`,
-                          )
-                        }
-                      }
-                      type="button"
-                    >
-                      Buy
-                    </button>
-                  </div>
+      {overview.shops.length === 0 ? (
+        <p className="summary empty-state">
+          No traders operate here. Travel to another district to find merchants.
+        </p>
+      ) : (
+        <div className="overview-grid">
+          {overview.shops.map((shop) => (
+            <article key={shop.id}>
+              <header className="shop-district-header">
+                <div>
+                  <h2>{shop.name}</h2>
+                  <p className="shop-district-context">
+                    {shop.districtName}
+                    {shop.controllingFactionName ? ` · ${shop.controllingFactionName}` : ''}
+                    {' · '}
+                    {shop.shopType.replace('_', ' ')}
+                  </p>
                 </div>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
+                <div className="badge-row shop-district-badges">
+                  {shop.danger !== null && (
+                    <span className={shop.danger > 50 ? 'badge badge-warning' : 'badge'}>
+                      Danger {shop.danger}
+                    </span>
+                  )}
+                  {shop.marketPressure !== null && shop.marketPressure > 40 && (
+                    <span className="badge badge-warning">
+                      Market pressure {shop.marketPressure}
+                    </span>
+                  )}
+                </div>
+              </header>
+              <p>{shop.summary}</p>
+              {shop.isBlocked ? (
+                <p className="summary badge badge-warning">
+                  ⛔ This establishment does not welcome House Valdric.
+                </p>
+              ) : shop.accessDenied ? (
+                <p className="summary badge badge-warning">
+                  This establishment does not welcome you.
+                </p>
+              ) : (
+                <div className="shop-offer-list">
+                  {shop.offers.map((offer) => (
+                    <div key={`${shop.id}-${offer.itemId}`} className="shop-offer-row">
+                      <div>
+                        <strong>{offer.itemName}</strong>
+                        <p>
+                          {offer.category} · Owned {offer.ownedQuantity}
+                        </p>
+                        <div className="badge-row">
+                          {offer.bestPrice ? (
+                            <span className="badge badge-positive">Best price</span>
+                          ) : (
+                            <span className="badge">+{offer.priceDelta} over best</span>
+                          )}
+                          <span
+                            className={
+                              offer.affordable ? 'badge badge-positive' : 'badge badge-warning'
+                            }
+                          >
+                            {offer.affordable ? 'Affordable' : 'Insufficient funds'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="shop-offer-actions">
+                        <span>{offer.price} Mk</span>
+                        <button
+                          className="action-button"
+                          disabled={!offer.affordable}
+                          onClick={() =>
+                            {
+                              dispatch(
+                                gameActions.purchaseItemFromShop({
+                                  shopId: shop.id,
+                                  itemId: offer.itemId,
+                                }),
+                              )
+                              setLastPurchaseMessage(
+                                `Purchased ${offer.itemName} from ${shop.name} for ${offer.price} Marks.`,
+                              )
+                            }
+                          }
+                          type="button"
+                        >
+                          Buy
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
       <section className="repair-section">
         <h2>Equipment Repair</h2>
         {hasQuartermaster && (

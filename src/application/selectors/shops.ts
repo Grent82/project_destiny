@@ -59,6 +59,11 @@ export const selectShopOverview = createSelector(
             ? (factionStandings[shop.requiredFactionId] ?? 0) < (shop.minFactionStanding ?? 0)
             : false
 
+        const districtControlFactionId = district?.controllingFactionId ?? districtState?.controllingFactionId ?? null
+        const isBlocked = districtControlFactionId
+          ? (factionStandings[districtControlFactionId] ?? 0) <= -50
+          : false
+
         return {
           id: shop.id,
           name: shop.name,
@@ -70,7 +75,8 @@ export const selectShopOverview = createSelector(
           danger: districtState?.danger ?? null,
           marketPressure: districtState?.marketPressure ?? null,
           accessDenied,
-          offers: accessDenied
+          isBlocked,
+          offers: (accessDenied || isBlocked)
             ? []
             : shop.offers
                 .slice()

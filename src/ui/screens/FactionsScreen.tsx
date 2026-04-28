@@ -35,16 +35,14 @@ function standingTier(standing: number): string {
 }
 
 function standingBarStyle(standing: number): React.CSSProperties {
-  const tier = standingTier(standing)
-  const colorMap: Record<string, string> = {
-    Hostile: 'rgba(239, 68, 68, 0.65)',
-    Cold: 'rgba(148, 163, 184, 0.45)',
-    Neutral: 'rgba(148, 163, 184, 0.3)',
-    Warm: 'rgba(251, 191, 36, 0.55)',
-    Allied: 'rgba(215, 191, 130, 0.8)',
-  }
   const normalized = ((standing + 100) / 200) * 100
-  return { width: `${normalized}%`, background: colorMap[tier] ?? colorMap['Neutral'] }
+  let color: string
+  if (standing > 20) color = 'rgba(74, 222, 128, 0.7)'
+  else if (standing >= -20) color = 'rgba(148, 163, 184, 0.45)'
+  else if (standing >= -40) color = 'rgba(251, 191, 36, 0.65)'
+  else if (standing >= -50) color = 'rgba(249, 115, 22, 0.75)'
+  else color = 'rgba(239, 68, 68, 0.8)'
+  return { width: `${normalized}%`, background: color }
 }
 
 export function FactionsScreen() {
@@ -79,6 +77,16 @@ export function FactionsScreen() {
                 </div>
                 <span className="badge">{tier}</span>
               </div>
+              {faction.standing < -50 && (
+                <p className="summary" style={{ color: 'rgba(239,68,68,0.9)', fontSize: '0.85em', marginTop: '0.25rem' }}>
+                  ⛔ Blacklisted — shops closed
+                </p>
+              )}
+              {faction.standing < -40 && faction.standing >= -50 && (
+                <p className="summary" style={{ color: 'rgba(249,115,22,0.9)', fontSize: '0.85em', marginTop: '0.25rem' }}>
+                  ⚠ Hostile — district travel restricted
+                </p>
+              )}
             </article>
           )
         })}

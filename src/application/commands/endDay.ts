@@ -437,6 +437,28 @@ export function endDay(state: GameState): GameState {
     }
   }
 
+  // Step 7b: Faction pressure escalation
+  next = {
+    ...next,
+    factionStates: next.factionStates.map((factionState) => {
+      const standing = next.factionStandings[factionState.factionId] ?? 0
+      if (standing < -40) {
+        return { ...factionState, activePressure: Math.min(100, factionState.activePressure + 5) }
+      }
+      return { ...factionState, activePressure: Math.max(0, factionState.activePressure - 2) }
+    }),
+  }
+  for (const factionState of next.factionStates) {
+    const standing = next.factionStandings[factionState.factionId] ?? 0
+    if (standing < -40 && factionState.activePressure >= 60) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${factionState.factionId.replace('faction-', '')} pressure on the house is mounting.`,
+      )
+    }
+  }
+
   // Step 8: Evaluate world events
   const afterExpiry = expireHireOffers(next)
 

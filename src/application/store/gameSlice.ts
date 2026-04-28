@@ -15,7 +15,7 @@ import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { evaluateEvents } from '../commands/evaluateEvents'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
-import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
+import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
 
