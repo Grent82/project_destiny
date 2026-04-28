@@ -15,7 +15,7 @@ import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { evaluateEvents } from '../commands/evaluateEvents'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
-import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
+import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
 
@@ -129,6 +129,24 @@ const gameSlice = createSlice({
       const { factionId, delta } = action.payload
       const current = state.factionStandings[factionId] ?? 0
       state.factionStandings[factionId] = Math.max(-100, Math.min(100, current + delta))
+
+      if (delta < -10) {
+        state.roster.forEach((rosterNpc) => {
+          const npcDef = getNpcDefinitions().find((n) => n.id === rosterNpc.npcId)
+          if (npcDef?.factionAffinityId === factionId) {
+            rosterNpc.traits.loyalty = Math.max(0, (rosterNpc.traits.loyalty ?? 50) - 5)
+            if (rosterNpc.traits.loyalty < 30) {
+              state.activityLog.unshift({
+                id: `log-faction-loyalty-${rosterNpc.npcId}-${state.day}`,
+                day: state.day,
+                timeSlot: state.timeSlot,
+                category: 'system',
+                message: `${npcDef.name} takes notice of what was done to their people.`,
+              })
+            }
+          }
+        })
+      }
     },
     adjustCityDial(
       state,

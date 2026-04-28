@@ -84,11 +84,7 @@ export function ShopsScreen() {
                 </div>
               </header>
               <p>{shop.summary}</p>
-              {shop.isBlocked ? (
-                <p className="summary badge badge-warning">
-                  ⛔ This establishment does not welcome House Valdric.
-                </p>
-              ) : shop.accessDenied ? (
+              {shop.accessDenied ? (
                 <p className="summary badge badge-warning">
                   This establishment does not welcome you.
                 </p>
@@ -120,7 +116,6 @@ export function ShopsScreen() {
                         <span>{offer.price} Mk</span>
                         <button
                           className="action-button"
-                          disabled={!offer.affordable}
                           onClick={() =>
                             {
                               dispatch(
@@ -155,7 +150,6 @@ export function ShopsScreen() {
         {roster.map((npc) => {
           const weaponId = npc.loadout.primaryWeaponId
           const armorId = npc.loadout.armorId
-          if (!weaponId && !armorId) return null
 
           const weaponDurability = durabilities[npc.npcId]?.['weapon'] ?? 100
           const armorDurability = durabilities[npc.npcId]?.['armor'] ?? 100

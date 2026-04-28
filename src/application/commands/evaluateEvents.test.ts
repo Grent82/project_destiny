@@ -12,6 +12,7 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
   return {
     ...initialGameStateSnapshot,
     pendingEvents: [],
+    firedEventIds: [],
     cityDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
     cityResources: {
       foodSecurity: 80,
@@ -162,8 +163,8 @@ describe('district travel event triggers', () => {
   })
 })
 
-describe('resolveEvent reducer', () => {
-  it('removes event from pendingEvents and applies outcomes', () => {
+describe('applyOutcomes', () => {
+  it('adjustFactionStanding applies delta and clamps', () => {
     const state = makeState({ factionStandings: { 'faction-civic-compact': 95 } })
     const next = applyOutcomes(state, [
       { type: 'adjustFactionStanding', target: 'faction-civic-compact', delta: 10 },
@@ -236,6 +237,7 @@ describe('resolveEvent reducer', () => {
 })
 
 describe('resolveEvent reducer', () => {
+  it('removes event from pendingEvents and applies outcomes', () => {
     const initialState = makeState({
       pendingEvents: [{ eventId: 'event-unpaid-wages-unrest', firedOnDay: 1 }],
       money: 500,

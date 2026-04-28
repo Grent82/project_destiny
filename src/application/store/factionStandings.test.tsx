@@ -22,6 +22,9 @@ vi.mock('../content/contentCatalog', () => {
       shops: [],
       shopsById: new Map(),
     },
+    getQuestTemplates: () => [],
+    getNpcDefinitions: () => [],
+    getCouncilVoteTemplates: () => [],
   }
 })
 

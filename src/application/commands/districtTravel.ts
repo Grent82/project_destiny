@@ -16,9 +16,35 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
   const dangerLevel = district?.dangerLevel ?? 1
   const message = buildTravelMessage(name, dangerLevel)
 
-  const nextState: GameState = { ...state, currentDistrictId: districtId, availableForHire: [...state.availableForHire] }
+  let nextState: GameState = { ...state, currentDistrictId: districtId, availableForHire: [...state.availableForHire] }
   generateDistrictHireOffers(nextState, districtId)
+  nextState = appendActivityLogEntry(nextState, 'system', message)
 
-  const withLog = appendActivityLogEntry(nextState, 'system', message)
-  return evaluateEvents(withLog)
+  const controlFactionId = district?.controllingFactionId
+  if (controlFactionId) {
+    const standing = nextState.factionStandings[controlFactionId] ?? 0
+    if (standing <= -50) {
+      nextState = appendActivityLogEntry(
+        nextState,
+        'system',
+        `Moving through hostile territory. ${controlFactionId.replace('faction-', '')} enforcers watch every corner.`,
+      )
+      nextState = {
+        ...nextState,
+        roster: nextState.roster.map((npc) =>
+          npc.assignment === 'idle' || npc.assignment === 'deployed'
+            ? { ...npc, states: { ...npc.states, stress: Math.min(100, npc.states.stress + 3) } }
+            : npc,
+        ),
+      }
+    } else if (standing <= -30) {
+      nextState = appendActivityLogEntry(
+        nextState,
+        'system',
+        'You are not welcome here. Eyes follow you through the street.',
+      )
+    }
+  }
+
+  return evaluateEvents(nextState)
 }
