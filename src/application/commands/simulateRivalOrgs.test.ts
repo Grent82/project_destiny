@@ -54,7 +54,6 @@ const baseState: GameState = {
     antagonistFactionId: 'faction-gilded-court',
     missingRelatives: [],
   },
-  isFirstRun: false,
 }
 
 describe('simulateRivalOrgs', () => {
