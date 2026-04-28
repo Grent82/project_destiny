@@ -3,6 +3,9 @@ import { contentCatalog } from '../content/contentCatalog'
 
 export const selectPendingEvents = (state: RootState) => state.game.pendingEvents
 
+export const selectPendingEventsCount = (state: RootState) =>
+  state.game.pendingEvents?.length ?? 0
+
 export const selectFirstPendingEvent = (state: RootState) => {
   const pending = state.game.pendingEvents[0]
   if (!pending) return null

@@ -7,7 +7,6 @@ import { CombatScreen } from '../screens/CombatScreen'
 import { ContractBoardScreen } from '../screens/ContractBoardScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DistrictMapScreen } from '../screens/DistrictMapScreen'
-import { DistrictsScreen } from '../screens/DistrictsScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
 import { InvestigationScreen } from '../screens/InvestigationScreen'
@@ -56,17 +55,21 @@ export function App() {
         <p className="sidebar-brand">House Valdric</p>
 
         <nav aria-label="Primary" className="nav-list">
-          {screenCatalog.map((screen) => (
-            <NavLink
-              key={screen.path}
-              className={({ isActive }) =>
-                isActive ? 'nav-link nav-link-active' : 'nav-link'
-              }
-              to={screen.path}
-            >
-              {screen.title}
-            </NavLink>
-          ))}
+          {screenCatalog.map((screen) => {
+            const isStep = screen.path === '/contracts' || screen.path === '/missions'
+            return (
+              <NavLink
+                key={screen.path}
+                className={({ isActive }) => {
+                  const base = isStep ? 'nav-link nav-link-step' : 'nav-link'
+                  return isActive ? `${base} nav-link-active` : base
+                }}
+                to={screen.path}
+              >
+                {screen.title}
+              </NavLink>
+            )
+          })}
         </nav>
       </aside>
 
@@ -79,7 +82,6 @@ export function App() {
             <Route path="/roster" element={<RosterScreen />} />
             <Route path="/recruitment" element={<RecruitmentScreen />} />
             <Route path="/district-map" element={<DistrictMapScreen />} />
-            <Route path="/districts" element={<DistrictsScreen />} />
             <Route path="/factions" element={<FactionsScreen />} />
             <Route path="/contracts" element={<ContractBoardScreen />} />
             <Route path="/investigation" element={<InvestigationScreen />} />
@@ -95,7 +97,6 @@ export function App() {
                     '/roster',
                     '/recruitment',
                     '/district-map',
-                    '/districts',
                     '/factions',
                     '/contracts',
                     '/investigation',

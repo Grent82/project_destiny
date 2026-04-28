@@ -64,6 +64,67 @@ strong { color: var(--text-secondary); }
 
 .stat-bar-fill-low  { background: rgba(251, 191, 36, 0.5); }
 .stat-bar-fill-crit { background: rgba(239, 68, 68, 0.55); }
+.stat-bar-fill-good { background: rgba(215, 191, 130, 0.55); }
+
+/* ── Roster groups ───────────────────────────────────────── */
+.roster-group {
+  margin-bottom: 0.75rem;
+}
+.roster-group-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+  padding: 0.25rem 0.75rem;
+  margin: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Row tints by status */
+.roster-row--deployed     { border-left: 3px solid #4a7cbf; }
+.roster-row--recovering   { border-left: 3px solid #8b2020; }
+.roster-row--working      { border-left: 3px solid #2a5c2a; }
+.roster-row--training     { border-left: 3px solid #5c4a2a; }
+.roster-row--assigned_title { border-left: 3px solid #8b7355; }
+.roster-row--idle         { border-left: 3px solid transparent; }
+
+.roster-row-title-role {
+  font-weight: 400;
+  font-size: 0.8em;
+  color: var(--text-tertiary);
+}
+
+/* Mini stat bars */
+.roster-mini-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+.mini-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.mini-stat-label {
+  font-size: 0.65rem;
+  color: var(--text-tertiary);
+  min-width: 1.5rem;
+}
+.mini-bar-track {
+  width: 4rem;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 200ms ease;
+}
+.mini-bar-fill--good { background: #2a5c2a; }
+.mini-bar-fill--low  { background: #8b6a20; }
+.mini-bar-fill--crit { background: #8b2020; }
 
 /* ── App shell ───────────────────────────────────────────── */
 .app-shell {
@@ -238,7 +299,7 @@ strong { color: var(--text-secondary); }
 
 .list-panel {
   display: grid;
-  gap: 0.75rem;
+  gap: 0;
 }
 
 .roster-row {

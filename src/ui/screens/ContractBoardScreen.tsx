@@ -117,9 +117,16 @@ export function ContractBoardScreen() {
                     </button>
                   )}
                   {template?.objectiveType !== 'investigation' && (
-                    <p className="quest-briefing">
-                      Resolves through deployment.
-                    </p>
+                    <div className="quest-actions">
+                      <p className="quest-briefing">Resolves through deployment.</p>
+                      <button
+                        className="action-button action-button--primary"
+                        onClick={() => navigate('/missions')}
+                        type="button"
+                      >
+                        Prepare Deployment →
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}

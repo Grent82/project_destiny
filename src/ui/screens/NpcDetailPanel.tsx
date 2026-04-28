@@ -13,28 +13,30 @@ type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 const TABS = ['Attributes', 'Skills', 'States', 'Traits', 'Relations'] as const
 type Tab = (typeof TABS)[number]
 
-function StatRow({ label, value }: { label: string; value: number }) {
+function StatRow({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
+  const pct = Math.round((value / max) * 100)
   const fillClass =
-    value < 20 ? 'stat-bar-fill stat-bar-fill-crit'
-    : value < 40 ? 'stat-bar-fill stat-bar-fill-low'
-    : 'stat-bar-fill'
+    pct < 30 ? 'stat-bar-fill stat-bar-fill-crit'
+    : pct < 60 ? 'stat-bar-fill stat-bar-fill-low'
+    : 'stat-bar-fill stat-bar-fill-good'
 
   return (
     <div className="stat-row">
       <span className="stat-label">{label}</span>
       <span className="stat-value">{value}</span>
       <div className="stat-bar">
-        <div className={fillClass} style={{ width: `${value}%` }} />
+        <div className={fillClass} style={{ width: `${pct}%` }} />
       </div>
     </div>
   )
 }
 
 function StateStatRow({ label, value, warn }: { label: string; value: number; warn: boolean }) {
+  const pct = Math.round(value)
   const fillClass =
-    value < 20 ? 'stat-bar-fill stat-bar-fill-crit'
-    : value < 40 ? 'stat-bar-fill stat-bar-fill-low'
-    : 'stat-bar-fill'
+    pct < 30 ? 'stat-bar-fill stat-bar-fill-crit'
+    : pct < 60 ? 'stat-bar-fill stat-bar-fill-low'
+    : 'stat-bar-fill stat-bar-fill-good'
 
   return (
     <div className="stat-row">
@@ -320,7 +322,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 <span className="stat-label">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
                 <span className="stat-value">{val}</span>
                 <div className="stat-bar">
-                  <div className="stat-bar-fill" style={{ width: `${val}%` }} />
+                  <div className="stat-bar-fill stat-bar-fill-good" style={{ width: `${val}%` }} />
                 </div>
                 {val >= 75 && (
                   <span className="badge badge-positive" title={`High ${key}`}>▲</span>

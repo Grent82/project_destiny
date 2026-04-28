@@ -5,6 +5,15 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
 
+const ROSTER_GROUPS = [
+  { key: 'deployed', label: 'Deployed' },
+  { key: 'assigned_title', label: 'On Duty' },
+  { key: 'working', label: 'Working' },
+  { key: 'training', label: 'Training' },
+  { key: 'idle', label: 'Available' },
+  { key: 'recovering', label: 'Recovering' },
+] as const
+
 export function RosterScreen() {
   const rosterEntries = useAppSelector(selectRosterEntries)
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(
@@ -25,47 +34,71 @@ export function RosterScreen() {
 
       <div className="roster-layout">
         <div className="list-panel" role="list" aria-label="Roster entries">
-          {rosterEntries.map((entry) => (
-            <button
-              key={entry.npcId}
-              className={
-                entry.npcId === selectedNpcId
-                  ? 'roster-row roster-row-active'
-                  : 'roster-row'
-              }
-              onClick={() => setSelectedNpcId(entry.npcId)}
-              type="button"
-            >
-              <span className="roster-row-title">{entry.name}</span>
-              <div className="badge-row">
-                {entry.assignment === 'deployed' && (
-                  <span className="badge assignment-badge assignment-badge--deployed">Deployed</span>
-                )}
-                {entry.assignment === 'recovering' && (
-                  <span className="badge assignment-badge assignment-badge--recovering">Recovering</span>
-                )}
-                {entry.assignment === 'working' && (
-                  <span className="badge assignment-badge assignment-badge--working">Working</span>
-                )}
-                {entry.assignment === 'training' && (
-                  <span className="badge assignment-badge assignment-badge--training">Training</span>
-                )}
-                {entry.assignment === 'assigned_title' && entry.activeTitle && (
-                  <span className="badge assignment-badge assignment-badge--assigned-title">
-                    {contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled'}
-                  </span>
-                )}
-                <span className="badge">{entry.status}</span>
-
-                <span className={entry.health < 40 ? 'badge badge-warning' : 'badge'}>
-                  HP {entry.health}
-                </span>
-                <span className={entry.morale < 40 ? 'badge badge-warning' : 'badge'}>
-                  Mor {entry.morale}
-                </span>
+          {ROSTER_GROUPS.map(({ key, label }) => {
+            const group = rosterEntries.filter((e) => e.assignment === key)
+            if (group.length === 0) return null
+            return (
+              <div key={key} className="roster-group">
+                <p className="roster-group-label">
+                  {key === 'assigned_title'
+                    ? label
+                    : label}
+                </p>
+                {group.map((entry) => (
+                  <button
+                    key={entry.npcId}
+                    className={[
+                      'roster-row',
+                      `roster-row--${key}`,
+                      entry.npcId === selectedNpcId ? 'roster-row-active' : '',
+                    ].filter(Boolean).join(' ')}
+                    onClick={() => setSelectedNpcId(entry.npcId)}
+                    type="button"
+                  >
+                    <span className="roster-row-title">
+                      {entry.name}
+                      {key === 'assigned_title' && entry.activeTitle && (
+                        <span className="roster-row-title-role">
+                          {' — '}{contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled'}
+                        </span>
+                      )}
+                    </span>
+                    <div className="badge-row">
+                      <span className="badge">{entry.status}</span>
+                    </div>
+                    <div className="roster-mini-stats">
+                      <div className="mini-stat">
+                        <span className="mini-stat-label">HP</span>
+                        <div className="mini-bar-track">
+                          <div
+                            className={[
+                              'mini-bar-fill',
+                              entry.health < 30 ? 'mini-bar-fill--crit' :
+                              entry.health < 60 ? 'mini-bar-fill--low' : 'mini-bar-fill--good',
+                            ].join(' ')}
+                            style={{ width: `${entry.health}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="mini-stat">
+                        <span className="mini-stat-label">Mor</span>
+                        <div className="mini-bar-track">
+                          <div
+                            className={[
+                              'mini-bar-fill',
+                              entry.morale < 30 ? 'mini-bar-fill--crit' :
+                              entry.morale < 60 ? 'mini-bar-fill--low' : 'mini-bar-fill--good',
+                            ].join(' ')}
+                            style={{ width: `${entry.morale}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
               </div>
-            </button>
-          ))}
+            )
+          })}
         </div>
 
         {detail ? (

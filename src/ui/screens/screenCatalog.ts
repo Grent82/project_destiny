@@ -20,11 +20,6 @@ export const screenCatalog = [
     summary: 'Navigate Valdenmoor. Six districts — each held by someone, each with a cost.',
   },
   {
-    path: '/districts',
-    title: 'Districts',
-    summary: 'Survey city districts, access levels, and market pressure.',
-  },
-  {
     path: '/shops',
     title: 'The Market',
     summary: 'District vendors and what they will part with today.',
@@ -36,13 +31,13 @@ export const screenCatalog = [
   },
   {
     path: '/contracts',
-    title: 'Contracts',
-    summary: 'Structured engagements — briefings, obligations, and what the house stands to gain or lose.',
+    title: 'Work Board',
+    summary: 'Accept contracts and investigations. Active work tracks here.',
   },
   {
     path: '/missions',
-    title: 'Missions',
-    summary: 'Review available work, assemble a squad, and confirm the stakes.',
+    title: 'Deployment',
+    summary: 'Assemble your squad and commit to an engagement.',
   },
   {
     path: '/combat',
