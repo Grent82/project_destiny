@@ -18,6 +18,11 @@ export function addNpcToSelectedSquad(
     return state
   }
 
+  // Title-holders are on duty and cannot be deployed
+  if (npc.assignment === 'assigned_title') {
+    return state
+  }
+
   if (state.selectedSquadNpcIds.includes(npcId)) {
     return state
   }

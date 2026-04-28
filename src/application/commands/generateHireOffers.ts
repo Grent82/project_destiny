@@ -9,7 +9,21 @@ function calculatePrimarySkillAvg(npcDef: NpcDefinition): number {
   return top3.reduce((sum, v) => sum + v, 0) / top3.length
 }
 
-export function generateDistrictHireOffers(state: GameState, districtId: string): void {
+function computeReputationScore(state: GameState): number {
+  const standingScore = Object.values(state.factionStandings).reduce(
+    (sum, s) => sum + Math.max(0, s),
+    0
+  )
+  const questScore = (state.completedQuestIds?.length ?? 0) * 15
+  const dayScore = Math.min(state.day * 2, 60)
+  return Math.min(200, standingScore + questScore + dayScore)
+}
+
+export function generateDistrictHireOffers(
+  state: GameState,
+  districtId: string,
+  reputationScore: number = computeReputationScore(state),
+): void {
   const alreadyHired = new Set(state.roster.map((r) => r.npcId))
   const alreadyOffered = new Set(state.availableForHire.map((o) => o.npcId))
 
@@ -17,7 +31,15 @@ export function generateDistrictHireOffers(state: GameState, districtId: string)
   const controllingFactionId = district?.controllingFactionId ?? null
   const dangerLevel = district?.dangerLevel ?? 3
 
+  // Pool size scales with reputation: 2 base, up to 6 at score 160+
+  const poolSize = 2 + Math.floor(reputationScore / 40)
+  // Higher reputation unlocks NPCs with higher base loyalty trait
+  const minLoyalty = reputationScore >= 100 ? 60 : 0
+
+  let addedCount = 0
+
   for (const npcDef of contentCatalog.npcs) {
+    if (addedCount >= poolSize) break
     if (alreadyHired.has(npcDef.id) || alreadyOffered.has(npcDef.id)) continue
 
     const matchesFaction = npcDef.factionAffinityId === controllingFactionId && controllingFactionId !== null
@@ -34,6 +56,9 @@ export function generateDistrictHireOffers(state: GameState, districtId: string)
     // Independent NPCs only appear in lower-danger districts unless random
     if (isIndependent && dangerLevel > 3 && !randomAppearance) continue
 
+    // At high reputation, filter out low-loyalty candidates
+    if ((npcDef.startingTraits?.loyalty ?? 50) < minLoyalty) continue
+
     const primarySkillAvg = calculatePrimarySkillAvg(npcDef)
     const wagePerDay = Math.max(3, Math.min(20, Math.floor(primarySkillAvg / 5)))
     const signingBonus = wagePerDay * 3
@@ -49,5 +74,6 @@ export function generateDistrictHireOffers(state: GameState, districtId: string)
     }
 
     state.availableForHire.push(offer)
+    addedCount++
   }
 }

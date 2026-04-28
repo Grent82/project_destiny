@@ -66,8 +66,9 @@ describe('generateDistrictHireOffers', () => {
     it('adds independent NPCs (no factionAffinityId) in low-danger districts', () => {
       // npc-sable-wrent has factionAffinityId: null
       // district-harbor has dangerLevel: 2
+      // Pass reputationScore=80 → poolSize=4, no loyalty filter
       const state = makeState()
-      generateDistrictHireOffers(state, 'district-harbor')
+      generateDistrictHireOffers(state, 'district-harbor', 80)
       const offeredIds = state.availableForHire.map((o) => o.npcId)
       expect(offeredIds).toContain('npc-sable-wrent')
     })

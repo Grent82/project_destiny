@@ -534,5 +534,31 @@
       "district",
       "political"
     ]
+  },
+  {
+    "id": "event-npc-betrayal",
+    "title": "A Knife in the Dark",
+    "description": "One of your own has turned against you. They have carried your secrets to your enemies. The damage is already done.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "Noted.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You file the betrayal away. Names are remembered."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "betrayal",
+      "npc",
+      "social"
+    ]
   }
 ]

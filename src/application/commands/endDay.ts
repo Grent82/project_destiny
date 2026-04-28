@@ -10,6 +10,8 @@ import { expireHireOffers } from './recruitment'
 import { getCouncilVoteTemplates, contentCatalog } from '../content/contentCatalog'
 import { applyPassiveDrift, applyProximityGains, applyRelationshipDelta } from './adjustRelationship'
 import { generateDistrictHireOffers } from './generateHireOffers'
+import { evaluateNpcDeparture } from './npcDeparture'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -295,10 +297,18 @@ export function endDay(state: GameState): GameState {
 
       case 'title-steward': {
         next = { ...next, money: next.money + 15 }
+        next = {
+          ...next,
+          cityResources: {
+            ...next.cityResources,
+            foodSecurity: Math.min(100, next.cityResources.foodSecurity + 5),
+            waterAccess: Math.min(100, next.cityResources.waterAccess + 5),
+          },
+        }
         next = appendActivityLogEntry(
           next,
           'economy',
-          `${npcName} managed the accounts. +15 Marks.`,
+          `${npcName} managed the accounts. +15 Marks, +5 food and water.`,
         )
         break
       }
@@ -335,10 +345,17 @@ export function endDay(state: GameState): GameState {
       }
 
       case 'title-chief-engineer': {
+        next = {
+          ...next,
+          cityResources: {
+            ...next.cityResources,
+            materialStock: Math.min(100, next.cityResources.materialStock + 5),
+          },
+        }
         next = appendActivityLogEntry(
           next,
           'system',
-          `${npcName} oversaw workshop output.`,
+          `${npcName} oversaw workshop output. +5 materials.`,
         )
         break
       }
@@ -349,7 +366,25 @@ export function endDay(state: GameState): GameState {
     }
   }
 
-  // Step 4b: Working NPC passive income
+  // Step 4b: Training NPCs gain skills each day
+  // Working NPCs do NOT get training gains — they trade skill growth for income
+  const hasTrainer = next.roster.some(
+    (r) => r.activeTitle === 'title-trainer' && r.assignment !== 'deployed',
+  )
+  const trainingSkillGain = hasTrainer ? 2 : 1
+  for (const npc of next.roster.filter((r) => r.assignment === 'training')) {
+    const skillKey = SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
+    next = {
+      ...next,
+      roster: next.roster.map((r) =>
+        r.npcId === npc.npcId
+          ? { ...r, skills: { ...r.skills, [skillKey]: Math.min(100, r.skills[skillKey] + trainingSkillGain) } }
+          : r,
+      ),
+    }
+  }
+
+  // Step 4c: Working NPC passive income
   const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
   for (const runtimeNpc of workingNpcs) {
     const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
@@ -383,7 +418,56 @@ export function endDay(state: GameState): GameState {
     applyProximityGains(next, deployedNpcIds)
   }
 
-  // Step 5c: Durability warnings
+  // Step 5c: NPC departure / betrayal check (after wages and passive drift)
+  // Math.random() is acceptable here — endDay is a command, not a reducer.
+  const rosterBeforeDepartures = next.roster
+  for (const npc of rosterBeforeDepartures) {
+    if (npc.assignment === 'recovering' || npc.assignment === 'assigned_title') continue
+    const relKey = buildRelationshipKey('player', npc.npcId)
+    const rel = next.relationships[relKey]
+    const result = evaluateNpcDeparture(
+      { id: npc.npcId, name: npc.name, assignment: npc.assignment, traits: { loyalty: npc.traits.loyalty } },
+      rel,
+      Math.random(),
+    )
+    if (result.type === 'departed') {
+      next = {
+        ...next,
+        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+        availableForHire: next.availableForHire.filter((o) => o.npcId !== npc.npcId),
+      }
+      next = appendActivityLogEntry(next, 'system', `${result.npcName}: ${result.reason}`)
+    } else if (result.type === 'betrayed') {
+      next = {
+        ...next,
+        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+      }
+      // Leak info to rivals — boost a hostile faction's standing
+      const hostieFactions = Object.entries(next.factionStandings)
+        .filter(([, s]) => s < -20)
+        .map(([id]) => id)
+      if (hostieFactions.length > 0) {
+        const target = hostieFactions[0]!
+        next = {
+          ...next,
+          factionStandings: {
+            ...next.factionStandings,
+            [target]: Math.min(100, (next.factionStandings[target] ?? 0) + 10),
+          },
+        }
+      }
+      next = appendActivityLogEntry(next, 'system', `${result.npcName}: ${result.consequence}`)
+      next = {
+        ...next,
+        pendingEvents: [
+          ...next.pendingEvents,
+          { eventId: 'event-npc-betrayal', firedOnDay: next.day },
+        ],
+      }
+    }
+  }
+
+  // Step 5d: Durability warnings
   for (const npc of next.roster) {
     const npcDur = next.equippedItemDurabilities[npc.npcId]
     if (!npcDur) continue

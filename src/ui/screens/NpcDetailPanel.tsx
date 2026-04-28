@@ -86,6 +86,13 @@ interface NpcDetailPanelProps {
 
 const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as const
 
+const ASSIGNMENT_LABELS: Record<string, string> = {
+  idle: 'Available for deployment',
+  working: 'Earns Marks, cannot deploy or train',
+  training: 'Gains skill, no income',
+  recovering: 'Recovering from injury',
+}
+
 function AssignmentSelector({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
   const isSystemControlled = detail.assignment === 'deployed' || detail.assignment === 'assigned_title'
@@ -94,6 +101,9 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
     return (
       <div className="assignment-selector">
         <span className="text-muted">Assignment: {detail.assignment.replace('_', ' ')} (system)</span>
+        {detail.assignment === 'assigned_title' && (
+          <p className="assignment-warning">This NPC is on title duty and cannot be deployed.</p>
+        )}
       </div>
     )
   }
@@ -107,12 +117,18 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
             key={a}
             type="button"
             className={detail.assignment === a ? 'badge badge-positive' : 'badge'}
+            title={ASSIGNMENT_LABELS[a]}
             onClick={() => dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: a }))}
           >
             {a}
           </button>
         ))}
       </div>
+      {detail.assignment in ASSIGNMENT_LABELS && (
+        <p className="text-muted" style={{ fontSize: '0.8em', marginTop: '0.25rem' }}>
+          {ASSIGNMENT_LABELS[detail.assignment]}
+        </p>
+      )}
     </div>
   )
 }

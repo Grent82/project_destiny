@@ -136,6 +136,13 @@ strong { color: var(--text-secondary); }
   margin-left: auto;
 }
 
+.reputation-tier {
+  font-size: 0.75em;
+  font-variant: small-caps;
+  color: #9ca3af;
+  letter-spacing: 0.05em;
+}
+
 .summary,
 .placeholder-grid p {
   color: #d1d5db;

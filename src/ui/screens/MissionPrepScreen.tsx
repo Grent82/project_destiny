@@ -118,13 +118,16 @@ export function MissionPrepScreen() {
                   </span>
                   <button
                     className="action-button"
-                    disabled={entry.loyalty <= NPC_STATE_THRESHOLDS.LOYALTY_REFUSE_DEPLOY_THRESHOLD}
+                    disabled={
+                      entry.loyalty <= NPC_STATE_THRESHOLDS.LOYALTY_REFUSE_DEPLOY_THRESHOLD ||
+                      entry.assignment === 'assigned_title'
+                    }
                     onClick={() =>
                       dispatch(gameActions.addNpcToSelectedSquad(entry.npcId))
                     }
                     type="button"
                   >
-                    Add to squad
+                    {entry.assignment === 'assigned_title' ? 'On Duty' : 'Add to squad'}
                   </button>
                 </div>
               ))
