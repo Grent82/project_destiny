@@ -16,5 +16,23 @@
     "districtPresence": ["district-the-pale", "district-the-warrens", "district-ironworks"],
     "currentPriority": "Establishing district presence before the player consolidates. Director Forn wants what the player has.",
     "rosterNpcIds": ["npc-enemy-director-forn", "npc-enemy-operative-weld", "npc-enemy-contacts-rhen"]
+  },
+  {
+    "id": "org-iron-covenant",
+    "name": "The Iron Covenant",
+    "description": "A disciplined mercenary brotherhood that operates like a guild — strict internal hierarchy, long-term contracts, and an appetite for territory. Expansion is their doctrine.",
+    "factionAlignment": "faction-foundry-league",
+    "districtPresence": ["district-ironworks", "district-the-warrens"],
+    "currentPriority": "Expanding control of the Ironworks district and cutting off rival contract pipelines.",
+    "rosterNpcIds": []
+  },
+  {
+    "id": "org-pale-sisters",
+    "name": "The Pale Sisters",
+    "description": "A covert network of agents and fixers with roots in the old regime. They apply pressure through information, blackmail, and strategic recruitment — rarely open violence.",
+    "factionAlignment": null,
+    "districtPresence": ["district-the-pale", "district-gilded-heights"],
+    "currentPriority": "Recruiting from unstable houses and undermining city institutions from within.",
+    "rosterNpcIds": []
   }
 ]

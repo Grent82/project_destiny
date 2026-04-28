@@ -12,6 +12,7 @@ import { applyPassiveDrift, applyProximityGains, applyRelationshipDelta } from '
 import { generateDistrictHireOffers } from './generateHireOffers'
 import { evaluateNpcDeparture } from './npcDeparture'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -540,6 +541,36 @@ export function endDay(state: GameState): GameState {
         'system',
         `${factionState.factionId.replace('faction-', '')} pressure on the house is mounting.`,
       )
+    }
+  }
+
+  // Step 7c: Rival org simulation
+  const rivalActions = simulateRivalOrgs(next, [Math.random(), Math.random()])
+  next = applyRivalActions(next, rivalActions)
+
+  // Step 7d: City stability crisis event
+  if ((next.cityStability ?? 60) < 30) {
+    const crisisEventId = 'event-city-crisis'
+    const alreadyPending = next.pendingEvents.some((e) => e.eventId === crisisEventId)
+    const alreadyFired = (next.firedEventIds ?? []).includes(crisisEventId)
+    if (!alreadyPending && !alreadyFired) {
+      next = {
+        ...next,
+        pendingEvents: [...next.pendingEvents, { eventId: crisisEventId, firedOnDay: next.day }],
+        firedEventIds: [...(next.firedEventIds ?? []), crisisEventId],
+      }
+    }
+  }
+
+  // Step 7e: Household antagonist faction notice — fires every 10 days if standing > 30
+  if ((next.factionStandings['faction-gilded-court'] ?? -20) > 30 && next.day % 10 === 0) {
+    const noticeEventId = 'event-gilded-notice'
+    const alreadyPending = next.pendingEvents.some((e) => e.eventId === noticeEventId)
+    if (!alreadyPending) {
+      next = {
+        ...next,
+        pendingEvents: [...next.pendingEvents, { eventId: noticeEventId, firedOnDay: next.day }],
+      }
     }
   }
 

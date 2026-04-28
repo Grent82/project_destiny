@@ -8,10 +8,15 @@ export function OpeningScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const [step, setStep] = useState<'name' | 'lore'>('name')
 
-  function confirm() {
+  function confirmName() {
     const trimmed = name.trim() || 'Valdric'
     dispatch(gameActions.setProtagonistName(trimmed))
+    setStep('lore')
+  }
+
+  function confirmLore() {
     dispatch(gameActions.setHasSeenOpening(true))
     navigate('/dashboard')
   }
@@ -19,31 +24,45 @@ export function OpeningScreen() {
   return (
     <div className="opening-screen">
       <div className="opening-content">
-        <p className="opening-house-name">House Valdric</p>
-        <p className="opening-text">
-          Eighteen months since the Court moved against your family. Edric is dead. Mira is
-          taken. Cael is in the ground. Marion Vale sits across from you in what remains of
-          the administrative office — the one room the debt-claim seizure couldn't reach. She
-          hasn't said anything yet. She's waiting to see what you intend.
-        </p>
-        <div className="opening-name-field">
-          <label className="opening-name-label" htmlFor="protagonist-name">
-            Your name
-          </label>
-          <input
-            className="opening-name-input"
-            id="protagonist-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') confirm()
-            }}
-          />
-        </div>
-        <button className="opening-confirm action-button" onClick={confirm} type="button">
-          Take the Ledger →
-        </button>
+        <p className="opening-house-name">House Valdris</p>
+        {step === 'name' ? (
+          <>
+            <p className="opening-text">
+              Eighteen months since the Court moved against your family. Edric is dead. Mira is
+              taken. Cael is in the ground. Marion Vale sits across from you in what remains of
+              the administrative office — the one room the debt-claim seizure couldn't reach. She
+              hasn't said anything yet. She's waiting to see what you intend.
+            </p>
+            <div className="opening-name-field">
+              <label className="opening-name-label" htmlFor="protagonist-name">
+                Your name
+              </label>
+              <input
+                className="opening-name-input"
+                id="protagonist-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') confirmName()
+                }}
+              />
+            </div>
+            <button className="opening-confirm action-button" onClick={confirmName} type="button">
+              Continue →
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="household-summary">
+              <p>House Valdris. Your grandfather built it from nothing. Your father maintained it until the night of the Compact's purge. Your sister, Mira, was taken. Your brother did not survive.</p>
+              <p>One man remained loyal. The ledger is yours.</p>
+            </div>
+            <button className="opening-confirm action-button" onClick={confirmLore} type="button">
+              Take the Ledger →
+            </button>
+          </>
+        )}
       </div>
     </div>
   )

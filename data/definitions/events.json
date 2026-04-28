@@ -564,7 +564,7 @@
   {
     "id": "event-loyal-npc-milestone",
     "title": "A Reliable Hand",
-    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "description": "One of your people has been consistent \u2014 steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
     "triggerConditions": {
       "dayMin": 10,
       "probability": 0.3
@@ -585,13 +585,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The bonus is delivered without ceremony. The work continues — better than before."
+            "message": "The bonus is delivered without ceremony. The work continues \u2014 better than before."
           }
         ]
       },
       {
         "id": "choice-acknowledge-words",
-        "label": "Acknowledge the work — no payment",
+        "label": "Acknowledge the work \u2014 no payment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -625,7 +625,7 @@
   {
     "id": "event-stressed-npc-warning",
     "title": "Someone Is Close to Breaking",
-    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
       "probability": 0.45
@@ -633,7 +633,7 @@
     "choices": [
       {
         "id": "choice-give-rest",
-        "label": "Give them two days off — no assignments",
+        "label": "Give them two days off \u2014 no assignments",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -667,7 +667,7 @@
       },
       {
         "id": "choice-push-through",
-        "label": "Push through — the work does not wait",
+        "label": "Push through \u2014 the work does not wait",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -699,7 +699,7 @@
     "choices": [
       {
         "id": "choice-invest-shipment",
-        "label": "Buy in — invest 80 Marks",
+        "label": "Buy in \u2014 invest 80 Marks",
         "outcomes": [
           {
             "type": "addCredits",
@@ -717,13 +717,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
+            "message": "The goods clear the dock before the inspection. The investment was sound \u2014 the materials arrive and the margin holds."
           }
         ]
       },
       {
         "id": "choice-pass-windfall",
-        "label": "Pass — the timing is suspicious",
+        "label": "Pass \u2014 the timing is suspicious",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -737,6 +737,109 @@
       "economy",
       "market",
       "harbor"
+    ]
+  },
+  {
+    "id": "event-city-crisis",
+    "title": "The City Trembles",
+    "description": "Stability in Valdenmoor is critically low. Riots have broken out in the outer districts. Your operations may be affected.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-restore-order",
+        "label": "Dispatch a team to restore order",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 10
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Your team moves into the outer districts. Order is restored \u2014 for now. The Compact takes note."
+          }
+        ]
+      },
+      {
+        "id": "choice-stay-out",
+        "label": "Stay out of it",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You keep the house doors shut. The riots burn themselves out by morning."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "city",
+      "crisis",
+      "stability"
+    ]
+  },
+  {
+    "id": "event-rival-expansion",
+    "title": "Rivals Move",
+    "description": "A rival organization has seized control of a district market. Competition for contracts will be fiercer.",
+    "triggerConditions": {
+      "probability": 0,
+      "minUnrest": 40
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "Noted.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The market slips from reach. You file it away and move on."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "rivals",
+      "city",
+      "economy"
+    ]
+  },
+  {
+    "id": "event-gilded-notice",
+    "title": "Noted.",
+    "description": "Word reaches you that the Gilded Court has taken an interest in your rebuilding efforts. Whether that is opportunity or threat remains unclear.",
+    "triggerConditions": {
+      "factionStandingAbove": {
+        "factionId": "faction-gilded-court",
+        "threshold": 30
+      },
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-let-them-watch",
+        "label": "Let them watch.",
+        "outcomes": []
+      },
+      {
+        "id": "choice-send-goodwill",
+        "label": "Send a message of goodwill.",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": 5
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "narrative",
+      "lineage"
     ]
   }
 ]

@@ -46,6 +46,9 @@ export function RecruitmentScreen() {
                     <span className="badge">Signing: {offer.signingBonus} Marks</span>
                   )}
                   <span className="badge">{offer.turnsAvailable} day{offer.turnsAvailable !== 1 ? 's' : ''} remaining</span>
+                  {offer.source === 'combat' && (
+                    <span className="badge hire-badge--combat">Former Enemy</span>
+                  )}
                 </div>
                 <div style={{ marginTop: '0.5rem' }}>
                   <button

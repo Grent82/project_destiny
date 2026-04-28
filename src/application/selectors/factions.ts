@@ -33,3 +33,5 @@ export function selectAllFactions(state: RootState) {
     standing: state.game.factionStandings[faction.id] ?? 0,
   }))
 }
+
+export const selectCityStability = (state: RootState) => state.game.cityStability ?? 60

@@ -1,6 +1,6 @@
 import type React from 'react'
 
-import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding } from '../../application'
+import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability } from '../../application'
 import type { InstitutionalTier } from '../../domain'
 import { useAppSelector } from '../app/hooks'
 
@@ -50,6 +50,7 @@ export function FactionsScreen() {
   const cityDials = useAppSelector(selectCityDials)
   const institutionalStanding = useAppSelector(selectInstitutionalStanding)
   const councilSeats = useAppSelector(selectCouncilSeats)
+  const cityStability = useAppSelector(selectCityStability)
 
   return (
     <section className="screen-panel">
@@ -58,6 +59,20 @@ export function FactionsScreen() {
       <p className="summary">
         Where House Valdric stands with each power in Valdenmoor. Standing shifts with every choice.
       </p>
+
+      <div className="city-stability-section">
+        <h3>City Stability</h3>
+        <div className="stability-bar-track">
+          <div
+            className="stability-bar-fill"
+            style={{
+              width: `${cityStability}%`,
+              backgroundColor: cityStability < 30 ? '#8b2020' : cityStability < 60 ? '#8b6a20' : '#2a5c2a',
+            }}
+          />
+        </div>
+        <span className="stability-label">{cityStability}/100</span>
+      </div>
 
       <div className="overview-grid">
         {factions.map((faction) => {

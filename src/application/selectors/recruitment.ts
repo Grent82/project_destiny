@@ -1,9 +1,15 @@
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
+import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
+
+type EnemyNpcDef = { id: string; name: string; background: string; factionAffinityId?: string }
+const enemyNpcsById = new Map<string, EnemyNpcDef>(
+  (enemyNpcsData as EnemyNpcDef[]).map((e) => [e.id, e]),
+)
 
 export function selectAvailableForHire(state: RootState) {
   return state.game.availableForHire.map((offer) => {
-    const def = contentCatalog.npcsById.get(offer.npcId)
+    const def = contentCatalog.npcsById.get(offer.npcId) ?? enemyNpcsById.get(offer.npcId)
     const faction = def?.factionAffinityId
       ? contentCatalog.factionsById.get(def.factionAffinityId)?.name ?? null
       : null
@@ -17,6 +23,7 @@ export function selectAvailableForHire(state: RootState) {
       turnsAvailable: offer.turnsAvailable,
       requiredFactionId: offer.requiredFactionId,
       requiredFactionStanding: offer.requiredFactionStanding,
+      source: offer.source,
     }
   })
 }

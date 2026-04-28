@@ -70,6 +70,7 @@ export const hireOfferSchema = z
     requiredFactionId: z.string().nullable().default(null),
     requiredFactionStanding: z.number().default(0),
     turnsAvailable: z.number().default(3),
+    source: z.enum(['district', 'combat']).optional(),
   })
   .strict()
 
@@ -112,6 +113,30 @@ export const gameStateSchema = z
       rollResult: z.enum(['pending', 'success', 'partial', 'failure']).default('pending'),
     }).nullable().default(null),
     firedEventIds: z.array(z.string()).default([]),
+    rivalOrgActions: z.array(z.object({
+      orgId: z.string(),
+      actionType: z.enum(['expand', 'recruit', 'pressure', 'bribe']),
+      targetFactionId: z.string().optional(),
+      day: z.number(),
+    })).default([]),
+    cityStability: z.number().min(0).max(100).default(60),
+    householdLore: z.object({
+      houseName: z.string().default('House Valdris'),
+      founderName: z.string().default('Edric Valdris'),
+      founderGeneration: z.number().default(2),
+      antagonistFactionId: z.string().default('faction-gilded-court'),
+      missingRelatives: z.array(z.object({
+        name: z.string(),
+        relation: z.string(),
+        lastKnownLocation: z.string().optional(),
+      })).default([]),
+    }).default(() => ({
+      houseName: 'House Valdris',
+      founderName: 'Edric Valdris',
+      founderGeneration: 2,
+      antagonistFactionId: 'faction-gilded-court',
+      missingRelatives: [],
+    })),
   })
   .strict()
 
