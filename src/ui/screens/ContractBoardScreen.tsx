@@ -6,6 +6,7 @@ import {
   selectAvailableQuests,
   selectCompletedQuestIds,
 } from '../../application'
+import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
@@ -130,14 +131,16 @@ export function ContractBoardScreen() {
           <article className="detail-panel">
             <h2>Closed Contracts</h2>
             <div className="mission-list">
-              {completedQuestIds.map((id) => (
-                <div key={id} className="mission-row mission-row-header">
-                  <span className="quest-closed-label">{id.replace('quest-', '').replace(/-/g, ' ')}</span>
-                  <span className="badge--closed">
-                    Closed
-                  </span>
-                </div>
-              ))}
+              {completedQuestIds.map((id) => {
+                const template = contentCatalog.questsById?.get(id)
+                const label = template?.title ?? id.replace('quest-', '').replace(/-/g, ' ')
+                return (
+                  <div key={id} className="mission-row mission-row-header">
+                    <span className="quest-closed-label">{label}</span>
+                    <span className="badge badge--closed">Closed</span>
+                  </div>
+                )
+              })}
             </div>
           </article>
         )}

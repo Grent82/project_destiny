@@ -23,10 +23,6 @@ export function GlobalStatusBar() {
         {summary.money} <abbr title="Marks">Mk</abbr>
       </span>
       <span className="status-bar-divider" aria-hidden="true" />
-      <span className="status-bar-item">
-        {summary.assignedSquadCount} in the field
-      </span>
-      <span className="status-bar-divider" aria-hidden="true" />
       <span className="status-bar-item reputation-tier">Rep: {reputationTier}</span>
       {currentDistrict && (
         <>

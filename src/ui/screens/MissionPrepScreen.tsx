@@ -63,8 +63,8 @@ export function MissionPrepScreen() {
               <div key={mission.id} className="mission-row">
                 <strong>{mission.title}</strong>
                 <span>Difficulty: {mission.difficulty}</span>
-                <span>Reward: {mission.rewardCredits} Marks</span>
-                <span>+{mission.rewardStanding} / -{mission.penaltyStanding} standing</span>
+                <span>Reward: <strong>{mission.rewardCredits} Mk</strong></span>
+                <span>Standing: +{mission.rewardStanding} / −{mission.penaltyStanding}</span>
                 <span>District: {mission.district}</span>
                 <button
                   className="action-button"

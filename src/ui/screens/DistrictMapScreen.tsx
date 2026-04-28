@@ -28,7 +28,7 @@ const DANGER_COLORS: Record<number, string> = {
 function factionBadge(factionId: string | null, contestedIds: string[]): string {
   if (factionId && FACTION_SHORT_NAMES[factionId]) return FACTION_SHORT_NAMES[factionId]
   if (contestedIds.length > 0) return 'Contested'
-  return 'Contested'
+  return 'Open'
 }
 
 export function DistrictMapScreen() {
@@ -84,7 +84,7 @@ export function DistrictMapScreen() {
                   handleTravel(district.id, district.accessRestricted)
                 }
               }}
-              title={district.narrativeSummary}
+
             >
               <h2>{district.name}</h2>
 

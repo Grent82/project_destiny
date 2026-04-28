@@ -56,11 +56,7 @@ export function RosterScreen() {
                   </span>
                 )}
                 <span className="badge">{entry.status}</span>
-                {entry.activeTitle && (
-                  <span className="badge badge-positive" title={contentCatalog.titlesById.get(entry.activeTitle)?.name}>
-                    {contentCatalog.titlesById.get(entry.activeTitle)?.name ?? entry.activeTitle}
-                  </span>
-                )}
+
                 <span className={entry.health < 40 ? 'badge badge-warning' : 'badge'}>
                   HP {entry.health}
                 </span>
