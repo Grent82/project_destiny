@@ -12,7 +12,7 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
   return {
     ...initialGameStateSnapshot,
     pendingEvents: [],
-    firedEventIds: [],
+    lastFiredDay: {},
     cityDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
     cityResources: {
       foodSecurity: 80,
@@ -76,6 +76,8 @@ describe('evaluateEvents', () => {
         choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
         isAutoResolved: false,
         tags: [],
+        repeatable: false,
+        cooldownDays: 7,
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -92,29 +94,29 @@ describe('evaluateEvents', () => {
     )
   })
 
-  it('skips events already in firedEventIds', () => {
+  it('skips events already in lastFiredDay (non-repeatable)', () => {
     const state = makeState({
       cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
-      firedEventIds: ['event-unpaid-wages-unrest'],
+      lastFiredDay: { 'event-unpaid-wages-unrest': 9 },
     })
     const next = evaluateEvents(state)
     const ids = next.pendingEvents.map((e) => e.eventId)
     expect(ids).not.toContain('event-unpaid-wages-unrest')
   })
 
-  it('populates firedEventIds after evaluateEvents runs', () => {
+  it('populates lastFiredDay after evaluateEvents runs', () => {
     const state = makeState({
       cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
-      firedEventIds: [],
+      lastFiredDay: {},
     })
     const next = evaluateEvents(state)
-    expect(next.firedEventIds).toContain('event-unpaid-wages-unrest')
+    expect(next.lastFiredDay['event-unpaid-wages-unrest']).toBe(state.day)
   })
 
   it('does not re-fire same event within same day even if conditions still met', () => {
     const state = makeState({
       cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
-      firedEventIds: ['event-unpaid-wages-unrest'],
+      lastFiredDay: { 'event-unpaid-wages-unrest': 10 },
     })
     const next1 = evaluateEvents(state)
     const next2 = evaluateEvents(next1)
@@ -131,35 +133,33 @@ describe('district travel event triggers', () => {
     vi.restoreAllMocks()
   })
 
-  it('fires district events after travelToDistrict dispatch', () => {
-    const initialState = makeState({ firedEventIds: [], day: 1 })
+  it('does NOT fire district events immediately on travelToDistrict (events fire at endDay only)', () => {
+    const initialState = makeState({ lastFiredDay: {}, day: 1 })
     const next = gameSliceReducer(
       initialState,
       gameActions.travelToDistrict('district-the-hollows'),
     )
     const ids = next.pendingEvents.map((e) => e.eventId)
-    expect(ids).toContain('event-hollows-entry')
+    expect(ids).not.toContain('event-hollows-entry')
   })
 
-  it('fires pale approach event when travelling to The Pale', () => {
-    const initialState = makeState({ firedEventIds: [], day: 1 })
+  it('does NOT fire pale approach event on travel (fires at endDay)', () => {
+    const initialState = makeState({ lastFiredDay: {}, day: 1 })
     const next = gameSliceReducer(
       initialState,
       gameActions.travelToDistrict('district-the-pale'),
     )
     const ids = next.pendingEvents.map((e) => e.eventId)
-    expect(ids).toContain('event-pale-approach')
+    expect(ids).not.toContain('event-pale-approach')
   })
 
-  it('does not re-fire district event when travelling to same district again on same day', () => {
-    const initialState = makeState({ firedEventIds: [], day: 1 })
-    const after1 = gameSliceReducer(
+  it('sets currentDistrictId after travelToDistrict', () => {
+    const initialState = makeState({ lastFiredDay: {}, day: 1 })
+    const next = gameSliceReducer(
       initialState,
       gameActions.travelToDistrict('district-the-hollows'),
     )
-    const after2 = gameSliceReducer(after1, gameActions.travelToDistrict('district-the-hollows'))
-    const matches = after2.pendingEvents.filter((e) => e.eventId === 'event-hollows-entry')
-    expect(matches).toHaveLength(1)
+    expect(next.currentDistrictId).toBe('district-the-hollows')
   })
 })
 

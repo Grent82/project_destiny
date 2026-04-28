@@ -88,5 +88,10 @@ export function selectRosterDetail(state: RootState, npcId: string) {
       intoxication: runtime.states.intoxication,
       hygiene: runtime.states.hygiene,
     },
+    loadout: {
+      primaryWeaponId: runtime.loadout.primaryWeaponId,
+      secondaryWeaponId: runtime.loadout.secondaryWeaponId,
+      armorId: runtime.loadout.armorId,
+    },
   }
 }

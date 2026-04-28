@@ -28,18 +28,24 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
   return true
 }
 
+function isOnCooldown(template: EventTemplate, state: GameState): boolean {
+  const lastDay = state.lastFiredDay[template.id]
+  if (lastDay === undefined) return false
+  if (!template.repeatable) return true
+  return state.day - lastDay < template.cooldownDays
+}
+
 export function evaluateEvents(state: GameState): GameState {
   const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
-  const alreadyFired = new Set(state.firedEventIds ?? [])
   const newPending: typeof state.pendingEvents = []
-  const newFiredIds: string[] = []
+  const newLastFiredDay: Record<string, number> = {}
 
   for (const template of contentCatalog.events) {
     if (alreadyPending.has(template.id)) continue
-    if (alreadyFired.has(template.id)) continue
+    if (isOnCooldown(template, state)) continue
     if (checkConditions(template, state)) {
       newPending.push({ eventId: template.id, firedOnDay: state.day })
-      newFiredIds.push(template.id)
+      newLastFiredDay[template.id] = state.day
     }
   }
 
@@ -48,6 +54,6 @@ export function evaluateEvents(state: GameState): GameState {
   return {
     ...state,
     pendingEvents: [...state.pendingEvents, ...newPending],
-    firedEventIds: [...(state.firedEventIds ?? []), ...newFiredIds],
+    lastFiredDay: { ...state.lastFiredDay, ...newLastFiredDay },
   }
 }

@@ -57,6 +57,8 @@ export const eventTemplateSchema = z
     choices: z.array(eventChoiceSchema).min(1),
     isAutoResolved: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
+    repeatable: z.boolean().default(false),
+    cooldownDays: z.number().int().min(1).default(7),
   })
   .strict()
 

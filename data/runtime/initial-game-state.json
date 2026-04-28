@@ -4,6 +4,7 @@
   "money": 500,
   "protagonistName": "",
   "hasSeenOpening": false,
+  "isFirstRun": true,
   "factionStates": [
     {
       "factionId": "faction-civic-compact",
@@ -357,7 +358,6 @@
   },
   "equippedItemDurabilities": {},
   "activeInvestigation": null,
-  "firedEventIds": [],
   "rivalOrgActions": [],
   "cityStability": 60,
   "expeditionState": {
@@ -383,5 +383,6 @@
         "lastKnownLocation": "district-gilded-heights"
       }
     ]
-  }
+  },
+  "lastFiredDay": {}
 }

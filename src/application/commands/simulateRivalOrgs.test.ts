@@ -8,6 +8,7 @@ const baseState: GameState = {
   money: 500,
   protagonistName: 'Test',
   hasSeenOpening: false,
+  isFirstRun: false,
   cityDials: { control: 50, prosperity: 50, unrest: 30, corruption: 20 },
   factionStandings: {},
   factionStates: [],
@@ -32,7 +33,7 @@ const baseState: GameState = {
   relationships: {},
   equippedItemDurabilities: {},
   activeInvestigation: null,
-  firedEventIds: [],
+  lastFiredDay: {},
   rivalOrgActions: [],
   cityStability: 60,
   expeditionState: {
@@ -53,6 +54,7 @@ const baseState: GameState = {
     antagonistFactionId: 'faction-gilded-court',
     missingRelatives: [],
   },
+  isFirstRun: false,
 }
 
 describe('simulateRivalOrgs', () => {

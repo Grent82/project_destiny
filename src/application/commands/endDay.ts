@@ -494,7 +494,7 @@ export function endDay(state: GameState): GameState {
 
   // Step 6: Advance time
   const nextDay = next.day + 1
-  next = { ...next, day: nextDay, timeSlot: 'morning', firedEventIds: [] }
+  next = { ...next, day: nextDay, timeSlot: 'morning' }
   next = appendActivityLogEntry(next, 'system', `The day turns. Day ${nextDay}.`)
 
   // Step 7: Periodic council vote — fire one every 5 days if none active
@@ -552,12 +552,12 @@ export function endDay(state: GameState): GameState {
   if ((next.cityStability ?? 60) < 30) {
     const crisisEventId = 'event-city-crisis'
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === crisisEventId)
-    const alreadyFired = (next.firedEventIds ?? []).includes(crisisEventId)
+    const alreadyFired = next.lastFiredDay[crisisEventId] !== undefined
     if (!alreadyPending && !alreadyFired) {
       next = {
         ...next,
         pendingEvents: [...next.pendingEvents, { eventId: crisisEventId, firedOnDay: next.day }],
-        firedEventIds: [...(next.firedEventIds ?? []), crisisEventId],
+        lastFiredDay: { ...next.lastFiredDay, [crisisEventId]: next.day },
       }
     }
   }

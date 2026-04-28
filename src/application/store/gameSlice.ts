@@ -13,7 +13,6 @@ import { endDay as endDayCommand } from '../commands/endDay'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../commands/recruitment'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
-import { evaluateEvents } from '../commands/evaluateEvents'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
@@ -58,6 +57,7 @@ const gameSlice = createSlice({
     },
     endDay(state) {
       const afterDay = endDayCommand(state)
+      afterDay.isFirstRun = false
       // Expire timed quests at end of day
       afterDay.activeQuests.forEach((q) => {
         const template = getQuestTemplates().find((t) => t.id === q.questId)
@@ -224,10 +224,6 @@ const gameSlice = createSlice({
       })
       if (state.activityLog.length > 100) state.activityLog.pop()
 
-      const snapshot = current(state)
-      const updated = evaluateEvents(snapshot)
-      state.pendingEvents = updated.pendingEvents
-      state.firedEventIds = updated.firedEventIds
     },
 
     completeQuest(state, action: PayloadAction<{ questId: string }>) {
@@ -630,6 +626,13 @@ const gameSlice = createSlice({
         })
         if (state.activityLog.length > 100) state.activityLog.pop()
       }
+    },
+
+    equipItem(state, action: PayloadAction<{ npcId: string; slot: 'primaryWeaponId' | 'secondaryWeaponId' | 'armorId'; itemId: string | null }>) {
+      const { npcId, slot, itemId } = action.payload
+      const npcState = state.roster.find((n) => n.npcId === npcId)
+      if (!npcState) return
+      npcState.loadout[slot] = itemId
     },
 
     resolveExpedition(state) {

@@ -449,7 +449,7 @@
     "description": "The Hollows does not welcome strangers. As you enter, eyes track you from doorways and alley mouths. Someone here knows your business before you do.",
     "triggerConditions": {
       "currentDistrict": "district-the-hollows",
-      "probability": 1.0
+      "probability": 0.3
     },
     "choices": [
       {
@@ -482,7 +482,8 @@
     "tags": [
       "district",
       "social"
-    ]
+    ],
+    "repeatable": false
   },
   {
     "id": "event-pale-approach",
@@ -490,7 +491,7 @@
     "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
-      "probability": 1.0
+      "probability": 0.3
     },
     "choices": [
       {
@@ -533,7 +534,8 @@
     "tags": [
       "district",
       "political"
-    ]
+    ],
+    "repeatable": false
   },
   {
     "id": "event-npc-betrayal",
@@ -822,7 +824,17 @@
       {
         "id": "choice-let-them-watch",
         "label": "Let them watch.",
-        "outcomes": []
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": -2
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You let them watch. The Court makes notes. That costs something, eventually."
+          }
+        ]
       },
       {
         "id": "choice-send-goodwill",

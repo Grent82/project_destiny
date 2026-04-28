@@ -12,7 +12,6 @@ import {
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
 import { ResourceStatusPanel } from '../components/ResourceStatusPanel'
-
 interface DashboardScreenProps {
   saveStore?: SaveGameStore
 }
@@ -23,6 +22,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const dispatch = useAppDispatch()
   const summary = useAppSelector(selectDashboardSummary)
   const protagonistName = useAppSelector(selectProtagonistName)
+  const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
   const [canLoadSavedSession, setCanLoadSavedSession] = useState(() =>
     hasSavedSession(saveStore),
@@ -49,6 +49,12 @@ export function DashboardScreen(props: DashboardScreenProps) {
         The debt claim against House Valdric is active. Marion is waiting. The ledgers are in
         worse shape than they look.
       </p>
+      {isFirstRun && (
+        <div className="first-run-directive">
+          <p>House Valdris has debts and work available.</p>
+          <a href="/contracts" className="directive-link">→ Check the Work Board</a>
+        </div>
+      )}
       <div className="session-actions">
         <button
           className="action-button action-button--secondary"

@@ -7,6 +7,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
+import { ItemSelectionModal } from '../components/ItemSelectionModal'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 
@@ -248,6 +249,7 @@ function TitlePanel({ detail }: { detail: NpcDetail }) {
 
 export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Attributes')
+  const [equipSlot, setEquipSlot] = useState<'primaryWeaponId' | 'secondaryWeaponId' | 'armorId' | null>(null)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
 
   return (
@@ -347,9 +349,36 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           <AssignmentSelector detail={detail} />
           <DurabilityPanel npcId={detail.npcId} />
           <TitlePanel detail={detail} />
-          <button className="action-button" type="button" disabled>
-            Equip gear
-          </button>
+          <div className="equip-actions">
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => setEquipSlot('primaryWeaponId')}
+            >
+              Primary Weapon {detail.loadout?.primaryWeaponId ? '✓' : '—'}
+            </button>
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => setEquipSlot('secondaryWeaponId')}
+            >
+              Secondary Weapon {detail.loadout?.secondaryWeaponId ? '✓' : '—'}
+            </button>
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => setEquipSlot('armorId')}
+            >
+              Armor {detail.loadout?.armorId ? '✓' : '—'}
+            </button>
+          </div>
+          {equipSlot && (
+            <ItemSelectionModal
+              npcId={detail.npcId}
+              slot={equipSlot}
+              onClose={() => setEquipSlot(null)}
+            />
+          )}
         </div>
       </div>
     </div>

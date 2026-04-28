@@ -113,7 +113,7 @@ export const gameStateSchema = z
       districtId: z.string().nullable(),
       rollResult: z.enum(['pending', 'success', 'partial', 'failure']).default('pending'),
     }).nullable().default(null),
-    firedEventIds: z.array(z.string()).default([]),
+    lastFiredDay: z.record(z.string(), z.number()).default({}),
     rivalOrgActions: z.array(z.object({
       orgId: z.string(),
       actionType: z.enum(['expand', 'recruit', 'pressure', 'bribe']),
@@ -149,6 +149,7 @@ export const gameStateSchema = z
       antagonistFactionId: 'faction-gilded-court',
       missingRelatives: [],
     })),
+    isFirstRun: z.boolean().default(true),
   })
   .strict()
 
