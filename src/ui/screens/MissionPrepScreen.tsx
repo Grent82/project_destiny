@@ -24,9 +24,9 @@ export function MissionPrepScreen() {
   return (
     <section className="screen-panel">
       <p className="eyebrow">House Valdric</p>
-      <h1>Contracts</h1>
+      <h1>Squad Deployment</h1>
       <p className="summary">
-        Available work in Valdenmoor. Review the stakes, confirm the squad, commit.
+        Assemble your unit and commit to the engagement.
       </p>
       <p className="summary">
         Squad size: {summary.selectedSquad.length}/{squadRules.maxSquadSize}

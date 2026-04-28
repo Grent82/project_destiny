@@ -17,7 +17,7 @@ describe('MissionPrepScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Contracts' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Squad Deployment' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'The Deployed' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Deploy to encounter' })).toBeInTheDocument()
     expect(screen.getByText('Marion Vale')).toBeInTheDocument()

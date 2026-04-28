@@ -55,8 +55,11 @@ export function OpeningScreen() {
         ) : (
           <>
             <div className="household-summary">
-              <p>House Valdris. Your grandfather built it from nothing. Your father maintained it until the night of the Compact's purge. Your sister, Mira, was taken. Your brother did not survive.</p>
-              <p>One man remained loyal. The ledger is yours.</p>
+              <p>House Valdris. Your grandfather built it from nothing. Your father maintained it until the night of the Compact's purge. Edric is dead. Cael is in the ground. Mira — taken, not confirmed dead, which is the only mercy in any of this.</p>
+              <p>Marion Vale remained. She had no reason to — the wages stopped weeks ago, the house name meant nothing in the city. She stayed anyway.</p>
+              <p>Three days later, Ida Rhys knocked on the door. She said she heard you were hiring. She may be lying about something smaller.</p>
+              <p>Mira is still out there. That is the only thing in the ledger that matters more than the debt.</p>
+              <p>The ledger is yours.</p>
             </div>
             <button className="opening-confirm action-button" onClick={confirmLore} type="button">
               Take the Ledger →
