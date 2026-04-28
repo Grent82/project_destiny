@@ -49,4 +49,9 @@ export const screenCatalog = [
     title: 'The Record',
     summary: 'What has been logged: economy shifts, encounters, and the state of things.',
   },
+  {
+    path: '/expedition',
+    title: 'Expeditions',
+    summary: 'Send a squad outside the walls. Higher risk. Higher return.',
+  },
 ] as const

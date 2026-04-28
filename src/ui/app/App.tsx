@@ -8,6 +8,9 @@ import { ContractBoardScreen } from '../screens/ContractBoardScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DistrictMapScreen } from '../screens/DistrictMapScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
+import { ExpeditionPrepScreen } from '../screens/ExpeditionPrepScreen'
+import { ExpeditionTravelScreen } from '../screens/ExpeditionTravelScreen'
+import { ExpeditionReturnScreen } from '../screens/ExpeditionReturnScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
 import { InvestigationScreen } from '../screens/InvestigationScreen'
 import { MissionPrepScreen } from '../screens/MissionPrepScreen'
@@ -89,6 +92,9 @@ export function App() {
             <Route path="/shops" element={<ShopsScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
             <Route path="/event-log" element={<EventLogScreen />} />
+            <Route path="/expedition" element={<ExpeditionPrepScreen />} />
+            <Route path="/expedition-travel" element={<ExpeditionTravelScreen />} />
+            <Route path="/expedition-return" element={<ExpeditionReturnScreen />} />
             {screenCatalog
               .filter(
                 (screen) =>
@@ -104,6 +110,7 @@ export function App() {
                     '/shops',
                     '/combat',
                     '/event-log',
+                    '/expedition',
                   ].includes(screen.path),
               )
               .map((screen) => (

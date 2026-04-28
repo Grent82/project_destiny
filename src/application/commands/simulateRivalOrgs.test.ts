@@ -35,6 +35,17 @@ const baseState: GameState = {
   firedEventIds: [],
   rivalOrgActions: [],
   cityStability: 60,
+  expeditionState: {
+    status: 'idle',
+    destinationId: null,
+    squadNpcIds: [],
+    suppliesRemaining: 0,
+    daysDeparted: 0,
+    totalDays: 0,
+    encounters: [],
+    discoveries: [],
+    cityDayAtDeparture: 0,
+  },
   householdLore: {
     houseName: 'House Test',
     founderName: 'Test Founder',

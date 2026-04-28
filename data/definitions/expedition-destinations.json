@@ -1,0 +1,47 @@
+[
+  {
+    "id": "dest-ashfields",
+    "name": "The Ashfields",
+    "description": "Burned farmland three hours east of the gates. Something moved back in after the survivors left.",
+    "durationDays": 3,
+    "dangerLevel": 3,
+    "supplyConsumptionPerDay": 2,
+    "encounterEnemyIds": ["npc-enemy-rack", "npc-enemy-marsh"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-ration-compact-brick", "weight": 3 },
+      { "type": "item", "itemId": "item-medkit-field", "weight": 2 },
+      { "type": "lore", "loreKey": "ashfields-fragment", "label": "A burned ledger page. Pre-Breach accounting records.", "weight": 1 }
+    ],
+    "narrativeHook": "The ash still smells of something that wasn't wood."
+  },
+  {
+    "id": "dest-ruined-garrison",
+    "name": "The Ruined Garrison",
+    "description": "A military outpost from before the Breach. Four days north. Previous expeditions have not returned complete.",
+    "durationDays": 4,
+    "dangerLevel": 4,
+    "supplyConsumptionPerDay": 2,
+    "encounterEnemyIds": ["npc-enemy-warden-morrow", "npc-enemy-warden-captain-ruk"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-lamp-signal-expedition", "weight": 2 },
+      { "type": "lore", "loreKey": "garrison-orders", "label": "Standing orders from before the Breach. Someone powerful issued them.", "weight": 3 },
+      { "type": "item", "itemId": "item-iron-raw-ingots", "weight": 1 }
+    ],
+    "narrativeHook": "The garrison flag is still flying. No one put it there recently."
+  },
+  {
+    "id": "dest-green-corridor",
+    "name": "The Green Corridor",
+    "description": "A stretch of road south that still has trees. Two days. Relatively safe, relatively profitable.",
+    "durationDays": 2,
+    "dangerLevel": 2,
+    "supplyConsumptionPerDay": 1,
+    "encounterEnemyIds": ["npc-enemy-tomas-rell", "npc-enemy-deputy-heller"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-ration-compact-brick", "weight": 4 },
+      { "type": "item", "itemId": "item-medkit-field", "weight": 2 },
+      { "type": "marks", "amount": 150, "weight": 2 }
+    ],
+    "narrativeHook": "The traders used to call it the safe road. They don't anymore."
+  }
+]

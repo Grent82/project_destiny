@@ -2,6 +2,7 @@ import districts from '../../../data/definitions/districts.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import events from '../../../data/definitions/events.json'
+import expeditionDestinationsData from '../../../data/definitions/expedition-destinations.json'
 import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
 import missions from '../../../data/definitions/missions.json'
@@ -21,6 +22,7 @@ import {
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
 import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
 import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
+import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 
 const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
 const parsedQuests = questTemplateSchema.array().parse(questsData)
@@ -32,6 +34,7 @@ const parsedItems = itemDefinitionSchema.array().parse(items)
 const parsedShops = shopDefinitionSchema.array().parse(shops)
 const parsedMissions = missionContractSchema.array().parse(missions)
 const parsedEvents = eventTemplateSchema.array().parse(events)
+const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -59,6 +62,8 @@ export const contentCatalog = {
   events: parsedEvents,
   eventsById: toMap(parsedEvents),
   councilVotes: parsedCouncilVotes,
+  expeditionDestinations: parsedDestinations,
+  expeditionDestinationsById: new Map(parsedDestinations.map((d) => [d.id, d])),
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {

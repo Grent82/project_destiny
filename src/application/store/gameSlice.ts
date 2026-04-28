@@ -18,6 +18,11 @@ import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArm
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
+import {
+  generateExpeditionEncounter,
+  rollDiscovery,
+  applyExpeditionDiscoveries,
+} from '../commands/expedition'
 
 const gameSlice = createSlice({
   name: 'game',
@@ -520,6 +525,150 @@ const gameSlice = createSlice({
       if (!npc) return
       if (npc.assignment === 'deployed' || npc.assignment === 'assigned_title') return
       npc.assignment = action.payload.assignment as typeof npc.assignment
+    },
+
+    startExpedition(
+      state,
+      action: PayloadAction<{
+        destinationId: string
+        squadNpcIds: string[]
+        supplies: number
+      }>,
+    ) {
+      const { destinationId, squadNpcIds, supplies } = action.payload
+      const destination = contentCatalog.expeditionDestinationsById.get(destinationId)
+      if (!destination) return
+      if (squadNpcIds.length === 0) return
+      if ((state.cityResources?.foodSecurity ?? 0) < supplies) return
+
+      for (const npc of state.roster) {
+        if (squadNpcIds.includes(npc.npcId)) {
+          npc.assignment = 'deployed'
+        }
+      }
+
+      state.cityResources.foodSecurity = Math.max(
+        0,
+        (state.cityResources.foodSecurity ?? 0) - supplies,
+      )
+
+      state.expeditionState = {
+        status: 'traveling',
+        destinationId,
+        squadNpcIds,
+        suppliesRemaining: supplies,
+        daysDeparted: 0,
+        totalDays: destination.durationDays,
+        encounters: [],
+        discoveries: [],
+        cityDayAtDeparture: state.day,
+      }
+
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-expedition-depart`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `Expedition departed for ${destination.name}. ${squadNpcIds.length} operative${squadNpcIds.length !== 1 ? 's' : ''}. ${supplies} supplies allocated.`,
+      })
+      if (state.activityLog.length > 100) state.activityLog.pop()
+    },
+
+    advanceExpeditionDay(state) {
+      const exp = state.expeditionState
+      if (!exp || exp.status !== 'traveling') return
+
+      const destination = contentCatalog.expeditionDestinationsById.get(exp.destinationId ?? '')
+      if (!destination) return
+
+      const consumed = destination.supplyConsumptionPerDay
+      exp.suppliesRemaining = Math.max(0, exp.suppliesRemaining - consumed)
+
+      const r1 = Math.random()
+      const encounter = generateExpeditionEncounter(exp.daysDeparted + 1, destination.dangerLevel, r1)
+
+      if (encounter.type === 'discovery') {
+        const r2 = Math.random()
+        const discovery = rollDiscovery(destination.discoveryTable, r2)
+        if (discovery) exp.discoveries.push(discovery)
+      }
+
+      exp.encounters.push({
+        day: exp.daysDeparted + 1,
+        type: encounter.type,
+        label: encounter.label,
+        resolved: encounter.type !== 'combat',
+      })
+
+      exp.daysDeparted += 1
+
+      if (exp.suppliesRemaining === 0) {
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-exp-no-supplies`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: 'Supplies exhausted on expedition. The squad presses on — barely.',
+        })
+        if (state.activityLog.length > 100) state.activityLog.pop()
+        for (const npc of state.roster) {
+          if (exp.squadNpcIds.includes(npc.npcId)) {
+            npc.states.health = Math.max(0, npc.states.health - 10)
+            npc.states.morale = Math.max(0, npc.states.morale - 15)
+          }
+        }
+      }
+
+      if (exp.daysDeparted >= exp.totalDays) {
+        exp.status = 'returned'
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-exp-returned`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: `The expedition returns from ${destination.name}.`,
+        })
+        if (state.activityLog.length > 100) state.activityLog.pop()
+      }
+    },
+
+    resolveExpedition(state) {
+      const exp = state.expeditionState
+      if (!exp || exp.status !== 'returned') return
+
+      const snapshot = current(state) as GameState
+
+      // Apply discoveries and then tick city for each expedition day
+      let nextState = applyExpeditionDiscoveries(snapshot, exp.discoveries)
+
+      const daysToProcess = Math.min(exp.daysDeparted, 10)
+      for (let i = 0; i < daysToProcess; i++) {
+        nextState = endDayCommand(nextState)
+      }
+
+      // Return deployed squad NPCs to idle
+      nextState = {
+        ...nextState,
+        roster: nextState.roster.map((npc) => {
+          if (exp.squadNpcIds.includes(npc.npcId) && npc.assignment === 'deployed') {
+            return { ...npc, assignment: 'idle' as const }
+          }
+          return npc
+        }),
+        expeditionState: {
+          status: 'idle' as const,
+          destinationId: null,
+          squadNpcIds: [],
+          suppliesRemaining: 0,
+          daysDeparted: 0,
+          totalDays: 0,
+          encounters: [],
+          discoveries: [],
+          cityDayAtDeparture: 0,
+        },
+      }
+
+      return nextState
     },
   },
 })

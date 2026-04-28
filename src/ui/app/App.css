@@ -1299,3 +1299,29 @@ a:focus-visible,
   font-size: var(--size-sm);
   padding: 0.25rem 0.75rem;
 }
+
+/* ── Expedition ─────────────────────────────────────────── */
+.expedition-progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+.expedition-progress-fill {
+  height: 100%;
+  background: #8b7355;
+  border-radius: 3px;
+  transition: width 300ms ease;
+}
+.expedition-squad-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.mission-row--selected {
+  border-left: 3px solid #d7bf82;
+  background: rgba(215, 191, 130, 0.05);
+}

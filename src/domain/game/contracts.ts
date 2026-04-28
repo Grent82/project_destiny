@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { activeCombatStateSchema } from '../combat/contracts'
+import { expeditionStateSchema } from '../expedition/contracts'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
 import { relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
@@ -120,6 +121,17 @@ export const gameStateSchema = z
       day: z.number(),
     })).default([]),
     cityStability: z.number().min(0).max(100).default(60),
+    expeditionState: expeditionStateSchema.default(() => ({
+      status: 'idle' as const,
+      destinationId: null,
+      squadNpcIds: [],
+      suppliesRemaining: 0,
+      daysDeparted: 0,
+      totalDays: 0,
+      encounters: [],
+      discoveries: [],
+      cityDayAtDeparture: 0,
+    })),
     householdLore: z.object({
       houseName: z.string().default('House Valdris'),
       founderName: z.string().default('Edric Valdris'),
