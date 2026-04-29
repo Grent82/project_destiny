@@ -197,6 +197,7 @@ export function endDay(state: GameState): GameState {
     const newHealth = Math.min(100, npc.states.health + baseRecovery + medicBonus)
     const fullyRecovered = newHealth >= 80
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
+    const npcName = npcDef?.name ?? npc.npcId
 
     next = {
       ...next,
@@ -215,7 +216,13 @@ export function endDay(state: GameState): GameState {
       next = appendActivityLogEntry(
         next,
         'system',
-        `${npcDef?.name ?? npc.npcId} is recovered. Back on roster.`,
+        `${npcName} is recovered. Back on roster.`,
+      )
+    } else if (newHealth > npc.states.health) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npcName} is recovering. Health improving.`,
       )
     }
   }
@@ -375,6 +382,7 @@ export function endDay(state: GameState): GameState {
   const trainingSkillGain = hasTrainer ? 2 : 1
   for (const npc of next.roster.filter((r) => r.assignment === 'training')) {
     const skillKey = SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
+    const oldSkillVal = npc.skills[skillKey]
     next = {
       ...next,
       roster: next.roster.map((r) =>
@@ -382,6 +390,19 @@ export function endDay(state: GameState): GameState {
           ? { ...r, skills: { ...r.skills, [skillKey]: Math.min(100, r.skills[skillKey] + trainingSkillGain) } }
           : r,
       ),
+    }
+    if (oldSkillVal < 100) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name} gained +${trainingSkillGain} ${skillKey} from training.`,
+      )
+    } else if (npc.wagesOwedDays >= 3) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name} continues training. Progress steady.`,
+      )
     }
   }
 

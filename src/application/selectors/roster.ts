@@ -95,5 +95,6 @@ export function selectRosterDetail(state: RootState, npcId: string) {
       secondaryWeaponId: runtime.loadout.secondaryWeaponId,
       armorId: runtime.loadout.armorId,
     },
+    wagesOwedDays: runtime.wagesOwedDays,
   }
 }

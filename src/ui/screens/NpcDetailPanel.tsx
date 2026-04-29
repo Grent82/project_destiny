@@ -365,6 +365,12 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           ))}
         </div>
 
+        {detail.assignment === 'training' && (
+          <p style={{ fontSize: 'var(--size-sm)', fontStyle: 'italic', color: 'var(--text-muted)', margin: '0.25rem 0' }}>
+            Training — Day {detail.wagesOwedDays} of ~7 until next stat tick
+          </p>
+        )}
+
         <div className="npc-tab-content" role="tabpanel">
           {activeTab === 'Attributes' &&
             Object.entries(detail.attributes).map(([key, val]) => (
