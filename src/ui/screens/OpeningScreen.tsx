@@ -40,7 +40,6 @@ export function OpeningScreen() {
             </radialGradient>
           </defs>
           <rect width="400" height="120" fill="#0d0a07"/>
-          <ellipse cx="288" cy="36" rx="18" ry="18" fill="moonGlow" />
           <ellipse cx="288" cy="36" rx="18" ry="18" fill="url(#moonGlow)"/>
           {/* Moon disc */}
           <circle cx="288" cy="36" r="10" fill="#1e160d" stroke="#c9a84c" strokeWidth="1.2" opacity="0.85"/>
