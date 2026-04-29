@@ -60,6 +60,7 @@ export function App() {
         <nav aria-label="Primary" className="nav-list">
           {screenCatalog.map((screen) => {
             const isStep = screen.path === '/contracts' || screen.path === '/missions'
+            const stepNum = screen.path === '/contracts' ? '①' : screen.path === '/missions' ? '②' : null
             return (
               <NavLink
                 key={screen.path}
@@ -69,6 +70,7 @@ export function App() {
                 }}
                 to={screen.path}
               >
+                {stepNum && <span className="step-num">{stepNum}</span>}
                 {screen.title}
               </NavLink>
             )
