@@ -857,6 +857,25 @@ strong { color: var(--text-secondary); }
   margin-top: 0.5rem;
 }
 
+.opening-skyline {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: block;
+}
+
+.opening-intro-row {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.opening-marion-portrait {
+  flex-shrink: 0;
+  width: 80px;
+  --portrait-accent: var(--gold-warm);
+}
+
 @media (max-width: 860px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -1196,6 +1215,67 @@ strong { color: var(--text-secondary); }
 .district-card--hq {
   outline: 1px solid rgba(180, 130, 40, 0.45);
   outline-offset: -1px;
+}
+
+/* ── District identity: accent border + glyph watermark ─── */
+.district-card--harbor,
+.district-card--gilded-heights,
+.district-card--ironworks,
+.district-card--the-pale,
+.district-card--the-warrens,
+.district-card--the-hollows {
+  position: relative;
+  overflow: hidden;
+}
+
+.district-card--harbor,
+.district-card--gilded-heights,
+.district-card--ironworks,
+.district-card--the-pale,
+.district-card--the-warrens,
+.district-card--the-hollows {
+  border-left-width: 3px;
+}
+
+/* Harbor Ward — rust/orange, anchor */
+.district-card--harbor          { border-left-color: #b5541a; }
+.district-card--harbor::before  { content: '⚓'; color: #b5541a; }
+
+/* Gilded Heights — gold/amber, scales */
+.district-card--gilded-heights          { border-left-color: #c9a84c; }
+.district-card--gilded-heights::before  { content: '⚖'; color: #c9a84c; }
+
+/* Ironworks — steel blue-grey, gear */
+.district-card--ironworks          { border-left-color: #607080; }
+.district-card--ironworks::before  { content: '⚙'; color: #607080; }
+
+/* The Pale — silver/grey, hexagon */
+.district-card--the-pale          { border-left-color: #9ea8b4; }
+.district-card--the-pale::before  { content: '❄'; color: #9ea8b4; }
+
+/* The Warrens — moss green, flower */
+.district-card--the-warrens          { border-left-color: #5a7a4a; }
+.district-card--the-warrens::before  { content: '⚘'; color: #5a7a4a; }
+
+/* The Hollows — dark red/charcoal, star */
+.district-card--the-hollows          { border-left-color: #8b2020; }
+.district-card--the-hollows::before  { content: '✦'; color: #8b2020; }
+
+/* shared watermark positioning */
+.district-card--harbor::before,
+.district-card--gilded-heights::before,
+.district-card--ironworks::before,
+.district-card--the-pale::before,
+.district-card--the-warrens::before,
+.district-card--the-hollows::before {
+  position: absolute;
+  bottom: -0.5rem;
+  right: 0.75rem;
+  font-size: 4.5rem;
+  opacity: 0.07;
+  pointer-events: none;
+  line-height: 1;
+  user-select: none;
 }
 
 .badge--hq {

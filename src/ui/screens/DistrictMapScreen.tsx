@@ -71,10 +71,11 @@ export function DistrictMapScreen() {
             <article
               key={district.id}
               className={[
+                `district-card--${district.id.replace('district-', '')}`,
                 isCurrent ? 'district-card--current' : '',
                 district.accessRestricted ? 'district-card--restricted' : '',
                 isHouseDistrict ? 'district-card--hq' : '',
-              ].filter(Boolean).join(' ') || undefined}
+              ].filter(Boolean).join(' ')}
               style={{ cursor: district.accessRestricted ? undefined : 'pointer' }}
               onClick={() => handleTravel(district.id, district.accessRestricted)}
               role="button"
