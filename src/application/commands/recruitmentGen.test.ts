@@ -25,8 +25,11 @@ describe('generateDistrictHireOffers', () => {
     it('adds NPCs whose factionAffinityId matches the district controlling faction', () => {
       // district-harbor is controlled by faction-civic-compact
       // npc-marion-vale and npc-verek-holst have factionAffinityId: faction-civic-compact
+      // Mock Math.random so non-matching NPCs never sneak in via randomAppearance (< 0.1)
+      vi.spyOn(Math, 'random').mockReturnValue(0.5)
       const state = makeState()
       generateDistrictHireOffers(state, 'district-harbor')
+      vi.restoreAllMocks()
       const offeredIds = state.availableForHire.map((o) => o.npcId)
       expect(offeredIds).toContain('npc-marion-vale')
       expect(offeredIds).toContain('npc-verek-holst')
