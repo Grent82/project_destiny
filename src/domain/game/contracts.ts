@@ -150,6 +150,10 @@ export const gameStateSchema = z
       missingRelatives: [],
     })),
     isFirstRun: z.boolean().default(true),
+    debtAmount: z.number().int().nonnegative().default(500),
+    debtDueDay: z.number().int().positive().default(30),
+    debtPaid: z.boolean().default(false),
+    debtCrisisTriggered: z.boolean().default(false),
   })
   .strict()
 

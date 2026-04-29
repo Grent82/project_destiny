@@ -85,7 +85,32 @@ const gameSlice = createSlice({
           message: `Contract failed: ${template?.title ?? failed.questId}. The house bears the cost.`,
         })
       }
+      if (
+        !afterDay.debtPaid &&
+        !afterDay.debtCrisisTriggered &&
+        afterDay.day >= afterDay.debtDueDay &&
+        afterDay.money < afterDay.debtAmount
+      ) {
+        afterDay.debtCrisisTriggered = true
+        afterDay.activityLog.unshift({
+          id: `log-${afterDay.day}-${afterDay.timeSlot}-debt-crisis`,
+          day: afterDay.day,
+          timeSlot: afterDay.timeSlot,
+          category: 'system',
+          message: 'The debt-claim against House Valdris has come due. The creditors have moved. The house is seized.',
+        })
+        if (afterDay.activityLog.length > 100) afterDay.activityLog.pop()
+      }
       return afterDay
+    },
+    payDebt(state, action: PayloadAction<{ amount: number }>) {
+      const payment = Math.max(0, action.payload.amount)
+      const actualPayment = Math.min(payment, state.money)
+      state.money = Math.max(0, state.money - actualPayment)
+      state.debtAmount = Math.max(0, state.debtAmount - actualPayment)
+      if (state.debtAmount === 0) {
+        state.debtPaid = true
+      }
     },
     recruitNpc(state, action: PayloadAction<{ npcId: string }>) {
       const nextState = recruitNpcCommand(state, action.payload.npcId)

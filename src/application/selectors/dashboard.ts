@@ -20,6 +20,15 @@ export const selectDashboardSummary = createSelector([selectGame], (game) => {
   }
 })
 
+export const selectDebtStatus = createSelector([selectGame], (game) => ({
+  debtAmount: game.debtAmount,
+  debtDueDay: game.debtDueDay,
+  debtPaid: game.debtPaid,
+  debtCrisisTriggered: game.debtCrisisTriggered,
+  daysRemaining: Math.max(0, game.debtDueDay - game.day),
+  marks: game.money,
+}))
+
 export const selectProtagonistName = createSelector(
   [selectGame],
   (game) => game.protagonistName,

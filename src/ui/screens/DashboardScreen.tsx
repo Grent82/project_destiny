@@ -7,6 +7,7 @@ import {
   type SaveGameStore,
   saveCurrentSession,
   selectDashboardSummary,
+  selectDebtStatus,
   selectProtagonistName,
 } from '../../application'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
@@ -23,6 +24,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const summary = useAppSelector(selectDashboardSummary)
   const protagonistName = useAppSelector(selectProtagonistName)
   const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
+  const debt = useAppSelector(selectDebtStatus)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
   const [canLoadSavedSession, setCanLoadSavedSession] = useState(() =>
     hasSavedSession(saveStore),
@@ -55,6 +57,36 @@ export function DashboardScreen(props: DashboardScreenProps) {
           <a href="/contracts" className="directive-link">→ Check the Work Board</a>
         </div>
       )}
+      <article className={`detail-panel debt-claim-panel${debt.debtCrisisTriggered ? ' debt-claim-panel--crisis' : debt.debtPaid ? ' debt-claim-panel--settled' : ''}`}>
+        {debt.debtCrisisTriggered ? (
+          <>
+            <h2>Debt Claim — <span className="debt-status debt-status--defaulted">DEFAULTED ✗</span></h2>
+            <p className="debt-crisis-message">The creditors have moved. The house is seized.</p>
+          </>
+        ) : debt.debtPaid ? (
+          <>
+            <h2>Debt Claim — <span className="debt-status debt-status--settled">Settled ✓</span></h2>
+            <p>House Valdris stands clear. The creditors withdrew.</p>
+          </>
+        ) : (
+          <>
+            <h2>Debt Claim — <span className="debt-status debt-status--active">Active</span></h2>
+            <p>
+              {debt.debtAmount} Marks owed · Due: Day {debt.debtDueDay} · {debt.daysRemaining} day{debt.daysRemaining !== 1 ? 's' : ''} remaining
+            </p>
+            <button
+              className="action-button action-button--secondary"
+              disabled={debt.marks === 0 || debt.debtAmount === 0}
+              onClick={() =>
+                dispatch(gameActions.payDebt({ amount: Math.min(debt.marks, debt.debtAmount) }))
+              }
+              type="button"
+            >
+              Pay {Math.min(debt.marks, debt.debtAmount)} Marks
+            </button>
+          </>
+        )}
+      </article>
       <div className="session-actions">
         <button
           className="action-button action-button--secondary"

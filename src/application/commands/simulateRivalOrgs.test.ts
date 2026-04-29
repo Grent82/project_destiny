@@ -54,6 +54,10 @@ const baseState: GameState = {
     antagonistFactionId: 'faction-gilded-court',
     missingRelatives: [],
   },
+  debtAmount: 500,
+  debtDueDay: 30,
+  debtPaid: false,
+  debtCrisisTriggered: false,
 }
 
 describe('simulateRivalOrgs', () => {

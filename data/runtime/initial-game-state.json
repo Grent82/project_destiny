@@ -384,5 +384,9 @@
       }
     ]
   },
-  "lastFiredDay": {}
+  "lastFiredDay": {},
+  "debtAmount": 500,
+  "debtDueDay": 30,
+  "debtPaid": false,
+  "debtCrisisTriggered": false
 }
