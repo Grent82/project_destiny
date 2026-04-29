@@ -58,6 +58,7 @@ const baseState: GameState = {
   debtDueDay: 30,
   debtPaid: false,
   debtCrisisTriggered: false,
+  houseDistrictId: 'district-the-pale',
 }
 
 describe('simulateRivalOrgs', () => {

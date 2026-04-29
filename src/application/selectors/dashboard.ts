@@ -38,3 +38,8 @@ export const selectHasSeenOpening = createSelector(
   [selectGame],
   (game) => game.hasSeenOpening,
 )
+
+export const selectHouseDistrictId = createSelector(
+  [selectGame],
+  (game) => game.houseDistrictId,
+)

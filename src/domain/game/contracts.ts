@@ -154,6 +154,7 @@ export const gameStateSchema = z
     debtDueDay: z.number().int().positive().default(30),
     debtPaid: z.boolean().default(false),
     debtCrisisTriggered: z.boolean().default(false),
+    houseDistrictId: z.string().default('district-the-pale'),
   })
   .strict()
 

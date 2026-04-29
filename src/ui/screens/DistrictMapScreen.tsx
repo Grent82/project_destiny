@@ -1,4 +1,4 @@
-import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectInstitutionalStanding } from '../../application'
+import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
@@ -35,6 +35,7 @@ export function DistrictMapScreen() {
   const dispatch = useAppDispatch()
   const districts = useAppSelector(selectDistrictMapEntries)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
+  const houseDistrictId = useAppSelector(selectHouseDistrictId)
   const institutionalStanding = useAppSelector(selectInstitutionalStanding)
   const isCompactBlacklisted = institutionalStanding['faction-civic-compact'] === 'blacklisted'
 
@@ -64,6 +65,7 @@ export function DistrictMapScreen() {
           const dangerLabel = DANGER_LABELS[district.dangerLevel] ?? String(district.dangerLevel)
           const isHighDanger = district.dangerLevel >= 4
           const isCurrent = district.isCurrent
+          const isHouseDistrict = district.id === houseDistrictId
 
           return (
             <article
@@ -71,6 +73,7 @@ export function DistrictMapScreen() {
               className={[
                 isCurrent ? 'district-card--current' : '',
                 district.accessRestricted ? 'district-card--restricted' : '',
+                isHouseDistrict ? 'district-card--hq' : '',
               ].filter(Boolean).join(' ') || undefined}
               style={{ cursor: district.accessRestricted ? undefined : 'pointer' }}
               onClick={() => handleTravel(district.id, district.accessRestricted)}
@@ -87,6 +90,10 @@ export function DistrictMapScreen() {
 
             >
               <h2>{district.name}</h2>
+
+              {isHouseDistrict && (
+                <p className="badge badge--hq badge--inline">⌂ House Valdris</p>
+              )}
 
               <p>
                 <span className="badge" style={{ marginRight: '0.5rem' }}>

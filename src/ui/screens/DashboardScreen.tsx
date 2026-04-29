@@ -126,6 +126,10 @@ export function DashboardScreen(props: DashboardScreenProps) {
           <h2>Deployed</h2>
           <p>{summary.assignedSquadCount} in the field</p>
         </article>
+        <article>
+          <h2>House Location</h2>
+          <p>House Valdris — The Pale</p>
+        </article>
       </div>
       <ResourceStatusPanel />
       <article className="detail-panel">
