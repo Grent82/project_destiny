@@ -1506,6 +1506,15 @@ a:focus-visible,
   margin-top: 0.5rem;
 }
 
+.district-hook {
+  font-style: italic;
+  font-size: 0.78em;
+  color: var(--text-tertiary);
+  padding-left: 0.75rem;
+  margin-top: 0.4rem;
+  opacity: 0.85;
+}
+
 .status-bar-events-alert {
   color: #d7bf82;
   animation: pulse 2s ease-in-out infinite;

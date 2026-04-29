@@ -660,6 +660,24 @@ const gameSlice = createSlice({
       npcState.loadout[slot] = itemId
     },
 
+    addToStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
+      const { type, id } = action.payload
+      if (type === 'weapon' && !state.stash.weapons.includes(id)) {
+        state.stash.weapons.push(id)
+      } else if (type === 'armor' && !state.stash.armors.includes(id)) {
+        state.stash.armors.push(id)
+      }
+    },
+
+    removeFromStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
+      const { type, id } = action.payload
+      if (type === 'weapon') {
+        state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
+      } else {
+        state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
+      }
+    },
+
     resolveExpedition(state) {
       const exp = state.expeditionState
       if (!exp || exp.status !== 'returned') return

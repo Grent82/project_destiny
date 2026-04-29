@@ -20,7 +20,11 @@
     "dangerLevel": 2,
     "accessRestricted": false,
     "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes — goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
-    "narrativeHook": "The trade roads run south. Bandits own them after the third milestone."
+    "narrativeHook": "The trade roads run south. Bandits own them after the third milestone.",
+    "hooks": [
+      "Dock foremen are hiring. The kind of work that doesn't ask questions.",
+      "A crate on Pier 9 has been sitting unclaimed for three days. Someone is afraid to collect it."
+    ]
   },
   {
     "id": "district-gilded-heights",
@@ -41,7 +45,11 @@
     "dangerLevel": 1,
     "accessRestricted": true,
     "narrativeSummary": "Gilded Heights does not have guards at the gate — it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
-    "narrativeHook": "The highland passes are nominally under Civic Compact jurisdiction. Nominally."
+    "narrativeHook": "The highland passes are nominally under Civic Compact jurisdiction. Nominally.",
+    "hooks": [
+      "Guild notices cover the market boards. Three contracts, one suspicious.",
+      "A Court invitation arrived with no name on the seal. Someone wants a discreet meeting."
+    ]
   },
   {
     "id": "district-ironworks",
@@ -62,7 +70,11 @@
     "dangerLevel": 2,
     "accessRestricted": false,
     "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here — on paper; in practice, the terms are set by who can keep the furnaces lit.",
-    "narrativeHook": "The mines are three days east. Some still produce. Most are haunted."
+    "narrativeHook": "The mines are three days east. Some still produce. Most are haunted.",
+    "hooks": [
+      "The League is short on contract workers. The foreman doesn't ask about your history.",
+      "A League inspector went missing on the night shift. The furnaces were still running."
+    ]
   },
   {
     "id": "district-the-pale",
@@ -88,7 +100,11 @@
     "dangerLevel": 3,
     "accessRestricted": false,
     "narrativeSummary": "The Pale is where the city's accounting breaks down — too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
-    "narrativeHook": "The old garrison road leads to the ruins of the previous city. Nobody comes back unchanged."
+    "narrativeHook": "The old garrison road leads to the ruins of the previous city. Nobody comes back unchanged.",
+    "hooks": [
+      "Crumbling manor walls hide older debts. A letter from the Collectors awaits.",
+      "Three factions watch the same corner. The one who doesn't show is the one to worry about."
+    ]
   },
   {
     "id": "district-the-warrens",
@@ -111,7 +127,11 @@
     "dangerLevel": 2,
     "accessRestricted": false,
     "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives — crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
-    "narrativeHook": "The sewers connect to the undercroft. Older than the city. Darker too."
+    "narrativeHook": "The sewers connect to the undercroft. Older than the city. Darker too.",
+    "hooks": [
+      "The Restored have opened a new relief house. The Compact hasn't decided whether to shut it down yet.",
+      "Someone is posting unsigned broadsheets at night. The city watch want them found."
+    ]
   },
   {
     "id": "district-the-hollows",
@@ -132,6 +152,10 @@
     "dangerLevel": 5,
     "accessRestricted": true,
     "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching — collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
-    "narrativeHook": "The Hollows backs up against the outer wall. There are doors in that wall. Unofficial ones."
+    "narrativeHook": "The Hollows backs up against the outer wall. There are doors in that wall. Unofficial ones.",
+    "hooks": [
+      "Something was dug up in the eastern rubble. The people who found it aren't talking.",
+      "A fire burned for three days in the condemned block. Nobody reported it."
+    ]
   }
 ]

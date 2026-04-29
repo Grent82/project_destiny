@@ -886,6 +886,168 @@ A playable prototype where the player can:
 
 If this milestone is fun, the project is viable.
 
+## 12. Art Direction
+
+### 12.1 Visual Style
+
+Project Destiny uses a dark fantasy, post-cataclysm aesthetic set in a decaying medieval city. The visual language should communicate weight, scarcity, and political tension without resorting to grimdark for its own sake.
+
+Core palette:
+- Background: deep charcoal and near-black (`#0d0a07`, `#1e160d`)
+- Accent: warm amber and gold (`#c9a84c`) used sparingly to signal importance, heat, and warmth
+- Negative space should dominate; accent colors earn attention by contrast
+
+The reference for atmosphere is the Master of Raana visual language: strong character portraits, clear status bars, and layered information panels. The UI should feel like a well-kept ledger in a dangerous city — functional, legible, and quietly threatening.
+
+### 12.2 Typography
+
+- **Display / headings**: IM Fell English — gothic gravitas appropriate to house names, district headers, and modal titles
+- **Body / interface**: Crimson Pro — readable and elegant; suits long NPC descriptions, event text, and dialogue panels
+- **UI chrome / data labels**: system sans-serif fallbacks acceptable for numeric values and small labels where legibility under dense layout takes priority
+
+Do not mix display and body typefaces within the same paragraph. Display text is for named elements and moments of weight.
+
+### 12.3 District Visual Identity
+
+Each district carries a thematic accent color and a watermark glyph used in headers, district panels, and map overlays.
+
+| District | Accent Color | Glyph | Design Intent |
+|---|---|---|---|
+| The Pale | Silver | ❄ | Cold, old nobility, frost-quiet decay |
+| Iron Docks | Rust | ⚓ | Industry, labor, iron and salt |
+| The City | Gold | ⚖ | Commerce, law, Compact authority |
+| The Tangle | Moss | ⚘ | Organic, crowded, underground networks |
+| Ashfields | Charcoal | ✦ | Ruin, post-cataclysm wasteland, ash memory |
+
+District identity should be visible in:
+- district panel headers and borders
+- event card backgrounds when an event originates in that district
+- shop and location UI frames when the player is present in a district
+
+### 12.4 NPC Portraits
+
+NPC portraits are hooded silhouette SVGs with faction-colored border accents in the current milestone. This approach:
+
+- scales to a large roster without requiring per-character illustration
+- maintains visual consistency across rarity tiers
+- allows faction identity to register at a glance via border color
+
+Design rules:
+- portrait shape is consistent (100×130 viewBox, centered silhouette)
+- border or glow accent reflects faction affinity
+- primary NPCs (Marion Vale, starting roster) may receive a slightly more detailed silhouette treatment to signal narrative weight
+- placeholder portraits must be replaced by milestone 2 with illustrated or semi-illustrated alternatives
+
+### 12.5 Reference
+
+The visual reference is Master of Raana:
+- strong character portrait panels as the primary NPC presentation surface
+- clear stat bars and numeric values in fixed-position panels
+- layered information (status, relationship, assignment, equipment) without spatial clutter
+- event and dialogue panels as overlays, not separate screens where avoidable
+
+Project Destiny should feel related to this reference in information density and character-forward presentation, not in illustration style.
+
+---
+
+## 13. Player Character
+
+### 13.1 Who the Player Is
+
+The player controls a male protagonist, unnamed at game start until character creation is implemented. He is the head of House Valdris — a minor noble house in the city of Valdenmoor.
+
+He has lost:
+- his house title (stripped during the Compact's purge)
+- his retinue (dead, scattered, or turned)
+- his family (Edric dead, Cael dead, Mira's fate unconfirmed)
+- his liquid assets (debt-claim seizure)
+
+He retains:
+- the House Valdris name (legally contested but not yet voided)
+- a ruined manor in The Pale district
+- one loyal retainer: Marion Vale
+
+This setup defines the starting condition of the game. It is not backstory-only flavor — it is the mechanical state that the player must recover from.
+
+### 13.2 The Ruined Manor
+
+The player's base of operations is a partly-seized manor in The Pale. In the opening milestone this represents:
+
+- two usable rooms
+- a locked basement (future expansion)
+- access to The Pale district and its faction tensions
+
+The manor serves as the organizational headquarters. Its condition affects available title slots and passive household bonuses. Manor restoration is a long-term progression objective, not an MVP feature.
+
+### 13.3 Playability Scope
+
+The player character is present in all decisions and events. He is not yet playable in tactical combat — combat is currently managed through assigned NPCs. Direct player combat participation is a future milestone.
+
+Character creation (name, starting stats, trait selection) is planned but not yet implemented. Until that milestone, the protagonist defaults to the name `Valdric` if none is entered at the opening screen.
+
+### 13.4 Player Identity Rules
+
+- The player is male. This is fixed in the current design scope.
+- He is an adult with prior authority — not a youth coming-of-age protagonist.
+- His voice in events should reflect loss, calculation, and slow recovery — not naivety or comic incompetence.
+- Events should respect that he was once capable and is now rebuilding, not that he is learning from scratch.
+
+---
+
+## 14. Marion Vale — Companion Arc
+
+### 14.1 Role
+
+Marion Vale is the player's last loyal retainer and the only NPC present from the opening screen. She is not a generic starting companion. She is the narrative anchor of the early game.
+
+Her presence answers a question the player has not yet asked: someone chose to stay. The game does not explain her reasoning immediately. Her motivation — *to rebuild something worth serving* — is internal and unexpressed.
+
+### 14.2 Competence and Agency
+
+Marion's primary identity is her competence, not her relationship to the player.
+
+Her starting profile:
+- High intellect (63), presence (66), and resolve (61)
+- Top skills: negotiation (68), administration (61), intrigue (41)
+- High prudence (67) and ambition (71)
+- Moderate loyalty (52) — earned, not automatic
+- Allowed titles: quartermaster, steward
+
+Marion should be used as a capable organizational officer. The player gains real mechanical value from assigning her correctly. Her arc does not override this — it runs alongside it.
+
+Design rule: Marion must never be portrayed as a simple love interest or as a character whose primary purpose is emotional support. Her competence and independent agency come first in all event and dialogue authoring.
+
+### 14.3 Romantic Arc Structure
+
+Marion's arc is expressed through restraint. It progresses through four stages, with only the first two currently implemented:
+
+| Stage | Name | Trigger Condition | Expression |
+|---|---|---|---|
+| 1 | Trust | Loyalty ≥ 60, morale stable | She speaks plainly. Offers assessment without being asked. |
+| 2 | Dependence | Loyalty ≥ 75, no morale crisis in 14 days | Personal events begin. Small gestures. She notices things. |
+| 3 | Unspoken feeling | Loyalty ≥ 85, player has not dismissed or replaced her | Dialogue shifts. She does not name what it is. Neither does the player. |
+| 4 | Player choice | Loyalty ≥ 90, stage 3 complete | A decision point. Not a confession scene — a moment where the player's action speaks. |
+
+Stages 3 and 4 are future milestones.
+
+### 14.4 Personal Events
+
+In the current implementation, Marion's personal events fire based on loyalty and morale conditions. Event design rules:
+
+- Events should be quiet — a conversation at the end of a day, a note left, a task completed without being asked
+- Events should not lock the player into a romance path; they should open space for one
+- Events should reference real game state (a mission just completed, a district recently visited, a named NPC Marion has interacted with)
+- Events should respect Marion's ambition and prudence scores — she does not act impulsively
+
+### 14.5 Authoring Constraints
+
+- Marion's dialogue should never be soft or deferent by default. She is direct and precise.
+- She will disagree with the player when her prudence or ambition scores warrant it.
+- She does not express feeling through declaration. She expresses it through action, silence, and specificity.
+- Her arc is not the main plot. It is a parallel track that the player may pursue or not. Either choice should produce a coherent experience.
+
+---
+
 ## 11. Summary
 
 The defining feature of this design is not any single mechanic. It is the fact that:

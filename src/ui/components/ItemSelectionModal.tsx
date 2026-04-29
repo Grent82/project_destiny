@@ -1,7 +1,6 @@
-import rawWeapons from '../../../data/definitions/weapons.json'
-import rawArmor from '../../../data/definitions/armor.json'
 import { gameActions } from '../../application/store/gameSlice'
-import { useAppDispatch } from '../app/hooks'
+import { selectStashedArmors, selectStashedWeapons } from '../../application/selectors/stash'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 type EquipSlot = 'primaryWeaponId' | 'secondaryWeaponId' | 'armorId'
 

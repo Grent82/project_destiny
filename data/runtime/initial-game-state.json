@@ -389,5 +389,9 @@
   "debtDueDay": 30,
   "debtPaid": false,
   "debtCrisisTriggered": false,
-  "houseDistrictId": "district-the-pale"
+  "houseDistrictId": "district-the-pale",
+  "stash": {
+    "weapons": [],
+    "armors": []
+  }
 }

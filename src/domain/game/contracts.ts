@@ -149,6 +149,10 @@ export const gameStateSchema = z
       antagonistFactionId: 'faction-gilded-court',
       missingRelatives: [],
     })),
+    stash: z.object({
+      weapons: z.array(z.string()),
+      armors: z.array(z.string()),
+    }).default(() => ({ weapons: [], armors: [] })),
     isFirstRun: z.boolean().default(true),
     debtAmount: z.number().int().nonnegative().default(500),
     debtDueDay: z.number().int().positive().default(30),

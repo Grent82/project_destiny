@@ -15,6 +15,7 @@ export const districtDefinitionSchema = z
     accessRestricted: z.boolean(),
     narrativeSummary: z.string().min(1),
     narrativeHook: z.string().optional(),
+    hooks: z.array(z.string()).optional(),
   })
   .strict()
 
