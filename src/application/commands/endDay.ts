@@ -419,13 +419,34 @@ export function endDay(state: GameState): GameState {
     applyProximityGains(next, deployedNpcIds)
   }
 
+  // Step 5c-pre: Ambition frustration morale drain
+  for (const npc of next.roster) {
+    if (npc.traits.ambition > 65 && npc.activeTitle === null && npc.assignment !== 'deployed') {
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? { ...r, states: { ...r.states, morale: Math.max(0, r.states.morale - 2) } }
+            : r,
+        ),
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name}: ambition stirs without outlet. Morale suffers.`,
+      )
+    }
+  }
+
   // Step 5c: NPC departure / betrayal check (after wages and passive drift)
   // Math.random() is acceptable here — endDay is a command, not a reducer.
   const rosterBeforeDepartures = next.roster
   for (const npc of rosterBeforeDepartures) {
     if (npc.assignment === 'recovering' || npc.assignment === 'assigned_title') continue
     const relKey = buildRelationshipKey('player', npc.npcId)
-    const rel = next.relationships[relKey]
+    // Use start-of-day relationships: freshly-created entries from wage payment have
+    // loyalty=0 by default, which would incorrectly flag new NPCs for departure.
+    const rel = state.relationships[relKey]
     const result = evaluateNpcDeparture(
       { id: npc.npcId, name: npc.name, assignment: npc.assignment, traits: { loyalty: npc.traits.loyalty } },
       rel,

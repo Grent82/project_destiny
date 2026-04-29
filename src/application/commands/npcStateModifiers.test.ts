@@ -113,8 +113,9 @@ describe('endDay threshold events', () => {
     }
     const next = endDay(stressedState)
     // stress 90 - 3 decay = 87 > 80 threshold → morale 50 - 5 = 45
+    // Marion Vale also has ambition=71 (>65), no title, not deployed → ambition drain -2 → 43
     const stressedNpc = next.roster[0]!
-    expect(stressedNpc.states.morale).toBe(45) // 50 - 5
+    expect(stressedNpc.states.morale).toBe(43) // 50 - 5 (stress) - 2 (ambition)
     const stressWarning = next.activityLog.find((e) =>
       e.message.includes('carries the weight'),
     )
