@@ -134,13 +134,16 @@ function CharacterSection({ detail }: { detail: NpcDetail }) {
   )
 }
 
-function portraitInitials(name: string) {
-  return name
-    .split(' ')
-    .map((word) => word[0] ?? '')
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+const FACTION_CLASS_MAP: Record<string, string> = {
+  'faction-civic-compact': 'compact',
+  'faction-gilded-court': 'gilded',
+  'faction-foundry-league': 'foundry',
+  'faction-tallow-ring': 'tallow',
+  'faction-restored': 'restored',
+}
+
+function factionClass(factionAffinityId: string | null): string {
+  return factionAffinityId ? (FACTION_CLASS_MAP[factionAffinityId] ?? 'neutral') : 'neutral'
 }
 
 interface NpcDetailPanelProps {
@@ -315,8 +318,20 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   return (
     <div className="npc-detail-panel">
       <div className="npc-portrait-column">
-        <div className="npc-portrait-placeholder" aria-hidden="true">
-          {portraitInitials(detail.name)}
+        <div
+          className={[
+            'npc-portrait-placeholder',
+            `npc-portrait-placeholder--${factionClass(detail.factionAffinityId)}`,
+            detail.npcId === 'npc-marion-vale' ? 'npc-portrait-placeholder--primary' : '',
+          ].filter(Boolean).join(' ')}
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" className="npc-silhouette">
+            <ellipse cx="50" cy="28" rx="16" ry="18" fill="currentColor" opacity="0.6"/>
+            <path d="M28 32 Q50 15 72 32 Q68 50 50 52 Q32 50 28 32Z" fill="currentColor" opacity="0.5"/>
+            <path d="M22 55 Q50 48 78 55 L85 130 H15 Z" fill="currentColor" opacity="0.45"/>
+            <path d="M18 58 Q30 52 50 50 Q70 52 82 58 L80 72 Q65 65 50 64 Q35 65 20 72Z" fill="currentColor" opacity="0.55"/>
+          </svg>
         </div>
 
         <p className="npc-identity-name">{detail.name}</p>

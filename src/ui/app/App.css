@@ -413,15 +413,34 @@ strong { color: var(--text-secondary); }
   width: 100%;
   aspect-ratio: 3 / 4;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(201, 168, 76, 0.2);
-  background: linear-gradient(160deg, rgba(215, 191, 130, 0.12), rgba(22, 16, 9, 0.6));
+  background: linear-gradient(175deg, #1e160d 0%, #0d0a07 100%);
+  border: 2px solid var(--portrait-accent, rgba(201,168,76,0.25));
+  border-left: 4px solid var(--portrait-accent, rgba(201,168,76,0.5));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: rgba(215, 191, 130, 0.5);
-  letter-spacing: -0.02em;
+  overflow: hidden;
+  position: relative;
+}
+
+.npc-silhouette {
+  width: 72%;
+  height: 72%;
+  color: var(--portrait-accent, rgba(201,168,76,0.4));
+}
+
+/* Faction accent colors */
+.npc-portrait-placeholder--compact  { --portrait-accent: #4a7fb5; }
+.npc-portrait-placeholder--gilded   { --portrait-accent: #c9a84c; }
+.npc-portrait-placeholder--foundry  { --portrait-accent: #8b6914; }
+.npc-portrait-placeholder--tallow   { --portrait-accent: #7a3a2a; }
+.npc-portrait-placeholder--restored { --portrait-accent: #4a7a5a; }
+.npc-portrait-placeholder--neutral  { --portrait-accent: rgba(201,168,76,0.35); }
+
+/* Marion Vale — primary character distinction */
+.npc-portrait-placeholder--primary {
+  border-left-width: 6px;
+  box-shadow: 0 0 18px rgba(var(--portrait-accent-rgb, 201,168,76), 0.15) inset;
 }
 
 .npc-identity-name {
