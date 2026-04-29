@@ -1,8 +1,11 @@
 import { useState } from 'react'
 
+import rawArmor from '../../../data/definitions/armor.json'
+import rawWeapons from '../../../data/definitions/weapons.json'
 import { gameActions, selectShopOverview } from '../../application'
 import { getDurabilityTier } from '../../application/commands/durability'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
+import { selectStash } from '../../application/selectors/stash'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 function DurabilityBar({ current, max }: { current: number; max: number }) {
@@ -25,6 +28,7 @@ export function ShopsScreen() {
   const overview = useAppSelector(selectShopOverview)
   const [lastPurchaseMessage, setLastPurchaseMessage] = useState<string | null>(null)
   const gameState = useAppSelector((state) => state.game)
+  const stash = useAppSelector(selectStash)
   const roster = gameState.roster
   const durabilities = gameState.equippedItemDurabilities
   const money = gameState.money
@@ -142,6 +146,68 @@ export function ShopsScreen() {
           ))}
         </div>
       )}
+      <section className="repair-section">
+        <h2>Equipment Stash</h2>
+        <p className="summary">Acquire weapons and armor to make them available for equipping to roster members.</p>
+        <div className="stash-catalog">
+          <h3>Weapons</h3>
+          <div className="shop-offer-list">
+            {(rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number }>).map((w) => {
+              const owned = stash.weapons.includes(w.id)
+              return (
+                <div key={w.id} className="shop-offer-row">
+                  <div>
+                    <strong>{w.name}</strong>
+                    <p>T{w.tier} · {w.weaponClass} · {w.damageMin}–{w.damageMax} dmg · {w.accuracy}% acc</p>
+                  </div>
+                  <div className="shop-offer-actions">
+                    {owned
+                      ? <span className="badge badge-positive">In Stash</span>
+                      : (
+                        <button
+                          className="action-button action-button-sm"
+                          type="button"
+                          onClick={() => dispatch(gameActions.addToStash({ type: 'weapon', id: w.id }))}
+                        >
+                          Acquire
+                        </button>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          <h3>Armor</h3>
+          <div className="shop-offer-list">
+            {(rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number }>).map((a) => {
+              const owned = stash.armors.includes(a.id)
+              return (
+                <div key={a.id} className="shop-offer-row">
+                  <div>
+                    <strong>{a.name}</strong>
+                    <p>T{a.tier} · {a.armorClass} · {a.soak} soak · -{a.evasionPenalty}% evasion</p>
+                  </div>
+                  <div className="shop-offer-actions">
+                    {owned
+                      ? <span className="badge badge-positive">In Stash</span>
+                      : (
+                        <button
+                          className="action-button action-button-sm"
+                          type="button"
+                          onClick={() => dispatch(gameActions.addToStash({ type: 'armor', id: a.id }))}
+                        >
+                          Acquire
+                        </button>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
       <section className="repair-section">
         <h2>Equipment Repair</h2>
         {hasQuartermaster && (

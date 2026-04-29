@@ -1310,6 +1310,15 @@ strong { color: var(--text-secondary); }
 }
 
 /* ── Contract board ──────────────────────────────────────── */
+.faction-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: inherit;
+  stroke: currentColor;
+  fill: none;
+}
+
 .faction-badge {
   display: inline-block;
   padding: 0.1rem 0.4rem;

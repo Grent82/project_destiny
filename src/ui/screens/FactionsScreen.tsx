@@ -79,7 +79,12 @@ export function FactionsScreen() {
           const tier = standingTier(faction.standing)
           return (
             <article key={faction.factionId}>
-              <h2>{faction.name}</h2>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <svg className="faction-icon" aria-hidden="true">
+                  <use href={`/icons.svg#icon-${faction.factionId}`} />
+                </svg>
+                {faction.name}
+              </h2>
               <p style={{ fontStyle: 'italic', fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary, #999)', fontSize: '0.9em', marginBottom: '0.25rem' }}>
                 {faction.primer}
               </p>

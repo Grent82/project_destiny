@@ -23,9 +23,6 @@ interface ArmorEntry {
   tier: number
 }
 
-const weapons = rawWeapons as WeaponEntry[]
-const armors = rawArmor as ArmorEntry[]
-
 interface ItemSelectionModalProps {
   npcId: string
   slot: EquipSlot
@@ -34,6 +31,8 @@ interface ItemSelectionModalProps {
 
 export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalProps) {
   const dispatch = useAppDispatch()
+  const weapons = useAppSelector(selectStashedWeapons) as WeaponEntry[]
+  const armors = useAppSelector(selectStashedArmors) as ArmorEntry[]
   const isWeaponSlot = slot === 'primaryWeaponId' || slot === 'secondaryWeaponId'
 
   function handleSelect(itemId: string | null) {
@@ -60,7 +59,9 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
           </button>
 
           {isWeaponSlot
-            ? weapons.map((w) => (
+            ? weapons.length === 0
+              ? <p className="summary">No weapons in stash. Acquire weapons from The Market.</p>
+              : weapons.map((w) => (
               <button
                 key={w.id}
                 className="item-selection-option"
@@ -73,7 +74,9 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
                 </span>
               </button>
             ))
-            : armors.map((a) => (
+            : armors.length === 0
+              ? <p className="summary">No armor in stash. Acquire armor from The Market.</p>
+              : armors.map((a) => (
               <button
                 key={a.id}
                 className="item-selection-option"

@@ -59,6 +59,7 @@ const baseState: GameState = {
   debtPaid: false,
   debtCrisisTriggered: false,
   houseDistrictId: 'district-the-pale',
+  stash: { weapons: [], armors: [] },
 }
 
 describe('simulateRivalOrgs', () => {
