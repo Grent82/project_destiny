@@ -189,11 +189,11 @@ strong { color: var(--text-secondary); }
 .global-status-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 2rem;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
-  background: rgba(22, 16, 9, 0.6);
-  backdrop-filter: blur(8px);
+  gap: 0;
+  padding: 0.4rem 1.2rem;
+  background: var(--bg-mid);
+  border-top: 2px solid var(--gold-warm);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
   font-size: 0.83rem;
   color: #a89070;
   position: sticky;
@@ -201,31 +201,39 @@ strong { color: var(--text-secondary); }
   z-index: 10;
 }
 
-.status-bar-item {
-  white-space: nowrap;
+.status-zone {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
 }
 
-.status-bar-slot {
-  color: var(--text-secondary);
+.status-zone--identity { flex: 0 0 auto; }
+.status-zone--resources {
+  flex: 1;
+  border-left: 1px solid rgba(201, 168, 76, 0.2);
+  border-right: 1px solid rgba(201, 168, 76, 0.2);
+}
+.status-zone--actions { flex: 0 0 auto; gap: 0.5rem; }
+
+.status-day strong,
+.status-marks strong {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--text-accent);
 }
 
-.status-bar-divider {
-  width: 1px;
-  height: 1rem;
-  background: rgba(201, 168, 76, 0.25);
-  flex-shrink: 0;
+.status-house-name {
+  font-family: var(--font-display);
+  font-size: var(--size-sm);
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.status-bar-alert {
-  margin-left: auto;
-}
-
-.reputation-tier {
-  font-size: 0.75em;
-  font-variant: small-caps;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-}
+.status-district { color: var(--text-muted); font-size: var(--size-sm); }
+.status-rep { color: var(--text-secondary); font-size: var(--size-sm); }
+.status-events-badge { animation: pulse 1.5s infinite; }
 
 .squad-cohesion {
   color: var(--text-tertiary, #9ca3af);
@@ -1412,9 +1420,10 @@ a:focus-visible,
 }
 
 .status-bar-end-day {
-  margin-left: auto;
-  font-size: var(--size-sm);
-  padding: 0.25rem 0.75rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  border-color: var(--gold-warm);
+  padding: 0.3rem 1rem;
 }
 
 /* ── Expedition ─────────────────────────────────────────── */

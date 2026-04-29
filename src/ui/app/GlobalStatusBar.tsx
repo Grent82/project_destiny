@@ -11,51 +11,38 @@ export function GlobalStatusBar() {
 
   return (
     <div className="global-status-bar" role="status" aria-label="Game status">
-      {protagonistName && (
-        <>
-          <span className="status-bar-item status-bar-name">{protagonistName}</span>
-          <span className="status-bar-divider" aria-hidden="true" />
-        </>
-      )}
-      <span className="status-bar-item">
-        Day {summary.day} · <span className="status-bar-slot">{summary.timeSlot}</span>
-      </span>
-      <span className="status-bar-divider" aria-hidden="true" />
-      <span className="status-bar-item">
-        {summary.money} <abbr title="Marks">Mk</abbr>
-      </span>
-      <span className="status-bar-divider" aria-hidden="true" />
-      {pendingEventsCount > 0 && (
-        <>
-          <span className="status-bar-item status-bar-events-alert">
-            ● {pendingEventsCount} pending
-          </span>
-          <span className="status-bar-divider" aria-hidden="true" />
-        </>
-      )}
-      <span className="status-bar-item reputation-tier">Rep: {reputationTier}</span>
-      {currentDistrict && (
-        <>
-          <span className="status-bar-divider" aria-hidden="true" />
-          <span className="status-bar-item">In: {currentDistrict.name}</span>
-        </>
-      )}
-      {summary.deployedCount > 0 && (
-        <>
-          <span className="status-bar-divider" aria-hidden="true" />
-          <span className="badge badge-warning status-bar-alert">
-            {summary.deployedCount} deployed
-          </span>
-        </>
-      )}
-      <span className="status-bar-divider" aria-hidden="true" />
-      <button
-        className="action-button action-button--primary status-bar-end-day"
-        onClick={() => dispatch(gameActions.endDay())}
-        type="button"
-      >
-        End Day →
-      </button>
+      <div className="status-zone status-zone--identity">
+        <span className="status-house-name">{protagonistName}</span>
+        <span className="status-day">
+          Day <strong>{summary.day}</strong> · {summary.timeSlot}
+        </span>
+      </div>
+
+      <div className="status-zone status-zone--resources">
+        <span className="status-marks">
+          <strong>{summary.money}</strong> <abbr title="Marks">Mk</abbr>
+        </span>
+        <span className="status-rep">{reputationTier}</span>
+        {currentDistrict && (
+          <span className="status-district">⬡ {currentDistrict.name}</span>
+        )}
+      </div>
+
+      <div className="status-zone status-zone--actions">
+        {pendingEventsCount > 0 && (
+          <span className="badge status-events-badge">● {pendingEventsCount}</span>
+        )}
+        {summary.deployedCount > 0 && (
+          <span className="badge badge-warning">⚔ {summary.deployedCount}</span>
+        )}
+        <button
+          className="action-button status-bar-end-day"
+          onClick={() => dispatch(gameActions.endDay())}
+          type="button"
+        >
+          End Day →
+        </button>
+      </div>
     </div>
   )
 }
