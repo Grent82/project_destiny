@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { selectRosterDetail, selectRosterEntries } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
+import { getJobForNpc } from '../../application/content/jobCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
 
@@ -68,11 +69,15 @@ export function RosterScreen() {
                           {' — '}{contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled'}
                         </span>
                       )}
-                      {key === 'working' && (
-                        <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
-                          {' — '}~{computeWorkingIncome(entry.skills as Record<string, number>)} Marks/day
-                        </span>
-                      )}
+                      {key === 'working' && (() => {
+                        const skills = entry.skills as Record<string, number>
+                        const job = getJobForNpc(skills)
+                        return (
+                          <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
+                            {' — '}{job.name} — ~{computeWorkingIncome(skills)} Marks/day
+                          </span>
+                        )
+                      })()}
                     </span>
                     <div className="badge-row">
                       <span className="badge">{entry.status}</span>
