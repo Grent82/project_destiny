@@ -29,7 +29,7 @@
       },
       {
         "id": "choice-ignore",
-        "label": "Ignore it \u2014 they'll manage",
+        "label": "Ignore it — they'll manage",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -57,7 +57,7 @@
   {
     "id": "event-gilded-court-approach",
     "title": "A Gilded Messenger",
-    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting \u2014 on their terms. You are not foolish enough to think this is a kindness.",
+    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting — on their terms. You are not foolish enough to think this is a kindness.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-gilded-court",
@@ -83,13 +83,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You attend. The Court notes your cooperation \u2014 and your face."
+            "message": "You attend. The Court notes your cooperation — and your face."
           }
         ]
       },
       {
         "id": "choice-decline",
-        "label": "Decline \u2014 send a polite refusal",
+        "label": "Decline — send a polite refusal",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -134,13 +134,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The League thanks you. The Corridor is placed under watch \u2014 disrupted but not closed."
+            "message": "The League thanks you. The Corridor is placed under watch — disrupted but not closed."
           }
         ]
       },
       {
         "id": "choice-ignore-corridor",
-        "label": "Keep it quiet \u2014 not your problem",
+        "label": "Keep it quiet — not your problem",
         "outcomes": [
           {
             "type": "setCorridorStatus",
@@ -167,7 +167,7 @@
   {
     "id": "event-ring-smuggler-contact",
     "title": "A Ring Offer",
-    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods \u2014 restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
+    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods — restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-tallow-ring",
@@ -221,7 +221,7 @@
   {
     "id": "event-restored-appeal",
     "title": "A Petition from the Warrens",
-    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help \u2014 money, testimony, or a distraction that buys them time.",
+    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help — money, testimony, or a distraction that buys them time.",
     "triggerConditions": {
       "minUnrest": 40,
       "probability": 0.45
@@ -247,7 +247,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The Restored accept your help quietly. Word will spread \u2014 in the right places."
+            "message": "The Restored accept your help quietly. Word will spread — in the right places."
           }
         ]
       },
@@ -297,7 +297,7 @@
   {
     "id": "event-market-price-spike",
     "title": "Supply Shortage in the Harbor",
-    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week \u2014 but this week it matters.",
+    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week — but this week it matters.",
     "triggerConditions": {
       "probability": 0.3,
       "dayMin": 3
@@ -347,7 +347,7 @@
   {
     "id": "event-foundry-inspection",
     "title": "League Safety Inspection",
-    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current \u2014 but inspections have a way of finding things.",
+    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current — but inspections have a way of finding things.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-foundry-league",
@@ -359,7 +359,7 @@
     "choices": [
       {
         "id": "choice-cooperate-fully",
-        "label": "Cooperate fully \u2014 nothing to hide",
+        "label": "Cooperate fully — nothing to hide",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -401,7 +401,7 @@
   {
     "id": "event-auto-npc-injury-complication",
     "title": "Injury Complications",
-    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover \u2014 but it will take time and rest.",
+    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover — but it will take time and rest.",
     "triggerConditions": {
       "probability": 0.25,
       "dayMin": 4
@@ -454,11 +454,11 @@
     "choices": [
       {
         "id": "choice-keep-moving",
-        "label": "Keep moving \u2014 head down",
+        "label": "Keep moving — head down",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You move through without incident. The Hollows lets you pass \u2014 this time."
+            "message": "You move through without incident. The Hollows lets you pass — this time."
           }
         ]
       },
@@ -488,7 +488,7 @@
   {
     "id": "event-pale-approach",
     "title": "The Pale Keeps Its Silence",
-    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
+    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate — politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "probability": 0.3
@@ -511,7 +511,7 @@
       },
       {
         "id": "choice-deflect-questions",
-        "label": "Deflect \u2014 you are here on private business",
+        "label": "Deflect — you are here on private business",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -566,7 +566,7 @@
   {
     "id": "event-loyal-npc-milestone",
     "title": "A Reliable Hand",
-    "description": "One of your people has been consistent \u2014 steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
     "triggerConditions": {
       "dayMin": 10,
       "probability": 0.3
@@ -587,13 +587,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The bonus is delivered without ceremony. The work continues \u2014 better than before."
+            "message": "The bonus is delivered without ceremony. The work continues — better than before."
           }
         ]
       },
       {
         "id": "choice-acknowledge-words",
-        "label": "Acknowledge the work \u2014 no payment",
+        "label": "Acknowledge the work — no payment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -627,7 +627,7 @@
   {
     "id": "event-stressed-npc-warning",
     "title": "Someone Is Close to Breaking",
-    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
       "probability": 0.45
@@ -635,7 +635,7 @@
     "choices": [
       {
         "id": "choice-give-rest",
-        "label": "Give them two days off \u2014 no assignments",
+        "label": "Give them two days off — no assignments",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -669,7 +669,7 @@
       },
       {
         "id": "choice-push-through",
-        "label": "Push through \u2014 the work does not wait",
+        "label": "Push through — the work does not wait",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -701,7 +701,7 @@
     "choices": [
       {
         "id": "choice-invest-shipment",
-        "label": "Buy in \u2014 invest 80 Marks",
+        "label": "Buy in — invest 80 Marks",
         "outcomes": [
           {
             "type": "addCredits",
@@ -719,13 +719,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The goods clear the dock before the inspection. The investment was sound \u2014 the materials arrive and the margin holds."
+            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
           }
         ]
       },
       {
         "id": "choice-pass-windfall",
-        "label": "Pass \u2014 the timing is suspicious",
+        "label": "Pass — the timing is suspicious",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -760,7 +760,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Your team moves into the outer districts. Order is restored \u2014 for now. The Compact takes note."
+            "message": "Your team moves into the outer districts. Order is restored — for now. The Compact takes note."
           }
         ]
       },
@@ -852,6 +852,438 @@
     "tags": [
       "narrative",
       "lineage"
+    ]
+  },
+  {
+    "id": "event-npc-marion-note",
+    "title": "A Note from Marion",
+    "description": "Marion leaves a folded note on the table before you wake.",
+    "triggerConditions": {
+      "dayMin": 3,
+      "probability": 0.7
+    },
+    "choices": [
+      {
+        "id": "choice-read-note",
+        "label": "Read the note",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion leaves a folded note on the table. *I have been watching your back since the Breach. I will not stop now.*"
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale"
+    ]
+  },
+  {
+    "id": "event-npc-marion-warning",
+    "title": "Marion Intercepts You",
+    "description": "Marion catches you before you leave. She does not ask. She tells.",
+    "triggerConditions": {
+      "minUnrest": 50,
+      "probability": 0.65
+    },
+    "choices": [
+      {
+        "id": "choice-hear-her-out",
+        "label": "Listen",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion catches you at the door. \"The city is wrong tonight. You are not going alone. Do not argue.\" You do not argue."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale"
+    ]
+  },
+  {
+    "id": "event-npc-ida-blade",
+    "title": "Ida Sharpens Her Blade",
+    "description": "Ida sharpens her blade loudly in the common room. She is not subtle about it.",
+    "triggerConditions": {
+      "dayMin": 2,
+      "probability": 0.65
+    },
+    "choices": [
+      {
+        "id": "choice-notice-ida",
+        "label": "Acknowledge her",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Ida sharpens her blade loudly in the common room. \"Just making sure I am still useful around here.\" She does not look up."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "ida-rhys"
+    ]
+  },
+  {
+    "id": "event-npc-ida-provisions",
+    "title": "Ida Drops Supplies",
+    "description": "Ida returns with provisions no one asked for. She calls it practical, not generous.",
+    "triggerConditions": {
+      "maxFoodSecurity": 50,
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-take-supplies",
+        "label": "Accept the supplies",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Ida drops a sack of dried provisions on the table. \"Picked these up. Do not make it sentimental.\" She leaves before you can thank her."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "ida-rhys"
+    ]
+  },
+  {
+    "id": "event-npc-verek-marks",
+    "title": "Verek Returns from the Pale",
+    "description": "Verek comes back from the Pale. He does not explain. He rarely does.",
+    "triggerConditions": {
+      "dayMin": 4,
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-accept-marks",
+        "label": "Take the Marks",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Verek returns from the Pale in silence. He sets three Marks on the table without explanation. He sits down and pours himself a drink."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "verek-holst"
+    ]
+  },
+  {
+    "id": "event-npc-verek-routes",
+    "title": "Verek Passes Notes",
+    "description": "Verek slides a folded paper across the table. Routes, timings, names.",
+    "triggerConditions": {
+      "corridorStatus": "disrupted",
+      "probability": 0.7
+    },
+    "choices": [
+      {
+        "id": "choice-review-routes",
+        "label": "Study the notes",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Verek slides a folded paper across the table. Routes, patrol timings, two names circled in red. He says nothing. He does not need to."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "verek-holst"
+    ]
+  },
+  {
+    "id": "event-npc-rutha-terms",
+    "title": "Rutha Reviews the Terms",
+    "description": "Rutha Kael reviews her arrangement carefully. She makes notes.",
+    "triggerConditions": {
+      "dayMin": 5,
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-rutha",
+        "label": "Acknowledge her",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Rutha reviews her contract terms in the corner, making notes in the margin. She looks up once. \"If the terms change, tell me before it matters. Not after.\" She returns to her notes."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "rutha-kael"
+    ]
+  },
+  {
+    "id": "event-npc-rutha-thornwall",
+    "title": "Rutha Mentions Thornwall",
+    "description": "Rutha mentions the Thornwall Incident. Once. Obliquely.",
+    "triggerConditions": {
+      "dayMin": 10,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-listen-to-rutha",
+        "label": "Listen",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Rutha cleans her blade and speaks without looking up. \"The job changed. Nobody told us until it was too late.\" She does not say which job. She does not need to."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "rutha-kael"
+    ]
+  },
+  {
+    "id": "event-npc-sable-survey",
+    "title": "Sable Checks the Load-Bearing Walls",
+    "description": "Sable Wrent is inspecting the building again. She has opinions.",
+    "triggerConditions": {
+      "dayMin": 4,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-hear-sable",
+        "label": "Hear her out",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Sable traces a crack in the corner wall with two fingers. \"This joint was poured wrong. League saved coin. We are the ones who pay if it shifts.\" She makes a note. You suspect the League is on another list somewhere."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "sable-wrent"
+    ]
+  },
+  {
+    "id": "event-npc-aldric-manners",
+    "title": "Aldric on Manners",
+    "description": "Aldric Vane observes the room. He has thoughts on presentation.",
+    "triggerConditions": {
+      "dayMin": 3,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-indulge-aldric",
+        "label": "Let him speak",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Aldric watches you interact with a contact and says afterward, quietly: \"You have the right instincts. The diction wants work. I can help with that, if you would like.\" He does not say it is for his benefit too. He does not need to."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "aldric-vane"
+    ]
+  },
+  {
+    "id": "event-npc-dara-route",
+    "title": "Dara Mentions a Route",
+    "description": "Dara Slink returns from a run and mentions something useful in passing.",
+    "triggerConditions": {
+      "dayMin": 2,
+      "probability": 0.55
+    },
+    "choices": [
+      {
+        "id": "choice-note-daras-route",
+        "label": "Make a note of it",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street — second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "dara-slink"
+    ]
+  },
+  {
+    "id": "event-npc-oswin-logistics",
+    "title": "Oswin on the Distribution Problem",
+    "description": "Oswin Farr has been thinking about food routes again.",
+    "triggerConditions": {
+      "dayMin": 5,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-hear-oswin",
+        "label": "Listen",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Oswin spreads a hand-drawn map on the table — distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "oswin-farr"
+    ]
+  },
+  {
+    "id": "event-npc-cress-treats",
+    "title": "Cress Treats an Injury",
+    "description": "Cress Aldmoor tends to something without being asked.",
+    "triggerConditions": {
+      "dayMin": 3,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-accept-treatment",
+        "label": "Accept the treatment",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Cress notices the cut on your forearm and says nothing — just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "cress-aldmoor"
+    ]
+  },
+  {
+    "id": "event-npc-tav-register",
+    "title": "Tav Returns from the Register",
+    "description": "Tav comes back from his quarterly register check. He does not mention it.",
+    "triggerConditions": {
+      "dayMin": 6,
+      "probability": 0.45
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-tav",
+        "label": "Say nothing",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Tav comes back from his quarterly register check and sets down his pack without a word. After a moment he says: \"They asked about you. I said you keep your accounts in order.\" A pause. \"That is the truth.\""
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "tav"
+    ]
+  },
+  {
+    "id": "event-npc-maret-record",
+    "title": "Maret Finds a Record",
+    "description": "Maret Sunne has found something in the permit archives that she considers notable.",
+    "triggerConditions": {
+      "dayMin": 4,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-review-record",
+        "label": "Review the record",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Maret sets a copied page on the table — a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "maret-sunne"
+    ]
+  },
+  {
+    "id": "event-npc-lirien-father",
+    "title": "Lirien Speaks of Her Father",
+    "description": "Lirien Ashcroft mentions her father. She does not ask for help. Not yet.",
+    "triggerConditions": {
+      "dayMin": 5,
+      "probability": 0.5
+    },
+    "choices": [
+      {
+        "id": "choice-listen-to-lirien",
+        "label": "Listen",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lirien says, without preamble: \"My father is still at the estate. The informal arrest continues. The Court considers this a courtesy.\" A short pause. \"I do not.\" She does not ask for your help. The door she leaves open is deliberate."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "lirien-ashcroft"
     ]
   }
 ]
