@@ -74,6 +74,66 @@ function RelationshipBar({ label, value }: { label: string; value: number }) {
   )
 }
 
+const TRAIT_LABELS: Record<string, string> = {
+  discipline: 'disciplined',
+  ambition: 'ambitious',
+  empathy: 'empathetic',
+  ruthlessness: 'ruthless',
+  prudence: 'prudent',
+  curiosity: 'curious',
+  dominance: 'dominant',
+  loyalty: 'loyal',
+  vanity: 'vain',
+  zeal: 'zealous',
+}
+
+const TRAIT_LOW_LABELS: Record<string, string> = {
+  discipline: 'undisciplined',
+  ambition: 'unambitious',
+  empathy: 'callous',
+  ruthlessness: 'merciful',
+  prudence: 'reckless',
+  curiosity: 'incurious',
+  dominance: 'submissive',
+  loyalty: 'disloyal',
+  vanity: 'humble',
+  zeal: 'indifferent',
+}
+
+function getDominantTraitSentences(traits: Record<string, number>): string[] {
+  return Object.entries(traits)
+    .filter(([, val]) => val > 65 || val < 35)
+    .sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50))
+    .slice(0, 2)
+    .map(([key, val]) => {
+      if (val > 65) return `Highly ${TRAIT_LABELS[key] ?? key}.`
+      return `Unusually ${TRAIT_LOW_LABELS[key] ?? key}.`
+    })
+}
+
+function CharacterSection({ detail }: { detail: NpcDetail }) {
+  if (!detail.background) return null
+  const traitSentences = getDominantTraitSentences(detail.traits)
+
+  return (
+    <div style={{ padding: '0.75rem 0 0.75rem', borderBottom: '1px solid var(--border)' }}>
+      <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.35rem' }}>
+        {detail.background}
+      </p>
+      {traitSentences.length > 0 && (
+        <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.25rem' }}>
+          {traitSentences.join(' ')}
+        </p>
+      )}
+      {detail.motivation && (
+        <p style={{ fontSize: 'var(--size-sm)', fontStyle: 'italic', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
+          — {detail.motivation}
+        </p>
+      )}
+    </div>
+  )
+}
+
 function portraitInitials(name: string) {
   return name
     .split(' ')
@@ -271,10 +331,10 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         )}
 
         <p className="text-muted">{detail.origin}</p>
-        <p className="text-muted">{detail.background}</p>
       </div>
 
       <div className="npc-stats-column">
+        <CharacterSection detail={detail} />
         <div className="npc-tab-bar" role="tablist">
           {TABS.map((tab) => (
             <button

@@ -42,7 +42,8 @@
       "vanity": 31,
       "zeal": 22
     },
-    "allowedTitleIds": ["title-quartermaster", "title-steward"]
+    "allowedTitleIds": ["title-quartermaster", "title-steward"],
+    "motivation": "To rebuild something worth serving. She does not say this aloud."
   },
   {
     "id": "npc-ida-rhys",
@@ -87,7 +88,8 @@
       "vanity": 8,
       "zeal": 35
     },
-    "allowedTitleIds": ["title-chief-engineer", "title-trainer"]
+    "allowedTitleIds": ["title-chief-engineer", "title-trainer"],
+    "motivation": "Coin, at least for now. Something else, maybe. She has not decided."
   },
   {
     "id": "npc-verek-holst",
@@ -132,7 +134,8 @@
       "vanity": 29,
       "zeal": 41
     },
-    "allowedTitleIds": ["title-quartermaster", "title-trainer"]
+    "allowedTitleIds": ["title-quartermaster", "title-trainer"],
+    "motivation": "To enforce something that holds. The law was convenient once. He is less certain now."
   },
   {
     "id": "npc-sable-wrent",
@@ -177,7 +180,8 @@
       "vanity": 22,
       "zeal": 41
     },
-    "allowedTitleIds": ["title-chief-engineer"]
+    "allowedTitleIds": ["title-chief-engineer"],
+    "motivation": "To make the League pay what it owes. She has not decided what currency yet."
   },
   {
     "id": "npc-aldric-vane",
@@ -222,7 +226,8 @@
       "vanity": 76,
       "zeal": 18
     },
-    "allowedTitleIds": ["title-steward", "title-quartermaster"]
+    "allowedTitleIds": ["title-steward", "title-quartermaster"],
+    "motivation": "To recover the name, if not the house. He will settle for one if he cannot have both."
   },
   {
     "id": "npc-dara-slink",
@@ -267,7 +272,8 @@
       "vanity": 19,
       "zeal": 31
     },
-    "allowedTitleIds": ["title-quartermaster"]
+    "allowedTitleIds": ["title-quartermaster"],
+    "motivation": "To keep moving. The packages, the routes, the contacts — these are just the mechanism."
   },
   {
     "id": "npc-oswin-farr",
@@ -312,7 +318,8 @@
       "vanity": 14,
       "zeal": 73
     },
-    "allowedTitleIds": ["title-steward", "title-medic"]
+    "allowedTitleIds": ["title-steward", "title-medic"],
+    "motivation": "To see the Warrens fed without permission from anyone. He is still mapping the logistics."
   },
   {
     "id": "npc-cress-aldmoor",
@@ -357,7 +364,8 @@
       "vanity": 24,
       "zeal": 19
     },
-    "allowedTitleIds": ["title-medic"]
+    "allowedTitleIds": ["title-medic"],
+    "motivation": "To practice medicine without becoming the physician she left behind. It is harder than it sounds."
   },
   {
     "id": "npc-tav",
@@ -402,7 +410,8 @@
       "vanity": 14,
       "zeal": 44
     },
-    "allowedTitleIds": ["title-trainer", "title-quartermaster"]
+    "allowedTitleIds": ["title-trainer", "title-quartermaster"],
+    "motivation": "To never be owned again. He has not decided what comes after that."
   },
   {
     "id": "npc-maret-sunne",
@@ -447,7 +456,8 @@
       "vanity": 19,
       "zeal": 38
     },
-    "allowedTitleIds": ["title-steward"]
+    "allowedTitleIds": ["title-steward"],
+    "motivation": "To ensure the record is complete and accurate. What others do with it afterward is their own concern."
   },
   {
     "id": "npc-rutha-kael",
@@ -492,7 +502,8 @@
       "vanity": 18,
       "zeal": 39
     },
-    "allowedTitleIds": ["title-trainer", "title-quartermaster"]
+    "allowedTitleIds": ["title-trainer", "title-quartermaster"],
+    "motivation": "To choose employers more carefully next time. She is still refining the criteria."
   },
   {
     "id": "npc-lirien-ashcroft",
@@ -537,6 +548,7 @@
       "vanity": 54,
       "zeal": 22
     },
-    "allowedTitleIds": ["title-steward"]
+    "allowedTitleIds": ["title-steward"],
+    "motivation": "To bring her father home and settle her house's debts. The Court can wait."
   }
 ]

@@ -119,6 +119,7 @@ export const npcDefinitionSchema = z
     startingSkills: skillsSchema,
     startingTraits: traitsSchema,
     allowedTitleIds: z.array(entityIdSchema).default([]),
+    motivation: z.string().optional(),
   })
   .strict()
 
