@@ -412,7 +412,7 @@ export function endDay(state: GameState): GameState {
     const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
     if (!npcDef) continue
 
-    const skills = npcDef.startingSkills as Record<string, number>
+    const skills = runtimeNpc.skills as Record<string, number>
     const nonCombatSkills = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
     const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
     const income = Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))

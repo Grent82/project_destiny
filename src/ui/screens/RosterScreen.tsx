@@ -14,10 +14,7 @@ const ROSTER_GROUPS = [
   { key: 'recovering', label: 'Recovering' },
 ] as const
 
-function computeWorkingIncome(npcId: string): number {
-  const npcDef = contentCatalog.npcsById.get(npcId)
-  if (!npcDef) return 3
-  const skills = npcDef.startingSkills as Record<string, number>
+function computeWorkingIncome(skills: Record<string, number>): number {
   const nonCombatSkills = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
   const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
   return Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
@@ -73,7 +70,7 @@ export function RosterScreen() {
                       )}
                       {key === 'working' && (
                         <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
-                          {' — '}~{computeWorkingIncome(entry.npcId)} Marks/day
+                          {' — '}~{computeWorkingIncome(entry.skills as Record<string, number>)} Marks/day
                         </span>
                       )}
                     </span>

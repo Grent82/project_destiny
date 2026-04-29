@@ -15,6 +15,7 @@ export function selectRosterEntries(state: RootState) {
       morale: npc.states.morale,
       stress: npc.states.stress,
       loyalty: npc.traits.loyalty,
+      skills: npc.skills,
     }
   })
 }
