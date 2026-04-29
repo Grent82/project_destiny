@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import {
   gameActions,
   selectActiveMission,
+  selectActiveQuests,
   selectAvailableMissions,
   selectCombatScreenState,
   selectMissionPrepSummary,
@@ -20,6 +21,8 @@ export function MissionPrepScreen() {
   const activeMission = useAppSelector(selectActiveMission)
   const missions = useAppSelector(selectAvailableMissions)
   const cohesion = useAppSelector(selectSquadCohesion)
+  const activeQuests = useAppSelector(selectActiveQuests)
+  const activeContract = activeQuests.length > 0 ? activeQuests[0] : null
 
   return (
     <section className="screen-panel">
@@ -28,6 +31,24 @@ export function MissionPrepScreen() {
       <p className="summary">
         Assemble your unit and commit to the engagement.
       </p>
+
+      {activeContract?.template ? (
+        <div className="contract-context-banner">
+          <p className="contract-context-label">Deploying in support of</p>
+          <strong className="contract-context-title">{activeContract.template.title}</strong>
+          <p className="contract-context-briefing">{activeContract.template.briefing}</p>
+        </div>
+      ) : (
+        <div className="contract-context-banner contract-context-banner--empty">
+          <p className="contract-context-label">
+            No contract accepted —{' '}
+            <NavLink className="nav-link-inline" to="/contracts">
+              visit the Work Board first
+            </NavLink>
+            .
+          </p>
+        </div>
+      )}
       <p className="summary">
         Squad size: {summary.selectedSquad.length}/{squadRules.maxSquadSize}
       </p>
@@ -41,7 +62,7 @@ export function MissionPrepScreen() {
 
       <div className="session-actions">
         <button
-          className="action-button"
+          className="action-button action-button--primary action-button--cta"
           disabled={summary.selectedSquad.length === 0}
           onClick={() => {
             dispatch(gameActions.startCombatEncounter())
