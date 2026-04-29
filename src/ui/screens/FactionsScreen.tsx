@@ -80,7 +80,12 @@ export function FactionsScreen() {
           return (
             <article key={faction.factionId}>
               <h2>{faction.name}</h2>
-              <p>{faction.agenda}</p>
+              <p style={{ fontStyle: 'italic', fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary, #999)', fontSize: '0.9em', marginBottom: '0.25rem' }}>
+                {faction.primer}
+              </p>
+              <p style={{ fontSize: '0.8em', color: 'var(--color-text-muted, #666)', marginBottom: '0.5rem' }}>
+                {faction.agenda}
+              </p>
               <div className="stat-row">
                 <span className="stat-label">Standing</span>
                 <span className="stat-value">{faction.standing}</span>

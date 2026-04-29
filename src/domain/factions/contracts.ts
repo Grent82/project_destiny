@@ -19,6 +19,7 @@ export const factionDefinitionSchema = z
   .object({
     id: entityIdSchema,
     name: z.string().min(1),
+    primer: z.string().min(1),
     agenda: z.string().min(1),
     description: z.string().min(1),
     territory: z.array(entityIdSchema),

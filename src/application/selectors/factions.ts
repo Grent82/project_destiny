@@ -29,6 +29,7 @@ export function selectAllFactions(state: RootState) {
   return contentCatalog.factions.map((faction) => ({
     factionId: faction.id,
     name: faction.name,
+    primer: faction.primer,
     agenda: faction.agenda,
     standing: state.game.factionStandings[faction.id] ?? 0,
   }))

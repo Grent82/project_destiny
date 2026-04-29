@@ -2,6 +2,7 @@
   {
     "id": "faction-civic-compact",
     "name": "Civic Compact",
+    "primer": "They keep the peace — and the ledger. Cross them and the gates close.",
     "agenda": "Maintain order, secure trade routes, and suppress open unrest.",
     "description": "A pragmatic alliance of magistrates, captains, and merchants who treat stability as the city's highest good.",
     "territory": ["district-harbor"],
@@ -10,6 +11,7 @@
   {
     "id": "faction-gilded-court",
     "name": "Gilded Court",
+    "primer": "Credit, titles, and access. They do not help for free.",
     "agenda": "Expand elite influence through patronage, debt, and ceremonial prestige.",
     "description": "A network of nobles and financiers who shape the city through soft power and curated loyalty.",
     "territory": ["district-gilded-heights"],
@@ -18,6 +20,7 @@
   {
     "id": "faction-foundry-league",
     "name": "Foundry League",
+    "primer": "They build and repair what the city runs on. They know their leverage.",
     "agenda": "Control industrial output, skilled labor, and the city's repair economy.",
     "description": "An alliance of workshop owners, engineers, and labor organizers with a hard-edged view of leverage.",
     "territory": ["district-ironworks"],
@@ -26,6 +29,7 @@
   {
     "id": "faction-tallow-ring",
     "name": "The Tallow Ring",
+    "primer": "The city's underside. They move what the Compact forbids. Useful. Dangerous.",
     "agenda": "Profit from the gaps the law creates: false papers, contraband, slave-escape logistics, unregistered births.",
     "description": "A decentralized criminal network operating in Valdenmoor's lower districts and Harbor Ward. They move goods and people the Compact has decided should not move. Their escape-network services make them, accidentally, the city's only functional slave-liberation infrastructure — though they charge accordingly.",
     "territory": ["district-harbor"],
@@ -34,6 +38,7 @@
   {
     "id": "faction-restored",
     "name": "The Restored",
+    "primer": "They believe the walls are a sin repeated. They build outside them — and will burn what keeps the gates closed.",
     "agenda": "Abolish birth controls, end binding contracts, and reclaim the world outside the walls through natural repopulation and voluntary community labor.",
     "description": "A faith-adjacent ideological movement holding that the Breach was consequence of human overreach and that the Compact's Breeding Register repeats the same error. They provide community support in working districts, preach against the binding system, and establish dangerous outside-wall settlements as doctrine-in-practice. Their extremist wing has moved from disruption to violence.",
     "territory": [],
