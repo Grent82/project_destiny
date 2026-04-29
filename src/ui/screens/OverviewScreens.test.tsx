@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 
 import { AppProviders } from '../app/AppProviders'
 import { DistrictMapScreen } from './DistrictMapScreen'
@@ -8,7 +9,9 @@ describe('overview screens', () => {
   it('renders seeded district map entries', () => {
     render(
       <AppProviders>
-        <DistrictMapScreen />
+        <MemoryRouter>
+          <DistrictMapScreen />
+        </MemoryRouter>
       </AppProviders>,
     )
 

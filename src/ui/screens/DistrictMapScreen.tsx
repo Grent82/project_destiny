@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -50,6 +51,10 @@ export function DistrictMapScreen() {
       <h1>The City</h1>
       <p className="summary">
         Six districts. Each one holds something. Move carefully — the city watches who passes through.
+      </p>
+
+      <p className="district-quick-action">
+        <Link className="nav-link nav-link--inline" to="/shops">Market →</Link>
       </p>
 
       {currentDistrictId && (
