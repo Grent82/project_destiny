@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore, gameActions } from '../../application'
 import { AppProviders } from '../app/AppProviders'
@@ -11,7 +12,9 @@ describe('CombatScreen', () => {
 
     render(
       <AppProviders>
-        <CombatScreen />
+        <MemoryRouter>
+          <CombatScreen />
+        </MemoryRouter>
       </AppProviders>,
     )
 
@@ -52,7 +55,9 @@ describe('CombatScreen', () => {
 
     render(
       <AppProviders store={store}>
-        <CombatScreen />
+        <MemoryRouter>
+          <CombatScreen />
+        </MemoryRouter>
       </AppProviders>,
     )
 

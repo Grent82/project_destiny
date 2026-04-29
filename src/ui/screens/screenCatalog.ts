@@ -40,11 +40,6 @@ export const screenCatalog = [
     summary: 'Assemble your squad and commit to an engagement.',
   },
   {
-    path: '/combat',
-    title: 'Engagement',
-    summary: 'Two-range tactical encounters. The ground belongs to whoever holds it.',
-  },
-  {
     path: '/event-log',
     title: 'The Record',
     summary: 'What has been logged: economy shifts, encounters, and the state of things.',

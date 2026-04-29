@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { gameActions, selectCombatScreenState } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -14,6 +15,7 @@ const RANGE_LABELS: Record<string, { label: string; description: string }> = {
 
 export function CombatScreen() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const combat = useAppSelector(selectCombatScreenState)
   const rangeInfo = combat.range ? RANGE_LABELS[combat.range] : null
 
@@ -201,6 +203,33 @@ export function CombatScreen() {
               })}
             </div>
           </article>
+
+          {combat.outcome !== 'ongoing' && (
+            <article className="detail-panel">
+              <h2>
+                Engagement Concluded —{' '}
+                <span className={combat.outcome === 'victory' ? 'badge badge-positive' : 'badge badge-warning'}>
+                  {combat.outcome === 'victory' ? 'Victory' : 'Defeat'}
+                </span>
+              </h2>
+              <div className="combat-action-row">
+                <button
+                  className="action-button"
+                  onClick={() => navigate('/dashboard')}
+                  type="button"
+                >
+                  Return to Operations
+                </button>
+                <button
+                  className="action-button"
+                  onClick={() => navigate('/roster')}
+                  type="button"
+                >
+                  View Roster
+                </button>
+              </div>
+            </article>
+          )}
         </>
       )}
     </section>
