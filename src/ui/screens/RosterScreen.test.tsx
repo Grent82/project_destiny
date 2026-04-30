@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
 import { AppProviders } from '../app/AppProviders'
 import { RosterScreen } from './RosterScreen'
@@ -10,7 +11,9 @@ describe('RosterScreen', () => {
 
     render(
       <AppProviders>
-        <RosterScreen />
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
       </AppProviders>,
     )
 

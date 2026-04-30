@@ -1,4 +1,5 @@
 import { getQuestTemplates } from '../content/contentCatalog'
+import { contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
 
 export const selectAvailableQuests = (state: RootState) =>
@@ -26,4 +27,22 @@ export const selectActiveInvestigationQuest = (state: RootState) => {
   if (!inv) return null
   const template = getQuestTemplates().find((q) => q.id === inv.questId) ?? null
   return { investigation: inv, template }
+}
+
+export const selectActiveThreatNpc = (state: RootState) => {
+  const activeQuest = state.game.activeQuests[0]
+  if (!activeQuest) return null
+  const template = getQuestTemplates().find((q) => q.id === activeQuest.questId)
+  if (!template?.enemyNpcId) return null
+  const npcDef = contentCatalog.npcsById.get(template.enemyNpcId)
+  if (!npcDef) return null
+  const faction = npcDef.factionAffinityId
+    ? contentCatalog.factionsById.get(npcDef.factionAffinityId)?.name ?? npcDef.factionAffinityId
+    : null
+  return {
+    id: npcDef.id,
+    name: npcDef.name,
+    motivation: npcDef.motivation ?? null,
+    factionName: faction,
+  }
 }

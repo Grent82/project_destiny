@@ -13,7 +13,8 @@
     "penaltyStandingDelta": -5,
     "timeLimitDays": 5,
     "linkedMissionId": null,
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "enemyNpcId": "npc-enemy-the-dockmaster"
   },
   {
     "id": "quest-ledger-recovery",
@@ -29,7 +30,8 @@
     "penaltyStandingDelta": -8,
     "timeLimitDays": 7,
     "linkedMissionId": null,
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "enemyNpcId": "npc-enemy-lady-sorn"
   },
   {
     "id": "quest-foundry-escort",
@@ -64,7 +66,8 @@
     "requiredFactionStanding": {
       "factionId": "faction-tallow-ring",
       "minStanding": 5
-    }
+    },
+    "enemyNpcId": "npc-enemy-harlen-voss"
   },
   {
     "id": "quest-restored-appeal",

@@ -4,6 +4,7 @@ import {
   gameActions,
   selectActiveMission,
   selectActiveQuests,
+  selectActiveThreatNpc,
   selectAvailableMissions,
   selectCombatScreenState,
   selectMissionPrepSummary,
@@ -23,6 +24,7 @@ export function MissionPrepScreen() {
   const cohesion = useAppSelector(selectSquadCohesion)
   const activeQuests = useAppSelector(selectActiveQuests)
   const activeContract = activeQuests.length > 0 ? activeQuests[0] : null
+  const threatNpc = useAppSelector(selectActiveThreatNpc)
 
   return (
     <section className="screen-panel">
@@ -47,6 +49,30 @@ export function MissionPrepScreen() {
             </NavLink>
             .
           </p>
+        </div>
+      )}
+      {threatNpc && (
+        <div className="threat-panel">
+          <p className="threat-panel__label">Known Threat</p>
+          <div className="threat-panel__body">
+            <div className="threat-panel__portrait npc-portrait-placeholder">
+              <img
+                alt={threatNpc.name}
+                className="npc-portrait-img"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                src={`/portraits/${threatNpc.id.replace('npc-', '')}.jpg`}
+              />
+            </div>
+            <div className="threat-panel__info">
+              <strong className="threat-panel__name">{threatNpc.name}</strong>
+              {threatNpc.factionName && (
+                <span className="threat-panel__faction">{threatNpc.factionName}</span>
+              )}
+              {threatNpc.motivation && (
+                <p className="threat-panel__motivation">"{threatNpc.motivation}"</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
       <p className="summary">
