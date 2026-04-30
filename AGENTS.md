@@ -21,6 +21,15 @@ bd update <id> --claim
 
 Do not start implementation before the task is claimed and its ownership is clear.
 
+## Session Start Checklist
+
+Every session must begin with these two steps **before claiming any bead**:
+
+1. `bd prime` — load full workflow context and session protocol
+2. **RPG audit** — run the quick alignment check from [docs/workflows/session-rpg-audit.md](docs/workflows/session-rpg-audit.md)
+
+The RPG audit answers four questions about whether this session's planned work advances player character agency, the Mira story arc, world NPC interactions, or meaningful choice and consequence. If the answer to all four is No, reorder the queue before starting.
+
 ## Core Rules
 
 - Use `bd` for all backlog and dependency tracking.

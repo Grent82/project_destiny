@@ -493,6 +493,14 @@ strong { color: var(--text-secondary); }
   color: var(--portrait-accent, rgba(201,168,76,0.4));
 }
 
+.npc-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: var(--radius-md);
+}
+
 /* Faction accent colors */
 .npc-portrait-placeholder--compact  { --portrait-accent: #4a7fb5; }
 .npc-portrait-placeholder--gilded   { --portrait-accent: #c9a84c; }

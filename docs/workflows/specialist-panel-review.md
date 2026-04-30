@@ -4,6 +4,10 @@ Use this workflow when you need **multiple expert perspectives on a topic** — 
 
 The point is not consensus. It is **productive disagreement**. Each specialist sees different risks. Beads become richer when they carry the tension between design intent, UX clarity, narrative coherence, and technical feasibility.
 
+## Related workflows
+
+Before running a specialist panel, complete the [Session-Start RPG Audit](session-rpg-audit.md). The audit ensures the findings you bring into a panel are already filtered through the RPG north star. This avoids spending panel time on work that fails the four core audit questions.
+
 ## When to use
 
 - Audit findings have been collected and need to be prioritized or enriched
