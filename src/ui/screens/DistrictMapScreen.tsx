@@ -131,7 +131,7 @@ export function DistrictMapScreen() {
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                 />
               )}
-              <h2>{district.name}</h2>
+              <h2 className="district-card-name">{district.name}</h2>
 
               {isHouseDistrict && (
                 <p className="badge badge--hq badge--inline">⌂ House Valdris</p>
