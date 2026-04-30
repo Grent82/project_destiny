@@ -403,10 +403,11 @@
   "mainQuest": { "stage": "searching", "lastClue": "" },
   "districtTension": {
     "district-the-pale": 20,
-    "district-the-city": 35,
-    "district-iron-docks": 50,
-    "district-the-tangle": 65,
-    "district-ashfields": 80
+    "district-harbor": 35,
+    "district-ironworks": 50,
+    "district-the-warrens": 65,
+    "district-the-hollows": 80,
+    "district-gilded-heights": 25
   },
   "activeDialogueId": null,
   "activeDialogueNodeId": null
