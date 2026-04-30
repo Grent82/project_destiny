@@ -176,6 +176,21 @@ export function DistrictMapScreen() {
                 <p className="district-hook">{district.hooks[0]}</p>
               )}
 
+              {district.worldNpcs.length > 0 && (
+                <div className="district-people">
+                  <h3 className="district-people__heading">People</h3>
+                  <ul className="district-people__list">
+                    {district.worldNpcs.map((npc) => (
+                      <li key={npc.id} className="district-people__entry">
+                        <span className="district-people__name">{npc.name}</span>
+                        {' — '}
+                        <span className="district-people__desc">{npc.description}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {isCurrent && (
                 <p className="badge badge--inline badge--mt">
                   You are here

@@ -1,5 +1,6 @@
 import districts from '../../../data/definitions/districts.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
+import dialoguesData from '../../../data/definitions/dialogues.json'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import events from '../../../data/definitions/events.json'
 import expeditionDestinationsData from '../../../data/definitions/expedition-destinations.json'
@@ -23,10 +24,12 @@ import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles
 import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
 import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
+import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
 
 const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
 const parsedQuests = questTemplateSchema.array().parse(questsData)
 const parsedCouncilVotes = councilVoteEventSchema.array().parse(councilVotesData)
+const parsedDialogues = dialogueTreeSchema.array().parse(dialoguesData)
 const parsedNpcs = npcDefinitionSchema.array().parse(npcs)
 const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
@@ -64,6 +67,9 @@ export const contentCatalog = {
   councilVotes: parsedCouncilVotes,
   expeditionDestinations: parsedDestinations,
   expeditionDestinationsById: new Map(parsedDestinations.map((d) => [d.id, d])),
+  dialogues: parsedDialogues,
+  dialoguesById: new Map(parsedDialogues.map((d) => [d.id, d])),
+  dialoguesByNpcId: new Map(parsedDialogues.map((d) => [d.npcId, d])),
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {
@@ -80,4 +86,8 @@ export function getNpcDefinitions() {
 
 export function getCouncilVoteTemplates(): CouncilVoteEvent[] {
   return contentCatalog.councilVotes
+}
+
+export function getDialogueTrees(): DialogueTree[] {
+  return contentCatalog.dialogues
 }

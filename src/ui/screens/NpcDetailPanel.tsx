@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
 import { getJobForNpc } from '../../application/content/jobCatalog'
@@ -329,6 +330,16 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Attributes')
   const [equipSlot, setEquipSlot] = useState<'primaryWeaponId' | 'secondaryWeaponId' | 'armorId' | null>(null)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
+
+  function handleTalk() {
+    if (!dialogueTree) return
+    dispatch(gameActions.startDialogue({ dialogueId: dialogueTree.id, nodeId: dialogueTree.openingNodeId }))
+    navigate('/dialogue')
+  }
 
   return (
     <div className="npc-detail-panel">
@@ -457,6 +468,11 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           <AssignmentSelector detail={detail} />
           <DurabilityPanel npcId={detail.npcId} />
           <TitlePanel detail={detail} />
+          {dialogueTree && (
+            <button className="action-button" type="button" onClick={handleTalk}>
+              Talk
+            </button>
+          )}
           <div className="equip-actions">
             <button
               className="action-button"

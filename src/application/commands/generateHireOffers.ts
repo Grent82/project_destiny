@@ -40,6 +40,7 @@ export function generateDistrictHireOffers(
 
   for (const npcDef of contentCatalog.npcs) {
     if (addedCount >= poolSize) break
+    if ((npcDef.npcType ?? 'roster') !== 'roster') continue
     if (alreadyHired.has(npcDef.id) || alreadyOffered.has(npcDef.id)) continue
 
     const matchesFaction = npcDef.factionAffinityId === controllingFactionId && controllingFactionId !== null

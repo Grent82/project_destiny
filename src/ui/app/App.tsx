@@ -6,6 +6,7 @@ import { useAppSelector } from './hooks'
 import { CombatScreen } from '../screens/CombatScreen'
 import { ContractBoardScreen } from '../screens/ContractBoardScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
+import { DialogueScreen } from '../screens/DialogueScreen'
 import { DistrictMapScreen } from '../screens/DistrictMapScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
 import { ExpeditionPrepScreen } from '../screens/ExpeditionPrepScreen'
@@ -98,6 +99,7 @@ export function App() {
             <Route path="/expedition" element={<ExpeditionPrepScreen />} />
             <Route path="/expedition-travel" element={<ExpeditionTravelScreen />} />
             <Route path="/expedition-return" element={<ExpeditionReturnScreen />} />
+            <Route path="/dialogue" element={<DialogueScreen />} />
             {screenCatalog
               .filter(
                 (screen) =>
@@ -114,6 +116,7 @@ export function App() {
                     '/combat',
                     '/event-log',
                     '/expedition',
+                    '/dialogue',
                   ].includes(screen.path),
               )
               .map((screen) => (

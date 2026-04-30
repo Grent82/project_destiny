@@ -1558,6 +1558,46 @@ a:focus-visible,
   opacity: 0.85;
 }
 
+.district-people {
+  margin-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.5rem;
+}
+
+.district-people__heading {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin: 0 0 0.35rem 0;
+  font-weight: 600;
+}
+
+.district-people__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.district-people__entry {
+  font-size: 0.75em;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.district-people__name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.district-people__desc {
+  font-style: italic;
+  opacity: 0.8;
+}
+
 .status-bar-events-alert {
   color: #d7bf82;
   animation: pulse 2s ease-in-out infinite;

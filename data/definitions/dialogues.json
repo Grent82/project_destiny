@@ -1,0 +1,76 @@
+[
+  {
+    "id": "dialogue-marion-vale",
+    "npcId": "npc-marion-vale",
+    "openingNodeId": "marion-node-1",
+    "nodes": [
+      {
+        "id": "marion-node-1",
+        "npcId": "npc-marion-vale",
+        "text": "You look like you haven't slept. Again.",
+        "choices": [
+          {
+            "id": "marion-choice-fine",
+            "label": "I'm fine.",
+            "nextNodeId": "marion-node-2"
+          },
+          {
+            "id": "marion-choice-busy",
+            "label": "There's too much to do.",
+            "nextNodeId": "marion-node-3",
+            "outcome": {
+              "type": "loyalty",
+              "value": 5
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-2",
+        "npcId": "npc-marion-vale",
+        "text": "Marion studies you. 'As you say, my lord.' She doesn't believe you.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-3",
+        "npcId": "npc-marion-vale",
+        "text": "She nods slowly. 'Then let me carry some of it.' Her hand rests near yours for a moment, then she steps back.",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "id": "dialogue-verek-holst",
+    "npcId": "npc-verek-holst",
+    "openingNodeId": "verek-node-1",
+    "nodes": [
+      {
+        "id": "verek-node-1",
+        "npcId": "npc-verek-holst",
+        "text": "What'll it be? News costs the same as ale around here.",
+        "choices": [
+          {
+            "id": "verek-choice-hear",
+            "label": "Tell me what you've heard.",
+            "nextNodeId": "verek-node-2",
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "collectors-asking"
+            }
+          },
+          {
+            "id": "verek-choice-nothing",
+            "label": "Nothing today.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "verek-node-2",
+        "npcId": "npc-verek-holst",
+        "text": "He leans in. 'Collectors were asking about the old Valdris accounts last night.'",
+        "choices": []
+      }
+    ]
+  }
+]

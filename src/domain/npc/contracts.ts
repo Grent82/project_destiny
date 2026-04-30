@@ -111,6 +111,8 @@ export const npcDefinitionSchema = z
     id: entityIdSchema,
     name: z.string().min(1),
     npcType: z.enum(['roster', 'story', 'world', 'enemy']).default('roster'),
+    districtId: entityIdSchema.optional(),
+    description: z.string().optional(),
     origin: z.string().min(1),
     background: z.string().min(1),
     rarity: raritySchema,

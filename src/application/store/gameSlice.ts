@@ -729,6 +729,20 @@ const gameSlice = createSlice({
 
       return nextState
     },
+
+    startDialogue(state, action: PayloadAction<{ dialogueId: string; nodeId: string }>) {
+      state.activeDialogueId = action.payload.dialogueId
+      state.activeDialogueNodeId = action.payload.nodeId
+    },
+
+    advanceDialogue(state, action: PayloadAction<{ nodeId: string | null }>) {
+      state.activeDialogueNodeId = action.payload.nodeId
+    },
+
+    endDialogue(state) {
+      state.activeDialogueId = null
+      state.activeDialogueNodeId = null
+    },
   },
 })
 

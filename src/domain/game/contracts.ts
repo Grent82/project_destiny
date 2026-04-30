@@ -179,6 +179,8 @@ export const gameStateSchema = z
       lastClue: z.string().default(''),
     }).default(() => ({ stage: 'searching' as const, lastClue: '' })),
     districtTension: z.record(z.string(), z.number().int().min(0).max(100)).default({}),
+    activeDialogueId: z.string().nullable().default(null),
+    activeDialogueNodeId: z.string().nullable().default(null),
   })
   .strict()
 

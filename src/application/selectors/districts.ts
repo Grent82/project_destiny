@@ -25,6 +25,16 @@ export const selectCurrentDistrict = (state: RootState) => {
   return contentCatalog.districtsById.get(id) ?? null
 }
 
+export function selectWorldNpcsByDistrict(districtId: string) {
+  return contentCatalog.npcs
+    .filter((npc) => npc.npcType === 'world' && npc.districtId === districtId)
+    .map((npc) => ({
+      id: npc.id,
+      name: npc.name,
+      description: npc.description ?? npc.background,
+    }))
+}
+
 export function selectDistrictMapEntries(state: RootState) {
   const currentId = state.game.currentDistrictId
   const tension = state.game.districtTension
@@ -40,5 +50,6 @@ export function selectDistrictMapEntries(state: RootState) {
     hooks: def.hooks,
     isCurrent: def.id === currentId,
     tension: tension[def.id] ?? null,
+    worldNpcs: selectWorldNpcsByDistrict(def.id),
   }))
 }

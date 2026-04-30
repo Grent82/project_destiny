@@ -407,5 +407,7 @@
     "district-iron-docks": 50,
     "district-the-tangle": 65,
     "district-ashfields": 80
-  }
+  },
+  "activeDialogueId": null,
+  "activeDialogueNodeId": null
 }

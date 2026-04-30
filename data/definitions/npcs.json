@@ -42,7 +42,10 @@
       "vanity": 31,
       "zeal": 22
     },
-    "allowedTitleIds": ["title-quartermaster", "title-steward"],
+    "allowedTitleIds": [
+      "title-quartermaster",
+      "title-steward"
+    ],
     "motivation": "To rebuild something worth serving. She does not say this aloud."
   },
   {
@@ -88,14 +91,17 @@
       "vanity": 8,
       "zeal": 35
     },
-    "allowedTitleIds": ["title-chief-engineer", "title-trainer"],
+    "allowedTitleIds": [
+      "title-chief-engineer",
+      "title-trainer"
+    ],
     "motivation": "Coin, at least for now. Something else, maybe. She has not decided."
   },
   {
     "id": "npc-verek-holst",
     "name": "Verek Holst",
     "origin": "Civic Quarter",
-    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce — which makes him reliable and irritating in equal measure.",
+    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce \u2014 which makes him reliable and irritating in equal measure.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-civic-compact",
@@ -134,14 +140,17 @@
       "vanity": 29,
       "zeal": 41
     },
-    "allowedTitleIds": ["title-quartermaster", "title-trainer"],
+    "allowedTitleIds": [
+      "title-quartermaster",
+      "title-trainer"
+    ],
     "motivation": "To enforce something that holds. The law was convenient once. He is less certain now."
   },
   {
     "id": "npc-sable-wrent",
     "name": "Sable Wrent",
     "origin": "Ironworks",
-    "background": "Lost two fingers on a wall-repair crew eight years ago — League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
+    "background": "Lost two fingers on a wall-repair crew eight years ago \u2014 League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -180,14 +189,16 @@
       "vanity": 22,
       "zeal": 41
     },
-    "allowedTitleIds": ["title-chief-engineer"],
+    "allowedTitleIds": [
+      "title-chief-engineer"
+    ],
     "motivation": "To make the League pay what it owes. She has not decided what currency yet."
   },
   {
     "id": "npc-aldric-vane",
     "name": "Aldric Vane",
     "origin": "Gilded Heights",
-    "background": "Second son of a minor Court house that no longer exists — lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
+    "background": "Second son of a minor Court house that no longer exists \u2014 lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": null,
@@ -226,7 +237,10 @@
       "vanity": 76,
       "zeal": 18
     },
-    "allowedTitleIds": ["title-steward", "title-quartermaster"],
+    "allowedTitleIds": [
+      "title-steward",
+      "title-quartermaster"
+    ],
     "motivation": "To recover the name, if not the house. He will settle for one if he cannot have both."
   },
   {
@@ -272,8 +286,10 @@
       "vanity": 19,
       "zeal": 31
     },
-    "allowedTitleIds": ["title-quartermaster"],
-    "motivation": "To keep moving. The packages, the routes, the contacts — these are just the mechanism."
+    "allowedTitleIds": [
+      "title-quartermaster"
+    ],
+    "motivation": "To keep moving. The packages, the routes, the contacts \u2014 these are just the mechanism."
   },
   {
     "id": "npc-oswin-farr",
@@ -318,7 +334,10 @@
       "vanity": 14,
       "zeal": 73
     },
-    "allowedTitleIds": ["title-steward", "title-medic"],
+    "allowedTitleIds": [
+      "title-steward",
+      "title-medic"
+    ],
     "motivation": "To see the Warrens fed without permission from anyone. He is still mapping the logistics."
   },
   {
@@ -364,14 +383,16 @@
       "vanity": 24,
       "zeal": 19
     },
-    "allowedTitleIds": ["title-medic"],
+    "allowedTitleIds": [
+      "title-medic"
+    ],
     "motivation": "To practice medicine without becoming the physician she left behind. It is harder than it sounds."
   },
   {
     "id": "npc-tav",
     "name": "Tav",
     "origin": "The Warrens",
-    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract — limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
+    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract \u2014 limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": "faction-restored",
@@ -410,14 +431,17 @@
       "vanity": 14,
       "zeal": 44
     },
-    "allowedTitleIds": ["title-trainer", "title-quartermaster"],
+    "allowedTitleIds": [
+      "title-trainer",
+      "title-quartermaster"
+    ],
     "motivation": "To never be owned again. He has not decided what comes after that."
   },
   {
     "id": "npc-maret-sunne",
     "name": "Maret Sunne",
     "origin": "Civic Quarter",
-    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt — she is precise about the difference between what the rules say and what actually happens.",
+    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt \u2014 she is precise about the difference between what the rules say and what actually happens.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -456,14 +480,16 @@
       "vanity": 19,
       "zeal": 38
     },
-    "allowedTitleIds": ["title-steward"],
+    "allowedTitleIds": [
+      "title-steward"
+    ],
     "motivation": "To ensure the record is complete and accurate. What others do with it afterward is their own concern."
   },
   {
     "id": "npc-rutha-kael",
     "name": "Rutha Kael",
     "origin": "Thornwall Approach",
-    "background": "Survived the Thornwall Incident — the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
+    "background": "Survived the Thornwall Incident \u2014 the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": null,
@@ -502,14 +528,17 @@
       "vanity": 18,
       "zeal": 39
     },
-    "allowedTitleIds": ["title-trainer", "title-quartermaster"],
+    "allowedTitleIds": [
+      "title-trainer",
+      "title-quartermaster"
+    ],
     "motivation": "To choose employers more carefully next time. She is still refining the criteria."
   },
   {
     "id": "npc-lirien-ashcroft",
     "name": "Lirien Ashcroft",
     "origin": "Gilded Heights",
-    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago — her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
+    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago \u2014 her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -548,7 +577,9 @@
       "vanity": 54,
       "zeal": 22
     },
-    "allowedTitleIds": ["title-steward"],
+    "allowedTitleIds": [
+      "title-steward"
+    ],
     "motivation": "To bring her father home and settle her house's debts. The Court can wait."
   },
   {
@@ -596,6 +627,486 @@
       "zeal": 0
     },
     "allowedTitleIds": [],
-    "motivation": "Unknown. Rumoured to be involved with the Pale Court — or captured by them."
+    "motivation": "Unknown. Rumoured to be involved with the Pale Court \u2014 or captured by them."
+  },
+  {
+    "id": "npc-garet-doyle",
+    "name": "Garet Doyle",
+    "npcType": "world",
+    "districtId": "district-the-pale",
+    "description": "Innkeeper of The Ashen Cup. Knows everyone who passes through, and owes a few debts to The Collectors.",
+    "origin": "The Pale",
+    "background": "Garet has run The Ashen Cup for over a decade. He trades in warm ale and overheard conversations, and his ledger holds names no one should forget.",
+    "rarity": "common",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 40,
+      "agility": 30,
+      "endurance": 45,
+      "intellect": 40,
+      "perception": 55,
+      "presence": 60,
+      "resolve": 40
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 0,
+      "administration": 20,
+      "engineering": 0,
+      "negotiation": 30,
+      "survival": 0,
+      "security": 0,
+      "crafting": 0,
+      "performance": 0,
+      "academics": 0,
+      "intrigue": 25
+    },
+    "startingTraits": {
+      "discipline": 40,
+      "ambition": 30,
+      "empathy": 50,
+      "ruthlessness": 20,
+      "prudence": 55,
+      "curiosity": 45,
+      "dominance": 30,
+      "loyalty": 35,
+      "vanity": 20,
+      "zeal": 15
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-sister-vael",
+    "name": "Sister Vael",
+    "npcType": "world",
+    "districtId": "district-the-pale",
+    "description": "A healer who trades in information as readily as remedies.",
+    "origin": "The Pale",
+    "background": "Sister Vael runs a small infirmary near the old sanctuary. She asks careful questions and remembers every answer.",
+    "rarity": "common",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 25,
+      "agility": 35,
+      "endurance": 40,
+      "intellect": 65,
+      "perception": 60,
+      "presence": 60,
+      "resolve": 50
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 45,
+      "administration": 0,
+      "engineering": 0,
+      "negotiation": 30,
+      "survival": 0,
+      "security": 0,
+      "crafting": 0,
+      "performance": 0,
+      "academics": 35,
+      "intrigue": 40
+    },
+    "startingTraits": {
+      "discipline": 55,
+      "ambition": 35,
+      "empathy": 65,
+      "ruthlessness": 25,
+      "prudence": 60,
+      "curiosity": 70,
+      "dominance": 20,
+      "loyalty": 40,
+      "vanity": 10,
+      "zeal": 30
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-torvald-messe",
+    "name": "Torvald Messe",
+    "npcType": "world",
+    "districtId": "district-harbor",
+    "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
+    "origin": "Harbor Ward",
+    "background": "Torvald has processed guild registrations for the Compact for fifteen years. He knows every loophole and enjoys enforcing the ones that hurt.",
+    "rarity": "common",
+    "status": "citizen",
+    "factionAffinityId": "faction-civic-compact",
+    "baseAttributes": {
+      "might": 25,
+      "agility": 30,
+      "endurance": 35,
+      "intellect": 60,
+      "perception": 50,
+      "presence": 60,
+      "resolve": 55
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 0,
+      "administration": 55,
+      "engineering": 0,
+      "negotiation": 40,
+      "survival": 0,
+      "security": 0,
+      "crafting": 0,
+      "performance": 0,
+      "academics": 50,
+      "intrigue": 25
+    },
+    "startingTraits": {
+      "discipline": 65,
+      "ambition": 45,
+      "empathy": 20,
+      "ruthlessness": 40,
+      "prudence": 70,
+      "curiosity": 30,
+      "dominance": 55,
+      "loyalty": 50,
+      "vanity": 60,
+      "zeal": 35
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-lira-ashcroft",
+    "name": "Lira Ashcroft",
+    "npcType": "world",
+    "districtId": "district-harbor",
+    "description": "Black market fence operating from behind a legitimate spice stall.",
+    "origin": "Harbor Ward",
+    "background": "Lira\u2019s spice stall smells of cardamom and old money. What moves through the back room has no smell at all.",
+    "rarity": "uncommon",
+    "status": "criminal",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 30,
+      "agility": 55,
+      "endurance": 35,
+      "intellect": 55,
+      "perception": 65,
+      "presence": 60,
+      "resolve": 45
+    },
+    "startingSkills": {
+      "melee": 15,
+      "ranged": 20,
+      "medicine": 0,
+      "administration": 25,
+      "engineering": 0,
+      "negotiation": 50,
+      "survival": 0,
+      "security": 30,
+      "crafting": 0,
+      "performance": 35,
+      "academics": 0,
+      "intrigue": 60
+    },
+    "startingTraits": {
+      "discipline": 50,
+      "ambition": 65,
+      "empathy": 30,
+      "ruthlessness": 55,
+      "prudence": 60,
+      "curiosity": 40,
+      "dominance": 35,
+      "loyalty": 25,
+      "vanity": 45,
+      "zeal": 20
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-bog",
+    "name": "Bog",
+    "npcType": "world",
+    "districtId": "district-ironworks",
+    "description": "Dock boss. No last name given. Controls who works the morning shifts.",
+    "origin": "Ironworks",
+    "background": "Nobody remembers when Bog arrived at the docks, only that he was already in charge when they got there. He keeps things moving.",
+    "rarity": "common",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 65,
+      "agility": 40,
+      "endurance": 70,
+      "intellect": 35,
+      "perception": 45,
+      "presence": 60,
+      "resolve": 60
+    },
+    "startingSkills": {
+      "melee": 35,
+      "ranged": 0,
+      "medicine": 0,
+      "administration": 25,
+      "engineering": 0,
+      "negotiation": 30,
+      "survival": 30,
+      "security": 40,
+      "crafting": 0,
+      "performance": 0,
+      "academics": 0,
+      "intrigue": 20
+    },
+    "startingTraits": {
+      "discipline": 55,
+      "ambition": 40,
+      "empathy": 25,
+      "ruthlessness": 50,
+      "prudence": 40,
+      "curiosity": 20,
+      "dominance": 70,
+      "loyalty": 45,
+      "vanity": 15,
+      "zeal": 30
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-fenwick-pale",
+    "name": "Fenwick Pale",
+    "npcType": "world",
+    "districtId": "district-ironworks",
+    "description": "Ship broker who knows which captains ask no questions.",
+    "origin": "Ironworks",
+    "background": "Fenwick brokers berths and routes for vessels the port registry prefers not to log. He is cheerful about it.",
+    "rarity": "common",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 35,
+      "agility": 45,
+      "endurance": 40,
+      "intellect": 50,
+      "perception": 55,
+      "presence": 60,
+      "resolve": 40
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 0,
+      "administration": 35,
+      "engineering": 0,
+      "negotiation": 55,
+      "survival": 20,
+      "security": 0,
+      "crafting": 0,
+      "performance": 25,
+      "academics": 0,
+      "intrigue": 40
+    },
+    "startingTraits": {
+      "discipline": 35,
+      "ambition": 50,
+      "empathy": 40,
+      "ruthlessness": 30,
+      "prudence": 45,
+      "curiosity": 55,
+      "dominance": 25,
+      "loyalty": 20,
+      "vanity": 50,
+      "zeal": 15
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-the-wren",
+    "name": "The Wren",
+    "npcType": "world",
+    "districtId": "district-the-warrens",
+    "description": "Nameless information broker. Deals only in secrets.",
+    "origin": "Unknown",
+    "background": "No one knows The Wren\u2019s real name, face, or history. Only that they know yours.",
+    "rarity": "rare",
+    "status": "criminal",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 25,
+      "agility": 60,
+      "endurance": 30,
+      "intellect": 70,
+      "perception": 75,
+      "presence": 60,
+      "resolve": 55
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 0,
+      "administration": 0,
+      "engineering": 0,
+      "negotiation": 40,
+      "survival": 35,
+      "security": 45,
+      "crafting": 0,
+      "performance": 50,
+      "academics": 30,
+      "intrigue": 75
+    },
+    "startingTraits": {
+      "discipline": 70,
+      "ambition": 60,
+      "empathy": 20,
+      "ruthlessness": 55,
+      "prudence": 75,
+      "curiosity": 65,
+      "dominance": 30,
+      "loyalty": 10,
+      "vanity": 15,
+      "zeal": 20
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-osanna-cray",
+    "name": "Osanna Cray",
+    "npcType": "world",
+    "districtId": "district-the-warrens",
+    "description": "Former Pale Court servant, now hiding in The Tangle.",
+    "origin": "The Pale",
+    "background": "Osanna served in the Court until she saw something she should not have. She does not speak of it. She does not need to.",
+    "rarity": "uncommon",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 30,
+      "agility": 50,
+      "endurance": 35,
+      "intellect": 55,
+      "perception": 60,
+      "presence": 60,
+      "resolve": 45
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 20,
+      "administration": 40,
+      "engineering": 0,
+      "negotiation": 30,
+      "survival": 0,
+      "security": 0,
+      "crafting": 0,
+      "performance": 35,
+      "academics": 45,
+      "intrigue": 50
+    },
+    "startingTraits": {
+      "discipline": 50,
+      "ambition": 30,
+      "empathy": 45,
+      "ruthlessness": 25,
+      "prudence": 65,
+      "curiosity": 40,
+      "dominance": 20,
+      "loyalty": 35,
+      "vanity": 25,
+      "zeal": 20
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-cutter",
+    "name": "Cutter",
+    "npcType": "world",
+    "districtId": "district-the-hollows",
+    "description": "Ashborn-adjacent scavenger. Sells salvage and rumours equally.",
+    "origin": "The Hollows",
+    "background": "Cutter digs through what the Breach left behind. Sometimes what he finds is worth more as a secret than as scrap.",
+    "rarity": "common",
+    "status": "criminal",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 50,
+      "agility": 55,
+      "endurance": 50,
+      "intellect": 35,
+      "perception": 60,
+      "presence": 60,
+      "resolve": 40
+    },
+    "startingSkills": {
+      "melee": 30,
+      "ranged": 20,
+      "medicine": 0,
+      "administration": 0,
+      "engineering": 25,
+      "negotiation": 25,
+      "survival": 55,
+      "security": 30,
+      "crafting": 40,
+      "performance": 0,
+      "academics": 0,
+      "intrigue": 30
+    },
+    "startingTraits": {
+      "discipline": 35,
+      "ambition": 40,
+      "empathy": 20,
+      "ruthlessness": 45,
+      "prudence": 35,
+      "curiosity": 60,
+      "dominance": 30,
+      "loyalty": 25,
+      "vanity": 15,
+      "zeal": 30
+    },
+    "allowedTitleIds": []
+  },
+  {
+    "id": "npc-old-maret",
+    "name": "Old Maret",
+    "npcType": "world",
+    "districtId": "district-the-hollows",
+    "description": "Remembers the city before the Breach. Not all of her memories are safe.",
+    "origin": "The Hollows",
+    "background": "Old Maret was already old before the Breach. She sits in the same doorway she has sat in for thirty years and watches the city become something else.",
+    "rarity": "uncommon",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 20,
+      "agility": 20,
+      "endurance": 30,
+      "intellect": 65,
+      "perception": 70,
+      "presence": 60,
+      "resolve": 60
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 25,
+      "administration": 0,
+      "engineering": 0,
+      "negotiation": 20,
+      "survival": 30,
+      "security": 0,
+      "crafting": 15,
+      "performance": 30,
+      "academics": 60,
+      "intrigue": 35
+    },
+    "startingTraits": {
+      "discipline": 60,
+      "ambition": 20,
+      "empathy": 55,
+      "ruthlessness": 20,
+      "prudence": 70,
+      "curiosity": 65,
+      "dominance": 15,
+      "loyalty": 50,
+      "vanity": 10,
+      "zeal": 25
+    },
+    "allowedTitleIds": []
   }
 ]
