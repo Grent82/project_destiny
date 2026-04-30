@@ -2,6 +2,19 @@ import { Link } from 'react-router-dom'
 import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
+const DISTRICT_IMAGE_MAP: Record<string, string> = {
+  'district-the-pale': 'the-pale',
+  'district-ironworks': 'iron-docks',
+  'district-harbor': 'the-city',
+  'district-the-warrens': 'the-tangle',
+  'district-the-hollows': 'ashfields',
+}
+
+function districtImageSrc(id: string): string | null {
+  const slug = DISTRICT_IMAGE_MAP[id]
+  return slug ? `/districts/${slug}.jpg` : null
+}
+
 const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-civic-compact': 'Compact',
   'faction-gilded-court': 'Court',
@@ -95,6 +108,15 @@ export function DistrictMapScreen() {
               }}
 
             >
+              {districtImageSrc(district.id) && (
+                <img
+                  className="district-card-art"
+                  src={districtImageSrc(district.id)!}
+                  alt=""
+                  aria-hidden
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                />
+              )}
               <h2>{district.name}</h2>
 
               {isHouseDistrict && (

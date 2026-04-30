@@ -1286,6 +1286,16 @@ strong { color: var(--text-secondary); }
   user-select: none;
 }
 
+.district-card-art {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  margin-bottom: var(--space-sm);
+  opacity: 0.75;
+}
+
 .badge--hq {
   background: rgba(180, 130, 40, 0.15);
   color: #c9a84c;
