@@ -860,7 +860,8 @@
     "description": "Marion leaves a folded note on the table before you wake.",
     "triggerConditions": {
       "dayMin": 3,
-      "probability": 0.7
+      "probability": 0.7,
+      "requiredRosterNpcId": "npc-marion-vale"
     },
     "choices": [
       {
@@ -887,7 +888,8 @@
     "description": "Marion catches you before you leave. She does not ask. She tells.",
     "triggerConditions": {
       "minUnrest": 50,
-      "probability": 0.65
+      "probability": 0.65,
+      "requiredRosterNpcId": "npc-marion-vale"
     },
     "choices": [
       {
@@ -914,7 +916,8 @@
     "description": "Ida sharpens her blade loudly in the common room. She is not subtle about it.",
     "triggerConditions": {
       "dayMin": 2,
-      "probability": 0.65
+      "probability": 0.65,
+      "requiredRosterNpcId": "npc-ida-rhys"
     },
     "choices": [
       {
@@ -941,7 +944,8 @@
     "description": "Ida returns with provisions no one asked for. She calls it practical, not generous.",
     "triggerConditions": {
       "maxFoodSecurity": 50,
-      "probability": 0.6
+      "probability": 0.6,
+      "requiredRosterNpcId": "npc-ida-rhys"
     },
     "choices": [
       {
@@ -968,7 +972,8 @@
     "description": "Verek comes back from the Pale. He does not explain. He rarely does.",
     "triggerConditions": {
       "dayMin": 4,
-      "probability": 0.6
+      "probability": 0.6,
+      "requiredRosterNpcId": "npc-verek-holst"
     },
     "choices": [
       {
@@ -995,7 +1000,8 @@
     "description": "Verek slides a folded paper across the table. Routes, timings, names.",
     "triggerConditions": {
       "corridorStatus": "disrupted",
-      "probability": 0.7
+      "probability": 0.7,
+      "requiredRosterNpcId": "npc-verek-holst"
     },
     "choices": [
       {
@@ -1022,7 +1028,8 @@
     "description": "Rutha Kael reviews her arrangement carefully. She makes notes.",
     "triggerConditions": {
       "dayMin": 5,
-      "probability": 0.6
+      "probability": 0.6,
+      "requiredRosterNpcId": "npc-rutha-kael"
     },
     "choices": [
       {
@@ -1049,7 +1056,8 @@
     "description": "Rutha mentions the Thornwall Incident. Once. Obliquely.",
     "triggerConditions": {
       "dayMin": 10,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-rutha-kael"
     },
     "choices": [
       {
@@ -1076,7 +1084,8 @@
     "description": "Sable Wrent is inspecting the building again. She has opinions.",
     "triggerConditions": {
       "dayMin": 4,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-sable-wrent"
     },
     "choices": [
       {
@@ -1103,7 +1112,8 @@
     "description": "Aldric Vane observes the room. He has thoughts on presentation.",
     "triggerConditions": {
       "dayMin": 3,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-aldric-vane"
     },
     "choices": [
       {
@@ -1130,7 +1140,8 @@
     "description": "Dara Slink returns from a run and mentions something useful in passing.",
     "triggerConditions": {
       "dayMin": 2,
-      "probability": 0.55
+      "probability": 0.55,
+      "requiredRosterNpcId": "npc-dara-slink"
     },
     "choices": [
       {
@@ -1157,7 +1168,8 @@
     "description": "Oswin Farr has been thinking about food routes again.",
     "triggerConditions": {
       "dayMin": 5,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-oswin-farr"
     },
     "choices": [
       {
@@ -1184,7 +1196,8 @@
     "description": "Cress Aldmoor tends to something without being asked.",
     "triggerConditions": {
       "dayMin": 3,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-cress-aldmoor"
     },
     "choices": [
       {
@@ -1211,7 +1224,8 @@
     "description": "Tav comes back from his quarterly register check. He does not mention it.",
     "triggerConditions": {
       "dayMin": 6,
-      "probability": 0.45
+      "probability": 0.45,
+      "requiredRosterNpcId": "npc-tav"
     },
     "choices": [
       {
@@ -1238,7 +1252,8 @@
     "description": "Maret Sunne has found something in the permit archives that she considers notable.",
     "triggerConditions": {
       "dayMin": 4,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-maret-sunne"
     },
     "choices": [
       {
@@ -1265,7 +1280,8 @@
     "description": "Lirien Ashcroft mentions her father. She does not ask for help. Not yet.",
     "triggerConditions": {
       "dayMin": 5,
-      "probability": 0.5
+      "probability": 0.5,
+      "requiredRosterNpcId": "npc-lirien-ashcroft"
     },
     "choices": [
       {

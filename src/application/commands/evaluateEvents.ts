@@ -13,6 +13,7 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
   if (cond.dayMin !== undefined && state.day < cond.dayMin) return false
   if (cond.currentDistrict !== undefined && state.currentDistrictId !== cond.currentDistrict) return false
   if (cond.activeQuestId !== undefined && !state.activeQuests.some((q) => q.questId === cond.activeQuestId)) return false
+  if (cond.requiredRosterNpcId !== undefined && !state.roster.some((n) => n.npcId === cond.requiredRosterNpcId)) return false
 
   if (cond.factionStandingBelow) {
     const standing = state.factionStandings[cond.factionStandingBelow.factionId] ?? 0

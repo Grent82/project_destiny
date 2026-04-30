@@ -44,6 +44,7 @@ export const eventTriggerConditionsSchema = z
     dayMin: z.number().optional(),
     currentDistrict: z.string().optional(),
     activeQuestId: z.string().optional(),
+    requiredRosterNpcId: z.string().optional(),
     probability: z.number().min(0).max(1).default(1),
   })
   .strict()

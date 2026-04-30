@@ -152,8 +152,9 @@ export function ShopsScreen() {
         <div className="stash-catalog">
           <h3>Weapons</h3>
           <div className="shop-offer-list">
-            {(rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number }>).map((w) => {
+            {(rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number; shopPrice: number }>).map((w) => {
               const owned = stash.weapons.includes(w.id)
+              const canAfford = money >= w.shopPrice
               return (
                 <div key={w.id} className="shop-offer-row">
                   <div>
@@ -167,9 +168,10 @@ export function ShopsScreen() {
                         <button
                           className="action-button action-button-sm"
                           type="button"
-                          onClick={() => dispatch(gameActions.addToStash({ type: 'weapon', id: w.id }))}
+                          disabled={!canAfford}
+                          onClick={() => dispatch(gameActions.addToStash({ type: 'weapon', id: w.id, price: w.shopPrice }))}
                         >
-                          Acquire
+                          {w.shopPrice} Mk
                         </button>
                       )
                     }
@@ -180,8 +182,9 @@ export function ShopsScreen() {
           </div>
           <h3>Armor</h3>
           <div className="shop-offer-list">
-            {(rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number }>).map((a) => {
+            {(rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number; shopPrice: number }>).map((a) => {
               const owned = stash.armors.includes(a.id)
+              const canAfford = money >= a.shopPrice
               return (
                 <div key={a.id} className="shop-offer-row">
                   <div>
@@ -195,9 +198,10 @@ export function ShopsScreen() {
                         <button
                           className="action-button action-button-sm"
                           type="button"
-                          onClick={() => dispatch(gameActions.addToStash({ type: 'armor', id: a.id }))}
+                          disabled={!canAfford}
+                          onClick={() => dispatch(gameActions.addToStash({ type: 'armor', id: a.id, price: a.shopPrice }))}
                         >
-                          Acquire
+                          {a.shopPrice} Mk
                         </button>
                       )
                     }

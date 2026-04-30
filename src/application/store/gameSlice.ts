@@ -660,12 +660,15 @@ const gameSlice = createSlice({
       npcState.loadout[slot] = itemId
     },
 
-    addToStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
-      const { type, id } = action.payload
+    addToStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string; price: number }>) {
+      const { type, id, price } = action.payload
+      if (state.money < price) return
       if (type === 'weapon' && !state.stash.weapons.includes(id)) {
         state.stash.weapons.push(id)
+        state.money -= price
       } else if (type === 'armor' && !state.stash.armors.includes(id)) {
         state.stash.armors.push(id)
+        state.money -= price
       }
     },
 
