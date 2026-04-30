@@ -743,6 +743,47 @@ const gameSlice = createSlice({
       state.activeDialogueId = null
       state.activeDialogueNodeId = null
     },
+
+    repairRoom(state, action: PayloadAction<string>) {
+      const room = state.house.rooms.find((r) => r.roomId === action.payload)
+      if (!room) return
+      if (room.state !== 'damaged' && room.state !== 'stripped' && room.state !== 'collapsed') return
+      if (state.money < room.repairCost) return
+      state.money -= room.repairCost
+      room.state = 'intact'
+      room.repairCost = 0
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-repair-${room.roomId}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'economy',
+        message: `${room.name} repaired. The house reclaims another room.`,
+      })
+    },
+
+    searchRoom(state, action: PayloadAction<string>) {
+      const room = state.house.rooms.find((r) => r.roomId === action.payload)
+      if (!room || room.searched) return
+      if (room.state === 'locked' || room.state === 'collapsed') return
+      room.searched = true
+      if (room.roomId === 'room-vault' && state.house.vaultUnlocked) {
+        state.mainQuest.stage = 'lead-found'
+        state.mainQuest.lastClue = "A letter from Mira, hidden in the vault. She left willingly — but not freely."
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-vault-search`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: "The vault yielded a letter. Mira's hand. She knew what was coming.",
+        })
+      }
+    },
+
+    unlockVault(state) {
+      state.house.vaultUnlocked = true
+      const vault = state.house.rooms.find((r) => r.roomId === 'room-vault')
+      if (vault) vault.state = 'intact'
+    },
   },
 })
 

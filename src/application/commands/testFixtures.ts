@@ -2,11 +2,11 @@
  * Test fixtures for game state scenarios.
  * Use these when a test needs NPCs beyond Marion Vale (the Day 1 starting roster).
  */
-import { type GameState, type RosterNpc } from '../../domain'
+import { type GameState, type NpcRuntimeState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 
 /** Ida Rhys roster entry — represents her after the player hires her (she starts in the hire pool) */
-export const idaRhysRosterEntry: RosterNpc = {
+export const idaRhysRosterEntry: NpcRuntimeState = {
   npcId: 'npc-ida-rhys',
   name: 'Ida Rhys',
   status: 'mercenary',

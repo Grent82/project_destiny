@@ -1761,3 +1761,100 @@ a:focus-visible,
   flex-direction: column;
   gap: 0.35rem;
 }
+
+/* ── House Screen ───────────────────────────────────────────── */
+.house-status-bar {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #9e8c6e);
+}
+.house-status-bar strong { color: var(--text-primary, #e8dcc8); }
+
+.house-room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.house-room {
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.house-room--intact { border-color: rgba(120,180,100,0.35); }
+.house-room--damaged { border-color: rgba(220,160,50,0.4); }
+.house-room--stripped { border-color: rgba(180,100,60,0.4); }
+.house-room--destroyed { border-color: rgba(180,60,60,0.35); }
+.house-room--locked { border-color: rgba(100,120,200,0.4); }
+.house-room--collapsed { border-color: rgba(120,90,60,0.3); background: rgba(0,0,0,0.15); }
+
+.house-room__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.house-room__name { margin: 0; font-size: 0.95rem; font-weight: 600; }
+.house-room__state-badge {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary, #9e8c6e);
+}
+.house-room--intact .house-room__state-badge { color: #7ab464; }
+.house-room--locked .house-room__state-badge { color: #6478c8; }
+
+.house-room__searched { font-size: 0.8rem; color: #7ab464; margin: 0; }
+.house-room__cost-note { font-size: 0.8rem; color: var(--text-secondary, #9e8c6e); margin: 0; }
+.house-room__actions { display: flex; flex-direction: column; gap: 0.35rem; margin-top: auto; }
+
+/* ── Ledger Screen ──────────────────────────────────────────── */
+.ledger-debt-block {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.03);
+}
+.ledger-debt-block--urgent {
+  border-color: rgba(220,80,60,0.5);
+  background: rgba(220,80,60,0.06);
+}
+.ledger-debt-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.75rem;
+}
+.ledger-debt-block__header h2 { margin: 0; font-size: 1rem; }
+.ledger-debt-block__days { font-size: 0.85rem; color: var(--text-secondary, #9e8c6e); }
+.ledger-debt-block--urgent .ledger-debt-block__days { color: #e05050; }
+.ledger-debt-block__body { display: flex; flex-direction: column; gap: 0.5rem; }
+.ledger-debt-block__balance { font-size: 0.9rem; color: var(--text-secondary, #9e8c6e); margin: 0; }
+.ledger-debt-block__cleared { color: #7ab464; margin: 0; }
+.ledger-debt-block__seized { color: #e05050; font-style: italic; margin: 0; }
+
+.ledger-section { margin-bottom: 2rem; }
+.ledger-section h2 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary, #9e8c6e); margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; }
+
+.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.ledger-table th { text-align: left; color: var(--text-secondary, #9e8c6e); font-weight: 400; padding: 0.3rem 0.5rem; font-size: 0.8rem; }
+.ledger-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.ledger-table__value { text-align: right; font-variant-numeric: tabular-nums; }
+.ledger-table__row--total td { border-top: 1px solid rgba(255,255,255,0.15); font-weight: 600; }
+.ledger-standing--positive { color: #7ab464; }
+.ledger-standing--neutral { color: var(--text-secondary, #9e8c6e); }
+.ledger-standing--negative { color: #e05050; }
+.ledger-empty { font-style: italic; color: var(--text-secondary, #9e8c6e); font-size: 0.9rem; }
+.text-danger { color: #e05050; }

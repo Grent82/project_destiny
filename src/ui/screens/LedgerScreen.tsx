@@ -1,0 +1,152 @@
+import { gameActions, selectFactionSummaries, selectLedgerSummary } from '../../application'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+
+const QUEST_STATUS_LABEL: Record<string, string> = {
+  active: 'Active',
+  completed: 'Completed',
+  failed: 'Failed',
+}
+
+function standingLabel(standing: number): string {
+  if (standing >= 60) return 'Allied'
+  if (standing >= 30) return 'Friendly'
+  if (standing >= 10) return 'Warm'
+  if (standing >= -10) return 'Neutral'
+  if (standing >= -30) return 'Cool'
+  if (standing >= -60) return 'Cold'
+  return 'Hostile'
+}
+
+function standingClass(standing: number): string {
+  if (standing >= 30) return 'ledger-standing--positive'
+  if (standing >= -30) return 'ledger-standing--neutral'
+  return 'ledger-standing--negative'
+}
+
+export function LedgerScreen() {
+  const ledger = useAppSelector(selectLedgerSummary)
+  const factions = useAppSelector(selectFactionSummaries)
+  const dispatch = useAppDispatch()
+
+  const debtUrgent = !ledger.debtPaid && ledger.daysRemaining <= 5
+
+  return (
+    <section className="screen-panel">
+      <p className="eyebrow">House Valdris</p>
+      <h1>The Ledger</h1>
+      <p className="summary">
+        The founding legal record of House Valdris. Every contract signed, every wage promised,
+        every debt owed. Whoever holds the Ledger holds the house.
+      </p>
+
+      {/* Debt block */}
+      <div className={`ledger-debt-block ${debtUrgent ? 'ledger-debt-block--urgent' : ''}`}>
+        <div className="ledger-debt-block__header">
+          <h2>Outstanding Debt Claim</h2>
+          {!ledger.debtPaid && !ledger.debtCrisisTriggered && (
+            <span className="ledger-debt-block__days">
+              {ledger.daysRemaining} day{ledger.daysRemaining !== 1 ? 's' : ''} remaining
+            </span>
+          )}
+        </div>
+
+        {ledger.debtCrisisTriggered ? (
+          <p className="ledger-debt-block__seized">
+            The creditors have acted. The house has been seized.
+          </p>
+        ) : ledger.debtPaid ? (
+          <p className="ledger-debt-block__cleared">Debt cleared. House Valdris stands free.</p>
+        ) : (
+          <div className="ledger-debt-block__body">
+            <p>
+              <strong>{ledger.debtAmount} Mk</strong> owed. Due on day {ledger.debtDueDay}.
+            </p>
+            <p className="ledger-debt-block__balance">
+              Current marks: <strong>{ledger.marks} Mk</strong>
+              {ledger.marks < ledger.debtAmount && (
+                <span className="text-danger">
+                  {' '}
+                  — short {ledger.debtAmount - ledger.marks} Mk
+                </span>
+              )}
+            </p>
+            <button
+              className="action-button action-button--primary"
+              disabled={ledger.marks < ledger.debtAmount}
+              onClick={() => dispatch(gameActions.payDebt({ amount: ledger.debtAmount }))}
+              type="button"
+            >
+              Pay Debt — {ledger.debtAmount} Mk
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Daily P&L */}
+      <div className="ledger-section">
+        <h2>Daily Accounts</h2>
+        <table className="ledger-table">
+          <tbody>
+            <tr>
+              <td>Roster wages</td>
+              <td className="ledger-table__value text-danger">−{ledger.rosterWages} Mk/day</td>
+            </tr>
+            <tr>
+              <td>Total daily outgoings</td>
+              <td className="ledger-table__value text-danger">−{ledger.dailyExpenses} Mk/day</td>
+            </tr>
+            <tr className="ledger-table__row--total">
+              <td>Marks on hand</td>
+              <td className="ledger-table__value">{ledger.marks} Mk</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Faction obligations */}
+      <div className="ledger-section">
+        <h2>Faction Standing</h2>
+        <table className="ledger-table">
+          <tbody>
+            {factions.map((f) => (
+              <tr key={f.factionId}>
+                <td>{f.name}</td>
+                <td className={`ledger-table__value ${standingClass(f.standingWithPlayer)}`}>
+                  {standingLabel(f.standingWithPlayer)} ({f.standingWithPlayer > 0 ? '+' : ''}
+                  {f.standingWithPlayer})
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Contract registry */}
+      <div className="ledger-section">
+        <h2>Contract Registry</h2>
+        {ledger.activeContracts.length === 0 ? (
+          <p className="ledger-empty">No contracts on record. The house has taken no work.</p>
+        ) : (
+          <table className="ledger-table">
+            <thead>
+              <tr>
+                <th>Contract</th>
+                <th>Accepted</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ledger.activeContracts.map((c) => (
+                <tr key={c.questId}>
+                  <td>{c.questId}</td>
+                  <td>Day {c.acceptedOnDay}</td>
+                  <td>{QUEST_STATUS_LABEL[c.status] ?? c.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  )
+}

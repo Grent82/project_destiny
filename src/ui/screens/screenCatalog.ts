@@ -34,4 +34,14 @@ export const screenCatalog = [
     title: 'Journal',
     summary: 'What has been logged: economy shifts, encounters, and the state of things.',
   },
+  {
+    path: '/house',
+    title: 'The House',
+    summary: 'The Valdris family seat in The Pale. Damaged, stripped, but still standing.',
+  },
+  {
+    path: '/ledger',
+    title: 'Ledger',
+    summary: 'The founding legal record of House Valdris. Debt, wages, contracts, obligations.',
+  },
 ] as const

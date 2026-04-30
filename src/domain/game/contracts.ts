@@ -62,6 +62,25 @@ export const cityResourcesSchema = z
   })
   .strict()
 
+export const roomStateSchema = z.enum(['intact', 'damaged', 'stripped', 'destroyed', 'locked', 'collapsed'])
+
+export const houseRoomSchema = z
+  .object({
+    roomId: z.string(),
+    name: z.string(),
+    state: roomStateSchema,
+    repairCost: z.number().int().nonnegative(),
+    searched: z.boolean().default(false),
+  })
+  .strict()
+
+export const houseStateSchema = z
+  .object({
+    rooms: z.array(houseRoomSchema),
+    vaultUnlocked: z.boolean().default(false),
+  })
+  .strict()
+
 export const hireOfferSchema = z
   .object({
     npcId: z.string(),
@@ -181,6 +200,19 @@ export const gameStateSchema = z
     districtTension: z.record(z.string(), z.number().int().min(0).max(100)).default({}),
     activeDialogueId: z.string().nullable().default(null),
     activeDialogueNodeId: z.string().nullable().default(null),
+    house: houseStateSchema.default(() => ({
+      rooms: [
+        { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false },
+        { roomId: 'room-marion-quarters', name: "Marion's Quarters", state: 'intact' as const, repairCost: 0, searched: false },
+        { roomId: 'room-bureau', name: 'Bureau', state: 'damaged' as const, repairCost: 15, searched: false },
+        { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, searched: false },
+        { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, searched: false },
+        { roomId: 'room-master-chamber', name: "Master's Chamber", state: 'stripped' as const, repairCost: 45, searched: false },
+        { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false },
+        { roomId: 'room-garret', name: 'Garret', state: 'collapsed' as const, repairCost: 130, searched: false },
+      ],
+      vaultUnlocked: false,
+    })),
   })
   .strict()
 
@@ -193,5 +225,8 @@ export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>
 export type GameContentCatalog = z.infer<typeof gameContentCatalogSchema>
 export type GameState = z.infer<typeof gameStateSchema>
 export type HireOffer = z.infer<typeof hireOfferSchema>
+export type HouseRoom = z.infer<typeof houseRoomSchema>
+export type HouseState = z.infer<typeof houseStateSchema>
+export type RoomState = z.infer<typeof roomStateSchema>
 
 export type EquippedItemDurabilities = z.infer<typeof gameStateSchema>['equippedItemDurabilities']

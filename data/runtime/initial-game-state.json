@@ -339,5 +339,66 @@
     "district-gilded-heights": 25
   },
   "activeDialogueId": null,
-  "activeDialogueNodeId": null
+  "activeDialogueNodeId": null,
+  "house": {
+    "rooms": [
+      {
+        "roomId": "room-entrance-hall",
+        "name": "Entrance Hall",
+        "state": "intact",
+        "repairCost": 0,
+        "searched": false
+      },
+      {
+        "roomId": "room-marion-quarters",
+        "name": "Marion's Quarters",
+        "state": "intact",
+        "repairCost": 0,
+        "searched": false
+      },
+      {
+        "roomId": "room-bureau",
+        "name": "Bureau",
+        "state": "damaged",
+        "repairCost": 15,
+        "searched": false
+      },
+      {
+        "roomId": "room-kitchen",
+        "name": "Kitchen",
+        "state": "damaged",
+        "repairCost": 20,
+        "searched": false
+      },
+      {
+        "roomId": "room-study",
+        "name": "Study",
+        "state": "stripped",
+        "repairCost": 35,
+        "searched": false
+      },
+      {
+        "roomId": "room-master-chamber",
+        "name": "Master's Chamber",
+        "state": "stripped",
+        "repairCost": 45,
+        "searched": false
+      },
+      {
+        "roomId": "room-vault",
+        "name": "Cellar / Vault",
+        "state": "locked",
+        "repairCost": 0,
+        "searched": false
+      },
+      {
+        "roomId": "room-garret",
+        "name": "Garret",
+        "state": "collapsed",
+        "repairCost": 130,
+        "searched": false
+      }
+    ],
+    "vaultUnlocked": false
+  }
 }

@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { endDay } from './endDay'

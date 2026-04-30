@@ -13,7 +13,9 @@ import { ExpeditionPrepScreen } from '../screens/ExpeditionPrepScreen'
 import { ExpeditionTravelScreen } from '../screens/ExpeditionTravelScreen'
 import { ExpeditionReturnScreen } from '../screens/ExpeditionReturnScreen'
 import { FactionsScreen } from '../screens/FactionsScreen'
+import { HouseScreen } from '../screens/HouseScreen'
 import { InvestigationScreen } from '../screens/InvestigationScreen'
+import { LedgerScreen } from '../screens/LedgerScreen'
 import { MissionPrepScreen } from '../screens/MissionPrepScreen'
 import { OpeningScreen } from '../screens/OpeningScreen'
 import { RecruitmentScreen } from '../screens/RecruitmentScreen'
@@ -96,6 +98,8 @@ export function App() {
             <Route path="/shops" element={<ShopsScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
             <Route path="/event-log" element={<EventLogScreen />} />
+            <Route path="/house" element={<HouseScreen />} />
+            <Route path="/ledger" element={<LedgerScreen />} />
             <Route path="/expedition" element={<ExpeditionPrepScreen />} />
             <Route path="/expedition-travel" element={<ExpeditionTravelScreen />} />
             <Route path="/expedition-return" element={<ExpeditionReturnScreen />} />
@@ -115,6 +119,8 @@ export function App() {
                     '/shops',
                     '/combat',
                     '/event-log',
+                    '/house',
+                    '/ledger',
                     '/expedition',
                     '/dialogue',
                   ].includes(screen.path),
