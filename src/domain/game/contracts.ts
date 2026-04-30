@@ -200,6 +200,7 @@ export const gameStateSchema = z
     districtTension: z.record(z.string(), z.number().int().min(0).max(100)).default({}),
     activeDialogueId: z.string().nullable().default(null),
     activeDialogueNodeId: z.string().nullable().default(null),
+    visitedDialogueNodes: z.record(z.string(), z.string()).default({}),
     house: houseStateSchema.default(() => ({
       rooms: [
         { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false },

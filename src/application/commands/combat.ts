@@ -21,6 +21,32 @@ import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
 
+const PLAYER_DEFAULT_WEAPON_ID = 'weapon-dagger-wasterunner'
+
+function buildPlayerCombatant(playerCharacter: GameState['playerCharacter']): CombatantState {
+  const { strength, cunning, authority } = playerCharacter.stats
+  return {
+    combatantId: 'player',
+    sourceNpcId: null,
+    name: playerCharacter.name || 'The Heir',
+    side: 'allies',
+    maxHealth: 80,
+    health: 80,
+    morale: Math.max(30, Math.min(100, authority * 10)),
+    skill: Math.min(85, (strength + cunning) * 5),
+    accuracy: Math.min(90, 50 + cunning * 3),
+    damageMin: strength + 5,
+    damageMax: strength * 2 + 6,
+    effectiveRange: 'close',
+    soak: 3,
+    speed: 4,
+    guarding: false,
+    staggered: false,
+    equippedWeaponId: PLAYER_DEFAULT_WEAPON_ID,
+    equippedArmorId: null,
+  }
+}
+
 function isAlive(combatant: CombatantState) {
   return combatant.health > 0
 }
@@ -476,7 +502,7 @@ function appendCombatActivityEntries(
     )
 }
 
-export function startCombatEncounter(state: GameState): GameState {
+export function startCombatEncounter(state: GameState, linkedQuestId?: string | null): GameState {
   if (state.activeCombat?.outcome === 'ongoing') {
     return state
   }
@@ -487,8 +513,11 @@ export function startCombatEncounter(state: GameState): GameState {
     return state
   }
 
-  const allies = squad.map((npc) => buildAllyCombatant(npc, state.equippedItemDurabilities, state.relationships))
-  const enemies = allies.map((_, index) => buildEnemyCombatant(index, allies))
+  const npcAllies = squad.map((npc) => buildAllyCombatant(npc, state.equippedItemDurabilities, state.relationships))
+  const playerCombatant = buildPlayerCombatant(state.playerCharacter)
+  const allies = [playerCombatant, ...npcAllies]
+  // Enemy count matches NPC squad size only (not counting the player)
+  const enemies = npcAllies.map((_, index) => buildEnemyCombatant(index, npcAllies))
   const combatants = [...allies, ...enemies].sort(
     (left, right) => right.speed - left.speed || right.skill - left.skill,
   )
@@ -508,6 +537,7 @@ export function startCombatEncounter(state: GameState): GameState {
       },
     ],
     factionId: 'faction-civic-compact',
+    linkedQuestId: linkedQuestId ?? null,
   }
 
   return appendActivityLogEntry(
@@ -698,6 +728,21 @@ export function concludeCombatEncounter(state: GameState): GameState {
         }
         const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
         nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved.`)
+      }
+    }
+
+    // Complete linked quest on victory
+    if (combat.linkedQuestId) {
+      const questIdx = nextState.activeQuests.findIndex((q) => q.questId === combat.linkedQuestId)
+      if (questIdx !== -1) {
+        const completedQuest = { ...nextState.activeQuests[questIdx], objectiveMet: true, status: 'completed' as const }
+        const nextQuests = nextState.activeQuests.filter((_, i) => i !== questIdx)
+        nextState = {
+          ...nextState,
+          activeQuests: nextQuests,
+          completedQuestIds: [...nextState.completedQuestIds, completedQuest.questId],
+        }
+        nextState = appendActivityLogEntry(nextState, 'system', `Contract fulfilled: ${completedQuest.questId}.`)
       }
     }
   }

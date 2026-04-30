@@ -70,6 +70,7 @@ const baseState: GameState = {
   districtTension: {},
   activeDialogueId: null,
   activeDialogueNodeId: null,
+  visitedDialogueNodes: {},
   house: {
     rooms: [
       { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false },

@@ -69,7 +69,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
     // All allies alive at some positive health
     const nextState = concludeCombatEncounter(resolvedState)
     const allyIds = resolvedState.activeCombat.combatants
-      .filter((c) => c.side === 'allies' && (c.health ?? 0) > 0)
+      .filter((c) => c.side === 'allies' && (c.health ?? 0) > 0 && c.sourceNpcId !== null)
       .map((c) => c.sourceNpcId!)
 
     for (const npcId of allyIds) {

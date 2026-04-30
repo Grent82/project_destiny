@@ -10,12 +10,12 @@ import {
 
 describe('combat commands', () => {
   it('starts a seeded combat encounter from the selected squad', () => {
-    // Use initialStateWithIda so we have 2 allies → 2 allies + 2 enemies = 4 combatants
+    // Use initialStateWithIda so we have 2 NPC allies + player → 3 allies + 2 enemies = 5 combatants
     const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'] }
     const nextState = startCombatEncounter(state)
 
     expect(nextState.activeCombat).not.toBeNull()
-    expect(nextState.activeCombat?.combatants).toHaveLength(4)
+    expect(nextState.activeCombat?.combatants).toHaveLength(5)
     expect(nextState.activeCombat?.range).toBe('distant')
     expect(nextState.activeCombat?.outcome).toBe('ongoing')
     expect(nextState.activityLog[0]?.message).toMatch(/moves out.*hostile patrol|hostile patrol stands in the way/i)

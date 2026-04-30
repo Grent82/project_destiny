@@ -43,8 +43,8 @@ const gameSlice = createSlice({
         action.payload.itemId,
       )
     },
-    startCombatEncounter(state) {
-      return startCombatEncounter(state)
+    startCombatEncounter(state, action: PayloadAction<{ questId?: string } | undefined>) {
+      return startCombatEncounter(state, action.payload?.questId)
     },
     performCombatAction(
       state,
@@ -787,12 +787,25 @@ const gameSlice = createSlice({
     },
 
     startDialogue(state, action: PayloadAction<{ dialogueId: string; nodeId: string }>) {
-      state.activeDialogueId = action.payload.dialogueId
-      state.activeDialogueNodeId = action.payload.nodeId
+      const { dialogueId, nodeId } = action.payload
+      state.activeDialogueId = dialogueId
+      // Resume from last visited node if it still exists in the tree; otherwise start from nodeId
+      const lastNode = state.visitedDialogueNodes[dialogueId]
+      if (lastNode) {
+        const tree = contentCatalog.dialoguesById.get(dialogueId)
+        const nodeExists = tree?.nodes.some((n) => n.id === lastNode) ?? false
+        state.activeDialogueNodeId = nodeExists ? lastNode : nodeId
+      } else {
+        state.activeDialogueNodeId = nodeId
+      }
     },
 
     advanceDialogue(state, action: PayloadAction<{ nodeId: string | null }>) {
-      state.activeDialogueNodeId = action.payload.nodeId
+      const { nodeId } = action.payload
+      if (nodeId !== null && state.activeDialogueId) {
+        state.visitedDialogueNodes[state.activeDialogueId] = nodeId
+      }
+      state.activeDialogueNodeId = nodeId
     },
 
     endDialogue(state) {

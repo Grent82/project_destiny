@@ -699,6 +699,25 @@ strong { color: var(--text-secondary); }
   margin-bottom: 0;
 }
 
+.hp-bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 2px 0 4px;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background: var(--accent-gold, #c9a84c);
+  border-radius: 3px;
+  transition: width 0.2s ease;
+}
+
+.hp-bar-fill.hp-bar-critical {
+  background: #c0392b;
+}
+
 .detail-grid strong {
   display: block;
   margin-bottom: 0.35rem;

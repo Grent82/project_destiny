@@ -73,6 +73,7 @@ export const activeCombatStateSchema = z
     combatants: z.array(combatantStateSchema).min(2),
     log: z.array(combatLogEntrySchema),
     factionId: entityIdSchema.optional(),
+    linkedQuestId: z.string().nullable().optional(),
   })
   .strict()
 

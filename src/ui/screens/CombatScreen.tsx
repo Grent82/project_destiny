@@ -133,9 +133,13 @@ export function CombatScreen() {
                 {combat.allies.map((combatant) => (
                   <div key={combatant.combatantId} className="mission-row">
                     <strong>{combatant.name}</strong>
-                    <span>
-                      Health {combatant.health}/{combatant.maxHealth}
-                    </span>
+                    <span>HP {combatant.health}/{combatant.maxHealth}</span>
+                    <div className="hp-bar-track">
+                      <div
+                        className={`hp-bar-fill${combatant.health / combatant.maxHealth < 0.3 ? ' hp-bar-critical' : ''}`}
+                        style={{ width: `${Math.round((combatant.health / combatant.maxHealth) * 100)}%` }}
+                      />
+                    </div>
                     <span>Morale {combatant.morale}</span>
                     <div className="badge-row">
                       <span className={`badge ${combatant.effectiveRange === combat.range ? 'badge-positive' : ''}`}>
@@ -160,9 +164,13 @@ export function CombatScreen() {
                 {combat.enemies.map((combatant) => (
                   <div key={combatant.combatantId} className="mission-row">
                     <strong>{combatant.name}</strong>
-                    <span>
-                      Health {combatant.health}/{combatant.maxHealth}
-                    </span>
+                    <span>HP {combatant.health}/{combatant.maxHealth}</span>
+                    <div className="hp-bar-track">
+                      <div
+                        className={`hp-bar-fill${combatant.health / combatant.maxHealth < 0.3 ? ' hp-bar-critical' : ''}`}
+                        style={{ width: `${Math.round((combatant.health / combatant.maxHealth) * 100)}%` }}
+                      />
+                    </div>
                     <span>Morale {combatant.morale}</span>
                     {combatant.lore && (
                       <p className="enemy-lore">{combatant.lore}</p>
