@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import { recruitNpc, dismissNpc, expireHireOffers } from './recruitment'
 
 const stateWithOffers = {
@@ -105,7 +106,7 @@ describe('recruitNpc', () => {
 
 describe('dismissNpc', () => {
   const stateWithRoster = {
-    ...initialGameStateSnapshot,
+    ...initialStateWithIda,
   }
 
   it('removes the NPC from roster', () => {

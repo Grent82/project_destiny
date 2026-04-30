@@ -23,7 +23,7 @@ const NPC_WORLD_RUMOR_SNIPPETS = [
 ]
 
 const DISTRICT_HINT_TO_ID: Record<string, string> = {
-  'Harbor Ward': 'district-harbor-ward',
+  'Harbor Ward': 'district-harbor',
   'Civic Quarter': 'district-civic-quarter',
   'The Pale': 'district-the-pale',
   'Ironworks': 'district-ironworks',

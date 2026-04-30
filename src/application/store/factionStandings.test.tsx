@@ -97,7 +97,7 @@ describe('selectFactionStanding', () => {
     const store = createGameStore()
     const state = store.getState()
     expect(selectFactionStanding('faction-civic-compact')(state)).toBe(10)
-    expect(selectFactionStanding('faction-gilded-court')(state)).toBe(-20)
+    expect(selectFactionStanding('faction-gilded-court')(state)).toBe(-65)
     expect(selectFactionStanding('faction-tallow-ring')(state)).toBe(15)
   })
 
@@ -112,7 +112,7 @@ describe('selectFactionStandings and selectCityDials', () => {
     const store = createGameStore()
     const standings = selectFactionStandings(store.getState())
     expect(standings['faction-civic-compact']).toBe(10)
-    expect(standings['faction-gilded-court']).toBe(-20)
+    expect(standings['faction-gilded-court']).toBe(-65)
     expect(standings['faction-foundry-league']).toBe(5)
     expect(standings['faction-tallow-ring']).toBe(15)
     expect(standings['faction-restored']).toBe(0)
@@ -147,10 +147,10 @@ describe('FactionsScreen', () => {
         <FactionsScreen />
       </AppProviders>,
     )
-    // faction-gilded-court: -20 → Cold
+    // faction-gilded-court: -65 → Hostile
     // faction-civic-compact: 10 → Neutral
     expect(screen.getAllByText('Neutral').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('Cold')).toBeInTheDocument()
+    expect(screen.getByText('Hostile')).toBeInTheDocument()
   })
 
   it('renders city dials section', () => {

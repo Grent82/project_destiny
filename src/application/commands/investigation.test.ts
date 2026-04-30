@@ -3,10 +3,11 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import { gameStateSchema } from '../../domain'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
-  const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
+  const state = gameStateSchema.parse({ ...initialStateWithIda, ...overrides })
   return createGameStore(state)
 }
 

@@ -3,10 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { purchaseItemFromShop } from './purchase'
 
+// Use a rich starting state so purchase tests are independent of starting balance
+const richState = { ...initialGameStateSnapshot, money: 500 }
+
 describe('purchaseItemFromShop', () => {
   it('deducts money and adds inventory for a valid purchase', () => {
     const nextState = purchaseItemFromShop(
-      initialGameStateSnapshot,
+      richState,
       'shop-ironworks-supply',
       'item-spare-parts',
     )
@@ -36,21 +39,21 @@ describe('purchaseItemFromShop', () => {
 
   it('does not change state when the requested item is not offered', () => {
     const nextState = purchaseItemFromShop(
-      initialGameStateSnapshot,
+      richState,
       'shop-heights-ledger-house',
       'item-spare-parts',
     )
 
-    expect(nextState).toEqual(initialGameStateSnapshot)
+    expect(nextState).toEqual(richState)
   })
 
   it('does not change state when the shopId does not exist', () => {
     const nextState = purchaseItemFromShop(
-      initialGameStateSnapshot,
+      richState,
       'shop-does-not-exist',
       'item-spare-parts',
     )
 
-    expect(nextState).toEqual(initialGameStateSnapshot)
+    expect(nextState).toEqual(richState)
   })
 })

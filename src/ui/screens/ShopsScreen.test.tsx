@@ -1,15 +1,21 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { createGameStore } from '../../application'
+import { initialGameStateSnapshot } from '../../application/store/initialGameState'
+import { gameStateSchema } from '../../domain'
 import { AppProviders } from '../app/AppProviders'
 import { ShopsScreen } from './ShopsScreen'
 
 describe('ShopsScreen', () => {
   it('renders seeded shops and updates visible money and owned quantity after purchase', async () => {
     const user = userEvent.setup()
+    // Use explicit money=500 and harbor district so purchase test is independent of starting balance/district
+    const richState = gameStateSchema.parse({ ...initialGameStateSnapshot, money: 500, currentDistrictId: 'district-harbor' })
+    const store = createGameStore(richState)
 
     render(
-      <AppProviders>
+      <AppProviders store={store}>
         <ShopsScreen />
       </AppProviders>,
     )

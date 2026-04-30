@@ -1,7 +1,7 @@
 {
   "day": 1,
   "timeSlot": "morning",
-  "money": 500,
+  "money": 100,
   "protagonistName": "",
   "hasSeenOpening": false,
   "isFirstRun": true,
@@ -90,7 +90,7 @@
       "npcId": "npc-marion-vale",
       "name": "Marion Vale",
       "status": "retainer",
-      "assignment": "working",
+      "assignment": "idle",
       "activeTitle": null,
       "wagesOwedDays": 0,
       "attributes": {
@@ -149,98 +149,11 @@
           "item-medkit-field"
         ]
       },
-      "relationships": {
-        "npc-ida-rhys": {
-          "affinity": 48,
-          "respect": 57,
-          "fear": 12,
-          "loyalty": 50,
-          "trust": 46
-        }
-      },
+      "relationships": {},
       "factionRelationships": [
         {
           "factionId": "faction-civic-compact",
           "standing": 18
-        }
-      ]
-    },
-    {
-      "npcId": "npc-ida-rhys",
-      "name": "Ida Rhys",
-      "status": "mercenary",
-      "assignment": "idle",
-      "activeTitle": null,
-      "wagesOwedDays": 0,
-      "attributes": {
-        "might": 54,
-        "agility": 42,
-        "endurance": 59,
-        "intellect": 57,
-        "perception": 49,
-        "presence": 35,
-        "resolve": 64
-      },
-      "skills": {
-        "melee": 39,
-        "ranged": 33,
-        "medicine": 12,
-        "administration": 18,
-        "engineering": 73,
-        "negotiation": 16,
-        "survival": 28,
-        "security": 31,
-        "crafting": 69,
-        "performance": 6,
-        "academics": 22,
-        "intrigue": 11
-      },
-      "traits": {
-        "discipline": 74,
-        "ambition": 48,
-        "empathy": 29,
-        "ruthlessness": 38,
-        "prudence": 59,
-        "curiosity": 64,
-        "dominance": 27,
-        "loyalty": 46,
-        "vanity": 8,
-        "zeal": 35
-      },
-      "states": {
-        "health": 91,
-        "fatigue": 16,
-        "stress": 18,
-        "morale": 61,
-        "fear": 9,
-        "anger": 14,
-        "hunger": 20,
-        "injury": 4,
-        "intoxication": 0,
-        "hygiene": 68
-      },
-      "loadout": {
-        "primaryWeaponId": null,
-        "secondaryWeaponId": null,
-        "armorId": null,
-        "accessoryIds": [],
-        "consumableIds": [
-          "item-medkit-field"
-        ]
-      },
-      "relationships": {
-        "npc-marion-vale": {
-          "affinity": 42,
-          "respect": 63,
-          "fear": 9,
-          "loyalty": 39,
-          "trust": 40
-        }
-      },
-      "factionRelationships": [
-        {
-          "factionId": "faction-foundry-league",
-          "standing": 24
         }
       ]
     }
@@ -268,14 +181,13 @@
   "activityLog": [],
   "activeQuestIds": [],
   "selectedSquadNpcIds": [
-    "npc-marion-vale",
-    "npc-ida-rhys"
+    "npc-marion-vale"
   ],
   "activeCombat": null,
   "activeMissionId": null,
   "factionStandings": {
     "faction-civic-compact": 10,
-    "faction-gilded-court": -20,
+    "faction-gilded-court": -65,
     "faction-foundry-league": 5,
     "faction-tallow-ring": 15,
     "faction-restored": 0
@@ -287,8 +199,18 @@
     "corruption": 60
   },
   "pendingEvents": [],
-  "currentDistrictId": "district-harbor",
+  "currentDistrictId": "district-the-pale",
   "availableForHire": [
+    {
+      "npcId": "npc-ida-rhys",
+      "discoveredInDistrictId": "district-the-pale",
+      "wagePerDay": 8,
+      "signingBonus": 0,
+      "requiredFactionId": null,
+      "requiredFactionStanding": 0,
+      "turnsAvailable": 10,
+      "source": "district"
+    },
     {
       "npcId": "npc-verek-holst",
       "discoveredInDistrictId": "district-harbor",
@@ -296,7 +218,7 @@
       "signingBonus": 0,
       "requiredFactionId": null,
       "requiredFactionStanding": 0,
-      "turnsAvailable": 3
+      "turnsAvailable": 8
     },
     {
       "npcId": "npc-sable-wrent",
@@ -305,7 +227,7 @@
       "signingBonus": 50,
       "requiredFactionId": null,
       "requiredFactionStanding": 0,
-      "turnsAvailable": 3
+      "turnsAvailable": 8
     },
     {
       "npcId": "npc-cress-aldmoor",
@@ -314,7 +236,7 @@
       "signingBonus": 75,
       "requiredFactionId": null,
       "requiredFactionStanding": 0,
-      "turnsAvailable": 3
+      "turnsAvailable": 8
     },
     {
       "npcId": "npc-oswin-farr",
@@ -323,7 +245,7 @@
       "signingBonus": 0,
       "requiredFactionId": null,
       "requiredFactionStanding": 0,
-      "turnsAvailable": 3
+      "turnsAvailable": 8
     }
   ],
   "availableQuests": [
@@ -373,7 +295,7 @@
   },
   "householdLore": {
     "houseName": "House Valdris",
-    "founderName": "Edric Valdris",
+    "founderName": "Aldren Valdris",
     "founderGeneration": 2,
     "antagonistFactionId": "faction-gilded-court",
     "missingRelatives": [
@@ -396,11 +318,18 @@
   },
   "playerCharacter": {
     "name": "",
-    "stats": { "strength": 5, "cunning": 5, "authority": 5 },
+    "stats": {
+      "strength": 5,
+      "cunning": 5,
+      "authority": 5
+    },
     "traits": [],
     "level": 1
   },
-  "mainQuest": { "stage": "searching", "lastClue": "" },
+  "mainQuest": {
+    "stage": "searching",
+    "lastClue": ""
+  },
   "districtTension": {
     "district-the-pale": 20,
     "district-harbor": 35,

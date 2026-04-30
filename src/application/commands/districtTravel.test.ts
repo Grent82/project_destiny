@@ -34,7 +34,12 @@ describe('travelToDistrict', () => {
 
   it('does not block travel to accessRestricted districts at the action level', () => {
     // district-gilded-heights is accessRestricted:true — action must still succeed
-    const next = travelToDistrict(initialGameStateSnapshot, 'district-gilded-heights')
+    // Use neutral Gilded Court standing so travel message is standard
+    const friendlyState = {
+      ...initialGameStateSnapshot,
+      factionStandings: { ...initialGameStateSnapshot.factionStandings, 'faction-gilded-court': 0 },
+    }
+    const next = travelToDistrict(friendlyState, 'district-gilded-heights')
     expect(next.currentDistrictId).toBe('district-gilded-heights')
     expect(next.activityLog[0].message).toBe('You make your way to Gilded Heights.')
   })

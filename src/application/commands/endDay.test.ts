@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import { endDay, wageForStatus } from './endDay'
 
 describe('wageForStatus', () => {
@@ -19,12 +20,11 @@ describe('wageForStatus', () => {
 
 describe('endDay', () => {
   // Marion Vale: retainer (4 Marks), Ida Rhys: mercenary (8 Marks)
-  // Marion Vale has assignment='working', so she also earns passive income
-  // Total daily wage: 12 Marks
+  // Total daily wage: 12 Marks — uses initialStateWithIda (Ida hired)
   it('wage deduction reduces credits by the combined daily wage', () => {
     const stateNoWorking = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
     }
     const next = endDay(stateNoWorking)
     expect(next.money).toBe(stateNoWorking.money - 12)
@@ -38,8 +38,8 @@ describe('endDay', () => {
   })
 
   it('fatigue decreases for resting NPCs', () => {
-    const next = endDay(initialGameStateSnapshot)
-    const idaBefore = initialGameStateSnapshot.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const next = endDay(initialStateWithIda)
+    const idaBefore = initialStateWithIda.roster.find((r) => r.npcId === 'npc-ida-rhys')!
     const idaAfter = next.roster.find((r) => r.npcId === 'npc-ida-rhys')!
     // idle => resting => fatigue -10
     expect(idaAfter.states.fatigue).toBe(Math.max(0, idaBefore.states.fatigue - 10))
@@ -47,8 +47,8 @@ describe('endDay', () => {
 
   it('medic title heals the most injured NPC by 8 health', () => {
     const stateWithMedic = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-medic' } : npc,
       ),
     }
@@ -60,13 +60,13 @@ describe('endDay', () => {
 
   it('steward title adds 15 Marks to credits after wage deduction', () => {
     const stateWithSteward = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward', assignment: 'idle' as const } : { ...npc, assignment: 'idle' as const },
       ),
     }
     const next = endDay(stateWithSteward)
-    // 500 - 12 wages + 15 steward = 503
+    // money - 12 wages + 15 steward
     expect(next.money).toBe(stateWithSteward.money - 12 + 15)
   })
 
@@ -89,7 +89,8 @@ describe('endDay', () => {
   })
 
   it('logs a warning when credits are insufficient for wages', () => {
-    const brokeState = { ...initialGameStateSnapshot, money: 5 }
+    // Marion (retainer) costs 4M/day — use 3M to trigger "draws no wages" warning
+    const brokeState = { ...initialGameStateSnapshot, money: 3 }
     const next = endDay(brokeState)
     const warning = next.activityLog.find((e) => e.message.includes('draws no wages'))
     expect(warning).toBeDefined()
@@ -106,8 +107,8 @@ describe('endDay', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0)
 
     const stateWithTrainer = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? { ...npc, activeTitle: 'title-trainer', assignment: 'idle' as const }
           : npc,

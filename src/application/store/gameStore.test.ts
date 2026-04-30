@@ -24,11 +24,11 @@ describe('game store integration', () => {
     expect(selectDashboardSummary(state)).toMatchObject({
       day: 1,
       timeSlot: 'morning',
-      money: 500,
-      rosterCount: 2,
-      assignedSquadCount: 2,
+      money: 100,
+      rosterCount: 1,
+      assignedSquadCount: 1,
     })
-    expect(selectRosterEntries(state)).toHaveLength(2)
+    expect(selectRosterEntries(state)).toHaveLength(1)
     expect(selectRosterDetail(state, 'npc-marion-vale')?.name).toBe('Marion Vale')
     expect(selectDistrictSummaries(state).length).toBeGreaterThanOrEqual(3)
     expect(selectFactionSummaries(state).length).toBeGreaterThanOrEqual(3)

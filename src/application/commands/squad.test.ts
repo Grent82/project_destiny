@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import {
   addNpcToSelectedSquad,
   removeNpcFromSelectedSquad,
@@ -10,7 +11,7 @@ import {
 describe('squad commands', () => {
   it('adds a roster npc to the selected squad when capacity allows', () => {
     const state = {
-      ...initialGameStateSnapshot,
+      ...initialStateWithIda,
       selectedSquadNpcIds: ['npc-marion-vale'],
     }
 
@@ -23,10 +24,11 @@ describe('squad commands', () => {
   })
 
   it('removes an npc from the selected squad', () => {
-    const nextState = removeNpcFromSelectedSquad(
-      initialGameStateSnapshot,
-      'npc-ida-rhys',
-    )
+    const state = {
+      ...initialStateWithIda,
+      selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+    }
+    const nextState = removeNpcFromSelectedSquad(state, 'npc-ida-rhys')
 
     expect(nextState.selectedSquadNpcIds).toEqual(['npc-marion-vale'])
   })

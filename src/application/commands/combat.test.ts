@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -9,7 +10,9 @@ import {
 
 describe('combat commands', () => {
   it('starts a seeded combat encounter from the selected squad', () => {
-    const nextState = startCombatEncounter(initialGameStateSnapshot)
+    // Use initialStateWithIda so we have 2 allies → 2 allies + 2 enemies = 4 combatants
+    const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'] }
+    const nextState = startCombatEncounter(state)
 
     expect(nextState.activeCombat).not.toBeNull()
     expect(nextState.activeCombat?.combatants).toHaveLength(4)

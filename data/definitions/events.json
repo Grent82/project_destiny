@@ -237,7 +237,7 @@
           },
           {
             "type": "adjustFactionStanding",
-            "target": "faction-the-restored",
+            "target": "faction-restored",
             "delta": 15
           },
           {
@@ -272,7 +272,7 @@
           },
           {
             "type": "adjustFactionStanding",
-            "target": "faction-the-restored",
+            "target": "faction-restored",
             "delta": -20
           },
           {

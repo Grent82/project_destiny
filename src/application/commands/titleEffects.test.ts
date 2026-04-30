@@ -1,16 +1,17 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { endDay } from './endDay'
 
-const [firstNpc, secondNpc] = initialGameStateSnapshot.roster
+const [firstNpc, secondNpc] = initialStateWithIda.roster
 
 describe('title effects: opportunity cost and bonuses', () => {
   it('medic title speeds recovery for recovering NPCs', () => {
     const stateWithRecovering = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === secondNpc!.npcId
           ? { ...npc, assignment: 'recovering' as const, states: { ...npc.states, health: 40 } }
           : npc,
@@ -41,8 +42,8 @@ describe('title effects: opportunity cost and bonuses', () => {
 
     // Without trainer: training NPC gets +1 skill/day
     const stateTrainingNoTrainer = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === secondNpc!.npcId
           ? { ...npc, assignment: 'training' as const }
           : { ...npc, assignment: 'idle' as const, activeTitle: null },
@@ -55,8 +56,8 @@ describe('title effects: opportunity cost and bonuses', () => {
 
     // With trainer: training NPC gets +2 skill/day
     const stateWithTrainer = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === firstNpc!.npcId
           ? { ...npc, activeTitle: 'title-trainer', assignment: 'idle' as const }
           : { ...npc, assignment: 'training' as const },
@@ -71,8 +72,8 @@ describe('title effects: opportunity cost and bonuses', () => {
 
   it('title holder (assigned_title) cannot be moved to deployed via setNpcAssignment', () => {
     const stateWithTitleHolder = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
         npc.npcId === firstNpc!.npcId
           ? { ...npc, assignment: 'assigned_title' as const, activeTitle: 'title-medic' }
           : npc,

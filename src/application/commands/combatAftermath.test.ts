@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { initialStateWithIda } from './testFixtures'
 import { concludeCombatEncounter, startCombatEncounter } from './combat'
 import { addNpcToSelectedSquad } from './squad'
 import { endDay } from './endDay'
@@ -132,9 +133,9 @@ describe('concludeCombatEncounter — emotional aftermath', () => {
 describe('addNpcToSelectedSquad — recovering guard', () => {
   it('rejects NPCs with assignment "recovering"', () => {
     const stateWithRecovering = {
-      ...initialGameStateSnapshot,
+      ...initialStateWithIda,
       selectedSquadNpcIds: [],
-      roster: initialGameStateSnapshot.roster.map((r) =>
+      roster: initialStateWithIda.roster.map((r) =>
         r.npcId === 'npc-ida-rhys' ? { ...r, assignment: 'recovering' as const } : r,
       ),
     }
@@ -145,9 +146,9 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
 
   it('sets assignment to "deployed" when NPC is added to squad', () => {
     const stateWithIdle = {
-      ...initialGameStateSnapshot,
+      ...initialStateWithIda,
       selectedSquadNpcIds: [],
-      roster: initialGameStateSnapshot.roster.map((r) =>
+      roster: initialStateWithIda.roster.map((r) =>
         r.npcId === 'npc-ida-rhys' ? { ...r, assignment: 'idle' as const } : r,
       ),
     }
@@ -162,8 +163,8 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
 describe('endDay — recovering NPC health recovery', () => {
   it('recovering NPCs gain 15 health per day', () => {
     const stateWithRecovering = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((r) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((r) =>
         r.npcId === 'npc-ida-rhys'
           ? { ...r, assignment: 'recovering' as const, states: { ...r.states, health: 20 } }
           : r,
@@ -177,8 +178,8 @@ describe('endDay — recovering NPC health recovery', () => {
 
   it('recovering NPC returns to idle when health reaches 80', () => {
     const stateWithRecovering = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((r) =>
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((r) =>
         r.npcId === 'npc-ida-rhys'
           ? { ...r, assignment: 'recovering' as const, states: { ...r.states, health: 70 } }
           : r,
@@ -193,8 +194,8 @@ describe('endDay — recovering NPC health recovery', () => {
 
   it('recovery bonus applies with medic on roster (not deployed)', () => {
     const stateWithMedicAndRecovering = {
-      ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((r) => {
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((r) => {
         if (r.npcId === 'npc-marion-vale') {
           return { ...r, activeTitle: 'title-medic', assignment: 'idle' as const }
         }
