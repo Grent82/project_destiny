@@ -719,6 +719,7 @@ export function endDay(state: GameState): GameState {
 
   // Step 9b: Faction daily agenda log
   const factionIds = [
+    'faction-civic-compact',
     'faction-gilded-court',
     'faction-foundry-league',
     'faction-tallow-ring',
