@@ -47,10 +47,10 @@ export function DashboardScreen(props: DashboardScreenProps) {
         </p>
         <button
           className="action-button action-button--primary"
-          onClick={() => dispatch(gameActions.endDay())}
+          onClick={() => dispatch(gameActions.advanceTimeSlot())}
           type="button"
         >
-          End Day →
+          {summary.timeSlot === 'night' ? 'End Night →' : `End ${summary.timeSlot.charAt(0).toUpperCase() + summary.timeSlot.slice(1)} →`}
         </button>
       </div>
       <p className="summary">

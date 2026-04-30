@@ -5,7 +5,8 @@
     "description": "Word travels fast in the Warrens. You haven't paid your people on time, and resentment is building. A Compact inspector has taken notice.",
     "triggerConditions": {
       "minUnrest": 60,
-      "probability": 0.6
+      "probability": 0.6,
+      "dayMin": 3
     },
     "choices": [
       {
@@ -173,7 +174,8 @@
         "factionId": "faction-tallow-ring",
         "threshold": 5
       },
-      "probability": 0.5
+      "probability": 0.5,
+      "dayMin": 4
     },
     "choices": [
       {
@@ -224,7 +226,8 @@
     "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help \u2014 money, testimony, or a distraction that buys them time.",
     "triggerConditions": {
       "minUnrest": 40,
-      "probability": 0.45
+      "probability": 0.45,
+      "dayMin": 5
     },
     "choices": [
       {
@@ -449,7 +452,8 @@
     "description": "The Hollows does not welcome strangers. As you enter, eyes track you from doorways and alley mouths. Someone here knows your business before you do.",
     "triggerConditions": {
       "currentDistrict": "district-the-hollows",
-      "probability": 0.3
+      "probability": 0.3,
+      "dayMin": 5
     },
     "choices": [
       {
@@ -491,7 +495,8 @@
     "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
-      "probability": 0.3
+      "probability": 0.3,
+      "dayMin": 4
     },
     "choices": [
       {
@@ -630,7 +635,8 @@
     "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
-      "probability": 0.45
+      "probability": 0.45,
+      "dayMin": 4
     },
     "choices": [
       {
@@ -696,7 +702,7 @@
     "description": "A rare cargo arrived in the Harbor Ward last night ahead of any announced schedule. The dock broker is selling quickly and quietly before the Compact inspectors arrive. The price will not last the morning.",
     "triggerConditions": {
       "probability": 0.2,
-      "dayMin": 2
+      "dayMin": 3
     },
     "choices": [
       {

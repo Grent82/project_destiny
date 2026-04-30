@@ -103,6 +103,59 @@ const gameSlice = createSlice({
       }
       return afterDay
     },
+
+    advanceTimeSlot(state) {
+      const SLOT_SEQUENCE = ['morning', 'afternoon', 'evening', 'night'] as const
+      type TimeSlot = typeof SLOT_SEQUENCE[number]
+      const currentIndex = SLOT_SEQUENCE.indexOf(state.timeSlot as TimeSlot)
+      const nextIndex = (currentIndex + 1) % SLOT_SEQUENCE.length
+      const nextSlot = SLOT_SEQUENCE[nextIndex]!
+
+      if (nextSlot === 'morning') {
+        // Crossed midnight — run full day processing via endDay
+        const afterDay = endDayCommand(state)
+        afterDay.isFirstRun = false
+        afterDay.activeQuests.forEach((q) => {
+          const template = getQuestTemplates().find((t) => t.id === q.questId)
+          if (template?.timeLimitDays != null && afterDay.day - q.acceptedOnDay >= template.timeLimitDays) {
+            q.status = 'failed'
+          }
+        })
+        const failedQuests = afterDay.activeQuests.filter((q) => q.status === 'failed')
+        afterDay.activeQuests = afterDay.activeQuests.filter((q) => q.status === 'active')
+        for (const failed of failedQuests) {
+          const template = getQuestTemplates().find((t) => t.id === failed.questId)
+          if (template?.rewardStandingFactionId && afterDay.factionStandings[template.rewardStandingFactionId] !== undefined) {
+            afterDay.factionStandings[template.rewardStandingFactionId] = Math.max(
+              -100,
+              (afterDay.factionStandings[template.rewardStandingFactionId] ?? 0) + template.penaltyStandingDelta,
+            )
+          }
+        }
+        if (!afterDay.debtPaid && !afterDay.debtCrisisTriggered && afterDay.day >= afterDay.debtDueDay && afterDay.money < afterDay.debtAmount) {
+          afterDay.debtCrisisTriggered = true
+          afterDay.activityLog.unshift({
+            id: `log-${afterDay.day}-${afterDay.timeSlot}-debt-crisis`,
+            day: afterDay.day,
+            timeSlot: afterDay.timeSlot,
+            category: 'system',
+            message: 'The debt-claim against House Valdris has come due. The creditors have moved. The house is seized.',
+          })
+        }
+        return afterDay
+      }
+
+      // Light slot advance — just move time forward
+      state.timeSlot = nextSlot
+      state.activityLog.unshift({
+        id: `log-${state.day}-${nextSlot}-advance`,
+        day: state.day,
+        timeSlot: nextSlot,
+        category: 'system',
+        message: `${nextSlot.charAt(0).toUpperCase() + nextSlot.slice(1)} settles over Valdenmoor.`,
+      })
+      if (state.activityLog.length > 100) state.activityLog.pop()
+    },
     payDebt(state, action: PayloadAction<{ amount: number }>) {
       const payment = Math.max(0, action.payload.amount)
       const actualPayment = Math.min(payment, state.money)
