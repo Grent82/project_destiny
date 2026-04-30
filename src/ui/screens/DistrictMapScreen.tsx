@@ -45,6 +45,18 @@ function factionBadge(factionId: string | null, contestedIds: string[]): string 
   return 'Open'
 }
 
+function tensionBadgeClass(tension: number): string {
+  if (tension <= 30) return 'tension-badge--calm'
+  if (tension <= 60) return 'tension-badge--uneasy'
+  return 'tension-badge--dangerous'
+}
+
+function tensionLabel(tension: number): string {
+  if (tension <= 30) return 'Calm'
+  if (tension <= 60) return 'Uneasy'
+  return 'Dangerous'
+}
+
 export function DistrictMapScreen() {
   const dispatch = useAppDispatch()
   const districts = useAppSelector(selectDistrictMapEntries)
@@ -167,6 +179,12 @@ export function DistrictMapScreen() {
               {isCurrent && (
                 <p className="badge badge--inline badge--mt">
                   You are here
+                </p>
+              )}
+
+              {district.tension !== null && (
+                <p className={`badge tension-badge ${tensionBadgeClass(district.tension)} badge--inline`}>
+                  Tension: {tensionLabel(district.tension)}
                 </p>
               )}
             </article>

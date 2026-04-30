@@ -647,6 +647,60 @@ export function endDay(state: GameState): GameState {
     afterEvents = evaluateEvents(afterExpiry)
   }
 
+  // Step 9b: Faction daily agenda log
+  const factionIds = [
+    'faction-civic-compact',
+    'faction-gilded-court',
+    'faction-foundry-league',
+    'faction-tallow-ring',
+    'faction-restored',
+  ]
+  const factionAgendaMessages: Record<string, string> = {
+    'faction-civic-compact': 'The Collectors updated their ledgers. Three new accounts flagged for collection.',
+    'faction-gilded-court': 'The Iron Compact posted new contract boards in the Docks. Rates competitive.',
+    'faction-foundry-league': 'A Pale Court courier was seen near the old annex. No message delivered.',
+    'faction-tallow-ring': "The Tangle's network shifted overnight. Two safe-houses changed hands.",
+    'faction-restored': 'Ashborn markings appeared on a warehouse wall in the Ashfields.',
+  }
+  const todayFactionId = factionIds[nextDay % factionIds.length]!
+  const agendaMsg = factionAgendaMessages[todayFactionId] ?? `${todayFactionId} acted today.`
+  afterEvents = appendActivityLogEntry(afterEvents, 'system', agendaMsg)
+
+  // Step 9c: District tension update
+  const TENSION_DECAY_TARGET = 30
+  const TENSION_DRIFT = 2
+  const failedDistrictIds = new Set<string>()
+  for (const entry of afterEvents.activityLog) {
+    if (entry.message.toLowerCase().includes('failed')) {
+      // Try to match a district ID from the message
+      for (const d of afterEvents.districts) {
+        if (entry.message.includes(d.districtId)) {
+          failedDistrictIds.add(d.districtId)
+        }
+      }
+    }
+  }
+  const updatedTension: Record<string, number> = { ...afterEvents.districtTension }
+  for (const [districtId, tension] of Object.entries(updatedTension)) {
+    let t = tension
+    // Drift toward 30
+    if (t > TENSION_DECAY_TARGET) {
+      t = Math.max(TENSION_DECAY_TARGET, t - TENSION_DRIFT)
+    } else if (t < TENSION_DECAY_TARGET) {
+      t = Math.min(TENSION_DECAY_TARGET, t + TENSION_DRIFT)
+    }
+    // Failed contract in this district: +5
+    if (failedDistrictIds.has(districtId)) {
+      t = Math.min(100, t + 5)
+    }
+    // Debt crisis: +10 to district-the-pale
+    if (afterEvents.debtCrisisTriggered && districtId === 'district-the-pale') {
+      t = Math.min(100, t + 10)
+    }
+    updatedTension[districtId] = Math.max(0, Math.min(100, t))
+  }
+  afterEvents = { ...afterEvents, districtTension: updatedTension }
+
   // Step 10: Auto-resolve rumor events — pick 1 per day, append to log, remove from pending
   return resolveRumorEvents(afterEvents)
 }

@@ -1327,6 +1327,22 @@ strong { color: var(--text-secondary); }
   color: #fff;
 }
 
+/* ── Tension badges ──────────────────────────────────────── */
+.tension-badge--calm {
+  background: rgba(76, 175, 80, 0.85);
+  color: #fff;
+}
+
+.tension-badge--uneasy {
+  background: rgba(255, 152, 0, 0.85);
+  color: #fff;
+}
+
+.tension-badge--dangerous {
+  background: rgba(211, 47, 47, 0.85);
+  color: #fff;
+}
+
 /* ── Contract board ──────────────────────────────────────── */
 .faction-icon {
   width: 32px;

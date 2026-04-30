@@ -178,6 +178,7 @@ export const gameStateSchema = z
       stage: z.enum(['searching', 'lead-found', 'location-known', 'rescued']).default('searching'),
       lastClue: z.string().default(''),
     }).default(() => ({ stage: 'searching' as const, lastClue: '' })),
+    districtTension: z.record(z.string(), z.number().int().min(0).max(100)).default({}),
   })
   .strict()
 

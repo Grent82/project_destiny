@@ -67,6 +67,7 @@ const baseState: GameState = {
     level: 1,
   },
   mainQuest: { stage: 'searching' as const, lastClue: '' },
+  districtTension: {},
 }
 
 describe('simulateRivalOrgs', () => {

@@ -27,6 +27,7 @@ export const selectCurrentDistrict = (state: RootState) => {
 
 export function selectDistrictMapEntries(state: RootState) {
   const currentId = state.game.currentDistrictId
+  const tension = state.game.districtTension
   return contentCatalog.districts.map((def) => ({
     id: def.id,
     name: def.name,
@@ -38,5 +39,6 @@ export function selectDistrictMapEntries(state: RootState) {
     narrativeHook: def.narrativeHook,
     hooks: def.hooks,
     isCurrent: def.id === currentId,
+    tension: tension[def.id] ?? null,
   }))
 }

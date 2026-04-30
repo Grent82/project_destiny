@@ -400,5 +400,12 @@
     "traits": [],
     "level": 1
   },
-  "mainQuest": { "stage": "searching", "lastClue": "" }
+  "mainQuest": { "stage": "searching", "lastClue": "" },
+  "districtTension": {
+    "district-the-pale": 20,
+    "district-the-city": 35,
+    "district-iron-docks": 50,
+    "district-the-tangle": 65,
+    "district-ashfields": 80
+  }
 }

@@ -53,3 +53,8 @@ export const selectMainQuest = createSelector(
   [selectGame],
   (game) => game.mainQuest,
 )
+
+export const selectDistrictTension = createSelector(
+  [selectGame],
+  (game) => game.districtTension,
+)
