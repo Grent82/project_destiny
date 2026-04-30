@@ -13,6 +13,24 @@ import { generateDistrictHireOffers } from './generateHireOffers'
 import { evaluateNpcDeparture } from './npcDeparture'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
+import { getJobForNpc } from '../content/jobCatalog'
+
+const NPC_WORLD_RUMOR_SNIPPETS = [
+  'someone in the Merchant Guild is doctoring their ledgers.',
+  'a shipment of arms was diverted from the docks last night.',
+  'the city watch is being paid to look the other way in the Warrens.',
+  'a noble heir is seeking quiet passage out of the city.',
+]
+
+const DISTRICT_HINT_TO_ID: Record<string, string> = {
+  'Harbor Ward': 'district-harbor-ward',
+  'Civic Quarter': 'district-civic-quarter',
+  'The Pale': 'district-the-pale',
+  'Ironworks': 'district-ironworks',
+  'Gilded Heights': 'district-gilded-heights',
+  'The Warrens': 'district-the-warrens',
+  'The Hollows': 'district-the-hollows',
+}
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -647,9 +665,60 @@ export function endDay(state: GameState): GameState {
     afterEvents = evaluateEvents(afterExpiry)
   }
 
+  // Step 9a: NPC world agency — working NPCs occasionally cause incidents, discover rumors, or make contacts
+  for (const npc of afterEvents.roster.filter((r) => r.assignment === 'working')) {
+    if (Math.random() >= 0.08) continue
+
+    const job = getJobForNpc(npc.skills as Record<string, number>)
+    const district = job.districtHint
+    const districtId = DISTRICT_HINT_TO_ID[district] ?? `district-${district.toLowerCase().replace(/\s+/g, '-')}`
+    const npcName = npc.name
+
+    const isReckless = npc.traits.ruthlessness > 60 || npc.traits.prudence < 40
+    const isAmbitious = npc.traits.ambition > 60
+    const isDiplomatic = npc.traits.empathy > 60
+    const isCharming = npc.traits.vanity > 60
+
+    type AgencyAction = 'rumor' | 'incident' | 'contact'
+    const pool: AgencyAction[] = ['rumor', 'rumor', 'rumor', 'rumor']
+    if (isReckless || isAmbitious) pool.push('incident', 'incident', 'incident')
+    if (isDiplomatic || isCharming) pool.push('contact', 'contact', 'contact')
+
+    const action = pool[Math.floor(Math.random() * pool.length)]!
+
+    if (action === 'rumor') {
+      const snippet = NPC_WORLD_RUMOR_SNIPPETS[Math.floor(Math.random() * NPC_WORLD_RUMOR_SNIPPETS.length)]!
+      afterEvents = appendActivityLogEntry(
+        afterEvents,
+        'system',
+        `${npcName} overheard something useful while working in ${district}. Word is: ${snippet}`,
+      )
+    } else if (action === 'incident') {
+      afterEvents = appendActivityLogEntry(
+        afterEvents,
+        'system',
+        `${npcName} got into a confrontation at ${district}. Tension is running higher there.`,
+      )
+      if (afterEvents.districtTension[districtId] !== undefined) {
+        afterEvents = {
+          ...afterEvents,
+          districtTension: {
+            ...afterEvents.districtTension,
+            [districtId]: Math.min(100, (afterEvents.districtTension[districtId] ?? 0) + 3),
+          },
+        }
+      }
+    } else {
+      afterEvents = appendActivityLogEntry(
+        afterEvents,
+        'system',
+        `${npcName} made a useful contact in ${district}. A new opportunity may follow.`,
+      )
+    }
+  }
+
   // Step 9b: Faction daily agenda log
   const factionIds = [
-    'faction-civic-compact',
     'faction-gilded-court',
     'faction-foundry-league',
     'faction-tallow-ring',
