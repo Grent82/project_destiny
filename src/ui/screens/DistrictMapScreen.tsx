@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -59,6 +59,7 @@ function tensionLabel(tension: number): string {
 
 export function DistrictMapScreen() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const districts = useAppSelector(selectDistrictMapEntries)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
   const houseDistrictId = useAppSelector(selectHouseDistrictId)
@@ -68,6 +69,7 @@ export function DistrictMapScreen() {
   function handleTravel(districtId: string, accessRestricted: boolean) {
     if (accessRestricted) return
     dispatch(gameActions.travelToDistrict(districtId))
+    navigate(`/district/${districtId}`)
   }
 
   return (

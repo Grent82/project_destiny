@@ -19,12 +19,24 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes — goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
+    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes \u2014 goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
     "narrativeHook": "The trade roads run south. Bandits own them after the third milestone.",
     "hooks": [
       "Dock foremen are hiring. The kind of work that doesn't ask questions.",
       "A crate on Pier 9 has been sitting unclaimed for three days. Someone is afraid to collect it."
-    ]
+    ],
+    "adjacentDistrictIds": [
+      "district-the-pale",
+      "district-ironworks",
+      "district-the-hollows",
+      "district-gilded-heights"
+    ],
+    "borderTypes": {
+      "district-the-pale": "open",
+      "district-ironworks": "open",
+      "district-the-hollows": "compact_checkpoint",
+      "district-gilded-heights": "restricted_gate"
+    }
   },
   {
     "id": "district-gilded-heights",
@@ -44,12 +56,20 @@
     ],
     "dangerLevel": 1,
     "accessRestricted": true,
-    "narrativeSummary": "Gilded Heights does not have guards at the gate — it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
+    "narrativeSummary": "Gilded Heights does not have guards at the gate \u2014 it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
     "narrativeHook": "The highland passes are nominally under Civic Compact jurisdiction. Nominally.",
     "hooks": [
       "Guild notices cover the market boards. Three contracts, one suspicious.",
       "A Court invitation arrived with no name on the seal. Someone wants a discreet meeting."
-    ]
+    ],
+    "adjacentDistrictIds": [
+      "district-harbor",
+      "district-the-pale"
+    ],
+    "borderTypes": {
+      "district-harbor": "restricted_gate",
+      "district-the-pale": "restricted_gate"
+    }
   },
   {
     "id": "district-ironworks",
@@ -69,17 +89,27 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here — on paper; in practice, the terms are set by who can keep the furnaces lit.",
+    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here \u2014 on paper; in practice, the terms are set by who can keep the furnaces lit.",
     "narrativeHook": "The mines are three days east. Some still produce. Most are haunted.",
     "hooks": [
       "The League is short on contract workers. The foreman doesn't ask about your history.",
       "A League inspector went missing on the night shift. The furnaces were still running."
-    ]
+    ],
+    "adjacentDistrictIds": [
+      "district-harbor",
+      "district-the-pale",
+      "district-the-warrens"
+    ],
+    "borderTypes": {
+      "district-harbor": "open",
+      "district-the-pale": "open",
+      "district-the-warrens": "ring_toll"
+    }
   },
   {
     "id": "district-the-pale",
     "name": "The Pale",
-    "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks — nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
+    "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks \u2014 nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
     "controllingFactionId": null,
     "contestedByFactionIds": [
       "faction-civic-compact",
@@ -99,17 +129,29 @@
     ],
     "dangerLevel": 3,
     "accessRestricted": false,
-    "narrativeSummary": "The Pale is where the city's accounting breaks down — too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
+    "narrativeSummary": "The Pale is where the city's accounting breaks down \u2014 too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
     "narrativeHook": "The old garrison road leads to the ruins of the previous city. Nobody comes back unchanged.",
     "hooks": [
       "Crumbling manor walls hide older debts. A letter from the Collectors awaits.",
       "Three factions watch the same corner. The one who doesn't show is the one to worry about."
-    ]
+    ],
+    "adjacentDistrictIds": [
+      "district-harbor",
+      "district-ironworks",
+      "district-gilded-heights",
+      "district-the-warrens"
+    ],
+    "borderTypes": {
+      "district-harbor": "open",
+      "district-ironworks": "open",
+      "district-gilded-heights": "restricted_gate",
+      "district-the-warrens": "condemned_barrier"
+    }
   },
   {
     "id": "district-the-warrens",
     "name": "The Warrens",
-    "summary": "The oldest residential district — six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
+    "summary": "The oldest residential district \u2014 six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
     "controllingFactionId": "faction-civic-compact",
     "contestedByFactionIds": [
       "faction-restored"
@@ -126,12 +168,22 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives — crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
+    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives \u2014 crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
     "narrativeHook": "The sewers connect to the undercroft. Older than the city. Darker too.",
     "hooks": [
       "The Restored have opened a new relief house. The Compact hasn't decided whether to shut it down yet.",
       "Someone is posting unsigned broadsheets at night. The city watch want them found."
-    ]
+    ],
+    "adjacentDistrictIds": [
+      "district-ironworks",
+      "district-the-pale",
+      "district-the-hollows"
+    ],
+    "borderTypes": {
+      "district-ironworks": "ring_toll",
+      "district-the-pale": "condemned_barrier",
+      "district-the-hollows": "open"
+    }
   },
   {
     "id": "district-the-hollows",
@@ -151,11 +203,19 @@
     ],
     "dangerLevel": 5,
     "accessRestricted": true,
-    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching — collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
+    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching \u2014 collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
     "narrativeHook": "The Hollows backs up against the outer wall. There are doors in that wall. Unofficial ones.",
     "hooks": [
       "Something was dug up in the eastern rubble. The people who found it aren't talking.",
       "A fire burned for three days in the condemned block. Nobody reported it."
-    ]
+    ],
+    "adjacentDistrictIds": [
+      "district-harbor",
+      "district-the-warrens"
+    ],
+    "borderTypes": {
+      "district-harbor": "compact_checkpoint",
+      "district-the-warrens": "open"
+    }
   }
 ]

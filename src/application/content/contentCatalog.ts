@@ -1,4 +1,5 @@
 import districts from '../../../data/definitions/districts.json'
+import poisData from '../../../data/definitions/pois.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
 import dialoguesData from '../../../data/definitions/dialogues.json'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
@@ -11,6 +12,7 @@ import npcs from '../../../data/definitions/npcs.json'
 import questsData from '../../../data/definitions/quests.json'
 import shops from '../../../data/definitions/shops.json'
 import titlesData from '../../../data/definitions/titles.json'
+import { z } from 'zod'
 import {
   districtDefinitionSchema,
   eventTemplateSchema,
@@ -26,6 +28,17 @@ import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/gove
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
 
+const poiSchema = z.object({
+  id: z.string(),
+  districtId: z.string(),
+  name: z.string(),
+  type: z.enum(['guild', 'tavern', 'shop', 'court', 'residence', 'market', 'faction_hq', 'black_market']),
+  description: z.string(),
+  factionId: z.string().nullable(),
+  actions: z.array(z.enum(['contracts', 'hire', 'shop'])),
+})
+export type PoiDefinition = z.infer<typeof poiSchema>
+
 const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
 const parsedQuests = questTemplateSchema.array().parse(questsData)
 const parsedCouncilVotes = councilVoteEventSchema.array().parse(councilVotesData)
@@ -33,6 +46,7 @@ const parsedDialogues = dialogueTreeSchema.array().parse(dialoguesData)
 const parsedNpcs = npcDefinitionSchema.array().parse(npcs)
 const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
+const parsedPois = poiSchema.array().parse(poisData)
 const parsedItems = itemDefinitionSchema.array().parse(items)
 const parsedShops = shopDefinitionSchema.array().parse(shops)
 const parsedMissions = missionContractSchema.array().parse(missions)
@@ -70,6 +84,14 @@ export const contentCatalog = {
   dialogues: parsedDialogues,
   dialoguesById: new Map(parsedDialogues.map((d) => [d.id, d])),
   dialoguesByNpcId: new Map(parsedDialogues.map((d) => [d.npcId, d])),
+  pois: parsedPois,
+  poisById: toMap(parsedPois),
+  poisByDistrictId: new Map(
+    Array.from(new Set(parsedPois.map((p) => p.districtId))).map((districtId) => [
+      districtId,
+      parsedPois.filter((p) => p.districtId === districtId),
+    ])
+  ),
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {

@@ -1877,3 +1877,34 @@ a:focus-visible,
 .ledger-standing--negative { color: #e05050; }
 .ledger-empty { font-style: italic; color: var(--text-secondary, #9e8c6e); font-size: 0.9rem; }
 .text-danger { color: #e05050; }
+
+/* District POI Grid */
+.poi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.poi-card {
+  background: var(--panel-bg, rgba(255,255,255,0.04));
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.poi-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.poi-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+.poi-name { font-size: 1rem; }
+.poi-description { font-size: 0.85rem; color: var(--text-secondary, #9e8c6e); margin: 0; flex: 1; }
+.poi-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: auto; padding-top: 0.4rem; }

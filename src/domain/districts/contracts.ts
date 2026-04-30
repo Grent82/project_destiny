@@ -2,6 +2,14 @@ import { z } from 'zod'
 
 import { entityIdSchema } from '../shared/contracts'
 
+export const borderTypeSchema = z.enum([
+  'open',
+  'compact_checkpoint',
+  'ring_toll',
+  'condemned_barrier',
+  'restricted_gate',
+])
+
 export const districtDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -16,7 +24,10 @@ export const districtDefinitionSchema = z
     narrativeSummary: z.string().min(1),
     narrativeHook: z.string().optional(),
     hooks: z.array(z.string()).optional(),
+    adjacentDistrictIds: z.array(entityIdSchema).default([]),
+    borderTypes: z.record(z.string(), borderTypeSchema).default({}),
   })
   .strict()
 
+export type BorderType = z.infer<typeof borderTypeSchema>
 export type DistrictDefinition = z.infer<typeof districtDefinitionSchema>

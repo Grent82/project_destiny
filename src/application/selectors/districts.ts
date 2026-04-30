@@ -35,6 +35,22 @@ export function selectWorldNpcsByDistrict(districtId: string) {
     }))
 }
 
+export function selectDistrictPOIs(districtId: string) {
+  return (state: RootState) => {
+    const pois = contentCatalog.poisByDistrictId.get(districtId) ?? []
+    const availableForHire = state.game.availableForHire
+    const availableQuests = state.game.availableQuests
+    return pois.map((poi) => ({
+      ...poi,
+      hasHireables: poi.actions.includes('hire') && availableForHire.some((o) => o.discoveredInDistrictId === districtId),
+      hasContracts: poi.actions.includes('contracts') && availableQuests.some((qId) => {
+        const template = contentCatalog.questsById.get(qId)
+        return template?.discoveryDistrictId === districtId
+      }),
+    }))
+  }
+}
+
 export function selectDistrictMapEntries(state: RootState) {
   const currentId = state.game.currentDistrictId
   const tension = state.game.districtTension
@@ -51,5 +67,8 @@ export function selectDistrictMapEntries(state: RootState) {
     isCurrent: def.id === currentId,
     tension: tension[def.id] ?? null,
     worldNpcs: selectWorldNpcsByDistrict(def.id),
+    adjacentDistrictIds: def.adjacentDistrictIds,
+    borderTypes: def.borderTypes,
+    isAdjacent: currentId !== null && def.adjacentDistrictIds.includes(currentId),
   }))
 }
