@@ -305,6 +305,63 @@ strong { color: var(--text-secondary); }
   margin: 0;
 }
 
+.threat-panel {
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(122, 32, 32, 0.5);
+  background: rgba(122, 32, 32, 0.08);
+}
+
+.threat-panel__label {
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-blood);
+  margin: 0 0 0.6rem;
+}
+
+.threat-panel__body {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.threat-panel__portrait {
+  flex: 0 0 52px;
+  width: 52px;
+  aspect-ratio: 3 / 4;
+  border-color: rgba(122, 32, 32, 0.5);
+  border-left-color: rgba(122, 32, 32, 0.8);
+}
+
+.threat-panel__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.threat-panel__name {
+  font-family: var(--font-display);
+  font-size: var(--size-md);
+  color: var(--text-primary);
+  display: block;
+}
+
+.threat-panel__faction {
+  font-size: var(--size-xs);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.threat-panel__motivation {
+  font-size: var(--size-sm);
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 0.15rem 0 0;
+}
+
 .nav-link-inline {
   color: var(--gold-warm);
   text-decoration: underline;
