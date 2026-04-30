@@ -1285,5 +1285,365 @@
       "personal",
       "lirien-ashcroft"
     ]
+  },
+  {
+    "id": "event-rumor-ledger-keeper",
+    "title": "Whispers from the Pale",
+    "description": "Whispers in the Pale: a Collectors ledger-keeper was found dead in The Tangle. The debt books were missing.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-ledger-keeper",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Whispers in the Pale: a Collectors ledger-keeper was found dead in The Tangle. The debt books were missing."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-iron-docks-rates",
+    "title": "Word from the Iron Docks",
+    "description": "Iron Docks foremen posted new work boards overnight. The rates are lower than last season.",
+    "triggerConditions": {
+      "dayMin": 2,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-iron-docks-rates",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Iron Docks foremen posted new work boards overnight. The rates are lower than last season."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-pale-court-annex",
+    "title": "Movement Near the Old Annex",
+    "description": "A hooded figure was seen entering the Pale Court's old annex. The building has been sealed for two years.",
+    "triggerConditions": {
+      "dayMin": 4,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-pale-court-annex",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "A hooded figure was seen entering the Pale Court's old annex. The building has been sealed for two years."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-ashfields-convoy",
+    "title": "Turned Back on the Ashfields Road",
+    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings.",
+    "triggerConditions": {
+      "dayMin": 6,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-ashfields-convoy",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-tangle-silence-broken",
+    "title": "Something in the Tangle",
+    "description": "The Tangle's usual silence broke last night. Screaming, then nothing.",
+    "triggerConditions": {
+      "dayMin": 8,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-tangle-silence-broken",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Tangle's usual silence broke last night. Screaming, then nothing."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-guild-notices-torn",
+    "title": "Torn Notices at the City Market",
+    "description": "Guild notices at The City market were torn down before dawn. Someone doesn't want them read.",
+    "triggerConditions": {
+      "dayMin": 10,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-guild-notices-torn",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Guild notices at The City market were torn down before dawn. Someone doesn't want them read."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-foundry-fire",
+    "title": "Fire at the Foundry Quarter",
+    "description": "A fire gutted a warehouse in the Foundry Quarter before dawn. No League investigation has been announced. Two dockworkers have not reported for shift.",
+    "triggerConditions": {
+      "dayMin": 12,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-foundry-fire",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "A fire gutted a warehouse in the Foundry Quarter before dawn. No League investigation has been announced. Two dockworkers have not reported for shift."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-compact-census",
+    "title": "Compact Census Takers",
+    "description": "Civic Compact census takers have been moving through the Warrens asking about household numbers. Some doors were not answered. Some were nailed shut.",
+    "triggerConditions": {
+      "dayMin": 14,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-compact-census",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Civic Compact census takers have been moving through the Warrens asking about household numbers. Some doors were not answered. Some were nailed shut."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-ring-broker-missing",
+    "title": "A Broker Goes Quiet",
+    "description": "Word from the Tallow Ring's usual contacts: one of their mid-tier brokers has gone quiet. No one's looking for her. That's the worrying part.",
+    "triggerConditions": {
+      "dayMin": 16,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-ring-broker-missing",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Word from the Tallow Ring's usual contacts: one of their mid-tier brokers has gone quiet. No one's looking for her. That's the worrying part."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-old-bridge-cracks",
+    "title": "The Old Bridge Groans",
+    "description": "Stone-setters flagged three new cracks in the Old Bridge span. The League filed the report. The Compact has not responded. The bridge carries forty wagons a day.",
+    "triggerConditions": {
+      "dayMin": 18,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-old-bridge-cracks",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Stone-setters flagged three new cracks in the Old Bridge span. The League filed the report. The Compact has not responded. The bridge carries forty wagons a day."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-gilded-court-auction",
+    "title": "A Gilded Court Auction",
+    "description": "House Aurevaine is auctioning a confiscated estate in the upper ward. Attendance is by invitation only. No list of invitees has been made public.",
+    "triggerConditions": {
+      "dayMin": 20,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-gilded-court-auction",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "House Aurevaine is auctioning a confiscated estate in the upper ward. Attendance is by invitation only. No list of invitees has been made public."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-pale-recruits",
+    "title": "New Faces at the Pale",
+    "description": "The Pale Court has been seen speaking with young men at the gate markets. Not scholars. The kind who carry weight well and ask few questions.",
+    "triggerConditions": {
+      "dayMin": 22,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-pale-recruits",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Pale Court has been seen speaking with young men at the gate markets. Not scholars. The kind who carry weight well and ask few questions."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-food-price-spike",
+    "title": "Bread Prices Up in the Warrens",
+    "description": "Bread prices in the Warrens jumped two marks overnight. No explanation from the bakers. A League distributor was seen at the market before the stalls opened.",
+    "triggerConditions": {
+      "dayMin": 24,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-food-price-spike",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Bread prices in the Warrens jumped two marks overnight. No explanation from the bakers. A League distributor was seen at the market before the stalls opened."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-patrol-rerouted",
+    "title": "Compact Patrols Rerouted",
+    "description": "The Compact's night patrol route through the Tangle has been quietly rerouted. No announcement. The streets it no longer covers are not empty.",
+    "triggerConditions": {
+      "dayMin": 27,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-patrol-rerouted",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Compact's night patrol route through the Tangle has been quietly rerouted. No announcement. The streets it no longer covers are not empty."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
+  },
+  {
+    "id": "event-rumor-ship-unscheduled",
+    "title": "An Unscheduled Vessel",
+    "description": "An unscheduled vessel docked at the Iron Docks just before curfew. It unloaded in under an hour. No manifest was posted. The League watchman on duty has taken leave.",
+    "triggerConditions": {
+      "dayMin": 30,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-rumor-ship-unscheduled",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "An unscheduled vessel docked at the Iron Docks just before curfew. It unloaded in under an hour. No manifest was posted. The League watchman on duty has taken leave."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["rumor", "world"],
+    "repeatable": false
   }
 ]

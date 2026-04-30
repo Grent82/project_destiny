@@ -550,5 +550,52 @@
     },
     "allowedTitleIds": ["title-steward"],
     "motivation": "To bring her father home and settle her house's debts. The Court can wait."
+  },
+  {
+    "id": "npc-mira",
+    "name": "Mira",
+    "npcType": "story",
+    "origin": "House Valdris",
+    "background": "The player's younger sister. Last seen three months before the Breach, following a lead on their mother's lineage. Her disappearance is the reason the player fights to rebuild House Valdris.",
+    "rarity": "rare",
+    "status": "family",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 30,
+      "agility": 50,
+      "endurance": 30,
+      "intellect": 70,
+      "perception": 55,
+      "presence": 60,
+      "resolve": 40
+    },
+    "startingSkills": {
+      "melee": 0,
+      "ranged": 0,
+      "medicine": 0,
+      "administration": 0,
+      "engineering": 0,
+      "negotiation": 0,
+      "survival": 0,
+      "security": 0,
+      "crafting": 0,
+      "performance": 0,
+      "academics": 0,
+      "intrigue": 0
+    },
+    "startingTraits": {
+      "discipline": 0,
+      "ambition": 0,
+      "empathy": 0,
+      "ruthlessness": 0,
+      "prudence": 0,
+      "curiosity": 70,
+      "dominance": 0,
+      "loyalty": 0,
+      "vanity": 0,
+      "zeal": 0
+    },
+    "allowedTitleIds": [],
+    "motivation": "Unknown. Rumoured to be involved with the Pale Court — or captured by them."
   }
 ]

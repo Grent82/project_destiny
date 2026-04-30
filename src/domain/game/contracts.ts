@@ -174,6 +174,10 @@ export const gameStateSchema = z
       traits: [],
       level: 1,
     })),
+    mainQuest: z.object({
+      stage: z.enum(['searching', 'lead-found', 'location-known', 'rescued']).default('searching'),
+      lastClue: z.string().default(''),
+    }).default(() => ({ stage: 'searching' as const, lastClue: '' })),
   })
   .strict()
 

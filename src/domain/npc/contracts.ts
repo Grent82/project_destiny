@@ -110,6 +110,7 @@ export const npcDefinitionSchema = z
   .object({
     id: entityIdSchema,
     name: z.string().min(1),
+    npcType: z.enum(['roster', 'story', 'world', 'enemy']).default('roster'),
     origin: z.string().min(1),
     background: z.string().min(1),
     rarity: raritySchema,
@@ -144,6 +145,7 @@ export const npcRuntimeStateSchema = z
 export type Attributes = z.infer<typeof attributesSchema>
 export type NpcAssignment = z.infer<typeof npcAssignmentSchema>
 export type NpcDefinition = z.infer<typeof npcDefinitionSchema>
+export type NpcType = z.infer<typeof npcDefinitionSchema>['npcType']
 export type NpcRuntimeState = z.infer<typeof npcRuntimeStateSchema>
 export type NpcStatus = z.infer<typeof npcStatusSchema>
 export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>

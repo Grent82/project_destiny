@@ -66,6 +66,7 @@ const baseState: GameState = {
     traits: [],
     level: 1,
   },
+  mainQuest: { stage: 'searching' as const, lastClue: '' },
 }
 
 describe('simulateRivalOrgs', () => {

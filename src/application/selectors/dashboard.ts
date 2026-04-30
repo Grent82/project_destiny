@@ -48,3 +48,8 @@ export const selectPlayerCharacter = createSelector(
   [selectGame],
   (game) => game.playerCharacter,
 )
+
+export const selectMainQuest = createSelector(
+  [selectGame],
+  (game) => game.mainQuest,
+)

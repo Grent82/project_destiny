@@ -8,6 +8,7 @@ import {
   saveCurrentSession,
   selectDashboardSummary,
   selectDebtStatus,
+  selectMainQuest,
   selectPlayerCharacter,
   selectProtagonistName,
 } from '../../application'
@@ -27,6 +28,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const playerCharacter = useAppSelector(selectPlayerCharacter)
   const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
   const debt = useAppSelector(selectDebtStatus)
+  const mainQuest = useAppSelector(selectMainQuest)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
   const [canLoadSavedSession, setCanLoadSavedSession] = useState(() =>
     hasSavedSession(saveStore),
@@ -90,6 +92,23 @@ export function DashboardScreen(props: DashboardScreenProps) {
             </button>
           </>
         )}
+      </article>
+      <article className="detail-panel mira-quest-panel">
+        <h2>The Search for Mira</h2>
+        <p className="summary">
+          {mainQuest.stage === 'searching' && (
+            <em>Mira has been missing for three months. No word. No body. You hold onto that.</em>
+          )}
+          {mainQuest.stage === 'lead-found' && (
+            <em>A contact in The Tangle claims to have seen her. It may be nothing.</em>
+          )}
+          {mainQuest.stage === 'location-known' && (
+            <em>She is alive. Somewhere in the Pale Court's reach.</em>
+          )}
+          {mainQuest.stage === 'rescued' && (
+            <em>Mira is safe. For now.</em>
+          )}
+        </p>
       </article>
       <div className="session-actions">
         <button

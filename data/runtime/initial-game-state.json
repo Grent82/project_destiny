@@ -399,5 +399,6 @@
     "stats": { "strength": 5, "cunning": 5, "authority": 5 },
     "traits": [],
     "level": 1
-  }
+  },
+  "mainQuest": { "stage": "searching", "lastClue": "" }
 }
