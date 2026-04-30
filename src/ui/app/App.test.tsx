@@ -21,7 +21,7 @@ describe('App', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: /Operations/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /House Valdris/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Roster' })).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'End Day →' }).length).toBeGreaterThan(0)
   })

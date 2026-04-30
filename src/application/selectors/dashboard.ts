@@ -43,3 +43,8 @@ export const selectHouseDistrictId = createSelector(
   [selectGame],
   (game) => game.houseDistrictId,
 )
+
+export const selectPlayerCharacter = createSelector(
+  [selectGame],
+  (game) => game.playerCharacter,
+)

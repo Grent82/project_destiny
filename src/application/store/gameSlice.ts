@@ -678,6 +678,19 @@ const gameSlice = createSlice({
       }
     },
 
+    setPlayerCharacter(
+      state,
+      action: PayloadAction<{
+        name: string
+        stats: { strength: number; cunning: number; authority: number }
+        traits: string[]
+      }>,
+    ) {
+      state.playerCharacter.name = action.payload.name
+      state.playerCharacter.stats = action.payload.stats
+      state.playerCharacter.traits = action.payload.traits
+    },
+
     resolveExpedition(state) {
       const exp = state.expeditionState
       if (!exp || exp.status !== 'returned') return

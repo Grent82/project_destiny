@@ -159,6 +159,21 @@ export const gameStateSchema = z
     debtPaid: z.boolean().default(false),
     debtCrisisTriggered: z.boolean().default(false),
     houseDistrictId: z.string().default('district-the-pale'),
+    playerCharacter: z.object({
+      name: z.string().default(''),
+      stats: z.object({
+        strength: z.number().int().min(1).max(10).default(5),
+        cunning: z.number().int().min(1).max(10).default(5),
+        authority: z.number().int().min(1).max(10).default(5),
+      }),
+      traits: z.array(z.string()).default([]),
+      level: z.number().int().default(1),
+    }).default(() => ({
+      name: '',
+      stats: { strength: 5, cunning: 5, authority: 5 },
+      traits: [],
+      level: 1,
+    })),
   })
   .strict()
 

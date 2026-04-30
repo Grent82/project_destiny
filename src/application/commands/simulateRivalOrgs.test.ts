@@ -60,6 +60,12 @@ const baseState: GameState = {
   debtCrisisTriggered: false,
   houseDistrictId: 'district-the-pale',
   stash: { weapons: [], armors: [] },
+  playerCharacter: {
+    name: '',
+    stats: { strength: 5, cunning: 5, authority: 5 },
+    traits: [],
+    level: 1,
+  },
 }
 
 describe('simulateRivalOrgs', () => {

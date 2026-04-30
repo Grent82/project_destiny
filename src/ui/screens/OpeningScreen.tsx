@@ -4,19 +4,56 @@ import { useNavigate } from 'react-router-dom'
 import { gameActions } from '../../application'
 import { useAppDispatch } from '../app/hooks'
 
+const STARTING_TRAITS = ['Ruthless', 'Diplomatic', 'Cautious', 'Ambitious', 'Loyal', 'Cunning']
+const STAT_POOL = 6
+const STAT_BASE = 3
+const STAT_MAX = 8
+
 export function OpeningScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [name, setName] = useState('')
-  const [step, setStep] = useState<'name' | 'lore'>('name')
+  const [step, setStep] = useState<'name' | 'lore' | 'character'>('name')
+
+  // Character creation state
+  const [charName, setCharName] = useState('')
+  const [stats, setStats] = useState({ strength: STAT_BASE, cunning: STAT_BASE, authority: STAT_BASE })
+  const [selectedTraits, setSelectedTraits] = useState<string[]>([])
+
+  const pointsUsed = (stats.strength - STAT_BASE) + (stats.cunning - STAT_BASE) + (stats.authority - STAT_BASE)
+  const pointsRemaining = STAT_POOL - pointsUsed
+
+  function adjustStat(stat: keyof typeof stats, delta: number) {
+    const next = stats[stat] + delta
+    if (next < STAT_BASE) return
+    if (next > STAT_MAX) return
+    if (delta > 0 && pointsRemaining <= 0) return
+    setStats((s) => ({ ...s, [stat]: next }))
+  }
+
+  function toggleTrait(trait: string) {
+    setSelectedTraits((prev) => {
+      if (prev.includes(trait)) return prev.filter((t) => t !== trait)
+      if (prev.length >= 2) return prev
+      return [...prev, trait]
+    })
+  }
 
   function confirmName() {
     const trimmed = name.trim() || 'Valdric'
     dispatch(gameActions.setProtagonistName(trimmed))
+    setCharName(trimmed)
     setStep('lore')
   }
 
   function confirmLore() {
+    setStep('character')
+  }
+
+  function beginGame() {
+    const finalName = charName.trim() || name.trim() || 'Valdric'
+    dispatch(gameActions.setPlayerCharacter({ name: finalName, stats, traits: selectedTraits }))
+    dispatch(gameActions.setProtagonistName(finalName))
     dispatch(gameActions.setHasSeenOpening(true))
     navigate('/dashboard')
   }
@@ -138,7 +175,7 @@ export function OpeningScreen() {
               Continue →
             </button>
           </>
-        ) : (
+        ) : step === 'lore' ? (
           <>
             <div className="household-summary">
               <p>House Valdris. Your grandfather built it from nothing. Your father maintained it until the night of the Compact's purge. Edric is dead. Cael is in the ground. Mira — taken, not confirmed dead, which is the only mercy in any of this.</p>
@@ -149,6 +186,77 @@ export function OpeningScreen() {
               <p>The ledger is yours.</p>
             </div>
             <button className="opening-confirm action-button" onClick={confirmLore} type="button">
+              Continue →
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="character-creation">
+              <h2 className="character-creation-title">Lord of House Valdris</h2>
+              <div className="opening-name-field">
+                <label className="opening-name-label" htmlFor="char-name">
+                  Your name, Lord
+                </label>
+                <input
+                  className="opening-name-input"
+                  id="char-name"
+                  type="text"
+                  placeholder="Enter your name, Lord..."
+                  value={charName}
+                  onChange={(e) => setCharName(e.target.value)}
+                />
+              </div>
+
+              <div className="stat-allocation">
+                <p className="stat-allocation-header">
+                  Distribute your nature — <strong>{pointsRemaining}</strong> point{pointsRemaining !== 1 ? 's' : ''} remaining
+                </p>
+                {(['strength', 'cunning', 'authority'] as const).map((stat) => (
+                  <div key={stat} className="stat-row">
+                    <span className="stat-label" style={{ textTransform: 'capitalize' }}>{stat}</span>
+                    <button
+                      className="action-button action-button--secondary"
+                      onClick={() => adjustStat(stat, -1)}
+                      disabled={stats[stat] <= STAT_BASE}
+                      type="button"
+                      aria-label={`Decrease ${stat}`}
+                    >−</button>
+                    <span className="stat-value">{stats[stat]}</span>
+                    <button
+                      className="action-button action-button--secondary"
+                      onClick={() => adjustStat(stat, 1)}
+                      disabled={pointsRemaining <= 0 || stats[stat] >= STAT_MAX}
+                      type="button"
+                      aria-label={`Increase ${stat}`}
+                    >+</button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="trait-selection">
+                <p className="trait-selection-header">
+                  Choose 2 traits — <strong>{selectedTraits.length}</strong>/2 selected
+                </p>
+                <div className="trait-grid">
+                  {STARTING_TRAITS.map((trait) => (
+                    <button
+                      key={trait}
+                      className={`trait-button${selectedTraits.includes(trait) ? ' trait-button--selected' : ''}`}
+                      onClick={() => toggleTrait(trait)}
+                      type="button"
+                    >
+                      {trait}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <button
+              className="opening-confirm action-button action-button--primary"
+              onClick={beginGame}
+              disabled={selectedTraits.length < 2}
+              type="button"
+            >
               Take the Ledger →
             </button>
           </>

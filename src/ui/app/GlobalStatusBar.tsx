@@ -1,18 +1,21 @@
-import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectPendingEventsCount, selectProtagonistName, selectReputationTier } from '../../application'
+import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectReputationTier } from '../../application'
 import { useAppDispatch, useAppSelector } from './hooks'
 
 export function GlobalStatusBar() {
   const dispatch = useAppDispatch()
   const summary = useAppSelector(selectDashboardSummary)
   const protagonistName = useAppSelector(selectProtagonistName)
+  const playerCharacter = useAppSelector(selectPlayerCharacter)
   const currentDistrict = useAppSelector(selectCurrentDistrict)
   const reputationTier = useAppSelector(selectReputationTier)
   const pendingEventsCount = useAppSelector(selectPendingEventsCount)
 
+  const displayName = playerCharacter.name || protagonistName || 'Valdric'
+
   return (
     <div className="global-status-bar" role="status" aria-label="Game status">
       <div className="status-zone status-zone--identity">
-        <span className="status-house-name">{protagonistName}</span>
+        <span className="status-house-name">{displayName}</span>
         <span className="status-day">
           Day <strong>{summary.day}</strong> · {summary.timeSlot}
         </span>

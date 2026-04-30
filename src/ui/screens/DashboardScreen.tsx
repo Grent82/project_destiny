@@ -8,6 +8,7 @@ import {
   saveCurrentSession,
   selectDashboardSummary,
   selectDebtStatus,
+  selectPlayerCharacter,
   selectProtagonistName,
 } from '../../application'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
@@ -23,6 +24,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const dispatch = useAppDispatch()
   const summary = useAppSelector(selectDashboardSummary)
   const protagonistName = useAppSelector(selectProtagonistName)
+  const playerCharacter = useAppSelector(selectPlayerCharacter)
   const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
   const debt = useAppSelector(selectDebtStatus)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
@@ -30,10 +32,12 @@ export function DashboardScreen(props: DashboardScreenProps) {
     hasSavedSession(saveStore),
   )
 
+  const displayName = playerCharacter.name || protagonistName || 'Valdric'
+
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
-      <h1>Operations — {protagonistName}</h1>
+      <p className="eyebrow">House Valdris</p>
+      <h1>Lord {displayName}, House Valdris</h1>
       <div className="day-header">
         <p className="day-display">
           Day {summary.day} —{' '}
