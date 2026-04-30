@@ -29,7 +29,7 @@
       },
       {
         "id": "choice-ignore",
-        "label": "Ignore it — they'll manage",
+        "label": "Ignore it \u2014 they'll manage",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -57,7 +57,7 @@
   {
     "id": "event-gilded-court-approach",
     "title": "A Gilded Messenger",
-    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting — on their terms. You are not foolish enough to think this is a kindness.",
+    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting \u2014 on their terms. You are not foolish enough to think this is a kindness.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-gilded-court",
@@ -83,13 +83,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You attend. The Court notes your cooperation — and your face."
+            "message": "You attend. The Court notes your cooperation \u2014 and your face."
           }
         ]
       },
       {
         "id": "choice-decline",
-        "label": "Decline — send a polite refusal",
+        "label": "Decline \u2014 send a polite refusal",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -134,13 +134,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The League thanks you. The Corridor is placed under watch — disrupted but not closed."
+            "message": "The League thanks you. The Corridor is placed under watch \u2014 disrupted but not closed."
           }
         ]
       },
       {
         "id": "choice-ignore-corridor",
-        "label": "Keep it quiet — not your problem",
+        "label": "Keep it quiet \u2014 not your problem",
         "outcomes": [
           {
             "type": "setCorridorStatus",
@@ -167,7 +167,7 @@
   {
     "id": "event-ring-smuggler-contact",
     "title": "A Ring Offer",
-    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods — restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
+    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods \u2014 restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-tallow-ring",
@@ -221,7 +221,7 @@
   {
     "id": "event-restored-appeal",
     "title": "A Petition from the Warrens",
-    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help — money, testimony, or a distraction that buys them time.",
+    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help \u2014 money, testimony, or a distraction that buys them time.",
     "triggerConditions": {
       "minUnrest": 40,
       "probability": 0.45
@@ -247,7 +247,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The Restored accept your help quietly. Word will spread — in the right places."
+            "message": "The Restored accept your help quietly. Word will spread \u2014 in the right places."
           }
         ]
       },
@@ -297,7 +297,7 @@
   {
     "id": "event-market-price-spike",
     "title": "Supply Shortage in the Harbor",
-    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week — but this week it matters.",
+    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week \u2014 but this week it matters.",
     "triggerConditions": {
       "probability": 0.3,
       "dayMin": 3
@@ -347,7 +347,7 @@
   {
     "id": "event-foundry-inspection",
     "title": "League Safety Inspection",
-    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current — but inspections have a way of finding things.",
+    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current \u2014 but inspections have a way of finding things.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-foundry-league",
@@ -359,7 +359,7 @@
     "choices": [
       {
         "id": "choice-cooperate-fully",
-        "label": "Cooperate fully — nothing to hide",
+        "label": "Cooperate fully \u2014 nothing to hide",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -401,7 +401,7 @@
   {
     "id": "event-auto-npc-injury-complication",
     "title": "Injury Complications",
-    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover — but it will take time and rest.",
+    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover \u2014 but it will take time and rest.",
     "triggerConditions": {
       "probability": 0.25,
       "dayMin": 4
@@ -454,11 +454,11 @@
     "choices": [
       {
         "id": "choice-keep-moving",
-        "label": "Keep moving — head down",
+        "label": "Keep moving \u2014 head down",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You move through without incident. The Hollows lets you pass — this time."
+            "message": "You move through without incident. The Hollows lets you pass \u2014 this time."
           }
         ]
       },
@@ -488,7 +488,7 @@
   {
     "id": "event-pale-approach",
     "title": "The Pale Keeps Its Silence",
-    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate — politely, professionally, with a list of questions you were not expecting.",
+    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "probability": 0.3
@@ -511,7 +511,7 @@
       },
       {
         "id": "choice-deflect-questions",
-        "label": "Deflect — you are here on private business",
+        "label": "Deflect \u2014 you are here on private business",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -566,7 +566,7 @@
   {
     "id": "event-loyal-npc-milestone",
     "title": "A Reliable Hand",
-    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "description": "One of your people has been consistent \u2014 steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
     "triggerConditions": {
       "dayMin": 10,
       "probability": 0.3
@@ -587,13 +587,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The bonus is delivered without ceremony. The work continues — better than before."
+            "message": "The bonus is delivered without ceremony. The work continues \u2014 better than before."
           }
         ]
       },
       {
         "id": "choice-acknowledge-words",
-        "label": "Acknowledge the work — no payment",
+        "label": "Acknowledge the work \u2014 no payment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -627,7 +627,7 @@
   {
     "id": "event-stressed-npc-warning",
     "title": "Someone Is Close to Breaking",
-    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
       "probability": 0.45
@@ -635,7 +635,7 @@
     "choices": [
       {
         "id": "choice-give-rest",
-        "label": "Give them two days off — no assignments",
+        "label": "Give them two days off \u2014 no assignments",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -669,7 +669,7 @@
       },
       {
         "id": "choice-push-through",
-        "label": "Push through — the work does not wait",
+        "label": "Push through \u2014 the work does not wait",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -701,7 +701,7 @@
     "choices": [
       {
         "id": "choice-invest-shipment",
-        "label": "Buy in — invest 80 Marks",
+        "label": "Buy in \u2014 invest 80 Marks",
         "outcomes": [
           {
             "type": "addCredits",
@@ -719,13 +719,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
+            "message": "The goods clear the dock before the inspection. The investment was sound \u2014 the materials arrive and the margin holds."
           }
         ]
       },
       {
         "id": "choice-pass-windfall",
-        "label": "Pass — the timing is suspicious",
+        "label": "Pass \u2014 the timing is suspicious",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -760,7 +760,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Your team moves into the outer districts. Order is restored — for now. The Compact takes note."
+            "message": "Your team moves into the outer districts. Order is restored \u2014 for now. The Compact takes note."
           }
         ]
       },
@@ -1139,7 +1139,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street — second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
+            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street \u2014 second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
           }
         ]
       }
@@ -1166,7 +1166,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Oswin spreads a hand-drawn map on the table — distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
+            "message": "Oswin spreads a hand-drawn map on the table \u2014 distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
           }
         ]
       }
@@ -1193,7 +1193,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Cress notices the cut on your forearm and says nothing — just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
+            "message": "Cress notices the cut on your forearm and says nothing \u2014 just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
           }
         ]
       }
@@ -1247,7 +1247,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Maret sets a copied page on the table — a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
+            "message": "Maret sets a copied page on the table \u2014 a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
           }
         ]
       }
@@ -1307,8 +1307,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 1
+    }
   },
   {
     "id": "event-rumor-iron-docks-rates",
@@ -1331,8 +1337,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 3
+    }
   },
   {
     "id": "event-rumor-pale-court-annex",
@@ -1355,13 +1367,19 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 5
+    }
   },
   {
     "id": "event-rumor-ashfields-convoy",
     "title": "Turned Back on the Ashfields Road",
-    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings.",
+    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings.",
     "triggerConditions": {
       "dayMin": 6,
       "probability": 1
@@ -1373,14 +1391,20 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings."
+            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings."
           }
         ]
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 7
+    }
   },
   {
     "id": "event-rumor-tangle-silence-broken",
@@ -1403,8 +1427,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 9
+    }
   },
   {
     "id": "event-rumor-guild-notices-torn",
@@ -1427,8 +1457,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 11
+    }
   },
   {
     "id": "event-rumor-foundry-fire",
@@ -1451,8 +1487,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 13
+    }
   },
   {
     "id": "event-rumor-compact-census",
@@ -1475,8 +1517,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 15
+    }
   },
   {
     "id": "event-rumor-ring-broker-missing",
@@ -1499,8 +1547,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 17
+    }
   },
   {
     "id": "event-rumor-old-bridge-cracks",
@@ -1523,8 +1577,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 19
+    }
   },
   {
     "id": "event-rumor-gilded-court-auction",
@@ -1547,8 +1607,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 21
+    }
   },
   {
     "id": "event-rumor-pale-recruits",
@@ -1571,8 +1637,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 23
+    }
   },
   {
     "id": "event-rumor-food-price-spike",
@@ -1595,8 +1667,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 25
+    }
   },
   {
     "id": "event-rumor-patrol-rerouted",
@@ -1619,8 +1697,14 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 27
+    }
   },
   {
     "id": "event-rumor-ship-unscheduled",
@@ -1643,7 +1727,13 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["rumor", "world"],
-    "repeatable": false
+    "tags": [
+      "rumor",
+      "world"
+    ],
+    "repeatable": false,
+    "conditions": {
+      "dayMin": 29
+    }
   }
 ]
