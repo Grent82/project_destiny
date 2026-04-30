@@ -36,12 +36,15 @@ describe('LocalSaveSnapshotStore', () => {
     expect(snapshotStore.load()).toBeNull()
   })
 
-  it('rejects invalid stored snapshots during load', () => {
+  it('returns null and clears storage when save is invalid (graceful degradation)', () => {
     const storage = createMemoryStorage()
     const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
 
     storage.setItem('save-slot', JSON.stringify({ day: 'invalid' }))
 
-    expect(() => snapshotStore.load()).toThrow()
+    const result = snapshotStore.load()
+    expect(result).toBeNull()
+    // Stale save should be auto-cleared
+    expect(storage.getItem('save-slot')).toBeNull()
   })
 })

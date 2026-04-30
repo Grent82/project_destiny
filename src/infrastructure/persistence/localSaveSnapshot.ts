@@ -50,8 +50,15 @@ export class LocalSaveSnapshotStore implements SaveGameStore {
     }
 
     const parsed = JSON.parse(raw) as unknown
+    const result = gameStateSchema.safeParse(parsed)
 
-    return gameStateSchema.parse(parsed)
+    if (!result.success) {
+      console.warn('[SaveStore] Saved state failed schema validation — discarding stale save.', result.error.flatten())
+      this.storage.removeItem(this.key)
+      return null
+    }
+
+    return result.data
   }
 
   save(state: GameState): void {
