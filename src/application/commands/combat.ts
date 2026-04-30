@@ -25,7 +25,7 @@ const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthr
 const PLAYER_DEFAULT_WEAPON_ID = 'weapon-dagger-wasterunner'
 
 function buildPlayerCombatant(playerCharacter: GameState['playerCharacter']): CombatantState {
-  const { strength, cunning, authority } = playerCharacter.stats
+  const { attributes, skills } = playerCharacter
   return {
     combatantId: 'player',
     sourceNpcId: null,
@@ -33,12 +33,12 @@ function buildPlayerCombatant(playerCharacter: GameState['playerCharacter']): Co
     side: 'allies',
     maxHealth: 80,
     health: 80,
-    morale: Math.max(30, Math.min(100, authority * 10)),
-    skill: Math.min(85, (strength + cunning) * 5),
-    accuracy: Math.min(90, 50 + cunning * 3),
-    damageMin: strength + 5,
-    damageMax: strength * 2 + 6,
-    effectiveRange: 'close',
+    morale: Math.max(30, Math.min(100, Math.round(attributes.resolve * 0.7 + attributes.presence * 0.3))),
+    skill: Math.min(85, Math.max(skills.melee, skills.ranged)),
+    accuracy: Math.min(90, 50 + Math.floor(attributes.perception * 0.4)),
+    damageMin: Math.max(5, Math.floor(attributes.might / 8) + 5),
+    damageMax: Math.max(8, Math.floor(attributes.might / 5) + 6),
+    effectiveRange: skills.ranged > skills.melee ? 'distant' : 'close',
     soak: 3,
     speed: 4,
     guarding: false,

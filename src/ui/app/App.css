@@ -943,6 +943,141 @@ strong { color: var(--text-secondary); }
   margin-top: 0.5rem;
 }
 
+/* ── Character creation — shared sections ───────────────── */
+.character-creation {
+  display: grid;
+  gap: 2rem;
+}
+
+.char-section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.char-section-label {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+}
+
+.char-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(201, 168, 76, 0.5);
+  font-style: italic;
+}
+
+/* ── Background archetype cards ─────────────────────────── */
+.background-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.background-card {
+  display: grid;
+  gap: 0.3rem;
+  text-align: left;
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.background-card:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.background-card--selected {
+  border-color: rgba(201, 168, 76, 0.7);
+  background: rgba(201, 168, 76, 0.07);
+}
+
+.background-card-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-accent);
+  letter-spacing: 0.04em;
+}
+
+.background-card-tagline {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.background-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  line-height: 1.55;
+}
+
+/* ── Trait cards ─────────────────────────────────────────── */
+.trait-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.trait-card {
+  display: grid;
+  gap: 0.2rem;
+  text-align: left;
+  padding: 0.65rem 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.trait-card:hover:not(:disabled) {
+  border-color: rgba(201, 168, 76, 0.35);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.trait-card:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.trait-card--selected {
+  border-color: rgba(201, 168, 76, 0.65);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.trait-card-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+
+.trait-card-desc {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  line-height: 1.45;
+}
+
+/* ── Household summary (lore step) ──────────────────────── */
+.household-summary {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.household-summary p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  font-size: 0.92rem;
+}
+
 .opening-skyline {
   width: 100%;
   max-width: 480px;

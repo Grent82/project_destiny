@@ -107,7 +107,7 @@ const BASE_GAME_STATE = {
   selectedSquadNpcIds: ['npc-1', 'npc-2'],
   activeCombat: null,
   equippedItemDurabilities: {},
-  playerCharacter: { name: 'Valdric', stats: { strength: 5, cunning: 5, authority: 5 }, traits: [], level: 1 },
+  playerCharacter: { name: 'Valdric', attributes: { might: 40, agility: 40, endurance: 40, intellect: 40, perception: 40, presence: 40, resolve: 40 }, skills: { melee: 15, ranged: 15, medicine: 15, administration: 15, engineering: 15, negotiation: 15, survival: 15, security: 15, crafting: 15, performance: 15, academics: 15, intrigue: 15 }, traits: { discipline: 40, ambition: 40, empathy: 40, ruthlessness: 40, prudence: 40, curiosity: 40, dominance: 40, loyalty: 40, vanity: 40, zeal: 40 }, level: 1 },
 }
 
 function makeCombatant(overrides: Partial<CombatantState> = {}): CombatantState {

@@ -1,6 +1,7 @@
 import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
+import type { Attributes, Skills, Traits } from '../../domain/npc/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import {
@@ -331,8 +332,10 @@ const gameSlice = createSlice({
           message: `Contract complete: ${quest.title}. ${quest.rewardMarks} Marks received.`,
         })
         if (state.activityLog.length > 100) state.activityLog.pop()
-        // Renown gain from quest completion
-        const renownGain = quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
+        // Renown gain from quest completion — ambition trait adds +2
+        const baseRenownGain = quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
+        const ambitionBonus = state.playerCharacter.traits.ambition > 60 ? 2 : 0
+        const renownGain = baseRenownGain + ambitionBonus
         const oldLevel = getRenownLevel(state.playerCharacter.renown)
         state.playerCharacter.renown += renownGain
         const newLevel = getRenownLevel(state.playerCharacter.renown)
@@ -759,12 +762,14 @@ const gameSlice = createSlice({
       state,
       action: PayloadAction<{
         name: string
-        stats: { strength: number; cunning: number; authority: number }
-        traits: string[]
+        attributes: Attributes
+        skills: Skills
+        traits: Traits
       }>,
     ) {
       state.playerCharacter.name = action.payload.name
-      state.playerCharacter.stats = action.payload.stats
+      state.playerCharacter.attributes = action.payload.attributes
+      state.playerCharacter.skills = action.payload.skills
       state.playerCharacter.traits = action.payload.traits
     },
 

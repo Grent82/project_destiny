@@ -13,7 +13,7 @@ import {
   itemDefinitionSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
-import { npcDefinitionSchema, npcRuntimeStateSchema } from '../npc/contracts'
+import { attributesSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
 import { questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
@@ -180,18 +180,16 @@ export const gameStateSchema = z
     houseDistrictId: z.string().default('district-the-pale'),
     playerCharacter: z.object({
       name: z.string().default(''),
-      stats: z.object({
-        strength: z.number().int().min(1).max(10).default(5),
-        cunning: z.number().int().min(1).max(10).default(5),
-        authority: z.number().int().min(1).max(10).default(5),
-      }),
-      traits: z.array(z.string()).default([]),
+      attributes: attributesSchema,
+      skills: skillsSchema,
+      traits: traitsSchema,
       level: z.number().int().default(1),
       renown: z.number().int().min(0).default(0),
     }).default(() => ({
       name: '',
-      stats: { strength: 5, cunning: 5, authority: 5 },
-      traits: [],
+      attributes: { might: 40, agility: 40, endurance: 40, intellect: 40, perception: 40, presence: 40, resolve: 40 },
+      skills: { melee: 15, ranged: 15, medicine: 15, administration: 15, engineering: 15, negotiation: 15, survival: 15, security: 15, crafting: 15, performance: 15, academics: 15, intrigue: 15 },
+      traits: { discipline: 40, ambition: 40, empathy: 40, ruthlessness: 40, prudence: 40, curiosity: 40, dominance: 40, loyalty: 40, vanity: 40, zeal: 40 },
       level: 1,
       renown: 0,
     })),
@@ -230,6 +228,10 @@ export type GameState = z.infer<typeof gameStateSchema>
 export type HireOffer = z.infer<typeof hireOfferSchema>
 export type HouseRoom = z.infer<typeof houseRoomSchema>
 export type HouseState = z.infer<typeof houseStateSchema>
+export type PlayerCharacter = z.infer<typeof gameStateSchema>['playerCharacter']
 export type RoomState = z.infer<typeof roomStateSchema>
 
 export type EquippedItemDurabilities = z.infer<typeof gameStateSchema>['equippedItemDurabilities']
+
+// Re-export NPC schemas used for playerCharacter for consumer convenience
+export type { Attributes, Skills, Traits } from '../npc/contracts'

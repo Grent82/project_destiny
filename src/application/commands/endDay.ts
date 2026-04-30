@@ -211,10 +211,11 @@ export function endDay(state: GameState): GameState {
     }
   }
 
-  // Step 1b: Loyalty decay for unpaid NPCs
+  // Step 1b: Loyalty decay for unpaid NPCs (empathy trait reduces decay rate by 15%)
+  const loyaltyDecay = next.playerCharacter.traits.empathy > 60 ? 13 : 15
   for (const npc of next.roster) {
     if (npc.wagesOwedDays >= 2) {
-      const newLoyalty = Math.max(0, npc.traits.loyalty - 15)
+      const newLoyalty = Math.max(0, npc.traits.loyalty - loyaltyDecay)
       next = {
         ...next,
         roster: next.roster.map((r) =>
