@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectTitleEligibilityForNpc, selectDurabilityTierForNpc } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -329,7 +329,9 @@ function TitlePanel({ detail }: { detail: NpcDetail }) {
 export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Attributes')
   const [equipSlot, setEquipSlot] = useState<'primaryWeaponId' | 'secondaryWeaponId' | 'armorId' | null>(null)
+  const [showAssociates, setShowAssociates] = useState(false)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
+  const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -455,17 +457,65 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             ))}
           {activeTab === 'Relations' && (
             <div>
+              <h4 style={{ marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>With You</h4>
               <RelationshipBar label="Affinity" value={relationship.affinity} />
               <RelationshipBar label="Respect" value={relationship.respect} />
               <RelationshipBar label="Fear" value={relationship.fear} />
               <RelationshipBar label="Trust" value={relationship.trust} />
               <RelationshipBar label="Loyalty" value={relationship.loyalty} />
+              {knownAssociates.length > 0 && (
+                <div style={{ marginTop: '1rem' }}>
+                  <button
+                    className="npc-tab"
+                    style={{ width: '100%', textAlign: 'left', marginBottom: '0.5rem' }}
+                    type="button"
+                    onClick={() => setShowAssociates((v) => !v)}
+                  >
+                    {showAssociates ? '▾' : '▸'} Known Associates ({knownAssociates.length})
+                  </button>
+                  {showAssociates && (
+                    <div className="associates-list">
+                      {knownAssociates.map((assoc) => (
+                        <div key={assoc.npcId} className="associate-entry">
+                          <strong className="associate-name">{assoc.name}</strong>
+                          <div className="associate-axes">
+                            <span title="Trust">Tr {assoc.axes.trust > 0 ? '+' : ''}{assoc.axes.trust}</span>
+                            <span title="Affinity">Af {assoc.axes.affinity > 0 ? '+' : ''}{assoc.axes.affinity}</span>
+                            <span title="Loyalty">Lo {assoc.axes.loyalty > 0 ? '+' : ''}{assoc.axes.loyalty}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
 
         <div className="npc-quick-actions">
           <AssignmentSelector detail={detail} />
+          {detail.assignment === 'training' && (
+            <div className="training-focus-panel">
+              <label htmlFor={`training-focus-${detail.npcId}`} style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                Training Focus
+              </label>
+              <select
+                id={`training-focus-${detail.npcId}`}
+                className="action-button"
+                style={{ width: '100%', marginTop: '0.25rem' }}
+                value={detail.trainingFocus ?? ''}
+                onChange={(e) =>
+                  dispatch(gameActions.setNpcTrainingFocus({ npcId: detail.npcId, skill: e.target.value || null }))
+                }
+              >
+                <option value="">— Any skill (random) —</option>
+                {Object.keys(detail.skills).map((skill) => (
+                  <option key={skill} value={skill}>{skill}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <DurabilityPanel npcId={detail.npcId} />
           <TitlePanel detail={detail} />
           {dialogueTree && (

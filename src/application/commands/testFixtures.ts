@@ -13,6 +13,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   assignment: 'idle',
   activeTitle: null,
   wagesOwedDays: 0,
+  trainingFocus: null,
   attributes: {
     might: 54,
     agility: 42,

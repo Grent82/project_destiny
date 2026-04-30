@@ -23,6 +23,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     assignment: 'idle' as const,
     activeTitle: null,
     wagesOwedDays: 0,
+    trainingFocus: null,
     attributes: { ...npcDef.baseAttributes },
     skills: { ...npcDef.startingSkills },
     traits: { ...npcDef.startingTraits, loyalty: initialLoyalty },

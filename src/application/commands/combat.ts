@@ -17,6 +17,7 @@ import { getArmorProfile, getWeaponProfile } from '../content/equipmentCatalog'
 import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
+import { getRenownLevel } from '../../domain/progression/contracts'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
@@ -737,12 +738,25 @@ export function concludeCombatEncounter(state: GameState): GameState {
       if (questIdx !== -1) {
         const completedQuest = { ...nextState.activeQuests[questIdx], objectiveMet: true, status: 'completed' as const }
         const nextQuests = nextState.activeQuests.filter((_, i) => i !== questIdx)
+        const template = contentCatalog.questsById.get(completedQuest.questId)
+        const renownGain = template?.riskLevel === 'high' ? 15 : template?.riskLevel === 'medium' ? 8 : 4
+        const oldRenown = nextState.playerCharacter.renown
+        const newRenown = oldRenown + renownGain
+        const oldLevel = getRenownLevel(oldRenown)
+        const newLevel = getRenownLevel(newRenown)
         nextState = {
           ...nextState,
           activeQuests: nextQuests,
           completedQuestIds: [...nextState.completedQuestIds, completedQuest.questId],
+          playerCharacter: {
+            ...nextState.playerCharacter,
+            renown: newRenown,
+          },
         }
-        nextState = appendActivityLogEntry(nextState, 'system', `Contract fulfilled: ${completedQuest.questId}.`)
+        nextState = appendActivityLogEntry(nextState, 'system', `Contract fulfilled: ${completedQuest.questId}. +${renownGain} Renown.`)
+        if (newLevel.level > oldLevel.level) {
+          nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
+        }
       }
     }
   }

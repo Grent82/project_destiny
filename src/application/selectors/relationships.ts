@@ -1,6 +1,7 @@
 import type { RootState } from '../store/gameStore'
 import type { RelationshipAxes } from '../../domain/relationships/contracts'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { contentCatalog } from '../content/contentCatalog'
 
 const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
 
@@ -13,6 +14,24 @@ export const selectRelationshipWithPlayer =
 
 export const selectAllRelationships = (state: RootState): Record<string, RelationshipAxes> =>
   state.game.relationships
+
+export const selectKnownAssociates =
+  (npcId: string) =>
+  (state: RootState): { npcId: string; name: string; axes: RelationshipAxes }[] => {
+    const results: { npcId: string; name: string; axes: RelationshipAxes }[] = []
+    const allNpcIds = contentCatalog.npcs.map((n) => n.id)
+    for (const otherId of allNpcIds) {
+      if (otherId === npcId) continue
+      const key = buildRelationshipKey(npcId, otherId)
+      const axes = state.game.relationships[key]
+      if (!axes) continue
+      const otherNpc = contentCatalog.npcsById.get(otherId)
+      if (otherNpc) {
+        results.push({ npcId: otherId, name: otherNpc.name, axes })
+      }
+    }
+    return results
+  }
 
 /**
  * Average loyalty across selected squad members' relationships.

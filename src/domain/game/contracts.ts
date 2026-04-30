@@ -187,11 +187,13 @@ export const gameStateSchema = z
       }),
       traits: z.array(z.string()).default([]),
       level: z.number().int().default(1),
+      renown: z.number().int().min(0).default(0),
     }).default(() => ({
       name: '',
       stats: { strength: 5, cunning: 5, authority: 5 },
       traits: [],
       level: 1,
+      renown: 0,
     })),
     mainQuest: z.object({
       stage: z.enum(['searching', 'lead-found', 'location-known', 'rescued']).default('searching'),

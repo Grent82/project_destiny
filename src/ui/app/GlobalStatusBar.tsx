@@ -1,4 +1,5 @@
 import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectReputationTier } from '../../application'
+import { getRenownLevel } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from './hooks'
 
 export function GlobalStatusBar() {
@@ -11,6 +12,7 @@ export function GlobalStatusBar() {
   const pendingEventsCount = useAppSelector(selectPendingEventsCount)
 
   const displayName = playerCharacter.name || protagonistName || 'Valdric'
+  const renownLevel = getRenownLevel(playerCharacter.renown)
 
   return (
     <div className="global-status-bar" role="status" aria-label="Game status">
@@ -26,6 +28,9 @@ export function GlobalStatusBar() {
           <strong>{summary.money}</strong> <abbr title="Marks">Mk</abbr>
         </span>
         <span className="status-rep">{reputationTier}</span>
+        <span className="status-renown" title={`Renown: ${playerCharacter.renown}`}>
+          ✦ {renownLevel.label}
+        </span>
         {currentDistrict && (
           <span className="status-district">⬡ {currentDistrict.name}</span>
         )}

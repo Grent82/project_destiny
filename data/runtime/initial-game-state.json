@@ -155,7 +155,8 @@
           "factionId": "faction-civic-compact",
           "standing": 18
         }
-      ]
+      ],
+      "trainingFocus": null
     }
   ],
   "inventory": [
@@ -359,7 +360,8 @@
       "authority": 5
     },
     "traits": [],
-    "level": 1
+    "level": 1,
+    "renown": 0
   },
   "mainQuest": {
     "stage": "searching",

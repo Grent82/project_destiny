@@ -65,6 +65,7 @@ const baseState: GameState = {
     stats: { strength: 5, cunning: 5, authority: 5 },
     traits: [],
     level: 1,
+    renown: 0,
   },
   mainQuest: { stage: 'searching' as const, lastClue: '' },
   districtTension: {},

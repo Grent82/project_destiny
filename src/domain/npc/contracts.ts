@@ -134,6 +134,7 @@ export const npcRuntimeStateSchema = z
     assignment: npcAssignmentSchema,
     activeTitle: entityIdSchema.nullable(),
     wagesOwedDays: nonNegativeIntegerSchema,
+    trainingFocus: z.string().nullable().default(null),
     attributes: attributesSchema,
     skills: skillsSchema,
     traits: traitsSchema,

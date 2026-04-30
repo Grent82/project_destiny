@@ -1320,32 +1320,39 @@ strong { color: var(--text-secondary); }
 .district-card--the-pale,
 .district-card--the-warrens,
 .district-card--the-hollows {
-  border-left-width: 3px;
+  border-left-width: 4px;
+  border-top-width: 1px;
 }
 
-/* Harbor Ward — rust/orange, anchor */
-.district-card--harbor          { border-left-color: #b5541a; }
-.district-card--harbor::before  { content: '⚓'; color: #b5541a; }
+/* Harbor Ward — rust/orange, anchor — sea trade */
+.district-card--harbor          { border-left-color: #c4612a; border-top-color: rgba(196,97,42,0.3); background: linear-gradient(135deg, rgba(196,97,42,0.07) 0%, transparent 60%); }
+.district-card--harbor::before  { content: '⚓'; color: #c4612a; }
+.district-card--harbor .district-card-name { color: #d07040; }
 
-/* Gilded Heights — gold/amber, scales */
-.district-card--gilded-heights          { border-left-color: #c9a84c; }
+/* Gilded Heights — gold/amber, scales — wealth & law */
+.district-card--gilded-heights          { border-left-color: #c9a84c; border-top-color: rgba(201,168,76,0.3); background: linear-gradient(135deg, rgba(201,168,76,0.09) 0%, transparent 60%); }
 .district-card--gilded-heights::before  { content: '⚖'; color: #c9a84c; }
+.district-card--gilded-heights .district-card-name { color: #d4b060; }
 
-/* Ironworks — steel blue-grey, gear */
-.district-card--ironworks          { border-left-color: #607080; }
+/* Ironworks — steel blue-grey, gear — industry */
+.district-card--ironworks          { border-left-color: #607080; border-top-color: rgba(96,112,128,0.3); background: linear-gradient(135deg, rgba(96,112,128,0.09) 0%, transparent 60%); }
 .district-card--ironworks::before  { content: '⚙'; color: #607080; }
+.district-card--ironworks .district-card-name { color: #7890a4; }
 
-/* The Pale — silver/grey, hexagon */
-.district-card--the-pale          { border-left-color: #9ea8b4; }
+/* The Pale — silver/grey, snowflake — old power */
+.district-card--the-pale          { border-left-color: #9ea8b4; border-top-color: rgba(158,168,180,0.3); background: linear-gradient(135deg, rgba(158,168,180,0.07) 0%, transparent 60%); }
 .district-card--the-pale::before  { content: '❄'; color: #9ea8b4; }
+.district-card--the-pale .district-card-name { color: #b0bbc8; }
 
-/* The Warrens — moss green, flower */
-.district-card--the-warrens          { border-left-color: #5a7a4a; }
+/* The Warrens — moss green, flower — underground life */
+.district-card--the-warrens          { border-left-color: #5a7a4a; border-top-color: rgba(90,122,74,0.3); background: linear-gradient(135deg, rgba(90,122,74,0.09) 0%, transparent 60%); }
 .district-card--the-warrens::before  { content: '⚘'; color: #5a7a4a; }
+.district-card--the-warrens .district-card-name { color: #6e9458; }
 
-/* The Hollows — dark red/charcoal, star */
-.district-card--the-hollows          { border-left-color: #8b2020; }
-.district-card--the-hollows::before  { content: '✦'; color: #8b2020; }
+/* The Hollows — dark red/charcoal, star — danger/fringe */
+.district-card--the-hollows          { border-left-color: #9b2828; border-top-color: rgba(155,40,40,0.3); background: linear-gradient(135deg, rgba(155,40,40,0.09) 0%, transparent 60%); }
+.district-card--the-hollows::before  { content: '✦'; color: #9b2828; }
+.district-card--the-hollows .district-card-name { color: #c04040; }
 
 /* shared watermark positioning */
 .district-card--harbor::before,
@@ -1355,10 +1362,10 @@ strong { color: var(--text-secondary); }
 .district-card--the-warrens::before,
 .district-card--the-hollows::before {
   position: absolute;
-  bottom: -0.5rem;
-  right: 0.75rem;
-  font-size: 4.5rem;
-  opacity: 0.16;
+  bottom: -1rem;
+  right: 0.5rem;
+  font-size: 6rem;
+  opacity: 0.22;
   pointer-events: none;
   line-height: 1;
   user-select: none;
@@ -1908,3 +1915,15 @@ a:focus-visible,
 .poi-name { font-size: 1rem; }
 .poi-description { font-size: 0.85rem; color: var(--text-secondary, #9e8c6e); margin: 0; flex: 1; }
 .poi-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: auto; padding-top: 0.4rem; }
+
+/* Known Associates */
+.associates-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.25rem; }
+.associate-entry { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0.5rem; background: var(--panel-bg, rgba(255,255,255,0.03)); border-radius: 4px; font-size: 0.82rem; }
+.associate-name { color: var(--text-primary); }
+.associate-axes { display: flex; gap: 0.75rem; color: var(--text-secondary); font-size: 0.78rem; }
+
+/* Training Focus */
+.training-focus-panel { padding: 0.5rem 0; }
+
+/* Status bar renown */
+.status-renown { font-size: 0.78rem; color: #c9a84c; letter-spacing: 0.04em; opacity: 0.85; }

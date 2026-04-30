@@ -97,5 +97,7 @@ export function selectRosterDetail(state: RootState, npcId: string) {
       armorId: runtime.loadout.armorId,
     },
     wagesOwedDays: runtime.wagesOwedDays,
+    trainingFocus: runtime.trainingFocus,
+    rarity: definition?.rarity ?? 'common',
   }
 }

@@ -2,6 +2,7 @@ import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
+import { getRenownLevel } from '../../domain/progression/contracts'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -330,6 +331,20 @@ const gameSlice = createSlice({
           message: `Contract complete: ${quest.title}. ${quest.rewardMarks} Marks received.`,
         })
         if (state.activityLog.length > 100) state.activityLog.pop()
+        // Renown gain from quest completion
+        const renownGain = quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
+        const oldLevel = getRenownLevel(state.playerCharacter.renown)
+        state.playerCharacter.renown += renownGain
+        const newLevel = getRenownLevel(state.playerCharacter.renown)
+        if (newLevel.level > oldLevel.level) {
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-renown-${questId}`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'system',
+            message: `Your name carries further now. Renown rank: ${newLevel.label}.`,
+          })
+        }
       }
     },
 
@@ -599,6 +614,12 @@ const gameSlice = createSlice({
       if (!npc) return
       if (npc.assignment === 'deployed' || npc.assignment === 'assigned_title') return
       npc.assignment = action.payload.assignment as typeof npc.assignment
+    },
+
+    setNpcTrainingFocus(state, action: PayloadAction<{ npcId: string; skill: string | null }>) {
+      const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+      if (!npc) return
+      npc.trainingFocus = action.payload.skill
     },
 
     startExpedition(

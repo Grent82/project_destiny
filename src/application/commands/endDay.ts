@@ -1,5 +1,6 @@
 import type { GameState, NpcStatus, Skills } from '../../domain'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import { RARITY_SKILL_CAPS, skillGainMultiplier, crossedMilestones } from '../../domain/progression/contracts'
 import {
   getLoyaltyDeployStatus,
   getStressMoraleDecay,
@@ -451,33 +452,57 @@ export function endDay(state: GameState): GameState {
 
   // Step 4b: Training NPCs gain skills each day
   // Working NPCs do NOT get training gains — they trade skill growth for income
-  const hasTrainer = next.roster.some(
-    (r) => r.activeTitle === 'title-trainer' && r.assignment !== 'deployed',
-  )
-  const trainingSkillGain = hasTrainer ? 2 : 1
-  for (const npc of next.roster.filter((r) => r.assignment === 'training')) {
-    const skillKey = SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
-    const oldSkillVal = npc.skills[skillKey]
-    next = {
-      ...next,
-      roster: next.roster.map((r) =>
-        r.npcId === npc.npcId
-          ? { ...r, skills: { ...r.skills, [skillKey]: Math.min(100, r.skills[skillKey] + trainingSkillGain) } }
-          : r,
-      ),
-    }
-    if (oldSkillVal < 100) {
-      next = appendActivityLogEntry(
-        next,
-        'system',
-        `${npc.name} gained +${trainingSkillGain} ${skillKey} from training.`,
-      )
-    } else if (npc.wagesOwedDays >= 3) {
-      next = appendActivityLogEntry(
-        next,
-        'system',
-        `${npc.name} continues training. Progress steady.`,
-      )
+  {
+    const hasTrainer = next.roster.some(
+      (r) => r.activeTitle === 'title-trainer' && r.assignment !== 'deployed',
+    )
+    const baseGain = hasTrainer ? 2 : 1
+
+    for (const npc of next.roster.filter((r) => r.assignment === 'training')) {
+      const npcDef = contentCatalog.npcsById.get(npc.npcId)
+      const rarityCap = RARITY_SKILL_CAPS[npcDef?.rarity ?? 'common'] ?? 70
+
+      // Use training focus if set; otherwise pick a random skill
+      const focusedSkill = npc.trainingFocus && (npc.skills as Record<string, number>)[npc.trainingFocus] !== undefined
+        ? npc.trainingFocus
+        : null
+      const skillKey = focusedSkill ?? SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
+
+      const currentVal = (npc.skills as Record<string, number>)[skillKey] ?? 0
+      if (currentVal >= rarityCap) {
+        next = appendActivityLogEntry(
+          next, 'system',
+          `${npc.name} has reached their limit in ${skillKey} — ${npcDef?.rarity ?? 'common'} cap is ${rarityCap}.`,
+        )
+        continue
+      }
+
+      const multiplier = skillGainMultiplier(currentVal)
+      const rawGain = baseGain * (focusedSkill ? 1.5 : 1)
+      const effectiveGain = Math.max(1, Math.round(rawGain * multiplier))
+      const newVal = Math.min(rarityCap, currentVal + effectiveGain)
+
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? { ...r, skills: { ...r.skills, [skillKey]: newVal } }
+            : r,
+        ),
+      }
+
+      const milestones = crossedMilestones(currentVal, newVal)
+      if (milestones.length > 0) {
+        next = appendActivityLogEntry(
+          next, 'system',
+          `${npc.name} reached a milestone in ${skillKey} (${milestones[0]}). Something has changed in them.`,
+        )
+      } else {
+        next = appendActivityLogEntry(
+          next, 'system',
+          `${npc.name} gained +${effectiveGain} ${skillKey}${focusedSkill ? ' (focused training)' : ''}.`,
+        )
+      }
     }
   }
 
