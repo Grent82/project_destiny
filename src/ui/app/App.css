@@ -421,11 +421,13 @@ strong { color: var(--text-secondary); }
   width: min(100%, 62rem);
   margin: 0 auto;
   padding: 2rem;
-  border: 1px solid rgba(201, 168, 76, 0.25);
+  border: 1px solid rgba(201, 168, 76, 0.45);
   border-radius: var(--radius-lg);
-  background: rgba(22, 16, 9, 0.72);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(12px);
+  background: rgba(18, 12, 7, 0.92);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(201, 168, 76, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
 }
 
 .placeholder-grid {
@@ -1337,7 +1339,7 @@ strong { color: var(--text-secondary); }
   bottom: -0.5rem;
   right: 0.75rem;
   font-size: 4.5rem;
-  opacity: 0.07;
+  opacity: 0.16;
   pointer-events: none;
   line-height: 1;
   user-select: none;
