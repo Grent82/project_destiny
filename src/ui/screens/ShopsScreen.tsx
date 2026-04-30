@@ -33,6 +33,13 @@ export function ShopsScreen() {
   const durabilities = gameState.equippedItemDurabilities
   const money = gameState.money
   const hasQuartermaster = roster.some((r) => r.activeTitle === 'title-quartermaster')
+  const currentDistrictId = gameState.currentDistrictId
+
+  // Only show weapon/armor stash when in a district with an arms dealer or weapon_dealer shop type
+  const districtShopTypes = overview.shops.map((s: { shopType: string }) => s.shopType)
+  const hasArmsDealer = districtShopTypes.some(
+    (t: string) => t === 'weapon_dealer' || t === 'black_market' || t === 'workshop',
+  )
 
   const priceNote =
     overview.corridorStatus === 'blocked'
@@ -146,9 +153,17 @@ export function ShopsScreen() {
           ))}
         </div>
       )}
+      {!currentDistrictId && (
+        <p className="summary text-danger">You are not in a district. Travel to a district to access shops.</p>
+      )}
       <section className="repair-section">
         <h2>Equipment Stash</h2>
+        {!hasArmsDealer ? (
+          <p className="summary">No arms dealer in this district. Travel to Harbor Ward, Ironworks, or the Warrens to acquire weapons and armor.</p>
+        ) : (
         <p className="summary">Acquire weapons and armor to make them available for equipping to roster members.</p>
+        )}
+        {hasArmsDealer && (
         <div className="stash-catalog">
           <h3>Weapons</h3>
           <div className="shop-offer-list">
@@ -211,6 +226,7 @@ export function ShopsScreen() {
             })}
           </div>
         </div>
+        )}
       </section>
       <section className="repair-section">
         <h2>Equipment Repair</h2>

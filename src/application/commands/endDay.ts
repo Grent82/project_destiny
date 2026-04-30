@@ -652,6 +652,38 @@ export function endDay(state: GameState): GameState {
     }
   }
 
+  // Step 7f: Debt crisis consequences
+  if (next.debtCrisisTriggered && !next.debtPaid) {
+    // Gilded Court faction pressure spikes when debt is in default
+    next = {
+      ...next,
+      factionStates: next.factionStates.map((fs) =>
+        fs.factionId === 'faction-gilded-court'
+          ? { ...fs, activePressure: Math.min(100, fs.activePressure + 10) }
+          : fs
+      ),
+    }
+    // After day 35: low-loyalty NPCs begin to leave (loyalty trait < 40)
+    if (next.day >= 35) {
+      const departing = next.roster.filter(
+        (npc) => npc.traits.loyalty < 40 && npc.assignment !== 'deployed',
+      )
+      for (const npc of departing) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${npc.name} has left. With the house seized and no prospects, they could not stay.`,
+        )
+      }
+      const departingIds = new Set(departing.map((n) => n.npcId))
+      next = {
+        ...next,
+        roster: next.roster.filter((n) => !departingIds.has(n.npcId)),
+        selectedSquadNpcIds: next.selectedSquadNpcIds.filter((id) => !departingIds.has(id)),
+      }
+    }
+  }
+
   // Step 8: Evaluate world events
   const afterExpiry = expireHireOffers(next)
 
