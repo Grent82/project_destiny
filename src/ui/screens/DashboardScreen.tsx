@@ -100,15 +100,20 @@ export function DashboardScreen(props: DashboardScreenProps) {
             <em>Mira has been missing for three months. No word. No body. You hold onto that.</em>
           )}
           {mainQuest.stage === 'lead-found' && (
-            <em>A contact in The Tangle claims to have seen her. It may be nothing.</em>
+            <em>{mainQuest.lastClue || 'A lead has surfaced. Something to follow.'}</em>
           )}
           {mainQuest.stage === 'location-known' && (
-            <em>She is alive. Somewhere in the Pale Court's reach.</em>
+            <em>{mainQuest.lastClue || 'Her location is known. Getting to her is another matter.'}</em>
           )}
           {mainQuest.stage === 'rescued' && (
             <em>Mira is safe. For now.</em>
           )}
         </p>
+        {(mainQuest.stage === 'lead-found' || mainQuest.stage === 'location-known') && (
+          <span className={`badge ${mainQuest.stage === 'location-known' ? 'badge-warning' : ''}`}>
+            {mainQuest.stage === 'lead-found' ? 'Lead in hand' : 'Location known'}
+          </span>
+        )}
       </article>
       <div className="session-actions">
         <button

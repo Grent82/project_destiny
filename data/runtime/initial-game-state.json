@@ -276,6 +276,41 @@
       "fear": 0,
       "trust": 55,
       "loyalty": 70
+    },
+    "npc-marion-vale-npc-orren-wex": {
+      "trust": 55,
+      "loyalty": 45,
+      "affinity": 40,
+      "fear": 0,
+      "respect": 50
+    },
+    "npc-marion-vale-npc-tessaly-ash": {
+      "trust": 40,
+      "loyalty": 35,
+      "affinity": 50,
+      "fear": 0,
+      "respect": 38
+    },
+    "npc-marion-vale-npc-sanna-veld": {
+      "trust": 45,
+      "loyalty": 38,
+      "affinity": 55,
+      "fear": 0,
+      "respect": 42
+    },
+    "npc-brand-npc-marion-vale": {
+      "trust": 30,
+      "loyalty": 28,
+      "affinity": 22,
+      "fear": 0,
+      "respect": 55
+    },
+    "npc-dalen-morke-npc-marion-vale": {
+      "trust": -60,
+      "loyalty": -80,
+      "affinity": -40,
+      "fear": 18,
+      "respect": -20
     }
   },
   "equippedItemDurabilities": {},

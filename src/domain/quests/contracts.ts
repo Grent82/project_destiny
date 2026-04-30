@@ -21,6 +21,11 @@ export const questTemplateSchema = z.object({
     factionId: z.string(),
     minStanding: z.number(),
   }).nullable().default(null),
+  discoverySource: z.enum(['bar', 'guild', 'court', 'event', 'npc', 'notice_board']).nullable().default(null),
+  discoveryDistrictId: z.string().nullable().default(null),
+  sourceNpcId: z.string().nullable().default(null),
+  riskLevel: z.enum(['low', 'medium', 'high', 'extreme']).nullable().default(null),
+  flavorNote: z.string().nullable().default(null),
 })
 
 export const questRuntimeSchema = z.object({

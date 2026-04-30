@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   gameActions,
   selectActiveQuests,
-  selectAvailableQuests,
   selectCompletedQuestIds,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
@@ -32,64 +31,26 @@ function FactionBadge({ factionId }: { factionId: string | null }) {
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const availableQuests = useAppSelector(selectAvailableQuests)
   const activeQuests = useAppSelector(selectActiveQuests)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
 
   return (
     <section className="screen-panel">
       <p className="eyebrow">House Valdric</p>
-      <h1>The Contract Board</h1>
+      <h1>Work Board</h1>
       <p className="summary">
-        Structured engagements — briefings, obligations, and what the house stands to gain or lose.
+        Contracts the house has taken on. Obligations, briefings, and what is owed if you fail.
       </p>
 
       <div className="overview-grid">
 
         <article className="detail-panel">
-          <h2>Available Contracts</h2>
-          {availableQuests.length === 0 ? (
-            <p className="summary">No contracts currently on offer.</p>
-          ) : (
-            <div className="mission-list">
-              {availableQuests.map((quest) => (
-                <div key={quest.id} className="mission-row">
-                  <div className="mission-row-header">
-                    <strong>{quest.title}</strong>
-                    <FactionBadge factionId={quest.employerFactionId} />
-                    {quest.districtId && (
-                      <span className="badge">
-                        {quest.districtId.replace('district-', '').replace(/-/g, ' ')}
-                      </span>
-                    )}
-                  </div>
-                  <p className="quest-briefing">
-                    {quest.briefing}
-                  </p>
-                  <div className="quest-meta">
-                    <span>Reward: <strong>{quest.rewardMarks} Marks</strong></span>
-                    {quest.timeLimitDays != null && (
-                      <span>Time limit: <strong>{quest.timeLimitDays} days</strong></span>
-                    )}
-                    <span>Type: {quest.objectiveType}</span>
-                  </div>
-                  <button
-                    className="action-button"
-                    onClick={() => dispatch(gameActions.acceptQuest({ questId: quest.id }))}
-                    type="button"
-                  >
-                    Accept Contract
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </article>
-
-        <article className="detail-panel">
           <h2>Active Contracts</h2>
+          <p className="summary" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            Contracts are found in the field — at guild halls, taverns, courts, and through contacts in each district.
+          </p>
           {activeQuests.length === 0 ? (
-            <p className="summary">No contracts currently in progress.</p>
+            <p className="summary">No contracts currently in progress. Explore the districts to find work.</p>
           ) : (
             <div className="mission-list">
               {activeQuests.map(({ runtime, template }) => (
@@ -97,13 +58,32 @@ export function ContractBoardScreen() {
                   <div className="mission-row-header">
                     <strong>{template?.title ?? runtime.questId}</strong>
                     <FactionBadge factionId={template?.employerFactionId ?? null} />
-                    <span className="badge badge-warning">Active</span>
-                  </div>
-                  {template?.timeLimitDays != null && (
-                    <span className="quest-meta">
-                      Time limit: {template.timeLimitDays} days (accepted day {runtime.acceptedOnDay})
+                    <span className={`badge ${runtime.objectiveMet ? 'badge-positive' : 'badge-warning'}`}>
+                      {runtime.objectiveMet ? 'Objective met' : 'Active'}
                     </span>
+                    {template?.riskLevel && (
+                      <span className="badge">{template.riskLevel} risk</span>
+                    )}
+                  </div>
+                  {template?.flavorNote && (
+                    <p className="quest-briefing" style={{ fontStyle: 'italic', opacity: 0.7 }}>
+                      {template.flavorNote}
+                    </p>
                   )}
+                  {template?.briefing && (
+                    <p className="quest-briefing">{template.briefing}</p>
+                  )}
+                  <div className="quest-meta">
+                    {template?.rewardMarks != null && template.rewardMarks > 0 && (
+                      <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>
+                    )}
+                    {template?.timeLimitDays != null && (
+                      <span>Time limit: <strong>{template.timeLimitDays} days</strong> (accepted day {runtime.acceptedOnDay})</span>
+                    )}
+                    {template?.districtId && (
+                      <span>District: {template.districtId.replace('district-', '').replace(/-/g, ' ')}</span>
+                    )}
+                  </div>
                   {template?.objectiveType === 'investigation' && (
                     <button
                       className="action-button"
@@ -116,17 +96,14 @@ export function ContractBoardScreen() {
                       Investigate
                     </button>
                   )}
-                  {template?.objectiveType !== 'investigation' && (
-                    <div className="quest-actions">
-                      <p className="quest-briefing">Resolves through deployment.</p>
-                      <button
-                        className="action-button action-button--primary"
-                        onClick={() => navigate('/missions')}
-                        type="button"
-                      >
-                        Prepare Deployment →
-                      </button>
-                    </div>
+                  {template?.objectiveType === 'combat' && (
+                    <button
+                      className="action-button action-button--primary"
+                      onClick={() => navigate('/combat')}
+                      type="button"
+                    >
+                      Deploy Squad →
+                    </button>
                   )}
                 </div>
               ))}

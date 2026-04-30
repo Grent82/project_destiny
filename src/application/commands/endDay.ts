@@ -140,6 +140,45 @@ function resolveRumorEvents(state: GameState): GameState {
   return next
 }
 
+function checkMainQuestProgression(state: GameState): GameState {
+  const { stage } = state.mainQuest
+
+  // lead-found → location-known: Wren contacts deliver intel after enough days
+  if (stage === 'lead-found') {
+    const tAllowRing = state.factionStandings['faction-tallow-ring'] ?? -100
+    if (state.day >= 20 && tAllowRing > -30) {
+      return appendActivityLogEntry(
+        {
+          ...state,
+          mainQuest: {
+            stage: 'location-known',
+            lastClue: 'A Wren contact confirms it: Mira is held somewhere in The Pale. Getting her out will not be quiet.',
+          },
+        },
+        'system',
+        "Marion pulls you aside. 'They know where she is.' The search is over. The hard part begins.",
+      )
+    }
+  }
+
+  // location-known → rescued: completing quest-mira-rescue
+  if (stage === 'location-known' && state.completedQuestIds.includes('quest-mira-rescue')) {
+    return appendActivityLogEntry(
+      {
+        ...state,
+        mainQuest: {
+          stage: 'rescued',
+          lastClue: '',
+        },
+      },
+      'system',
+      'Mira is out. She is not the same. Neither are you.',
+    )
+  }
+
+  return state
+}
+
 export function endDay(state: GameState): GameState {
   let next = state
 
@@ -804,5 +843,8 @@ export function endDay(state: GameState): GameState {
   afterEvents = { ...afterEvents, districtTension: updatedTension }
 
   // Step 10: Auto-resolve rumor events — pick 1 per day, append to log, remove from pending
-  return resolveRumorEvents(afterEvents)
+  afterEvents = resolveRumorEvents(afterEvents)
+
+  // Step 11: Main quest progression
+  return checkMainQuestProgression(afterEvents)
 }
