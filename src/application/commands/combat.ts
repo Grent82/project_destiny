@@ -181,6 +181,26 @@ function getPreferredTarget(encounter: ActiveCombatState, actor: CombatantState)
     return null
   }
 
+  // Enemies use varied targeting strategies for unpredictability
+  if (actor.side === 'enemies') {
+    const roll = Math.random()
+    // 35%: target lowest HP (focus fire)
+    if (roll < 0.35) {
+      return opponents.slice().sort((a, b) => a.health - b.health)[0] ?? null
+    }
+    // 25%: target lowest morale (exploit fear)
+    if (roll < 0.60) {
+      return opponents.slice().sort((a, b) => a.morale - b.morale)[0] ?? null
+    }
+    // 25%: target highest skill (neutralize the strongest)
+    if (roll < 0.85) {
+      return opponents.slice().sort((a, b) => b.skill - a.skill)[0] ?? null
+    }
+    // 15%: random target
+    return opponents[Math.floor(Math.random() * opponents.length)] ?? null
+  }
+
+  // Allies always focus lowest HP (maximize KO chance)
   return opponents.slice().sort((left, right) => left.health - right.health)[0] ?? null
 }
 
@@ -460,10 +480,21 @@ function resolveEnemyTurns(encounter: ActiveCombatState) {
       continue
     }
 
-    const chosenAction: CombatAction =
-      nextEncounter.range === 'distant' && activeCombatant.effectiveRange === 'close'
-        ? 'advance'
-        : 'attack'
+    const chosenAction: CombatAction = (() => {
+      // At distance, melee enemies advance
+      if (nextEncounter.range === 'distant' && activeCombatant.effectiveRange === 'close') {
+        return 'advance'
+      }
+      // Low health + not on cooldown: chance to guard (defensive AI)
+      if (activeCombatant.health < 30 && !activeCombatant.guardCooldown && Math.random() < 0.5) {
+        return 'guard'
+      }
+      // Ranged enemies at close range: retreat to get effective range
+      if (nextEncounter.range === 'close' && activeCombatant.effectiveRange === 'ranged' && Math.random() < 0.4) {
+        return 'retreat'
+      }
+      return 'attack'
+    })()
 
     nextEncounter = clearGuarding(nextEncounter, activeCombatant.side)
     nextEncounter = applyAction(
@@ -549,7 +580,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   const encounter: ActiveCombatState = {
     encounterId: `encounter-day-${state.day}-${state.timeSlot}`,
     round: 1,
-    range: 'distant',
+    range: 'medium',
     outcome: 'ongoing',
     activeCombatantId: combatants[0]?.combatantId ?? null,
     combatants,
@@ -557,7 +588,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
       {
         round: 1,
         actorId: combatants[0]?.combatantId ?? 'system',
-        summary: 'A patrol moves to cut the squad off. Distance holds, for now.',
+        summary: 'A patrol moves to cut the squad off. The gap between them closes fast.',
       },
     ],
     factionId: 'faction-civic-compact',

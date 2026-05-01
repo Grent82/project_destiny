@@ -30,7 +30,7 @@ describe('CombatScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Attack' }))
 
-    expect(screen.getByText(/strikes|lands a blow|connects|goes wide|misses|deflected/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/strikes|lands a blow|connects|goes wide|misses|deflected/i).length).toBeGreaterThan(0)
   })
 
   it('lets the player conclude a resolved encounter', async () => {
