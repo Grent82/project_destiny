@@ -87,6 +87,7 @@ export function CombatScreen() {
             <button
               className="action-button"
               disabled={!combat.canAct}
+              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
               onClick={() => dispatch(gameActions.performCombatAction('attack'))}
               type="button"
             >
@@ -95,6 +96,7 @@ export function CombatScreen() {
             <button
               className="action-button"
               disabled={!combat.canAct}
+              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
               onClick={() => dispatch(gameActions.performCombatAction('advance'))}
               type="button"
             >
@@ -103,6 +105,7 @@ export function CombatScreen() {
             <button
               className="action-button"
               disabled={!combat.canAct}
+              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
               onClick={() => dispatch(gameActions.performCombatAction('retreat'))}
               type="button"
             >
@@ -111,6 +114,7 @@ export function CombatScreen() {
             <button
               className="action-button"
               disabled={!combat.canAct}
+              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
               onClick={() => dispatch(gameActions.performCombatAction('guard'))}
               type="button"
             >
@@ -119,6 +123,7 @@ export function CombatScreen() {
             <button
               className="action-button"
               disabled={combat.outcome === 'ongoing'}
+              title={combat.outcome === 'ongoing' ? 'Combat is still in progress' : undefined}
               onClick={() => dispatch(gameActions.concludeCombatEncounter())}
               type="button"
             >

@@ -8,7 +8,7 @@ export function selectRosterEntries(state: RootState) {
     return {
       npcId: npc.npcId,
       name: def?.name ?? npc.npcId,
-      status: (def as any)?.status ?? 'operative',
+      status: (def as { status?: string })?.status ?? 'operative',
       assignment: npc.assignment,
       activeTitle: npc.activeTitle,
       health: npc.states.health,

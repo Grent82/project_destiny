@@ -30,7 +30,7 @@
       },
       {
         "id": "choice-ignore",
-        "label": "Ignore it \u2014 they'll manage",
+        "label": "Ignore it — they'll manage",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -58,7 +58,7 @@
   {
     "id": "event-gilded-court-approach",
     "title": "A Gilded Messenger",
-    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting \u2014 on their terms. You are not foolish enough to think this is a kindness.",
+    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting — on their terms. You are not foolish enough to think this is a kindness.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-gilded-court",
@@ -84,13 +84,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You attend. The Court notes your cooperation \u2014 and your face."
+            "message": "You attend. The Court notes your cooperation — and your face."
           }
         ]
       },
       {
         "id": "choice-decline",
-        "label": "Decline \u2014 send a polite refusal",
+        "label": "Decline — send a polite refusal",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -135,13 +135,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The League thanks you. The Corridor is placed under watch \u2014 disrupted but not closed."
+            "message": "The League thanks you. The Corridor is placed under watch — disrupted but not closed."
           }
         ]
       },
       {
         "id": "choice-ignore-corridor",
-        "label": "Keep it quiet \u2014 not your problem",
+        "label": "Keep it quiet — not your problem",
         "outcomes": [
           {
             "type": "setCorridorStatus",
@@ -168,7 +168,7 @@
   {
     "id": "event-ring-smuggler-contact",
     "title": "A Ring Offer",
-    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods \u2014 restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
+    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods — restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-tallow-ring",
@@ -223,7 +223,7 @@
   {
     "id": "event-restored-appeal",
     "title": "A Petition from the Warrens",
-    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help \u2014 money, testimony, or a distraction that buys them time.",
+    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help — money, testimony, or a distraction that buys them time.",
     "triggerConditions": {
       "minUnrest": 40,
       "probability": 0.45,
@@ -250,7 +250,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The Restored accept your help quietly. Word will spread \u2014 in the right places."
+            "message": "The Restored accept your help quietly. Word will spread — in the right places."
           }
         ]
       },
@@ -300,7 +300,7 @@
   {
     "id": "event-market-price-spike",
     "title": "Supply Shortage in the Harbor",
-    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week \u2014 but this week it matters.",
+    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week — but this week it matters.",
     "triggerConditions": {
       "probability": 0.3,
       "dayMin": 3
@@ -350,7 +350,7 @@
   {
     "id": "event-foundry-inspection",
     "title": "League Safety Inspection",
-    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current \u2014 but inspections have a way of finding things.",
+    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current — but inspections have a way of finding things.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-foundry-league",
@@ -362,7 +362,7 @@
     "choices": [
       {
         "id": "choice-cooperate-fully",
-        "label": "Cooperate fully \u2014 nothing to hide",
+        "label": "Cooperate fully — nothing to hide",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -404,7 +404,7 @@
   {
     "id": "event-auto-npc-injury-complication",
     "title": "Injury Complications",
-    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover \u2014 but it will take time and rest.",
+    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover — but it will take time and rest.",
     "triggerConditions": {
       "probability": 0.25,
       "dayMin": 4
@@ -458,11 +458,11 @@
     "choices": [
       {
         "id": "choice-keep-moving",
-        "label": "Keep moving \u2014 head down",
+        "label": "Keep moving — head down",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You move through without incident. The Hollows lets you pass \u2014 this time."
+            "message": "You move through without incident. The Hollows lets you pass — this time."
           }
         ]
       },
@@ -492,7 +492,7 @@
   {
     "id": "event-pale-approach",
     "title": "The Pale Keeps Its Silence",
-    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
+    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate — politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "probability": 0.3,
@@ -516,7 +516,7 @@
       },
       {
         "id": "choice-deflect-questions",
-        "label": "Deflect \u2014 you are here on private business",
+        "label": "Deflect — you are here on private business",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -571,7 +571,7 @@
   {
     "id": "event-loyal-npc-milestone",
     "title": "A Reliable Hand",
-    "description": "One of your people has been consistent \u2014 steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
     "triggerConditions": {
       "dayMin": 10,
       "probability": 0.3
@@ -592,13 +592,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The bonus is delivered without ceremony. The work continues \u2014 better than before."
+            "message": "The bonus is delivered without ceremony. The work continues — better than before."
           }
         ]
       },
       {
         "id": "choice-acknowledge-words",
-        "label": "Acknowledge the work \u2014 no payment",
+        "label": "Acknowledge the work — no payment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -632,7 +632,7 @@
   {
     "id": "event-stressed-npc-warning",
     "title": "Someone Is Close to Breaking",
-    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
       "probability": 0.45,
@@ -641,7 +641,7 @@
     "choices": [
       {
         "id": "choice-give-rest",
-        "label": "Give them two days off \u2014 no assignments",
+        "label": "Give them two days off — no assignments",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -675,7 +675,7 @@
       },
       {
         "id": "choice-push-through",
-        "label": "Push through \u2014 the work does not wait",
+        "label": "Push through — the work does not wait",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -707,7 +707,7 @@
     "choices": [
       {
         "id": "choice-invest-shipment",
-        "label": "Buy in \u2014 invest 80 Marks",
+        "label": "Buy in — invest 80 Marks",
         "outcomes": [
           {
             "type": "addCredits",
@@ -725,13 +725,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The goods clear the dock before the inspection. The investment was sound \u2014 the materials arrive and the margin holds."
+            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
           }
         ]
       },
       {
         "id": "choice-pass-windfall",
-        "label": "Pass \u2014 the timing is suspicious",
+        "label": "Pass — the timing is suspicious",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -766,7 +766,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Your team moves into the outer districts. Order is restored \u2014 for now. The Compact takes note."
+            "message": "Your team moves into the outer districts. Order is restored — for now. The Compact takes note."
           }
         ]
       },
@@ -1156,7 +1156,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street \u2014 second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
+            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street — second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
           }
         ]
       }
@@ -1184,7 +1184,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Oswin spreads a hand-drawn map on the table \u2014 distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
+            "message": "Oswin spreads a hand-drawn map on the table — distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
           }
         ]
       }
@@ -1212,7 +1212,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Cress notices the cut on your forearm and says nothing \u2014 just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
+            "message": "Cress notices the cut on your forearm and says nothing — just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
           }
         ]
       }
@@ -1268,7 +1268,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Maret sets a copied page on the table \u2014 a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
+            "message": "Maret sets a copied page on the table — a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
           }
         ]
       }
@@ -1392,7 +1392,7 @@
   {
     "id": "event-rumor-ashfields-convoy",
     "title": "Turned Back on the Ashfields Road",
-    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings.",
+    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings.",
     "triggerConditions": {
       "dayMin": 7,
       "probability": 1
@@ -1404,7 +1404,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings."
+            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings."
           }
         ]
       }
@@ -1712,5 +1712,457 @@
       "world"
     ],
     "repeatable": false
+  },
+  {
+    "id": "event-marion-debt-weight",
+    "title": "Marion Speaks of the Debt",
+    "description": "Marion finds you in the bureau before dawn. She sets down a cup of something warm and doesn't sit. She has been running the numbers again. You can tell by the look on her face.",
+    "triggerConditions": {
+      "dayMin": 3,
+      "dayMax": 5,
+      "debtPaid": false,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.75
+    },
+    "choices": [
+      {
+        "id": "choice-marion-debt-manage",
+        "label": "\"We'll manage.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": -3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion nods once. \"As you say.\" She picks up her cup and leaves the numbers on the desk."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-debt-honest",
+        "label": "\"I know. I'm worried too.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 6
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "She is quiet for a moment. \"Good. Worry is useful. We'll find a way.\" She refills your cup without being asked."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "debt"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
+  },
+  {
+    "id": "event-marion-first-success",
+    "title": "Marion Takes Note",
+    "description": "You return from a completed job. Marion is waiting in the entrance hall — not to greet you, you understand. She was already there for other reasons. But she looks at you differently now.",
+    "triggerConditions": {
+      "completedQuestCountMin": 1,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.8
+    },
+    "choices": [
+      {
+        "id": "choice-marion-success-acknowledge",
+        "label": "Nod in passing.",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "respect",
+            "delta": 5
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 4
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion watches you pass. Something shifts in her expression. She has revised her estimate upward."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "quest"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
+  },
+  {
+    "id": "event-marion-combat-aftermath",
+    "title": "After the Blood",
+    "description": "Someone came back from the job in pieces. Marion is in the kitchen, tearing cloth into strips with practiced hands. She does not look up when you enter. After a moment she says: \"This is not what I signed up for.\" She is not asking you to respond. But you can.",
+    "triggerConditions": {
+      "dayMin": 4,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.45
+    },
+    "choices": [
+      {
+        "id": "choice-marion-combat-reassure",
+        "label": "\"It won't always be like this.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 4
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion ties off a bandage without answering. Then: \"It never is, until it is.\" She doesn't say it unkindly."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-combat-silent",
+        "label": "Say nothing. Let her work.",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "affinity",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You stay. You do not explain yourself. Marion seems to appreciate this more than words."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-combat-indifferent",
+        "label": "\"They knew the risks.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": -6
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion does not look up. She keeps tearing strips. The kitchen feels smaller after that."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "combat"
+    ],
+    "repeatable": false,
+    "cooldownDays": 14
+  },
+  {
+    "id": "event-marion-growing-roster",
+    "title": "Marion Watches the House Fill",
+    "description": "The entrance hall has begun to smell like other people. Marion stands at the top of the stairs, looking down at the new faces below. She does not comment on the noise. She doesn't need to.",
+    "triggerConditions": {
+      "minRosterSize": 3,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.65
+    },
+    "choices": [
+      {
+        "id": "choice-marion-roster-reassure",
+        "label": "\"They're good people.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion tilts her head. \"Time will say.\" She goes back to her accounting. She has already memorized every face."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-roster-quiet",
+        "label": "Stand beside her in silence.",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "affinity",
+            "delta": 6
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You stand beside Marion for a moment, looking down at the household you are building. She doesn't move away."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "roster"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
+  },
+  {
+    "id": "event-marion-provisions-crisis",
+    "title": "Marion Has Prepared",
+    "description": "You are nearly out of money. Marion does not mention this. What you find instead: a covered pot on the stove, a week's worth of dried provisions stacked near the larder, and a note in her handwriting listing what can be sold if it comes to that.",
+    "triggerConditions": {
+      "maxCredits": 20,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.7
+    },
+    "choices": [
+      {
+        "id": "choice-marion-provisions-acknowledge",
+        "label": "Leave a brief note of thanks.",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "affinity",
+            "delta": 7
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion finds your note the next morning. She does not respond to it. The pot is warm again by midday."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "economy"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
+  },
+  {
+    "id": "event-marion-loyal-stay",
+    "title": "Marion Is Still Here",
+    "description": "The debt is past due. Others have noticed. Marion's old contacts in the Harbor Ward have sent her two discreet offers — you found the letters, by accident, in the kitchen fire. She hasn't taken either. She has not mentioned them. She is setting the table for supper.",
+    "triggerConditions": {
+      "dayMin": 20,
+      "debtPaid": false,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-marion-stay-acknowledge",
+        "label": "\"You could have left.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 8
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "loyalty",
+            "delta": 10
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion sets down the bowl. She looks at you directly. \"I could have. I didn't.\" She goes back to supper. It is enough."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-stay-silent",
+        "label": "Say nothing. Sit down for supper.",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "affinity",
+            "delta": 8
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You sit. Marion serves without ceremony. The debt is not spoken of. It hangs in the air like smoke — but the table is set."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "debt",
+      "loyalty"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
+  },
+  {
+    "id": "event-marion-house-renown",
+    "title": "Marion Overhears the Name",
+    "description": "Marion returns from the market with the week's supplies and a particular look on her face. She unpacks in silence, then says: \"Three separate stall-keepers used your house's name today. Not with contempt.\" She lets that sit for a moment.",
+    "triggerConditions": {
+      "minRenown": 25,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.7
+    },
+    "choices": [
+      {
+        "id": "choice-marion-renown-humble",
+        "label": "\"It's a start.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "respect",
+            "delta": 6
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion looks at you steadily. \"Yes,\" she says. \"It is.\" Something in her posture has changed."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-renown-proud",
+        "label": "\"Good. Let them keep talking.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "respect",
+            "delta": 4
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -2
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion allows herself a thin smile. She does not often do that. She goes back to unpacking, and there is no more to say."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "renown"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
+  },
+  {
+    "id": "event-marion-personal-history",
+    "title": "Marion Tells You About Sable",
+    "description": "It is late. The house is quiet. Marion is mending something that doesn't need mending, and you both know it. After a long silence she says: \"There was a girl I served before. Her name was Sable Orn. She had your exact quality of stubbornness.\" She does not look up. \"She didn't make it.\" Another pause. \"I should have done more.\"",
+    "triggerConditions": {
+      "npcRelationshipMin": {
+        "npcId": "npc-marion-vale",
+        "axis": "trust",
+        "min": 60
+      },
+      "requiredRosterNpcId": "npc-marion-vale",
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-marion-history-listen",
+        "label": "\"Tell me about her.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "affinity",
+            "delta": 10
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 8
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion speaks for an hour without stopping. She does not cry. She does not embellish. When she finishes, she folds the mending and goes to bed. You sit with the name Sable Orn for a long time."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-history-gentle",
+        "label": "\"You can't carry all of them.\"",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 6
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-marion-vale",
+            "axis": "loyalty",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion is quiet. Then: \"No. But I carry this one.\" She puts down the mending. \"Don't let me have to carry yours.\" It is the closest thing to a vow she will ever make."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc",
+      "personal",
+      "marion-vale",
+      "romance",
+      "lore"
+    ],
+    "repeatable": false,
+    "cooldownDays": 30
   }
 ]

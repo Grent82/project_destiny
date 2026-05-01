@@ -174,7 +174,7 @@ export function ExpeditionPrepScreen() {
           )}
           <button
             className="action-button action-button--primary"
-            disabled={!canDepart()}
+            disabled={!canDepart()} title={!canDepart() ? "Select an expedition and at least one operative to depart" : undefined}
             onClick={handleDepart}
             type="button"
             style={{ marginTop: '1rem' }}

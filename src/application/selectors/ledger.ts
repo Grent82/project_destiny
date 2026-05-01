@@ -10,6 +10,14 @@ export const selectLedgerSummary = createSelector([selectGame], (game) => {
   const dailyExpenses = rosterWages
   const daysRemaining = Math.max(0, game.debtDueDay - game.day)
 
+  // Burn rate: how many days until we can't pay the debt at current daily expense rate
+  const netDailyBurn = dailyExpenses // no passive income yet tracked here
+  const daysOfRunwayAtCurrentRate =
+    netDailyBurn > 0 ? Math.floor(game.money / netDailyBurn) : 999
+  const projectedMarksByDebt =
+    daysRemaining > 0 ? game.money - netDailyBurn * daysRemaining : game.money
+  const willMeetDebt = projectedMarksByDebt >= game.debtAmount
+
   const activeContracts = game.activeQuests.map((q) => ({
     questId: q.questId,
     status: q.status,
@@ -27,6 +35,9 @@ export const selectLedgerSummary = createSelector([selectGame], (game) => {
     marks: game.money,
     dailyExpenses,
     rosterWages,
+    daysOfRunwayAtCurrentRate,
+    projectedMarksByDebt,
+    willMeetDebt,
     factionStandings: game.factionStandings,
     activeContracts,
     mainQuestStage: game.mainQuest.stage,

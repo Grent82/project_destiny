@@ -63,6 +63,7 @@ describe('LocalSaveSnapshotStore', () => {
     }
     // Remove saveVersion key entirely to simulate v0
     const { saveVersion: _omit, ...v0SaveWithoutVersion } = v0Save as typeof v0Save & { saveVersion: unknown }
+    void _omit
     storage.setItem('save-slot', JSON.stringify(v0SaveWithoutVersion))
 
     const result = snapshotStore.load()

@@ -7,4 +7,5 @@ export const selectActiveMission = (state: RootState) => {
   return contentCatalog.missionsById.get(id) ?? null
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const selectAvailableMissions = (_state: RootState) => contentCatalog.missions

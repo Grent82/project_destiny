@@ -1,20 +1,22 @@
+import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 
-export function selectDistrictSummaries(state: RootState) {
-  return state.game.districts.map((district) => ({
-    districtId: district.districtId,
-    name: contentCatalog.districtsById.get(district.districtId)?.name ?? district.districtId,
-    controllingFactionId: district.controllingFactionId,
-    controllingFactionName:
-      contentCatalog.factionsById.get(district.controllingFactionId)?.name ??
-      district.controllingFactionId,
-    danger: district.danger,
-    marketPressure: district.marketPressure,
-    shopTypes:
-      contentCatalog.districtsById.get(district.districtId)?.shopTypes ?? [],
-  }))
-}
+export const selectDistrictSummaries = createSelector(
+  (state: RootState) => state.game.districts,
+  (districts) =>
+    districts.map((district) => ({
+      districtId: district.districtId,
+      name: contentCatalog.districtsById.get(district.districtId)?.name ?? district.districtId,
+      controllingFactionId: district.controllingFactionId,
+      controllingFactionName:
+        contentCatalog.factionsById.get(district.controllingFactionId)?.name ??
+        district.controllingFactionId,
+      danger: district.danger,
+      marketPressure: district.marketPressure,
+      shopTypes: contentCatalog.districtsById.get(district.districtId)?.shopTypes ?? [],
+    })),
+)
 
 export const selectCurrentDistrictId = (state: RootState) =>
   state.game.currentDistrictId

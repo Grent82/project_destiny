@@ -72,7 +72,7 @@ export function LedgerScreen() {
             </p>
             <button
               className="action-button action-button--primary"
-              disabled={ledger.marks < ledger.debtAmount}
+              disabled={ledger.marks < ledger.debtAmount} title={ledger.marks < ledger.debtAmount ? `Not enough Marks. You need ${ledger.debtAmount - ledger.marks} more to pay the debt.` : undefined}
               onClick={() => dispatch(gameActions.payDebt({ amount: ledger.debtAmount }))}
               type="button"
             >
@@ -99,6 +99,33 @@ export function LedgerScreen() {
               <td>Marks on hand</td>
               <td className="ledger-table__value">{ledger.marks} Mk</td>
             </tr>
+            {!ledger.debtPaid && (
+              <tr>
+                <td title="Projected marks after paying wages until debt due day">
+                  Projected at debt day
+                </td>
+                <td
+                  className={`ledger-table__value ${ledger.willMeetDebt ? 'text-success' : 'text-danger'}`}
+                >
+                  {ledger.projectedMarksByDebt} Mk{' '}
+                  {ledger.willMeetDebt ? '✓ on track' : '✗ shortfall'}
+                </td>
+              </tr>
+            )}
+            {ledger.dailyExpenses > 0 && (
+              <tr>
+                <td title="Days until marks run out at current daily wage burn (excluding quest income)">
+                  Runway (wages only)
+                </td>
+                <td
+                  className={`ledger-table__value ${ledger.daysOfRunwayAtCurrentRate < 10 ? 'text-danger' : ''}`}
+                >
+                  {ledger.daysOfRunwayAtCurrentRate === 999
+                    ? '—'
+                    : `${ledger.daysOfRunwayAtCurrentRate} days`}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

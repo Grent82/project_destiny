@@ -9,6 +9,7 @@ export const selectExpeditionDestination = (state: RootState) => {
   return contentCatalog.expeditionDestinationsById.get(id) ?? null
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const selectAllExpeditionDestinations = (_state: RootState) =>
   contentCatalog.expeditionDestinations
 

@@ -6,7 +6,7 @@ try {
   initialGameStateSnapshot = gameStateSchema.parse(initialGameState)
 } catch (err) {
   console.error('Failed to parse initial game state:', err)
-  throw new Error('Game state schema validation failed. Check data/runtime/initial-game-state.json matches the current schema.')
+  throw new Error('Game state schema validation failed. Check data/runtime/initial-game-state.json matches the current schema.', { cause: err })
 }
 
 export { initialGameStateSnapshot }

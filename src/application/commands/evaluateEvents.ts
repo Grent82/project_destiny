@@ -1,3 +1,4 @@
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain'
 import type { EventTemplate } from '../../domain/events/contracts'
 import { contentCatalog } from '../content/contentCatalog'
@@ -11,9 +12,23 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
   if (cond.maxFoodSecurity !== undefined && state.cityResources.foodSecurity > cond.maxFoodSecurity) return false
   if (cond.corridorStatus !== undefined && state.cityResources.corridorStatus !== cond.corridorStatus) return false
   if (cond.dayMin !== undefined && state.day < cond.dayMin) return false
+  if (cond.dayMax !== undefined && state.day > cond.dayMax) return false
   if (cond.currentDistrict !== undefined && state.currentDistrictId !== cond.currentDistrict) return false
   if (cond.activeQuestId !== undefined && !state.activeQuests.some((q) => q.questId === cond.activeQuestId)) return false
   if (cond.requiredRosterNpcId !== undefined && !state.roster.some((n) => n.npcId === cond.requiredRosterNpcId)) return false
+  if (cond.maxCredits !== undefined && state.money > cond.maxCredits) return false
+  if (cond.minRenown !== undefined && state.playerCharacter.renown < cond.minRenown) return false
+  if (cond.debtPaid !== undefined && state.debtPaid !== cond.debtPaid) return false
+  if (cond.minRosterSize !== undefined && state.roster.length < cond.minRosterSize) return false
+  if (cond.completedQuestCountMin !== undefined && state.completedQuestIds.length < cond.completedQuestCountMin) return false
+
+  if (cond.npcRelationshipMin !== undefined) {
+    const { npcId, axis, min } = cond.npcRelationshipMin
+    const key = buildRelationshipKey('player', npcId)
+    const rel = state.relationships[key]
+    const value = rel ? rel[axis] : 0
+    if (value < min) return false
+  }
 
   if (cond.factionStandingBelow) {
     const standing = state.factionStandings[cond.factionStandingBelow.factionId] ?? 0

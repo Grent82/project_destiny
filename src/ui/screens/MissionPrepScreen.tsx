@@ -89,7 +89,7 @@ export function MissionPrepScreen() {
       <div className="session-actions">
         <button
           className="action-button action-button--primary action-button--cta"
-          disabled={summary.selectedSquad.length === 0}
+          disabled={summary.selectedSquad.length === 0} title={summary.selectedSquad.length === 0 ? "Select at least one squad member before deploying" : undefined}
           onClick={() => {
             dispatch(gameActions.startCombatEncounter())
             navigate('/combat')
