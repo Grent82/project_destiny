@@ -71,6 +71,36 @@ For each finding that survives review:
 
 Specialists will identify issues the audit missed. Capture these immediately.
 
+## Required Expert Output Format
+
+Each specialist agent **must** structure their output using this exact format so findings can be collected programmatically into the SQL `expert_findings` table:
+
+```
+## Findings
+
+| severity | area | finding | recommendation |
+|----------|------|---------|----------------|
+| critical | combat/balance | Guard spam provides 55% free damage reduction | Add action cost; limit guards per round |
+| major | ui/tooltips | No tooltips on stat bars | Add title attributes to all stat elements |
+```
+
+Severity values: `critical` / `high` / `major` / `medium` / `minor`
+
+This format is **mandatory** when the panel output will feed a synthesis round. Without it, findings must be manually extracted and risk being lost.
+
+## Synthesis Round: Bead Traceability
+
+After collecting all specialist outputs into the SQL table, the synthesis agent **must**:
+
+1. Number every finding in the table (1 to N)
+2. Produce an explicit mapping: `finding # → bead ID` (or `grouped into bead X`)
+3. Verify completeness: every finding has a bead or a named group
+4. Any finding not in the mapping is a gap — create the bead before closing
+
+**Grouping is allowed. Silent dropping is not.**
+
+See `bd memories audit-traceability` for the persistent rule.
+
 ## Output Standard
 
 - Every surviving finding has a bead with specialist-enriched description

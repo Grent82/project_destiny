@@ -63,6 +63,36 @@ rm -rf directory
 cp -rf source dest
 ```
 
+## Code Change Gates
+
+Run these before **and** after any code change:
+
+```bash
+pnpm test:run      # must pass, count must not drop below 333
+pnpm typecheck     # zero errors
+pnpm build         # clean build before committing
+```
+
+## Schema Change Checklist
+
+Whenever `gameStateSchema` in `src/domain/game/contracts.ts` changes:
+
+1. Update `data/runtime/initial-game-state.json` with the new field and its default.
+2. Find all test fixtures: `grep -rl 'BASE_GAME\|gameState' src --include='*.test.ts'`
+3. Update every fixture that builds a full `GameState` object.
+4. Run `pnpm test:run` — verify all tests pass.
+5. Warn the user: browser localStorage saves with the old schema will be auto-discarded.
+
+Skipping any step causes startup crashes (the "Take the Ledger" class of bug).
+
+## Dead Code Watch
+
+When touching `combat.ts`, `endDay.ts`, or `gameSlice.ts`:
+
+- Every flag or field **set** must also be **read** somewhere in the same file or its consumers.
+- If you write to a field and nothing reads it: create a bead, do not leave silent dead code.
+- Known dead mechanics tracked in bead `destiny-a8r` (staggered flag, evasionPenalty).
+
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
 
