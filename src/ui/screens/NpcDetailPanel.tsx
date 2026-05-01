@@ -16,6 +16,23 @@ type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
 const TABS = ['Attributes', 'Skills', 'States', 'Traits', 'Relations'] as const
 type Tab = (typeof TABS)[number]
 
+const ATTRIBUTE_TOOLTIPS: Record<string, string> = {
+  Might: 'Might — affects melee damage, carrying capacity, and physical feats.',
+  Agility: 'Agility — affects evasion, initiative order, and ranged accuracy.',
+  Endurance: 'Endurance — affects maximum HP, stamina, and resistance to fatigue.',
+  Intellect: 'Intellect — affects skill training speed, tactical options, and investigation.',
+  Perception: 'Perception — affects stealth detection, ranged accuracy, and awareness.',
+  Presence: 'Presence — affects NPC morale, recruitment success, and social influence.',
+  Resolve: 'Resolve — affects resistance to fear, stress, and morale loss.',
+}
+
+const STATE_TOOLTIPS: Record<string, string> = {
+  Hunger: 'Hunger — rises over time. Above threshold: combat penalties apply.',
+  Fear: 'Fear — rises in dangerous situations. Above threshold: NPC may refuse to advance.',
+  Stress: 'Stress — rises from hardship. Above threshold: morale decay accelerates.',
+  Fatigue: 'Fatigue — rises from activity. Above threshold: accuracy penalties apply.',
+}
+
 function StatRow({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
   const pct = Math.round((value / max) * 100)
   const fillClass =
@@ -25,7 +42,7 @@ function StatRow({ label, value, max = 100 }: { label: string; value: number; ma
 
   return (
     <div className="stat-row">
-      <span className="stat-label">{label}</span>
+      <span className="stat-label" title={ATTRIBUTE_TOOLTIPS[label]}>{label}</span>
       <span className="stat-value">{value}</span>
       <div className="stat-bar">
         <div className={fillClass} style={{ width: `${pct}%` }} />
@@ -34,16 +51,19 @@ function StatRow({ label, value, max = 100 }: { label: string; value: number; ma
   )
 }
 
-function StateStatRow({ label, value, warn }: { label: string; value: number; warn: boolean }) {
+function StateStatRow({ label, value, warn, negativePolarity = false }: { label: string; value: number; warn: boolean; negativePolarity?: boolean }) {
   const pct = Math.round(value)
-  const fillClass =
-    pct < 30 ? 'stat-bar-fill stat-bar-fill-crit'
-    : pct < 60 ? 'stat-bar-fill stat-bar-fill-low'
-    : 'stat-bar-fill stat-bar-fill-good'
+  const fillClass = negativePolarity
+    ? (pct > 60 ? 'stat-bar-fill stat-bar-fill-crit'
+      : pct > 30 ? 'stat-bar-fill stat-bar-fill-low'
+      : 'stat-bar-fill stat-bar-fill-good')
+    : (pct < 30 ? 'stat-bar-fill stat-bar-fill-crit'
+      : pct < 60 ? 'stat-bar-fill stat-bar-fill-low'
+      : 'stat-bar-fill stat-bar-fill-good')
 
   return (
     <div className="stat-row">
-      <span className="stat-label">{label}</span>
+      <span className="stat-label" title={STATE_TOOLTIPS[label]}>{label}</span>
       <span className="stat-value">{value}</span>
       {warn && <span title="Threshold exceeded — consequences active">⚠</span>}
       <div className="stat-bar">
@@ -429,12 +449,14 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 (key === 'fear' && val > NPC_STATE_THRESHOLDS.FEAR_REFUSE_ADVANCE_THRESHOLD) ||
                 (key === 'stress' && val > NPC_STATE_THRESHOLDS.STRESS_MORALE_DECAY_THRESHOLD) ||
                 (key === 'fatigue' && val > NPC_STATE_THRESHOLDS.FATIGUE_ACCURACY_PENALTY_THRESHOLD)
+              const negativePolarity = ['fatigue', 'stress', 'hunger', 'fear', 'anger', 'injury', 'intoxication'].includes(key)
               return (
                 <StateStatRow
                   key={key}
                   label={key.charAt(0).toUpperCase() + key.slice(1)}
                   value={val}
                   warn={warn}
+                  negativePolarity={negativePolarity}
                 />
               )
             })}

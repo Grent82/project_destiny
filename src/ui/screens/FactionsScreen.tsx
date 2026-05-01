@@ -45,6 +45,15 @@ function standingBarStyle(standing: number): React.CSSProperties {
   return { width: `${normalized}%`, background: color }
 }
 
+const FACTION_STANDING_TOOLTIP = 'Standing range: Hostile ≤ −60 · Cold −59 to −20 · Neutral −19 to 20 · Warm 21 to 60 · Allied > 60. Standing shifts with every choice.'
+
+const CITY_DIAL_TOOLTIPS: Record<string, string> = {
+  control: 'Control — degree of civic order. High control reduces crime and faction conflict.',
+  prosperity: 'Prosperity — economic health of the city. Affects market prices and NPC wages.',
+  unrest: 'Unrest — public discontent. High unrest increases district danger and faction aggression.',
+  corruption: 'Corruption — institutional decay. Affects enforcement and civic services.',
+}
+
 export function FactionsScreen() {
   const factions = useAppSelector(selectAllFactions)
   const cityDials = useAppSelector(selectCityDials)
@@ -92,7 +101,7 @@ export function FactionsScreen() {
                 {faction.agenda}
               </p>
               <div className="stat-row">
-                <span className="stat-label">Standing</span>
+                <span className="stat-label" title={FACTION_STANDING_TOOLTIP}>Standing</span>
                 <span className="stat-value">{faction.standing}</span>
                 <div className="stat-bar">
                   <div
@@ -147,7 +156,7 @@ export function FactionsScreen() {
         <h2>City Dials</h2>
         {(['control', 'prosperity', 'unrest', 'corruption'] as const).map((dial) => (
           <div key={dial} className="stat-row">
-            <span className="stat-label" style={{ textTransform: 'capitalize' }}>
+            <span className="stat-label" style={{ textTransform: 'capitalize' }} title={CITY_DIAL_TOOLTIPS[dial]}>
               {dial}
             </span>
             <span className="stat-value">{cityDials[dial]}</span>
