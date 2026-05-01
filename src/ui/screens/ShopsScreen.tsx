@@ -202,6 +202,7 @@ export function ShopsScreen() {
                           className="action-button action-button-sm"
                           type="button"
                           disabled={!canAfford}
+                          title={!canAfford ? `Not enough Marks. You need ${w.shopPrice - money} more.` : undefined}
                           onClick={() => dispatch(gameActions.addToStash({ type: 'weapon', id: w.id, price: w.shopPrice }))}
                         >
                           {w.shopPrice} Mk
@@ -232,6 +233,7 @@ export function ShopsScreen() {
                           className="action-button action-button-sm"
                           type="button"
                           disabled={!canAfford}
+                          title={!canAfford ? `Not enough Marks. You need ${a.shopPrice - money} more.` : undefined}
                           onClick={() => dispatch(gameActions.addToStash({ type: 'armor', id: a.id, price: a.shopPrice }))}
                         >
                           {a.shopPrice} Mk
@@ -273,6 +275,13 @@ export function ShopsScreen() {
                   <button
                     className="action-button action-button-sm"
                     disabled={weaponDurability >= weaponMax || money < weaponRepairCost}
+                    title={
+                      weaponDurability >= weaponMax
+                        ? 'Weapon is fully repaired.'
+                        : money < weaponRepairCost
+                          ? `Not enough Marks. Repair costs ${weaponRepairCost} Mk.`
+                          : undefined
+                    }
                     onClick={() => dispatch(gameActions.repairItem({ npcId: npc.npcId, slot: 'weapon' }))}
                     type="button"
                   >
@@ -288,6 +297,13 @@ export function ShopsScreen() {
                   <button
                     className="action-button action-button-sm"
                     disabled={armorDurability >= armorMax || money < armorRepairCost}
+                    title={
+                      armorDurability >= armorMax
+                        ? 'Armor is fully repaired.'
+                        : money < armorRepairCost
+                          ? `Not enough Marks. Repair costs ${armorRepairCost} Mk.`
+                          : undefined
+                    }
                     onClick={() => dispatch(gameActions.repairItem({ npcId: npc.npcId, slot: 'armor' }))}
                     type="button"
                   >

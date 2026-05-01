@@ -158,6 +158,13 @@ export function InvestigationScreen() {
       <button
         className="action-button"
         disabled={selectedNpcIds.length === 0 || districtMismatch}
+        title={
+          districtMismatch
+            ? 'Selected operatives are not in this district. Assign them here first.'
+            : selectedNpcIds.length === 0
+              ? 'Select at least one operative to run the investigation.'
+              : undefined
+        }
         onClick={handleRun}
         type="button"
       >

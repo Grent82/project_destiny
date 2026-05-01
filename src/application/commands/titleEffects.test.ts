@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { initialStateWithIda } from './testFixtures'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'

@@ -264,6 +264,11 @@ export function OpeningScreen() {
                       onClick={() => toggleTrait(key)}
                       type="button"
                       disabled={selectedTraitKeys.length >= 2 && !selectedTraitKeys.includes(key)}
+                      title={
+                        selectedTraitKeys.length >= 2 && !selectedTraitKeys.includes(key)
+                          ? 'Two traits already chosen. Deselect one to pick another.'
+                          : undefined
+                      }
                     >
                       <span className="trait-card-label">{label}</span>
                       <span className="trait-card-desc">{description}</span>
@@ -277,6 +282,15 @@ export function OpeningScreen() {
               className="opening-confirm action-button action-button--primary"
               onClick={beginGame}
               disabled={!canBegin}
+              title={
+                !canBegin
+                  ? selectedBackground === null && selectedTraitKeys.length < 2
+                    ? 'Choose a background and two traits to begin.'
+                    : selectedBackground === null
+                      ? 'Choose a background to begin.'
+                      : 'Choose two traits to begin.'
+                  : undefined
+              }
               type="button"
             >
               Take the Ledger →

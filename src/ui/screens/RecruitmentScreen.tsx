@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { gameActions, selectAvailableForHire } from '../../application'
+import { selectLedgerSummary } from '../../application/selectors/ledger'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { getRenownLevel, RARITY_SKILL_CAPS } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -13,10 +14,18 @@ export function RecruitmentScreen() {
   const marks = useAppSelector((state) => state.game.money)
   const rosterSize = useAppSelector((state) => state.game.roster.length)
   const renown = useAppSelector((state) => state.game.playerCharacter.renown)
+  const ledger = useAppSelector(selectLedgerSummary)
   const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
 
   const renownLevel = getRenownLevel(renown)
   const rosterFull = rosterSize >= renownLevel.rosterSlots
+
+  const runwayClass =
+    ledger.daysOfRunwayAtCurrentRate < 7
+      ? 'text-danger'
+      : ledger.daysOfRunwayAtCurrentRate < 21
+        ? 'text-warning'
+        : 'text-muted'
 
   return (
     <section className="screen-panel">
@@ -33,6 +42,14 @@ export function RecruitmentScreen() {
       >
         ← Back to Roster
       </button>
+
+      <div className="burn-rate-panel">
+        <span className="badge">Daily wages: {ledger.dailyExpenses} Mk/day</span>
+        <span className={`badge ${runwayClass}`}>
+          Runway: {ledger.daysOfRunwayAtCurrentRate === 999 ? '∞' : `${ledger.daysOfRunwayAtCurrentRate}d`}
+        </span>
+        <span className="badge">Treasury: {marks} Mk</span>
+      </div>
 
       {lastRecruitedName && (
         <p className="recruit-confirmation">{lastRecruitedName} has joined the house.</p>
@@ -57,6 +74,19 @@ export function RecruitmentScreen() {
             const npcRarity = npcDef?.rarity ?? null
             const npcSkillCap = npcRarity ? (RARITY_SKILL_CAPS[npcRarity] ?? null) : null
 
+            const weeklyOngoing = offer.wagePerDay * 7
+            const newDailyBurn = ledger.dailyExpenses + offer.wagePerDay
+            const runwayAfterHire =
+              newDailyBurn > 0
+                ? Math.floor((marks - offer.signingBonus) / newDailyBurn)
+                : 999
+            const affordabilityClass =
+              !canAfford || runwayAfterHire < 7
+                ? 'text-danger'
+                : runwayAfterHire < 21
+                  ? 'text-warning'
+                  : 'text-muted'
+
             return (
               <article key={offer.npcId} className="roster-row">
                 <div>
@@ -80,15 +110,23 @@ export function RecruitmentScreen() {
                   {offer.background}
                 </p>
                 <div className="badge-row">
-                  <span className="badge">{offer.wagePerDay} Marks/day</span>
+                  <span className="badge">{offer.wagePerDay} Mk/day</span>
+                  <span className={`badge ${affordabilityClass}`} title="Weekly ongoing wage cost">
+                    {weeklyOngoing} Mk/week ongoing
+                  </span>
                   {offer.signingBonus > 0 && (
-                    <span className="badge">Signing: {offer.signingBonus} Marks</span>
+                    <span className="badge">Signing: {offer.signingBonus} Mk</span>
                   )}
                   <span className="badge">{offer.turnsAvailable} day{offer.turnsAvailable !== 1 ? 's' : ''} remaining</span>
                   {offer.source === 'combat' && (
                     <span className="badge hire-badge--combat">Former Enemy</span>
                   )}
                 </div>
+                {canAfford && (
+                  <p className={`${affordabilityClass}`} style={{ fontSize: '0.8rem', margin: '0.2rem 0' }}>
+                    Runway after hire: {runwayAfterHire === 999 ? '∞' : `${runwayAfterHire}d`}
+                  </p>
+                )}
                 <div style={{ marginTop: '0.5rem' }}>
                   <button
                     className="action-button"
