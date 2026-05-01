@@ -21,13 +21,14 @@ describe('wageForStatus', () => {
 describe('endDay', () => {
   // Marion Vale: retainer (4 Marks), Ida Rhys: mercenary (8 Marks)
   // Total daily wage: 12 Marks — uses initialStateWithIda (Ida hired)
+  // House baseline income: +5 Marks/day (Step 4d)
   it('wage deduction reduces credits by the combined daily wage', () => {
     const stateNoWorking = {
       ...initialStateWithIda,
       roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
     }
     const next = endDay(stateNoWorking)
-    expect(next.money).toBe(stateNoWorking.money - 12)
+    expect(next.money).toBe(stateNoWorking.money - 12 + 5)
   })
 
   it('hunger rises by 8 each day for non-deployed NPCs', () => {
@@ -66,8 +67,8 @@ describe('endDay', () => {
       ),
     }
     const next = endDay(stateWithSteward)
-    // money - 12 wages + 15 steward
-    expect(next.money).toBe(stateWithSteward.money - 12 + 15)
+    // money - 12 wages + 15 steward + 5 house baseline income
+    expect(next.money).toBe(stateWithSteward.money - 12 + 15 + 5)
   })
 
   it('day counter increments by 1', () => {

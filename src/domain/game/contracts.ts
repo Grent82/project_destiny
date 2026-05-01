@@ -173,7 +173,7 @@ export const gameStateSchema = z
       armors: z.array(z.string()),
     }).default(() => ({ weapons: [], armors: [] })),
     isFirstRun: z.boolean().default(true),
-    debtAmount: z.number().int().nonnegative().default(500),
+    debtAmount: z.number().int().nonnegative().default(800),
     debtDueDay: z.number().int().positive().default(30),
     debtPaid: z.boolean().default(false),
     debtCrisisTriggered: z.boolean().default(false),

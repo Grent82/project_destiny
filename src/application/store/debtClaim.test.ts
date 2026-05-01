@@ -6,8 +6,8 @@ import { initialGameStateSnapshot } from './initialGameState'
 import { gameStateSchema } from '../../domain'
 
 function makeRichStore() {
-  // Use explicit money=500 so debt tests are independent of starting balance
-  const state = gameStateSchema.parse({ ...initialGameStateSnapshot, money: 500 })
+  // Use explicit money and debtAmount so debt tests are independent of starting balance
+  const state = gameStateSchema.parse({ ...initialGameStateSnapshot, money: 500, debtAmount: 500 })
   return createGameStore(state)
 }
 

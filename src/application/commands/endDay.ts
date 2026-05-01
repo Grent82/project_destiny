@@ -242,6 +242,18 @@ export function endDay(state: GameState): GameState {
     }
   }
 
+  // Step 1c: Unrest effect on loyalty — high city unrest unsettles all roster NPCs
+  if (next.cityDials.unrest >= 70) {
+    next = {
+      ...next,
+      roster: next.roster.map((npc) => ({
+        ...npc,
+        traits: { ...npc.traits, loyalty: Math.max(0, npc.traits.loyalty - 1) },
+      })),
+    }
+    next = appendActivityLogEntry(next, 'system', 'Unrest in the city unsettles your household.')
+  }
+
   // Step 2: State decay
   next = {
     ...next,
@@ -508,6 +520,8 @@ export function endDay(state: GameState): GameState {
   }
 
   // Step 4c: Working NPC passive income
+  // Prosperity dial modifies income: +10% if >= 60, -10% if <= 30
+  const prosperityMult = next.cityDials.prosperity >= 60 ? 1.1 : next.cityDials.prosperity <= 30 ? 0.9 : 1
   const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
   for (const runtimeNpc of workingNpcs) {
     const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
@@ -516,7 +530,7 @@ export function endDay(state: GameState): GameState {
     const skills = runtimeNpc.skills as Record<string, number>
     const nonCombatSkills = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
     const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
-    const income = Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
+    const income = Math.floor(Math.max(3, Math.min(15, Math.floor(bestSkill / 7))) * prosperityMult)
     next = { ...next, money: next.money + income }
 
     if (income >= 10) {
@@ -525,6 +539,19 @@ export function endDay(state: GameState): GameState {
         'economy',
         `${npcDef.name} brings in ${income} Marks from day work.`,
       )
+    }
+  }
+
+  // Step 4d: House baseline income
+  next = { ...next, money: next.money + 5 }
+  next = appendActivityLogEntry(next, 'economy', 'The house generates its daily yield. +5 Marks.')
+
+  // Step 4e: Faction income grants — allied factions contribute 3 Marks/day each
+  for (const [factionId, standing] of Object.entries(next.factionStandings)) {
+    if (standing >= 50) {
+      next = { ...next, money: next.money + 3 }
+      const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
+      next = appendActivityLogEntry(next, 'economy', `${factionName} grant: +3 Marks.`)
     }
   }
 
@@ -688,7 +715,9 @@ export function endDay(state: GameState): GameState {
   }
 
   // Step 7c: Rival org simulation
-  const rivalActions = simulateRivalOrgs(next, [Math.random(), Math.random()])
+  // Control dial modifies rival org frequency: high control (-5% chance), low control (+5% chance)
+  const controlAdj = next.cityDials.control >= 60 ? 0.05 : next.cityDials.control <= 30 ? -0.05 : 0
+  const rivalActions = simulateRivalOrgs(next, [Math.random() + controlAdj, Math.random() + controlAdj])
   next = applyRivalActions(next, rivalActions)
 
   // Step 7d: City stability crisis event
@@ -717,7 +746,38 @@ export function endDay(state: GameState): GameState {
     }
   }
 
-  // Step 7f: Debt crisis consequences
+  // Step 7f: Debt interest — each unpaid day past day 15 adds 10 Marks
+  if (!next.debtPaid && next.day > 15) {
+    next = {
+      ...next,
+      debtAmount: next.debtAmount + 10,
+    }
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `Interest accrues on the outstanding debt. The house now owes ${next.debtAmount} Marks.`,
+    )
+  }
+
+  // Step 7f-ii: Rival faction warning at day 20 if debt > 400 Marks remaining
+  if (!next.debtPaid && next.day === 20 && next.debtAmount > 400) {
+    const warningEventId = 'event-debt-faction-warning'
+    const alreadyPending = next.pendingEvents.some((e) => e.eventId === warningEventId)
+    if (!alreadyPending) {
+      next = {
+        ...next,
+        pendingEvents: [...next.pendingEvents, { eventId: warningEventId, firedOnDay: next.day }],
+        lastFiredDay: { ...next.lastFiredDay, [warningEventId]: next.day },
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `⚠ A courier bearing the Gilded Court seal arrives. The message is terse: the debt is noted, the deadline approaches, and patience is not unlimited. Rival factions are watching.`,
+      )
+    }
+  }
+
+  // Step 7f-iii: Debt crisis consequences
   if (next.debtCrisisTriggered && !next.debtPaid) {
     // Gilded Court faction pressure spikes when debt is in default
     next = {

@@ -54,7 +54,7 @@ const baseState: GameState = {
     antagonistFactionId: 'faction-gilded-court',
     missingRelatives: [],
   },
-  debtAmount: 500,
+  debtAmount: 800,
   debtDueDay: 30,
   debtPaid: false,
   debtCrisisTriggered: false,
