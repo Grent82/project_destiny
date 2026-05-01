@@ -292,7 +292,7 @@ function attack(encounter: ActiveCombatState, actorId: string) {
     weapon.damageMin + Math.random() * (weapon.damageMax - weapon.damageMin),
   )
   const effectiveSoak = Math.max(0, armor.soak - weapon.armorPiercing)
-  const guardMitigation = target.guarding ? 0.55 : 1
+  const guardMitigation = target.guarding ? 0.70 : 1
   let damage = Math.max(0, Math.round((rawDamage - effectiveSoak) * guardMitigation))
 
   const isCrit = Math.random() * 100 < weapon.critChance
@@ -354,10 +354,10 @@ function guard(encounter: ActiveCombatState, actorId: string) {
       ...combatant,
       guarding: true,
       guardCooldown: true,
-      morale: Math.min(100, combatant.morale + 4),
+      morale: Math.max(0, combatant.morale - 3),
     })),
     actorId,
-    'The combatant braces and guards against the next strike.',
+    'The combatant braces, trading momentum for protection.',
   )
 }
 
