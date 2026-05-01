@@ -5,7 +5,8 @@
     "description": "Tends to injuries and illness within the house. Reduces health recovery time.",
     "requiredSkill": "medicine",
     "requiredSkillThreshold": 45,
-    "dailyEffect": "Deployed medics restore health daily to the most injured roster member."
+    "dailyEffect": "Deployed medics restore health daily to the most injured roster member.",
+    "synergyNote": "High medicine skill (>45) heals more each day (8→12 health)."
   },
   {
     "id": "title-steward",
@@ -13,7 +14,8 @@
     "description": "Manages the day-to-day accounts and provisioning. Reduces waste and overhead.",
     "requiredSkill": "administration",
     "requiredSkillThreshold": 45,
-    "dailyEffect": "Manages the accounts. +15 Marks per day."
+    "dailyEffect": "Manages the accounts. +15 Marks per day.",
+    "synergyNote": "High administration skill (>45) increases daily income (15→25 Marks)."
   },
   {
     "id": "title-trainer",
@@ -21,7 +23,8 @@
     "description": "Maintains discipline and readiness among the roster.",
     "requiredSkill": "melee",
     "requiredSkillThreshold": 55,
-    "dailyEffect": "Runs drills. Idle roster members gain skill points over time."
+    "dailyEffect": "Runs drills. Idle roster members gain skill points over time.",
+    "synergyNote": "High melee skill (≥70) trains two roster members per day instead of one."
   },
   {
     "id": "title-quartermaster",
@@ -29,7 +32,8 @@
     "description": "Oversees equipment maintenance and inventory distribution.",
     "requiredSkill": "logistics",
     "requiredSkillThreshold": 40,
-    "dailyEffect": "Extends equipment durability (future system)."
+    "dailyEffect": "Extends equipment durability (future system).",
+    "synergyNote": "Manages supply and logistics for passive income (3–8 Marks/day, scaled by logistics skill)."
   },
   {
     "id": "title-chief-engineer",
@@ -37,6 +41,7 @@
     "description": "Manages structural repairs and technical projects for the house.",
     "requiredSkill": "engineering",
     "requiredSkillThreshold": 50,
-    "dailyEffect": "Oversees workshop output. Reduces material costs on district projects."
+    "dailyEffect": "Oversees workshop output. Reduces material costs on district projects.",
+    "synergyNote": "High engineering skill (>50) increases material output (5→10+ per day)."
   }
 ]

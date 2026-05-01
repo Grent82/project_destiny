@@ -370,6 +370,9 @@ export function endDay(state: GameState): GameState {
 
     switch (npc.activeTitle) {
       case 'title-medic': {
+        // Synergy: medicine skill scales healing (base 8, +1 per 15 pts above 45, cap 12)
+        const medicineSkill = npc.skills['medicine'] ?? 45
+        const healAmount = 8 + Math.floor(Math.max(0, medicineSkill - 45) / 15)
         const injured = next.roster
           .filter((r) => r.states.health < 100)
           .sort((a, b) => a.states.health - b.states.health)[0]
@@ -379,21 +382,24 @@ export function endDay(state: GameState): GameState {
             ...next,
             roster: next.roster.map((r) =>
               r.npcId === injured.npcId
-                ? { ...r, states: { ...r.states, health: Math.min(100, r.states.health + 8) } }
+                ? { ...r, states: { ...r.states, health: Math.min(100, r.states.health + healAmount) } }
                 : r,
             ),
           }
           next = appendActivityLogEntry(
             next,
             'system',
-            `${npcName} tended to ${patientName}'s injuries.`,
+            `${npcName} tended to ${patientName}'s injuries. (+${healAmount} health)`,
           )
         }
         break
       }
 
       case 'title-steward': {
-        next = { ...next, money: next.money + 15 }
+        // Synergy: administration skill scales income (base 15, +2 per 10 pts above 45, cap 25)
+        const adminSkill = npc.skills['administration'] ?? 45
+        const stewardIncome = Math.min(25, 15 + Math.floor(Math.max(0, adminSkill - 45) / 10) * 2)
+        next = { ...next, money: next.money + stewardIncome }
         next = {
           ...next,
           cityResources: {
@@ -405,16 +411,19 @@ export function endDay(state: GameState): GameState {
         next = appendActivityLogEntry(
           next,
           'economy',
-          `${npcName} managed the accounts. +15 Marks, +5 food and water.`,
+          `${npcName} managed the accounts. +${stewardIncome} Marks, +5 food and water.`,
         )
         break
       }
 
       case 'title-trainer': {
+        // Synergy: melee skill >= 70 trains 2 NPCs instead of 1
+        const meleeSkill = npc.skills['melee'] ?? 45
+        const trainCount = meleeSkill >= 70 ? 2 : 1
         const idleNpcs = next.roster.filter(
           (r) => r.assignment === 'idle' && r.npcId !== npc.npcId,
         )
-        if (idleNpcs.length > 0) {
+        for (let t = 0; t < Math.min(trainCount, idleNpcs.length); t++) {
           const target = idleNpcs[Math.floor(Math.random() * idleNpcs.length)]!
           const skillKey = SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
           next = {
@@ -442,22 +451,37 @@ export function endDay(state: GameState): GameState {
       }
 
       case 'title-chief-engineer': {
+        // Synergy: engineering skill scales material output (base 5, +1 per 10 pts above 50)
+        const engineeringSkill = npc.skills['engineering'] ?? 50
+        const materialGain = 5 + Math.floor(Math.max(0, engineeringSkill - 50) / 10)
         next = {
           ...next,
           cityResources: {
             ...next.cityResources,
-            materialStock: Math.min(100, next.cityResources.materialStock + 5),
+            materialStock: Math.min(100, next.cityResources.materialStock + materialGain),
           },
         }
         next = appendActivityLogEntry(
           next,
           'system',
-          `${npcName} oversaw workshop output. +5 materials.`,
+          `${npcName} oversaw workshop output. +${materialGain} materials.`,
         )
         break
       }
 
-      // title-quartermaster: no daily tick effect
+      case 'title-quartermaster': {
+        // Synergy: administration skill provides small passive income (base 3, +1 per 15 pts above 40)
+        const qmAdminSkill = npc.skills['administration'] ?? 40
+        const qmIncome = 3 + Math.floor(Math.max(0, qmAdminSkill - 40) / 15)
+        next = { ...next, money: next.money + qmIncome }
+        next = appendActivityLogEntry(
+          next,
+          'economy',
+          `${npcName} optimised supply routes. +${qmIncome} Marks.`,
+        )
+        break
+      }
+
       default:
         break
     }

@@ -59,7 +59,7 @@ describe('endDay', () => {
     expect(idaAfter.states.health).toBe(99) // 91 + 8
   })
 
-  it('steward title adds 15 Marks to credits after wage deduction', () => {
+  it('steward title adds skill-scaled Marks to credits after wage deduction', () => {
     const stateWithSteward = {
       ...initialStateWithIda,
       roster: initialStateWithIda.roster.map((npc) =>
@@ -67,8 +67,9 @@ describe('endDay', () => {
       ),
     }
     const next = endDay(stateWithSteward)
-    // money - 12 wages + 15 steward + 5 house baseline income
-    expect(next.money).toBe(stateWithSteward.money - 12 + 15 + 5)
+    // Marion's administration is 61, so steward income = 15 + floor((61-45)/10)*2 = 17
+    // money - 12 wages + 17 steward + 5 house baseline income
+    expect(next.money).toBe(stateWithSteward.money - 12 + 17 + 5)
   })
 
   it('day counter increments by 1', () => {
