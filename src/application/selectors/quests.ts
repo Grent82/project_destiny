@@ -9,6 +9,9 @@ export const selectAvailableQuests = (state: RootState) =>
       const standing = state.game.factionStandings[q.requiredFactionStanding.factionId] ?? 0
       if (standing < q.requiredFactionStanding.minStanding) return false
     }
+    if (q.prerequisiteQuestId && !state.game.completedQuestIds.includes(q.prerequisiteQuestId)) {
+      return false
+    }
     return true
   })
 

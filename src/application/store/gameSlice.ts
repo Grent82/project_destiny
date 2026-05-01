@@ -329,6 +329,67 @@ const gameSlice = createSlice({
           )
         }
         const corruptionNote = corruption >= 70 ? ' (funds skimmed by corrupt hands)' : ''
+
+        // Side-effect logs first (pushed earlier so completion stays at top)
+
+        // City dial consequence
+        if (quest.rewardCityDialId && quest.rewardCityDialDelta !== 0) {
+          const dial = quest.rewardCityDialId
+          state.cityDials[dial] = Math.max(0, Math.min(100, state.cityDials[dial] + quest.rewardCityDialDelta))
+          const direction = quest.rewardCityDialDelta > 0 ? 'rises' : 'falls'
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-dial-${questId}`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'system',
+            message: `City ${dial} ${direction} in the wake of ${quest.title}.`,
+          })
+          if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+        }
+
+        // Debt reduction consequence
+        if (quest.rewardDebtReduction > 0) {
+          state.debtAmount = Math.max(0, state.debtAmount - quest.rewardDebtReduction)
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-debt-${questId}`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'economy',
+            message: `House debt reduced by ${quest.rewardDebtReduction} Marks — obligations clarified by ${quest.title}.`,
+          })
+          if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+        }
+
+        // NPC unlock consequence — make NPC available for hire
+        if (quest.unlocksNpcId) {
+          const alreadyHired = state.roster.some((r) => r.npcId === quest.unlocksNpcId)
+          const alreadyAvailable = state.availableForHire.some((r) => r.npcId === quest.unlocksNpcId)
+          if (!alreadyHired && !alreadyAvailable) {
+            const npcDefs = getNpcDefinitions()
+            const npcDef = npcDefs.find((n) => n.id === quest.unlocksNpcId)
+            if (npcDef) {
+              state.availableForHire.push({
+                npcId: npcDef.id,
+                discoveredInDistrictId: quest.districtId ?? null,
+                wagePerDay: 0,
+                signingBonus: 0,
+                requiredFactionId: null,
+                requiredFactionStanding: 0,
+                turnsAvailable: 10,
+              })
+              state.activityLog.unshift({
+                id: `log-${state.day}-${state.timeSlot}-npc-${quest.unlocksNpcId}`,
+                day: state.day,
+                timeSlot: state.timeSlot,
+                category: 'system',
+                message: `${npcDef.name} is now available for house service.`,
+              })
+              if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+            }
+          }
+        }
+
+        // Completion message at top
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-complete-${questId}`,
           day: state.day,
@@ -337,8 +398,9 @@ const gameSlice = createSlice({
           message: `Contract complete: ${quest.title}. ${rewardMarks} Marks received.${corruptionNote}`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+
         // Renown gain from quest completion — ambition trait adds +2
-        const baseRenownGain = quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
+        const baseRenownGain = quest.riskLevel === 'extreme' ? 20 : quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
         const ambitionBonus = state.playerCharacter.traits.ambition > 60 ? 2 : 0
         const renownGain = baseRenownGain + ambitionBonus
         const oldLevel = getRenownLevel(state.playerCharacter.renown)

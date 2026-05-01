@@ -30,6 +30,10 @@ export const questTemplateSchema = z.object({
   sourceNpcId: z.string().nullable().default(null),
   riskLevel: z.enum(['low', 'medium', 'high', 'extreme']).nullable().default(null),
   flavorNote: z.string().nullable().default(null),
+  rewardCityDialId: z.enum(['prosperity', 'unrest', 'control', 'corruption']).nullable().default(null),
+  rewardCityDialDelta: z.number().default(0),
+  rewardDebtReduction: z.number().default(0),
+  unlocksNpcId: z.string().nullable().default(null),
 })
 
 export const questRuntimeSchema = z.object({

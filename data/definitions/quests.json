@@ -14,7 +14,9 @@
     "timeLimitDays": 5,
     "linkedMissionId": null,
     "requiredFactionStanding": null,
-    "enemyNpcId": "npc-enemy-the-dockmaster"
+    "enemyNpcId": "npc-enemy-the-dockmaster",
+    "rewardCityDialId": "unrest",
+    "rewardCityDialDelta": -5
   },
   {
     "id": "quest-ledger-recovery",
@@ -67,7 +69,9 @@
       "factionId": "faction-tallow-ring",
       "minStanding": 5
     },
-    "enemyNpcId": "npc-enemy-harlen-voss"
+    "enemyNpcId": "npc-enemy-harlen-voss",
+    "rewardCityDialId": "unrest",
+    "rewardCityDialDelta": 5
   },
   {
     "id": "quest-restored-appeal",
@@ -169,7 +173,9 @@
     "penaltyStandingDelta": -5,
     "timeLimitDays": 5,
     "linkedMissionId": null,
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "rewardCityDialId": "corruption",
+    "rewardCityDialDelta": 6
   },
   {
     "id": "quest-hollows-ledger",
@@ -201,7 +207,9 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 5,
     "linkedMissionId": null,
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "rewardCityDialId": "prosperity",
+    "rewardCityDialDelta": 4
   },
   {
     "id": "quest-compact-watch",
@@ -249,7 +257,9 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 1,
     "linkedMissionId": null,
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "rewardCityDialId": "unrest",
+    "rewardCityDialDelta": -6
   },
   {
     "id": "quest-mira-rescue",
@@ -274,7 +284,11 @@
     "questType": "story",
     "openingText": "Tessaly sets down the cup before she speaks. 'She is alive. The Gilded Court has her in the old tannery on the Pale's eastern edge. They are not using her yet — but they will.' She does not elaborate on what *yet* means. She does not need to.",
     "aftermathText": "Mira walks out on her own feet, which tells you something. She does not speak on the way back. When she does, it is only to say: 'I knew you would come. I did not know if that was a good thing.' She has a name for you now, too — one you have not heard before. House Valdric, she says, as if she is testing the weight of it.",
-    "prerequisiteQuestId": null
+    "prerequisiteQuestId": null,
+    "unlocksNpcId": "npc-mira",
+    "rewardCityDialId": "control",
+    "rewardCityDialDelta": -8,
+    "rewardDebtReduction": 0
   },
   {
     "id": "quest-orren-wex-rescue",
@@ -299,6 +313,10 @@
     "questType": "story",
     "openingText": "Marion does not sit when she brings this to you. She stands near the door, as if she is not certain you will want her in the room when she is done. 'Orren Wex is in Compact custody. He has been for six weeks. They are not charging him — they are keeping him available. He knows every number in the house's original accounts. If they let him talk to the right people, the debt becomes very clearly yours.'",
     "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him — the copy, not the original — and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question — one he is too tired to answer tonight.",
-    "prerequisiteQuestId": null
+    "prerequisiteQuestId": null,
+    "unlocksNpcId": "npc-orren-wex",
+    "rewardDebtReduction": 80,
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0
   }
 ]
