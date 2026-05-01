@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { getRenownLevel } from '../../domain/progression/contracts'
 
 export function recruitNpc(state: GameState, npcId: string): GameState {
   const offer = state.availableForHire.find((o) => o.npcId === npcId)
@@ -13,6 +14,9 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
 
   const alreadyOnRoster = state.roster.some((r) => r.npcId === npcId)
   if (alreadyOnRoster) return state
+
+  const renownLevel = getRenownLevel(state.playerCharacter.renown)
+  if (state.roster.length >= renownLevel.rosterSlots) return state
 
   const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - 20)
 

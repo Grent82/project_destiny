@@ -1,6 +1,6 @@
 import type { ActivityCategory, GameState } from '../../domain'
 
-const MAX_ACTIVITY_ENTRIES = 40
+export const MAX_ACTIVITY_ENTRIES = 40
 
 export function appendActivityLogEntry(
   state: GameState,

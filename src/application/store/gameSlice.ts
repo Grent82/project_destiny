@@ -13,6 +13,7 @@ import { purchaseItemFromShop } from '../commands/purchase'
 import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from '../commands/squad'
 import { endDay as endDayCommand } from '../commands/endDay'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../commands/recruitment'
+import { MAX_ACTIVITY_ENTRIES } from '../commands/activityLog'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
@@ -101,7 +102,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: 'The debt-claim against House Valdris has come due. The creditors have moved. The house is seized.',
         })
-        if (afterDay.activityLog.length > 100) afterDay.activityLog.pop()
+        if (afterDay.activityLog.length >= MAX_ACTIVITY_ENTRIES) afterDay.activityLog.pop()
       }
       return afterDay
     },
@@ -156,7 +157,7 @@ const gameSlice = createSlice({
         category: 'system',
         message: `${nextSlot.charAt(0).toUpperCase() + nextSlot.slice(1)} settles over Valdenmoor.`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
     payDebt(state, action: PayloadAction<{ amount: number }>) {
       const payment = Math.max(0, action.payload.amount)
@@ -270,7 +271,7 @@ const gameSlice = createSlice({
         category: 'system',
         message: `A title conferred. The house has a new ${roleLabel}.`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       applyRelationshipDelta(state, 'player', npcId, 'respect', 8)
     },
     revokeTitle(state, action: PayloadAction<{ npcId: string }>) {
@@ -285,7 +286,7 @@ const gameSlice = createSlice({
         category: 'system',
         message: `The title is revoked. The role sits empty.`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       applyRelationshipDelta(state, 'player', npcId, 'respect', -5)
     },
 
@@ -302,7 +303,7 @@ const gameSlice = createSlice({
         category: 'system',
         message: `Contract accepted: ${quest?.title ?? questId}.`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
 
     },
 
@@ -331,7 +332,7 @@ const gameSlice = createSlice({
           category: 'economy',
           message: `Contract complete: ${quest.title}. ${quest.rewardMarks} Marks received.`,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         // Renown gain from quest completion — ambition trait adds +2
         const baseRenownGain = quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
         const ambitionBonus = state.playerCharacter.traits.ambition > 60 ? 2 : 0
@@ -373,7 +374,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: `Contract failed: ${quest.title}. The house bears the cost.`,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
 
@@ -404,7 +405,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: `Contract failed: ${quest?.title ?? questId}. The house bears the cost.`,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
     adjustRelationship(
@@ -427,7 +428,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: reason,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
 
@@ -445,7 +446,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: `House Valdric has been blacklisted by ${factionId}. Enforcement will follow.`,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       } else if (tier === 'hostile') {
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
@@ -454,7 +455,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: `The institutional arm of ${factionId} has turned against the house.`,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
 
@@ -479,7 +480,7 @@ const gameSlice = createSlice({
         category: 'system',
         message: `Council vote: "${vote.title}" — ${passes ? 'passed' : 'failed'}.${passes ? ` ${vote.effect}` : ''}`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
 
       state.activeCouncilVotes = state.activeCouncilVotes.filter((v) => v.id !== voteId)
     },
@@ -521,7 +522,7 @@ const gameSlice = createSlice({
         category: 'economy',
         message: `Equipment repaired. Cost: ${finalRepairCost} Marks.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
 
     startInvestigation(state, action: PayloadAction<{ questId: string }>) {
@@ -608,7 +609,7 @@ const gameSlice = createSlice({
           message: `The investigation goes nowhere. The opportunity is lost.`,
         })
       }
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       state.activeInvestigation = null
     },
 
@@ -669,7 +670,7 @@ const gameSlice = createSlice({
         category: 'system',
         message: `Expedition departed for ${destination.name}. ${squadNpcIds.length} operative${squadNpcIds.length !== 1 ? 's' : ''}. ${supplies} supplies allocated.`,
       })
-      if (state.activityLog.length > 100) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
 
     advanceExpeditionDay(state) {
@@ -708,7 +709,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: 'Supplies exhausted on expedition. The squad presses on — barely.',
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         for (const npc of state.roster) {
           if (exp.squadNpcIds.includes(npc.npcId)) {
             npc.states.health = Math.max(0, npc.states.health - 10)
@@ -726,7 +727,7 @@ const gameSlice = createSlice({
           category: 'system',
           message: `The expedition returns from ${destination.name}.`,
         })
-        if (state.activityLog.length > 100) state.activityLog.pop()
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
 
