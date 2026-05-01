@@ -22,6 +22,43 @@
               "type": "loyalty",
               "value": 5
             }
+          },
+          {
+            "id": "marion-choice-early-game",
+            "label": "Talk about the books.",
+            "nextNodeId": "marion-node-early-intro",
+            "condition": {
+              "type": "dayMax",
+              "value": 7
+            }
+          },
+          {
+            "id": "marion-choice-debt-talk",
+            "label": "\"What do we do if the debt breaks us?\"",
+            "nextNodeId": "marion-node-debt-crisis-intro",
+            "condition": {
+              "type": "debtPaid",
+              "value": false
+            }
+          },
+          {
+            "id": "marion-choice-renown-talk",
+            "label": "Talk about the house's growing reputation.",
+            "nextNodeId": "marion-node-renown-intro",
+            "condition": {
+              "type": "minRenown",
+              "value": 25
+            }
+          },
+          {
+            "id": "marion-choice-trust-talk",
+            "label": "Let her speak plainly.",
+            "nextNodeId": "marion-node-trust-intro",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-marion-vale",
+              "value": 50
+            }
           }
         ]
       },
@@ -35,6 +72,221 @@
         "id": "marion-node-3",
         "npcId": "npc-marion-vale",
         "text": "She nods slowly. 'Then let me carry some of it.' Her hand rests near yours for a moment, then she steps back.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-early-intro",
+        "npcId": "npc-marion-vale",
+        "text": "Marion looks up from a ledger. She's been running numbers since before you woke. She hasn't offered any of it to you yet.",
+        "choices": [
+          {
+            "id": "marion-choice-early-ask-ledger",
+            "label": "\"What are you working on?\"",
+            "nextNodeId": "marion-node-early-ledger-a"
+          },
+          {
+            "id": "marion-choice-early-leave",
+            "label": "Leave her to it.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "marion-node-early-ledger-a",
+        "npcId": "npc-marion-vale",
+        "text": "She turns the ledger around. Three columns: what you owe, what's coming in, what the gap is. The gap is large. She taps it once. \"You need a job done before the week is out.\"",
+        "choices": [
+          {
+            "id": "marion-choice-early-thanks",
+            "label": "\"Thank you for this.\"",
+            "nextNodeId": "marion-node-early-thanks-b",
+            "outcome": {
+              "type": "loyalty",
+              "value": 4
+            }
+          },
+          {
+            "id": "marion-choice-early-bristle",
+            "label": "\"I know how to run a household.\"",
+            "nextNodeId": "marion-node-early-bristle-b"
+          }
+        ]
+      },
+      {
+        "id": "marion-node-early-thanks-b",
+        "npcId": "npc-marion-vale",
+        "text": "\"Don't thank me. Get the job done.\" She takes back the ledger. It is the closest she comes to a compliment this early.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-early-bristle-b",
+        "npcId": "npc-marion-vale",
+        "text": "She holds your gaze for a moment. Then she closes the ledger and sets it back in front of herself. \"As you say.\" She does not offer the numbers again.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-debt-crisis-intro",
+        "npcId": "npc-marion-vale",
+        "text": "Marion is at the window. She doesn't turn when you enter. After a moment: \"I've been thinking about what we do if it comes to the worst.\"",
+        "choices": [
+          {
+            "id": "marion-choice-debt-what-worst",
+            "label": "\"Define 'the worst.'\"",
+            "nextNodeId": "marion-node-debt-crisis-a"
+          },
+          {
+            "id": "marion-choice-debt-stop",
+            "label": "\"Don't. Not yet.\"",
+            "nextNodeId": "marion-node-debt-stop-b"
+          }
+        ]
+      },
+      {
+        "id": "marion-node-debt-crisis-a",
+        "npcId": "npc-marion-vale",
+        "text": "She turns. \"The creditors take the house. You scatter. Everyone goes their own way.\" She folds her arms. \"I have a list of what we sell first. And a route out of Valdenmoor that avoids the Compact checkpoints.\" She pauses. \"I'm not saying we use it. I'm saying I have it.\"",
+        "choices": [
+          {
+            "id": "marion-choice-debt-relieved",
+            "label": "\"That's... actually a relief.\"",
+            "nextNodeId": "marion-node-debt-plan-c",
+            "outcome": {
+              "type": "loyalty",
+              "value": 6
+            }
+          },
+          {
+            "id": "marion-choice-debt-wont-happen",
+            "label": "\"It won't come to that.\"",
+            "nextNodeId": "marion-node-debt-optimist-c"
+          }
+        ]
+      },
+      {
+        "id": "marion-node-debt-stop-b",
+        "npcId": "npc-marion-vale",
+        "text": "She nods once. She turns back to the window. Whatever she had planned stays unspoken. But you get the sense she's already done the thinking — she just won't burden you with it yet.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-debt-plan-c",
+        "npcId": "npc-marion-vale",
+        "text": "\"Good.\" She unfolds her arms. \"Then stop looking at the floor and do something.\" It is, you realize, encouragement.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-debt-optimist-c",
+        "npcId": "npc-marion-vale",
+        "text": "Marion looks at you for a long moment. \"No,\" she says quietly. \"It might.\" She doesn't press it. The route stays in her head. She hopes she never needs it.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-renown-intro",
+        "npcId": "npc-marion-vale",
+        "text": "Marion sets a cup of tea in front of you without being asked. She does this rarely. \"There are people in the market who step aside when I say the house name,\" she says. \"It's new.\"",
+        "choices": [
+          {
+            "id": "marion-choice-renown-earned",
+            "label": "\"We earned it.\"",
+            "nextNodeId": "marion-node-renown-earned-a"
+          },
+          {
+            "id": "marion-choice-renown-careful",
+            "label": "\"Then we need to be careful. Visibility cuts both ways.\"",
+            "nextNodeId": "marion-node-renown-careful-a",
+            "outcome": {
+              "type": "loyalty",
+              "value": 5
+            }
+          },
+          {
+            "id": "marion-choice-renown-shrug",
+            "label": "\"Does it matter?\"",
+            "nextNodeId": "marion-node-renown-shrug-a"
+          }
+        ]
+      },
+      {
+        "id": "marion-node-renown-earned-a",
+        "npcId": "npc-marion-vale",
+        "text": "Marion picks up her own cup. \"Yes,\" she says. She does not often say things like this plainly. \"We did.\" She looks out the window at the street below. The cup is warm in both their hands.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-renown-careful-a",
+        "npcId": "npc-marion-vale",
+        "text": "Marion looks at you with something that is not quite surprise. \"Yes.\" She sits down. \"I've already started thinking about who might want to test it.\" She opens the ledger to a different page — names, not numbers. \"I'll keep watching.\"",
+        "choices": []
+      },
+      {
+        "id": "marion-node-renown-shrug-a",
+        "npcId": "npc-marion-vale",
+        "text": "Marion considers this. \"It matters because people behave differently around names they respect.\" She pauses. \"Or fear. We should decide which we want to be.\" She does not push you to answer now.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-trust-intro",
+        "npcId": "npc-marion-vale",
+        "text": "Marion finds you before supper. She has a question — you can tell by the way she's standing, hands clasped behind her back. \"Can I ask you something that isn't about the household?\"",
+        "choices": [
+          {
+            "id": "marion-choice-trust-yes",
+            "label": "\"Ask.\"",
+            "nextNodeId": "marion-node-trust-ask-a",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-marion-vale",
+              "value": 50
+            }
+          },
+          {
+            "id": "marion-choice-trust-later",
+            "label": "\"Not now, Marion.\"",
+            "nextNodeId": "marion-node-trust-later-a"
+          }
+        ]
+      },
+      {
+        "id": "marion-node-trust-ask-a",
+        "npcId": "npc-marion-vale",
+        "text": "She takes a breath. \"Do you actually want this? The house, the debt, all of it. Or did you just find yourself here and haven't found a reason to leave yet?\" She is watching your face closely. She will know if you lie.",
+        "choices": [
+          {
+            "id": "marion-choice-trust-want-it",
+            "label": "\"I want it. I'm just not sure how yet.\"",
+            "nextNodeId": "marion-node-trust-honest-b",
+            "outcome": {
+              "type": "loyalty",
+              "value": 8
+            }
+          },
+          {
+            "id": "marion-choice-trust-found-here",
+            "label": "\"Honestly? I found myself here.\"",
+            "nextNodeId": "marion-node-trust-found-b",
+            "outcome": {
+              "type": "loyalty",
+              "value": 5
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-trust-later-a",
+        "npcId": "npc-marion-vale",
+        "text": "Marion nods. \"Of course.\" She does not ask again. The question will wait. She hopes the answer will still be worth hearing when you're ready.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-trust-honest-b",
+        "npcId": "npc-marion-vale",
+        "text": "Marion is quiet for a moment. \"Good,\" she says finally. \"That's the right answer. The ones who are certain usually aren't.\" She unclasp her hands. Something in her has settled. \"Supper in an hour.\"",
+        "choices": []
+      },
+      {
+        "id": "marion-node-trust-found-b",
+        "npcId": "npc-marion-vale",
+        "text": "She considers this for a long moment. \"Most people are where they are because they found themselves there.\" She looks out toward the front door. \"The difference is what they do about it.\" She leaves the question open. You know which side of it she's on.",
         "choices": []
       }
     ]

@@ -1,5 +1,13 @@
 import { z } from 'zod'
 
+export const dialogueConditionSchema = z
+  .object({
+    type: z.enum(['dayMin', 'dayMax', 'debtPaid', 'minRenown', 'minNpcTrust', 'minNpcLoyalty']),
+    value: z.union([z.number(), z.boolean()]),
+    npcId: z.string().optional(),
+  })
+  .strict()
+
 export const dialogueOutcomeSchema = z
   .object({
     type: z.enum(['loyalty', 'mainQuestHint', 'standing']),
@@ -13,6 +21,7 @@ export const dialogueChoiceSchema = z
     label: z.string().min(1),
     nextNodeId: z.string().nullable(),
     outcome: dialogueOutcomeSchema.optional(),
+    condition: dialogueConditionSchema.optional(),
   })
   .strict()
 
@@ -34,6 +43,7 @@ export const dialogueTreeSchema = z
   })
   .strict()
 
+export type DialogueCondition = z.infer<typeof dialogueConditionSchema>
 export type DialogueOutcome = z.infer<typeof dialogueOutcomeSchema>
 export type DialogueChoice = z.infer<typeof dialogueChoiceSchema>
 export type DialogueNode = z.infer<typeof dialogueNodeSchema>

@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router-dom'
 
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import type { DialogueChoice } from '../../domain/dialogue/contracts'
+import type { DialogueChoice, DialogueCondition } from '../../domain/dialogue/contracts'
 
 export function DialogueScreen() {
   const dispatch = useAppDispatch()
@@ -17,6 +18,26 @@ export function DialogueScreen() {
     : null
 
   const npcDef = tree ? contentCatalog.npcsById.get(tree.npcId) : null
+
+  function meetsCondition(cond: DialogueCondition): boolean {
+    switch (cond.type) {
+      case 'dayMin': return gameState.day >= (cond.value as number)
+      case 'dayMax': return gameState.day <= (cond.value as number)
+      case 'debtPaid': return gameState.debtPaid === (cond.value as boolean)
+      case 'minRenown': return gameState.playerCharacter.renown >= (cond.value as number)
+      case 'minNpcTrust': {
+        if (!cond.npcId) return true
+        const key = buildRelationshipKey('player', cond.npcId)
+        return (gameState.relationships[key]?.trust ?? 0) >= (cond.value as number)
+      }
+      case 'minNpcLoyalty': {
+        if (!cond.npcId) return true
+        const key = buildRelationshipKey('player', cond.npcId)
+        return (gameState.relationships[key]?.loyalty ?? 0) >= (cond.value as number)
+      }
+      default: return true
+    }
+  }
 
   function handleLeave() {
     dispatch(gameActions.endDialogue())
@@ -58,7 +79,8 @@ export function DialogueScreen() {
   }
 
   const portraitId = tree.npcId.replace('npc-', '')
-  const isEndNode = node.choices.length === 0
+  const visibleChoices = node.choices.filter((c) => !c.condition || meetsCondition(c.condition))
+  const isEndNode = visibleChoices.length === 0
 
   return (
     <section className="screen-panel">
@@ -127,7 +149,7 @@ export function DialogueScreen() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {!isEndNode &&
-              node.choices.map((choice) => (
+              visibleChoices.map((choice) => (
                 <button
                   key={choice.id}
                   className="action-button"
