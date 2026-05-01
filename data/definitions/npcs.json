@@ -101,7 +101,7 @@
     "id": "npc-verek-holst",
     "name": "Verek Holst",
     "origin": "Civic Quarter",
-    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce \u2014 which makes him reliable and irritating in equal measure.",
+    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce — which makes him reliable and irritating in equal measure.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-civic-compact",
@@ -150,7 +150,7 @@
     "id": "npc-sable-wrent",
     "name": "Sable Wrent",
     "origin": "Ironworks",
-    "background": "Lost two fingers on a wall-repair crew eight years ago \u2014 League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
+    "background": "Lost two fingers on a wall-repair crew eight years ago — League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -198,7 +198,7 @@
     "id": "npc-aldric-vane",
     "name": "Aldric Vane",
     "origin": "Gilded Heights",
-    "background": "Second son of a minor Court house that no longer exists \u2014 lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
+    "background": "Second son of a minor Court house that no longer exists — lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": null,
@@ -289,7 +289,7 @@
     "allowedTitleIds": [
       "title-quartermaster"
     ],
-    "motivation": "To keep moving. The packages, the routes, the contacts \u2014 these are just the mechanism."
+    "motivation": "To keep moving. The packages, the routes, the contacts — these are just the mechanism."
   },
   {
     "id": "npc-oswin-farr",
@@ -392,7 +392,7 @@
     "id": "npc-tav",
     "name": "Tav",
     "origin": "The Warrens",
-    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract \u2014 limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
+    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract — limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": "faction-restored",
@@ -441,7 +441,7 @@
     "id": "npc-maret-sunne",
     "name": "Maret Sunne",
     "origin": "Civic Quarter",
-    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt \u2014 she is precise about the difference between what the rules say and what actually happens.",
+    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt — she is precise about the difference between what the rules say and what actually happens.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -489,7 +489,7 @@
     "id": "npc-rutha-kael",
     "name": "Rutha Kael",
     "origin": "Thornwall Approach",
-    "background": "Survived the Thornwall Incident \u2014 the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
+    "background": "Survived the Thornwall Incident — the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": null,
@@ -538,7 +538,7 @@
     "id": "npc-lirien-ashcroft",
     "name": "Lirien Ashcroft",
     "origin": "Gilded Heights",
-    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago \u2014 her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
+    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago — her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -627,7 +627,7 @@
       "zeal": 0
     },
     "allowedTitleIds": [],
-    "motivation": "Unknown. Rumoured to be involved with the Pale Court \u2014 or captured by them."
+    "motivation": "Unknown. Rumoured to be involved with the Pale Court — or captured by them."
   },
   {
     "id": "npc-garet-doyle",
@@ -675,7 +675,8 @@
       "vanity": 20,
       "zeal": 15
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To keep The Ashen Cup standing. The ledger is insurance. The drinks are cover."
   },
   {
     "id": "npc-sister-vael",
@@ -723,14 +724,15 @@
       "vanity": 10,
       "zeal": 30
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To know things before they become crises. She does not consider this surveillance."
   },
   {
     "id": "npc-torvald-messe",
     "name": "Torvald Messe",
     "npcType": "world",
     "districtId": "district-harbor",
-    "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
+    "description": "Guild registrar. Officious by nature, he can unlock contract access — for a price.",
     "origin": "Harbor Ward",
     "background": "Torvald has processed guild registrations for the Compact for fifteen years. He knows every loophole and enjoys enforcing the ones that hurt.",
     "rarity": "common",
@@ -771,7 +773,8 @@
       "vanity": 60,
       "zeal": 35
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To ensure the process is followed. He is aware this makes him useful to very different people."
   },
   {
     "id": "npc-lira-ashcroft",
@@ -780,7 +783,7 @@
     "districtId": "district-harbor",
     "description": "Black market fence operating from behind a legitimate spice stall.",
     "origin": "Harbor Ward",
-    "background": "Lira\u2019s spice stall smells of cardamom and old money. What moves through the back room has no smell at all.",
+    "background": "Lira’s spice stall smells of cardamom and old money. What moves through the back room has no smell at all.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": null,
@@ -819,7 +822,8 @@
       "vanity": 45,
       "zeal": 20
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To remain exactly where she is, doing exactly what she does. The question is who lets her."
   },
   {
     "id": "npc-bog",
@@ -867,7 +871,8 @@
       "vanity": 15,
       "zeal": 30
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To keep the docks running. He has opinions about who deserves to benefit from that."
   },
   {
     "id": "npc-fenwick-pale",
@@ -915,7 +920,8 @@
       "vanity": 50,
       "zeal": 15
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To keep the routes open. He will not say for whom, only that the list is longer than it looks."
   },
   {
     "id": "npc-the-wren",
@@ -924,7 +930,7 @@
     "districtId": "district-the-warrens",
     "description": "Nameless information broker. Deals only in secrets.",
     "origin": "Unknown",
-    "background": "No one knows The Wren\u2019s real name, face, or history. Only that they know yours.",
+    "background": "No one knows The Wren’s real name, face, or history. Only that they know yours.",
     "rarity": "rare",
     "status": "criminal",
     "factionAffinityId": null,
@@ -963,7 +969,8 @@
       "vanity": 15,
       "zeal": 20
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "Unknown. This is the point."
   },
   {
     "id": "npc-osanna-cray",
@@ -1011,7 +1018,8 @@
       "vanity": 25,
       "zeal": 20
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To stay far enough from the Court that what she knows remains a shield and not a liability."
   },
   {
     "id": "npc-cutter",
@@ -1059,7 +1067,8 @@
       "vanity": 15,
       "zeal": 30
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To find the thing that makes it worth everything that came before. He is still looking."
   },
   {
     "id": "npc-old-maret",
@@ -1107,14 +1116,15 @@
       "vanity": 10,
       "zeal": 25
     },
-    "allowedTitleIds": []
+    "allowedTitleIds": [],
+    "motivation": "To outlast it. She has outlasted everything else."
   },
   {
     "id": "npc-enemy-harlen-voss",
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "A Collectors enforcer who has spent fifteen years ensuring debts are paid \u2014 or that the consequences of not paying them are instructive. He does not distinguish between the debt and the person who owes it. Both are property until settled.",
+    "background": "A Collectors enforcer who has spent fifteen years ensuring debts are paid — or that the consequences of not paying them are instructive. He does not distinguish between the debt and the person who owes it. Both are property until settled.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -1161,7 +1171,7 @@
     "name": "The Dockmaster",
     "npcType": "enemy",
     "origin": "Harbor Ward",
-    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut \u2014 in coin, in silence, or in favors owed. He considers this fair market rate.",
+    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut — in coin, in silence, or in favors owed. He considers this fair market rate.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": "faction-civic-compact",
@@ -1208,7 +1218,7 @@
     "name": "Lady Sorn",
     "npcType": "enemy",
     "origin": "Gilded Heights",
-    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
+    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest — quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -1355,7 +1365,7 @@
     "npcType": "story",
     "districtId": "district-the-pale",
     "origin": "The Pale",
-    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly \u2014 but not entirely freely.",
+    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly — but not entirely freely.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-tallow-ring",
