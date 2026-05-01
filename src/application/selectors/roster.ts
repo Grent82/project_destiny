@@ -1,14 +1,16 @@
+import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 
-export function selectRosterEntries(state: RootState) {
-  return state.game.roster.map((npc) => {
-    const def = contentCatalog.npcsById.get(npc.npcId)
-      ?? contentCatalog.enemyNpcsById.get(npc.npcId)
+export const selectRosterEntries = createSelector(
+  (state: RootState) => state.game.roster,
+  (roster) => roster.map((npc) => {
+    const npcDef = contentCatalog.npcsById.get(npc.npcId)
+    const def = npcDef ?? contentCatalog.enemyNpcsById.get(npc.npcId)
     return {
       npcId: npc.npcId,
       name: def?.name ?? npc.npcId,
-      status: (def as { status?: string })?.status ?? 'operative',
+      status: npcDef?.status ?? 'operative',
       assignment: npc.assignment,
       activeTitle: npc.activeTitle,
       health: npc.states.health,
@@ -19,8 +21,8 @@ export function selectRosterEntries(state: RootState) {
       loyalty: npc.traits.loyalty,
       skills: npc.skills,
     }
-  })
-}
+  }),
+)
 
 export function selectRosterDetail(state: RootState, npcId: string) {
   const runtime = state.game.roster.find((entry) => entry.npcId === npcId)
