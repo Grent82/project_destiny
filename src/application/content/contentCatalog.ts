@@ -10,6 +10,7 @@ import items from '../../../data/definitions/items.json'
 import missions from '../../../data/definitions/missions.json'
 import npcs from '../../../data/definitions/npcs.json'
 import questsData from '../../../data/definitions/quests.json'
+import rumorsData from '../../../data/definitions/rumors.json'
 import shops from '../../../data/definitions/shops.json'
 import titlesData from '../../../data/definitions/titles.json'
 import { z } from 'zod'
@@ -93,6 +94,8 @@ export const contentCatalog = {
       parsedPois.filter((p) => p.districtId === districtId),
     ])
   ),
+  rumors: rumorsData as string[],
+  districtNameToId: new Map(parsedDistricts.map((d) => [d.name, d.id])),
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {

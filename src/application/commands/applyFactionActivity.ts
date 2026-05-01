@@ -1,22 +1,6 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
-import { getQuestTemplates } from '../content/contentCatalog'
-
-const FACTION_IDS = [
-  'faction-civic-compact',
-  'faction-gilded-court',
-  'faction-foundry-league',
-  'faction-tallow-ring',
-  'faction-restored',
-]
-
-const FACTION_AGENDA_MESSAGES: Record<string, string> = {
-  'faction-civic-compact': 'The Collectors updated their ledgers. Three new accounts flagged for collection.',
-  'faction-gilded-court': 'The Iron Compact posted new contract boards in the Docks. Rates competitive.',
-  'faction-foundry-league': 'A Pale Court courier was seen near the old annex. No message delivered.',
-  'faction-tallow-ring': "The Tangle's network shifted overnight. Two safe-houses changed hands.",
-  'faction-restored': 'Ashborn markings appeared on a warehouse wall in the Ashfields.',
-}
+import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 
 const TENSION_DECAY_TARGET = 30
 const TENSION_DRIFT = 2
@@ -49,10 +33,13 @@ export function applyFactionActivity(state: GameState): GameState {
   let next = state
   const currentDay = next.day
 
-  // Step 9b: Faction daily agenda log
-  const todayFactionId = FACTION_IDS[currentDay % FACTION_IDS.length]!
-  const agendaMsg = FACTION_AGENDA_MESSAGES[todayFactionId] ?? `${todayFactionId} acted today.`
-  next = appendActivityLogEntry(next, 'system', agendaMsg)
+  // Step 9b: Faction daily agenda log — rotate through factions using data-driven hooks
+  const factions = contentCatalog.factions
+  const todayFaction = factions[currentDay % factions.length]
+  if (todayFaction) {
+    const agendaMsg = todayFaction.dailyAgendaHook ?? `${todayFaction.name} acted today.`
+    next = appendActivityLogEntry(next, 'system', agendaMsg)
+  }
 
   // Step 9c: District tension update
   const failedDistrictIds = new Set<string>()

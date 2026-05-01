@@ -5,40 +5,6 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { getJobForNpc } from '../content/jobCatalog'
 
-const NPC_WORLD_RUMOR_SNIPPETS = [
-  'someone in the Merchant Guild is doctoring their ledgers.',
-  'a shipment of arms was diverted from the docks last night.',
-  'the city watch is being paid to look the other way in the Warrens.',
-  'a noble heir is seeking quiet passage out of the city.',
-]
-
-const DISTRICT_HINT_TO_ID: Record<string, string> = {
-  'Harbor Ward': 'district-harbor',
-  'Civic Quarter': 'district-civic-quarter',
-  'The Pale': 'district-the-pale',
-  'Ironworks': 'district-ironworks',
-  'Gilded Heights': 'district-gilded-heights',
-  'The Warrens': 'district-the-warrens',
-  'The Hollows': 'district-the-hollows',
-}
-
-const FACTION_IDS = [
-  'faction-civic-compact',
-  'faction-gilded-court',
-  'faction-foundry-league',
-  'faction-tallow-ring',
-  'faction-restored',
-] as const
-
-const DISTRICT_FACTION_MAP: Record<string, string> = {
-  'district-the-pale': 'faction-gilded-court',
-  'district-ironworks': 'faction-foundry-league',
-  'district-harbor': 'faction-civic-compact',
-  'district-the-warrens': 'faction-tallow-ring',
-  'district-the-hollows': 'faction-restored',
-  'district-gilded-heights': 'faction-gilded-court',
-}
-
 type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks'
 
 /** Step 9a: NPC world agency — working NPCs shape the world through their actions. */
@@ -51,7 +17,8 @@ export function applyNpcAgency(state: GameState): GameState {
 
     const job = getJobForNpc(npc.skills as Record<string, number>)
     const district = job.districtHint
-    const districtId = DISTRICT_HINT_TO_ID[district] ?? `district-${district.toLowerCase().replace(/\s+/g, '-')}`
+    const districtId = contentCatalog.districtNameToId.get(district)
+      ?? `district-${district.toLowerCase().replace(/\s+/g, '-')}`
     const npcName = npc.name
 
     const isReckless = npc.traits.ruthlessness > 60 || npc.traits.prudence < 40
@@ -71,7 +38,8 @@ export function applyNpcAgency(state: GameState): GameState {
     afterEvents = { ...afterEvents, relationships: { ...afterEvents.relationships } }
 
     if (action === 'rumor') {
-      const snippet = NPC_WORLD_RUMOR_SNIPPETS[Math.floor(Math.random() * NPC_WORLD_RUMOR_SNIPPETS.length)]!
+      const rumors = contentCatalog.rumors
+      const snippet = rumors[Math.floor(Math.random() * rumors.length)]!
       afterEvents = appendActivityLogEntry(
         afterEvents,
         'system',
@@ -93,7 +61,7 @@ export function applyNpcAgency(state: GameState): GameState {
         }
       }
       if (isReckless) {
-        const affectedFaction = DISTRICT_FACTION_MAP[districtId]
+        const affectedFaction = contentCatalog.districtsById.get(districtId)?.controllingFactionId
         if (affectedFaction && afterEvents.factionStandings[affectedFaction] !== undefined) {
           afterEvents = {
             ...afterEvents,
@@ -111,7 +79,8 @@ export function applyNpcAgency(state: GameState): GameState {
         `${npcName} made a useful contact in ${district}. A new opportunity may follow.`,
       )
     } else if (action === 'faction_favor') {
-      const factionId = FACTION_IDS[Math.floor(Math.random() * FACTION_IDS.length)]!
+      const factionIds = contentCatalog.factions.map((f) => f.id)
+      const factionId = factionIds[Math.floor(Math.random() * factionIds.length)]!
       const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
       const delta = 1 + Math.floor(Math.random() * 2)
       if (afterEvents.factionStandings[factionId] !== undefined) {

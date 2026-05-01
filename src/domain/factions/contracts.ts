@@ -24,6 +24,7 @@ export const factionDefinitionSchema = z
     description: z.string().min(1),
     territory: z.array(entityIdSchema),
     tags: z.array(z.string().min(1)).default([]),
+    dailyAgendaHook: z.string().optional(),
   })
   .strict()
 
