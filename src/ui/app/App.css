@@ -866,6 +866,26 @@ strong { color: var(--text-secondary); }
   color: #fde68a;
 }
 
+.badge-story {
+  background: rgba(167, 139, 250, 0.2);
+  color: #ddd6fe;
+  letter-spacing: 0.03em;
+}
+
+.mission-row--story {
+  border-color: rgba(167, 139, 250, 0.35);
+  background: rgba(167, 139, 250, 0.05);
+}
+
+.quest-opening-text {
+  font-style: italic;
+  color: var(--text-secondary);
+  border-left: 2px solid rgba(167, 139, 250, 0.4);
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
 .hire-badge--combat {
   background: rgba(251, 146, 60, 0.18);
   color: #fed7aa;

@@ -53,11 +53,14 @@ export function ContractBoardScreen() {
             <p className="summary">No contracts currently in progress. Explore the districts to find work.</p>
           ) : (
             <div className="mission-list">
-              {activeQuests.map(({ runtime, template }) => (
-                <div key={runtime.questId} className="mission-row">
+              {activeQuests.map(({ runtime, template }) => {
+                const isStory = template?.questType === 'story'
+                return (
+                <div key={runtime.questId} className={`mission-row${isStory ? ' mission-row--story' : ''}`}>
                   <div className="mission-row-header">
                     <strong>{template?.title ?? runtime.questId}</strong>
-                    <FactionBadge factionId={template?.employerFactionId ?? null} />
+                    {isStory && <span className="badge badge-story">◆ House Obligation</span>}
+                    {!isStory && <FactionBadge factionId={template?.employerFactionId ?? null} />}
                     <span className={`badge ${runtime.objectiveMet ? 'badge-positive' : 'badge-warning'}`}>
                       {runtime.objectiveMet ? 'Objective met' : 'Active'}
                     </span>
@@ -65,12 +68,20 @@ export function ContractBoardScreen() {
                       <span className="badge">{template.riskLevel} risk</span>
                     )}
                   </div>
+                  {isStory && template?.openingText && (
+                    <p className="quest-briefing quest-opening-text">
+                      {template.openingText}
+                    </p>
+                  )}
                   {template?.flavorNote && (
                     <p className="quest-briefing" style={{ fontStyle: 'italic', opacity: 0.7 }}>
                       {template.flavorNote}
                     </p>
                   )}
-                  {template?.briefing && (
+                  {template?.briefing && !isStory && (
+                    <p className="quest-briefing">{template.briefing}</p>
+                  )}
+                  {isStory && !template?.openingText && template?.briefing && (
                     <p className="quest-briefing">{template.briefing}</p>
                   )}
                   <div className="quest-meta">
@@ -106,7 +117,8 @@ export function ContractBoardScreen() {
                     </button>
                   )}
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </article>
