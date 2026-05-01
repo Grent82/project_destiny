@@ -1,5 +1,5 @@
-import { getQuestTemplates } from '../content/contentCatalog'
-import { contentCatalog } from '../content/contentCatalog'
+import { createSelector } from '@reduxjs/toolkit'
+import { getQuestTemplates, contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
 
 export const selectAvailableQuests = (state: RootState) =>
@@ -15,11 +15,14 @@ export const selectAvailableQuests = (state: RootState) =>
     return true
   })
 
-export const selectActiveQuests = (state: RootState) =>
-  state.game.activeQuests.map((aq) => ({
-    runtime: aq,
-    template: getQuestTemplates().find((q) => q.id === aq.questId) ?? null,
-  }))
+export const selectActiveQuests = createSelector(
+  (state: RootState) => state.game.activeQuests,
+  (activeQuests) =>
+    activeQuests.map((aq) => ({
+      runtime: aq,
+      template: getQuestTemplates().find((q) => q.id === aq.questId) ?? null,
+    })),
+)
 
 export const selectCompletedQuestIds = (state: RootState) => state.game.completedQuestIds
 

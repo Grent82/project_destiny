@@ -1,0 +1,102 @@
+import type { GameState, NpcStatus } from '../../domain'
+import { appendActivityLogEntry } from './activityLog'
+import { applyRelationshipDelta } from './adjustRelationship'
+
+export function wageForStatus(status: NpcStatus): number {
+  switch (status) {
+    case 'retainer':
+      return 4
+    case 'mercenary':
+      return 8
+    case 'citizen':
+      return 5
+    case 'servant':
+      return 2
+    case 'apprentice':
+      return 3
+    case 'noble':
+      return 14
+    case 'criminal':
+      return 5
+    case 'prisoner':
+      return 0
+    case 'family':
+      return 0
+  }
+}
+
+/** Steps 1, 1b, 1c: wage deduction, loyalty decay, unrest effect on loyalty. */
+export function applyWages(state: GameState): GameState {
+  let next = state
+
+  // Step 1: Wage deduction
+  next = { ...next, relationships: { ...next.relationships } }
+  for (const rosterEntry of state.roster) {
+    const wage = wageForStatus(rosterEntry.status)
+    if (wage === 0) continue
+
+    if (next.money >= wage) {
+      next = { ...next, money: next.money - wage }
+      // Paid on time → loyalty +2
+      applyRelationshipDelta(next, 'player', rosterEntry.npcId, 'loyalty', 2)
+    } else {
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === rosterEntry.npcId
+            ? { ...r, wagesOwedDays: r.wagesOwedDays + 1 }
+            : r,
+        ),
+      }
+      next = appendActivityLogEntry(
+        next,
+        'economy',
+        `${rosterEntry.name} draws no wages today. The debt grows.`,
+      )
+    }
+  }
+
+  // Step 1b: Loyalty decay for unpaid NPCs (empathy trait reduces decay rate by 15%)
+  const loyaltyDecay = next.playerCharacter.traits.empathy > 60 ? 13 : 15
+  for (const npc of next.roster) {
+    if (npc.wagesOwedDays >= 2) {
+      const newLoyalty = Math.max(0, npc.traits.loyalty - loyaltyDecay)
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? { ...r, traits: { ...r.traits, loyalty: newLoyalty } }
+            : r,
+        ),
+      }
+      const relResult = applyRelationshipDelta(next, 'player', npc.npcId, 'loyalty', -5)
+      if (newLoyalty < 20) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${npc.name}'s loyalty is failing. Unpaid debts leave marks on the house.`,
+        )
+      } else if (relResult.significant) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${npc.name} grows resentful. The unpaid debt strains their loyalty.`,
+        )
+      }
+    }
+  }
+
+  // Step 1c: Unrest effect on loyalty — high city unrest unsettles all roster NPCs
+  if (next.cityDials.unrest >= 70) {
+    next = {
+      ...next,
+      roster: next.roster.map((npc) => ({
+        ...npc,
+        traits: { ...npc.traits, loyalty: Math.max(0, npc.traits.loyalty - 1) },
+      })),
+    }
+    next = appendActivityLogEntry(next, 'system', 'Unrest in the city unsettles your household.')
+  }
+
+  return next
+}

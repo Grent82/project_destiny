@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { ActiveCombatState, CombatantState } from '../../domain'
+import type { ActiveCombatState, CombatantState, GameState } from '../../domain'
 
 // Mock contentCatalog to avoid the pre-existing district schema validation error
 vi.mock('../content/contentCatalog', () => ({
@@ -233,7 +233,7 @@ describe('combat resolution with equipment', () => {
   })
 
   it('unarmed fallback: combat starts and produces log entries', () => {
-    const state = startCombatEncounter(BASE_GAME_STATE as unknown as Parameters<typeof startCombatEncounter>[0])
+    const state = startCombatEncounter(BASE_GAME_STATE as unknown as GameState)
     expect(state.activeCombat).not.toBeNull()
     const nextState = performCombatAction(state, 'attack')
     expect(nextState.activeCombat?.log.length).toBeGreaterThan(
@@ -249,7 +249,7 @@ describe('combat resolution with equipment', () => {
     }
     // Force hit by mocking Math.random to low value
     vi.spyOn(Math, 'random').mockReturnValue(0.01)
-    const nextState = performCombatAction(state as unknown as unknown as Parameters<typeof performCombatAction>[0], 'attack')
+    const nextState = performCombatAction(state as unknown as GameState, 'attack')
     const enemy = nextState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
     expect(enemy?.health).toBeLessThan(50)
   })
@@ -279,7 +279,7 @@ describe('combat resolution with equipment', () => {
     })
 
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     // Stagger is consumed in the same round: enemy loses their turn and staggered resets to false
@@ -301,7 +301,7 @@ describe('combat resolution with equipment', () => {
 
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     // Find ally's attack log entry
@@ -315,7 +315,7 @@ describe('combat resolution with equipment', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.01)
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     // Find the ally's attack log entry specifically (last log may be stagger/reeling message)
@@ -329,7 +329,7 @@ describe('combat resolution with equipment', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.99)  // always miss
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
+      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     const lastLog = nextState.activeCombat?.log.at(-1)?.summary ?? ''

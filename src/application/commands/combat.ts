@@ -490,7 +490,7 @@ function resolveEnemyTurns(encounter: ActiveCombatState) {
         return 'guard'
       }
       // Ranged enemies at close range: retreat to get effective range
-      if (nextEncounter.range === 'close' && activeCombatant.effectiveRange === 'ranged' && Math.random() < 0.4) {
+      if (nextEncounter.range === 'close' && activeCombatant.effectiveRange === 'distant' && Math.random() < 0.4) {
         return 'retreat'
       }
       return 'attack'

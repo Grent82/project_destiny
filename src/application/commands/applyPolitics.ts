@@ -1,0 +1,148 @@
+import type { GameState } from '../../domain'
+import { appendActivityLogEntry } from './activityLog'
+import { getCouncilVoteTemplates } from '../content/contentCatalog'
+import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
+
+/** Steps 7, 7b, 7c, 7d, 7e, 7f: council votes, faction pressure, rival orgs, city stability, debt. */
+export function applyPolitics(state: GameState): GameState {
+  let next = state
+  const currentDay = next.day
+
+  // Step 7: Periodic council vote — fire one every 5 days if none active
+  if (currentDay % 5 === 0 && next.activeCouncilVotes.length === 0) {
+    const templates = getCouncilVoteTemplates()
+    if (templates.length > 0) {
+      const template = templates[Math.floor(Math.random() * templates.length)]!
+      next = {
+        ...next,
+        activeCouncilVotes: [
+          ...next.activeCouncilVotes,
+          {
+            ...template,
+            id: `${template.id}-day-${currentDay}`,
+            expiresOnDay: currentDay + 7,
+            outcome: 'pending' as const,
+          },
+        ],
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `The council convenes. A vote is called: "${template.title}".`,
+      )
+    }
+  }
+
+  // Step 7b: Faction pressure escalation
+  next = {
+    ...next,
+    factionStates: next.factionStates.map((factionState) => {
+      const standing = next.factionStandings[factionState.factionId] ?? 0
+      if (standing < -40) {
+        return { ...factionState, activePressure: Math.min(100, factionState.activePressure + 5) }
+      }
+      return { ...factionState, activePressure: Math.max(0, factionState.activePressure - 2) }
+    }),
+  }
+  for (const factionState of next.factionStates) {
+    const standing = next.factionStandings[factionState.factionId] ?? 0
+    if (standing < -40 && factionState.activePressure >= 60) {
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${factionState.factionId.replace('faction-', '')} pressure on the house is mounting.`,
+      )
+    }
+  }
+
+  // Step 7c: Rival org simulation
+  const controlAdj = next.cityDials.control >= 60 ? 0.05 : next.cityDials.control <= 30 ? -0.05 : 0
+  const rivalActions = simulateRivalOrgs(next, [Math.random() + controlAdj, Math.random() + controlAdj])
+  next = applyRivalActions(next, rivalActions)
+
+  // Step 7d: City stability crisis event
+  if ((next.cityStability ?? 60) < 30) {
+    const crisisEventId = 'event-city-crisis'
+    const alreadyPending = next.pendingEvents.some((e) => e.eventId === crisisEventId)
+    const alreadyFired = next.lastFiredDay[crisisEventId] !== undefined
+    if (!alreadyPending && !alreadyFired) {
+      next = {
+        ...next,
+        pendingEvents: [...next.pendingEvents, { eventId: crisisEventId, firedOnDay: next.day }],
+        lastFiredDay: { ...next.lastFiredDay, [crisisEventId]: next.day },
+      }
+    }
+  }
+
+  // Step 7e: Household antagonist faction notice — fires every 10 days if standing > 30
+  if ((next.factionStandings['faction-gilded-court'] ?? -20) > 30 && currentDay % 10 === 0) {
+    const noticeEventId = 'event-gilded-notice'
+    const alreadyPending = next.pendingEvents.some((e) => e.eventId === noticeEventId)
+    if (!alreadyPending) {
+      next = {
+        ...next,
+        pendingEvents: [...next.pendingEvents, { eventId: noticeEventId, firedOnDay: next.day }],
+      }
+    }
+  }
+
+  // Step 7f: Debt interest — each unpaid day past day 15 adds 10 Marks
+  if (!next.debtPaid && next.day > 15) {
+    next = { ...next, debtAmount: next.debtAmount + 10 }
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `Interest accrues on the outstanding debt. The house now owes ${next.debtAmount} Marks.`,
+    )
+  }
+
+  // Step 7f-ii: Rival faction warning at day 20 if debt > 400 Marks remaining
+  if (!next.debtPaid && next.day === 20 && next.debtAmount > 400) {
+    const warningEventId = 'event-debt-faction-warning'
+    const alreadyPending = next.pendingEvents.some((e) => e.eventId === warningEventId)
+    if (!alreadyPending) {
+      next = {
+        ...next,
+        pendingEvents: [...next.pendingEvents, { eventId: warningEventId, firedOnDay: next.day }],
+        lastFiredDay: { ...next.lastFiredDay, [warningEventId]: next.day },
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `⚠ A courier bearing the Gilded Court seal arrives. The message is terse: the debt is noted, the deadline approaches, and patience is not unlimited. Rival factions are watching.`,
+      )
+    }
+  }
+
+  // Step 7f-iii: Debt crisis consequences
+  if (next.debtCrisisTriggered && !next.debtPaid) {
+    next = {
+      ...next,
+      factionStates: next.factionStates.map((fs) =>
+        fs.factionId === 'faction-gilded-court'
+          ? { ...fs, activePressure: Math.min(100, fs.activePressure + 10) }
+          : fs,
+      ),
+    }
+    if (next.day >= 35) {
+      const departing = next.roster.filter(
+        (npc) => npc.traits.loyalty < 40 && npc.assignment !== 'deployed',
+      )
+      for (const npc of departing) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${npc.name} has left. With the house seized and no prospects, they could not stay.`,
+        )
+      }
+      const departingIds = new Set(departing.map((n) => n.npcId))
+      next = {
+        ...next,
+        roster: next.roster.filter((n) => !departingIds.has(n.npcId)),
+        selectedSquadNpcIds: next.selectedSquadNpcIds.filter((id) => !departingIds.has(id)),
+      }
+    }
+  }
+
+  return next
+}

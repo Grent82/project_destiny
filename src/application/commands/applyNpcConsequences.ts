@@ -1,0 +1,117 @@
+import type { GameState } from '../../domain'
+import { appendActivityLogEntry } from './activityLog'
+import { applyPassiveDrift, applyProximityGains } from './adjustRelationship'
+import { evaluateNpcDeparture } from './npcDeparture'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
+
+/** Steps 5b–5d: relationship drift, ambition frustration, NPC departure/betrayal, durability warnings.
+ *  Receives the original start-of-day relationships to correctly evaluate departure risk. */
+export function applyNpcConsequences(
+  state: GameState,
+  startOfDayRelationships: GameState['relationships'],
+): GameState {
+  let next = state
+
+  // Step 5b: Passive relationship drift and proximity gains
+  next = { ...next, relationships: { ...next.relationships } }
+  applyPassiveDrift(next)
+  const deployedNpcIds = next.roster.filter((r) => r.assignment === 'deployed').map((r) => r.npcId)
+  if (deployedNpcIds.length > 0) {
+    applyProximityGains(next, deployedNpcIds)
+  }
+
+  // Step 5c-pre: Ambition frustration morale drain
+  for (const npc of next.roster) {
+    if (npc.traits.ambition > 65 && npc.activeTitle === null && npc.assignment !== 'deployed') {
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? { ...r, states: { ...r.states, morale: Math.max(0, r.states.morale - 2) } }
+            : r,
+        ),
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name}: ambition stirs without outlet. Morale suffers.`,
+      )
+    }
+  }
+
+  // Step 5c: NPC departure / betrayal check (after wages and passive drift)
+  // Use start-of-day relationships: newly-created entries from wage payment have
+  // loyalty=0 by default, which would incorrectly flag new NPCs for departure.
+  const rosterBeforeDepartures = next.roster
+  for (const npc of rosterBeforeDepartures) {
+    if (npc.assignment === 'recovering' || npc.assignment === 'assigned_title') continue
+    const relKey = buildRelationshipKey('player', npc.npcId)
+    const rel = startOfDayRelationships[relKey]
+    const result = evaluateNpcDeparture(
+      { id: npc.npcId, name: npc.name, assignment: npc.assignment, traits: { loyalty: npc.traits.loyalty } },
+      rel,
+      Math.random(),
+    )
+    if (result.type === 'departed') {
+      next = {
+        ...next,
+        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+        availableForHire: next.availableForHire.filter((o) => o.npcId !== npc.npcId),
+      }
+      next = appendActivityLogEntry(next, 'system', `${result.npcName}: ${result.reason}`)
+    } else if (result.type === 'betrayed') {
+      next = {
+        ...next,
+        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+      }
+      // Leak info to rivals — boost a hostile faction's standing
+      const hostieFactions = Object.entries(next.factionStandings)
+        .filter(([, s]) => s < -20)
+        .map(([id]) => id)
+      if (hostieFactions.length > 0) {
+        const target = hostieFactions[0]!
+        next = {
+          ...next,
+          factionStandings: {
+            ...next.factionStandings,
+            [target]: Math.min(100, (next.factionStandings[target] ?? 0) + 10),
+          },
+        }
+      }
+      next = appendActivityLogEntry(next, 'system', `${result.npcName}: ${result.consequence}`)
+      next = {
+        ...next,
+        pendingEvents: [
+          ...next.pendingEvents,
+          { eventId: 'event-npc-betrayal', firedOnDay: next.day },
+        ],
+      }
+    }
+  }
+
+  // Step 5d: Durability warnings
+  for (const npc of next.roster) {
+    const npcDur = next.equippedItemDurabilities[npc.npcId]
+    if (!npcDur) continue
+
+    if (npc.loadout.primaryWeaponId) {
+      const weaponDur = npcDur['weapon'] ?? 100
+      if (weaponDur === 0) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s weapon is broken and needs repair.`)
+      } else if (weaponDur <= 20) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s weapon needs repair.`)
+      }
+    }
+
+    if (npc.loadout.armorId) {
+      const armorDur = npcDur['armor'] ?? 100
+      if (armorDur === 0) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s armor is broken and needs repair.`)
+      } else if (armorDur <= 20) {
+        next = appendActivityLogEntry(next, 'system', `Warning: ${npc.name}'s armor needs repair.`)
+      }
+    }
+  }
+
+  return next
+}

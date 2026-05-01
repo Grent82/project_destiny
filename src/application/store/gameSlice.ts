@@ -116,7 +116,8 @@ const gameSlice = createSlice({
 
       if (nextSlot === 'morning') {
         // Crossed midnight — run full day processing via endDay
-        const afterDay = endDayCommand(state)
+        const snapshot = current(state) as GameState
+        const afterDay = endDayCommand(snapshot)
         afterDay.isFirstRun = false
         afterDay.activeQuests.forEach((q) => {
           const template = getQuestTemplates().find((t) => t.id === q.questId)
@@ -247,10 +248,10 @@ const gameSlice = createSlice({
     resolveEvent(state, action: PayloadAction<{ eventId: string; choiceId: string }>) {
       const { eventId, choiceId } = action.payload
       const template = contentCatalog.eventsById.get(eventId)
-      if (!template) return state
+      if (!template) return
 
       const choice = template.choices.find((c) => c.id === choiceId)
-      if (!choice) return state
+      if (!choice) return
 
       const next = { ...state, pendingEvents: state.pendingEvents.filter((e) => e.eventId !== eventId) }
       return applyOutcomes(next, choice.outcomes)

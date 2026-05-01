@@ -21,6 +21,7 @@ import {
   missionContractSchema,
   npcDefinitionSchema,
   shopDefinitionSchema,
+  type NpcDefinition,
 } from '../../domain'
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
 import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
@@ -112,4 +113,8 @@ export function getCouncilVoteTemplates(): CouncilVoteEvent[] {
 
 export function getDialogueTrees(): DialogueTree[] {
   return contentCatalog.dialogues
+}
+
+export function safeGetNpc(npcId: string): NpcDefinition | null {
+  return contentCatalog.npcsById.get(npcId) ?? null
 }

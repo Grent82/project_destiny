@@ -53,24 +53,25 @@ export function selectDistrictPOIs(districtId: string) {
   }
 }
 
-export function selectDistrictMapEntries(state: RootState) {
-  const currentId = state.game.currentDistrictId
-  const tension = state.game.districtTension
-  return contentCatalog.districts.map((def) => ({
-    id: def.id,
-    name: def.name,
-    controllingFactionId: def.controllingFactionId,
-    contestedByFactionIds: def.contestedByFactionIds,
-    dangerLevel: def.dangerLevel,
-    accessRestricted: def.accessRestricted,
-    narrativeSummary: def.narrativeSummary,
-    narrativeHook: def.narrativeHook,
-    hooks: def.hooks,
-    isCurrent: def.id === currentId,
-    tension: tension[def.id] ?? null,
-    worldNpcs: selectWorldNpcsByDistrict(def.id),
-    adjacentDistrictIds: def.adjacentDistrictIds,
-    borderTypes: def.borderTypes,
-    isAdjacent: currentId !== null && def.adjacentDistrictIds.includes(currentId),
-  }))
-}
+export const selectDistrictMapEntries = createSelector(
+  (state: RootState) => state.game.currentDistrictId,
+  (state: RootState) => state.game.districtTension,
+  (currentId, tension) =>
+    contentCatalog.districts.map((def) => ({
+      id: def.id,
+      name: def.name,
+      controllingFactionId: def.controllingFactionId,
+      contestedByFactionIds: def.contestedByFactionIds,
+      dangerLevel: def.dangerLevel,
+      accessRestricted: def.accessRestricted,
+      narrativeSummary: def.narrativeSummary,
+      narrativeHook: def.narrativeHook,
+      hooks: def.hooks,
+      isCurrent: def.id === currentId,
+      tension: tension[def.id] ?? null,
+      worldNpcs: selectWorldNpcsByDistrict(def.id),
+      adjacentDistrictIds: def.adjacentDistrictIds,
+      borderTypes: def.borderTypes,
+      isAdjacent: currentId !== null && def.adjacentDistrictIds.includes(currentId),
+    })),
+)
