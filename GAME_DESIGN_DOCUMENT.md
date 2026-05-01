@@ -121,7 +121,7 @@ World values affect:
 
 Relationships are not flavor-only. They are one major progression system inside a broader roleplaying simulation.
 
-The player should be able to shape:
+The player shapes:
 
 - attraction and courtship
 - trust and attachment
@@ -129,12 +129,37 @@ The player should be able to shape:
 - fertility and timing
 - children, heirs, and dynastic plans
 
-These systems should create both emotional and strategic incentives:
+These systems create both emotional and strategic incentives:
 
 - visually attractive and socially desirable characters become meaningful targets for alliance and partnership
 - strong pairings can produce stronger heirs
 - households gain long-term value through compatible traits, stable bonds, and good upbringing
 - relationship choices can conflict with faction strategy, economics, and combat readiness
+
+#### Sensual presentation as a design pillar
+
+Sensual and physical presentation is an explicit product pillar — not decorative filler. It is mechanically connected to attraction, courtship, and household systems.
+
+**Design rules:**
+
+- **Attractiveness is readable and systemic.** Each NPC has a legible appeal profile (physical appeal, social grace, faction presentation) that the player can inspect and that influences attraction outcomes. It is not a hidden variable.
+- **Presentation scales with relationship depth.** Initial portrait framing is characterful and evocative. Deeper relationship stages unlock more intimate presentation tiers. Intimacy content must be earned through gameplay — it is not front-loaded.
+- **Character drives presentation, not the reverse.** A court-affiliated negotiator, a mercenary, and a dockworker occupy different social and visual registers. Their wardrobe, posture, and styling reflect who they are in Valdenmoor. Uniform sexualization across all NPCs collapses character distinction and weakens the setting.
+- **Wardrobe is gameplay, not decoration.** Clothing choices affect appeal scores, faction perception, and social outcomes. A character styled for court access is a different tool than one styled for street-level work.
+- **Attraction should be readable before it is explicit.** Expressiveness, posture, and styling create desire before any explicit content. A strong character read at the portrait level makes later intimacy feel earned.
+
+#### Courtship as a gameplay loop
+
+Courtship is an active system with mechanical steps, not a passive affinity meter that reaches a threshold:
+
+1. **Encounter** — the player meets an NPC through hire, event, or district interaction
+2. **Assessment** — the player can view attraction and compatibility indicators
+3. **Investment** — assigning NPCs together, managing their conditions well, and responding to personal events builds relationship depth
+4. **Courtship actions** — specific interactions available at relationship milestones (shared meals, gifts, assignments that create proximity)
+5. **Pair bond** — a formalized bond state with mechanical effects on morale, loyalty, and faction standing
+6. **Household formation** — pair bond + shared quarters unlock household-level bonuses and the reproduction path
+
+Each step should have visible mechanical consequence, not just a log entry.
 
 ### 3.4 Tactical Combat
 
@@ -356,47 +381,84 @@ Relationship values influence:
 
 #### Attraction and Compatibility
 
-Attraction should be a first-class system, not hidden flavor text.
+Attraction is a first-class system with legible, inspectable values — not hidden flavor text.
 
-Recommended data:
+**Appeal profile (per NPC):**
 
-- `orientation`
-- `romanticPreferenceTags`
-- `sexualPreferenceTags`
-- `attractionBiases`
-- `fertility`
-- `pairBondStrength`
-- `jealousySensitivity`
-- `familyGoal`
+| Field | Description |
+|---|---|
+| `physicalAppeal` | 0–100. Base attractiveness. Influenced by health, hygiene, and presentation tier. |
+| `socialGrace` | 0–100. Charisma and presence in social contexts. Mapped from `presence` attribute. |
+| `wardrobeTier` | `plain` / `functional` / `refined` / `elevated` / `high-court`. Affects appeal scores and faction perception. |
+| `presentationTier` | `default` / `courtship` / `intimate`. Unlocked by relationship depth. |
+| `orientation` | Who this NPC is attracted to. |
+| `romanticPreferenceTags` | Trait-based compatibility descriptors (e.g., `dominant`, `protective`, `intellectual`). |
+| `sexualPreferenceTags` | Preference descriptors relevant to courtship and pair bond stage. |
+| `attractionBiases` | Weighted modifiers toward specific trait combinations in partners. |
+| `fertility` | 0–100. Relevant when reproduction is in scope. |
+| `pairBondStrength` | 0–100. Current depth of pair bond with another NPC or the player. |
+| `jealousySensitivity` | 0–100. How strongly this NPC reacts to romantic competition. |
+| `familyGoal` | `none` / `open` / `seeking` / `urgent`. Influences courtship responsiveness. |
 
-These values influence:
+**Compatibility score** is computed from trait overlap, `attractionBiases`, and `romanticPreferenceTags` between two NPCs (or player and NPC). It is visible to the player and affects how quickly a pair bond deepens.
 
-- who is considered desirable
-- how quickly attraction grows
-- which partnerships are stable
-- how rivalry and possessiveness emerge
-- which pairings are practical for lineage planning
+**Appeal and wardrobe mechanics:**
+
+- The player can commission or purchase wardrobe upgrades from tailors and market NPCs
+- `wardrobeTier` provides a modifier to `physicalAppeal` checks and to faction-specific social outcomes
+- A character entering a court-adjacent district in `plain` wardrobe suffers social penalties; the same character in `refined` or `elevated` wardrobe gains access to interactions not otherwise available
+- Wardrobe upgrades cost Marks and may require specific faction standing or district access
+
+**Presentation tiers:**
+
+- `default`: Standard portrait framing — fully clothed, characterful, faction-appropriate
+- `courtship`: Unlocked at pair bond stage 2 — more intimate framing, expressive, not explicit
+- `intimate`: Unlocked at pair bond stage 4 (player choice required) — fully intimate presentation
+
+Presentation tier changes are stored per relationship, not per NPC globally. An NPC in a deep bond with the player may have `intimate` tier unlocked while their world-facing presentation remains `default`.
 
 #### Reproduction and Lineage
 
-NPCs should be able to become part of family trees over time.
+NPCs become part of family trees over time. Children are a long-term roster and strategic resource — not a background event.
 
-Recommended lineage data:
+**Lineage data per NPC:**
 
-- `lineageId`
-- `parents`
-- `children`
-- `householdId`
-- `pregnancyState`
-- `upbringingFocus`
-- `inheritedPotential`
+| Field | Description |
+|---|---|
+| `lineageId` | Unique identifier for a family line. Shared by all members of the same descent. |
+| `parents` | NPC IDs of biological parents (0, 1, or 2). |
+| `children` | NPC IDs of registered children. |
+| `householdId` | Which household this NPC belongs to. Households pool bonuses. |
+| `pregnancyState` | `none` / `early` / `mid` / `late` — tracked in days. |
+| `upbringingFocus` | Trait or skill category prioritized during childhood. Affects inherited potential. |
+| `inheritedPotential` | Numeric cap on how high this NPC's skills can train. Higher-potential children have higher rarity-equivalent caps. |
 
-Lineage design rules:
+**Trait inheritance model:**
 
-- children should inherit part of their baseline potential from their parents
-- inherited outcomes should be probabilistic rather than fully deterministic
-- upbringing, health, and household quality should modify inherited potential
-- lineage systems should produce both narrative attachment and long-term roster strategy
+When two NPCs produce a child, the child's starting trait and attribute values are derived as follows:
+
+1. **Base value**: average of both parents' values for each trait and attribute
+2. **Variance**: ±15 points of random noise applied per field (Gaussian-distributed, clamped to 0–100)
+3. **Dominant trait pull**: each parent has a 30% chance to "dominant-express" a specific trait, pushing the child's value toward their own (±10 additional points toward parent's value)
+4. **Inheritance cap**: the child's `inheritedPotential` is `(parentA.rarity + parentB.rarity) / 2` rounded up to the nearest rarity tier — meaning two `uncommon` parents produce an `uncommon` child; an `uncommon` + `rare` pairing can produce a `rare` child
+
+**Upbringing modifiers:**
+
+The `upbringingFocus` set on a child NPC during their development period (tracked in game days) applies a +10 bonus to the focused skill or trait category at maturity. Upbringing focus is set by the player or the assigned household head. Better household conditions (repaired rooms, stable economy, high-morale adults) reduce variance and increase the chance of favorable dominant expression.
+
+**Breeding Register (Valdenmoor law):**
+
+- First child: free registration, no permit required
+- Second child: costs a Reproduction Permit (approximately 80–120 Marks at current market rates, sourced from the Compact or the Tallow Ring gray market)
+- Third child and beyond: heavy Compact fine or the child is subject to Compact placement assessment
+- Children born to Bound parents have no citizen status by default; a Bond-Holder may elevate them, but the decision is legally and socially loaded
+- House Valdris as a recognized (if contested) house may petition for one-child exemption on dynastic grounds — this is a narrative mechanic, not a free pass
+
+**Strategic lineage value:**
+
+- A well-bred heir with high `inheritedPotential` and a favorable `upbringingFocus` enters the roster at young adult age with better skill caps than a recruited stranger of the same rarity
+- Lineage creates long-term investment — the player must manage the conditions that produce good outcomes for years of game time
+- This is the mechanical spine of the "household" ambition: you are not just recovering a house, you are building one that outlasts the current political crisis
 
 #### Equipment and loadout
 
@@ -981,9 +1043,9 @@ The manor serves as the organizational headquarters. Its condition affects avail
 
 ### 13.3 Playability Scope
 
-The player character is present in all decisions and events. He is not yet playable in tactical combat — combat is currently managed through assigned NPCs. Direct player combat participation is a future milestone.
+The player character is present in all decisions and events. He participates in tactical combat through the `buildPlayerCombatant` system — his attributes (might, resolve, presence, perception) and skills (melee, ranged) map directly to combatant stats.
 
-Character creation (name, starting stats, trait selection) is planned but not yet implemented. Until that milestone, the protagonist defaults to the name `Valdric` if none is entered at the opening screen.
+Character creation is implemented: name, background archetype, and two personality traits are selected at the opening screen. The background archetype (The Blade, The Schemer, The Voice) pre-fills the player's attribute and skill profile. The two personality traits start at 70 (others at 35) and drive live mechanical effects — ambition adds renown on quest completion; empathy reduces NPC loyalty decay when wages lapse.
 
 ### 13.4 Player Identity Rules
 
@@ -1048,7 +1110,102 @@ In the current implementation, Marion's personal events fire based on loyalty an
 
 ---
 
-## 11. Summary
+## 15. Relationship and Lineage UI
+
+### 15.1 Attraction and Compatibility Panel
+
+Accessible from the NPC detail panel (Relations tab), the attraction view shows:
+
+- **Appeal profile**: `physicalAppeal`, `socialGrace`, `wardrobeTier` as labeled bars
+- **Compatibility score** with the player (or between two selected NPCs): a single 0–100 value with a brief text read ("Strong match", "Misaligned goals", etc.)
+- **Pair bond depth**: 0–100 bar, current stage label, and next milestone condition
+- **Presentation tier indicator**: current tier (default / courtship / intimate) and what is required to advance
+- **Jealousy and family goal**: visible flags when they are likely to affect behavior
+
+The player should never need to guess whether two characters are compatible. The UI surfaces this explicitly.
+
+### 15.2 Wardrobe Management
+
+Wardrobe is accessed from the NPC detail panel equipment section or from the House screen's wardrobe storage room (when unlocked).
+
+Interface shows:
+- Current `wardrobeTier` and its active effects (appeal modifier, faction perception modifier)
+- Available wardrobe items from inventory or stash
+- Upgrade paths and costs (Marks, faction requirements)
+
+Wardrobe items are a distinct item category. They are purchased from tailors, court-affiliated shops, or the gray market (Tallow Ring). High-tier wardrobe items require specific faction standing to source.
+
+### 15.3 Courtship Actions
+
+Courtship-specific actions appear contextually in the NPC detail panel when relationship conditions are met. They do not appear as a separate menu — they are integrated into the existing action zone.
+
+| Action | Trigger condition | Mechanical effect |
+|---|---|---|
+| Shared meal | Pair bond > 25, NPC morale > 40 | +5 pair bond, +3 morale |
+| Gift (marked item) | Any pair bond depth | +3–10 pair bond based on compatibility match |
+| Assigned quarters | House room available | Unlocks proximity bonus (+1 pair bond/day passively) |
+| Personal invitation (event) | Pair bond > 50 | Fires a personal event specific to this NPC |
+| Formal declaration | Pair bond > 75, compatibility > 60 | Advances to pair bond stage 3 |
+| Bond commitment | Pair bond stage 4 conditions met | Player-triggered story moment, unlocks intimate presentation tier and household formation |
+
+Courtship actions consume time slots and may have faction visibility consequences. A public display toward a Compact-affiliated NPC may affect standing with the Court.
+
+### 15.4 Lineage Tree
+
+The Lineage screen (accessible from the House screen) displays:
+
+- All NPCs the player has direct household relationships with
+- Parent-child links as a simple tree graph
+- Child NPCs with development stage indicators (not yet adult / young adult / adult)
+- `inheritedPotential` shown as a rarity tier badge
+- `upbringingFocus` selector for non-adult children (player or household head sets this)
+- Pregnancy state for any NPC currently carrying
+
+The lineage tree is not initially visible — it is unlocked by forming the first pair bond in the household.
+
+### 15.5 Presentation Tier Display
+
+When a player views an NPC at `courtship` or `intimate` presentation tier, the portrait display reflects this. The tier is visible as a small indicator in the portrait frame (a discrete icon — not a bold label). The player advances tiers through the relationship system, never through a separate "unlock" purchase or menu.
+
+This keeps intimate presentation integrated with the relationship system rather than purchasable content, which aligns with the design rule: intimacy content must be earned through gameplay.
+
+---
+
+## 16. Sensual Presentation — Design Rules
+
+This section is the canonical reference for sensual and intimate presentation decisions across all roles (art, writing, UI).
+
+### 16.1 What sensual presentation is
+
+Sensual presentation is how physical appeal, attraction, and intimacy are communicated to the player through portrait art, event text, and UI framing. It is a design pillar — not a feature added to an otherwise complete game.
+
+Its purpose is to make specific characters feel desirable and worth investing in, which in turn makes the attraction, courtship, and household systems feel consequential. Without it, the relationship mechanics become abstract stat management. With it, they become the emotional core of the game.
+
+### 16.2 Authoring rules (writing)
+
+- **Name the character, not the body type.** Event text describing a character's appearance should be specific to who they are — their habits, their faction context, their relationship to the player. Generic descriptions of attractiveness are weaker than specific ones.
+- **Restraint earns intensity.** A single precise sentence about how a character moves, dresses, or holds eye contact is more effective than extended physical description. Save explicit language for moments that have been earned through relationship depth.
+- **Never describe a character's appearance without grounding it in action or context.** Marion does not simply look a certain way — she looks that way because she dressed for a specific meeting, or she did not bother to dress for this one.
+- **Attraction is two-directional.** Characters have preferences, reactions, and agency. An NPC who finds the player appealing should show it through behavior, not through passive availability.
+
+### 16.3 Authoring rules (art)
+
+See `docs/art-direction.md` — Character and Portrait Direction section for the full ruleset.
+
+Summary:
+- Presentation scales with relationship depth, never front-loaded
+- Wardrobe tier and faction identity drive styling, not generic appeal
+- Consistency across the roster is a hard requirement — one outlier in style or explicit level breaks the system
+- Placeholder silhouettes must be replaced at milestone 2 — the silhouette system is a scaffolding tool, not a presentation goal
+
+### 16.4 What sensual presentation is not
+
+- It is not a skin system or unlock store
+- It is not applied uniformly to all characters regardless of who they are in the world
+- It is not present in the UI outside of character-specific relationship contexts
+- It does not override character competence, political identity, or narrative function — a character's primary identity remains who they are, not what they look like
+
+
 
 The defining feature of this design is not any single mechanic. It is the fact that:
 
