@@ -40,6 +40,17 @@ The RPG audit answers four questions about whether this session's planned work a
 - Record blockers and assumptions in the active Bead instead of leaving them in chat only.
 - Create a new Bead for follow-up work rather than silently expanding scope.
 
+## Audit → Bead Traceability Rule
+
+When converting a list of findings (from audits, reviews, or expert reports) into beads, you **must** produce an explicit mapping before finishing:
+
+1. List every finding by number or ID.
+2. For each finding, record which bead covers it — either its own bead or a named group bead.
+3. Any finding not in the mapping is a **gap** — create a bead for it before closing.
+4. Grouping related findings into one bead is fine; silently dropping a finding is not.
+
+This prevents the synthesis agent from merging 48 findings into 27 beads and losing 7 without notice.
+
 ## Non-Interactive Shell Commands
 
 Always use non-interactive flags with commands that may prompt.
