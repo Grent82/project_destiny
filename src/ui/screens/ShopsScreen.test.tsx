@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
@@ -16,7 +17,9 @@ describe('ShopsScreen', () => {
 
     render(
       <AppProviders store={store}>
-        <ShopsScreen />
+        <MemoryRouter>
+          <ShopsScreen />
+        </MemoryRouter>
       </AppProviders>,
     )
 

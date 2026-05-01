@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import rawArmor from '../../../data/definitions/armor.json'
 import rawWeapons from '../../../data/definitions/weapons.json'
@@ -25,6 +26,7 @@ function DurabilityBar({ current, max }: { current: number; max: number }) {
 
 export function ShopsScreen() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const overview = useAppSelector(selectShopOverview)
   const [lastPurchaseMessage, setLastPurchaseMessage] = useState<string | null>(null)
   const gameState = useAppSelector((state) => state.game)
@@ -64,9 +66,18 @@ export function ShopsScreen() {
       ) : null}
 
       {overview.shops.length === 0 ? (
-        <p className="summary empty-state">
-          No traders operate here. Travel to another district to find merchants.
-        </p>
+        <div className="empty-state-message">
+          <p className="summary">
+            No traders operate here. Travel to another district to find merchants.
+          </p>
+          <button
+            className="action-button"
+            type="button"
+            onClick={() => navigate('/city')}
+          >
+            ← Browse District Map
+          </button>
+        </div>
       ) : (
         <div className="overview-grid">
           {overview.shops.map((shop) => (
@@ -159,7 +170,14 @@ export function ShopsScreen() {
       <section className="repair-section">
         <h2>Equipment Stash</h2>
         {!hasArmsDealer ? (
-          <p className="summary">No arms dealer in this district. Travel to Harbor Ward, Ironworks, or the Warrens to acquire weapons and armor.</p>
+          <div className="empty-state-message">
+            <p className="summary">No arms dealer in this district. Travel to Harbor Ward, Ironworks, or the Warrens to acquire weapons and armor.</p>
+            <div className="badge-row" style={{ marginTop: '0.5rem' }}>
+              <button className="action-button" type="button" onClick={() => navigate('/district/district-harbor')}>Harbor Ward</button>
+              <button className="action-button" type="button" onClick={() => navigate('/district/district-ironworks')}>Ironworks</button>
+              <button className="action-button" type="button" onClick={() => navigate('/district/district-the-warrens')}>The Warrens</button>
+            </div>
+          </div>
         ) : (
         <p className="summary">Acquire weapons and armor to make them available for equipping to roster members.</p>
         )}
