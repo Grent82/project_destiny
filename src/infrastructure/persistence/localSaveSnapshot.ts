@@ -33,6 +33,37 @@ function isStorageLike(value: unknown): value is StorageLike {
   )
 }
 
+function migrateState(raw: unknown): GameState | null {
+  const version = (raw as Record<string, unknown>)?.saveVersion ?? 0
+
+  if (version === 0) {
+    // v0 → v1: add saveVersion and normalize playerCharacter to attributes/skills/traits shape
+    const pc = (raw as Record<string, unknown>)?.playerCharacter as Record<string, unknown> | undefined
+    const migrated = {
+      ...(raw as object),
+      saveVersion: 1,
+      playerCharacter: pc?.attributes
+        ? pc
+        : {
+            name: pc?.name ?? 'The Heir',
+            attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
+            skills: { melee: 30, ranged: 20, medicine: 10, administration: 20, intrigue: 30, negotiation: 20, engineering: 10, academics: 10, performance: 20, survival: 20, security: 20, crafting: 10 },
+            traits: { discipline: 40, ambition: 60, empathy: 40, ruthlessness: 40, prudence: 40, curiosity: 40, dominance: 40, loyalty: 50, vanity: 40, zeal: 40 },
+            level: 1,
+            renown: (pc?.renown as number) ?? 0,
+          },
+    }
+    return gameStateSchema.safeParse(migrated).data ?? null
+  }
+
+  if (version === 1) {
+    return gameStateSchema.safeParse(raw).data ?? null
+  }
+
+  // Unknown future version — cannot load
+  return null
+}
+
 export class LocalSaveSnapshotStore implements SaveGameStore {
   private readonly storage: StorageLike
   private readonly key: string
@@ -50,15 +81,15 @@ export class LocalSaveSnapshotStore implements SaveGameStore {
     }
 
     const parsed = JSON.parse(raw) as unknown
-    const result = gameStateSchema.safeParse(parsed)
+    const migrated = migrateState(parsed)
 
-    if (!result.success) {
-      console.warn('[SaveStore] Saved state failed schema validation — discarding stale save.', result.error.flatten())
+    if (!migrated) {
+      console.warn('[SaveStore] Saved state could not be migrated — discarding stale save.')
       this.storage.removeItem(this.key)
       return null
     }
 
-    return result.data
+    return migrated
   }
 
   save(state: GameState): void {

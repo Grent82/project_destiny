@@ -97,6 +97,46 @@ describe('recruitNpc', () => {
     expect(next.money).toBe(50)
   })
 
+  it('blocks recruit when player faction standing is below required threshold', () => {
+    const factionLockedState = {
+      ...stateWithOffers,
+      availableForHire: [
+        {
+          npcId: 'npc-verek-holst',
+          discoveredInDistrictId: 'district-harbor',
+          wagePerDay: 18,
+          signingBonus: 0,
+          requiredFactionId: 'faction-gilded-court',
+          requiredFactionStanding: 30,
+          turnsAvailable: 3,
+        },
+      ],
+      factionStandings: { ...stateWithOffers.factionStandings, 'faction-gilded-court': 10 },
+    }
+    const next = recruitNpc(factionLockedState, 'npc-verek-holst')
+    expect(next.roster.find((r) => r.npcId === 'npc-verek-holst')).toBeUndefined()
+  })
+
+  it('allows recruit when player meets required faction standing', () => {
+    const factionMetState = {
+      ...stateWithOffers,
+      availableForHire: [
+        {
+          npcId: 'npc-verek-holst',
+          discoveredInDistrictId: 'district-harbor',
+          wagePerDay: 18,
+          signingBonus: 0,
+          requiredFactionId: 'faction-gilded-court',
+          requiredFactionStanding: 30,
+          turnsAvailable: 3,
+        },
+      ],
+      factionStandings: { ...stateWithOffers.factionStandings, 'faction-gilded-court': 35 },
+    }
+    const next = recruitNpc(factionMetState, 'npc-verek-holst')
+    expect(next.roster.find((r) => r.npcId === 'npc-verek-holst')).toBeDefined()
+  })
+
   it('logs a recruitment message', () => {
     const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
     const logEntry = next.activityLog.find((e) => e.message.includes('Verek Holst'))

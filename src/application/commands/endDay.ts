@@ -8,7 +8,7 @@ import {
 import { appendActivityLogEntry } from './activityLog'
 import { evaluateEvents } from './evaluateEvents'
 import { expireHireOffers } from './recruitment'
-import { getCouncilVoteTemplates, contentCatalog } from '../content/contentCatalog'
+import { getCouncilVoteTemplates, contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 import { applyPassiveDrift, applyProximityGains, applyRelationshipDelta } from './adjustRelationship'
 import { generateDistrictHireOffers } from './generateHireOffers'
 import { evaluateNpcDeparture } from './npcDeparture'
@@ -546,12 +546,13 @@ export function endDay(state: GameState): GameState {
   next = { ...next, money: next.money + 5 }
   next = appendActivityLogEntry(next, 'economy', 'The house generates its daily yield. +5 Marks.')
 
-  // Step 4e: Faction income grants — allied factions contribute 3 Marks/day each
+  // Step 4e: Faction income grants — allied factions contribute 3 Marks/day (6 at standing >= 75)
   for (const [factionId, standing] of Object.entries(next.factionStandings)) {
     if (standing >= 50) {
-      next = { ...next, money: next.money + 3 }
+      const grant = standing >= 75 ? 6 : 3
+      next = { ...next, money: next.money + grant }
       const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-      next = appendActivityLogEntry(next, 'economy', `${factionName} grant: +3 Marks.`)
+      next = appendActivityLogEntry(next, 'economy', `Faction support from ${factionName}. +${grant} Marks.`)
     }
   }
 
@@ -820,6 +821,25 @@ export function endDay(state: GameState): GameState {
     afterEvents = evaluateEvents(refreshed)
   } else {
     afterEvents = evaluateEvents(afterExpiry)
+  }
+
+  // Step 9: Faction quest bonus — standing >= 40 unlocks one additional quest per faction per day
+  {
+    const allQuests = getQuestTemplates()
+    for (const [factionId, standing] of Object.entries(afterEvents.factionStandings)) {
+      if (standing < 40) continue
+      const factionQuest = allQuests.find(
+        (q) =>
+          q.rewardStandingFactionId === factionId &&
+          !afterEvents.availableQuests.includes(q.id) &&
+          !afterEvents.completedQuestIds.includes(q.id) &&
+          !afterEvents.activeQuests.some((aq) => aq.questId === q.id) &&
+          (!q.requiredFactionStanding || standing >= q.requiredFactionStanding.minStanding),
+      )
+      if (factionQuest) {
+        afterEvents = { ...afterEvents, availableQuests: [...afterEvents.availableQuests, factionQuest.id] }
+      }
+    }
   }
 
 

@@ -80,6 +80,7 @@ const baseState: GameState = {
     ],
     vaultUnlocked: false,
   },
+  saveVersion: 1,
 }
 
 describe('simulateRivalOrgs', () => {

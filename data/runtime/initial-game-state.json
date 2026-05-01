@@ -467,5 +467,6 @@
     ],
     "vaultUnlocked": false
   },
-  "visitedDialogueNodes": {}
+  "visitedDialogueNodes": {},
+  "saveVersion": 1
 }

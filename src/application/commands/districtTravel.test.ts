@@ -32,12 +32,21 @@ describe('travelToDistrict', () => {
     expect(nextPale.currentDistrictId).toBe('district-the-pale')
   })
 
-  it('does not block travel to accessRestricted districts at the action level', () => {
-    // district-gilded-heights is accessRestricted:true — action must still succeed
-    // Use neutral Gilded Court standing so travel message is standard
-    const friendlyState = {
+  it('blocks travel to Gilded Heights when faction-gilded-court standing < 20', () => {
+    // district-gilded-heights now requires Gilded Court standing >= 20
+    const lowStandingState = {
       ...initialGameStateSnapshot,
       factionStandings: { ...initialGameStateSnapshot.factionStandings, 'faction-gilded-court': 0 },
+    }
+    const next = travelToDistrict(lowStandingState, 'district-gilded-heights')
+    expect(next.currentDistrictId).not.toBe('district-gilded-heights')
+    expect(next.activityLog[0].message).toContain('Access denied')
+  })
+
+  it('allows travel to Gilded Heights when faction-gilded-court standing >= 20', () => {
+    const friendlyState = {
+      ...initialGameStateSnapshot,
+      factionStandings: { ...initialGameStateSnapshot.factionStandings, 'faction-gilded-court': 25 },
     }
     const next = travelToDistrict(friendlyState, 'district-gilded-heights')
     expect(next.currentDistrictId).toBe('district-gilded-heights')
@@ -45,7 +54,7 @@ describe('travelToDistrict', () => {
   })
 
   it('does not block travel to accessRestricted + high-danger district at action level', () => {
-    // district-the-hollows: accessRestricted:true, dangerLevel:5
+    // district-the-hollows: accessRestricted:true, dangerLevel:5, no minControlFactionStanding
     const next = travelToDistrict(initialGameStateSnapshot, 'district-the-hollows')
     expect(next.currentDistrictId).toBe('district-the-hollows')
   })

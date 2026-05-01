@@ -128,6 +128,7 @@ function makeCombatant(overrides: Partial<CombatantState> = {}): CombatantState 
     speed: 4,
     guarding: false,
     staggered: false,
+    guardCooldown: false,
     equippedWeaponId: null,
     equippedArmorId: null,
     ...overrides,
@@ -253,7 +254,7 @@ describe('combat resolution with equipment', () => {
     expect(enemy?.health).toBeLessThan(50)
   })
 
-  it('stagger status is applied when staggerChance triggers', () => {
+  it('stagger status is applied and consumed: staggered enemy loses their next turn', () => {
     // Mock: hit, damage, crit miss, stagger hit
     vi.spyOn(Math, 'random')
       .mockReturnValueOnce(0.01)  // well below accuracy → hit
@@ -281,8 +282,12 @@ describe('combat resolution with equipment', () => {
       { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
       'attack',
     )
+    // Stagger is consumed in the same round: enemy loses their turn and staggered resets to false
     const target = nextState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
-    expect(target?.staggered).toBe(true)
+    expect(target?.staggered).toBe(false)
+    // The log should contain the "still reeling" message proving the turn was skipped
+    const reelingLog = nextState.activeCombat?.log.find((l) => l.summary.includes('still reeling'))
+    expect(reelingLog).toBeDefined()
   })
 
   it('crit doubles damage — log contains "telling blow"', () => {
@@ -313,8 +318,11 @@ describe('combat resolution with equipment', () => {
       { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as unknown as Parameters<typeof performCombatAction>[0],
       'attack',
     )
-    const lastLog = nextState.activeCombat?.log.at(-1)?.summary ?? ''
-    expect(lastLog).toMatch(/strikes|lands a blow|connects/)
+    // Find the ally's attack log entry specifically (last log may be stagger/reeling message)
+    const allyAttackLog = nextState.activeCombat?.log.find(
+      (l) => l.actorId === 'ally-1' && l.summary.match(/strikes|lands a blow|connects/),
+    )?.summary ?? ''
+    expect(allyAttackLog).toMatch(/strikes|lands a blow|connects/)
   })
 
   it('miss log uses Valdenmoor miss vocabulary', () => {

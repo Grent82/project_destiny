@@ -214,6 +214,7 @@ export const gameStateSchema = z
       ],
       vaultUnlocked: false,
     })),
+    saveVersion: z.number().int().min(1).default(1),
   })
   .strict()
 

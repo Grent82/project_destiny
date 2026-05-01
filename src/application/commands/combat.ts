@@ -43,6 +43,7 @@ function buildPlayerCombatant(playerCharacter: GameState['playerCharacter']): Co
     speed: 4,
     guarding: false,
     staggered: false,
+    guardCooldown: false,
     equippedWeaponId: PLAYER_DEFAULT_WEAPON_ID,
     equippedArmorId: null,
   }
@@ -112,6 +113,7 @@ function buildAllyCombatant(
     speed: Math.max(1, Math.floor((npc.attributes.agility + npc.attributes.resolve) / 18)),
     guarding: false,
     staggered: false,
+    guardCooldown: false,
     equippedWeaponId: npc.loadout.primaryWeaponId,
     equippedArmorId: npc.loadout.armorId,
   }
@@ -149,6 +151,7 @@ function buildEnemyCombatant(index: number, allies: CombatantState[]): Combatant
     speed: 4 + (index % 2),
     guarding: false,
     staggered: false,
+    guardCooldown: false,
     equippedWeaponId: null,
     equippedArmorId: null,
   }
@@ -277,7 +280,7 @@ function attack(encounter: ActiveCombatState, actorId: string) {
   const weapon = getWeaponProfile(actor.equippedWeaponId)
   const armor = getArmorProfile(target.equippedArmorId)
   const rangeOffset = getRangeModifier(actor.equippedWeaponId, encounter.range)
-  const effectiveAccuracy = Math.min(99, Math.max(1, weapon.accuracy + rangeOffset))
+  const effectiveAccuracy = Math.min(99, Math.max(1, weapon.accuracy + rangeOffset - armor.evasionPenalty))
 
   const hit = Math.random() * 100 < effectiveAccuracy
 
@@ -350,6 +353,7 @@ function guard(encounter: ActiveCombatState, actorId: string) {
     updateCombatant(encounter, actorId, (combatant) => ({
       ...combatant,
       guarding: true,
+      guardCooldown: true,
       morale: Math.min(100, combatant.morale + 4),
     })),
     actorId,
@@ -416,11 +420,15 @@ function findNextActiveCombatant(
 
 function advanceTurn(encounter: ActiveCombatState) {
   const nextTurn = findNextActiveCombatant(encounter, encounter.activeCombatantId)
+  const roundChanged = nextTurn.round > encounter.round
 
   return {
     ...encounter,
     activeCombatantId: nextTurn.activeCombatantId,
     round: nextTurn.round,
+    combatants: roundChanged
+      ? encounter.combatants.map((c) => ({ ...c, guardCooldown: false }))
+      : encounter.combatants,
   }
 }
 
@@ -435,6 +443,21 @@ function resolveEnemyTurns(encounter: ActiveCombatState) {
 
     if (!activeCombatant || activeCombatant.side === 'allies') {
       break
+    }
+
+    // Stagger: skip this enemy's turn and clear the flag
+    if (activeCombatant.staggered) {
+      nextEncounter = updateCombatant(nextEncounter, activeCombatant.combatantId, (c) => ({
+        ...c,
+        staggered: false,
+      }))
+      nextEncounter = appendLog(
+        nextEncounter,
+        activeCombatant.combatantId,
+        `${activeCombatant.name} is still reeling — their action is lost.`,
+      )
+      nextEncounter = advanceTurn(nextEncounter)
+      continue
     }
 
     const chosenAction: CombatAction =
@@ -571,6 +594,40 @@ export function performCombatAction(
   }
 
   const previousLogLength = encounter.log.length
+
+  // Stagger: skip the active ally's turn and clear the flag
+  if (activeCombatant.staggered) {
+    let nextEncounter = updateCombatant(encounter, activeCombatant.combatantId, (c) => ({
+      ...c,
+      staggered: false,
+    }))
+    nextEncounter = appendLog(
+      nextEncounter,
+      activeCombatant.combatantId,
+      `${activeCombatant.name} is still reeling — their action is lost.`,
+    )
+    nextEncounter = advanceTurn(nextEncounter)
+    nextEncounter = resolveEnemyTurns(nextEncounter)
+    nextEncounter = evaluateOutcome(nextEncounter)
+    let nextState = syncRosterFromCombat({ ...state, activeCombat: nextEncounter }, nextEncounter)
+    nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
+    return nextState
+  }
+
+  // Guard cooldown: prevent guard spam — unit can only guard once per round
+  if (action === 'guard' && activeCombatant.guardCooldown) {
+    let nextEncounter = appendLog(
+      encounter,
+      activeCombatant.combatantId,
+      `${activeCombatant.name} is already braced — they cannot guard again this round.`,
+    )
+    nextEncounter = advanceTurn(nextEncounter)
+    nextEncounter = resolveEnemyTurns(nextEncounter)
+    nextEncounter = evaluateOutcome(nextEncounter)
+    let nextState = syncRosterFromCombat({ ...state, activeCombat: nextEncounter }, nextEncounter)
+    nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
+    return nextState
+  }
 
   // Fear check: ally may refuse advance action
   if (action === 'advance' && activeCombatant.sourceNpcId) {
@@ -730,6 +787,20 @@ export function concludeCombatEncounter(state: GameState): GameState {
         const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
         nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved.`)
       }
+
+      // Non-quest victory renown gain
+      const oldRenown = nextState.playerCharacter.renown
+      const newRenown = oldRenown + 5
+      const oldLevel = getRenownLevel(oldRenown)
+      const newLevel = getRenownLevel(newRenown)
+      nextState = {
+        ...nextState,
+        playerCharacter: { ...nextState.playerCharacter, renown: newRenown },
+      }
+      nextState = appendActivityLogEntry(nextState, 'system', 'Victory. +5 Renown.')
+      if (newLevel.level > oldLevel.level) {
+        nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
+      }
     }
 
     // Complete linked quest on victory
@@ -789,7 +860,30 @@ export function concludeCombatEncounter(state: GameState): GameState {
       const employerName = contentCatalog.factionsById.get(mission.employerFactionId)?.name ?? mission.employerFactionId
       nextState = appendActivityLogEntry(nextState, 'combat',
         `The squad was driven back. "${mission.title}" failed. Standing with ${employerName} suffers.`)
+    } else {
+      const factionId = combat.factionId
+      if (factionId) {
+        const current = nextState.factionStandings[factionId] ?? 0
+        nextState = {
+          ...nextState,
+          factionStandings: {
+            ...nextState.factionStandings,
+            [factionId]: Math.max(-100, Math.min(100, current - 5)),
+          },
+        }
+        const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
+        nextState = appendActivityLogEntry(nextState, 'system', `Defeat. Standing with ${factionName} worsens.`)
+      }
     }
+  }
+
+  // District tension — any combat increases unrest
+  nextState = {
+    ...nextState,
+    cityDials: {
+      ...nextState.cityDials,
+      unrest: Math.min(100, nextState.cityDials.unrest + 3),
+    },
   }
 
   // Write health, assignment, and emotional aftermath back to roster
@@ -842,10 +936,12 @@ export function concludeCombatEncounter(state: GameState): GameState {
         assignment: isKO ? 'recovering' : 'idle',
         states: {
           ...npc.states,
-          health: newHealth,
+          health: isKO ? 10 : newHealth,
           morale: newMorale,
           stress: newStress,
-          injury: Math.min(100, npc.states.injury + Math.max(0, npc.states.health - newHealth)),
+          injury: isKO
+            ? Math.min(100, npc.states.injury + 30)
+            : Math.min(100, npc.states.injury + Math.max(0, npc.states.health - newHealth)),
         },
       }
     }),

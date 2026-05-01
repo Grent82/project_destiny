@@ -59,7 +59,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
     const nextState = concludeCombatEncounter(koState)
     const rosterEntry = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
     expect(rosterEntry.assignment).toBe('recovering')
-    expect(rosterEntry.states.health).toBe(0)
+    expect(rosterEntry.states.health).toBe(10) // KO'd NPCs are set to 10 (critical but alive)
   })
 
   it('surviving NPC (health > 0) gets assignment "idle"', () => {

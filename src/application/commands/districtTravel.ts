@@ -13,6 +13,19 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
   const district = contentCatalog.districtsById.get(districtId)
   const name = district?.name ?? districtId
   const dangerLevel = district?.dangerLevel ?? 1
+
+  // Gate: if district requires a minimum standing with its controlling faction, enforce it
+  if (district?.minControlFactionStanding != null && district.controllingFactionId) {
+    const standing = state.factionStandings[district.controllingFactionId] ?? -100
+    if (standing < district.minControlFactionStanding) {
+      return appendActivityLogEntry(
+        state,
+        'system',
+        `Access denied. ${name} is closed to those without standing with ${district.controllingFactionId.replace('faction-', '')}.`,
+      )
+    }
+  }
+
   const message = buildTravelMessage(name, dangerLevel)
 
   let nextState: GameState = { ...state, currentDistrictId: districtId, availableForHire: [...state.availableForHire] }

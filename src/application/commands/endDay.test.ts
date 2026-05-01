@@ -169,4 +169,59 @@ describe('endDay', () => {
 
     vi.restoreAllMocks()
   })
+
+  it('city dial: high unrest (>=70) decays all NPC loyalty by 1 and logs a message', () => {
+    const state = {
+      ...initialStateWithIda,
+      cityDials: { control: 45, prosperity: 45, unrest: 75, corruption: 30 },
+    }
+    const marionBefore = state.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const next = endDay(state)
+    const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    expect(marionAfter.traits.loyalty).toBeLessThan(marionBefore.traits.loyalty)
+    expect(next.activityLog.some((e) => e.message.includes('Unrest in the city'))).toBe(true)
+  })
+
+  it('city dial: low unrest (<70) does not add unrest loyalty decay', () => {
+    const state = {
+      ...initialStateWithIda,
+      cityDials: { control: 45, prosperity: 45, unrest: 55, corruption: 30 },
+    }
+    const marionBefore = state.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const next = endDay(state)
+    const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    expect(next.activityLog.some((e) => e.message.includes('Unrest in the city'))).toBe(false)
+    // Loyalty should not have extra decay (Marion has wages paid, so no unpaid decay either)
+    expect(marionAfter.traits.loyalty).toBe(marionBefore.traits.loyalty)
+  })
+
+  it('city dial: high prosperity (>=60) boosts working NPC income by 10%', () => {
+    const workingState = {
+      ...initialStateWithIda,
+      cityDials: { control: 45, prosperity: 65, unrest: 40, corruption: 30 },
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'working' as const } : { ...npc, assignment: 'idle' as const },
+      ),
+    }
+    const next = endDay(workingState)
+    // Ida's best skill drives income; with prosperity >=60 the base income gets *1.1
+    expect(next.money).toBeGreaterThan(workingState.money - 12 + 5) // wages out, base income in, plus boosted working income
+  })
+
+  it('city dial: low prosperity (<=30) reduces working NPC income by 10%', () => {
+    const baseState = {
+      ...initialStateWithIda,
+      cityDials: { control: 45, prosperity: 45, unrest: 40, corruption: 30 },
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'working' as const } : { ...npc, assignment: 'idle' as const },
+      ),
+    }
+    const lowProsperityState = {
+      ...baseState,
+      cityDials: { control: 45, prosperity: 25, unrest: 40, corruption: 30 },
+    }
+    const nextBase = endDay(baseState)
+    const nextLow = endDay(lowProsperityState)
+    expect(nextLow.money).toBeLessThanOrEqual(nextBase.money)
+  })
 })

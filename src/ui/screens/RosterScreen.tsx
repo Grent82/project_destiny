@@ -109,6 +109,48 @@ export function RosterScreen() {
                           />
                         </div>
                       </div>
+                      <div className="mini-stat">
+                        <span className="mini-stat-label">Str</span>
+                        <div className="mini-bar-track">
+                          <div
+                            className={[
+                              'mini-bar-fill',
+                              entry.stress > 60 ? 'mini-bar-fill--crit' :
+                              entry.stress > 30 ? 'mini-bar-fill--low' : 'mini-bar-fill--good',
+                            ].join(' ')}
+                            style={{ width: `${entry.stress}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="mini-stat">
+                        <span className="mini-stat-label">Hng</span>
+                        <div className="mini-bar-track">
+                          <div
+                            className={[
+                              'mini-bar-fill',
+                              entry.hunger > 60 ? 'mini-bar-fill--crit' :
+                              entry.hunger > 30 ? 'mini-bar-fill--low' : 'mini-bar-fill--good',
+                            ].join(' ')}
+                            style={{ width: `${entry.hunger}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="mini-stat">
+                        <span className="mini-stat-label">Fat</span>
+                        <div className="mini-bar-track">
+                          <div
+                            className={[
+                              'mini-bar-fill',
+                              entry.fatigue > 60 ? 'mini-bar-fill--crit' :
+                              entry.fatigue > 30 ? 'mini-bar-fill--low' : 'mini-bar-fill--good',
+                            ].join(' ')}
+                            style={{ width: `${entry.fatigue}%` }}
+                          />
+                        </div>
+                      </div>
+                      {(entry.stress >= 70 || entry.hunger >= 70 || entry.fatigue >= 70 || entry.health <= 30) && (
+                        <span className="roster-state-warning" title="NPC in danger zone — check their states">⚠</span>
+                      )}
                     </div>
                   </button>
                 ))}

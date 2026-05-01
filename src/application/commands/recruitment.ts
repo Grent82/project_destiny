@@ -9,6 +9,12 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
 
   if (offer.signingBonus > state.money) return state
 
+  // Gate: player must meet the required faction standing to hire this NPC
+  if (offer.requiredFactionId) {
+    const standing = state.factionStandings[offer.requiredFactionId] ?? -100
+    if (standing < offer.requiredFactionStanding) return state
+  }
+
   const npcDef = contentCatalog.npcsById.get(npcId)
   if (!npcDef) return state
 

@@ -47,4 +47,38 @@ describe('LocalSaveSnapshotStore', () => {
     // Stale save should be auto-cleared
     expect(storage.getItem('save-slot')).toBeNull()
   })
+
+  it('migrates a v0 save (no saveVersion) to v1 instead of discarding it', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    // A minimal v0 save that lacks saveVersion and uses old playerCharacter shape
+    const v0Save = {
+      ...initialGameStateSnapshot,
+      saveVersion: undefined,
+      playerCharacter: {
+        name: 'Old Hero',
+        // old saves had no attributes object — just top-level stats
+      },
+    }
+    // Remove saveVersion key entirely to simulate v0
+    const { saveVersion: _omit, ...v0SaveWithoutVersion } = v0Save as typeof v0Save & { saveVersion: unknown }
+    storage.setItem('save-slot', JSON.stringify(v0SaveWithoutVersion))
+
+    const result = snapshotStore.load()
+    expect(result).not.toBeNull()
+    expect(result?.saveVersion).toBe(1)
+    expect(result?.playerCharacter.attributes).toBeDefined()
+  })
+
+  it('returns null and clears storage for an unknown future save version', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    storage.setItem('save-slot', JSON.stringify({ ...initialGameStateSnapshot, saveVersion: 999 }))
+
+    const result = snapshotStore.load()
+    expect(result).toBeNull()
+    expect(storage.getItem('save-slot')).toBeNull()
+  })
 })

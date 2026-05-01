@@ -318,19 +318,23 @@ const gameSlice = createSlice({
 
       const quest = getQuestTemplates().find((q) => q.id === questId)
       if (quest) {
-        state.money += quest.rewardMarks
+        // Corruption dial reduces quest reward payments by 10% if >= 70
+        const corruption = state.cityDials.corruption
+        const rewardMarks = corruption >= 70 ? Math.floor(quest.rewardMarks * 0.9) : quest.rewardMarks
+        state.money += rewardMarks
         if (quest.rewardStandingFactionId && state.factionStandings[quest.rewardStandingFactionId] !== undefined) {
           state.factionStandings[quest.rewardStandingFactionId] = Math.min(
             100,
             (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.rewardStandingDelta,
           )
         }
+        const corruptionNote = corruption >= 70 ? ' (funds skimmed by corrupt hands)' : ''
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-complete-${questId}`,
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'economy',
-          message: `Contract complete: ${quest.title}. ${quest.rewardMarks} Marks received.`,
+          message: `Contract complete: ${quest.title}. ${rewardMarks} Marks received.${corruptionNote}`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         // Renown gain from quest completion — ambition trait adds +2

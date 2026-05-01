@@ -39,6 +39,7 @@ export const combatantStateSchema = z
     speed: positiveIntegerSchema,
     guarding: z.boolean(),
     staggered: z.boolean(),
+    guardCooldown: z.boolean().default(false),
     equippedWeaponId: entityIdSchema.nullable(),
     equippedArmorId: entityIdSchema.nullable(),
     lore: z.string().optional(),

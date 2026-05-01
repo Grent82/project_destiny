@@ -26,6 +26,7 @@ export const districtDefinitionSchema = z
     hooks: z.array(z.string()).optional(),
     adjacentDistrictIds: z.array(entityIdSchema).default([]),
     borderTypes: z.record(z.string(), borderTypeSchema).default({}),
+    minControlFactionStanding: z.number().nullable().default(null),
   })
   .strict()
 
