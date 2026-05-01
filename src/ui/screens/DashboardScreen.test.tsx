@@ -27,7 +27,8 @@ function createMemorySaveStore(): SaveGameStore {
 }
 
 describe('DashboardScreen', () => {
-  it('keeps load disabled until a snapshot exists', () => {
+  it('keeps load disabled until a snapshot exists', async () => {
+    const user = userEvent.setup()
     const store = createGameStore()
     const saveStore = createMemorySaveStore()
 
@@ -36,6 +37,8 @@ describe('DashboardScreen', () => {
         <DashboardScreen saveStore={saveStore} />
       </AppProviders>,
     )
+
+    await user.click(screen.getByRole('tab', { name: 'Operations' }))
 
     expect(screen.getByRole('button', { name: 'Load session' })).toBeDisabled()
     expect(
@@ -54,6 +57,7 @@ describe('DashboardScreen', () => {
       </AppProviders>,
     )
 
+    await user.click(screen.getByRole('tab', { name: 'Operations' }))
     await user.click(screen.getByRole('button', { name: 'Save session' }))
 
     expect(screen.getByRole('button', { name: 'Load session' })).toBeEnabled()
@@ -67,8 +71,10 @@ describe('DashboardScreen', () => {
       )
     })
 
+    await user.click(screen.getByRole('tab', { name: 'Intelligence' }))
     expect(screen.getByText(/Purchased item-medkit-field/i)).toBeInTheDocument()
 
+    await user.click(screen.getByRole('tab', { name: 'Operations' }))
     await user.click(screen.getByRole('button', { name: 'Load session' }))
 
     expect(screen.getByText('Session restored from local snapshot.')).toBeInTheDocument()

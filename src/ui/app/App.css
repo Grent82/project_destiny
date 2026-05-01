@@ -147,6 +147,12 @@ strong { color: var(--text-secondary); }
 .mini-bar-fill--good { background: #2a5c2a; }
 .mini-bar-fill--low  { background: #8b6a20; }
 .mini-bar-fill--crit { background: #8b2020; }
+.roster-state-warning {
+  font-size: 0.75rem;
+  color: #e57a00;
+  align-self: center;
+  line-height: 1;
+}
 
 /* ── App shell ───────────────────────────────────────────── */
 .app-shell {
@@ -683,6 +689,18 @@ strong { color: var(--text-secondary); }
   margin-top: 1.25rem;
 }
 
+.dashboard-critical-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-tab-bar {
+  margin-bottom: 1.25rem;
+}
+
 .combat-log-list {
   display: grid;
   gap: 0.75rem;
@@ -851,6 +869,39 @@ strong { color: var(--text-secondary); }
 .hire-badge--combat {
   background: rgba(251, 146, 60, 0.18);
   color: #fed7aa;
+}
+
+/* NPC rarity badges */
+.hire-badge--rarity {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm, 4px);
+}
+
+.hire-badge--rarity-common {
+  background: rgba(160, 160, 160, 0.18);
+  color: #b0b0b0;
+}
+
+.hire-badge--rarity-uncommon {
+  background: rgba(201, 168, 76, 0.2);
+  color: #d4aa44;
+}
+
+.hire-badge--rarity-rare {
+  background: rgba(138, 106, 191, 0.22);
+  color: #b894e8;
+}
+
+.hire-badge--rarity-elite {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.hire-badge--rarity-legendary {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
 }
 
 .action-button {
