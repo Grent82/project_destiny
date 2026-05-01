@@ -2164,5 +2164,682 @@
     ],
     "repeatable": false,
     "cooldownDays": 30
+  },
+  {
+    "id": "event-harbor-smuggling-tip",
+    "title": "Word from the Docks",
+    "description": "A docker you barely know presses a folded paper into your hand at the gate. It shows a berth number, a time, and three names. 'Compact's looking the other way tonight,' he says. 'For a price.'",
+    "triggerConditions": {
+      "currentDistrict": "district-harbor",
+      "dayMin": 2,
+      "probability": 0.35
+    },
+    "choices": [
+      {
+        "id": "choice-harbor-take-the-tip",
+        "label": "Follow up on it (send an operative)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": 60
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-tallow-ring",
+            "delta": 4
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The berth tip pays off. Sixty Marks from goods the Compact never logged. The Ring takes notice."
+          }
+        ]
+      },
+      {
+        "id": "choice-harbor-ignore-tip",
+        "label": "Leave it alone",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You let the tip go. The docker shrugs and walks off."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "harbor",
+      "economy",
+      "tallow-ring"
+    ],
+    "cooldownDays": 8
+  },
+  {
+    "id": "event-harbor-compact-inspection",
+    "title": "Scheduled Inspection",
+    "description": "A Compact clerk informs you that a cargo inventory inspection is scheduled at your berth — apparently a routine check. Your name is on the list. How thorough this becomes depends on your standing.",
+    "triggerConditions": {
+      "currentDistrict": "district-harbor",
+      "dayMin": 4,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-harbor-cooperate",
+        "label": "Cooperate fully",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The inspection goes cleanly. The Compact clerk stamps the manifest and moves on."
+          }
+        ]
+      },
+      {
+        "id": "choice-harbor-delay-inspection",
+        "label": "Request a delay (costs 30 Marks in fees)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -30
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Thirty Marks buys another week. The inspector pockets it with professional boredom."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "harbor",
+      "compact",
+      "economy"
+    ],
+    "cooldownDays": 10
+  },
+  {
+    "id": "event-harbor-dockworker-dispute",
+    "title": "Dispute at the Gate",
+    "description": "Two crews are blocking the gate access, disputing a missing payment from a shipping contract. Neither will move until it's settled. Your people can't get through — and waiting costs time.",
+    "triggerConditions": {
+      "currentDistrict": "district-harbor",
+      "dayMin": 3,
+      "probability": 0.25
+    },
+    "choices": [
+      {
+        "id": "choice-harbor-mediate",
+        "label": "Mediate the dispute (lose a time slot)",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -3
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You spend an hour untangling the dispute. Both crews leave grudgingly satisfied."
+          }
+        ]
+      },
+      {
+        "id": "choice-harbor-push-through",
+        "label": "Push through anyway",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 4
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You shoulder past the argument. They shout after you but don't follow."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "harbor",
+      "social",
+      "unrest"
+    ],
+    "cooldownDays": 9
+  },
+  {
+    "id": "event-gilded-invitation",
+    "title": "An Invitation to Supper",
+    "description": "A liveried messenger delivers a card embossed with a crest you half-recognize — a minor Court house extending an informal dinner invitation. The phrasing is pleasant and tells you nothing about why.",
+    "triggerConditions": {
+      "currentDistrict": "district-gilded-heights",
+      "dayMin": 3,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-gilded-attend",
+        "label": "Attend — it costs nothing to be seen",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": 8
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The supper is cautious and civil. Your presence is noted. The Court takes stock."
+          }
+        ]
+      },
+      {
+        "id": "choice-gilded-decline",
+        "label": "Send regrets",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": -3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The invitation is declined. The Court takes note of that too."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "gilded-heights",
+      "social",
+      "court"
+    ],
+    "cooldownDays": 12
+  },
+  {
+    "id": "event-gilded-debt-broker",
+    "title": "A Word About Your Obligations",
+    "description": "A debt broker operating out of a Gilded Heights office requests a private meeting. He represents unnamed parties and speaks carefully about 'restructuring arrangements.' The offer is vague enough to be either generous or dangerous.",
+    "triggerConditions": {
+      "currentDistrict": "district-gilded-heights",
+      "dayMin": 5,
+      "probability": 0.28
+    },
+    "choices": [
+      {
+        "id": "choice-gilded-meet-broker",
+        "label": "Hear him out",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -20
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "corruption",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The broker talks around the point for thirty minutes then makes an offer that reduces pressure at the cost of favors unspecified. You pay a meeting fee. Nothing is resolved."
+          }
+        ]
+      },
+      {
+        "id": "choice-gilded-refuse-broker",
+        "label": "Decline politely",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You decline. The broker smiles as if this was the expected answer and leaves."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "gilded-heights",
+      "economy",
+      "corruption"
+    ],
+    "cooldownDays": 14
+  },
+  {
+    "id": "event-ironworks-labor-stoppage",
+    "title": "Work Stoppage on Floor Three",
+    "description": "A section of League workers has stopped production over a safety dispute — part of a larger pattern of industrial grievances. The foreman wants someone with authority to hear the complaint. The League is watching.",
+    "triggerConditions": {
+      "currentDistrict": "district-ironworks",
+      "dayMin": 3,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-ironworks-side-workers",
+        "label": "Back the workers — the foreman was wrong",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-foundry-league",
+            "delta": -5
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You side with the floor workers. The foreman backs down. The League notes your position."
+          }
+        ]
+      },
+      {
+        "id": "choice-ironworks-side-league",
+        "label": "Back the League — work resumes",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-foundry-league",
+            "delta": 6
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 4
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Work resumes. The League nods. The workers go back to their stations with quiet faces."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "ironworks",
+      "league",
+      "social"
+    ],
+    "cooldownDays": 10
+  },
+  {
+    "id": "event-ironworks-salvage-find",
+    "title": "Something in the Wreckage",
+    "description": "A worker pulls you aside near a collapsed section of the old foundry annex. He's found something buried under the debris — tools, ingots, or something worth considerably more. He wants a cut to keep quiet.",
+    "triggerConditions": {
+      "currentDistrict": "district-ironworks",
+      "dayMin": 2,
+      "probability": 0.25
+    },
+    "choices": [
+      {
+        "id": "choice-ironworks-share-find",
+        "label": "Cut him in (split 50/50)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": 45
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You split the salvage. Forty-five Marks each. He nods and never mentions it again."
+          }
+        ]
+      },
+      {
+        "id": "choice-ironworks-take-all",
+        "label": "Take it all — threaten his silence",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": 90
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You take it all. He keeps quiet. For now."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "ironworks",
+      "economy"
+    ],
+    "cooldownDays": 12
+  },
+  {
+    "id": "event-pale-shelter-request",
+    "title": "Someone at the Threshold",
+    "description": "A family is sleeping against the south wall of what used to be a chapel. They have been here three nights. The cold has set in. One of your people points them out and says nothing else.",
+    "triggerConditions": {
+      "currentDistrict": "district-the-pale",
+      "dayMin": 2,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-pale-shelter-help",
+        "label": "Let them use one of the outbuildings",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -2
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "prosperity",
+            "delta": 1
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "They move into the outbuilding. They are quiet and do not ask for anything else."
+          }
+        ]
+      },
+      {
+        "id": "choice-pale-shelter-refuse",
+        "label": "You can't take on the liability",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You turn them away. They move further down the street."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "pale",
+      "social",
+      "morale"
+    ],
+    "cooldownDays": 7
+  },
+  {
+    "id": "event-pale-breach-relic",
+    "title": "Something Left by the Breach",
+    "description": "One of your people brings you an object they found in the rubble of the old gate district. It is clearly pre-Breach — its purpose is not immediately apparent, but it is intact. The Restored will pay for this. So will the right scholar.",
+    "triggerConditions": {
+      "currentDistrict": "district-the-pale",
+      "dayMin": 5,
+      "probability": 0.22
+    },
+    "choices": [
+      {
+        "id": "choice-pale-relic-restored",
+        "label": "Sell to the Restored",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": 80
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-restored",
+            "delta": 7
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Restored pays eighty Marks and handles the object with reverence."
+          }
+        ]
+      },
+      {
+        "id": "choice-pale-relic-keep",
+        "label": "Keep it — it might matter later",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You hold onto it. Its purpose remains unclear. Marion looks at it for a long time and says nothing."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "pale",
+      "restored",
+      "breach"
+    ],
+    "cooldownDays": 15
+  },
+  {
+    "id": "event-warrens-pickpocket-ring",
+    "title": "A Familiar Pattern",
+    "description": "Three of your people have had their pockets turned inside out in the same block over two days. Someone is working the area systematically. The locals know who — they just won't say.",
+    "triggerConditions": {
+      "currentDistrict": "district-the-warrens",
+      "dayMin": 3,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-warrens-pay-for-info",
+        "label": "Pay for the information (25 Marks)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -25
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-tallow-ring",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Twenty-five Marks buys a name. The Ring appreciates discretion over Compact involvement."
+          }
+        ]
+      },
+      {
+        "id": "choice-warrens-report-compact",
+        "label": "Report it to the Compact",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 4
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-tallow-ring",
+            "delta": -3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Compact files a report. Nothing changes immediately but they owe you a small note of goodwill."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "warrens",
+      "tallow-ring",
+      "compact"
+    ],
+    "cooldownDays": 9
+  },
+  {
+    "id": "event-warrens-night-patrol",
+    "title": "Night Patrol Request",
+    "description": "A block elder approaches you: three assaults on the same street this week. The Compact patrol doesn't come after dark. He's asking if your people would walk the street one night — no contract, no payment. Just presence.",
+    "triggerConditions": {
+      "currentDistrict": "district-the-warrens",
+      "dayMin": 4,
+      "probability": 0.28
+    },
+    "choices": [
+      {
+        "id": "choice-warrens-patrol-yes",
+        "label": "Do it",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -6
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Your people walk the street. Nothing happens. The block elder leaves a small crate of provisions at your gate in the morning."
+          }
+        ]
+      },
+      {
+        "id": "choice-warrens-patrol-decline",
+        "label": "You're not a patrol service",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You decline. The block elder nods and does not ask again."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "warrens",
+      "social",
+      "unrest"
+    ],
+    "cooldownDays": 10
+  },
+  {
+    "id": "event-hollows-gang-toll",
+    "title": "The Price of Passage",
+    "description": "A group of young men is blocking the main through-road into the Hollows. They want payment to let you and your people pass. They are armed with what they have, which is enough.",
+    "triggerConditions": {
+      "currentDistrict": "district-the-hollows",
+      "dayMin": 2,
+      "probability": 0.4
+    },
+    "choices": [
+      {
+        "id": "choice-hollows-pay-toll",
+        "label": "Pay the toll (15 Marks)",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -15
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Fifteen Marks. They move. The road is clear."
+          }
+        ]
+      },
+      {
+        "id": "choice-hollows-push-through",
+        "label": "Push through — show them what your people are",
+        "outcomes": [
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": 8
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Your people clear the road. Nobody is badly hurt. Word spreads. The Hollows notes the name."
+          }
+        ]
+      },
+      {
+        "id": "choice-hollows-find-another-way",
+        "label": "Turn back — find another route",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You go around. It costs time. The road stays blocked for someone else."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "hollows",
+      "violence",
+      "economy"
+    ],
+    "cooldownDays": 6
+  },
+  {
+    "id": "event-hollows-missing-person",
+    "title": "A Face You Almost Know",
+    "description": "A woman stops you on a narrow street and shows you a drawing — a young man's face, roughly done. 'He went in three days ago,' she says. 'He hasn't come out.' She is not asking for help exactly. She is just telling someone.",
+    "triggerConditions": {
+      "currentDistrict": "district-the-hollows",
+      "dayMin": 3,
+      "probability": 0.28
+    },
+    "choices": [
+      {
+        "id": "choice-hollows-ask-around",
+        "label": "Have someone ask around quietly",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -10
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "unrest",
+            "delta": -3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Ten Marks and some careful questions. The trail goes cold at the old mill. You report what you found. It's something."
+          }
+        ]
+      },
+      {
+        "id": "choice-hollows-cant-help",
+        "label": "You can't help — move on",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You move on. She watches you go."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "hollows",
+      "social",
+      "narrative"
+    ],
+    "cooldownDays": 12
   }
 ]
