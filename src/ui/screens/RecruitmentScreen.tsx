@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
 import { gameActions, selectAvailableForHire } from '../../application'
+import { contentCatalog } from '../../application/content/contentCatalog'
+import { RARITY_SKILL_CAPS } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function RecruitmentScreen() {
@@ -30,13 +32,29 @@ export function RecruitmentScreen() {
           {offers.map((offer) => {
             const canAfford = marks >= offer.signingBonus
             const factionNote = offer.factionAffinity ? ` · ${offer.factionAffinity}` : ''
+            const npcDef = contentCatalog.npcsById.get(offer.npcId)
+            const npcRarity = npcDef?.rarity ?? null
+            const npcSkillCap = npcRarity ? (RARITY_SKILL_CAPS[npcRarity] ?? null) : null
 
             return (
               <article key={offer.npcId} className="roster-row">
                 <div>
                   <span className="roster-row-title">{offer.name}</span>
                   <span className="text-muted">{factionNote}</span>
+                  {npcRarity && (
+                    <span
+                      className={`badge hire-badge--rarity hire-badge--rarity-${npcRarity}`}
+                      style={{ marginLeft: '0.5rem' }}
+                    >
+                      {npcRarity.charAt(0).toUpperCase() + npcRarity.slice(1)}
+                    </span>
+                  )}
                 </div>
+                {npcSkillCap !== null && (
+                  <p className="text-muted" style={{ margin: '0.1rem 0', fontSize: '0.8rem' }}>
+                    Skill cap: {npcSkillCap}
+                  </p>
+                )}
                 <p className="text-muted" style={{ margin: '0.25rem 0' }}>
                   {offer.background}
                 </p>
