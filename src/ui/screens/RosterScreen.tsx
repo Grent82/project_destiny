@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { selectRosterDetail, selectRosterEntries } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
@@ -22,6 +23,7 @@ function computeWorkingIncome(skills: Record<string, number>): number {
 }
 
 export function RosterScreen() {
+  const navigate = useNavigate()
   const rosterEntries = useAppSelector(selectRosterEntries)
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(
     rosterEntries[0]?.npcId ?? null,
@@ -38,6 +40,14 @@ export function RosterScreen() {
       <p className="summary">
         Personnel in house service. Their condition — health, morale, loyalty — is yours to account for.
       </p>
+      <button
+        className="action-button action-button--secondary"
+        type="button"
+        onClick={() => navigate('/recruitment')}
+        style={{ marginBottom: '1rem' }}
+      >
+        + Hire New Hands
+      </button>
 
       <div className="roster-layout">
         <div className="list-panel" role="list" aria-label="Roster entries">

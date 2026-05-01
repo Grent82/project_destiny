@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { gameActions, selectAvailableForHire } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
@@ -6,6 +7,7 @@ import { getRenownLevel, RARITY_SKILL_CAPS } from '../../domain/progression/cont
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function RecruitmentScreen() {
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const offers = useAppSelector(selectAvailableForHire)
   const marks = useAppSelector((state) => state.game.money)
@@ -23,6 +25,14 @@ export function RecruitmentScreen() {
       <p className="summary">
         Those seeking arrangement with the house. An offer not taken today may not stand tomorrow.
       </p>
+      <button
+        className="action-button action-button--secondary"
+        type="button"
+        onClick={() => navigate('/roster')}
+        style={{ marginBottom: '1rem' }}
+      >
+        ← Back to Roster
+      </button>
 
       {lastRecruitedName && (
         <p className="recruit-confirmation">{lastRecruitedName} has joined the house.</p>

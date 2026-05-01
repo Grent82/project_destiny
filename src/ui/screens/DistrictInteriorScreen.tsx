@@ -149,7 +149,7 @@ export function DistrictInteriorScreen() {
                       <button
                         className="action-button"
                         type="button"
-                        onClick={() => navigate('/roster')}
+                        onClick={() => navigate('/recruitment')}
                         style={{ fontSize: '0.8rem', padding: '0.3rem 0.7rem' }}
                       >
                         Find Hands
