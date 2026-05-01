@@ -2,9 +2,10 @@ import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { getCouncilVoteTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
+import type { Rng } from './seededRng'
 
 /** Steps 7, 7b, 7c, 7d, 7e, 7f: council votes, faction pressure, rival orgs, city stability, debt. */
-export function applyPolitics(state: GameState): GameState {
+export function applyPolitics(state: GameState, rng: Rng = Math.random): GameState {
   let next = state
   const currentDay = next.day
 
@@ -12,7 +13,7 @@ export function applyPolitics(state: GameState): GameState {
   if (currentDay % 5 === 0 && next.activeCouncilVotes.length === 0) {
     const templates = getCouncilVoteTemplates()
     if (templates.length > 0) {
-      const template = templates[Math.floor(Math.random() * templates.length)]!
+      const template = templates[Math.floor(rng() * templates.length)]!
       next = {
         ...next,
         activeCouncilVotes: [
@@ -57,7 +58,7 @@ export function applyPolitics(state: GameState): GameState {
 
   // Step 7c: Rival org simulation
   const controlAdj = next.cityDials.control >= 60 ? 0.05 : next.cityDials.control <= 30 ? -0.05 : 0
-  const rivalActions = simulateRivalOrgs(next, [Math.random() + controlAdj, Math.random() + controlAdj])
+  const rivalActions = simulateRivalOrgs(next, [rng() + controlAdj, rng() + controlAdj])
   next = applyRivalActions(next, rivalActions)
 
   // Step 7d: City stability crisis event

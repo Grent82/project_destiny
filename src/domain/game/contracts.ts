@@ -215,6 +215,7 @@ export const gameStateSchema = z
       vaultUnlocked: false,
     })),
     saveVersion: z.number().int().min(1).default(1),
+    rngSeed: z.number().int().nonnegative().default(42),
   })
   .strict()
 

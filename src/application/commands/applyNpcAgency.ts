@@ -4,16 +4,17 @@ import { applyRelationshipDelta } from './adjustRelationship'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { getJobForNpc } from '../content/jobCatalog'
+import type { Rng } from './seededRng'
 
 type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks'
 
 /** Step 9a: NPC world agency — working NPCs shape the world through their actions. */
-export function applyNpcAgency(state: GameState): GameState {
+export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameState {
   let afterEvents = state
   const workingNpcs = afterEvents.roster.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
-    if (Math.random() >= 0.15) continue
+    if (rng() >= 0.15) continue
 
     const job = getJobForNpc(npc.skills as Record<string, number>)
     const district = job.districtHint
@@ -33,13 +34,13 @@ export function applyNpcAgency(state: GameState): GameState {
     if (isAmbitious) pool.push('faction_favor')
     if (isGreedy) pool.push('spend_marks')
 
-    const action = pool[Math.floor(Math.random() * pool.length)]!
+    const action = pool[Math.floor(rng() * pool.length)]!
 
     afterEvents = { ...afterEvents, relationships: { ...afterEvents.relationships } }
 
     if (action === 'rumor') {
       const rumors = contentCatalog.rumors
-      const snippet = rumors[Math.floor(Math.random() * rumors.length)]!
+      const snippet = rumors[Math.floor(rng() * rumors.length)]!
       afterEvents = appendActivityLogEntry(
         afterEvents,
         'system',
@@ -80,9 +81,9 @@ export function applyNpcAgency(state: GameState): GameState {
       )
     } else if (action === 'faction_favor') {
       const factionIds = contentCatalog.factions.map((f) => f.id)
-      const factionId = factionIds[Math.floor(Math.random() * factionIds.length)]!
+      const factionId = factionIds[Math.floor(rng() * factionIds.length)]!
       const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-      const delta = 1 + Math.floor(Math.random() * 2)
+      const delta = 1 + Math.floor(rng() * 2)
       if (afterEvents.factionStandings[factionId] !== undefined) {
         afterEvents = {
           ...afterEvents,
@@ -100,11 +101,11 @@ export function applyNpcAgency(state: GameState): GameState {
     } else if (action === 'npc_bond') {
       const others = afterEvents.roster.filter((r) => r.npcId !== npc.npcId)
       if (others.length > 0) {
-        const other = others[Math.floor(Math.random() * others.length)]!
+        const other = others[Math.floor(rng() * others.length)]!
         const relKey = buildRelationshipKey(npc.npcId, other.npcId)
         const existing = afterEvents.relationships[relKey]
         if (!existing || existing.loyalty < 30) {
-          const delta = 5 + Math.floor(Math.random() * 10)
+          const delta = 5 + Math.floor(rng() * 10)
           applyRelationshipDelta(afterEvents, npc.npcId, other.npcId, 'loyalty', delta)
           afterEvents = appendActivityLogEntry(
             afterEvents,
@@ -114,7 +115,7 @@ export function applyNpcAgency(state: GameState): GameState {
         }
       }
     } else if (action === 'spend_marks') {
-      const cost = 5 + Math.floor(Math.random() * 10)
+      const cost = 5 + Math.floor(rng() * 10)
       if (afterEvents.money >= cost) {
         afterEvents = { ...afterEvents, money: afterEvents.money - cost }
         afterEvents = appendActivityLogEntry(

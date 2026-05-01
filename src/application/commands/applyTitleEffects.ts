@@ -2,6 +2,7 @@ import type { GameState, Skills } from '../../domain'
 import { RARITY_SKILL_CAPS, skillGainMultiplier, crossedMilestones } from '../../domain/progression/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
+import type { Rng } from './seededRng'
 
 const SKILL_KEYS: (keyof Skills)[] = [
   'melee',
@@ -19,7 +20,7 @@ const SKILL_KEYS: (keyof Skills)[] = [
 ]
 
 /** Steps 4, 4b, 4c, 4d, 4e: title effects, training gains, working NPC income, house baseline, faction grants. */
-export function applyTitleEffects(state: GameState): GameState {
+export function applyTitleEffects(state: GameState, rng: Rng = Math.random): GameState {
   let next = state
 
   // Step 4: Title effects
@@ -80,8 +81,8 @@ export function applyTitleEffects(state: GameState): GameState {
           (r) => r.assignment === 'idle' && r.npcId !== npc.npcId,
         )
         for (let t = 0; t < Math.min(trainCount, idleNpcs.length); t++) {
-          const target = idleNpcs[Math.floor(Math.random() * idleNpcs.length)]!
-          const skillKey = SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
+          const target = idleNpcs[Math.floor(rng() * idleNpcs.length)]!
+          const skillKey = SKILL_KEYS[Math.floor(rng() * SKILL_KEYS.length)]!
           next = {
             ...next,
             roster: next.roster.map((r) =>
@@ -151,7 +152,7 @@ export function applyTitleEffects(state: GameState): GameState {
         (npc.skills as Record<string, number>)[npc.trainingFocus] !== undefined
           ? npc.trainingFocus
           : null
-      const skillKey = focusedSkill ?? SKILL_KEYS[Math.floor(Math.random() * SKILL_KEYS.length)]!
+      const skillKey = focusedSkill ?? SKILL_KEYS[Math.floor(rng() * SKILL_KEYS.length)]!
 
       const currentVal = (npc.skills as Record<string, number>)[skillKey] ?? 0
       if (currentVal >= rarityCap) {

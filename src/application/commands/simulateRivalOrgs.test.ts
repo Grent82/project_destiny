@@ -81,6 +81,7 @@ const baseState: GameState = {
     vaultUnlocked: false,
   },
   saveVersion: 1,
+  rngSeed: 42,
 }
 
 describe('simulateRivalOrgs', () => {

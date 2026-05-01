@@ -4,6 +4,7 @@ import { evaluateEvents } from "./evaluateEvents"
 import { expireHireOffers } from "./recruitment"
 import { contentCatalog } from "../content/contentCatalog"
 import { generateDistrictHireOffers } from "./generateHireOffers"
+import { createRng } from "./seededRng"
 import { applyWages } from "./applyWages"
 import { applyStateDecay } from "./applyStateDecay"
 import { applyThresholds } from "./applyThresholds"
@@ -126,18 +127,21 @@ function checkMainQuestProgression(state: GameState): GameState {
 }
 
 export function endDay(state: GameState): GameState {
+  const seeded = createRng(state.rngSeed)
+  const rng = seeded.rng
+
   // Steps 1-4: wages, decay, thresholds, title effects + income
   let next = applyWages(state)
   next = applyStateDecay(next)
   next = applyThresholds(next)
-  next = applyTitleEffects(next)
+  next = applyTitleEffects(next, rng)
 
   // Step 5: City resource consequences
   next = applyEndOfDayResources(next)
 
   // Steps 5b-5d: relationship drift, NPC departure, durability warnings
   // Passes original relationships so departure check uses start-of-day loyalty values.
-  next = applyNpcConsequences(next, state.relationships)
+  next = applyNpcConsequences(next, state.relationships, rng)
 
   // Step 6: Advance time
   const nextDay = next.day + 1
@@ -145,7 +149,7 @@ export function endDay(state: GameState): GameState {
   next = appendActivityLogEntry(next, "system", `The day turns. Day ${nextDay}.`)
 
   // Step 7: Politics, factions, debt
-  next = applyPolitics(next)
+  next = applyPolitics(next, rng)
 
   // Step 8: Expire stale hire offers, optionally refresh, then evaluate world events
   const afterExpiry = expireHireOffers(next)
@@ -160,10 +164,13 @@ export function endDay(state: GameState): GameState {
 
   // Step 9: Faction quest bonus, NPC agency, faction agenda, district tension
   afterEvents = applyFactionQuestBonus(afterEvents)
-  afterEvents = applyNpcAgency(afterEvents)
+  afterEvents = applyNpcAgency(afterEvents, rng)
   afterEvents = applyFactionActivity(afterEvents)
 
   // Steps 10-11: Rumor events + main quest progression
   afterEvents = resolveRumorEvents(afterEvents)
-  return checkMainQuestProgression(afterEvents)
+  const finalState = checkMainQuestProgression(afterEvents)
+
+  // Store advanced RNG seed for next day's deterministic run
+  return { ...finalState, rngSeed: seeded.getSeed() }
 }

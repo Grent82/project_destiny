@@ -3,12 +3,14 @@ import { appendActivityLogEntry } from './activityLog'
 import { applyPassiveDrift, applyProximityGains } from './adjustRelationship'
 import { evaluateNpcDeparture } from './npcDeparture'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import type { Rng } from './seededRng'
 
 /** Steps 5b–5d: relationship drift, ambition frustration, NPC departure/betrayal, durability warnings.
  *  Receives the original start-of-day relationships to correctly evaluate departure risk. */
 export function applyNpcConsequences(
   state: GameState,
   startOfDayRelationships: GameState['relationships'],
+  rng: Rng = Math.random,
 ): GameState {
   let next = state
 
@@ -50,7 +52,7 @@ export function applyNpcConsequences(
     const result = evaluateNpcDeparture(
       { id: npc.npcId, name: npc.name, assignment: npc.assignment, traits: { loyalty: npc.traits.loyalty } },
       rel,
-      Math.random(),
+      rng(),
     )
     if (result.type === 'departed') {
       next = {
