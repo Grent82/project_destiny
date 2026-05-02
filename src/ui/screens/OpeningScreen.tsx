@@ -106,6 +106,7 @@ export function OpeningScreen() {
     const finalName = name.trim() || 'Valdric'
     dispatch(gameActions.setPlayerCharacter({
       name: finalName,
+      backgroundId: bg.id,
       attributes: bg.attributes,
       skills: bg.skills,
       traits: buildTraits(selectedTraitKeys),

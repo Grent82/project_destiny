@@ -235,6 +235,12 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
           stage: 'rescued',
           lastClue: 'Mira is back. She is thinner than you remember, and her eyes hold something new — a knowledge she refuses to name.',
         },
+        householdLore: {
+          ...next.householdLore,
+          missingRelatives: [
+            { name: 'Mira Valdris', relation: 'sister', lastKnownLocation: 'Recovered from the Pale Sisters\' facility' },
+          ],
+        },
         lastFiredDay: { ...next.lastFiredDay, 'event-mira-rescued': next.day },
       }
       next = appendActivityLogEntry(

@@ -38,6 +38,7 @@ const poiSchema = z.object({
   description: z.string(),
   factionId: z.string().nullable(),
   actions: z.array(z.enum(['contracts', 'hire', 'shop'])),
+  npcId: z.string().optional(),
 })
 export type PoiDefinition = z.infer<typeof poiSchema>
 

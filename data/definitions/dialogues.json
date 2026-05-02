@@ -165,7 +165,7 @@
       {
         "id": "marion-node-debt-stop-b",
         "npcId": "npc-marion-vale",
-        "text": "She nods once. She turns back to the window. Whatever she had planned stays unspoken. But you get the sense she's already done the thinking — she just won't burden you with it yet.",
+        "text": "She nods once. She turns back to the window. Whatever she had planned stays unspoken. But you get the sense she's already done the thinking \u2014 she just won't burden you with it yet.",
         "choices": []
       },
       {
@@ -215,7 +215,7 @@
       {
         "id": "marion-node-renown-careful-a",
         "npcId": "npc-marion-vale",
-        "text": "Marion looks at you with something that is not quite surprise. \"Yes.\" She sits down. \"I've already started thinking about who might want to test it.\" She opens the ledger to a different page — names, not numbers. \"I'll keep watching.\"",
+        "text": "Marion looks at you with something that is not quite surprise. \"Yes.\" She sits down. \"I've already started thinking about who might want to test it.\" She opens the ledger to a different page \u2014 names, not numbers. \"I'll keep watching.\"",
         "choices": []
       },
       {
@@ -227,7 +227,7 @@
       {
         "id": "marion-node-trust-intro",
         "npcId": "npc-marion-vale",
-        "text": "Marion finds you before supper. She has a question — you can tell by the way she's standing, hands clasped behind her back. \"Can I ask you something that isn't about the household?\"",
+        "text": "Marion finds you before supper. She has a question \u2014 you can tell by the way she's standing, hands clasped behind her back. \"Can I ask you something that isn't about the household?\"",
         "choices": [
           {
             "id": "marion-choice-trust-yes",
@@ -322,6 +322,294 @@
         "npcId": "npc-verek-holst",
         "text": "He leans in. 'Collectors were asking about the old Valdris accounts last night.'",
         "choices": []
+      }
+    ]
+  },
+  {
+    "id": "dialogue-garet-doyle",
+    "npcId": "npc-garet-doyle",
+    "openingNodeId": "garet-node-1",
+    "nodes": [
+      {
+        "id": "garet-node-1",
+        "npcId": "npc-garet-doyle",
+        "text": "Garet Doyle leans across the bar, wiping a glass that hasn't been clean in years. 'House Valdris. You're still standing, then. What'll it be?'",
+        "choices": [
+          {
+            "id": "garet-choice-rumours",
+            "label": "What's moving through the district?",
+            "nextNodeId": "garet-node-rumours"
+          },
+          {
+            "id": "garet-choice-nothing",
+            "label": "Nothing. Just looking.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "garet-node-rumours",
+        "npcId": "npc-garet-doyle",
+        "text": "'Compact's been asking questions about the old families. Not the kind of asking where they want answers. The kind where they already have them.' He sets the glass down. 'You didn't hear it here.'",
+        "choices": [
+          {
+            "id": "garet-choice-thanks",
+            "label": "I'll keep that in mind.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-lira-ashcroft",
+    "npcId": "npc-lira-ashcroft",
+    "openingNodeId": "lira-node-1",
+    "nodes": [
+      {
+        "id": "lira-node-1",
+        "npcId": "npc-lira-ashcroft",
+        "text": "Lira Ashcroft doesn't look up from the scale she's adjusting. 'Goods or gossip. I don't deal in anything else.' She finally meets your eye. 'Which is it?'",
+        "choices": [
+          {
+            "id": "lira-choice-sell",
+            "label": "I have something to move quietly.",
+            "nextNodeId": "lira-node-sell"
+          },
+          {
+            "id": "lira-choice-info",
+            "label": "I'm looking for information.",
+            "nextNodeId": "lira-node-info"
+          },
+          {
+            "id": "lira-choice-nothing",
+            "label": "Neither, for now.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "lira-node-sell",
+        "npcId": "npc-lira-ashcroft",
+        "text": "'Bring it by the stall tomorrow. No names, no ledger.' She slides a card across the table \u2014 a time and a dock number. 'Don't be late. I'm not sentimental.'",
+        "choices": [
+          {
+            "id": "lira-choice-sell-ok",
+            "label": "Understood.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "lira-node-info",
+        "npcId": "npc-lira-ashcroft",
+        "text": "'Information costs more than goods.' She names a price with her eyes. 'What's it worth to you?'",
+        "choices": [
+          {
+            "id": "lira-choice-info-pay",
+            "label": "Worth knowing.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 5
+            }
+          },
+          {
+            "id": "lira-choice-info-pass",
+            "label": "Another time.",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-bog",
+    "npcId": "npc-bog",
+    "openingNodeId": "bog-node-1",
+    "nodes": [
+      {
+        "id": "bog-node-1",
+        "npcId": "npc-bog",
+        "text": "Bog doesn't waste words. He looks at you the way a man looks at a problem that hasn't become inconvenient yet. 'Speak.'",
+        "choices": [
+          {
+            "id": "bog-choice-work",
+            "label": "I need hands for the morning shift.",
+            "nextNodeId": "bog-node-work"
+          },
+          {
+            "id": "bog-choice-leave",
+            "label": "Wrong time.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "bog-node-work",
+        "npcId": "npc-bog",
+        "text": "'Three Marks a head, up front. They work, they get paid. They don't work, they don't come back.' He holds out a hand, palm up. 'Simple as that.'",
+        "choices": [
+          {
+            "id": "bog-choice-deal",
+            "label": "Done.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 4
+            }
+          },
+          {
+            "id": "bog-choice-pass",
+            "label": "I'll think on it.",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-the-wren",
+    "npcId": "npc-the-wren",
+    "openingNodeId": "wren-node-1",
+    "nodes": [
+      {
+        "id": "wren-node-1",
+        "npcId": "npc-the-wren",
+        "text": "There's a figure in the corner that you almost missed. 'I know why you're here,' The Wren says. No greeting. No name. 'The question is whether what I have is worth what you'll pay.'",
+        "choices": [
+          {
+            "id": "wren-choice-ask",
+            "label": "What do you know about the Pale Sisters?",
+            "nextNodeId": "wren-node-pale"
+          },
+          {
+            "id": "wren-choice-nothing",
+            "label": "Perhaps not today.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "wren-node-pale",
+        "npcId": "npc-the-wren",
+        "text": "'They move assets through the Harbor on the second and fourth nights of each month. What those assets are, I won't say here.' The Wren slides a folded paper across the table. 'Read it. Burn it.'",
+        "choices": [
+          {
+            "id": "wren-choice-thanks",
+            "label": "I owe you.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "The Pale Sisters move assets through the Harbor \u2014 a lead worth following."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-old-maret",
+    "npcId": "npc-old-maret",
+    "openingNodeId": "maret-node-1",
+    "nodes": [
+      {
+        "id": "maret-node-1",
+        "npcId": "npc-old-maret",
+        "text": "The old woman looks at you with the particular clarity of the very old. 'Valdris,' she says softly. 'I knew your grandfather. He made a promise he didn't keep. I'm waiting to see if it skips a generation.'",
+        "choices": [
+          {
+            "id": "maret-choice-what",
+            "label": "What promise?",
+            "nextNodeId": "maret-node-promise"
+          },
+          {
+            "id": "maret-choice-leave",
+            "label": "I don't have time for old stories.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "maret-node-promise",
+        "npcId": "npc-old-maret",
+        "text": "'He said if it ever happened again, the family would be there. Be ready.' She looks out the window at something you can't see. 'The Breach wasn't the first. He knew that. I think you're starting to understand it too.'",
+        "choices": [
+          {
+            "id": "maret-choice-listen",
+            "label": "Tell me more.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Old Maret suggests the Breach may not have been the first \u2014 and your grandfather knew."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-sister-vael",
+    "npcId": "npc-sister-vael",
+    "openingNodeId": "vael-node-1",
+    "nodes": [
+      {
+        "id": "vael-node-1",
+        "npcId": "npc-sister-vael",
+        "text": "Sister Vael glances up from a stack of tightly-folded notes. 'House Valdris. I've been wondering when you'd come.' She folds her hands. 'Remedies or rumours?'",
+        "choices": [
+          {
+            "id": "vael-choice-info",
+            "label": "Information, if you have it.",
+            "nextNodeId": "vael-node-info"
+          },
+          {
+            "id": "vael-choice-healing",
+            "label": "One of my people needs attention.",
+            "nextNodeId": "vael-node-healing"
+          },
+          {
+            "id": "vael-choice-leave",
+            "label": "Neither. I'll return.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "vael-node-info",
+        "npcId": "npc-sister-vael",
+        "text": "'The Compact has been moving injured men out of sight \u2014 quietly, from the Detention House. They're not criminals.' She pauses. 'They're not from the city at all. Whatever is happening beyond the gates is closer than anyone is saying.'",
+        "choices": [
+          {
+            "id": "vael-choice-info-thanks",
+            "label": "Thank you, Sister.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "vael-node-healing",
+        "npcId": "npc-sister-vael",
+        "text": "'Send them by tonight. I'll see what I can do. I don't charge the Pale folk what I charge the Heights.' She writes something on a slip of paper. 'Give them this.'",
+        "choices": [
+          {
+            "id": "vael-choice-healing-thanks",
+            "label": "Gratitude.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 3
+            }
+          }
+        ]
       }
     ]
   }

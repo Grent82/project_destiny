@@ -181,6 +181,7 @@ export const gameStateSchema = z
     houseDistrictId: z.string().default('district-the-pale'),
     playerCharacter: z.object({
       name: z.string().default(''),
+      backgroundId: z.string().optional(),
       attributes: attributesSchema,
       skills: skillsSchema,
       traits: traitsSchema,

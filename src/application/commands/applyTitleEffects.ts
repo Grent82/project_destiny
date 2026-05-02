@@ -234,6 +234,26 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   next = { ...next, money: next.money + 5 }
   next = appendActivityLogEntry(next, 'economy', 'The house generates its daily yield. +5 Marks.')
 
+  // Background perk: Blade gets +1 combat NPC morale daily; Schemer gets +5 Marks/day; Voice gets +2 renown every 5 days
+  const backgroundId = next.playerCharacter.backgroundId
+  if (backgroundId === 'blade') {
+    next = {
+      ...next,
+      roster: next.roster.map((r) =>
+        r.assignment !== 'deployed'
+          ? r
+          : { ...r, states: { ...r.states, morale: Math.min(100, r.states.morale + 1) } }
+      ),
+    }
+  } else if (backgroundId === 'schemer') {
+    next = { ...next, money: next.money + 5 }
+  } else if (backgroundId === 'voice' && next.day % 5 === 0) {
+    next = {
+      ...next,
+      playerCharacter: { ...next.playerCharacter, renown: next.playerCharacter.renown + 2 },
+    }
+  }
+
   // Step 4e: Faction income grants — allied factions contribute 3 Marks/day (6 at standing >= 75)
   for (const [factionId, standing] of Object.entries(next.factionStandings)) {
     if (standing >= 50) {

@@ -123,6 +123,7 @@ export const npcDefinitionSchema = z
     startingTraits: traitsSchema,
     allowedTitleIds: z.array(entityIdSchema).default([]),
     motivation: z.string().optional(),
+    dialogueId: entityIdSchema.optional(),
   })
   .strict()
 

@@ -167,7 +167,25 @@ export function DistrictInteriorScreen() {
                     )}
                   </div>
                 )}
-                {poi.actions.length > 0 && !isHere && (
+                {poi.dialogueId && isHere && (
+                  <div className="poi-actions">
+                    <button
+                      className="action-button"
+                      type="button"
+                      onClick={() => {
+                        const tree = contentCatalog.dialoguesById.get(poi.dialogueId!)
+                        if (tree) {
+                          dispatch(gameActions.startDialogue({ dialogueId: tree.id, nodeId: tree.openingNodeId }))
+                          navigate('/dialogue')
+                        }
+                      }}
+                      style={{ fontSize: '0.8rem', padding: '0.3rem 0.7rem' }}
+                    >
+                      Talk
+                    </button>
+                  </div>
+                )}
+                {(poi.actions.length > 0 || poi.dialogueId) && !isHere && (
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
                     Enter the district to access this location.
                   </p>

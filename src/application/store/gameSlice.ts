@@ -954,12 +954,14 @@ const gameSlice = createSlice({
       state,
       action: PayloadAction<{
         name: string
+        backgroundId?: string
         attributes: Attributes
         skills: Skills
         traits: Traits
       }>,
     ) {
       state.playerCharacter.name = action.payload.name
+      if (action.payload.backgroundId) state.playerCharacter.backgroundId = action.payload.backgroundId
       state.playerCharacter.attributes = action.payload.attributes
       state.playerCharacter.skills = action.payload.skills
       state.playerCharacter.traits = action.payload.traits
@@ -1029,6 +1031,30 @@ const gameSlice = createSlice({
     endDialogue(state) {
       state.activeDialogueId = null
       state.activeDialogueNodeId = null
+    },
+
+    recordMainQuestHint(state, action: PayloadAction<{ hint: string }>) {
+      const { hint } = action.payload
+      state.mainQuest.lastClue = hint
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-mqhint`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `◆ ${hint}`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+    },
+
+    appendSystemLog(state, action: PayloadAction<{ message: string }>) {
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-sys-${state.activityLog.length}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: action.payload.message,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
 
     repairRoom(state, action: PayloadAction<string>) {

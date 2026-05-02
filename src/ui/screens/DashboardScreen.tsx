@@ -183,6 +183,17 @@ export function DashboardScreen(props: DashboardScreenProps) {
               <h2>House Location</h2>
               <p>House Valdris — The Pale</p>
             </article>
+            {playerCharacter.backgroundId && (
+              <article>
+                <h2>Background</h2>
+                <p style={{ textTransform: 'capitalize' }}>
+                  {playerCharacter.backgroundId === 'blade' ? '⚔ The Blade'
+                    : playerCharacter.backgroundId === 'schemer' ? '◈ The Schemer'
+                    : playerCharacter.backgroundId === 'voice' ? '◉ The Voice'
+                    : playerCharacter.backgroundId}
+                </p>
+              </article>
+            )}
           </div>
         </>
       )}

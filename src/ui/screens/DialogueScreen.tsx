@@ -46,15 +46,24 @@ export function DialogueScreen() {
 
   function handleChoice(choice: DialogueChoice) {
     if (choice.outcome) {
-      if (choice.outcome.type === 'loyalty' && typeof choice.outcome.value === 'number') {
+      const { type, value, targetId } = choice.outcome
+      const npcId = targetId ?? tree!.npcId
+
+      if ((type === 'loyalty' || type === 'trust' || type === 'respect') && typeof value === 'number') {
         dispatch(
           gameActions.adjustRelationship({
             fromId: 'player',
-            toId: tree!.npcId,
-            axis: 'loyalty',
-            delta: choice.outcome.value,
+            toId: npcId,
+            axis: type as 'loyalty' | 'trust' | 'respect',
+            delta: value,
           }),
         )
+      } else if (type === 'factionStanding' && typeof value === 'number' && targetId) {
+        dispatch(gameActions.adjustFactionStanding({ factionId: targetId, delta: value }))
+      } else if (type === 'mainQuestHint' && typeof value === 'string') {
+        dispatch(gameActions.recordMainQuestHint({ hint: value }))
+      } else if (type === 'activityLog' && typeof value === 'string') {
+        dispatch(gameActions.appendSystemLog({ message: value }))
       }
     }
 
