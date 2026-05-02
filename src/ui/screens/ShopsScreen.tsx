@@ -108,7 +108,9 @@ export function ShopsScreen() {
               <p>{shop.summary}</p>
               {shop.accessDenied ? (
                 <p className="summary badge badge-warning">
-                  This establishment does not welcome you.
+                  {'institutionalBlock' in shop && shop.institutionalBlock
+                    ? 'This faction has closed their doors to House Valdric. Blacklisted.'
+                    : 'This establishment does not welcome you.'}
                 </p>
               ) : (
                 <div className="shop-offer-list">

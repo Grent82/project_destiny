@@ -74,7 +74,7 @@ const gameSlice = createSlice({
       afterDay.activeQuests = afterDay.activeQuests.filter((q) => q.status === 'active')
       for (const failed of failedQuests) {
         const template = getQuestTemplates().find((t) => t.id === failed.questId)
-        if (template?.rewardStandingFactionId && afterDay.factionStandings[template.rewardStandingFactionId] !== undefined) {
+        if (template?.rewardStandingFactionId) {
           afterDay.factionStandings[template.rewardStandingFactionId] = Math.max(
             -100,
             (afterDay.factionStandings[template.rewardStandingFactionId] ?? 0) + template.penaltyStandingDelta,
@@ -85,7 +85,7 @@ const gameSlice = createSlice({
           day: afterDay.day,
           timeSlot: afterDay.timeSlot,
           category: 'system',
-          message: `Contract failed: ${template?.title ?? failed.questId}. The house bears the cost.`,
+          message: `Contract failed: "${template?.title ?? failed.questId}". The house bears the cost.${template?.rewardStandingFactionId && template.penaltyStandingDelta < 0 ? ` Standing with ${contentCatalog.factionsById.get(template.rewardStandingFactionId)?.name ?? template.rewardStandingFactionId} suffers.` : ''}`,
         })
       }
       if (
@@ -129,12 +129,19 @@ const gameSlice = createSlice({
         afterDay.activeQuests = afterDay.activeQuests.filter((q) => q.status === 'active')
         for (const failed of failedQuests) {
           const template = getQuestTemplates().find((t) => t.id === failed.questId)
-          if (template?.rewardStandingFactionId && afterDay.factionStandings[template.rewardStandingFactionId] !== undefined) {
+          if (template?.rewardStandingFactionId) {
             afterDay.factionStandings[template.rewardStandingFactionId] = Math.max(
               -100,
               (afterDay.factionStandings[template.rewardStandingFactionId] ?? 0) + template.penaltyStandingDelta,
             )
           }
+          afterDay.activityLog.unshift({
+            id: `log-${afterDay.day}-${afterDay.timeSlot}-quest-expire-${failed.questId}`,
+            day: afterDay.day,
+            timeSlot: afterDay.timeSlot,
+            category: 'system',
+            message: `Contract failed: "${template?.title ?? failed.questId}". The house bears the cost.${template?.rewardStandingFactionId && template.penaltyStandingDelta < 0 ? ` Standing with ${contentCatalog.factionsById.get(template.rewardStandingFactionId)?.name ?? template.rewardStandingFactionId} suffers.` : ''}`,
+          })
         }
         if (!afterDay.debtPaid && !afterDay.debtCrisisTriggered && afterDay.day >= afterDay.debtDueDay && afterDay.money < afterDay.debtAmount) {
           afterDay.debtCrisisTriggered = true
@@ -417,6 +424,43 @@ const gameSlice = createSlice({
           })
         }
       }
+    },
+
+    resolveSimpleContract(state, action: PayloadAction<{ questId: string }>) {
+      const { questId } = action.payload
+      const idx = state.activeQuests.findIndex((q) => q.questId === questId)
+      if (idx === -1) return
+      const quest = getQuestTemplates().find((q) => q.id === questId)
+      if (!quest) return
+      if (quest.objectiveType !== 'delivery' && quest.objectiveType !== 'survival') return
+
+      state.activeQuests.splice(idx, 1)
+      state.completedQuestIds.push(questId)
+
+      // Apply rewards
+      state.money += quest.rewardMarks
+      if (quest.rewardStandingFactionId && quest.rewardStandingDelta > 0) {
+        state.factionStandings[quest.rewardStandingFactionId] = Math.min(
+          100,
+          (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.rewardStandingDelta,
+        )
+      }
+      const oldRenown = state.playerCharacter.renown
+      const renownGain = quest.riskLevel === 'high' ? 12 : quest.riskLevel === 'medium' ? 7 : 3
+      state.playerCharacter.renown = oldRenown + renownGain
+
+      const label = quest.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
+      const factionNote = quest.rewardStandingFactionId
+        ? ` Standing improved.`
+        : ''
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-resolve-${questId}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'economy',
+        message: `${label}: "${quest.title}". ${quest.rewardMarks} Marks received. +${renownGain} Renown.${factionNote}`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
 
     failQuest(state, action: PayloadAction<{ questId: string }>) {

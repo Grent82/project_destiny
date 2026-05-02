@@ -9,6 +9,7 @@ const selectDistrictStates = (state: RootState) => state.game.districts
 const selectCurrentDistrictId = (state: RootState) => state.game.currentDistrictId
 const selectFactionStandings = (state: RootState) => state.game.factionStandings
 const selectCorridorStatus = (state: RootState) => state.game.cityResources.corridorStatus
+const selectInstitutionalStanding = (state: RootState) => state.game.institutionalStanding
 
 export const selectShopsInCurrentDistrict = (state: RootState) => {
   const districtId = state.game.currentDistrictId
@@ -17,8 +18,8 @@ export const selectShopsInCurrentDistrict = (state: RootState) => {
 }
 
 export const selectShopOverview = createSelector(
-  [selectMoney, selectInventory, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus],
-  (money, inventory, districtStates, currentDistrictId, factionStandings, corridorStatus) => {
+  [selectMoney, selectInventory, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding],
+  (money, inventory, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding) => {
     const quantities = new Map(inventory.map((entry) => [entry.itemId, entry.quantity]))
     const lowestPriceByItem = new Map<string, number>()
     const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
@@ -64,6 +65,12 @@ export const selectShopOverview = createSelector(
           ? (factionStandings[districtControlFactionId] ?? 0) <= -50
           : false
 
+        // Block shops run by factions that have blacklisted or turned hostile to the house
+        const shopFactionId = shop.requiredFactionId ?? district?.controllingFactionId ?? null
+        const institutionalBlock = shopFactionId
+          ? (institutionalStanding[shopFactionId] === 'blacklisted' || institutionalStanding[shopFactionId] === 'hostile')
+          : false
+
         return {
           id: shop.id,
           name: shop.name,
@@ -74,9 +81,10 @@ export const selectShopOverview = createSelector(
           controllingFactionName: controllingFaction?.name ?? null,
           danger: districtState?.danger ?? null,
           marketPressure: districtState?.marketPressure ?? null,
-          accessDenied,
+          accessDenied: accessDenied || institutionalBlock,
           isBlocked,
-          offers: (accessDenied || isBlocked)
+          institutionalBlock,
+          offers: (accessDenied || isBlocked || institutionalBlock)
             ? []
             : shop.offers
                 .slice()

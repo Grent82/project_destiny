@@ -4,6 +4,7 @@ import {
   gameActions,
   selectActiveQuests,
   selectCompletedQuestIds,
+  selectCurrentDistrictId,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -33,6 +34,7 @@ export function ContractBoardScreen() {
   const navigate = useNavigate()
   const activeQuests = useAppSelector(selectActiveQuests)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
+  const currentDistrictId = useAppSelector(selectCurrentDistrictId)
 
   return (
     <section className="screen-panel">
@@ -116,6 +118,24 @@ export function ContractBoardScreen() {
                       Deploy Squad →
                     </button>
                   )}
+                  {(template?.objectiveType === 'delivery' || template?.objectiveType === 'survival') && (() => {
+                    const inDistrict = !template.districtId || template.districtId === currentDistrictId
+                    const label = template.objectiveType === 'delivery' ? 'Complete Delivery' : 'Complete Job'
+                    const hint = template.districtId && !inDistrict
+                      ? `Travel to ${template.districtId.replace('district-', '').replace(/-/g, ' ')} first`
+                      : undefined
+                    return (
+                      <button
+                        className="action-button action-button--primary"
+                        onClick={() => dispatch(gameActions.resolveSimpleContract({ questId: runtime.questId }))}
+                        disabled={!inDistrict}
+                        title={hint}
+                        type="button"
+                      >
+                        {label}
+                      </button>
+                    )
+                  })()}
                 </div>
                 )
               })}

@@ -747,6 +747,18 @@ export function concludeCombatEncounter(state: GameState): GameState {
     const reward = mission?.rewardCredits ?? 0
     if (reward > 0) nextState = { ...nextState, money: nextState.money + reward }
 
+    // Loot from defeated enemies
+    const defeatedEnemies = combat.combatants.filter((c) => c.side === 'enemies' && c.health <= 0)
+    if (defeatedEnemies.length > 0) {
+      const lootMarks = defeatedEnemies.reduce((sum, e) => sum + Math.max(5, Math.floor(e.maxHealth / 5)), 0)
+      nextState = { ...nextState, money: nextState.money + lootMarks }
+      nextState = appendActivityLogEntry(
+        nextState,
+        'economy',
+        `Searched the fallen. Found ${lootMarks} Marks in coin and valuables.`,
+      )
+    }
+
     // Relationship gains for victory
     const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
     nextState = { ...nextState, relationships: { ...nextState.relationships } }
