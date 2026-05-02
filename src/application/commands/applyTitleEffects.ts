@@ -141,7 +141,10 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     const hasTrainer = next.roster.some(
       (r) => r.activeTitle === 'title-trainer' && r.assignment !== 'deployed',
     )
+    // Study intact: quiet place for study grants +25% training gain
+    const studyIntact = next.house.rooms.some((r) => r.roomId === 'room-study' && r.state === 'intact')
     const baseGain = hasTrainer ? 2 : 1
+    const studyMult = studyIntact ? 1.25 : 1
 
     for (const npc of next.roster.filter((r) => r.assignment === 'training')) {
       const npcDef = contentCatalog.npcsById.get(npc.npcId)
@@ -165,7 +168,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       }
 
       const multiplier = skillGainMultiplier(currentVal)
-      const rawGain = baseGain * (focusedSkill ? 1.5 : 1)
+      const rawGain = baseGain * (focusedSkill ? 1.5 : 1) * studyMult
       const effectiveGain = Math.max(1, Math.round(rawGain * multiplier))
       const newVal = Math.min(rarityCap, currentVal + effectiveGain)
 

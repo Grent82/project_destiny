@@ -910,25 +910,72 @@ const gameSlice = createSlice({
     repairRoom(state, action: PayloadAction<string>) {
       const room = state.house.rooms.find((r) => r.roomId === action.payload)
       if (!room) return
-      if (room.state !== 'damaged' && room.state !== 'stripped' && room.state !== 'collapsed') return
+      if (!['damaged', 'stripped', 'collapsed', 'destroyed'].includes(room.state)) return
       if (state.money < room.repairCost) return
       state.money -= room.repairCost
       room.state = 'intact'
       room.repairCost = 0
+
+      // Grant roster bonus for housing rooms
+      const ROSTER_BONUS_BY_ROOM: Record<string, number> = {
+        'room-servant-quarters': 1,
+        'room-barracks': 1,
+        'room-east-wing': 2,
+      }
+      const bonus = ROSTER_BONUS_BY_ROOM[room.roomId] ?? 0
+      if (bonus > 0) {
+        state.house.rosterBonus = (state.house.rosterBonus ?? 0) + bonus
+      }
+
+      const REPAIR_MESSAGES: Record<string, string> = {
+        'room-bureau': `${room.name} restored. The house has a place for its accounts again.`,
+        'room-kitchen': `${room.name} repaired. The smell of proper cooking returns to the house.`,
+        'room-study': `${room.name} cleared and shelved. A quiet place for thought and learning.`,
+        'room-master-chamber': `${room.name} restored. The lord's chamber is fit to receive again.`,
+        'room-servant-quarters': `${room.name} cleared and re-fitted. The house can house ${bonus} more soul${bonus > 1 ? 's' : ''} in service.`,
+        'room-barracks': `${room.name} rebuilt. Bunks and gear racks — room for ${bonus} more fighter${bonus > 1 ? 's' : ''}.`,
+        'room-garret': `${room.name} shored up. The top floor breathes again.`,
+        'room-east-wing': `${room.name} reclaimed at great cost. The house is whole again. ${bonus} more roster slots unlocked.`,
+      }
       state.activityLog.unshift({
         id: `log-${state.day}-${state.timeSlot}-repair-${room.roomId}`,
         day: state.day,
         timeSlot: state.timeSlot,
         category: 'economy',
-        message: `${room.name} repaired. The house reclaims another room.`,
+        message: REPAIR_MESSAGES[room.roomId] ?? `${room.name} repaired. The house reclaims another room.`,
       })
     },
 
     searchRoom(state, action: PayloadAction<string>) {
       const room = state.house.rooms.find((r) => r.roomId === action.payload)
       if (!room || room.searched) return
-      if (room.state === 'locked' || room.state === 'collapsed') return
+      if (room.state === 'locked' || room.state === 'collapsed' || room.state === 'destroyed') return
       room.searched = true
+
+      // Search rewards: Marks and lore based on room
+      const SEARCH_FINDS: Record<string, { marks: number; message: string }> = {
+        'room-entrance-hall': { marks: 0, message: 'The entrance hall yields nothing but dust and old boot-prints.' },
+        'room-marion-quarters': { marks: 0, message: "Marion's room is orderly. Private. You find nothing you weren't meant to." },
+        'room-bureau': { marks: 22, message: 'A forgotten strongbox behind the panelling. Old coins — house reserves from before the Breach. (Found 22 Marks)' },
+        'room-kitchen': { marks: 8, message: 'A small tin of emergency coin tucked behind the spice rack. Marion clearly knew about it. (Found 8 Marks)' },
+        'room-study': { marks: 15, message: 'Between two folios: a promissory note, unsigned. And a letter fragment — your father\'s hand, referring to "the arrangement below." (Found 15 Marks)' },
+        'room-master-chamber': { marks: 30, message: 'Behind the wainscoting: a sealed envelope with the house crest and a ring you don\'t recognise. A name on the envelope: Mira. (Found 30 Marks)' },
+        'room-servant-quarters': { marks: 5, message: 'Abandoned belongings from those who fled. A few coin left in haste. (Found 5 Marks)' },
+        'room-barracks': { marks: 12, message: 'Old garrison kit still in the racks. Some coin tucked in a boot. (Found 12 Marks)' },
+        'room-garret': { marks: 18, message: 'A locked chest in the corner — the lock yields to force. Household silver, unmelted. (Found 18 Marks)' },
+      }
+      const find = SEARCH_FINDS[room.roomId]
+      if (find) {
+        if (find.marks > 0) state.money += find.marks
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-search-${room.roomId}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: find.message,
+        })
+      }
+
       if (room.roomId === 'room-vault' && state.house.vaultUnlocked) {
         state.mainQuest.stage = 'lead-found'
         state.mainQuest.lastClue = "A letter from Mira, hidden in the vault. She left willingly — but not freely."

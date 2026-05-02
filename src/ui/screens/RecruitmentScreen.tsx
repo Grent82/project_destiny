@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { gameActions, selectAvailableForHire } from '../../application'
+import { gameActions, selectAvailableForHire, selectRosterCapacity } from '../../application'
 import { selectLedgerSummary } from '../../application/selectors/ledger'
 import { contentCatalog } from '../../application/content/contentCatalog'
-import { getRenownLevel, RARITY_SKILL_CAPS } from '../../domain/progression/contracts'
+import { RARITY_SKILL_CAPS } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function RecruitmentScreen() {
@@ -12,13 +12,11 @@ export function RecruitmentScreen() {
   const dispatch = useAppDispatch()
   const offers = useAppSelector(selectAvailableForHire)
   const marks = useAppSelector((state) => state.game.money)
-  const rosterSize = useAppSelector((state) => state.game.roster.length)
-  const renown = useAppSelector((state) => state.game.playerCharacter.renown)
+  const capacity = useAppSelector(selectRosterCapacity)
   const ledger = useAppSelector(selectLedgerSummary)
   const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
 
-  const renownLevel = getRenownLevel(renown)
-  const rosterFull = rosterSize >= renownLevel.rosterSlots
+  const { isFull, current: rosterSize, total: totalSlots, houseBonus } = capacity
 
   const runwayClass =
     ledger.daysOfRunwayAtCurrentRate < 7
@@ -49,15 +47,21 @@ export function RecruitmentScreen() {
           Runway: {ledger.daysOfRunwayAtCurrentRate === 999 ? '∞' : `${ledger.daysOfRunwayAtCurrentRate}d`}
         </span>
         <span className="badge">Treasury: {marks} Mk</span>
+        <span className="badge">
+          Roster: {rosterSize}/{totalSlots}{houseBonus > 0 ? ` (+${houseBonus} house)` : ''}
+        </span>
       </div>
 
       {lastRecruitedName && (
         <p className="recruit-confirmation">{lastRecruitedName} has joined the house.</p>
       )}
 
-      {rosterFull && (
+      {isFull && (
         <p className="status-note text-danger">
-          Roster full ({rosterSize}/{renownLevel.rosterSlots} slots). Gain renown to expand your household.
+          Roster full ({rosterSize}/{totalSlots} slots).{' '}
+          {houseBonus > 0
+            ? 'Repair more house rooms or gain renown to expand.'
+            : 'Repair house rooms (Servant Quarters, Barracks, East Wing) or gain renown to expand.'}
         </p>
       )}
 
@@ -131,10 +135,10 @@ export function RecruitmentScreen() {
                   <button
                     className="action-button"
                     type="button"
-                    disabled={!canAfford || rosterFull}
+                    disabled={!canAfford || isFull}
                     title={
-                      rosterFull
-                        ? `Roster full (${rosterSize}/${renownLevel.rosterSlots}). Gain renown to unlock more slots.`
+                      isFull
+                        ? `Roster full (${rosterSize}/${totalSlots}). Repair house rooms or gain renown to unlock more slots.`
                         : !canAfford
                           ? `Not enough Marks. Signing cost is ${offer.signingBonus} Marks.`
                           : undefined
@@ -147,7 +151,7 @@ export function RecruitmentScreen() {
                   >
                     Take them on
                   </button>
-                  {!canAfford && !rosterFull && (
+                  {!canAfford && !isFull && (
                     <span className="text-muted" style={{ marginLeft: '0.75rem', fontSize: '0.875rem' }}>
                       Insufficient funds ({offer.signingBonus} Marks required)
                     </span>

@@ -855,9 +855,42 @@ export function concludeCombatEncounter(state: GameState): GameState {
             renown: newRenown,
           },
         }
-        nextState = appendActivityLogEntry(nextState, 'system', `Contract fulfilled: ${completedQuest.questId}. +${renownGain} Renown.`)
+        const questTitle = template?.title ?? completedQuest.questId
+        nextState = appendActivityLogEntry(nextState, 'system', `Contract fulfilled: "${questTitle}". +${renownGain} Renown.`)
         if (newLevel.level > oldLevel.level) {
           nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
+        }
+
+        // Apply quest rewards: Marks and faction standing
+        if (template) {
+          if (template.rewardMarks > 0) {
+            nextState = { ...nextState, money: nextState.money + template.rewardMarks }
+            nextState = appendActivityLogEntry(nextState, 'economy', `Payment received: ${template.rewardMarks} Marks for "${questTitle}".`)
+          }
+          if (template.rewardStandingFactionId && template.rewardStandingDelta > 0) {
+            const current = nextState.factionStandings[template.rewardStandingFactionId] ?? 0
+            nextState = {
+              ...nextState,
+              factionStandings: {
+                ...nextState.factionStandings,
+                [template.rewardStandingFactionId]: Math.max(-100, Math.min(100, current + template.rewardStandingDelta)),
+              },
+            }
+            const factionName = contentCatalog.factionsById.get(template.rewardStandingFactionId)?.name ?? template.rewardStandingFactionId
+            nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved by ${template.rewardStandingDelta}.`)
+          }
+          if (template.rewardCityDialId && template.rewardCityDialDelta) {
+            const dial = template.rewardCityDialId as keyof typeof nextState.cityDials
+            if (dial in nextState.cityDials) {
+              nextState = {
+                ...nextState,
+                cityDials: {
+                  ...nextState.cityDials,
+                  [dial]: Math.max(0, Math.min(100, (nextState.cityDials[dial] as number) + template.rewardCityDialDelta)),
+                },
+              }
+            }
+          }
         }
       }
     }

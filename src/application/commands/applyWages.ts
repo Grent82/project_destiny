@@ -29,14 +29,19 @@ export function wageForStatus(status: NpcStatus): number {
 export function applyWages(state: GameState): GameState {
   let next = state
 
+  // Kitchen intact: house feeds its staff → 1 Mk reduction per NPC wage
+  const kitchenIntact = next.house.rooms.some((r) => r.roomId === 'room-kitchen' && r.state === 'intact')
+  const kitchenDiscount = kitchenIntact ? 1 : 0
+
   // Step 1: Wage deduction
   next = { ...next, relationships: { ...next.relationships } }
   for (const rosterEntry of state.roster) {
     const wage = wageForStatus(rosterEntry.status)
     if (wage === 0) continue
+    const effectiveWage = Math.max(0, wage - kitchenDiscount)
 
-    if (next.money >= wage) {
-      next = { ...next, money: next.money - wage }
+    if (next.money >= effectiveWage) {
+      next = { ...next, money: next.money - effectiveWage }
       // Paid on time → loyalty +2
       applyRelationshipDelta(next, 'player', rosterEntry.npcId, 'loyalty', 2)
     } else {

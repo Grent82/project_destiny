@@ -7,6 +7,17 @@ import {
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { HouseRoom, RoomState } from '../../domain/game/contracts'
 
+const ROOM_EFFECTS: Record<string, string> = {
+  'room-kitchen': 'When intact: reduces each NPC\'s daily wage by 1 Mk (house provides meals).',
+  'room-study': 'When intact: training NPCs gain +25% more skill per day.',
+  'room-bureau': 'Administrative hub of the house.',
+  'room-master-chamber': 'Your private chamber. Symbol of the house\'s standing.',
+  'room-servant-quarters': 'When repaired: unlocks +1 roster slot.',
+  'room-barracks': 'When repaired: unlocks +1 roster slot.',
+  'room-east-wing': 'When repaired: unlocks +2 roster slots.',
+  'room-garret': 'Upper floor lookout. Good vantage over the street.',
+}
+
 const STATE_LABELS: Record<RoomState, string> = {
   intact: 'Intact',
   damaged: 'Damaged',
@@ -43,6 +54,10 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
         <h3 className="house-room__name">{room.name}</h3>
         <span className="house-room__state-badge">{STATE_LABELS[room.state]}</span>
       </header>
+
+      {ROOM_EFFECTS[room.roomId] && (
+        <p className="house-room__effect">{ROOM_EFFECTS[room.roomId]}</p>
+      )}
 
       {room.searched && <p className="house-room__searched">✓ Searched</p>}
 

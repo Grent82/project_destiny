@@ -2155,6 +2155,7 @@ a:focus-visible,
 .house-room--locked .house-room__state-badge { color: #6478c8; }
 
 .house-room__searched { font-size: 0.8rem; color: #7ab464; margin: 0; }
+.house-room__effect { font-size: 0.78rem; color: var(--text-secondary, #9e8c6e); margin: 0.25rem 0 0; font-style: italic; }
 .house-room__cost-note { font-size: 0.8rem; color: var(--text-secondary, #9e8c6e); margin: 0; }
 .house-room__actions { display: flex; flex-direction: column; gap: 0.35rem; margin-top: auto; }
 

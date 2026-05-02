@@ -78,6 +78,7 @@ export const houseStateSchema = z
   .object({
     rooms: z.array(houseRoomSchema),
     vaultUnlocked: z.boolean().default(false),
+    rosterBonus: z.number().int().nonnegative().default(0),
   })
   .strict()
 
@@ -209,10 +210,14 @@ export const gameStateSchema = z
         { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, searched: false },
         { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, searched: false },
         { roomId: 'room-master-chamber', name: "Master's Chamber", state: 'stripped' as const, repairCost: 45, searched: false },
+        { roomId: 'room-servant-quarters', name: 'Servant Quarters', state: 'collapsed' as const, repairCost: 60, searched: false },
+        { roomId: 'room-barracks', name: 'Barracks', state: 'stripped' as const, repairCost: 80, searched: false },
         { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false },
         { roomId: 'room-garret', name: 'Garret', state: 'collapsed' as const, repairCost: 130, searched: false },
+        { roomId: 'room-east-wing', name: 'East Wing', state: 'destroyed' as const, repairCost: 200, searched: false },
       ],
       vaultUnlocked: false,
+      rosterBonus: 0,
     })),
     saveVersion: z.number().int().min(1).default(1),
     rngSeed: z.number().int().nonnegative().default(42),

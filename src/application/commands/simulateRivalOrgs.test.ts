@@ -79,6 +79,7 @@ const baseState: GameState = {
       { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false },
     ],
     vaultUnlocked: false,
+    rosterBonus: 0,
   },
   saveVersion: 1,
   rngSeed: 42,
