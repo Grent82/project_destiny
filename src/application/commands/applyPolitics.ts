@@ -23,6 +23,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
             id: `${template.id}-day-${currentDay}`,
             expiresOnDay: currentDay + 7,
             outcome: 'pending' as const,
+            playerVote: null,
           },
         ],
       }
@@ -32,6 +33,40 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
         `The council convenes. A vote is called: "${template.title}".`,
       )
     }
+  }
+
+  // Step 7a: Auto-resolve expired council votes
+  const expiredVotes = next.activeCouncilVotes.filter(
+    (v) => v.outcome === 'pending' && v.expiresOnDay > 0 && currentDay > v.expiresOnDay,
+  )
+  for (const vote of expiredVotes) {
+    // Player support = 70% pass; player oppose = 30% pass; neutral = 50%
+    const baseChance = vote.playerVote === 'support' ? 0.7 : vote.playerVote === 'oppose' ? 0.3 : 0.5
+    const passes = rng() < baseChance
+    const factionName = vote.proposingFactionId.replace('faction-', '').replace(/-/g, ' ')
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `The council vote "${vote.title}" has concluded — ${passes ? 'passed' : 'failed'}. ${passes ? vote.effect : `${factionName}'s proposal was blocked.`}`,
+    )
+    // Standing consequence for having influenced the vote
+    if (vote.playerVote) {
+      const standingDelta = passes ? 5 : -3
+      const current = next.factionStandings[vote.proposingFactionId] ?? 0
+      next = {
+        ...next,
+        factionStandings: {
+          ...next.factionStandings,
+          [vote.proposingFactionId]: Math.max(-100, Math.min(100, current + (vote.playerVote === 'support' ? standingDelta : -standingDelta))),
+        },
+      }
+    }
+  }
+  next = {
+    ...next,
+    activeCouncilVotes: next.activeCouncilVotes
+      .filter((v) => !expiredVotes.some((e) => e.id === v.id))
+      .map((v) => v),
   }
 
   // Step 7b: Faction pressure escalation

@@ -10,6 +10,7 @@ const selectCurrentDistrictId = (state: RootState) => state.game.currentDistrict
 const selectFactionStandings = (state: RootState) => state.game.factionStandings
 const selectCorridorStatus = (state: RootState) => state.game.cityResources.corridorStatus
 const selectInstitutionalStanding = (state: RootState) => state.game.institutionalStanding
+const selectDistrictTension = (state: RootState) => state.game.districtTension
 
 export const selectShopsInCurrentDistrict = (state: RootState) => {
   const districtId = state.game.currentDistrictId
@@ -18,16 +19,22 @@ export const selectShopsInCurrentDistrict = (state: RootState) => {
 }
 
 export const selectShopOverview = createSelector(
-  [selectMoney, selectInventory, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding],
-  (money, inventory, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding) => {
+  [selectMoney, selectInventory, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding, selectDistrictTension],
+  (money, inventory, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding, districtTension) => {
     const quantities = new Map(inventory.map((entry) => [entry.itemId, entry.quantity]))
     const lowestPriceByItem = new Map<string, number>()
     const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
 
-    const priceModifier =
+    const corridorMod =
       corridorStatus === 'blocked' ? 1.3
       : corridorStatus === 'disrupted' ? 1.15
       : 1.0
+
+    // District tension increases local prices (up to +20% at max tension)
+    const currentTension = currentDistrictId ? (districtTension[currentDistrictId] ?? 0) : 0
+    const tensionMod = 1 + (currentTension / 100) * 0.2
+
+    const priceModifier = corridorMod * tensionMod
 
     const shopsToShow = currentDistrictId
       ? contentCatalog.shops.filter((s) => s.districtId === currentDistrictId)

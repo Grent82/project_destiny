@@ -70,6 +70,7 @@ describe('resolveCouncilVote', () => {
     playerInfluenceThreshold: 30,
     expiresOnDay: 10,
     outcome: 'pending',
+    playerVote: null,
   }
 
   it('removes the resolved vote from activeCouncilVotes', () => {

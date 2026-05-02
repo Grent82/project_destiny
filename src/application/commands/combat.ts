@@ -568,7 +568,19 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     return state
   }
 
-  const npcAllies = squad.map((npc) => buildAllyCombatant(npc, state.equippedItemDurabilities, state.relationships))
+  // Night/evening combat: reduced visibility hurts accuracy
+  const timeSlotAccuracyMod =
+    state.timeSlot === 'night' ? -15
+    : state.timeSlot === 'evening' ? -5
+    : state.timeSlot === 'afternoon' ? 3
+    : 0
+
+  const npcAllies = squad.map((npc) => {
+    const base = buildAllyCombatant(npc, state.equippedItemDurabilities, state.relationships)
+    return timeSlotAccuracyMod !== 0
+      ? { ...base, accuracy: Math.max(1, Math.min(99, base.accuracy + timeSlotAccuracyMod)) }
+      : base
+  })
   const playerCombatant = buildPlayerCombatant(state.playerCharacter)
   const allies = [playerCombatant, ...npcAllies]
   // Enemy count matches NPC squad size only (not counting the player)
@@ -709,8 +721,44 @@ export function performCombatAction(
       npcDur['armor'] = Math.max(0, (npcDur['armor'] ?? 100) - amount)
     }
 
+    // Auto-switch to secondary weapon if primary breaks
+    const primaryBroken = npcDur['weapon'] === 0
+    const rosterNpc = nextState.roster.find((r) => r.npcId === npcId)
+    if (primaryBroken && rosterNpc?.loadout.secondaryWeaponId) {
+      const secondaryId = rosterNpc.loadout.secondaryWeaponId
+      nextState = {
+        ...nextState,
+        activeCombat: nextState.activeCombat
+          ? {
+              ...nextState.activeCombat,
+              combatants: nextState.activeCombat.combatants.map((c) =>
+                c.sourceNpcId === npcId ? { ...c, equippedWeaponId: secondaryId } : c,
+              ),
+            }
+          : nextState.activeCombat,
+      }
+      nextState = appendActivityLogEntry(
+        nextState,
+        'combat',
+        `${rosterNpc.npcId}'s weapon fails. They draw their secondary.`,
+      )
+    }
+
     durabilities[npcId] = npcDur
     nextState = { ...nextState, equippedItemDurabilities: durabilities }
+  }
+
+  // Fear generation: allies who take heavy damage become frightened
+  for (const allyCombatant of nextEncounter.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)) {
+    const before = encounter.combatants.find((c) => c.combatantId === allyCombatant.combatantId)
+    if (!before) continue
+    const damageTaken = before.health - allyCombatant.health
+    if (damageTaken <= 0) continue
+    const threshold = allyCombatant.maxHealth * 0.25
+    if (damageTaken >= threshold) {
+      const fearGain = allyCombatant.health <= allyCombatant.maxHealth * 0.2 ? 12 : 6
+      applyRelationshipDelta(nextState, 'player', allyCombatant.sourceNpcId!, 'fear', fearGain)
+    }
   }
 
   nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)

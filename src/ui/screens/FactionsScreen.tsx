@@ -1,8 +1,9 @@
 import type React from 'react'
 
-import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability } from '../../application'
+import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, gameActions } from '../../application'
 import type { InstitutionalTier } from '../../domain'
-import { useAppSelector } from '../app/hooks'
+import { getRenownLevel } from '../../domain/progression/contracts'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const COUNCIL_FACTIONS = [
   { id: 'faction-civic-compact', name: 'Civic Compact', shortName: 'Compact' },
@@ -55,11 +56,16 @@ const CITY_DIAL_TOOLTIPS: Record<string, string> = {
 }
 
 export function FactionsScreen() {
+  const dispatch = useAppDispatch()
   const factions = useAppSelector(selectAllFactions)
   const cityDials = useAppSelector(selectCityDials)
   const institutionalStanding = useAppSelector(selectInstitutionalStanding)
   const councilSeats = useAppSelector(selectCouncilSeats)
   const cityStability = useAppSelector(selectCityStability)
+  const activeCouncilVotes = useAppSelector(selectActiveCouncilVotes)
+  const playerRenown = useAppSelector((state) => state.game.playerCharacter.renown)
+  const renownLevel = getRenownLevel(playerRenown)
+  const totalSeats = Object.values(councilSeats).reduce((sum, s) => sum + s, 0) + renownLevel.councilSeats
 
   return (
     <section className="screen-panel">
@@ -150,6 +156,50 @@ export function FactionsScreen() {
             </div>
           )
         })}
+      </article>
+
+      <article className="detail-panel" style={{ marginTop: '2rem' }}>
+        <h2>Active Council Votes</h2>
+        <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)', marginBottom: '0.75rem' }}>
+          {totalSeats > 0 ? `${totalSeats} seat${totalSeats !== 1 ? 's' : ''} — your voice carries in chambers.` : 'No council seats. Reach Renown rank 4 to gain a seat.'}
+        </p>
+        {activeCouncilVotes.length === 0 ? (
+          <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)' }}>No votes pending. The council is quiet.</p>
+        ) : (
+          activeCouncilVotes.map((vote) => (
+            <div key={vote.id} style={{ marginBottom: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.75rem' }}>
+              <strong>{vote.title}</strong>
+              <p style={{ fontSize: '0.8em', color: 'var(--color-text-secondary, #999)', margin: '0.25rem 0' }}>{vote.description}</p>
+              <p style={{ fontSize: '0.75em', fontStyle: 'italic', margin: '0.25rem 0' }}>Effect if passed: {vote.effect}</p>
+              {vote.playerVote ? (
+                <span className={`badge ${vote.playerVote === 'support' ? 'badge-positive' : 'badge-warning'}`}>
+                  Your vote: {vote.playerVote}
+                </span>
+              ) : totalSeats > 0 ? (
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <button
+                    className="action-button"
+                    onClick={() => dispatch(gameActions.influenceCouncilVote({ voteId: vote.id, stance: 'support' }))}
+                    type="button"
+                  >
+                    Support
+                  </button>
+                  <button
+                    className="action-button"
+                    onClick={() => dispatch(gameActions.influenceCouncilVote({ voteId: vote.id, stance: 'oppose' }))}
+                    type="button"
+                  >
+                    Oppose
+                  </button>
+                </div>
+              ) : (
+                <p style={{ fontSize: '0.75em', color: 'var(--color-text-muted, #666)', marginTop: '0.25rem' }}>
+                  No council seats — cannot vote.
+                </p>
+              )}
+            </div>
+          ))
+        )}
       </article>
 
       <article className="detail-panel" style={{ marginTop: '2rem' }}>

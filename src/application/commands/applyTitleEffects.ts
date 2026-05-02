@@ -143,6 +143,12 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     )
     // Study intact: quiet place for study grants +25% training gain
     const studyIntact = next.house.rooms.some((r) => r.roomId === 'room-study' && r.state === 'intact')
+    // Time slot affects training retention: morning is best, night is worst
+    const timeSlotTrainMult =
+      next.timeSlot === 'morning' ? 1.1
+      : next.timeSlot === 'evening' ? 0.9
+      : next.timeSlot === 'night' ? 0.7
+      : 1.0
     const baseGain = hasTrainer ? 2 : 1
     const studyMult = studyIntact ? 1.25 : 1
 
@@ -168,7 +174,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       }
 
       const multiplier = skillGainMultiplier(currentVal)
-      const rawGain = baseGain * (focusedSkill ? 1.5 : 1) * studyMult
+      const rawGain = baseGain * (focusedSkill ? 1.5 : 1) * studyMult * timeSlotTrainMult
       const effectiveGain = Math.max(1, Math.round(rawGain * multiplier))
       const newVal = Math.min(rarityCap, currentVal + effectiveGain)
 

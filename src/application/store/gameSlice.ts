@@ -596,6 +596,31 @@ const gameSlice = createSlice({
       state.activeCouncilVotes = state.activeCouncilVotes.filter((v) => v.id !== voteId)
     },
 
+    influenceCouncilVote(
+      state,
+      action: PayloadAction<{ voteId: string; stance: 'support' | 'oppose' }>,
+    ) {
+      const { voteId, stance } = action.payload
+      const vote = state.activeCouncilVotes.find((v) => v.id === voteId)
+      if (!vote || vote.outcome !== 'pending') return
+
+      // Require at least 1 council seat with any faction to influence
+      const totalSeats = Object.values(state.councilSeats).reduce((sum, s) => sum + s, 0)
+      const renownLevel = getRenownLevel(state.playerCharacter.renown)
+      const renownSeats = renownLevel.councilSeats
+      if (totalSeats === 0 && renownSeats === 0) return
+
+      vote.playerVote = stance
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `House Valdric registers a ${stance} vote on "${vote.title}".`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+    },
+
     repairItem(state, action: PayloadAction<{ npcId: string; slot: 'weapon' | 'armor' }>) {
       const { npcId, slot } = action.payload
       const npc = state.roster.find((r) => r.npcId === npcId)
@@ -792,6 +817,7 @@ const gameSlice = createSlice({
       if (!destination) return
 
       const consumed = destination.supplyConsumptionPerDay
+      const wasStocked = exp.suppliesRemaining > 0
       exp.suppliesRemaining = Math.max(0, exp.suppliesRemaining - consumed)
 
       const r1 = Math.random()
@@ -812,13 +838,14 @@ const gameSlice = createSlice({
 
       exp.daysDeparted += 1
 
-      if (exp.suppliesRemaining === 0) {
+      if (wasStocked && exp.suppliesRemaining === 0) {
+        // First time running out — severe penalty
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-exp-no-supplies`,
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'system',
-          message: 'Supplies exhausted on expedition. The squad presses on — barely.',
+          message: 'Supplies exhausted. The squad forages, but their strength fades.',
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         for (const npc of state.roster) {
@@ -826,6 +853,28 @@ const gameSlice = createSlice({
             npc.states.health = Math.max(0, npc.states.health - 10)
             npc.states.morale = Math.max(0, npc.states.morale - 15)
           }
+        }
+      } else if (!wasStocked && exp.suppliesRemaining === 0) {
+        // Subsequent starving days — ongoing attrition
+        for (const npc of state.roster) {
+          if (exp.squadNpcIds.includes(npc.npcId)) {
+            npc.states.health = Math.max(0, npc.states.health - 5)
+            npc.states.morale = Math.max(0, npc.states.morale - 5)
+          }
+        }
+        // Force early return if majority of squad is critically low on health
+        const squadNpcs = state.roster.filter((n) => exp.squadNpcIds.includes(n.npcId))
+        const criticalCount = squadNpcs.filter((n) => n.states.health < 20).length
+        if (criticalCount >= Math.ceil(squadNpcs.length / 2)) {
+          exp.status = 'returned'
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-exp-retreat`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'system',
+            message: 'The squad cannot continue. Starving and broken, they turn back early.',
+          })
+          if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         }
       }
 

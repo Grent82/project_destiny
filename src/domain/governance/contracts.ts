@@ -22,6 +22,7 @@ export const councilVoteEventSchema = z.object({
   playerInfluenceThreshold: z.number(),
   expiresOnDay: z.number(),
   outcome: z.enum(['pending', 'passed', 'failed']).default('pending'),
+  playerVote: z.enum(['support', 'oppose']).nullable().default(null),
 })
 
 export type CouncilVoteEvent = z.infer<typeof councilVoteEventSchema>
