@@ -521,6 +521,12 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             <div className="training-focus-panel">
               <label htmlFor={`training-focus-${detail.npcId}`} style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 Training Focus
+                <span
+                  style={{ marginLeft: '0.35rem', cursor: 'help', opacity: 0.7 }}
+                  title="Set a focus skill for +50% training speed on that skill. Without focus, a random skill improves each day."
+                >
+                  ⓘ
+                </span>
               </label>
               <select
                 id={`training-focus-${detail.npcId}`}
@@ -536,6 +542,11 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                   <option key={skill} value={skill}>{skill}</option>
                 ))}
               </select>
+              {detail.trainingFocus && (
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-accent, #d4a853)', marginTop: '0.25rem' }}>
+                  ↑ Focused on {detail.trainingFocus} — +50% training speed
+                </p>
+              )}
             </div>
           )}
           <DurabilityPanel npcId={detail.npcId} />

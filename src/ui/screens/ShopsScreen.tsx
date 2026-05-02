@@ -198,7 +198,19 @@ export function ShopsScreen() {
                   </div>
                   <div className="shop-offer-actions">
                     {owned
-                      ? <span className="badge badge-positive">In Stash</span>
+                      ? (
+                        <div style={{ display: 'flex', gap: '0.25rem', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          <span className="badge badge-positive">In Stash</span>
+                          <button
+                            className="action-button action-button-sm"
+                            type="button"
+                            onClick={() => dispatch(gameActions.sellFromStash({ type: 'weapon', id: w.id }))}
+                            title="Sell for ~50% market value"
+                          >
+                            Sell
+                          </button>
+                        </div>
+                      )
                       : (
                         <button
                           className="action-button action-button-sm"
@@ -229,7 +241,19 @@ export function ShopsScreen() {
                   </div>
                   <div className="shop-offer-actions">
                     {owned
-                      ? <span className="badge badge-positive">In Stash</span>
+                      ? (
+                        <div style={{ display: 'flex', gap: '0.25rem', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          <span className="badge badge-positive">In Stash</span>
+                          <button
+                            className="action-button action-button-sm"
+                            type="button"
+                            onClick={() => dispatch(gameActions.sellFromStash({ type: 'armor', id: a.id }))}
+                            title="Sell for ~50% market value"
+                          >
+                            Sell
+                          </button>
+                        </div>
+                      )
                       : (
                         <button
                           className="action-button action-button-sm"

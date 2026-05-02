@@ -204,5 +204,62 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     }
   }
 
+  // Step 7h: Main quest stage progression
+  if (next.mainQuest.stage === 'lead-found' && next.day >= 12) {
+    const alreadyFired = 'event-mira-location' in next.lastFiredDay
+    if (!alreadyFired) {
+      next = {
+        ...next,
+        mainQuest: {
+          ...next.mainQuest,
+          stage: 'location-known',
+          lastClue: 'A contact in the Hollows knows where she was taken. The Pale Sisters have her — in the old treatment facility beyond the second gate.',
+        },
+        lastFiredDay: { ...next.lastFiredDay, 'event-mira-location': next.day },
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        'Word reaches you: a contact in the Hollows has news of Mira. Her location is known.',
+      )
+    }
+  }
+
+  if (next.mainQuest.stage === 'location-known' && next.day >= 20) {
+    const alreadyFired = 'event-mira-rescued' in next.lastFiredDay
+    if (!alreadyFired && next.completedQuestIds.length >= 3) {
+      next = {
+        ...next,
+        mainQuest: {
+          ...next.mainQuest,
+          stage: 'rescued',
+          lastClue: 'Mira is back. She is thinner than you remember, and her eyes hold something new — a knowledge she refuses to name.',
+        },
+        lastFiredDay: { ...next.lastFiredDay, 'event-mira-rescued': next.day },
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        '◆ A raid on the Pale Sisters\' facility. You pull Mira free. She is alive.',
+      )
+    }
+  }
+
+  if (next.mainQuest.stage === 'rescued' && next.day >= 25) {
+    const alreadyFired = 'event-epilogue' in next.lastFiredDay
+    if (!alreadyFired) {
+      next = {
+        ...next,
+        mainQuest: { ...next.mainQuest, stage: 'epilogue' },
+        lastFiredDay: { ...next.lastFiredDay, 'event-epilogue': next.day },
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        '◆ Mira speaks. She was not taken. She went looking for something — something your father buried. She found it. What she says next changes everything you thought you knew about the Breach.',
+      )
+    }
+  }
+
   return next
 }

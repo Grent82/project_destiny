@@ -152,13 +152,22 @@ export function DashboardScreen(props: DashboardScreenProps) {
                 <em>{mainQuest.lastClue || 'Her location is known. Getting to her is another matter.'}</em>
               )}
               {mainQuest.stage === 'rescued' && (
-                <em>Mira is safe. For now.</em>
+                <em>Mira is safe. For now. She carries something — a knowledge she hasn't shared.</em>
+              )}
+              {mainQuest.stage === 'epilogue' && (
+                <em>{mainQuest.lastClue || 'What Mira knows changes everything. The search is over. Something larger has begun.'}</em>
               )}
             </p>
             {(mainQuest.stage === 'lead-found' || mainQuest.stage === 'location-known') && (
               <span className={`badge ${mainQuest.stage === 'location-known' ? 'badge-warning' : ''}`}>
                 {mainQuest.stage === 'lead-found' ? 'Lead in hand' : 'Location known'}
               </span>
+            )}
+            {mainQuest.stage === 'rescued' && (
+              <span className="badge badge-positive">Mira recovered</span>
+            )}
+            {mainQuest.stage === 'epilogue' && (
+              <span className="badge badge-warning">◆ New chapter</span>
             )}
           </article>
           <div className="stats-grid">

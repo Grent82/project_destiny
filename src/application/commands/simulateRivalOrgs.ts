@@ -20,12 +20,16 @@ export function simulateRivalOrgs(state: GameState, randoms: number[]): RivalAct
     const r = randoms[i] ?? 0.5
     const playerStanding = state.cityStability ?? 60
 
-    if (r < 0.15) {
+    if (r < 0.10) {
       actions.push({ orgId, actionType: 'expand', day: state.day })
-    } else if (r < 0.30) {
+    } else if (r < 0.22) {
       actions.push({ orgId, actionType: 'recruit', day: state.day })
     } else if (r < 0.40 && playerStanding < 40) {
       actions.push({ orgId, actionType: 'pressure', day: state.day })
+    } else if (r < 0.48) {
+      const factions = ['faction-tallow-ring', 'faction-civic-compact', 'faction-foundry-league']
+      const target = factions[Math.floor((r * 100) % factions.length)]!
+      actions.push({ orgId, actionType: 'bribe', targetFactionId: target, day: state.day })
     }
   })
 
@@ -63,6 +67,39 @@ export function applyRivalActions(state: GameState, actions: RivalAction[]): Gam
         next,
         'system',
         'Pressure mounts in the streets. The city grows restless.',
+      )
+    } else if (action.actionType === 'recruit') {
+      // Rival org poaches one available hire before you can get to them
+      if (next.availableForHire.length > 0) {
+        const poached = next.availableForHire[0]!
+        next = {
+          ...next,
+          availableForHire: next.availableForHire.slice(1),
+        }
+        const orgName = ORG_NAMES[action.orgId] ?? action.orgId
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `${orgName} made their offer first. A potential hire has joined their ranks instead.`,
+        )
+        void poached // used implicitly
+      }
+    } else if (action.actionType === 'bribe') {
+      // Rival org bribes a faction contact — standing with a faction drops
+      const targetFaction = action.targetFactionId ?? 'faction-tallow-ring'
+      const current = next.factionStandings[targetFaction] ?? 0
+      next = {
+        ...next,
+        factionStandings: {
+          ...next.factionStandings,
+          [targetFaction]: Math.max(-100, current - 5),
+        },
+      }
+      const orgName = ORG_NAMES[action.orgId] ?? action.orgId
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${orgName} moved against you. Standing with ${targetFaction.replace('faction-', '').replace(/-/g, ' ')} has fallen.`,
       )
     }
   }

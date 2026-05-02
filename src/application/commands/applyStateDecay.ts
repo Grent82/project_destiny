@@ -4,10 +4,35 @@ import { contentCatalog } from '../content/contentCatalog'
 
 /** Steps 2, 2b: hunger/fatigue/stress decay and health recovery for recovering NPCs. */
 export function applyStateDecay(state: GameState): GameState {
+  const waterScarcity = (state.cityResources?.waterAccess ?? 100) < 30
+  const anger_morale_threshold = 30
+  const anger_fear_threshold = 70
+  const HYGIENE_PENALTY_THRESHOLD = 80  // Only penalize when severely unhygienic
+  const ANGER_PENALTY_THRESHOLD = 60
+
   let next: GameState = {
     ...state,
     roster: state.roster.map((npc) => {
       const isResting = npc.assignment !== 'deployed'
+      const highAnger = (npc.states.anger ?? 0) > ANGER_PENALTY_THRESHOLD
+      const highHygiene = (npc.states.hygiene ?? 0) > HYGIENE_PENALTY_THRESHOLD
+
+      // Anger: increases with low morale or high fear, decays slowly
+      const angerFromMorale = npc.states.morale < anger_morale_threshold ? 5 : 0
+      const angerFromFear = (npc.states.fear ?? 0) > anger_fear_threshold ? 3 : 0
+      const newAnger = Math.max(0, Math.min(100, (npc.states.anger ?? 0) - 1 + angerFromMorale + angerFromFear))
+
+      // Hygiene: accumulates over time, decays when resting
+      const newHygiene = isResting
+        ? Math.max(0, (npc.states.hygiene ?? 0) - 5)
+        : Math.min(100, (npc.states.hygiene ?? 0) + 3)
+
+      // Intoxication: decays naturally (sobers up)
+      const newIntox = Math.max(0, (npc.states.intoxication ?? 0) - 15)
+
+      // Morale penalty from poor conditions
+      const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0)
+
       return {
         ...npc,
         states: {
@@ -19,9 +44,24 @@ export function applyStateDecay(state: GameState): GameState {
           stress: isResting
             ? Math.max(0, npc.states.stress - 3)
             : npc.states.stress,
+          morale: Math.max(0, npc.states.morale - moralePenalty),
+          anger: newAnger,
+          hygiene: newHygiene,
+          intoxication: newIntox,
+          // Low water access drains health
+          health: waterScarcity ? Math.max(0, npc.states.health - 2) : npc.states.health,
         },
       }
     }),
+  }
+
+  // Log city-level water scarcity warning once per day (only when crossing threshold)
+  if (waterScarcity && state.day % 3 === 0) {
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      'Water access is critically low. The roster suffers.',
+    )
   }
 
   // Step 2b: Recovering NPCs regain health each day

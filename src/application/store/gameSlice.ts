@@ -919,6 +919,37 @@ const gameSlice = createSlice({
       }
     },
 
+    sellFromStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
+      const { type, id } = action.payload
+      if (type === 'weapon') {
+        if (!state.stash.weapons.includes(id)) return
+        const sellPrice = Math.floor(getWeaponRepairCost(id) * 2.5) // ~50% of shop price
+        state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
+        state.money += sellPrice
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-sell-${id}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'economy',
+          message: `Sold weapon from stash. +${sellPrice} Marks.`,
+        })
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      } else {
+        if (!state.stash.armors.includes(id)) return
+        const sellPrice = Math.floor(getArmorRepairCost(id) * 2.5)
+        state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
+        state.money += sellPrice
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-sell-${id}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'economy',
+          message: `Sold armor from stash. +${sellPrice} Marks.`,
+        })
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      }
+    },
+
     setPlayerCharacter(
       state,
       action: PayloadAction<{
