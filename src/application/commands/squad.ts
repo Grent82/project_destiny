@@ -1,5 +1,6 @@
 import type { GameState } from '../../domain'
 import { getLoyaltyDeployStatus } from '../../domain/npcStateModifiers'
+import { MIN_DEPLOYABLE_HEALTH } from './combat'
 
 const MAX_SQUAD_SIZE = 6
 
@@ -15,6 +16,10 @@ export function addNpcToSelectedSquad(
 
   // Cannot deploy recovering NPCs
   if (npc.assignment === 'recovering') {
+    return state
+  }
+
+  if (npc.states.health < MIN_DEPLOYABLE_HEALTH) {
     return state
   }
 
@@ -60,6 +65,11 @@ export function removeNpcFromSelectedSquad(
 
   return {
     ...state,
+    roster: state.roster.map((npc) =>
+      npc.npcId === npcId && npc.assignment === 'deployed'
+        ? { ...npc, assignment: 'idle' }
+        : npc,
+    ),
     selectedSquadNpcIds: state.selectedSquadNpcIds.filter((id) => id !== npcId),
   }
 }

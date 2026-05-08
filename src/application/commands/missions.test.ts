@@ -149,11 +149,11 @@ describe('concludeCombatEncounter without active mission (legacy path)', () => {
     expect(systemLog).toBeDefined()
   })
 
-  it('victory with no mission and encounter factionId: improves that faction standing', () => {
+  it('victory with no mission and encounter factionId: worsens that faction standing after a hostile clash', () => {
     const state = makeVictoryState(initialGameStateSnapshot, null)
     const factionId = state.activeCombat?.factionId ?? 'faction-civic-compact'
     const before = state.factionStandings[factionId] ?? 0
     const nextState = concludeCombatEncounter(state)
-    expect(nextState.factionStandings[factionId]).toBe(Math.min(100, before + 5))
+    expect(nextState.factionStandings[factionId]).toBe(Math.max(-100, before - 5))
   })
 })

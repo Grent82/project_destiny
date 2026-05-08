@@ -13,27 +13,41 @@ import {
 } from '../../domain/npcStateModifiers'
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
-import { getArmorProfile, getWeaponProfile } from '../content/equipmentCatalog'
+import { getArmorProfile, getWeaponProfile, UNARMED_PROFILE } from '../content/equipmentCatalog'
 import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { getRenownLevel } from '../../domain/progression/contracts'
+import { createRng, type Rng } from './seededRng'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
 
 const PLAYER_DEFAULT_WEAPON_ID = 'weapon-dagger-wasterunner'
+const PLAYER_MAX_HEALTH = 80
+export const MIN_DEPLOYABLE_HEALTH = 30
+
+function randomIndex(length: number, rng: Rng): number {
+  return Math.floor(rng() * length)
+}
 
 function buildPlayerCombatant(playerCharacter: GameState['playerCharacter']): CombatantState {
   const { attributes, skills } = playerCharacter
+  const combatState = playerCharacter.combatState
   return {
     combatantId: 'player',
     sourceNpcId: null,
     name: playerCharacter.name || 'The Heir',
     side: 'allies',
-    maxHealth: 80,
-    health: 80,
-    morale: Math.max(30, Math.min(100, Math.round(attributes.resolve * 0.7 + attributes.presence * 0.3))),
+    maxHealth: PLAYER_MAX_HEALTH,
+    health: Math.max(0, Math.min(PLAYER_MAX_HEALTH, combatState?.health ?? PLAYER_MAX_HEALTH)),
+    morale: Math.max(
+      30,
+      Math.min(
+        100,
+        combatState?.morale ?? Math.round(attributes.resolve * 0.7 + attributes.presence * 0.3),
+      ),
+    ),
     skill: Math.min(85, Math.max(skills.melee, skills.ranged)),
     accuracy: Math.min(90, 50 + Math.floor(attributes.perception * 0.4)),
     damageMin: Math.max(5, Math.floor(attributes.might / 8) + 5),
@@ -101,8 +115,8 @@ function buildAllyCombatant(
     sourceNpcId: npc.npcId,
     name: definition?.name ?? npc.npcId,
     side: 'allies',
-    maxHealth: Math.max(35, npc.states.health),
-    health: Math.max(35, npc.states.health),
+    maxHealth: Math.max(1, npc.states.health),
+    health: Math.max(0, npc.states.health),
     morale: npc.states.morale,
     skill,
     accuracy: Math.max(0, Math.min(100, Math.round(hitChance * 100))),
@@ -174,7 +188,7 @@ function getOpponents(encounter: ActiveCombatState, side: CombatantState['side']
   )
 }
 
-function getPreferredTarget(encounter: ActiveCombatState, actor: CombatantState) {
+function getPreferredTarget(encounter: ActiveCombatState, actor: CombatantState, rng: Rng) {
   const opponents = getOpponents(encounter, actor.side)
 
   if (opponents.length === 0) {
@@ -183,7 +197,7 @@ function getPreferredTarget(encounter: ActiveCombatState, actor: CombatantState)
 
   // Enemies use varied targeting strategies for unpredictability
   if (actor.side === 'enemies') {
-    const roll = Math.random()
+    const roll = rng()
     // 35%: target lowest HP (focus fire)
     if (roll < 0.35) {
       return opponents.slice().sort((a, b) => a.health - b.health)[0] ?? null
@@ -197,7 +211,7 @@ function getPreferredTarget(encounter: ActiveCombatState, actor: CombatantState)
       return opponents.slice().sort((a, b) => b.skill - a.skill)[0] ?? null
     }
     // 15%: random target
-    return opponents[Math.floor(Math.random() * opponents.length)] ?? null
+    return opponents[randomIndex(opponents.length, rng)] ?? null
   }
 
   // Allies always focus lowest HP (maximize KO chance)
@@ -231,11 +245,11 @@ function appendLog(encounter: ActiveCombatState, actorId: string, summary: strin
   }
 }
 
-function clearGuarding(encounter: ActiveCombatState, side: CombatantState['side']) {
+function clearGuardingForCombatant(encounter: ActiveCombatState, combatantId: string) {
   return {
     ...encounter,
     combatants: encounter.combatants.map((combatant) =>
-      combatant.side === side ? { ...combatant, guarding: false } : combatant,
+      combatant.combatantId === combatantId ? { ...combatant, guarding: false } : combatant,
     ),
   }
 }
@@ -274,24 +288,24 @@ function getRangeModifier(weaponId: string | null, range: CombatRange): number {
   return weapon.rangeModifierDistant
 }
 
-function buildHitMessage(actorName: string, targetName: string): string {
+function buildHitMessage(actorName: string, targetName: string, rng: Rng): string {
   const phrases = ['strikes', 'lands a blow on', 'connects with']
-  return `${actorName} ${phrases[Math.floor(Math.random() * phrases.length)]} ${targetName}`
+  return `${actorName} ${phrases[randomIndex(phrases.length, rng)]} ${targetName}`
 }
 
-function buildMissMessage(actorName: string, targetName: string): string {
+function buildMissMessage(actorName: string, targetName: string, rng: Rng): string {
   const phrases = ['misses', 'goes wide of', 'is deflected by']
-  return `${actorName} ${phrases[Math.floor(Math.random() * phrases.length)]} ${targetName}`
+  return `${actorName} ${phrases[randomIndex(phrases.length, rng)]} ${targetName}`
 }
 
-function attack(encounter: ActiveCombatState, actorId: string) {
+function attack(encounter: ActiveCombatState, actorId: string, rng: Rng) {
   const actor = getCombatantById(encounter, actorId)
 
   if (!actor || !isAlive(actor)) {
     return encounter
   }
 
-  const target = getPreferredTarget(encounter, actor)
+  const target = getPreferredTarget(encounter, actor, rng)
 
   if (!target) {
     return encounter
@@ -300,27 +314,39 @@ function attack(encounter: ActiveCombatState, actorId: string) {
   const weapon = getWeaponProfile(actor.equippedWeaponId)
   const armor = getArmorProfile(target.equippedArmorId)
   const rangeOffset = getRangeModifier(actor.equippedWeaponId, encounter.range)
-  const effectiveAccuracy = Math.min(99, Math.max(1, weapon.accuracy + rangeOffset - armor.evasionPenalty))
+  const weaponAccuracyModifier = weapon.accuracy - UNARMED_PROFILE.accuracy
+  const effectiveAccuracy = Math.min(
+    99,
+    Math.max(1, actor.accuracy + weaponAccuracyModifier + rangeOffset - armor.evasionPenalty),
+  )
 
-  const hit = Math.random() * 100 < effectiveAccuracy
+  const hit = rng() * 100 < effectiveAccuracy
 
   if (!hit) {
-    return appendLog(encounter, actorId, `${buildMissMessage(actor.name, target.name)}.`)
+    return appendLog(encounter, actorId, `${buildMissMessage(actor.name, target.name, rng)}.`)
   }
 
+  const effectiveDamageMin = Math.max(
+    1,
+    actor.damageMin + (weapon.damageMin - UNARMED_PROFILE.damageMin),
+  )
+  const effectiveDamageMax = Math.max(
+    effectiveDamageMin,
+    actor.damageMax + (weapon.damageMax - UNARMED_PROFILE.damageMax),
+  )
   const rawDamage = Math.round(
-    weapon.damageMin + Math.random() * (weapon.damageMax - weapon.damageMin),
+    effectiveDamageMin + rng() * (effectiveDamageMax - effectiveDamageMin),
   )
   const effectiveSoak = Math.max(0, armor.soak - weapon.armorPiercing)
   const guardMitigation = target.guarding ? 0.70 : 1
   let damage = Math.max(0, Math.round((rawDamage - effectiveSoak) * guardMitigation))
 
-  const isCrit = Math.random() * 100 < weapon.critChance
+  const isCrit = rng() * 100 < weapon.critChance
   if (isCrit) damage = damage * 2
 
-  const isStagger = Math.random() * 100 < weapon.staggerChance
+  const isStagger = rng() * 100 < weapon.staggerChance
 
-  const parts: string[] = [buildHitMessage(actor.name, target.name)]
+  const parts: string[] = [buildHitMessage(actor.name, target.name, rng)]
   parts.push(
     effectiveSoak > 0
       ? `${damage} damage (${effectiveSoak} soaked by armor)`
@@ -385,10 +411,11 @@ function applyAction(
   encounter: ActiveCombatState,
   actorId: string,
   action: CombatAction,
+  rng: Rng,
 ) {
   switch (action) {
     case 'attack':
-      return attack(encounter, actorId)
+      return attack(encounter, actorId, rng)
     case 'advance':
       return advance(encounter, actorId)
     case 'retreat':
@@ -452,7 +479,7 @@ function advanceTurn(encounter: ActiveCombatState) {
   }
 }
 
-function resolveEnemyTurns(encounter: ActiveCombatState) {
+function resolveEnemyTurns(encounter: ActiveCombatState, rng: Rng) {
   let nextEncounter = encounter
 
   while (nextEncounter.outcome === 'ongoing') {
@@ -486,21 +513,22 @@ function resolveEnemyTurns(encounter: ActiveCombatState) {
         return 'advance'
       }
       // Low health + not on cooldown: chance to guard (defensive AI)
-      if (activeCombatant.health < 30 && !activeCombatant.guardCooldown && Math.random() < 0.5) {
+      if (activeCombatant.health < 30 && !activeCombatant.guardCooldown && rng() < 0.5) {
         return 'guard'
       }
       // Ranged enemies at close range: retreat to get effective range
-      if (nextEncounter.range === 'close' && activeCombatant.effectiveRange === 'distant' && Math.random() < 0.4) {
+      if (nextEncounter.range === 'close' && activeCombatant.effectiveRange === 'distant' && rng() < 0.4) {
         return 'retreat'
       }
       return 'attack'
     })()
 
-    nextEncounter = clearGuarding(nextEncounter, activeCombatant.side)
+    nextEncounter = clearGuardingForCombatant(nextEncounter, activeCombatant.combatantId)
     nextEncounter = applyAction(
       nextEncounter,
       activeCombatant.combatantId,
       chosenAction,
+      rng,
     )
     nextEncounter = evaluateOutcome(nextEncounter)
 
@@ -562,7 +590,12 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     return state
   }
 
-  const squad = state.roster.filter((npc) => state.selectedSquadNpcIds.includes(npc.npcId))
+  const squad = state.roster.filter(
+    (npc) =>
+      state.selectedSquadNpcIds.includes(npc.npcId) &&
+      npc.states.health >= MIN_DEPLOYABLE_HEALTH &&
+      npc.assignment !== 'recovering',
+  )
 
   if (squad.length === 0) {
     return state
@@ -608,13 +641,10 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   }
 
   return appendActivityLogEntry(
-    syncRosterFromCombat(
     {
       ...state,
       activeCombat: encounter,
     },
-    encounter,
-    ),
     'combat',
     'The squad moves out. A hostile patrol stands in the way.',
   )
@@ -636,11 +666,14 @@ export function performCombatAction(
     return state
   }
 
+  const seeded = createRng(state.rngSeed)
+  const rng = seeded.rng
   const previousLogLength = encounter.log.length
 
   // Stagger: skip the active ally's turn and clear the flag
   if (activeCombatant.staggered) {
-    let nextEncounter = updateCombatant(encounter, activeCombatant.combatantId, (c) => ({
+    let nextEncounter = clearGuardingForCombatant(encounter, activeCombatant.combatantId)
+    nextEncounter = updateCombatant(nextEncounter, activeCombatant.combatantId, (c) => ({
       ...c,
       staggered: false,
     }))
@@ -650,9 +683,12 @@ export function performCombatAction(
       `${activeCombatant.name} is still reeling — their action is lost.`,
     )
     nextEncounter = advanceTurn(nextEncounter)
-    nextEncounter = resolveEnemyTurns(nextEncounter)
+    nextEncounter = resolveEnemyTurns(nextEncounter, rng)
     nextEncounter = evaluateOutcome(nextEncounter)
-    let nextState = syncRosterFromCombat({ ...state, activeCombat: nextEncounter }, nextEncounter)
+    let nextState = syncRosterFromCombat(
+      { ...state, activeCombat: nextEncounter, rngSeed: seeded.getSeed() },
+      nextEncounter,
+    )
     nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
     return nextState
   }
@@ -660,14 +696,17 @@ export function performCombatAction(
   // Guard cooldown: prevent guard spam — unit can only guard once per round
   if (action === 'guard' && activeCombatant.guardCooldown) {
     let nextEncounter = appendLog(
-      encounter,
+      clearGuardingForCombatant(encounter, activeCombatant.combatantId),
       activeCombatant.combatantId,
       `${activeCombatant.name} is already braced — they cannot guard again this round.`,
     )
     nextEncounter = advanceTurn(nextEncounter)
-    nextEncounter = resolveEnemyTurns(nextEncounter)
+    nextEncounter = resolveEnemyTurns(nextEncounter, rng)
     nextEncounter = evaluateOutcome(nextEncounter)
-    let nextState = syncRosterFromCombat({ ...state, activeCombat: nextEncounter }, nextEncounter)
+    let nextState = syncRosterFromCombat(
+      { ...state, activeCombat: nextEncounter, rngSeed: seeded.getSeed() },
+      nextEncounter,
+    )
     nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
     return nextState
   }
@@ -675,25 +714,32 @@ export function performCombatAction(
   // Fear check: ally may refuse advance action
   if (action === 'advance' && activeCombatant.sourceNpcId) {
     const npc = state.roster.find((r) => r.npcId === activeCombatant.sourceNpcId)
-    if (npc && checkFearRefuseAdvance({ fear: npc.states.fear })) {
+    if (npc && checkFearRefuseAdvance({ fear: npc.states.fear }, rng)) {
       const refusalMessage = `${activeCombatant.name} hesitates — fear roots them in place.`
-      let nextEncounter = appendLog(encounter, activeCombatant.combatantId, refusalMessage)
+      let nextEncounter = appendLog(
+        clearGuardingForCombatant(encounter, activeCombatant.combatantId),
+        activeCombatant.combatantId,
+        refusalMessage,
+      )
       nextEncounter = advanceTurn(nextEncounter)
-      nextEncounter = resolveEnemyTurns(nextEncounter)
+      nextEncounter = resolveEnemyTurns(nextEncounter, rng)
       nextEncounter = evaluateOutcome(nextEncounter)
-      let nextState = syncRosterFromCombat({ ...state, activeCombat: nextEncounter }, nextEncounter)
+      let nextState = syncRosterFromCombat(
+        { ...state, activeCombat: nextEncounter, rngSeed: seeded.getSeed() },
+        nextEncounter,
+      )
       nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
       return nextState
     }
   }
 
-  let nextEncounter = clearGuarding(encounter, activeCombatant.side)
-  nextEncounter = applyAction(nextEncounter, activeCombatant.combatantId, action)
+  let nextEncounter = clearGuardingForCombatant(encounter, activeCombatant.combatantId)
+  nextEncounter = applyAction(nextEncounter, activeCombatant.combatantId, action, rng)
   nextEncounter = evaluateOutcome(nextEncounter)
 
   if (nextEncounter.outcome === 'ongoing') {
     nextEncounter = advanceTurn(nextEncounter)
-    nextEncounter = resolveEnemyTurns(nextEncounter)
+    nextEncounter = resolveEnemyTurns(nextEncounter, rng)
     nextEncounter = evaluateOutcome(nextEncounter)
   }
 
@@ -701,6 +747,7 @@ export function performCombatAction(
     {
       ...state,
       activeCombat: nextEncounter,
+      rngSeed: seeded.getSeed(),
     },
     nextEncounter,
   )
@@ -711,13 +758,13 @@ export function performCombatAction(
     const durabilities = { ...nextState.equippedItemDurabilities }
     const npcDur = { ...(durabilities[npcId] ?? {}) } as Record<'weapon' | 'armor', number>
 
-    if (action === 'attack' && activeCombatant.equippedWeaponId && Math.random() < 0.05) {
-      const amount = 3 + Math.floor(Math.random() * 3)
+    if (action === 'attack' && activeCombatant.equippedWeaponId && rng() < 0.05) {
+      const amount = 3 + Math.floor(rng() * 3)
       npcDur['weapon'] = Math.max(0, (npcDur['weapon'] ?? 100) - amount)
     }
 
-    if (activeCombatant.equippedArmorId && Math.random() < 0.05) {
-      const amount = 2 + Math.floor(Math.random() * 3)
+    if (activeCombatant.equippedArmorId && rng() < 0.05) {
+      const amount = 2 + Math.floor(rng() * 3)
       npcDur['armor'] = Math.max(0, (npcDur['armor'] ?? 100) - amount)
     }
 
@@ -785,6 +832,8 @@ export function performCombatAction(
 export function concludeCombatEncounter(state: GameState): GameState {
   if (!state.activeCombat || state.activeCombat.outcome === 'ongoing') return state
 
+  const seeded = createRng(state.rngSeed)
+  const rng = seeded.rng
   const combat = state.activeCombat
   const mission = state.activeMissionId
     ? contentCatalog.missionsById.get(state.activeMissionId)
@@ -823,7 +872,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
       const alreadyHired = new Set(nextState.roster.map((r) => r.npcId))
       const eligible = recruitableDefs.filter((en) => !alreadyOffered.has(en.id) && !alreadyHired.has(en.id))
       if (eligible.length > 0) {
-        const pick = eligible[Math.floor(Math.random() * eligible.length)]!
+        const pick = eligible[randomIndex(eligible.length, rng)]!
         nextState = {
           ...nextState,
           availableForHire: [
@@ -870,13 +919,17 @@ export function concludeCombatEncounter(state: GameState): GameState {
         const current = nextState.factionStandings[factionId] ?? 0
         nextState = {
           ...nextState,
-          factionStandings: {
-            ...nextState.factionStandings,
-            [factionId]: Math.max(-100, Math.min(100, current + 5)),
-          },
-        }
+        factionStandings: {
+          ...nextState.factionStandings,
+          [factionId]: Math.max(-100, Math.min(100, current - 5)),
+        },
+      }
         const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-        nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved.`)
+        nextState = appendActivityLogEntry(
+          nextState,
+          'system',
+          `Victory came at a cost. Standing with ${factionName} worsens after the clash.`,
+        )
       }
 
       // Non-quest victory renown gain
@@ -1072,5 +1125,46 @@ export function concludeCombatEncounter(state: GameState): GameState {
     selectedSquadNpcIds: [],
   }
 
-  return appendActivityLogEntry(nextState, 'system', 'The encounter is concluded. The squad returns.')
+  const playerCombatant = combat.combatants.find((combatant) => combatant.combatantId === 'player')
+  if (playerCombatant) {
+    const currentPlayerCombatState = nextState.playerCharacter.combatState ?? {
+      health: PLAYER_MAX_HEALTH,
+      morale: Math.max(
+        30,
+        Math.min(
+          100,
+          Math.round(
+            nextState.playerCharacter.attributes.resolve * 0.7 +
+              nextState.playerCharacter.attributes.presence * 0.3,
+          ),
+        ),
+      ),
+      injury: 0,
+    }
+    const playerHealth = Math.max(0, Math.min(PLAYER_MAX_HEALTH, playerCombatant.health))
+    const playerWasKO = playerHealth <= 0
+    nextState = {
+      ...nextState,
+      playerCharacter: {
+        ...nextState.playerCharacter,
+        combatState: {
+          health: playerWasKO ? 10 : playerHealth,
+          morale: Math.max(0, Math.min(100, playerCombatant.morale + (isVictory ? 5 : -8))),
+          injury: playerWasKO
+            ? Math.min(100, currentPlayerCombatState.injury + 30)
+            : Math.min(
+                100,
+                currentPlayerCombatState.injury +
+                  Math.max(0, currentPlayerCombatState.health - playerHealth),
+              ),
+        },
+      },
+    }
+  }
+
+  return appendActivityLogEntry(
+    { ...nextState, rngSeed: seeded.getSeed() },
+    'system',
+    'The encounter is concluded. The squad returns.',
+  )
 }

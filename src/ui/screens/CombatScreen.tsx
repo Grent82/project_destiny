@@ -7,24 +7,60 @@ const RANGE_LABELS: Record<string, { label: string; description: string }> = {
     label: 'Close Range',
     description: 'Melee and short-range weapons have full effect. Rifles and crossbows are penalized.',
   },
+  medium: {
+    label: 'Medium Range',
+    description: 'Neither line owns the ground. Balanced weapons perform best while melee closes and long guns set up.',
+  },
   distant: {
     label: 'Distant Range',
     description: 'Ranged weapons operate at full effect. Melee weapons suffer a penalty.',
   },
 }
 
+const ACTION_BRIEFS = [
+  {
+    id: 'attack',
+    label: 'Attack',
+    detail: 'Auto-target the most vulnerable enemy in the current exchange.',
+  },
+  {
+    id: 'advance',
+    label: 'Advance',
+    detail: 'Push the fight one band closer: distant → medium → close.',
+  },
+  {
+    id: 'retreat',
+    label: 'Retreat',
+    detail: 'Give ground one band at a time: close → medium → distant.',
+  },
+  {
+    id: 'guard',
+    label: 'Guard',
+    detail: 'Brace for the next hit, then lose that protection when this combatant acts again.',
+  },
+] as const
+
 export function CombatScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const combat = useAppSelector(selectCombatScreenState)
   const rangeInfo = combat.range ? RANGE_LABELS[combat.range] : null
+  const commandStatusMessage = !combat.hasActiveCombat
+    ? 'No combat commands are available until an encounter begins.'
+    : combat.outcome !== 'ongoing'
+      ? 'Combat is resolved. Conclude the encounter to return to operations.'
+      : combat.canAct
+        ? 'Command combat is auto-targeted. Choose how the active ally approaches the exchange.'
+        : combat.activeCombatantName
+          ? `${combat.activeCombatantName} is not under player control right now. Enemy turns and skipped turns resolve automatically.`
+          : 'The encounter is resolving automatically.'
 
   return (
     <section className="screen-panel">
       <p className="eyebrow">House Valdric</p>
       <h1>Engagement</h1>
       <p className="summary">
-        Two-range encounters. The ground belongs to whoever holds it longest.
+        Three-range command combat. You direct the line by issuing orders, not by manually picking targets.
       </p>
 
       {!combat.hasActiveCombat ? (
@@ -84,51 +120,34 @@ export function CombatScreen() {
           </div>
 
           <div className="combat-action-row">
-            <button
-              className="action-button"
-              disabled={!combat.canAct}
-              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
-              onClick={() => dispatch(gameActions.performCombatAction('attack'))}
-              type="button"
-            >
-              Attack
-            </button>
-            <button
-              className="action-button"
-              disabled={!combat.canAct}
-              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
-              onClick={() => dispatch(gameActions.performCombatAction('advance'))}
-              type="button"
-            >
-              Advance
-            </button>
-            <button
-              className="action-button"
-              disabled={!combat.canAct}
-              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
-              onClick={() => dispatch(gameActions.performCombatAction('retreat'))}
-              type="button"
-            >
-              Retreat
-            </button>
-            <button
-              className="action-button"
-              disabled={!combat.canAct}
-              title={!combat.canAct ? 'Not your turn or combat is over' : undefined}
-              onClick={() => dispatch(gameActions.performCombatAction('guard'))}
-              type="button"
-            >
-              Guard
-            </button>
+            {ACTION_BRIEFS.map((action) => (
+              <button
+                key={action.id}
+                className="action-button"
+                disabled={!combat.canAct}
+                onClick={() => dispatch(gameActions.performCombatAction(action.id))}
+                type="button"
+              >
+                {action.label}
+              </button>
+            ))}
             <button
               className="action-button"
               disabled={combat.outcome === 'ongoing'}
-              title={combat.outcome === 'ongoing' ? 'Combat is still in progress' : undefined}
               onClick={() => dispatch(gameActions.concludeCombatEncounter())}
               type="button"
             >
               Conclude encounter
             </button>
+          </div>
+          <p className="summary">{commandStatusMessage}</p>
+          <div className="stats-grid">
+            {ACTION_BRIEFS.map((action) => (
+              <article key={action.id}>
+                <h2>{action.label}</h2>
+                <p>{action.detail}</p>
+              </article>
+            ))}
           </div>
 
           <div className="combat-layout">

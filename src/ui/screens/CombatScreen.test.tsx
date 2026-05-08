@@ -23,6 +23,9 @@ describe('CombatScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Start seeded encounter' }))
 
     expect(screen.getAllByText(/Round 1/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/Three-range command combat/i)).toBeInTheDocument()
+    expect(screen.getByText(/Medium Range/i)).toBeInTheDocument()
+    expect(screen.getByText(/Auto-target the most vulnerable enemy/i)).toBeInTheDocument()
     expect(
       screen.getAllByText(/Ash Raider|Bog Skirmisher|Ruin Poacher|Fen Cutthroat/)
         .length,

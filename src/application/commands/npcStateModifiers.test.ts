@@ -84,6 +84,11 @@ describe('checkFearRefuseAdvance', () => {
     // With 30% chance and 200 trials, probability of zero successes is negligible
     expect(trueCount).toBeGreaterThan(0)
   })
+
+  it('accepts an injected rng for deterministic fear refusal checks', () => {
+    expect(checkFearRefuseAdvance({ fear: 100 }, () => 0.1)).toBe(true)
+    expect(checkFearRefuseAdvance({ fear: 100 }, () => 0.9)).toBe(false)
+  })
 })
 
 describe('endDay threshold events', () => {

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
 import { concludeCombatEncounter, startCombatEncounter } from './combat'
-import { addNpcToSelectedSquad } from './squad'
+import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from './squad'
 import { endDay } from './endDay'
 
 function makeResolvedState(outcome: 'victory' | 'defeat') {
@@ -85,6 +85,39 @@ describe('concludeCombatEncounter — injury persistence', () => {
     const nextState = concludeCombatEncounter(resolvedState)
     expect(nextState.selectedSquadNpcIds).toEqual([])
   })
+
+  it('writes player combat health, morale, and injury back to playerCharacter', () => {
+    const resolvedState = makeResolvedState('victory')
+    if (!resolvedState.activeCombat) throw new Error('No active combat')
+
+    const stateWithPlayerCombatState = {
+      ...resolvedState,
+      playerCharacter: {
+        ...resolvedState.playerCharacter,
+        combatState: {
+          health: 80,
+          morale: 70,
+          injury: 6,
+        },
+      },
+      activeCombat: {
+        ...resolvedState.activeCombat,
+        combatants: resolvedState.activeCombat.combatants.map((combatant) =>
+          combatant.combatantId === 'player'
+            ? { ...combatant, health: 49, morale: 61 }
+            : combatant,
+        ),
+      },
+    }
+
+    const nextState = concludeCombatEncounter(stateWithPlayerCombatState)
+
+    expect(nextState.playerCharacter.combatState).toEqual({
+      health: 49,
+      morale: 66,
+      injury: 37,
+    })
+  })
 })
 
 describe('concludeCombatEncounter — emotional aftermath', () => {
@@ -157,6 +190,34 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
     expect(nextState.selectedSquadNpcIds).toContain('npc-ida-rhys')
     const rosterEntry = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
     expect(rosterEntry.assignment).toBe('deployed')
+  })
+
+  it('rejects NPCs who are too injured to deploy', () => {
+    const stateWithInjuredNpc = {
+      ...initialStateWithIda,
+      selectedSquadNpcIds: [],
+      roster: initialStateWithIda.roster.map((r) =>
+        r.npcId === 'npc-ida-rhys'
+          ? { ...r, states: { ...r.states, health: 24 } }
+          : r,
+      ),
+    }
+
+    const nextState = addNpcToSelectedSquad(stateWithInjuredNpc, 'npc-ida-rhys')
+    expect(nextState.selectedSquadNpcIds).not.toContain('npc-ida-rhys')
+  })
+
+  it('returns deselected NPCs from deployed to idle', () => {
+    const deployedState = addNpcToSelectedSquad(
+      { ...initialStateWithIda, selectedSquadNpcIds: [] },
+      'npc-ida-rhys',
+    )
+
+    const nextState = removeNpcFromSelectedSquad(deployedState, 'npc-ida-rhys')
+    const rosterEntry = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+
+    expect(nextState.selectedSquadNpcIds).not.toContain('npc-ida-rhys')
+    expect(rosterEntry.assignment).toBe('idle')
   })
 })
 

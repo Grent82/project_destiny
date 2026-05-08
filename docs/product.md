@@ -114,7 +114,7 @@ The MVP is the smallest version of the game that proves the product identity.
 - `10-15 jobs or titles`
 - `20-30 event templates`
 - `10-15 quests`
-- `1 tactical combat mode` based on `Close` and `Distant` range
+- `1 tactical combat mode` based on `Close`, `Medium`, and `Distant` range
 
 ### MVP systems
 
@@ -207,7 +207,7 @@ Acceptance signal:
 Must support:
 
 - squad-based, turn-based combat
-- `Close` and `Distant` range states
+- `Close`, `Medium`, and `Distant` range states
 - range-sensitive weapon identity
 - armor tradeoffs
 - effects from current NPC state

@@ -273,7 +273,7 @@ There is no spatial grid. Range is either implicit or indicated by a simple clos
 
 ### Recommendation for Project Destiny
 
-Keep the no-grid approach. Make the **Close / Distant range state explicit and prominent** — a large persistent zone indicator that shows which characters are in which range band. Scale portraits up slightly from MoR's combat view. Keep the combat log feed but add turn-separator markers so the player can parse turn boundaries.
+Keep the no-grid approach. Make the **Close / Medium / Distant range state explicit and prominent** — a large persistent zone indicator that shows which band currently governs the whole exchange. Scale portraits up slightly from MoR's combat view. Keep the combat log feed but add turn-separator markers so the player can parse turn boundaries.
 
 ---
 

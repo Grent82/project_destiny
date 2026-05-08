@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
@@ -21,6 +21,50 @@ describe('combat commands', () => {
     expect(nextState.activityLog[0]?.message).toMatch(/moves out.*hostile patrol|hostile patrol stands in the way/i)
   })
 
+  it('does not heal wounded allies when combat starts', () => {
+    const state = {
+      ...initialStateWithIda,
+      selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys'
+          ? { ...npc, states: { ...npc.states, health: 32 } }
+          : npc,
+      ),
+    }
+
+    const nextState = startCombatEncounter(state)
+    const allyCombatant = nextState.activeCombat?.combatants.find(
+      (combatant) => combatant.sourceNpcId === 'npc-ida-rhys',
+    )
+    const rosterEntry = nextState.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
+
+    expect(allyCombatant?.health).toBe(32)
+    expect(allyCombatant?.maxHealth).toBe(32)
+    expect(rosterEntry?.states.health).toBe(32)
+  })
+
+  it('uses stored player combat state when combat starts', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      playerCharacter: {
+        ...initialGameStateSnapshot.playerCharacter,
+        combatState: {
+          health: 57,
+          morale: 66,
+          injury: 18,
+        },
+      },
+    }
+
+    const nextState = startCombatEncounter(state)
+    const playerCombatant = nextState.activeCombat?.combatants.find(
+      (combatant) => combatant.combatantId === 'player',
+    )
+
+    expect(playerCombatant?.health).toBe(57)
+    expect(playerCombatant?.morale).toBe(66)
+  })
+
   it('does not start combat without a selected squad', () => {
     const state = {
       ...initialGameStateSnapshot,
@@ -34,12 +78,7 @@ describe('combat commands', () => {
 
   it('resolves a player action and advances the encounter state', () => {
     const startedState = startCombatEncounter(initialGameStateSnapshot)
-    // Mock Math.random to guarantee a hit (low value = below accuracy threshold)
-    vi.spyOn(Math, 'random').mockReturnValue(0.01)
-
     const nextState = performCombatAction(startedState, 'attack')
-
-    vi.restoreAllMocks()
 
     expect(nextState.activeCombat).not.toBeNull()
     expect(nextState.activeCombat?.log.length).toBeGreaterThan(
@@ -47,6 +86,23 @@ describe('combat commands', () => {
     )
     expect(nextState.activeCombat?.combatants.some((combatant) => combatant.health < combatant.maxHealth)).toBe(true)
     expect(nextState.activityLog[0]?.category).toBe('combat')
+  })
+
+  it('reproduces the same combat step from the same seed', () => {
+    const startedState = startCombatEncounter(initialGameStateSnapshot)
+
+    const firstRun = performCombatAction(startedState, 'attack')
+    const secondRun = performCombatAction(startedState, 'attack')
+
+    expect(firstRun.activeCombat).toEqual(secondRun.activeCombat)
+    expect(firstRun.rngSeed).toBe(secondRun.rngSeed)
+  })
+
+  it('advances rngSeed after resolving a combat step', () => {
+    const startedState = startCombatEncounter(initialGameStateSnapshot)
+    const nextState = performCombatAction(startedState, 'attack')
+
+    expect(nextState.rngSeed).not.toBe(startedState.rngSeed)
   })
 
   it('leaves state unchanged when no active combat exists', () => {

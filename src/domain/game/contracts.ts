@@ -185,6 +185,11 @@ export const gameStateSchema = z
       attributes: attributesSchema,
       skills: skillsSchema,
       traits: traitsSchema,
+      combatState: z.object({
+        health: z.number().int().min(0).max(100).default(80),
+        morale: z.number().int().min(0).max(100).default(70),
+        injury: z.number().int().min(0).max(100).default(0),
+      }).optional(),
       level: z.number().int().default(1),
       renown: z.number().int().min(0).default(0),
     }).default(() => ({

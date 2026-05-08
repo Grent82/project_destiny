@@ -106,6 +106,7 @@ const BASE_GAME_STATE = {
   activeQuestIds: [],
   selectedSquadNpcIds: ['npc-1', 'npc-2'],
   activeCombat: null,
+  rngSeed: 42,
   equippedItemDurabilities: {},
   playerCharacter: { name: 'Valdric', attributes: { might: 40, agility: 40, endurance: 40, intellect: 40, perception: 40, presence: 40, resolve: 40 }, skills: { melee: 15, ranged: 15, medicine: 15, administration: 15, engineering: 15, negotiation: 15, survival: 15, security: 15, crafting: 15, performance: 15, academics: 15, intrigue: 15 }, traits: { discipline: 40, ambition: 40, empathy: 40, ruthlessness: 40, prudence: 40, curiosity: 40, dominance: 40, loyalty: 40, vanity: 40, zeal: 40 }, level: 1 },
 }
@@ -245,23 +246,140 @@ describe('combat resolution with equipment', () => {
     const encounter = makeEncounter()
     const state = {
       ...BASE_GAME_STATE,
+      rngSeed: 0,
       activeCombat: encounter,
     }
-    // Force hit by mocking Math.random to low value
-    vi.spyOn(Math, 'random').mockReturnValue(0.01)
     const nextState = performCombatAction(state as unknown as GameState, 'attack')
     const enemy = nextState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
     expect(enemy?.health).toBeLessThan(50)
   })
 
-  it('stagger status is applied and consumed: staggered enemy loses their next turn', () => {
-    // Mock: hit, damage, crit miss, stagger hit
-    vi.spyOn(Math, 'random')
-      .mockReturnValueOnce(0.01)  // well below accuracy → hit
-      .mockReturnValueOnce(0.5)   // damage roll (midpoint)
-      .mockReturnValueOnce(0.99)  // above critChance → no crit
-      .mockReturnValueOnce(0.01)  // well below staggerChance → stagger
+  it('respects actor accuracy when resolving attacks', () => {
+    const highAccuracyState = {
+      ...BASE_GAME_STATE,
+      rngSeed: 42,
+      activeCombat: makeEncounter({
+        combatants: [
+          makeCombatant({ combatantId: 'ally-1', side: 'allies', accuracy: 80 }),
+          makeCombatant({
+            combatantId: 'enemy-1',
+            sourceNpcId: null,
+            name: 'Fen Cutthroat',
+            side: 'enemies',
+          }),
+        ],
+      }),
+    }
+    const lowAccuracyState = {
+      ...BASE_GAME_STATE,
+      rngSeed: 42,
+      activeCombat: makeEncounter({
+        combatants: [
+          makeCombatant({ combatantId: 'ally-1', side: 'allies', accuracy: 40 }),
+          makeCombatant({
+            combatantId: 'enemy-1',
+            sourceNpcId: null,
+            name: 'Fen Cutthroat',
+            side: 'enemies',
+          }),
+        ],
+      }),
+    }
 
+    const hitState = performCombatAction(highAccuracyState as unknown as GameState, 'attack')
+    const missState = performCombatAction(lowAccuracyState as unknown as GameState, 'attack')
+
+    const hitEnemy = hitState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
+    const missEnemy = missState.activeCombat?.combatants.find((c) => c.combatantId === 'enemy-1')
+
+    expect(hitEnemy?.health).toBeLessThan(50)
+    expect(missEnemy?.health).toBe(50)
+  })
+
+  it('keeps another ally guarding until that ally acts again or gets hit', () => {
+    const encounter = makeEncounter({
+      activeCombatantId: 'ally-1',
+      combatants: [
+        makeCombatant({
+          combatantId: 'ally-1',
+          sourceNpcId: 'npc-1',
+          side: 'allies',
+          speed: 6,
+          health: 50,
+          morale: 75,
+        }),
+        makeCombatant({
+          combatantId: 'ally-2',
+          sourceNpcId: 'npc-2',
+          name: 'Vance',
+          side: 'allies',
+          speed: 5,
+          health: 18,
+          morale: 60,
+        }),
+        makeCombatant({
+          combatantId: 'enemy-1',
+          sourceNpcId: null,
+          name: 'Fen Cutthroat',
+          side: 'enemies',
+          speed: 4,
+          health: 50,
+          morale: 65,
+        }),
+      ],
+    })
+    const guardedState = performCombatAction(
+      {
+        ...BASE_GAME_STATE,
+        rngSeed: 42,
+        activeCombat: encounter,
+      } as unknown as GameState,
+      'guard',
+    )
+
+    expect(
+      guardedState.activeCombat?.combatants.find((c) => c.combatantId === 'ally-1')?.guarding,
+    ).toBe(true)
+    expect(guardedState.activeCombat?.activeCombatantId).toBe('ally-2')
+
+    const afterSecondAllyActs = performCombatAction(guardedState, 'attack')
+    const firstAlly = afterSecondAllyActs.activeCombat?.combatants.find((c) => c.combatantId === 'ally-1')
+
+    expect(firstAlly?.guarding).toBe(true)
+    expect(
+      afterSecondAllyActs.activeCombat?.log.some((entry) => entry.actorId === 'enemy-1'),
+    ).toBe(true)
+  })
+
+  it('drops guarding when the same combatant attempts to guard again on cooldown', () => {
+    const state = {
+      ...BASE_GAME_STATE,
+      activeCombat: makeEncounter({
+        activeCombatantId: 'ally-1',
+        combatants: [
+          makeCombatant({
+            combatantId: 'ally-1',
+            side: 'allies',
+            guarding: true,
+            guardCooldown: true,
+          }),
+          makeCombatant({
+            combatantId: 'enemy-1',
+            sourceNpcId: null,
+            name: 'Fen Cutthroat',
+            side: 'enemies',
+          }),
+        ],
+      }),
+    }
+
+    const nextState = performCombatAction(state as unknown as GameState, 'guard')
+    const ally = nextState.activeCombat?.combatants.find((c) => c.combatantId === 'ally-1')
+
+    expect(ally?.guarding).toBe(false)
+  })
+
+  it('stagger status is applied and consumed: staggered enemy loses their next turn', () => {
     const encounter = makeEncounter({
       combatants: [
         makeCombatant({
@@ -279,7 +397,7 @@ describe('combat resolution with equipment', () => {
     })
 
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
+      { ...BASE_GAME_STATE, rngSeed: 0, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     // Stagger is consumed in the same round: enemy loses their turn and staggered resets to false
@@ -291,17 +409,9 @@ describe('combat resolution with equipment', () => {
   })
 
   it('crit doubles damage — log contains "telling blow"', () => {
-    // Mock sequence: hit, damage roll, crit triggers, no stagger, phrase select (ignored), then always-hit for enemy
-    vi.spyOn(Math, 'random')
-      .mockReturnValueOnce(0.01)  // ally hit → hits
-      .mockReturnValueOnce(0.5)   // ally damage roll
-      .mockReturnValueOnce(0.01)  // ally crit → triggers (critChance=2, 1 < 2)
-      .mockReturnValueOnce(0.99)  // ally stagger → no stagger
-      .mockReturnValue(0.01)      // all remaining (phrase picks, enemy turn)
-
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
+      { ...BASE_GAME_STATE, rngSeed: 118, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     // Find ally's attack log entry
@@ -312,10 +422,9 @@ describe('combat resolution with equipment', () => {
   })
 
   it('log uses Valdenmoor vocabulary (strikes/lands a blow/connects)', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.01)
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
+      { ...BASE_GAME_STATE, rngSeed: 0, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
     // Find the ally's attack log entry specifically (last log may be stagger/reeling message)
@@ -326,13 +435,14 @@ describe('combat resolution with equipment', () => {
   })
 
   it('miss log uses Valdenmoor miss vocabulary', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.99)  // always miss
     const encounter = makeEncounter()
     const nextState = performCombatAction(
-      { ...BASE_GAME_STATE, activeCombat: encounter } as unknown as GameState,
+      { ...BASE_GAME_STATE, rngSeed: 2, activeCombat: encounter } as unknown as GameState,
       'attack',
     )
-    const lastLog = nextState.activeCombat?.log.at(-1)?.summary ?? ''
-    expect(lastLog).toMatch(/misses|goes wide|deflected/)
+    const allyMissLog = nextState.activeCombat?.log.find(
+      (entry) => entry.actorId === 'ally-1' && /misses|goes wide|deflected/i.test(entry.summary),
+    )?.summary ?? ''
+    expect(allyMissLog).toMatch(/misses|goes wide|deflected/i)
   })
 })

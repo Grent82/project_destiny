@@ -169,7 +169,7 @@ Recommended approach:
 
 - turn-based
 - party-based
-- two-range system: `Close` and `Distant`
+- three-range system: `Close`, `Medium`, and `Distant`
 - strong weapon identity
 - armor tradeoffs
 - morale or pressure effects
@@ -535,6 +535,7 @@ Recommended weapon fields:
 - `speed`
 - `rangeType`
 - `rangeModifierClose`
+- `rangeModifierMedium`
 - `rangeModifierDistant`
 - `critChance`
 - `staggerChance`
@@ -732,7 +733,7 @@ Recommended structure:
 
 - party vs party
 - turn-based initiative
-- `Close` and `Distant` range states
+- `Close`, `Medium`, and `Distant` range states
 - actions limited to `4-6` core choices
 
 Recommended actions:
@@ -913,7 +914,7 @@ A full tactical grid may slow development without improving the core fantasy.
 
 Mitigation:
 
-- keep the two-range combat model first
+- keep the three-range combat model first
 
 ### Risk 5: Sexualization without system depth
 

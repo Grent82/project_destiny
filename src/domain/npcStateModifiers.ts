@@ -26,9 +26,12 @@ export function getHungerCombatPenalty(npc: NpcStatSnapshot): number {
 }
 
 /** Returns whether NPC might refuse advance action due to fear */
-export function checkFearRefuseAdvance(npc: NpcStatSnapshot): boolean {
+export function checkFearRefuseAdvance(
+  npc: NpcStatSnapshot,
+  rng: () => number = Math.random,
+): boolean {
   if ((npc.fear ?? 0) > T.FEAR_REFUSE_ADVANCE_THRESHOLD) {
-    return Math.random() * 100 < T.FEAR_REFUSE_ADVANCE_CHANCE
+    return rng() * 100 < T.FEAR_REFUSE_ADVANCE_CHANCE
   }
   return false
 }
