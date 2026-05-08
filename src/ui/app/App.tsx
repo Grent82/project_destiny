@@ -9,6 +9,7 @@ import { DashboardScreen } from '../screens/DashboardScreen'
 import { DialogueScreen } from '../screens/DialogueScreen'
 import { DistrictMapScreen } from '../screens/DistrictMapScreen'
 import { DistrictInteriorScreen } from '../screens/DistrictInteriorScreen'
+import { DistrictPoiScreen } from '../screens/DistrictPoiScreen'
 import { EventLogScreen } from '../screens/EventLogScreen'
 import { ExpeditionPrepScreen } from '../screens/ExpeditionPrepScreen'
 import { ExpeditionTravelScreen } from '../screens/ExpeditionTravelScreen'
@@ -93,6 +94,7 @@ export function App() {
             <Route path="/recruitment" element={<RecruitmentScreen />} />
             <Route path="/district-map" element={<DistrictMapScreen />} />
             <Route path="/district/:districtId" element={<DistrictInteriorScreen />} />
+            <Route path="/district/:districtId/poi/:poiId" element={<DistrictPoiScreen />} />
             <Route path="/factions" element={<FactionsScreen />} />
             <Route path="/contracts" element={<ContractBoardScreen />} />
             <Route path="/investigation" element={<InvestigationScreen />} />

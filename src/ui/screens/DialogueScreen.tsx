@@ -5,6 +5,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { DialogueChoice, DialogueCondition } from '../../domain/dialogue/contracts'
+import { VenueContextBanner } from './VenueContextBanner'
 
 export function DialogueScreen() {
   const dispatch = useAppDispatch()
@@ -94,6 +95,7 @@ export function DialogueScreen() {
   return (
     <section className="screen-panel">
       <p className="eyebrow">Dialogue</p>
+      <VenueContextBanner />
 
       <div
         style={{

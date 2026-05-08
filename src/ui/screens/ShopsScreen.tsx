@@ -8,6 +8,7 @@ import { getDurabilityTier } from '../../application/commands/durability'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
 import { selectStash } from '../../application/selectors/stash'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { VenueContextBanner } from './VenueContextBanner'
 
 function DurabilityBar({ current, max }: { current: number; max: number }) {
   const pct = max > 0 ? (current / max) * 100 : 0
@@ -57,6 +58,7 @@ export function ShopsScreen() {
       <p className="summary">
         District vendors. What they carry depends on who controls the ward and how much pressure the market is under.
       </p>
+      <VenueContextBanner />
       <p className="summary">Available funds: {overview.money} Marks</p>
       {priceNote ? (
         <p className="badge badge-warning">{priceNote}</p>

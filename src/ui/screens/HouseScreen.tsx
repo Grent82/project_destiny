@@ -6,6 +6,7 @@ import {
 } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { HouseRoom, RoomState } from '../../domain/game/contracts'
+import { VenueContextBanner } from './VenueContextBanner'
 
 const ROOM_EFFECTS: Record<string, string> = {
   'room-kitchen': 'When intact: reduces each NPC\'s daily wage by 1 Mk (house provides meals).',
@@ -111,6 +112,7 @@ export function HouseScreen() {
         The family seat in The Pale. Most of it was stripped or broken during the Breach. Marion
         has kept the entrance hall presentable. The vault below has not been opened since.
       </p>
+      <VenueContextBanner />
 
       <div className="house-status-bar">
         <span>

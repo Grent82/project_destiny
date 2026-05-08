@@ -8,6 +8,7 @@ import {
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { VenueContextBanner } from './VenueContextBanner'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-civic-compact': 'Compact',
@@ -43,6 +44,7 @@ export function ContractBoardScreen() {
       <p className="summary">
         Contracts the house has taken on. Obligations, briefings, and what is owed if you fail.
       </p>
+      <VenueContextBanner />
 
       <div className="overview-grid">
 

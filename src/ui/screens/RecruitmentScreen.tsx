@@ -6,6 +6,8 @@ import { selectLedgerSummary } from '../../application/selectors/ledger'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { RARITY_SKILL_CAPS } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { useVenueContext } from './locationContext'
+import { VenueContextBanner } from './VenueContextBanner'
 
 export function RecruitmentScreen() {
   const navigate = useNavigate()
@@ -15,6 +17,7 @@ export function RecruitmentScreen() {
   const capacity = useAppSelector(selectRosterCapacity)
   const ledger = useAppSelector(selectLedgerSummary)
   const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
+  const venueContext = useVenueContext()
 
   const { isFull, current: rosterSize, total: totalSlots, houseBonus } = capacity
 
@@ -32,13 +35,18 @@ export function RecruitmentScreen() {
       <p className="summary">
         Those seeking arrangement with the house. An offer not taken today may not stand tomorrow.
       </p>
+      <VenueContextBanner />
       <button
         className="action-button action-button--secondary"
         type="button"
-        onClick={() => navigate('/roster')}
+        onClick={() =>
+          venueContext
+            ? navigate(`/district/${venueContext.districtId}/poi/${venueContext.poiId}`)
+            : navigate('/roster')
+        }
         style={{ marginBottom: '1rem' }}
       >
-        ← Back to Roster
+        ← {venueContext ? `Back to ${venueContext.poiName}` : 'Back to Roster'}
       </button>
 
       <div className="burn-rate-panel">
