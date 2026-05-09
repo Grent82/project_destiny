@@ -38,6 +38,14 @@ export function MissionPrepScreen() {
         <div className="contract-context-banner">
           <p className="contract-context-label">Deploying in support of</p>
           <strong className="contract-context-title">{activeContract.template.title}</strong>
+          {activeContract.presentation && (
+            <>
+              <p className="contract-context-briefing"><strong>Issuer:</strong> {activeContract.presentation.issuerLabel}</p>
+              <p className="contract-context-briefing"><strong>Origin:</strong> {activeContract.presentation.originLabel}</p>
+              <p className="contract-context-briefing"><strong>Why now:</strong> {activeContract.presentation.whyNow}</p>
+              <p className="contract-context-briefing"><strong>What they want:</strong> {activeContract.presentation.employerIntent}</p>
+            </>
+          )}
           <p className="contract-context-briefing">{activeContract.template.briefing}</p>
         </div>
       ) : (

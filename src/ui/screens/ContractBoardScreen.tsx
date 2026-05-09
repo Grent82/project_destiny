@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import {
+  selectAvailableQuestLeads,
   gameActions,
   selectActiveQuests,
   selectCompletedQuestIds,
@@ -33,6 +34,7 @@ function FactionBadge({ factionId }: { factionId: string | null }) {
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const availableQuestLeads = useAppSelector(selectAvailableQuestLeads)
   const activeQuests = useAppSelector(selectActiveQuests)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
@@ -47,6 +49,47 @@ export function ContractBoardScreen() {
       <VenueContextBanner />
 
       <div className="overview-grid">
+        <article className="detail-panel">
+          <h2>Available Leads</h2>
+          <p className="summary" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            These are the contracts and obligations currently on the board. Read who sent them, where they came from, and why they matter before taking one into the house ledger.
+          </p>
+          {availableQuestLeads.length === 0 ? (
+            <p className="summary">No fresh leads at the moment. Work is either already in hand or not yet surfaced.</p>
+          ) : (
+            <div className="mission-list">
+              {availableQuestLeads.map(({ template, presentation }) => (
+                <div key={template.id} className="mission-row">
+                  <div className="mission-row-header">
+                    <strong>{template.title}</strong>
+                    <span className="badge">{presentation.categoryLabel}</span>
+                    {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
+                  </div>
+                  <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
+                  <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
+                  <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
+                  <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
+                  <div className="quest-meta">
+                    {template.rewardMarks > 0 && <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>}
+                    {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
+                    {template.districtId && (
+                      <span>
+                        District: {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    className="action-button action-button--primary"
+                    onClick={() => dispatch(gameActions.acceptQuest({ questId: template.id }))}
+                    type="button"
+                  >
+                    Accept contract
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </article>
 
         <article className="detail-panel">
           <h2>Active Contracts</h2>
@@ -57,7 +100,7 @@ export function ContractBoardScreen() {
             <p className="summary">No contracts currently in progress. Explore the districts to find work.</p>
           ) : (
             <div className="mission-list">
-              {activeQuests.map(({ runtime, template }) => {
+              {activeQuests.map(({ runtime, template, presentation }) => {
                 const isStory = template?.questType === 'story'
                 return (
                 <div key={runtime.questId} className={`mission-row${isStory ? ' mission-row--story' : ''}`}>
@@ -81,6 +124,14 @@ export function ContractBoardScreen() {
                     <p className="quest-briefing" style={{ fontStyle: 'italic', opacity: 0.7 }}>
                       {template.flavorNote}
                     </p>
+                  )}
+                  {presentation && (
+                    <>
+                      <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
+                      <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
+                      <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
+                      <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
+                    </>
                   )}
                   {template?.briefing && !isStory && (
                     <p className="quest-briefing">{template.briefing}</p>

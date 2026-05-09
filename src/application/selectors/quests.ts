@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { getQuestTemplates, contentCatalog } from '../content/contentCatalog'
+import { getQuestPresentation } from '../content/questPresentation'
 import type { RootState } from '../store/gameStore'
 
 export const selectAvailableQuests = (state: RootState) =>
@@ -15,12 +16,24 @@ export const selectAvailableQuests = (state: RootState) =>
     return true
   })
 
+export const selectAvailableQuestLeads = createSelector(
+  selectAvailableQuests,
+  (templates) =>
+    templates.map((template) => ({
+      template,
+      presentation: getQuestPresentation(template),
+    })),
+)
+
 export const selectActiveQuests = createSelector(
   (state: RootState) => state.game.activeQuests,
   (activeQuests) =>
     activeQuests.map((aq) => ({
       runtime: aq,
       template: getQuestTemplates().find((q) => q.id === aq.questId) ?? null,
+    })).map((entry) => ({
+      ...entry,
+      presentation: entry.template ? getQuestPresentation(entry.template) : null,
     })),
 )
 
