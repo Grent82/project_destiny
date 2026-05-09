@@ -604,7 +604,7 @@ const gameSlice = createSlice({
       const vote = state.activeCouncilVotes.find((v) => v.id === voteId)
       if (!vote || vote.outcome !== 'pending') return
 
-      // Require at least 1 council seat with any faction to influence
+      // Require either a restored ward seat or enough renown to reach the chamber through sponsors.
       const totalSeats = Object.values(state.councilSeats).reduce((sum, s) => sum + s, 0)
       const renownLevel = getRenownLevel(state.playerCharacter.renown)
       const renownSeats = renownLevel.councilSeats
@@ -616,7 +616,10 @@ const gameSlice = createSlice({
         day: state.day,
         timeSlot: state.timeSlot,
         category: 'system',
-        message: `House Valdric registers a ${stance} vote on "${vote.title}".`,
+        message:
+          totalSeats > 0
+            ? `House Valdric casts a ${stance} ward vote on "${vote.title}".`
+            : `House Valdric leans on chamber sponsors to ${stance} "${vote.title}".`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },

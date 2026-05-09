@@ -65,7 +65,15 @@ export function FactionsScreen() {
   const activeCouncilVotes = useAppSelector(selectActiveCouncilVotes)
   const playerRenown = useAppSelector((state) => state.game.playerCharacter.renown)
   const renownLevel = getRenownLevel(playerRenown)
-  const totalSeats = Object.values(councilSeats).reduce((sum, s) => sum + s, 0) + renownLevel.councilSeats
+  const restoredWardSeats = Object.values(councilSeats).reduce((sum, s) => sum + s, 0)
+  const chamberSponsors = renownLevel.councilSeats
+  const canInfluenceVotes = restoredWardSeats > 0 || chamberSponsors > 0
+  const voteAccessSummary =
+    restoredWardSeats > 0
+      ? `House Valdric has restored ${restoredWardSeats} ward seat${restoredWardSeats !== 1 ? 's' : ''}. Renown also grants ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} into committee chambers.`
+      : chamberSponsors > 0
+        ? `House Valdric holds no restored ward seat, but its name carries enough weight for ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} inside council committees.`
+        : 'House Valdric currently holds no restored ward seat and no sponsor channel into the chamber.'
 
   return (
     <section className="screen-panel">
@@ -159,9 +167,30 @@ export function FactionsScreen() {
       </article>
 
       <article className="detail-panel" style={{ marginTop: '2rem' }}>
+        <h2>House Political Footing</h2>
+        <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)', marginBottom: '0.75rem' }}>
+          House Valdric once held three ward seats before the debt proceedings stripped them. What remains now is reputation, access, and whatever sponsors can be coaxed into carrying your position.
+        </p>
+        <div className="stat-row" style={{ flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+          <span className="stat-label" style={{ minWidth: '10rem' }}>Restored ward seats</span>
+          <span className="stat-value">{restoredWardSeats}</span>
+          <span style={{ fontSize: '0.8em', color: 'var(--color-text-secondary, #999)', flexBasis: '100%' }}>
+            Literal representation under House Valdric's control.
+          </span>
+        </div>
+        <div className="stat-row" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
+          <span className="stat-label" style={{ minWidth: '10rem' }}>Sponsor channels</span>
+          <span className="stat-value">{chamberSponsors}</span>
+          <span style={{ fontSize: '0.8em', color: 'var(--color-text-secondary, #999)', flexBasis: '100%' }}>
+            Renown-based access to lobby, pressure, and steer a vote without conjuring literal seats.
+          </span>
+        </div>
+      </article>
+
+      <article className="detail-panel" style={{ marginTop: '2rem' }}>
         <h2>Active Council Votes</h2>
         <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)', marginBottom: '0.75rem' }}>
-          {totalSeats > 0 ? `${totalSeats} seat${totalSeats !== 1 ? 's' : ''} — your voice carries in chambers.` : 'No council seats. Reach Renown rank 4 to gain a seat.'}
+          {voteAccessSummary}
         </p>
         {activeCouncilVotes.length === 0 ? (
           <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)' }}>No votes pending. The council is quiet.</p>
@@ -172,29 +201,36 @@ export function FactionsScreen() {
               <p style={{ fontSize: '0.8em', color: 'var(--color-text-secondary, #999)', margin: '0.25rem 0' }}>{vote.description}</p>
               <p style={{ fontSize: '0.75em', fontStyle: 'italic', margin: '0.25rem 0' }}>Effect if passed: {vote.effect}</p>
               {vote.playerVote ? (
-                <span className={`badge ${vote.playerVote === 'support' ? 'badge-positive' : 'badge-warning'}`}>
-                  Your vote: {vote.playerVote}
-                </span>
-              ) : totalSeats > 0 ? (
+                <>
+                  <span className={`badge ${vote.playerVote === 'support' ? 'badge-positive' : 'badge-warning'}`}>
+                    {restoredWardSeats > 0 ? 'House vote' : 'Sponsor pressure'}: {vote.playerVote}
+                  </span>
+                  <p style={{ fontSize: '0.75em', color: 'var(--color-text-secondary, #999)', marginTop: '0.5rem' }}>
+                    {restoredWardSeats > 0
+                      ? 'This is a literal ward vote carried under House Valdric\'s name.'
+                      : 'This is not a literal seat. It reflects sponsors and committee allies carrying your preferred stance.'}
+                  </p>
+                </>
+              ) : canInfluenceVotes ? (
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                   <button
                     className="action-button"
                     onClick={() => dispatch(gameActions.influenceCouncilVote({ voteId: vote.id, stance: 'support' }))}
                     type="button"
                   >
-                    Support
+                    {restoredWardSeats > 0 ? 'Vote support' : 'Lobby support'}
                   </button>
                   <button
                     className="action-button"
                     onClick={() => dispatch(gameActions.influenceCouncilVote({ voteId: vote.id, stance: 'oppose' }))}
                     type="button"
                   >
-                    Oppose
+                    {restoredWardSeats > 0 ? 'Vote oppose' : 'Lobby oppose'}
                   </button>
                 </div>
               ) : (
                 <p style={{ fontSize: '0.75em', color: 'var(--color-text-muted, #666)', marginTop: '0.25rem' }}>
-                  No council seats — cannot vote.
+                  No restored ward seat and no sponsor channel — cannot intervene.
                 </p>
               )}
             </div>
