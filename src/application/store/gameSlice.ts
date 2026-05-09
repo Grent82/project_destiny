@@ -17,6 +17,7 @@ import { MAX_ACTIVITY_ENTRIES } from '../commands/activityLog'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
+import { getHouseDiscovery } from '../content/houseDiscoveries'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
@@ -1105,40 +1106,21 @@ const gameSlice = createSlice({
       if (room.state === 'locked' || room.state === 'collapsed' || room.state === 'destroyed') return
       room.searched = true
 
-      // Search rewards: Marks and lore based on room
-      const SEARCH_FINDS: Record<string, { marks: number; message: string }> = {
-        'room-entrance-hall': { marks: 0, message: 'The entrance hall yields nothing but dust and old boot-prints.' },
-        'room-marion-quarters': { marks: 0, message: "Marion's room is orderly. Private. You find nothing you weren't meant to." },
-        'room-bureau': { marks: 22, message: 'A forgotten strongbox behind the panelling. Old coins — house reserves from before the Breach. (Found 22 Marks)' },
-        'room-kitchen': { marks: 8, message: 'A small tin of emergency coin tucked behind the spice rack. Marion clearly knew about it. (Found 8 Marks)' },
-        'room-study': { marks: 15, message: 'Between two folios: a promissory note, unsigned. And a letter fragment — your father\'s hand, referring to "the arrangement below." (Found 15 Marks)' },
-        'room-master-chamber': { marks: 30, message: 'Behind the wainscoting: a sealed envelope with the house crest and a ring you don\'t recognise. A name on the envelope: Mira. (Found 30 Marks)' },
-        'room-servant-quarters': { marks: 5, message: 'Abandoned belongings from those who fled. A few coin left in haste. (Found 5 Marks)' },
-        'room-barracks': { marks: 12, message: 'Old garrison kit still in the racks. Some coin tucked in a boot. (Found 12 Marks)' },
-        'room-garret': { marks: 18, message: 'A locked chest in the corner — the lock yields to force. Household silver, unmelted. (Found 18 Marks)' },
-      }
-      const find = SEARCH_FINDS[room.roomId]
-      if (find) {
-        if (find.marks > 0) state.money += find.marks
+      const discovery = getHouseDiscovery(room.roomId, state.house.vaultUnlocked)
+      if (discovery) {
+        if (discovery.marks > 0) state.money += discovery.marks
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-search-${room.roomId}`,
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'system',
-          message: find.message,
+          message: discovery.message,
         })
       }
 
       if (room.roomId === 'room-vault' && state.house.vaultUnlocked) {
         state.mainQuest.stage = 'lead-found'
         state.mainQuest.lastClue = "A letter from Mira, hidden in the vault. She left willingly — but not freely."
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-vault-search`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'system',
-          message: "The vault yielded a letter. Mira's hand. She knew what was coming.",
-        })
       }
     },
 

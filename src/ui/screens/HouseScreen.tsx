@@ -4,6 +4,7 @@ import {
   selectHouseRepairSummary,
   selectHouseRooms,
 } from '../../application'
+import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { HouseRoom, RoomState } from '../../domain/game/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
@@ -39,6 +40,7 @@ const STATE_CLASS: Record<RoomState, string> = {
 
 function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
   const dispatch = useAppDispatch()
+  const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const canRepair =
     room.repairCost > 0 &&
     (room.state === 'damaged' || room.state === 'stripped' || room.state === 'collapsed') &&
@@ -48,6 +50,7 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
     room.state !== 'locked' &&
     room.state !== 'collapsed' &&
     room.state !== 'destroyed'
+  const discovery = room.searched ? getHouseDiscovery(room.roomId, vaultUnlocked) : null
 
   return (
     <article className={`house-room ${STATE_CLASS[room.state]}`}>
@@ -61,6 +64,20 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
       )}
 
       {room.searched && <p className="house-room__searched">✓ Searched</p>}
+      {discovery && (
+        <div style={{ marginTop: '0.45rem' }}>
+          <p className="house-room__effect" style={{ fontStyle: 'normal' }}>
+            {discovery.message}
+          </p>
+          {discovery.finds.length > 0 && (
+            <ul style={{ margin: '0.35rem 0 0', paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--text-secondary, #9e8c6e)' }}>
+              {discovery.finds.map((find) => (
+                <li key={find}>{find}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <footer className="house-room__actions">
         {canRepair && (
