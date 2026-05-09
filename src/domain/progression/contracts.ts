@@ -54,6 +54,14 @@ export const RARITY_SKILL_CAPS: Record<string, number> = {
   legendary: 100,
 }
 
+export const RARITY_DESCRIPTIONS: Record<string, string> = {
+  common: 'Steady, replaceable talent. Reliable early, but they plateau sooner than the exceptional.',
+  uncommon: 'Proven potential. They learn longer, cap higher, and usually justify sustained investment.',
+  rare: 'Difficult to replace. Rare hands reach elite ceilings and are worth shaping around.',
+  elite: 'Already near the top of their trade. Exceptional ceiling and little room for wasted handling.',
+  legendary: 'Almost singular. If one appears, they can define an entire wing of the house.',
+}
+
 /**
  * Diminishing returns multiplier for skill training above certain thresholds.
  */
