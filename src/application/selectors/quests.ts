@@ -40,6 +40,11 @@ export const selectActiveQuests = createSelector(
     })),
 )
 
+export const selectActiveQuestById = (state: RootState, questId: string | null) => {
+  if (!questId) return null
+  return selectActiveQuests(state).find((entry) => entry.runtime.questId === questId) ?? null
+}
+
 export const selectCompletedQuestIds = (state: RootState) => state.game.completedQuestIds
 
 export const selectActiveInvestigation = (state: RootState) => state.game.activeInvestigation
@@ -53,6 +58,24 @@ export const selectActiveInvestigationQuest = (state: RootState) => {
 
 export const selectActiveThreatNpc = (state: RootState) => {
   const activeQuest = state.game.activeQuests[0]
+  if (!activeQuest) return null
+  const template = getQuestTemplates().find((q) => q.id === activeQuest.questId)
+  if (!template?.enemyNpcId) return null
+  const npcDef = contentCatalog.npcsById.get(template.enemyNpcId)
+  if (!npcDef) return null
+  const faction = npcDef.factionAffinityId
+    ? contentCatalog.factionsById.get(npcDef.factionAffinityId)?.name ?? npcDef.factionAffinityId
+    : null
+  return {
+    id: npcDef.id,
+    name: npcDef.name,
+    motivation: npcDef.motivation ?? null,
+    factionName: faction,
+  }
+}
+
+export const selectThreatNpcForQuest = (state: RootState, questId: string | null) => {
+  const activeQuest = questId ? state.game.activeQuests.find((quest) => quest.questId === questId) : null
   if (!activeQuest) return null
   const template = getQuestTemplates().find((q) => q.id === activeQuest.questId)
   if (!template?.enemyNpcId) return null

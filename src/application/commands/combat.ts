@@ -590,6 +590,18 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     return state
   }
 
+  const linkedQuest = linkedQuestId
+    ? state.activeQuests.find((quest) => quest.questId === linkedQuestId) ?? null
+    : null
+
+  if (
+    linkedQuest &&
+    linkedQuest.context.incidentDistrictId &&
+    state.currentDistrictId !== linkedQuest.context.incidentDistrictId
+  ) {
+    return state
+  }
+
   const squad = state.roster.filter(
     (npc) =>
       state.selectedSquadNpcIds.includes(npc.npcId) &&
@@ -640,10 +652,32 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     linkedQuestId: linkedQuestId ?? null,
   }
 
+  const nextActiveQuests = linkedQuest
+    ? state.activeQuests.map((quest) =>
+        quest.questId === linkedQuest.questId
+          ? {
+              ...quest,
+              stageId: 'engaged',
+              currentObjectiveLabel: 'The squad is committed. Break the hostile line and survive the clash.',
+              progress: {
+                ...quest.progress,
+                completedSteps: Math.max(quest.progress.completedSteps, 3),
+                lastAdvancedDay: state.day,
+              },
+              journalEntries: [
+                ...quest.journalEntries,
+                'The squad commits to the incident site and the fighting begins.',
+              ],
+            }
+          : quest,
+      )
+    : state.activeQuests
+
   return appendActivityLogEntry(
     {
       ...state,
       activeCombat: encounter,
+      activeQuests: nextActiveQuests,
     },
     'combat',
     'The squad moves out. A hostile patrol stands in the way.',

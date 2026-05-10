@@ -99,6 +99,7 @@ export function App() {
             <Route path="/contracts" element={<ContractBoardScreen />} />
             <Route path="/investigation" element={<InvestigationScreen />} />
             <Route path="/missions" element={<MissionPrepScreen />} />
+            <Route path="/missions/:questId" element={<MissionPrepScreen />} />
             <Route path="/shops" element={<ShopsScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
             <Route path="/event-log" element={<EventLogScreen />} />

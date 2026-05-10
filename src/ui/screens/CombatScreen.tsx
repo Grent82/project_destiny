@@ -66,14 +66,10 @@ export function CombatScreen() {
       {!combat.hasActiveCombat ? (
         <div className="combat-empty-state">
           <p className="summary">
-            No encounter is active. The squad is waiting. Start a patrol clash here or commit from Contracts.
+            No encounter is active. Combat only begins after a contract or expedition has been taken on-site into preparation.
           </p>
-          <button
-            className="action-button"
-            onClick={() => dispatch(gameActions.startCombatEncounter())}
-            type="button"
-          >
-            Start seeded encounter
+          <button className="action-button" onClick={() => navigate('/contracts')} type="button">
+            Return to contracts
           </button>
         </div>
       ) : (

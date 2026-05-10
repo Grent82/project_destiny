@@ -44,6 +44,7 @@ export function ContractBoardScreen() {
   const activeQuests = useAppSelector(selectActiveQuests)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
+  const activeCombat = useAppSelector((state) => state.game.activeCombat)
 
   return (
     <section className="screen-panel">
@@ -177,13 +178,66 @@ export function ContractBoardScreen() {
                     </button>
                   )}
                   {template?.objectiveType === 'combat' && (
-                    <button
-                      className="action-button action-button--primary"
-                      onClick={() => navigate('/combat')}
-                      type="button"
-                    >
-                      Deploy Squad →
-                    </button>
+                    (() => {
+                      const targetDistrictId = incidentDistrictId ?? template?.districtId ?? null
+                      const incidentDistrictName = targetDistrictId
+                        ? contentCatalog.districtsById.get(targetDistrictId)?.name ?? targetDistrictId
+                        : 'incident site'
+                      const hasOngoingEncounter =
+                        activeCombat?.outcome === 'ongoing' && activeCombat.linkedQuestId === runtime.questId
+                      if (hasOngoingEncounter) {
+                        return (
+                          <button
+                            className="action-button action-button--primary"
+                            onClick={() => navigate(`/missions/${runtime.questId}`)}
+                            type="button"
+                          >
+                            Resume on-site encounter →
+                          </button>
+                        )
+                      }
+
+                      if (targetDistrictId && currentDistrictId !== targetDistrictId) {
+                        return (
+                          <button
+                            className="action-button action-button--primary"
+                            onClick={() => {
+                              dispatch(gameActions.updateQuestRuntime({
+                                questId: runtime.questId,
+                                stageId: 'traveling',
+                                currentObjectiveLabel: `Travel to ${incidentDistrictName} and establish the squad on-site.`,
+                                completedSteps: 1,
+                                appendJournalEntry: `The house moves toward ${incidentDistrictName}. The incident must be met in person.`,
+                              }))
+                              dispatch(gameActions.travelToDistrict(targetDistrictId))
+                              navigate(`/district/${targetDistrictId}`)
+                            }}
+                            type="button"
+                          >
+                            Travel to incident site →
+                          </button>
+                        )
+                      }
+
+                      return (
+                        <button
+                          className="action-button action-button--primary"
+                          onClick={() => {
+                            dispatch(gameActions.updateQuestRuntime({
+                              questId: runtime.questId,
+                              stageId: 'on-site-prep',
+                              currentObjectiveLabel: 'The house is on-site. Ready the squad before the clash begins.',
+                              completedSteps: 2,
+                              appendJournalEntry: 'The incident site is reached. The squad can now prepare on-site.',
+                            }))
+                            navigate(`/missions/${runtime.questId}`)
+                          }}
+                          type="button"
+                        >
+                          Open on-site prep →
+                        </button>
+                      )
+                    })()
                   )}
                   {(template?.objectiveType === 'delivery' || template?.objectiveType === 'survival') && (() => {
                     const inDistrict = !template.districtId || template.districtId === currentDistrictId

@@ -209,6 +209,35 @@ const gameSlice = createSlice({
     replaceGameState(_state, action: PayloadAction<GameState>) {
       return action.payload
     },
+    updateQuestRuntime(
+      state,
+      action: PayloadAction<{
+        questId: string
+        stageId?: string
+        currentObjectiveLabel?: string | null
+        completedSteps?: number
+        appendJournalEntry?: string
+      }>,
+    ) {
+      const quest = state.activeQuests.find((entry) => entry.questId === action.payload.questId)
+      if (!quest) return
+      if (action.payload.stageId !== undefined) {
+        quest.stageId = action.payload.stageId
+      }
+      if (action.payload.currentObjectiveLabel !== undefined) {
+        quest.currentObjectiveLabel = action.payload.currentObjectiveLabel
+      }
+      if (action.payload.completedSteps !== undefined) {
+        quest.progress.completedSteps = Math.max(
+          quest.progress.completedSteps,
+          Math.min(quest.progress.requiredSteps, action.payload.completedSteps),
+        )
+      }
+      quest.progress.lastAdvancedDay = state.day
+      if (action.payload.appendJournalEntry) {
+        quest.journalEntries = [...quest.journalEntries, action.payload.appendJournalEntry]
+      }
+    },
     setProtagonistName(state, action: PayloadAction<string>) {
       state.protagonistName = action.payload
     },

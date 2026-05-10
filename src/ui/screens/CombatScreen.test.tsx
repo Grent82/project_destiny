@@ -7,7 +7,7 @@ import { AppProviders } from '../app/AppProviders'
 import { CombatScreen } from './CombatScreen'
 
 describe('CombatScreen', () => {
-  it('starts a seeded encounter and resolves the first attack action', async () => {
+  it('shows a guarded empty state when no encounter is active', async () => {
     const user = userEvent.setup()
 
     render(
@@ -19,8 +19,23 @@ describe('CombatScreen', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Engagement' })).toBeInTheDocument()
+    expect(screen.getByText(/No encounter is active/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Return to contracts' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Return to contracts' }))
+  })
 
-    await user.click(screen.getByRole('button', { name: 'Start seeded encounter' }))
+  it('renders and resolves an active encounter', async () => {
+    const user = userEvent.setup()
+    const store = createGameStore()
+    store.dispatch(gameActions.startCombatEncounter())
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <CombatScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
 
     expect(screen.getAllByText(/Round 1/i).length).toBeGreaterThan(0)
     expect(screen.getByText(/Three-range command combat/i)).toBeInTheDocument()
@@ -66,6 +81,6 @@ describe('CombatScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Conclude encounter' }))
 
-    expect(screen.getByRole('button', { name: 'Start seeded encounter' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Return to contracts' })).toBeInTheDocument()
   })
 })

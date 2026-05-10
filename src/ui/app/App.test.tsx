@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
+import { createQuestRuntime } from '../../domain/quests/contracts'
+import { getQuestTemplates } from '../../application/content/contentCatalog'
 import { App } from './App'
 import { AppProviders } from './AppProviders'
 
@@ -28,16 +30,26 @@ describe('App', () => {
 
   it('deploys from mission prep into the combat route', async () => {
     const user = userEvent.setup()
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!harborwatch) {
+      throw new Error('Expected harborwatch quest in test fixtures.')
+    }
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      hasSeenOpening: true,
+      currentDistrictId: 'district-the-warrens',
+      activeQuests: [createQuestRuntime(harborwatch, 1)],
+    })
 
     render(
-      <AppProviders store={makeStoreWithOpeningSeen()}>
-        <MemoryRouter initialEntries={['/missions']}>
+      <AppProviders store={store}>
+        <MemoryRouter initialEntries={['/missions/quest-harborwatch']}>
           <App />
         </MemoryRouter>
       </AppProviders>,
     )
 
-    await user.click(screen.getByRole('button', { name: 'Deploy to encounter' }))
+    await user.click(screen.getByRole('button', { name: 'Commit squad on-site' }))
 
     expect(screen.getByRole('heading', { name: 'Engagement' })).toBeInTheDocument()
     expect(screen.getAllByText(/Round 1/i).length).toBeGreaterThan(0)

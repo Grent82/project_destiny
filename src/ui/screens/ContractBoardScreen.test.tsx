@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
+import { createQuestRuntime } from '../../domain/quests/contracts'
+import { getQuestTemplates } from '../../application/content/contentCatalog'
 import { AppProviders } from '../app/AppProviders'
 import { ContractBoardScreen } from './ContractBoardScreen'
 
@@ -34,5 +36,30 @@ describe('ContractBoardScreen', () => {
 
     expect(store.getState().game.activeQuests).toHaveLength(1)
     expect(store.getState().game.activeQuests[0]?.questId).toBe('quest-harborwatch')
+  })
+
+  it('sends combat contracts to travel first when the player is not at the incident site', () => {
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!harborwatch) {
+      throw new Error('Expected harborwatch quest in test fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-pale',
+      activeQuests: [createQuestRuntime(harborwatch, 1)],
+      availableQuests: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('button', { name: /Travel to incident site/i })).toBeInTheDocument()
   })
 })
