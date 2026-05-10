@@ -22,6 +22,7 @@ import { getHouseDiscovery } from '../content/houseDiscoveries'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
+import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import {
   generateExpeditionEncounter,
   rollDiscovery,
@@ -351,215 +352,29 @@ const gameSlice = createSlice({
     },
 
     completeQuest(state, action: PayloadAction<{ questId: string }>) {
-      const { questId } = action.payload
-      const idx = state.activeQuests.findIndex((q) => q.questId === questId)
-      if (idx === -1) return
-      const runtime = state.activeQuests[idx]
-      runtime.status = 'completed'
-      runtime.stageId = 'resolved'
-      runtime.objectiveMet = true
-      runtime.currentObjectiveLabel = 'The contract is settled. Return to house business.'
-      runtime.progress.completedSteps = runtime.progress.requiredSteps
-      runtime.progress.lastAdvancedDay = state.day
-      runtime.journalEntries = [...runtime.journalEntries, 'The contract was resolved in the house ledger.']
-      state.completedQuestIds.push(questId)
-      state.activeQuests.splice(idx, 1)
-
-      const quest = getQuestTemplates().find((q) => q.id === questId)
-      const questTitle = quest?.title ?? runtime.acceptedTitle
-      if (quest) {
-        // Corruption dial reduces quest reward payments by 10% if >= 70
-        const corruption = state.cityDials.corruption
-        const rewardMarks = corruption >= 70 ? Math.floor(quest.rewardMarks * 0.9) : quest.rewardMarks
-        state.money += rewardMarks
-        if (quest.rewardStandingFactionId && state.factionStandings[quest.rewardStandingFactionId] !== undefined) {
-          state.factionStandings[quest.rewardStandingFactionId] = Math.min(
-            100,
-            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.rewardStandingDelta,
-          )
-        }
-        const corruptionNote = corruption >= 70 ? ' (funds skimmed by corrupt hands)' : ''
-
-        // Side-effect logs first (pushed earlier so completion stays at top)
-
-        // City dial consequence
-        if (quest.rewardCityDialId && quest.rewardCityDialDelta !== 0) {
-          const dial = quest.rewardCityDialId
-          state.cityDials[dial] = Math.max(0, Math.min(100, state.cityDials[dial] + quest.rewardCityDialDelta))
-          const direction = quest.rewardCityDialDelta > 0 ? 'rises' : 'falls'
-          state.activityLog.unshift({
-            id: `log-${state.day}-${state.timeSlot}-dial-${questId}`,
-            day: state.day,
-            timeSlot: state.timeSlot,
-            category: 'system',
-            message: `City ${dial} ${direction} in the wake of ${questTitle}.`,
-          })
-          if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-        }
-
-        // Debt reduction consequence
-        if (quest.rewardDebtReduction > 0) {
-          state.debtAmount = Math.max(0, state.debtAmount - quest.rewardDebtReduction)
-          state.activityLog.unshift({
-            id: `log-${state.day}-${state.timeSlot}-debt-${questId}`,
-            day: state.day,
-            timeSlot: state.timeSlot,
-            category: 'economy',
-            message: `House debt reduced by ${quest.rewardDebtReduction} Marks — obligations clarified by ${questTitle}.`,
-          })
-          if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-        }
-
-        // NPC unlock consequence — make NPC available for hire
-        if (quest.unlocksNpcId) {
-          const alreadyHired = state.roster.some((r) => r.npcId === quest.unlocksNpcId)
-          const alreadyAvailable = state.availableForHire.some((r) => r.npcId === quest.unlocksNpcId)
-          if (!alreadyHired && !alreadyAvailable) {
-            const npcDefs = getNpcDefinitions()
-            const npcDef = npcDefs.find((n) => n.id === quest.unlocksNpcId)
-            if (npcDef) {
-              state.availableForHire.push({
-                npcId: npcDef.id,
-                discoveredInDistrictId: quest.districtId ?? null,
-                wagePerDay: 0,
-                signingBonus: 0,
-                requiredFactionId: null,
-                requiredFactionStanding: 0,
-                turnsAvailable: 10,
-              })
-              state.activityLog.unshift({
-                id: `log-${state.day}-${state.timeSlot}-npc-${quest.unlocksNpcId}`,
-                day: state.day,
-                timeSlot: state.timeSlot,
-                category: 'system',
-                message: `${npcDef.name} is now available for house service.`,
-              })
-              if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-            }
-          }
-        }
-
-        // Completion message at top
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-complete-${questId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'economy',
-          message: `Contract complete: ${questTitle}. ${rewardMarks} Marks received.${corruptionNote}`,
-        })
-        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-
-        // Renown gain from quest completion — ambition trait adds +2
-        const baseRenownGain = quest.riskLevel === 'extreme' ? 20 : quest.riskLevel === 'high' ? 15 : quest.riskLevel === 'medium' ? 8 : 4
-        const ambitionBonus = state.playerCharacter.traits.ambition > 60 ? 2 : 0
-        const renownGain = baseRenownGain + ambitionBonus
-        const oldLevel = getRenownLevel(state.playerCharacter.renown)
-        state.playerCharacter.renown += renownGain
-        const newLevel = getRenownLevel(state.playerCharacter.renown)
-        if (newLevel.level > oldLevel.level) {
-          state.activityLog.unshift({
-            id: `log-${state.day}-${state.timeSlot}-renown-${questId}`,
-            day: state.day,
-            timeSlot: state.timeSlot,
-            category: 'system',
-            message: `Your name carries further now. Renown rank: ${newLevel.label}.`,
-          })
-        }
-      }
-
-      if (questId === 'quest-mira-rescue' && state.mainQuest.stage !== 'rescued' && state.mainQuest.stage !== 'epilogue') {
-        state.mainQuest.stage = 'rescued'
-        state.mainQuest.lastClue =
-          'Mira is back. She walks under her own strength, but whatever held her still clings to the edges of her voice.'
-        state.householdLore.missingRelatives = state.householdLore.missingRelatives.filter(
-          (relative) => relative.name !== 'Mira Valdris',
-        )
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-mira-rescue`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'system',
-          message: '◆ Mira is out. She is alive, and the house has changed with her return.',
-        })
-        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-      }
+      settleQuestSuccess(state, action.payload.questId, {
+        journalEntry: 'The contract was resolved in the house ledger.',
+      })
     },
 
     resolveSimpleContract(state, action: PayloadAction<{ questId: string }>) {
       const { questId } = action.payload
-      const idx = state.activeQuests.findIndex((q) => q.questId === questId)
-      if (idx === -1) return
-      const runtime = state.activeQuests[idx]
+      const hasRuntime = state.activeQuests.some((entry) => entry.questId === questId)
+      if (!hasRuntime) return
       const quest = getQuestTemplates().find((q) => q.id === questId)
       if (!quest) return
       if (quest.objectiveType !== 'delivery' && quest.objectiveType !== 'survival') return
 
-      runtime.status = 'completed'
-      runtime.stageId = 'resolved'
-      runtime.objectiveMet = true
-      runtime.currentObjectiveLabel = 'The on-site work is done. Return and settle accounts.'
-      runtime.progress.completedSteps = runtime.progress.requiredSteps
-      runtime.progress.lastAdvancedDay = state.day
-      runtime.journalEntries = [...runtime.journalEntries, 'The contract was completed on-site.']
-      state.activeQuests.splice(idx, 1)
-      state.completedQuestIds.push(questId)
-
-      // Apply rewards
-      state.money += quest.rewardMarks
-      if (quest.rewardStandingFactionId && quest.rewardStandingDelta > 0) {
-        state.factionStandings[quest.rewardStandingFactionId] = Math.min(
-          100,
-          (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.rewardStandingDelta,
-        )
-      }
-      const oldRenown = state.playerCharacter.renown
-      const renownGain = quest.riskLevel === 'high' ? 12 : quest.riskLevel === 'medium' ? 7 : 3
-      state.playerCharacter.renown = oldRenown + renownGain
-
       const label = quest.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
-      const factionNote = quest.rewardStandingFactionId
-        ? ` Standing improved.`
-        : ''
-      state.activityLog.unshift({
-        id: `log-${state.day}-${state.timeSlot}-resolve-${questId}`,
-        day: state.day,
-        timeSlot: state.timeSlot,
-        category: 'economy',
-        message: `${label}: "${quest.title}". ${quest.rewardMarks} Marks received. +${renownGain} Renown.${factionNote}`,
+      settleQuestSuccess(state, questId, {
+        objectiveLabel: 'The on-site work is done. Return and settle accounts.',
+        journalEntry: 'The contract was completed on-site.',
+        completionMessage: `${label}: "${quest.title}".`,
       })
-      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
 
     failQuest(state, action: PayloadAction<{ questId: string }>) {
-      const { questId } = action.payload
-      const idx = state.activeQuests.findIndex((q) => q.questId === questId)
-      if (idx === -1) return
-      const runtime = state.activeQuests[idx]
-      runtime.status = 'failed'
-      runtime.stageId = 'failed'
-      runtime.currentObjectiveLabel = 'The contract is lost.'
-      runtime.progress.lastAdvancedDay = state.day
-      runtime.journalEntries = [...runtime.journalEntries, 'The contract failed before the house could settle it.']
-      state.activeQuests.splice(idx, 1)
-
-      const quest = getQuestTemplates().find((q) => q.id === questId)
-      const questTitle = quest?.title ?? runtime.acceptedTitle
-      if (quest) {
-        if (quest.rewardStandingFactionId && state.factionStandings[quest.rewardStandingFactionId] !== undefined) {
-          state.factionStandings[quest.rewardStandingFactionId] = Math.max(
-            -100,
-            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.penaltyStandingDelta,
-          )
-        }
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-fail-${questId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'system',
-          message: `Contract failed: ${questTitle}. The house bears the cost.`,
-        })
-        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-      }
+      settleQuestFailure(state, action.payload.questId)
     },
 
     expireTimedQuests(state) {
@@ -579,21 +394,10 @@ const gameSlice = createSlice({
       })
       state.activeQuests = state.activeQuests.filter((q) => q.status === 'active')
       for (const questId of failed) {
-        const quest = getQuestTemplates().find((t) => t.id === questId)
-        if (quest?.rewardStandingFactionId && state.factionStandings[quest.rewardStandingFactionId] !== undefined) {
-          state.factionStandings[quest.rewardStandingFactionId] = Math.max(
-            -100,
-            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.penaltyStandingDelta,
-          )
-        }
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-expire-${questId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'system',
-          message: `Contract failed: ${quest?.title ?? questId}. The house bears the cost.`,
+        settleQuestFailure(state, questId, {
+          objectiveLabel: 'The contract expired before the house acted.',
+          journalEntry: 'Time ran out before the contract could be completed.',
         })
-        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
     adjustRelationship(
@@ -789,48 +593,26 @@ const gameSlice = createSlice({
       state.activeInvestigation.rollResult = result
 
       if (result === 'success') {
-        state.money += quest.rewardMarks
-        if (quest.rewardStandingFactionId) {
-          state.factionStandings[quest.rewardStandingFactionId] = Math.min(
-            100,
-            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.rewardStandingDelta,
-          )
-        }
-        state.completedQuestIds.push(questId)
-        state.activeQuests = state.activeQuests.filter((q) => q.questId !== questId)
-        state.activityLog.unshift({
-          id: `log-inv-success-${questId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'economy',
-          message: `The investigation concludes. ${quest.rewardMarks} Marks received.`,
+        settleQuestSuccess(state, questId, {
+          journalEntry: 'The lead yielded a decisive result.',
+          completionMessage: `The investigation concludes. ${quest.rewardMarks} Marks received.`,
         })
       } else if (result === 'partial') {
         const halfReward = Math.floor(quest.rewardMarks / 2)
-        state.money += halfReward
-        state.completedQuestIds.push(questId)
-        state.activeQuests = state.activeQuests.filter((q) => q.questId !== questId)
-        state.activityLog.unshift({
-          id: `log-inv-partial-${questId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'economy',
-          message: `The investigation yields something, though not everything. ${halfReward} Marks.`,
+        settleQuestSuccess(state, questId, {
+          rewardScale: 0.5,
+          applyStanding: false,
+          applyCityDial: false,
+          applyDebtReduction: false,
+          applyUnlocksNpc: false,
+          renownGainOverride: 2,
+          journalEntry: 'The investigation yielded only part of the truth.',
+          completionMessage: `The investigation yields something, though not everything. ${halfReward} Marks.`,
         })
       } else {
-        if (quest.rewardStandingFactionId) {
-          state.factionStandings[quest.rewardStandingFactionId] = Math.max(
-            -100,
-            (state.factionStandings[quest.rewardStandingFactionId] ?? 0) + quest.penaltyStandingDelta,
-          )
-        }
-        state.activeQuests = state.activeQuests.filter((q) => q.questId !== questId)
-        state.activityLog.unshift({
-          id: `log-inv-fail-${questId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'system',
-          message: `The investigation goes nowhere. The opportunity is lost.`,
+        settleQuestFailure(state, questId, {
+          failureMessage: 'The investigation goes nowhere. The opportunity is lost.',
+          journalEntry: 'The lead went cold and the opportunity slipped away.',
         })
       }
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()

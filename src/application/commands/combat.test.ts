@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
+import { getQuestTemplates } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { createQuestRuntime } from '../../domain/quests/contracts'
 import { initialStateWithIda } from './testFixtures'
 import {
   concludeCombatEncounter,
@@ -128,5 +130,37 @@ describe('combat commands', () => {
 
     expect(nextState.activeCombat).toBeNull()
     expect(nextState.activityLog[0]?.message).toMatch(/encounter is concluded/i)
+  })
+
+  it('fails a combat-linked quest by default when the squad is defeated', () => {
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!harborwatch) {
+      throw new Error('Expected harborwatch quest in fixtures.')
+    }
+
+    const state = {
+      ...initialStateWithIda,
+      currentDistrictId: 'district-the-warrens',
+      activeQuests: [createQuestRuntime(harborwatch, 1)],
+      selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+    }
+
+    const startedState = startCombatEncounter(state, 'quest-harborwatch')
+    const resolvedState = {
+      ...startedState,
+      activeCombat: startedState.activeCombat
+        ? {
+            ...startedState.activeCombat,
+            outcome: 'defeat' as const,
+            activeCombatantId: null,
+          }
+        : null,
+    }
+
+    const nextState = concludeCombatEncounter(resolvedState)
+
+    expect(nextState.activeQuests.find((quest) => quest.questId === 'quest-harborwatch')).toBeUndefined()
+    expect(nextState.completedQuestIds).not.toContain('quest-harborwatch')
+    expect(nextState.activityLog.some((entry) => /driven back/i.test(entry.message))).toBe(true)
   })
 })

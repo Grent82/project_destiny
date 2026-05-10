@@ -19,6 +19,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng, type Rng } from './seededRng'
+import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
@@ -943,100 +944,24 @@ export function concludeCombatEncounter(state: GameState): GameState {
       )
     }
 
-    // Non-quest victory renown gain
-    const oldRenown = nextState.playerCharacter.renown
-    const newRenown = oldRenown + 5
-    const oldLevel = getRenownLevel(oldRenown)
-    const newLevel = getRenownLevel(newRenown)
-    nextState = {
-      ...nextState,
-      playerCharacter: { ...nextState.playerCharacter, renown: newRenown },
-    }
-    nextState = appendActivityLogEntry(nextState, 'system', 'Victory. +5 Renown.')
-    if (newLevel.level > oldLevel.level) {
-      nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
-    }
-
-    // Complete linked quest on victory
     if (combat.linkedQuestId) {
-      const questIdx = nextState.activeQuests.findIndex((q) => q.questId === combat.linkedQuestId)
-      if (questIdx !== -1) {
-        const completedQuest = { ...nextState.activeQuests[questIdx], objectiveMet: true, status: 'completed' as const }
-        const nextQuests = nextState.activeQuests.filter((_, i) => i !== questIdx)
-        const template = contentCatalog.questsById.get(completedQuest.questId)
-        const renownGain = template?.riskLevel === 'high' ? 15 : template?.riskLevel === 'medium' ? 8 : 4
-        const oldRenown = nextState.playerCharacter.renown
-        const newRenown = oldRenown + renownGain
-        const oldLevel = getRenownLevel(oldRenown)
-        const newLevel = getRenownLevel(newRenown)
-        nextState = {
-          ...nextState,
-          activeQuests: nextQuests,
-          completedQuestIds: [...nextState.completedQuestIds, completedQuest.questId],
-          playerCharacter: {
-            ...nextState.playerCharacter,
-            renown: newRenown,
-          },
-        }
-        const questTitle = template?.title ?? completedQuest.questId
-        nextState = appendActivityLogEntry(nextState, 'system', `Contract fulfilled: "${questTitle}". +${renownGain} Renown.`)
-        if (newLevel.level > oldLevel.level) {
-          nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
-        }
-
-        // Apply quest rewards: Marks and faction standing
-        if (template) {
-          if (template.rewardMarks > 0) {
-            nextState = { ...nextState, money: nextState.money + template.rewardMarks }
-            nextState = appendActivityLogEntry(nextState, 'economy', `Payment received: ${template.rewardMarks} Marks for "${questTitle}".`)
-          }
-          if (template.rewardStandingFactionId && template.rewardStandingDelta > 0) {
-            const current = nextState.factionStandings[template.rewardStandingFactionId] ?? 0
-            nextState = {
-              ...nextState,
-              factionStandings: {
-                ...nextState.factionStandings,
-                [template.rewardStandingFactionId]: Math.max(-100, Math.min(100, current + template.rewardStandingDelta)),
-              },
-            }
-            const factionName = contentCatalog.factionsById.get(template.rewardStandingFactionId)?.name ?? template.rewardStandingFactionId
-            nextState = appendActivityLogEntry(nextState, 'system', `Standing with ${factionName} improved by ${template.rewardStandingDelta}.`)
-          }
-          if (template.rewardCityDialId && template.rewardCityDialDelta) {
-            const dial = template.rewardCityDialId as keyof typeof nextState.cityDials
-            if (dial in nextState.cityDials) {
-              nextState = {
-                ...nextState,
-                cityDials: {
-                  ...nextState.cityDials,
-                  [dial]: Math.max(0, Math.min(100, (nextState.cityDials[dial] as number) + template.rewardCityDialDelta)),
-                },
-              }
-            }
-          }
-        }
-
-        if (completedQuest.questId === 'quest-mira-rescue' && nextState.mainQuest.stage !== 'rescued' && nextState.mainQuest.stage !== 'epilogue') {
-          nextState = {
-            ...nextState,
-            mainQuest: {
-              ...nextState.mainQuest,
-              stage: 'rescued',
-              lastClue: 'Mira is back. She walks under her own strength, but whatever held her still clings to the edges of her voice.',
-            },
-            householdLore: {
-              ...nextState.householdLore,
-              missingRelatives: nextState.householdLore.missingRelatives.filter(
-                (relative) => relative.name !== 'Mira Valdris',
-              ),
-            },
-          }
-          nextState = appendActivityLogEntry(
-            nextState,
-            'system',
-            '◆ Mira is out. She is alive, and the house has changed with her return.',
-          )
-        }
+      settleQuestSuccess(nextState, combat.linkedQuestId, {
+        objectiveLabel: 'The on-site clash is settled. Return to house business.',
+        journalEntry: 'The contract was settled in live combat at the incident site.',
+        completionMessage: `Contract fulfilled in the field.`,
+      })
+    } else {
+      const oldRenown = nextState.playerCharacter.renown
+      const newRenown = oldRenown + 5
+      const oldLevel = getRenownLevel(oldRenown)
+      const newLevel = getRenownLevel(newRenown)
+      nextState = {
+        ...nextState,
+        playerCharacter: { ...nextState.playerCharacter, renown: newRenown },
+      }
+      nextState = appendActivityLogEntry(nextState, 'system', 'Victory. +5 Renown.')
+      if (newLevel.level > oldLevel.level) {
+        nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
       }
     }
   }
@@ -1056,8 +981,54 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
     }
 
+    let handledLinkedQuestFailure = false
+    if (combat.linkedQuestId) {
+      const runtime = nextState.activeQuests.find((entry) => entry.questId === combat.linkedQuestId)
+      if (runtime) {
+        switch (runtime.context.retryBehavior) {
+          case 'retryable':
+            runtime.stageId = 'setback'
+            runtime.currentObjectiveLabel = 'The squad was driven back. Regroup before attempting the incident again.'
+            runtime.progress.lastAdvancedDay = nextState.day
+            runtime.journalEntries = [
+              ...runtime.journalEntries,
+              'The squad was driven back. The contract remains open, but the house must regroup.',
+            ]
+            nextState = appendActivityLogEntry(
+              nextState,
+              'combat',
+              `The squad was driven back, but ${runtime.acceptedTitle} remains open for another attempt.`,
+            )
+            break
+          case 'branch':
+            runtime.stageId = 'branch-aftermath'
+            runtime.currentObjectiveLabel = 'The defeat changes the shape of the contract. Return to the Work Board for the aftermath.'
+            runtime.progress.lastAdvancedDay = nextState.day
+            runtime.journalEntries = [
+              ...runtime.journalEntries,
+              'The defeat changes the shape of the contract. The next move is no longer straightforward.',
+            ]
+            nextState = appendActivityLogEntry(
+              nextState,
+              'combat',
+              `The defeat alters ${runtime.acceptedTitle}. The house must decide what shape the aftermath takes.`,
+            )
+            break
+          case 'fail':
+          default:
+            handledLinkedQuestFailure = settleQuestFailure(nextState, combat.linkedQuestId, {
+              failureMessage: `The squad was driven back. ${runtime.acceptedTitle} fails unless the house can bargain for another chance.`,
+              failureCategory: 'combat',
+              journalEntry: 'The squad was beaten back at the incident site and the contract collapsed.',
+              objectiveLabel: 'The incident ended in defeat. The contract is lost.',
+            })
+            break
+        }
+      }
+    }
+
     const factionId = combat.factionId
-    if (factionId) {
+    if (factionId && !handledLinkedQuestFailure) {
       const current = nextState.factionStandings[factionId] ?? 0
       nextState = {
         ...nextState,
