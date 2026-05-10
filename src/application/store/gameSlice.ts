@@ -4,6 +4,7 @@ import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { Attributes, Skills, Traits } from '../../domain/npc/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
+import { createQuestRuntime } from '../../domain/quests/contracts'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -302,9 +303,10 @@ const gameSlice = createSlice({
     acceptQuest(state, action: PayloadAction<{ questId: string }>) {
       const { questId } = action.payload
       if (!state.availableQuests.includes(questId)) return
-      state.availableQuests = state.availableQuests.filter((id) => id !== questId)
-      state.activeQuests.push({ questId, acceptedOnDay: state.day, status: 'active', objectiveMet: false })
       const quest = getQuestTemplates().find((q) => q.id === questId)
+      if (!quest) return
+      state.availableQuests = state.availableQuests.filter((id) => id !== questId)
+      state.activeQuests.push(createQuestRuntime(quest, state.day))
       state.activityLog.unshift({
         id: `log-${state.day}-${state.timeSlot}-accept-${questId}`,
         day: state.day,
@@ -320,12 +322,19 @@ const gameSlice = createSlice({
       const { questId } = action.payload
       const idx = state.activeQuests.findIndex((q) => q.questId === questId)
       if (idx === -1) return
-      state.activeQuests[idx].status = 'completed'
-      state.activeQuests[idx].objectiveMet = true
+      const runtime = state.activeQuests[idx]
+      runtime.status = 'completed'
+      runtime.stageId = 'resolved'
+      runtime.objectiveMet = true
+      runtime.currentObjectiveLabel = 'The contract is settled. Return to house business.'
+      runtime.progress.completedSteps = runtime.progress.requiredSteps
+      runtime.progress.lastAdvancedDay = state.day
+      runtime.journalEntries = [...runtime.journalEntries, 'The contract was resolved in the house ledger.']
       state.completedQuestIds.push(questId)
       state.activeQuests.splice(idx, 1)
 
       const quest = getQuestTemplates().find((q) => q.id === questId)
+      const questTitle = quest?.title ?? runtime.acceptedTitle
       if (quest) {
         // Corruption dial reduces quest reward payments by 10% if >= 70
         const corruption = state.cityDials.corruption
@@ -351,7 +360,7 @@ const gameSlice = createSlice({
             day: state.day,
             timeSlot: state.timeSlot,
             category: 'system',
-            message: `City ${dial} ${direction} in the wake of ${quest.title}.`,
+            message: `City ${dial} ${direction} in the wake of ${questTitle}.`,
           })
           if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         }
@@ -364,7 +373,7 @@ const gameSlice = createSlice({
             day: state.day,
             timeSlot: state.timeSlot,
             category: 'economy',
-            message: `House debt reduced by ${quest.rewardDebtReduction} Marks — obligations clarified by ${quest.title}.`,
+            message: `House debt reduced by ${quest.rewardDebtReduction} Marks — obligations clarified by ${questTitle}.`,
           })
           if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
         }
@@ -404,7 +413,7 @@ const gameSlice = createSlice({
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'economy',
-          message: `Contract complete: ${quest.title}. ${rewardMarks} Marks received.${corruptionNote}`,
+          message: `Contract complete: ${questTitle}. ${rewardMarks} Marks received.${corruptionNote}`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
 
@@ -431,10 +440,18 @@ const gameSlice = createSlice({
       const { questId } = action.payload
       const idx = state.activeQuests.findIndex((q) => q.questId === questId)
       if (idx === -1) return
+      const runtime = state.activeQuests[idx]
       const quest = getQuestTemplates().find((q) => q.id === questId)
       if (!quest) return
       if (quest.objectiveType !== 'delivery' && quest.objectiveType !== 'survival') return
 
+      runtime.status = 'completed'
+      runtime.stageId = 'resolved'
+      runtime.objectiveMet = true
+      runtime.currentObjectiveLabel = 'The on-site work is done. Return and settle accounts.'
+      runtime.progress.completedSteps = runtime.progress.requiredSteps
+      runtime.progress.lastAdvancedDay = state.day
+      runtime.journalEntries = [...runtime.journalEntries, 'The contract was completed on-site.']
       state.activeQuests.splice(idx, 1)
       state.completedQuestIds.push(questId)
 
@@ -468,10 +485,16 @@ const gameSlice = createSlice({
       const { questId } = action.payload
       const idx = state.activeQuests.findIndex((q) => q.questId === questId)
       if (idx === -1) return
-      state.activeQuests[idx].status = 'failed'
+      const runtime = state.activeQuests[idx]
+      runtime.status = 'failed'
+      runtime.stageId = 'failed'
+      runtime.currentObjectiveLabel = 'The contract is lost.'
+      runtime.progress.lastAdvancedDay = state.day
+      runtime.journalEntries = [...runtime.journalEntries, 'The contract failed before the house could settle it.']
       state.activeQuests.splice(idx, 1)
 
       const quest = getQuestTemplates().find((q) => q.id === questId)
+      const questTitle = quest?.title ?? runtime.acceptedTitle
       if (quest) {
         if (quest.rewardStandingFactionId && state.factionStandings[quest.rewardStandingFactionId] !== undefined) {
           state.factionStandings[quest.rewardStandingFactionId] = Math.max(
@@ -484,7 +507,7 @@ const gameSlice = createSlice({
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'system',
-          message: `Contract failed: ${quest.title}. The house bears the cost.`,
+          message: `Contract failed: ${questTitle}. The house bears the cost.`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
@@ -497,6 +520,10 @@ const gameSlice = createSlice({
         if (template?.timeLimitDays != null) {
           if (state.day - q.acceptedOnDay >= template.timeLimitDays) {
             q.status = 'failed'
+            q.stageId = 'failed'
+            q.currentObjectiveLabel = 'The contract expired before the house acted.'
+            q.progress.lastAdvancedDay = state.day
+            q.journalEntries = [...q.journalEntries, 'Time ran out before the contract could be completed.']
             failed.push(q.questId)
           }
         }
@@ -668,10 +695,18 @@ const gameSlice = createSlice({
     startInvestigation(state, action: PayloadAction<{ questId: string }>) {
       const quest = getQuestTemplates().find((q) => q.id === action.payload.questId)
       if (!quest || quest.objectiveType !== 'investigation') return
-      state.activeInvestigation = {
-        questId: action.payload.questId,
-        districtId: quest.districtId,
-        rollResult: 'pending',
+        state.activeInvestigation = {
+          questId: action.payload.questId,
+          districtId: quest.districtId,
+          rollResult: 'pending',
+        }
+      const runtime = state.activeQuests.find((activeQuest) => activeQuest.questId === action.payload.questId)
+      if (runtime) {
+        runtime.stageId = 'investigating'
+        runtime.currentObjectiveLabel = 'Select operatives and work the lead in the district.'
+        runtime.progress.completedSteps = Math.max(runtime.progress.completedSteps, 1)
+        runtime.progress.lastAdvancedDay = state.day
+        runtime.journalEntries = [...runtime.journalEntries, 'The house has committed operatives to investigate the lead.']
       }
     },
 

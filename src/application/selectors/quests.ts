@@ -34,6 +34,9 @@ export const selectActiveQuests = createSelector(
     })).map((entry) => ({
       ...entry,
       presentation: entry.template ? getQuestPresentation(entry.template) : null,
+      displayTitle: entry.runtime.acceptedTitle,
+      objectiveLabel: entry.runtime.currentObjectiveLabel ?? entry.runtime.acceptedBriefing,
+      incidentDistrictId: entry.runtime.context.incidentDistrictId ?? entry.template?.districtId ?? null,
     })),
 )
 

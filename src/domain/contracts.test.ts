@@ -167,6 +167,60 @@ describe('gameStateSchema', () => {
 
     expect(result.success).toBe(true)
   })
+
+  it('defaults richer quest runtime fields when loading an older active quest entry', () => {
+    const result = gameStateSchema.safeParse({
+      day: 3,
+      timeSlot: 'afternoon',
+      money: 120,
+      protagonistName: 'Valdric',
+      hasSeenOpening: true,
+      factionStates: [],
+      districts: [],
+      roster: [],
+      inventory: [],
+      cityResources: {
+        foodSecurity: 62,
+        waterAccess: 70,
+        materialStock: 50,
+        corridorStatus: 'open',
+      },
+      factionStandings: {},
+      cityDials: {
+        control: 45,
+        prosperity: 35,
+        unrest: 55,
+        corruption: 60,
+      },
+      activityLog: [],
+      activeQuestIds: [],
+      selectedSquadNpcIds: [],
+      activeCombat: null,
+      activeMissionId: null,
+      pendingEvents: [],
+      availableQuests: [],
+      activeQuests: [
+        {
+          questId: 'quest-harborwatch',
+          acceptedOnDay: 2,
+          status: 'active',
+          objectiveMet: false,
+          acceptedTitle: 'Harborwatch',
+        },
+      ],
+      completedQuestIds: [],
+    })
+
+    expect(result.success).toBe(true)
+    if (!result.success) return
+
+    const runtime = result.data.activeQuests[0]
+    expect(runtime.stageId).toBe('accepted')
+    expect(runtime.currentObjectiveLabel).toBeNull()
+    expect(runtime.progress.requiredSteps).toBe(1)
+    expect(runtime.context.retryBehavior).toBe('fail')
+    expect(runtime.journalEntries).toEqual([])
+  })
 })
 
 describe('activeCombatStateSchema', () => {

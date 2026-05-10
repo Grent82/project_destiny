@@ -31,6 +31,12 @@ function FactionBadge({ factionId }: { factionId: string | null }) {
   )
 }
 
+function formatStageLabel(stageId: string) {
+  return stageId
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (match) => match.toUpperCase())
+}
+
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -100,17 +106,18 @@ export function ContractBoardScreen() {
             <p className="summary">No contracts currently in progress. Explore the districts to find work.</p>
           ) : (
             <div className="mission-list">
-              {activeQuests.map(({ runtime, template, presentation }) => {
+              {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId }) => {
                 const isStory = template?.questType === 'story'
                 return (
                 <div key={runtime.questId} className={`mission-row${isStory ? ' mission-row--story' : ''}`}>
                   <div className="mission-row-header">
-                    <strong>{template?.title ?? runtime.questId}</strong>
+                    <strong>{displayTitle}</strong>
                     {isStory && <span className="badge badge-story">◆ House Obligation</span>}
                     {!isStory && <FactionBadge factionId={template?.employerFactionId ?? null} />}
                     <span className={`badge ${runtime.objectiveMet ? 'badge-positive' : 'badge-warning'}`}>
                       {runtime.objectiveMet ? 'Objective met' : 'Active'}
                     </span>
+                    <span className="badge">{formatStageLabel(runtime.stageId)}</span>
                     {template?.riskLevel && (
                       <span className="badge">{template.riskLevel} risk</span>
                     )}
@@ -123,6 +130,11 @@ export function ContractBoardScreen() {
                   {template?.flavorNote && (
                     <p className="quest-briefing" style={{ fontStyle: 'italic', opacity: 0.7 }}>
                       {template.flavorNote}
+                    </p>
+                  )}
+                  {objectiveLabel && (
+                    <p className="quest-briefing">
+                      <strong>Current objective:</strong> {objectiveLabel}
                     </p>
                   )}
                   {presentation && (
@@ -146,8 +158,10 @@ export function ContractBoardScreen() {
                     {template?.timeLimitDays != null && (
                       <span>Time limit: <strong>{template.timeLimitDays} days</strong> (accepted day {runtime.acceptedOnDay})</span>
                     )}
-                    {template?.districtId && (
-                      <span>District: {template.districtId.replace('district-', '').replace(/-/g, ' ')}</span>
+                    {incidentDistrictId && (
+                      <span>
+                        District: {contentCatalog.districtsById.get(incidentDistrictId)?.name ?? incidentDistrictId}
+                      </span>
                     )}
                   </div>
                   {template?.objectiveType === 'investigation' && (

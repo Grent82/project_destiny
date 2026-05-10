@@ -5,10 +5,34 @@ import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
 import { gameStateSchema } from '../../domain'
+import { createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
+import { getQuestTemplates } from '../content/contentCatalog'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialStateWithIda, ...overrides })
   return createGameStore(state)
+}
+
+function makeActiveQuest(questId: string, overrides: Partial<QuestRuntime> = {}): QuestRuntime {
+  const template = getQuestTemplates().find((quest) => quest.id === questId)
+  if (!template) {
+    throw new Error(`Unknown quest template in test: ${questId}`)
+  }
+
+  const base = createQuestRuntime(template, 1)
+  return {
+    ...base,
+    ...overrides,
+    progress: {
+      ...base.progress,
+      ...overrides.progress,
+    },
+    context: {
+      ...base.context,
+      ...overrides.context,
+    },
+    journalEntries: overrides.journalEntries ?? base.journalEntries,
+  }
 }
 
 afterEach(() => {
@@ -23,7 +47,7 @@ describe('startInvestigation', () => {
   it('sets activeInvestigation for an investigation quest', () => {
     const store = makeStore({
       activeQuests: [
-        { questId: 'quest-ledger-recovery', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-ledger-recovery'),
       ],
     })
 
@@ -34,12 +58,15 @@ describe('startInvestigation', () => {
     expect(state.activeInvestigation?.questId).toBe('quest-ledger-recovery')
     expect(state.activeInvestigation?.districtId).toBe('district-the-pale')
     expect(state.activeInvestigation?.rollResult).toBe('pending')
+    expect(state.activeQuests[0]?.stageId).toBe('investigating')
+    expect(state.activeQuests[0]?.currentObjectiveLabel).toContain('Select operatives')
+    expect(state.activeQuests[0]?.progress.completedSteps).toBe(1)
   })
 
   it('is a no-op for a non-investigation quest', () => {
     const store = makeStore({
       activeQuests: [
-        { questId: 'quest-harborwatch', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-harborwatch'),
       ],
     })
 
@@ -67,7 +94,7 @@ describe('resolveInvestigation', () => {
         rollResult: 'pending',
       },
       activeQuests: [
-        { questId: 'quest-ledger-recovery', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-ledger-recovery'),
       ],
       factionStandings: {
         ...initialGameStateSnapshot.factionStandings,
@@ -100,7 +127,7 @@ describe('resolveInvestigation', () => {
         rollResult: 'pending',
       },
       activeQuests: [
-        { questId: 'quest-ledger-recovery', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-ledger-recovery'),
       ],
       money: 0,
     })
@@ -125,7 +152,7 @@ describe('resolveInvestigation', () => {
         rollResult: 'pending',
       },
       activeQuests: [
-        { questId: 'quest-ledger-recovery', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-ledger-recovery'),
       ],
       factionStandings: {
         ...initialGameStateSnapshot.factionStandings,
@@ -156,7 +183,7 @@ describe('resolveInvestigation', () => {
         rollResult: 'pending',
       },
       activeQuests: [
-        { questId: 'quest-ledger-recovery', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-ledger-recovery'),
       ],
       factionStandings: {
         ...initialGameStateSnapshot.factionStandings,
@@ -181,7 +208,7 @@ describe('resolveInvestigation', () => {
         rollResult: 'pending',
       },
       activeQuests: [
-        { questId: 'quest-restored-appeal', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-restored-appeal'),
       ],
       factionStandings: {
         ...initialGameStateSnapshot.factionStandings,

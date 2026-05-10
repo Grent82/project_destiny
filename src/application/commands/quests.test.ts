@@ -3,10 +3,34 @@ import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
+import { createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
+import { getQuestTemplates } from '../content/contentCatalog'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
   return createGameStore(state)
+}
+
+function makeActiveQuest(questId: string, overrides: Partial<QuestRuntime> = {}): QuestRuntime {
+  const template = getQuestTemplates().find((quest) => quest.id === questId)
+  if (!template) {
+    throw new Error(`Unknown quest template in test: ${questId}`)
+  }
+
+  const base = createQuestRuntime(template, 1)
+  return {
+    ...base,
+    ...overrides,
+    progress: {
+      ...base.progress,
+      ...overrides.progress,
+    },
+    context: {
+      ...base.context,
+      ...overrides.context,
+    },
+    journalEntries: overrides.journalEntries ?? base.journalEntries,
+  }
 }
 
 describe('acceptQuest', () => {
@@ -23,8 +47,12 @@ describe('acceptQuest', () => {
     expect(state.availableQuests).not.toContain('quest-harborwatch')
     expect(state.activeQuests).toHaveLength(1)
     expect(state.activeQuests[0].questId).toBe('quest-harborwatch')
+    expect(state.activeQuests[0].acceptedTitle).toBe('The Harborwatch Dispute')
     expect(state.activeQuests[0].status).toBe('active')
+    expect(state.activeQuests[0].stageId).toBe('accepted')
     expect(state.activeQuests[0].objectiveMet).toBe(false)
+    expect(state.activeQuests[0].context.incidentDistrictId).toBe('district-the-warrens')
+    expect(state.activeQuests[0].progress.requiredSteps).toBeGreaterThan(1)
   })
 
   it('logs an activity entry', () => {
@@ -61,7 +89,7 @@ describe('completeQuest', () => {
     const store = makeStore({
       money: initialMoney,
       availableQuests: [],
-      activeQuests: [{ questId: 'quest-harborwatch', acceptedOnDay: 1, status: 'active', objectiveMet: false }],
+      activeQuests: [makeActiveQuest('quest-harborwatch')],
       completedQuestIds: [],
     })
 
@@ -77,7 +105,7 @@ describe('completeQuest', () => {
   it('applies faction standing reward', () => {
     const store = makeStore({
       availableQuests: [],
-      activeQuests: [{ questId: 'quest-harborwatch', acceptedOnDay: 1, status: 'active', objectiveMet: false }],
+      activeQuests: [makeActiveQuest('quest-harborwatch')],
       completedQuestIds: [],
       factionStandings: {
         'faction-civic-compact': 10,
@@ -98,7 +126,7 @@ describe('completeQuest', () => {
   it('logs completion with marks received', () => {
     const store = makeStore({
       availableQuests: [],
-      activeQuests: [{ questId: 'quest-harborwatch', acceptedOnDay: 1, status: 'active', objectiveMet: false }],
+      activeQuests: [makeActiveQuest('quest-harborwatch')],
       completedQuestIds: [],
     })
 
@@ -114,7 +142,7 @@ describe('failQuest', () => {
   it('applies standing penalty and removes from active', () => {
     const store = makeStore({
       availableQuests: [],
-      activeQuests: [{ questId: 'quest-harborwatch', acceptedOnDay: 1, status: 'active', objectiveMet: false }],
+      activeQuests: [makeActiveQuest('quest-harborwatch')],
       completedQuestIds: [],
       factionStandings: {
         'faction-civic-compact': 10,
@@ -136,7 +164,7 @@ describe('failQuest', () => {
   it('logs failure message', () => {
     const store = makeStore({
       availableQuests: [],
-      activeQuests: [{ questId: 'quest-harborwatch', acceptedOnDay: 1, status: 'active', objectiveMet: false }],
+      activeQuests: [makeActiveQuest('quest-harborwatch')],
       completedQuestIds: [],
     })
 
@@ -155,7 +183,7 @@ describe('expireTimedQuests', () => {
       availableQuests: [],
       // quest-foundry-escort has timeLimitDays: 3, accepted on day 1 → expired at day 4+
       activeQuests: [
-        { questId: 'quest-foundry-escort', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-foundry-escort'),
       ],
       completedQuestIds: [],
     })
@@ -172,7 +200,7 @@ describe('expireTimedQuests', () => {
       availableQuests: [],
       // quest-foundry-escort timeLimitDays: 3, accepted day 1 → expires at day 4
       activeQuests: [
-        { questId: 'quest-foundry-escort', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-foundry-escort'),
       ],
       completedQuestIds: [],
     })
@@ -189,7 +217,7 @@ describe('expireTimedQuests', () => {
       availableQuests: [],
       // quest-ring-debt has timeLimitDays: null
       activeQuests: [
-        { questId: 'quest-ring-debt', acceptedOnDay: 1, status: 'active', objectiveMet: false },
+        makeActiveQuest('quest-ring-debt'),
       ],
       completedQuestIds: [],
     })
@@ -198,5 +226,24 @@ describe('expireTimedQuests', () => {
 
     const state = store.getState().game
     expect(state.activeQuests).toHaveLength(1)
+  })
+
+  it('keeps multi-stage runtime context after acceptance', () => {
+    const store = makeStore({
+      availableQuests: ['quest-mira-rescue'],
+      activeQuests: [],
+      completedQuestIds: [],
+    })
+
+    store.dispatch(gameActions.acceptQuest({ questId: 'quest-mira-rescue' }))
+
+    const runtime = store.getState().game.activeQuests[0]
+    expect(runtime.acceptedTitle).toBeTruthy()
+    expect(runtime.currentObjectiveLabel).toBeTruthy()
+    expect(runtime.context.discoverySource).toBe('npc')
+    expect(runtime.context.discoveryDistrictId).toBe('district-the-pale')
+    expect(runtime.context.sourceNpcId).toBeTruthy()
+    expect(runtime.progress.requiredSteps).toBeGreaterThan(1)
+    expect(runtime.journalEntries.length).toBeGreaterThan(0)
   })
 })

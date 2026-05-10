@@ -7,6 +7,12 @@ const QUEST_STATUS_LABEL: Record<string, string> = {
   failed: 'Failed',
 }
 
+function formatQuestStageLabel(stageId: string): string {
+  return stageId
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (match) => match.toUpperCase())
+}
+
 function standingLabel(standing: number): string {
   if (standing >= 60) return 'Allied'
   if (standing >= 30) return 'Friendly'
@@ -160,14 +166,30 @@ export function LedgerScreen() {
                 <th>Contract</th>
                 <th>Accepted</th>
                 <th>Status</th>
+                <th>Stage</th>
               </tr>
             </thead>
             <tbody>
               {ledger.activeContracts.map((c) => (
                 <tr key={c.questId}>
-                  <td>{c.questId}</td>
+                  <td>
+                    <strong>{c.title}</strong>
+                    {c.currentObjectiveLabel && (
+                      <>
+                        <br />
+                        <span className="summary">{c.currentObjectiveLabel}</span>
+                      </>
+                    )}
+                    {c.incidentDistrictName && (
+                      <>
+                        <br />
+                        <span className="summary">District: {c.incidentDistrictName}</span>
+                      </>
+                    )}
+                  </td>
                   <td>Day {c.acceptedOnDay}</td>
                   <td>{QUEST_STATUS_LABEL[c.status] ?? c.status}</td>
+                  <td>{formatQuestStageLabel(c.stageId)}</td>
                 </tr>
               ))}
             </tbody>

@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import { wageForStatus } from '../commands/endDay'
+import { contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
 
 const selectGame = (state: RootState) => state.game
@@ -20,8 +21,14 @@ export const selectLedgerSummary = createSelector([selectGame], (game) => {
 
   const activeContracts = game.activeQuests.map((q) => ({
     questId: q.questId,
+    title: q.acceptedTitle,
     status: q.status,
+    stageId: q.stageId,
     acceptedOnDay: q.acceptedOnDay,
+    currentObjectiveLabel: q.currentObjectiveLabel,
+    incidentDistrictName: q.context.incidentDistrictId
+      ? contentCatalog.districtsById.get(q.context.incidentDistrictId)?.name ?? q.context.incidentDistrictId
+      : null,
   }))
 
   return {
