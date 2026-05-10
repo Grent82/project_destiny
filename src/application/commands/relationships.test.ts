@@ -30,7 +30,6 @@ function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
     activeQuestIds: [],
     selectedSquadNpcIds: [],
     activeCombat: null,
-    activeMissionId: null,
     ...overrides,
   })
 }

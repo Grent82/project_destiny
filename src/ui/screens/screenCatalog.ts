@@ -15,11 +15,6 @@ export const screenCatalog = [
     summary: 'Accept contracts and investigations. Active work tracks here.',
   },
   {
-    path: '/missions',
-    title: 'Deployment',
-    summary: 'Assemble your squad and commit to an engagement.',
-  },
-  {
     path: '/district-map',
     title: 'Districts',
     summary: 'Navigate Valdenmoor. Six districts — each held by someone, each with a cost.',

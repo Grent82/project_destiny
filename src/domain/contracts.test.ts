@@ -161,7 +161,6 @@ describe('gameStateSchema', () => {
       activeQuestIds: [],
       selectedSquadNpcIds: [],
       activeCombat: null,
-      activeMissionId: null,
       pendingEvents: [],
     })
 
@@ -196,7 +195,6 @@ describe('gameStateSchema', () => {
       activeQuestIds: [],
       selectedSquadNpcIds: [],
       activeCombat: null,
-      activeMissionId: null,
       pendingEvents: [],
       availableQuests: [],
       activeQuests: [

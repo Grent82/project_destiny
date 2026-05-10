@@ -869,15 +869,9 @@ export function concludeCombatEncounter(state: GameState): GameState {
   const seeded = createRng(state.rngSeed)
   const rng = seeded.rng
   const combat = state.activeCombat
-  const mission = state.activeMissionId
-    ? contentCatalog.missionsById.get(state.activeMissionId)
-    : null
   let nextState: GameState = { ...state, activeCombat: null }
 
   if (combat.outcome === 'victory') {
-    const reward = mission?.rewardCredits ?? 0
-    if (reward > 0) nextState = { ...nextState, money: nextState.money + reward }
-
     // Loot from defeated enemies
     const defeatedEnemies = combat.combatants.filter((c) => c.side === 'enemies' && c.health <= 0)
     if (defeatedEnemies.length > 0) {
@@ -931,54 +925,36 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
     }
 
-    if (mission) {
-      const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
-      const enemyCurrent = nextState.factionStandings[mission.enemyFactionId] ?? 0
+    const factionId = combat.factionId
+    if (factionId) {
+      const current = nextState.factionStandings[factionId] ?? 0
       nextState = {
         ...nextState,
-        factionStandings: {
-          ...nextState.factionStandings,
-          [mission.employerFactionId]: Math.max(-100, Math.min(100, employerCurrent + mission.rewardStanding)),
-          [mission.enemyFactionId]: Math.max(-100, Math.min(100, enemyCurrent - mission.penaltyStanding)),
-        },
-        activeMissionId: null,
-      }
-      const employerName = contentCatalog.factionsById.get(mission.employerFactionId)?.name ?? mission.employerFactionId
-      const enemyName = contentCatalog.factionsById.get(mission.enemyFactionId)?.name ?? mission.enemyFactionId
-      nextState = appendActivityLogEntry(nextState, 'economy',
-        `Mission complete: "${mission.title}". +${reward} Marks. Standing with ${employerName} improved; ${enemyName} will remember this.`)
-    } else {
-      const factionId = combat.factionId
-      if (factionId) {
-        const current = nextState.factionStandings[factionId] ?? 0
-        nextState = {
-          ...nextState,
         factionStandings: {
           ...nextState.factionStandings,
           [factionId]: Math.max(-100, Math.min(100, current - 5)),
         },
       }
-        const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-        nextState = appendActivityLogEntry(
-          nextState,
-          'system',
-          `Victory came at a cost. Standing with ${factionName} worsens after the clash.`,
-        )
-      }
+      const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
+      nextState = appendActivityLogEntry(
+        nextState,
+        'system',
+        `Victory came at a cost. Standing with ${factionName} worsens after the clash.`,
+      )
+    }
 
-      // Non-quest victory renown gain
-      const oldRenown = nextState.playerCharacter.renown
-      const newRenown = oldRenown + 5
-      const oldLevel = getRenownLevel(oldRenown)
-      const newLevel = getRenownLevel(newRenown)
-      nextState = {
-        ...nextState,
-        playerCharacter: { ...nextState.playerCharacter, renown: newRenown },
-      }
-      nextState = appendActivityLogEntry(nextState, 'system', 'Victory. +5 Renown.')
-      if (newLevel.level > oldLevel.level) {
-        nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
-      }
+    // Non-quest victory renown gain
+    const oldRenown = nextState.playerCharacter.renown
+    const newRenown = oldRenown + 5
+    const oldLevel = getRenownLevel(oldRenown)
+    const newLevel = getRenownLevel(newRenown)
+    nextState = {
+      ...nextState,
+      playerCharacter: { ...nextState.playerCharacter, renown: newRenown },
+    }
+    nextState = appendActivityLogEntry(nextState, 'system', 'Victory. +5 Renown.')
+    if (newLevel.level > oldLevel.level) {
+      nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
     }
 
     // Complete linked quest on victory
@@ -1080,33 +1056,18 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
     }
 
-    if (mission) {
-      const employerCurrent = nextState.factionStandings[mission.employerFactionId] ?? 0
+    const factionId = combat.factionId
+    if (factionId) {
+      const current = nextState.factionStandings[factionId] ?? 0
       nextState = {
         ...nextState,
         factionStandings: {
           ...nextState.factionStandings,
-          [mission.employerFactionId]: Math.max(-100, Math.min(100, employerCurrent - mission.penaltyStanding)),
+          [factionId]: Math.max(-100, Math.min(100, current - 5)),
         },
-        activeMissionId: null,
       }
-      const employerName = contentCatalog.factionsById.get(mission.employerFactionId)?.name ?? mission.employerFactionId
-      nextState = appendActivityLogEntry(nextState, 'combat',
-        `The squad was driven back. "${mission.title}" failed. Standing with ${employerName} suffers.`)
-    } else {
-      const factionId = combat.factionId
-      if (factionId) {
-        const current = nextState.factionStandings[factionId] ?? 0
-        nextState = {
-          ...nextState,
-          factionStandings: {
-            ...nextState.factionStandings,
-            [factionId]: Math.max(-100, Math.min(100, current - 5)),
-          },
-        }
-        const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-        nextState = appendActivityLogEntry(nextState, 'system', `Defeat. Standing with ${factionName} worsens.`)
-      }
+      const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
+      nextState = appendActivityLogEntry(nextState, 'system', `Defeat. Standing with ${factionName} worsens.`)
     }
   }
 
@@ -1129,7 +1090,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
     if (ally.health > 0) {
       applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'affinity', 2)
       applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 1)
-      if (isVictory && mission) {
+      if (isVictory) {
         applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 3)
       }
     }

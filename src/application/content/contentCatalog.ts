@@ -7,7 +7,6 @@ import events from '../../../data/definitions/events.json'
 import expeditionDestinationsData from '../../../data/definitions/expedition-destinations.json'
 import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
-import missions from '../../../data/definitions/missions.json'
 import npcs from '../../../data/definitions/npcs.json'
 import questsData from '../../../data/definitions/quests.json'
 import rumorsData from '../../../data/definitions/rumors.json'
@@ -19,7 +18,6 @@ import {
   eventTemplateSchema,
   factionDefinitionSchema,
   itemDefinitionSchema,
-  missionContractSchema,
   npcDefinitionSchema,
   shopDefinitionSchema,
   type NpcDefinition,
@@ -52,7 +50,6 @@ const parsedFactions = factionDefinitionSchema.array().parse(factions)
 const parsedPois = poiSchema.array().parse(poisData)
 const parsedItems = itemDefinitionSchema.array().parse(items)
 const parsedShops = shopDefinitionSchema.array().parse(shops)
-const parsedMissions = missionContractSchema.array().parse(missions)
 const parsedEvents = eventTemplateSchema.array().parse(events)
 const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
 
@@ -71,8 +68,6 @@ export const contentCatalog = {
   factionsById: toMap(parsedFactions),
   items: parsedItems,
   itemsById: toMap(parsedItems),
-  missions: parsedMissions,
-  missionsById: new Map(parsedMissions.map((m) => [m.id, m])),
   npcs: parsedNpcs,
   npcsById: toMap(parsedNpcs),
   enemyNpcs: enemyNpcsData as Array<{ id: string; name: string; [key: string]: unknown }>,

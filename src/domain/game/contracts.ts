@@ -113,7 +113,6 @@ export const gameStateSchema = z
     activeQuestIds: z.array(entityIdSchema),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
     activeCombat: activeCombatStateSchema.nullable(),
-    activeMissionId: entityIdSchema.nullable(),
     pendingEvents: z.array(pendingEventSchema).default([]),
     currentDistrictId: z.string().nullable().default(null),
     availableForHire: z.array(hireOfferSchema).default([]),

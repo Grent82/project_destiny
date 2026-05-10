@@ -244,9 +244,6 @@ const gameSlice = createSlice({
     setHasSeenOpening(state, action: PayloadAction<boolean>) {
       state.hasSeenOpening = action.payload
     },
-    selectMission(state, action: PayloadAction<string | null>) {
-      state.activeMissionId = action.payload
-    },
     adjustFactionStanding(
       state,
       action: PayloadAction<{ factionId: string; delta: number }>,

@@ -25,7 +25,20 @@ describe('App', () => {
 
     expect(screen.getByRole('heading', { name: /House Valdris/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Roster' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Deployment' })).not.toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'End Day →' }).length).toBeGreaterThan(0)
+  })
+
+  it('redirects generic mission route back to the work board', () => {
+    render(
+      <AppProviders store={makeStoreWithOpeningSeen()}>
+        <MemoryRouter initialEntries={['/missions']}>
+          <App />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Work Board' })).toBeInTheDocument()
   })
 
   it('deploys from mission prep into the combat route', async () => {

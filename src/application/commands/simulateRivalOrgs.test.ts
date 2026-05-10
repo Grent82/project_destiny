@@ -20,7 +20,6 @@ const baseState: GameState = {
   activeQuestIds: [],
   selectedSquadNpcIds: [],
   activeCombat: null,
-  activeMissionId: null,
   pendingEvents: [],
   currentDistrictId: null,
   availableForHire: [],

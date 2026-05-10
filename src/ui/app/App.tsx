@@ -64,18 +64,14 @@ export function App() {
 
         <nav aria-label="Primary" className="nav-list">
           {screenCatalog.map((screen) => {
-            const isStep = screen.path === '/contracts' || screen.path === '/missions'
-            const stepNum = screen.path === '/contracts' ? '①' : screen.path === '/missions' ? '②' : null
             return (
               <NavLink
                 key={screen.path}
                 className={({ isActive }) => {
-                  const base = isStep ? 'nav-link nav-link-step' : 'nav-link'
-                  return isActive ? `${base} nav-link-active` : base
+                  return isActive ? 'nav-link nav-link-active' : 'nav-link'
                 }}
                 to={screen.path}
               >
-                {stepNum && <span className="step-num">{stepNum}</span>}
                 {screen.title}
               </NavLink>
             )
@@ -98,7 +94,7 @@ export function App() {
             <Route path="/factions" element={<FactionsScreen />} />
             <Route path="/contracts" element={<ContractBoardScreen />} />
             <Route path="/investigation" element={<InvestigationScreen />} />
-            <Route path="/missions" element={<MissionPrepScreen />} />
+            <Route path="/missions" element={<Navigate replace to="/contracts" />} />
             <Route path="/missions/:questId" element={<MissionPrepScreen />} />
             <Route path="/shops" element={<ShopsScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
@@ -120,7 +116,6 @@ export function App() {
                     '/factions',
                     '/contracts',
                     '/investigation',
-                    '/missions',
                     '/shops',
                     '/combat',
                     '/event-log',
