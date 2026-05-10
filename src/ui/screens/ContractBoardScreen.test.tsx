@@ -61,5 +61,11 @@ describe('ContractBoardScreen', () => {
     )
 
     expect(screen.getByRole('button', { name: /Travel to incident site/i })).toBeInTheDocument()
+    expect(screen.getByText(/Next step:/i)).toBeInTheDocument()
+    expect(screen.getAllByText('Travel to The Warrens').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Blocked').length).toBeGreaterThan(0)
+    expect(
+      screen.getByRole('heading', { name: 'Recommended Next Step' }),
+    ).toBeInTheDocument()
   })
 })

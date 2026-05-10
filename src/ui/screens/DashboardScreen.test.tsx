@@ -6,7 +6,10 @@ import {
   gameActions,
   type SaveGameStore,
 } from '../../application'
+import { initialGameStateSnapshot } from '../../application/store/initialGameState'
 import type { GameState } from '../../domain'
+import { createQuestRuntime } from '../../domain/quests/contracts'
+import { getQuestTemplates } from '../../application/content/contentCatalog'
 import { AppProviders } from '../app/AppProviders'
 import { DashboardScreen } from './DashboardScreen'
 
@@ -27,6 +30,30 @@ function createMemorySaveStore(): SaveGameStore {
 }
 
 describe('DashboardScreen', () => {
+  it('surfaces a clear recommended next quest action in overview', () => {
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!harborwatch) {
+      throw new Error('Expected harborwatch quest in test fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-pale',
+      activeQuests: [createQuestRuntime(harborwatch, 1)],
+      availableQuests: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <DashboardScreen saveStore={createMemorySaveStore()} />
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'What next' })).toBeInTheDocument()
+    expect(screen.getByText('Travel to The Warrens')).toBeInTheDocument()
+    expect(screen.getByText('Blocked')).toBeInTheDocument()
+  })
+
   it('keeps load disabled until a snapshot exists', async () => {
     const user = userEvent.setup()
     const store = createGameStore()

@@ -11,6 +11,7 @@ import {
   selectMainQuest,
   selectPlayerCharacter,
   selectProtagonistName,
+  selectRecommendedQuestAction,
 } from '../../application'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
@@ -40,6 +41,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
   const debt = useAppSelector(selectDebtStatus)
   const mainQuest = useAppSelector(selectMainQuest)
+  const recommendedQuestAction = useAppSelector(selectRecommendedQuestAction)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
   const [canLoadSavedSession, setCanLoadSavedSession] = useState(() =>
     hasSavedSession(saveStore),
@@ -103,9 +105,37 @@ export function DashboardScreen(props: DashboardScreenProps) {
             The debt claim against House Valdric is active. Marion is waiting. The ledgers are in
             worse shape than they look.
           </p>
+          {recommendedQuestAction ? (
+            <article className="detail-panel">
+              <h2>What next</h2>
+              <div className="badge-row">
+                {recommendedQuestAction.isStory ? (
+                  <span className="badge badge-story">◆ Story-critical</span>
+                ) : null}
+                {recommendedQuestAction.blocked ? (
+                  <span className="badge badge-warning">Blocked</span>
+                ) : (
+                  <span className="badge badge-positive">Ready now</span>
+                )}
+                {recommendedQuestAction.urgencyRank >= 2 ? (
+                  <span className="badge badge-warning">Time-sensitive</span>
+                ) : null}
+              </div>
+              <p className="summary" style={{ marginTop: '0.65rem' }}>
+                <strong>{recommendedQuestAction.title}</strong>
+              </p>
+              <p className="quest-briefing">
+                <strong>{recommendedQuestAction.headline}</strong> —{' '}
+                {recommendedQuestAction.detail}
+              </p>
+              <a href={recommendedQuestAction.route} className="directive-link">
+                → {recommendedQuestAction.headline}
+              </a>
+            </article>
+          ) : null}
           {isFirstRun && (
             <div className="first-run-directive">
-              <p>House Valdris has debts and work available.</p>
+              <p>The first house leads are posted on the board in the Pale.</p>
               <a href="/contracts" className="directive-link">→ Check the Work Board</a>
             </div>
           )}
@@ -280,4 +310,3 @@ export function DashboardScreen(props: DashboardScreenProps) {
     </section>
   )
 }
-

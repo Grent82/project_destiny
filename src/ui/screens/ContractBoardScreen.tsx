@@ -6,6 +6,7 @@ import {
   selectActiveQuests,
   selectCompletedQuestIds,
   selectCurrentDistrictId,
+  selectRecommendedQuestAction,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -42,6 +43,7 @@ export function ContractBoardScreen() {
   const navigate = useNavigate()
   const availableQuestLeads = useAppSelector(selectAvailableQuestLeads)
   const activeQuests = useAppSelector(selectActiveQuests)
+  const recommendedQuestAction = useAppSelector(selectRecommendedQuestAction)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
   const activeCombat = useAppSelector((state) => state.game.activeCombat)
@@ -54,6 +56,32 @@ export function ContractBoardScreen() {
         Contracts the house has taken on. Obligations, briefings, and what is owed if you fail.
       </p>
       <VenueContextBanner />
+      {recommendedQuestAction ? (
+        <article className="detail-panel">
+          <h2>Recommended Next Step</h2>
+          <div className="mission-row-header">
+            <strong>{recommendedQuestAction.title}</strong>
+            {recommendedQuestAction.isStory ? (
+              <span className="badge badge-story">◆ Story-critical</span>
+            ) : null}
+            {recommendedQuestAction.blocked ? (
+              <span className="badge badge-warning">Blocked</span>
+            ) : (
+              <span className="badge badge-positive">Ready now</span>
+            )}
+            {recommendedQuestAction.urgencyRank >= 2 ? (
+              <span className="badge badge-warning">Time-sensitive</span>
+            ) : null}
+          </div>
+          <p className="quest-briefing">
+            <strong>{recommendedQuestAction.headline}</strong>
+          </p>
+          <p className="summary">{recommendedQuestAction.detail}</p>
+          <a href={recommendedQuestAction.route} className="directive-link">
+            → {recommendedQuestAction.headline}
+          </a>
+        </article>
+      ) : null}
 
       <div className="overview-grid">
         <article className="detail-panel">
@@ -69,7 +97,13 @@ export function ContractBoardScreen() {
                 <div key={template.id} className="mission-row">
                   <div className="mission-row-header">
                     <strong>{template.title}</strong>
+                    {template.questType === 'story' && (
+                      <span className="badge badge-story">◆ House Obligation</span>
+                    )}
                     <span className="badge">{presentation.categoryLabel}</span>
+                    {template.timeLimitDays != null && template.timeLimitDays <= 2 && (
+                      <span className="badge badge-warning">Urgent</span>
+                    )}
                     {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
                   </div>
                   <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
@@ -107,8 +141,9 @@ export function ContractBoardScreen() {
             <p className="summary">No contracts currently in progress. Explore the districts to find work.</p>
           ) : (
             <div className="mission-list">
-              {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId }) => {
+              {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId, readiness }) => {
                 const isStory = template?.questType === 'story'
+                const isUrgent = (template?.timeLimitDays ?? 99) <= 2
                 return (
                 <div key={runtime.questId} className={`mission-row${isStory ? ' mission-row--story' : ''}`}>
                   <div className="mission-row-header">
@@ -118,7 +153,13 @@ export function ContractBoardScreen() {
                     <span className={`badge ${runtime.objectiveMet ? 'badge-positive' : 'badge-warning'}`}>
                       {runtime.objectiveMet ? 'Objective met' : 'Active'}
                     </span>
+                    <span
+                      className={`badge ${runtime.objectiveMet ? 'badge-positive' : readiness.blocked ? 'badge-warning' : 'badge-positive'}`}
+                    >
+                      {readiness.blocked ? 'Blocked' : 'Ready now'}
+                    </span>
                     <span className="badge">{formatStageLabel(runtime.stageId)}</span>
+                    {isUrgent && <span className="badge badge-warning">Urgent</span>}
                     {template?.riskLevel && (
                       <span className="badge">{template.riskLevel} risk</span>
                     )}
@@ -138,6 +179,12 @@ export function ContractBoardScreen() {
                       <strong>Current objective:</strong> {objectiveLabel}
                     </p>
                   )}
+                  <p className="quest-briefing">
+                    <strong>Next step:</strong> {readiness.label}
+                  </p>
+                  <p className="quest-briefing" style={{ opacity: 0.82 }}>
+                    {readiness.detail}
+                  </p>
                   {presentation && (
                     <>
                       <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>

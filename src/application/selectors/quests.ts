@@ -3,18 +3,23 @@ import { getQuestTemplates, contentCatalog } from '../content/contentCatalog'
 import { getQuestPresentation } from '../content/questPresentation'
 import type { RootState } from '../store/gameStore'
 
-export const selectAvailableQuests = (state: RootState) =>
-  getQuestTemplates().filter((q) => {
-    if (!state.game.availableQuests.includes(q.id)) return false
-    if (q.requiredFactionStanding) {
-      const standing = state.game.factionStandings[q.requiredFactionStanding.factionId] ?? 0
-      if (standing < q.requiredFactionStanding.minStanding) return false
-    }
-    if (q.prerequisiteQuestId && !state.game.completedQuestIds.includes(q.prerequisiteQuestId)) {
-      return false
-    }
-    return true
-  })
+export const selectAvailableQuests = createSelector(
+  (state: RootState) => state.game.availableQuests,
+  (state: RootState) => state.game.factionStandings,
+  (state: RootState) => state.game.completedQuestIds,
+  (availableQuestIds, factionStandings, completedQuestIds) =>
+    getQuestTemplates().filter((q) => {
+      if (!availableQuestIds.includes(q.id)) return false
+      if (q.requiredFactionStanding) {
+        const standing = factionStandings[q.requiredFactionStanding.factionId] ?? 0
+        if (standing < q.requiredFactionStanding.minStanding) return false
+      }
+      if (q.prerequisiteQuestId && !completedQuestIds.includes(q.prerequisiteQuestId)) {
+        return false
+      }
+      return true
+    }),
+)
 
 export const selectAvailableQuestLeads = createSelector(
   selectAvailableQuests,
@@ -25,9 +30,19 @@ export const selectAvailableQuestLeads = createSelector(
     })),
 )
 
+function getQuestUrgencyRank(timeLimitDays: number | null | undefined) {
+  if (timeLimitDays == null) return 0
+  if (timeLimitDays <= 2) return 3
+  if (timeLimitDays <= 5) return 2
+  return 1
+}
+
 export const selectActiveQuests = createSelector(
   (state: RootState) => state.game.activeQuests,
-  (activeQuests) =>
+  (state: RootState) => state.game.currentDistrictId,
+  (state: RootState) => state.game.selectedSquadNpcIds.length,
+  (state: RootState) => state.game.activeCombat,
+  (activeQuests, currentDistrictId, selectedSquadCount, activeCombat) =>
     activeQuests.map((aq) => ({
       runtime: aq,
       template: getQuestTemplates().find((q) => q.id === aq.questId) ?? null,
@@ -37,6 +52,89 @@ export const selectActiveQuests = createSelector(
       displayTitle: entry.runtime.acceptedTitle,
       objectiveLabel: entry.runtime.currentObjectiveLabel ?? entry.runtime.acceptedBriefing,
       incidentDistrictId: entry.runtime.context.incidentDistrictId ?? entry.template?.districtId ?? null,
+      readiness: (() => {
+        const incidentDistrictId = entry.runtime.context.incidentDistrictId ?? entry.template?.districtId ?? null
+        const districtName = incidentDistrictId
+          ? contentCatalog.districtsById.get(incidentDistrictId)?.name ?? incidentDistrictId
+          : null
+        const hasOngoingEncounter =
+          activeCombat?.outcome === 'ongoing' && activeCombat.linkedQuestId === entry.runtime.questId
+
+        if (entry.template?.objectiveType === 'combat') {
+          if (hasOngoingEncounter) {
+            return {
+              state: 'resume-encounter',
+              label: 'Resume encounter',
+              detail: 'An on-site encounter is already underway.',
+              route: '/combat',
+              blocked: false,
+            }
+          }
+          if (incidentDistrictId && currentDistrictId !== incidentDistrictId) {
+            return {
+              state: 'blocked-location',
+              label: `Travel to ${districtName ?? 'the incident site'}`,
+              detail: 'You are not at the incident site yet.',
+              route: incidentDistrictId ? `/district/${incidentDistrictId}` : '/contracts',
+              blocked: true,
+            }
+          }
+          if (selectedSquadCount === 0) {
+            return {
+              state: 'blocked-squad',
+              label: 'Assemble a squad on-site',
+              detail: 'No operatives are selected for the clash.',
+              route: `/missions/${entry.runtime.questId}`,
+              blocked: true,
+            }
+          }
+          return {
+            state: 'ready-now',
+            label: 'Open on-site deployment',
+            detail: 'The incident site is reached and the squad can commit.',
+            route: `/missions/${entry.runtime.questId}`,
+            blocked: false,
+          }
+        }
+
+        if (entry.template?.objectiveType === 'investigation') {
+          if (incidentDistrictId && currentDistrictId !== incidentDistrictId) {
+            return {
+              state: 'blocked-location',
+              label: `Travel to ${districtName ?? 'the district'}`,
+              detail: 'The lead must be worked in the correct district.',
+              route: incidentDistrictId ? `/district/${incidentDistrictId}` : '/contracts',
+              blocked: true,
+            }
+          }
+          return {
+            state: 'ready-now',
+            label: 'Begin the investigation',
+            detail: 'The district is right. Put operatives on the lead.',
+            route: '/investigation',
+            blocked: false,
+          }
+        }
+
+        if (incidentDistrictId && currentDistrictId !== incidentDistrictId) {
+          return {
+            state: 'blocked-location',
+            label: `Travel to ${districtName ?? 'the district'}`,
+            detail: 'This contract can only be completed on-site.',
+            route: incidentDistrictId ? `/district/${incidentDistrictId}` : '/contracts',
+            blocked: true,
+          }
+        }
+
+        return {
+          state: 'ready-now',
+          label: 'Resolve the on-site task',
+          detail: 'The contract can be advanced from the current district.',
+          route: '/contracts',
+          blocked: false,
+        }
+      })(),
+      urgencyRank: getQuestUrgencyRank(entry.template?.timeLimitDays),
     })),
 )
 
@@ -91,3 +189,55 @@ export const selectThreatNpcForQuest = (state: RootState, questId: string | null
     factionName: faction,
   }
 }
+
+export const selectRecommendedQuestAction = createSelector(
+  selectActiveQuests,
+  selectAvailableQuestLeads,
+  (activeQuests, availableQuestLeads) => {
+    const topActiveQuest = activeQuests
+      .slice()
+      .sort((left, right) => {
+        const storyDelta = Number(Boolean(right.template?.questType === 'story')) - Number(Boolean(left.template?.questType === 'story'))
+        if (storyDelta !== 0) return storyDelta
+        const readinessDelta = Number(Boolean(!right.readiness.blocked)) - Number(Boolean(!left.readiness.blocked))
+        if (readinessDelta !== 0) return readinessDelta
+        return right.urgencyRank - left.urgencyRank
+      })[0]
+
+    if (topActiveQuest) {
+      return {
+        kind: 'active' as const,
+        title: topActiveQuest.displayTitle,
+        headline: topActiveQuest.readiness.label,
+        detail: topActiveQuest.readiness.detail,
+        route: topActiveQuest.readiness.route,
+        blocked: topActiveQuest.readiness.blocked,
+        urgencyRank: topActiveQuest.urgencyRank,
+        isStory: topActiveQuest.template?.questType === 'story',
+      }
+    }
+
+    const topLead = availableQuestLeads
+      .slice()
+      .sort((left, right) => {
+        const storyDelta = Number(Boolean(right.template.questType === 'story')) - Number(Boolean(left.template.questType === 'story'))
+        if (storyDelta !== 0) return storyDelta
+        return getQuestUrgencyRank(right.template.timeLimitDays) - getQuestUrgencyRank(left.template.timeLimitDays)
+      })[0]
+
+    if (topLead) {
+      return {
+        kind: 'lead' as const,
+        title: topLead.template.title,
+        headline: 'Review the lead on the Work Board',
+        detail: topLead.presentation.whyNow,
+        route: '/contracts',
+        blocked: false,
+        urgencyRank: getQuestUrgencyRank(topLead.template.timeLimitDays),
+        isStory: topLead.template.questType === 'story',
+      }
+    }
+
+    return null
+  },
+)
