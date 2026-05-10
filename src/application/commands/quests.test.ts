@@ -81,6 +81,23 @@ describe('acceptQuest', () => {
     const state = store.getState().game
     expect(state.activeQuests).toHaveLength(0)
   })
+
+  it('advances Mira to location-known only when the rescue lead is explicitly taken on', () => {
+    const store = makeStore({
+      availableQuests: ['quest-mira-rescue'],
+      activeQuests: [],
+      completedQuestIds: [],
+      mainQuest: {
+        stage: 'lead-found',
+        lastClue: 'Tessaly Ash claims she can help if the house commits.',
+      },
+    })
+
+    store.dispatch(gameActions.acceptQuest({ questId: 'quest-mira-rescue' }))
+
+    expect(store.getState().game.mainQuest.stage).toBe('location-known')
+    expect(store.getState().game.mainQuest.lastClue).toContain('old tannery')
+  })
 })
 
 describe('completeQuest', () => {
@@ -135,6 +152,24 @@ describe('completeQuest', () => {
     const log = store.getState().game.activityLog
     expect(log[0].message).toContain('Contract complete')
     expect(log[0].message).toContain('180 Marks')
+  })
+
+  it('rescues Mira only when the dedicated rescue quest is completed', () => {
+    const store = makeStore({
+      availableQuests: [],
+      activeQuests: [makeActiveQuest('quest-mira-rescue')],
+      completedQuestIds: [],
+      mainQuest: {
+        stage: 'location-known',
+        lastClue: 'The Pale tannery lies beyond the second gate.',
+      },
+    })
+
+    store.dispatch(gameActions.completeQuest({ questId: 'quest-mira-rescue' }))
+
+    expect(store.getState().game.mainQuest.stage).toBe('rescued')
+    expect(store.getState().game.mainQuest.lastClue).toContain('Mira is back')
+    expect(store.getState().game.activityLog.some((entry) => entry.message.includes('Mira is out'))).toBe(true)
   })
 })
 

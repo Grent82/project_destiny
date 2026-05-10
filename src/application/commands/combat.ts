@@ -1005,6 +1005,28 @@ export function concludeCombatEncounter(state: GameState): GameState {
             }
           }
         }
+
+        if (completedQuest.questId === 'quest-mira-rescue' && nextState.mainQuest.stage !== 'rescued' && nextState.mainQuest.stage !== 'epilogue') {
+          nextState = {
+            ...nextState,
+            mainQuest: {
+              ...nextState.mainQuest,
+              stage: 'rescued',
+              lastClue: 'Mira is back. She walks under her own strength, but whatever held her still clings to the edges of her voice.',
+            },
+            householdLore: {
+              ...nextState.householdLore,
+              missingRelatives: nextState.householdLore.missingRelatives.filter(
+                (relative) => relative.name !== 'Mira Valdris',
+              ),
+            },
+          }
+          nextState = appendActivityLogEntry(
+            nextState,
+            'system',
+            '◆ Mira is out. She is alive, and the house has changed with her return.',
+          )
+        }
       }
     }
   }

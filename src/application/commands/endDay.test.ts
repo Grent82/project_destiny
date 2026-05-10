@@ -175,6 +175,56 @@ describe('endDay', () => {
     vi.restoreAllMocks()
   })
 
+  it('surfaces Mira rescue work as a lead without auto-advancing the story stage', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 11,
+      mainQuest: {
+        stage: 'lead-found' as const,
+        lastClue: 'The vault letter points toward Tessaly Ash.',
+      },
+      availableQuests: [],
+    }
+
+    const next = endDay(state)
+
+    expect(next.mainQuest.stage).toBe('lead-found')
+    expect(next.availableQuests).toContain('quest-mira-rescue')
+    expect(next.mainQuest.lastClue).toContain('Tessaly Ash')
+  })
+
+  it('does not auto-rescue Mira from passive politics or elapsed days', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 19,
+      mainQuest: {
+        stage: 'location-known' as const,
+        lastClue: 'You know where Mira is held.',
+      },
+      completedQuestIds: ['quest-harborwatch', 'quest-ledger-recovery', 'quest-restored-appeal'],
+    }
+
+    const next = endDay(state)
+
+    expect(next.mainQuest.stage).toBe('location-known')
+    expect(next.activityLog.some((entry) => entry.message.includes('Mira is still inside the Pale tannery'))).toBe(true)
+  })
+
+  it('does not auto-advance Mira into the epilogue after rescue', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 24,
+      mainQuest: {
+        stage: 'rescued' as const,
+        lastClue: 'Mira is back at the house.',
+      },
+    }
+
+    const next = endDay(state)
+
+    expect(next.mainQuest.stage).toBe('rescued')
+  })
+
   it('city dial: high unrest (>=70) decays all NPC loyalty by 1 and logs a message', () => {
     const state = {
       ...initialStateWithIda,

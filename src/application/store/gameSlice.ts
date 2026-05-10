@@ -316,6 +316,12 @@ const gameSlice = createSlice({
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
 
+      if (questId === 'quest-mira-rescue' && state.mainQuest.stage === 'lead-found') {
+        state.mainQuest.stage = 'location-known'
+        state.mainQuest.lastClue =
+          "Tessaly Ash confirms it: Mira is in the old tannery on the Pale's eastern edge. You know where she is. Now you need a way in."
+      }
+
     },
 
     completeQuest(state, action: PayloadAction<{ questId: string }>) {
@@ -433,6 +439,23 @@ const gameSlice = createSlice({
             message: `Your name carries further now. Renown rank: ${newLevel.label}.`,
           })
         }
+      }
+
+      if (questId === 'quest-mira-rescue' && state.mainQuest.stage !== 'rescued' && state.mainQuest.stage !== 'epilogue') {
+        state.mainQuest.stage = 'rescued'
+        state.mainQuest.lastClue =
+          'Mira is back. She walks under her own strength, but whatever held her still clings to the edges of her voice.'
+        state.householdLore.missingRelatives = state.householdLore.missingRelatives.filter(
+          (relative) => relative.name !== 'Mira Valdris',
+        )
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-mira-rescue`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: '◆ Mira is out. She is alive, and the house has changed with her return.',
+        })
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
 
