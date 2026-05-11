@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
+import { computeBestInvestigationSkill, rollInvestigationOutcome } from './investigation'
 import { gameStateSchema } from '../../domain'
 import { createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
 import { getQuestTemplates } from '../content/contentCatalog'
@@ -35,13 +36,18 @@ function makeActiveQuest(questId: string, overrides: Partial<QuestRuntime> = {})
   }
 }
 
-afterEach(() => {
-  vi.restoreAllMocks()
-})
+describe('investigation helpers', () => {
+  it('computes the best available investigation skill across selected operatives', () => {
+    const skill = computeBestInvestigationSkill(initialStateWithIda, ['npc-marion-vale', 'npc-ida-rhys'])
+    expect(skill).toBe(68)
+  })
 
-// Marion Vale has negotiation: 68, intrigue: 41 (both above difficulty 55)
-// With skill 68: effectiveRoll = roll + (68 - 55) = roll + 13 → need roll >= 7 for success
-// With Math.random() = 0.99 → roll = 99, effectiveRoll = 112 → success
+  it('resolves deterministic seeded outcomes', () => {
+    expect(rollInvestigationOutcome(42, 68).outcome).toBe('success')
+    expect(rollInvestigationOutcome(7, 68).outcome).toBe('partial')
+    expect(rollInvestigationOutcome(7, 31).outcome).toBe('failure')
+  })
+})
 
 describe('startInvestigation', () => {
   it('sets activeInvestigation for an investigation quest', () => {
@@ -85,9 +91,8 @@ describe('startInvestigation', () => {
 
 describe('resolveInvestigation', () => {
   it('produces success with high skill and high roll', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.99) // roll = 99, effectiveRoll = 99 + 13 = 112 → success
-
     const store = makeStore({
+      rngSeed: 42,
       activeInvestigation: {
         questId: 'quest-ledger-recovery',
         districtId: 'district-the-pale',
@@ -115,12 +120,8 @@ describe('resolveInvestigation', () => {
   })
 
   it('produces partial result with moderate roll', () => {
-    // effectiveRoll must be >= 0 and < 20
-    // With Marion's negotiation 68: effectiveRoll = roll + 13
-    // Need effectiveRoll in [0, 20) → roll in [-13, 7) → Math.random returns 0.05 → roll=5 → effectiveRoll=18 → partial
-    vi.spyOn(Math, 'random').mockReturnValue(0.05)
-
     const store = makeStore({
+      rngSeed: 7,
       activeInvestigation: {
         questId: 'quest-ledger-recovery',
         districtId: 'district-the-pale',
@@ -142,10 +143,8 @@ describe('resolveInvestigation', () => {
   })
 
   it('produces failure with low skill and low roll', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.01) // roll = 1
-
-    // Use Ida Rhys who has low investigation skills (intrigue: 11, security: 31, admin: unknown)
     const store = makeStore({
+      rngSeed: 7,
       activeInvestigation: {
         questId: 'quest-ledger-recovery',
         districtId: 'district-the-pale',
@@ -163,8 +162,6 @@ describe('resolveInvestigation', () => {
 
     store.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-ida-rhys'] }))
 
-    // Ida Rhys: best skill likely intrigue:11, security:31 → bestSkill=31
-    // effectiveRoll = 1 + (31 - 55) = 1 - 24 = -23 → failure
     const state = store.getState().game
     expect(state.activeInvestigation).toBeNull()
     expect(state.money).toBe(100) // no reward
@@ -174,9 +171,8 @@ describe('resolveInvestigation', () => {
   })
 
   it('failure applies standing penalty', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.0) // roll = 0
-
     const store = makeStore({
+      rngSeed: 35,
       activeInvestigation: {
         questId: 'quest-ledger-recovery',
         districtId: 'district-the-pale',
@@ -199,9 +195,8 @@ describe('resolveInvestigation', () => {
   })
 
   it('success awards full marks and standing', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.99)
-
     const store = makeStore({
+      rngSeed: 42,
       activeInvestigation: {
         questId: 'quest-restored-appeal',
         districtId: null,

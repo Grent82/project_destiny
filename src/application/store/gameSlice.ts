@@ -22,6 +22,7 @@ import { getHouseDiscovery } from '../content/houseDiscoveries'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
+import { computeBestInvestigationSkill, rollInvestigationOutcome } from '../commands/investigation'
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import {
   generateExpeditionEncounter,
@@ -569,28 +570,12 @@ const gameSlice = createSlice({
       const quest = getQuestTemplates().find((q) => q.id === questId)
       if (!quest) return
 
-      const investigationSkills = ['intrigue', 'security', 'administration', 'negotiation'] as const
-
-      let bestSkillValue = 0
-      action.payload.npcIds.forEach((npcId) => {
-        const rosterNpc = state.roster.find((r) => r.npcId === npcId)
-        if (!rosterNpc) return
-        investigationSkills.forEach((skill) => {
-          const val = rosterNpc.skills[skill] ?? 0
-          if (val > bestSkillValue) bestSkillValue = val
-        })
-      })
-
-      const difficulty = 55
-      const roll = Math.random() * 100
-      const effectiveRoll = roll + (bestSkillValue - difficulty)
-
-      let result: 'success' | 'partial' | 'failure'
-      if (effectiveRoll >= 20) result = 'success'
-      else if (effectiveRoll >= 0) result = 'partial'
-      else result = 'failure'
+      const bestSkillValue = computeBestInvestigationSkill(state, action.payload.npcIds)
+      const { outcome, nextSeed } = rollInvestigationOutcome(state.rngSeed, bestSkillValue)
+      const result = outcome
 
       state.activeInvestigation.rollResult = result
+      state.rngSeed = nextSeed
 
       if (result === 'success') {
         settleQuestSuccess(state, questId, {
