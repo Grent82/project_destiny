@@ -4,7 +4,7 @@ import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { Attributes, Skills, Traits } from '../../domain/npc/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
-import { createQuestRuntime } from '../../domain/quests/contracts'
+import { createQuestLeadRuntime, createQuestRuntime } from '../../domain/quests/contracts'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -20,6 +20,7 @@ import { travelToDistrict as travelToDistrictCommand } from '../commands/distric
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
 import { getHouseDiscovery } from '../content/houseDiscoveries'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
+import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
 import { computeBestInvestigationSkill, rollInvestigationOutcome } from '../commands/investigation'
@@ -29,6 +30,42 @@ import {
   rollDiscovery,
   applyExpeditionDiscoveries,
 } from '../commands/expedition'
+
+function appendSystemActivity(state: GameState, message: string) {
+  state.activityLog.unshift({
+    id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+    day: state.day,
+    timeSlot: state.timeSlot,
+    category: 'system',
+    message,
+  })
+  if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+}
+
+function canDiscoverQuest(state: GameState, questId: string) {
+  return (
+    !state.availableQuestLeads.some((lead) => lead.questId === questId) &&
+    !state.activeQuests.some((quest) => quest.questId === questId) &&
+    !state.completedQuestIds.includes(questId)
+  )
+}
+
+function addQuestLeadIfNew(
+  state: GameState,
+  questId: string,
+  overrides: Parameters<typeof createQuestLeadRuntime>[2] = {},
+) {
+  const template = getQuestTemplates().find((quest) => quest.id === questId)
+  if (!template || !canDiscoverQuest(state, questId)) return false
+  if (template.requiredFactionStanding) {
+    const standing = state.factionStandings[template.requiredFactionStanding.factionId] ?? 0
+    if (standing < template.requiredFactionStanding.minStanding) return false
+  }
+
+  state.availableQuestLeads.push(createQuestLeadRuntime(template, state.day, overrides))
+  appendSystemActivity(state, `New lead discovered: ${template.title}.`)
+  return true
+}
 
 const gameSlice = createSlice({
   name: 'game',
@@ -353,6 +390,44 @@ const gameSlice = createSlice({
           "Tessaly Ash confirms it: Mira is in the old tannery on the Pale's eastern edge. You know where she is. Now you need a way in."
       }
 
+    },
+
+    discoverQuestLeadsAtPoi(state, action: PayloadAction<{ districtId: string; poiId: string }>) {
+      const { districtId, poiId } = action.payload
+      const poi = contentCatalog.poisById.get(poiId)
+      if (!poi || poi.districtId !== districtId) return
+
+      for (const template of getQuestTemplates()) {
+        if (!matchesQuestDiscoveryAtPoi(template, poi)) continue
+        addQuestLeadIfNew(state, template.id, {
+          discoverySource: template.discoverySource,
+          discoveryDistrictId: districtId,
+          sourcePoiId: poi.id,
+          issuerFactionId: poi.factionId ?? template.employerFactionId,
+        })
+      }
+    },
+
+    discoverQuestLeadsFromNpc(
+      state,
+      action: PayloadAction<{ districtId: string; npcId: string; poiId?: string | null }>,
+    ) {
+      const { districtId, npcId, poiId = null } = action.payload
+
+      for (const template of getQuestTemplates()) {
+        if (template.discoverySource !== 'npc') continue
+        if (template.sourceNpcId !== npcId) continue
+        if (template.discoveryDistrictId !== districtId) continue
+
+        const npc = contentCatalog.npcsById.get(npcId)
+        addQuestLeadIfNew(state, template.id, {
+          discoverySource: 'npc',
+          discoveryDistrictId: districtId,
+          sourceNpcId: npcId,
+          sourcePoiId: poiId,
+          issuerFactionId: npc?.factionAffinityId ?? template.employerFactionId,
+        })
+      }
     },
 
     completeQuest(state, action: PayloadAction<{ questId: string }>) {

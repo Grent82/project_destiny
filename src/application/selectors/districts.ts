@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
+import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 
 export const selectDistrictSummaries = createSelector(
   (state: RootState) => state.game.districts,
@@ -42,6 +43,9 @@ export function selectDistrictPOIs(districtId: string) {
     const pois = contentCatalog.poisByDistrictId.get(districtId) ?? []
     const availableForHire = state.game.availableForHire
     const availableQuestLeads = state.game.availableQuestLeads
+    const activeQuestIds = new Set(state.game.activeQuests.map((quest) => quest.questId))
+    const completedQuestIds = new Set(state.game.completedQuestIds)
+    const factionStandings = state.game.factionStandings
     return pois.map((poi) => {
       const npcDef = poi.npcId ? contentCatalog.npcsById.get(poi.npcId) : undefined
       return {
@@ -49,11 +53,23 @@ export function selectDistrictPOIs(districtId: string) {
         hasHireables: poi.actions.includes('hire') && availableForHire.some((o) => o.discoveredInDistrictId === districtId),
         hasContracts:
           poi.actions.includes('contracts') &&
-          availableQuestLeads.some(
-            (lead) =>
-              lead.discoveryDistrictId === districtId &&
-              (lead.sourcePoiId == null || lead.sourcePoiId === poi.id) &&
-              (lead.expiresOnDay == null || state.game.day <= lead.expiresOnDay),
+          (
+            availableQuestLeads.some(
+              (lead) =>
+                lead.discoveryDistrictId === districtId &&
+                (lead.sourcePoiId == null || lead.sourcePoiId === poi.id) &&
+                (lead.expiresOnDay == null || state.game.day <= lead.expiresOnDay),
+            ) ||
+            contentCatalog.quests.some(
+              (template) =>
+                !availableQuestLeads.some((lead) => lead.questId === template.id) &&
+                !activeQuestIds.has(template.id) &&
+                !completedQuestIds.has(template.id) &&
+                (!template.requiredFactionStanding ||
+                  (factionStandings[template.requiredFactionStanding.factionId] ?? 0) >=
+                    template.requiredFactionStanding.minStanding) &&
+                matchesQuestDiscoveryAtPoi(template, poi),
+            )
           ),
         dialogueId: npcDef?.dialogueId ?? null,
       }

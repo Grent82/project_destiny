@@ -124,6 +124,63 @@ describe('acceptQuest', () => {
   })
 })
 
+describe('quest lead discovery', () => {
+  it('discovers local work when the player reviews contracts at the matching POI', () => {
+    const store = makeStore({
+      availableQuestLeads: [],
+      activeQuests: [],
+      completedQuestIds: [],
+    })
+
+    store.dispatch(
+      gameActions.discoverQuestLeadsAtPoi({
+        districtId: 'district-harbor',
+        poiId: 'poi-harbor-guild-hall',
+      }),
+    )
+
+    const state = store.getState().game
+    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-harborwatch')).toBe(true)
+  })
+
+  it('does not discover guild work from the wrong venue type', () => {
+    const store = makeStore({
+      availableQuestLeads: [],
+      activeQuests: [],
+      completedQuestIds: [],
+    })
+
+    store.dispatch(
+      gameActions.discoverQuestLeadsAtPoi({
+        districtId: 'district-harbor',
+        poiId: 'poi-harbor-the-berth',
+      }),
+    )
+
+    const state = store.getState().game
+    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-harborwatch')).toBe(false)
+  })
+
+  it('discovers NPC-gated story work only from the matching contact', () => {
+    const store = makeStore({
+      availableQuestLeads: [],
+      activeQuests: [],
+      completedQuestIds: [],
+    })
+
+    store.dispatch(
+      gameActions.discoverQuestLeadsFromNpc({
+        districtId: 'district-the-pale',
+        npcId: 'npc-tessaly-ash',
+        poiId: 'poi-pale-wren-safe-house',
+      }),
+    )
+
+    const state = store.getState().game
+    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue')).toBe(true)
+  })
+})
+
 describe('completeQuest', () => {
   it('awards marks and moves quest to completedQuestIds', () => {
     const initialMoney = 100

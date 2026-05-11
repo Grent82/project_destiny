@@ -1,12 +1,11 @@
 import type { GameState } from '../../domain'
-import { createQuestLeadRuntime } from '../../domain/quests/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 
 const TENSION_DECAY_TARGET = 30
 const TENSION_DRIFT = 2
 
-/** Step 9 (faction quest bonus): unlock one additional quest per faction per day at standing >= 40. */
+/** Step 9 (faction quest bonus): high standing points the player toward faction work without auto-posting it to the board. */
 export function applyFactionQuestBonus(state: GameState): GameState {
   let next = state
   const allQuests = getQuestTemplates()
@@ -22,15 +21,24 @@ export function applyFactionQuestBonus(state: GameState): GameState {
         (!q.requiredFactionStanding || standing >= q.requiredFactionStanding.minStanding),
     )
     if (factionQuest) {
-      next = {
-        ...next,
-        availableQuestLeads: [
-          ...next.availableQuestLeads,
-          createQuestLeadRuntime(factionQuest, next.day, {
-            issuerFactionId: factionQuest.rewardStandingFactionId ?? factionQuest.employerFactionId,
-          }),
-        ],
-      }
+      const hintKey = `faction-work-hint-${factionQuest.id}`
+      if (next.lastFiredDay[hintKey] === next.day) continue
+
+      const districtName = factionQuest.discoveryDistrictId
+        ? contentCatalog.districtsById.get(factionQuest.discoveryDistrictId)?.name ?? factionQuest.discoveryDistrictId
+        : 'the city'
+
+      next = appendActivityLogEntry(
+        {
+          ...next,
+          lastFiredDay: {
+            ...next.lastFiredDay,
+            [hintKey]: next.day,
+          },
+        },
+        'system',
+        `Faction contacts hint at work tied to ${districtName}. If you want details, you need to hear it in person.`,
+      )
     }
   }
 

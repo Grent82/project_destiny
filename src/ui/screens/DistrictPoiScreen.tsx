@@ -120,7 +120,12 @@ export function DistrictPoiScreen() {
                   className="action-button"
                   type="button"
                   disabled={!isHere}
-                  onClick={() => navigate(`${ACTION_ROUTE[action]}${venueSearch}`)}
+                  onClick={() => {
+                    if (action === 'contracts') {
+                      dispatch(gameActions.discoverQuestLeadsAtPoi({ districtId: district.id, poiId: poi.id }))
+                    }
+                    navigate(`${ACTION_ROUTE[action]}${venueSearch}`)
+                  }}
                 >
                   Enter →
                 </button>
@@ -172,6 +177,13 @@ export function DistrictPoiScreen() {
               onClick={() => {
                 if (!poi.dialogueId) {
                   return
+                }
+                if (npc) {
+                  dispatch(gameActions.discoverQuestLeadsFromNpc({
+                    districtId: district.id,
+                    npcId: npc.id,
+                    poiId: poi.id,
+                  }))
                 }
                 const tree = contentCatalog.dialoguesById.get(poi.dialogueId)
                 if (!tree) {

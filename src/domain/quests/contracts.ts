@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const questObjectiveTypeSchema = z.enum(['combat', 'delivery', 'investigation', 'survival'])
-export const questDiscoverySourceSchema = z.enum(['bar', 'guild', 'court', 'event', 'npc', 'notice_board'])
+export const questDiscoverySourceSchema = z.enum(['bar', 'guild', 'court', 'event', 'npc', 'notice_board', 'faction_house'])
 export const questLeadFreshnessSchema = z.enum(['fresh', 'aging', 'stale'])
 
 export const questTemplateSchema = z.object({
@@ -109,6 +109,7 @@ const INITIAL_OBJECTIVE_LABEL_BY_TYPE: Record<QuestObjectiveType, string> = {
 
 export type QuestTemplate = z.infer<typeof questTemplateSchema>
 export type QuestObjectiveType = z.infer<typeof questObjectiveTypeSchema>
+export type QuestDiscoverySource = z.infer<typeof questDiscoverySourceSchema>
 export type QuestRuntime = z.infer<typeof questRuntimeSchema>
 export type QuestRuntimeContext = z.infer<typeof questRuntimeContextSchema>
 export type QuestRuntimeProgress = z.infer<typeof questRuntimeProgressSchema>

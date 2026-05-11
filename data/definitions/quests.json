@@ -13,6 +13,8 @@
     "penaltyStandingDelta": -5,
     "timeLimitDays": 5,
     "linkedMissionId": null,
+    "discoverySource": "guild",
+    "discoveryDistrictId": "district-harbor",
     "requiredFactionStanding": null,
     "enemyNpcId": "npc-enemy-the-dockmaster",
     "rewardCityDialId": "unrest",
@@ -32,6 +34,8 @@
     "penaltyStandingDelta": -8,
     "timeLimitDays": 7,
     "linkedMissionId": null,
+    "discoverySource": "court",
+    "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
     "enemyNpcId": "npc-enemy-lady-sorn"
   },
@@ -49,6 +53,8 @@
     "penaltyStandingDelta": -6,
     "timeLimitDays": 3,
     "linkedMissionId": null,
+    "discoverySource": "faction_house",
+    "discoveryDistrictId": "district-ironworks",
     "requiredFactionStanding": null
   },
   {
@@ -65,6 +71,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": null,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-the-hollows",
     "requiredFactionStanding": {
       "factionId": "faction-tallow-ring",
       "minStanding": 5
@@ -87,6 +95,8 @@
     "penaltyStandingDelta": -4,
     "timeLimitDays": 4,
     "linkedMissionId": null,
+    "discoverySource": "faction_house",
+    "discoveryDistrictId": "district-the-warrens",
     "requiredFactionStanding": {
       "factionId": "faction-restored",
       "minStanding": -10
@@ -106,6 +116,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 4,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-the-warrens",
     "requiredFactionStanding": null
   },
   {
@@ -122,6 +134,8 @@
     "penaltyStandingDelta": -3,
     "timeLimitDays": 3,
     "linkedMissionId": null,
+    "discoverySource": "faction_house",
+    "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": {
       "factionId": "faction-tallow-ring",
       "minStanding": 10
@@ -141,6 +155,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 6,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-the-hollows",
     "requiredFactionStanding": null
   },
   {
@@ -157,6 +173,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 2,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null
   },
   {
@@ -173,6 +191,8 @@
     "penaltyStandingDelta": -5,
     "timeLimitDays": 5,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-ironworks",
     "requiredFactionStanding": null,
     "rewardCityDialId": "corruption",
     "rewardCityDialDelta": 6
@@ -191,6 +211,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": null,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-the-hollows",
     "requiredFactionStanding": null
   },
   {
@@ -207,6 +229,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 5,
     "linkedMissionId": null,
+    "discoverySource": "court",
+    "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
     "rewardCityDialId": "prosperity",
     "rewardCityDialDelta": 4
@@ -225,6 +249,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 3,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null
   },
   {
@@ -241,6 +267,8 @@
     "penaltyStandingDelta": -3,
     "timeLimitDays": 1,
     "linkedMissionId": null,
+    "discoverySource": "court",
+    "discoveryDistrictId": "district-gilded-heights",
     "requiredFactionStanding": null
   },
   {
@@ -257,6 +285,8 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": 1,
     "linkedMissionId": null,
+    "discoverySource": "bar",
+    "discoveryDistrictId": "district-ironworks",
     "requiredFactionStanding": null,
     "rewardCityDialId": "unrest",
     "rewardCityDialDelta": -6
