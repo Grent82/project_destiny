@@ -22,6 +22,7 @@ interface QuestFailureOptions {
   failureCategory?: ActivityCategory
   journalEntry?: string
   objectiveLabel?: string
+  applyStanding?: boolean
 }
 
 function pushActivityLog(state: GameState, category: ActivityCategory, message: string, key: string) {
@@ -260,7 +261,8 @@ export function settleQuestFailure(state: GameState, questId: string, options: Q
   state.activeQuests.splice(questIndex, 1)
 
   const questTitle = template?.title ?? runtime.acceptedTitle
-  if (template?.rewardStandingFactionId && template.penaltyStandingDelta !== 0) {
+  const applyStanding = options.applyStanding ?? true
+  if (applyStanding && template?.rewardStandingFactionId && template.penaltyStandingDelta !== 0) {
     state.factionStandings[template.rewardStandingFactionId] = Math.max(
       -100,
       Math.min(

@@ -2,9 +2,67 @@ import type { GameState } from '../../domain'
 import { createRng } from './seededRng'
 
 const INVESTIGATION_SKILLS = ['intrigue', 'security', 'administration', 'negotiation'] as const
+
 const INVESTIGATION_DIFFICULTY = 55
 
 export type InvestigationOutcome = 'success' | 'partial' | 'failure'
+export type InvestigationBonusType = 'extra_marks' | 'reduce_penalty' | 'none'
+export type InvestigationExposureRisk = 'none' | 'low' | 'medium' | 'high'
+
+export interface InvestigationApproach {
+  id: string
+  label: string
+  description: string
+  primarySkills: readonly string[]
+  exposureRisk: InvestigationExposureRisk
+  /** Added to (bestSkill - difficulty) before thresholding. Positive = easier. */
+  difficultyModifier: number
+  bonusType: InvestigationBonusType
+  clueText: string
+}
+
+export const INVESTIGATION_APPROACHES: readonly InvestigationApproach[] = [
+  {
+    id: 'bribe',
+    label: 'Bribe & Network',
+    description:
+      "Work contacts for information. Low exposure; earns goodwill and yields a mark bonus when the work pays off.",
+    primarySkills: ['negotiation', 'intrigue'],
+    exposureRisk: 'low',
+    difficultyModifier: 0,
+    bonusType: 'extra_marks',
+    clueText:
+      "A paid informant tips a name — someone who's been asking the wrong questions in the right places.",
+  },
+  {
+    id: 'surveillance',
+    label: 'Covert Surveillance',
+    description:
+      'Tail suspects and watch for patterns. Skilled operatives gain a decisive edge, but the house risks being noticed.',
+    primarySkills: ['security', 'intrigue'],
+    exposureRisk: 'medium',
+    difficultyModifier: 15,
+    bonusType: 'none',
+    clueText:
+      'Two days of shadowing reveals a pattern — the target moves at predictable times, and rarely alone.',
+  },
+  {
+    id: 'records',
+    label: 'Paper Trail',
+    description:
+      'Search ledgers, manifests, and official records. Completely deniable, but slow and harder to read correctly.',
+    primarySkills: ['administration', 'academics'],
+    exposureRisk: 'none',
+    difficultyModifier: -10,
+    bonusType: 'reduce_penalty',
+    clueText:
+      'A forged entry in the guild manifests points to a holding three districts over — buried, but unmistakable.',
+  },
+]
+
+export function getInvestigationApproach(approachId: string): InvestigationApproach | undefined {
+  return INVESTIGATION_APPROACHES.find((a) => a.id === approachId)
+}
 
 export function computeBestInvestigationSkill(state: GameState, npcIds: string[]) {
   let bestSkillValue = 0
@@ -21,10 +79,36 @@ export function computeBestInvestigationSkill(state: GameState, npcIds: string[]
   return bestSkillValue
 }
 
-export function rollInvestigationOutcome(seed: number, bestSkillValue: number) {
+export function computeApproachSkillValue(
+  state: GameState,
+  npcIds: string[],
+  primarySkills: readonly string[],
+): number {
+  let bestSkillValue = 0
+
+  npcIds.forEach((npcId) => {
+    const rosterNpc = state.roster.find((npc) => npc.npcId === npcId)
+    if (!rosterNpc) return
+
+    primarySkills.forEach((skill) => {
+      bestSkillValue = Math.max(
+        bestSkillValue,
+        rosterNpc.skills[skill as keyof typeof rosterNpc.skills] ?? 0,
+      )
+    })
+  })
+
+  return bestSkillValue
+}
+
+export function rollInvestigationOutcome(
+  seed: number,
+  bestSkillValue: number,
+  difficultyModifier = 0,
+) {
   const seeded = createRng(seed)
   const roll = Math.floor(seeded.rng() * 100)
-  const effectiveRoll = roll + (bestSkillValue - INVESTIGATION_DIFFICULTY)
+  const effectiveRoll = roll + (bestSkillValue - INVESTIGATION_DIFFICULTY) + difficultyModifier
 
   let outcome: InvestigationOutcome
   if (effectiveRoll >= 20) {

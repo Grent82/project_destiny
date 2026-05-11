@@ -22,7 +22,7 @@ import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content
 import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
-import { computeBestInvestigationSkill, rollInvestigationOutcome } from '../commands/investigation'
+import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigationApproach, rollInvestigationOutcome } from '../commands/investigation'
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import {
   addQuestLeadIfNew,
@@ -492,38 +492,69 @@ const gameSlice = createSlice({
     startInvestigation(state, action: PayloadAction<{ questId: string }>) {
       const quest = getQuestTemplates().find((q) => q.id === action.payload.questId)
       if (!quest || quest.objectiveType !== 'investigation') return
-        state.activeInvestigation = {
-          questId: action.payload.questId,
-          districtId: quest.districtId,
-          rollResult: 'pending',
-        }
+      state.activeInvestigation = {
+        questId: action.payload.questId,
+        districtId: quest.districtId,
+        rollResult: 'pending',
+        stage: 'approach-selection',
+        chosenApproachId: null,
+        clueText: null,
+      }
       const runtime = state.activeQuests.find((activeQuest) => activeQuest.questId === action.payload.questId)
       if (runtime) {
         runtime.stageId = 'investigating'
-        runtime.currentObjectiveLabel = 'Select operatives and work the lead in the district.'
+        runtime.currentObjectiveLabel = 'Choose how to work this lead — your approach shapes the risk and reward.'
         runtime.progress.completedSteps = Math.max(runtime.progress.completedSteps, 1)
         runtime.progress.lastAdvancedDay = state.day
         runtime.journalEntries = [...runtime.journalEntries, 'The house has committed operatives to investigate the lead.']
       }
     },
 
+    chooseInvestigationApproach(state, action: PayloadAction<{ approachId: string }>) {
+      if (!state.activeInvestigation || state.activeInvestigation.stage !== 'approach-selection') return
+      const approach = getInvestigationApproach(action.payload.approachId)
+      if (!approach) return
+
+      state.activeInvestigation.stage = 'ready-to-resolve'
+      state.activeInvestigation.chosenApproachId = approach.id
+      state.activeInvestigation.clueText = approach.clueText
+
+      const runtime = state.activeQuests.find((q) => q.questId === state.activeInvestigation!.questId)
+      if (runtime) {
+        runtime.currentObjectiveLabel = `Approach: ${approach.label}. Assign operatives and resolve the investigation.`
+        runtime.progress.completedSteps = Math.max(runtime.progress.completedSteps, 2)
+        runtime.journalEntries = [...runtime.journalEntries, approach.clueText]
+      }
+    },
+
     resolveInvestigation(state, action: PayloadAction<{ npcIds: string[] }>) {
       if (!state.activeInvestigation) return
-      const { questId } = state.activeInvestigation
+      if (state.activeInvestigation.stage !== 'ready-to-resolve') return
+      const { questId, chosenApproachId } = state.activeInvestigation
       const quest = getQuestTemplates().find((q) => q.id === questId)
       if (!quest) return
 
-      const bestSkillValue = computeBestInvestigationSkill(state, action.payload.npcIds)
-      const { outcome, nextSeed } = rollInvestigationOutcome(state.rngSeed, bestSkillValue)
+      const approach = chosenApproachId ? getInvestigationApproach(chosenApproachId) : null
+      const bestSkillValue = approach
+        ? computeApproachSkillValue(state, action.payload.npcIds, approach.primarySkills)
+        : computeBestInvestigationSkill(state, action.payload.npcIds)
+      const difficultyModifier = approach?.difficultyModifier ?? 0
+
+      const { outcome, nextSeed } = rollInvestigationOutcome(state.rngSeed, bestSkillValue, difficultyModifier)
       const result = outcome
 
       state.activeInvestigation.rollResult = result
       state.rngSeed = nextSeed
 
+      const bonusType = approach?.bonusType ?? 'none'
+
       if (result === 'success') {
+        const rewardScale = bonusType === 'extra_marks' ? 1.25 : 1.0
+        const effectiveReward = Math.floor(quest.rewardMarks * rewardScale)
         settleQuestSuccess(state, questId, {
+          rewardScale,
           journalEntry: 'The lead yielded a decisive result.',
-          completionMessage: `The investigation concludes. ${quest.rewardMarks} Marks received.`,
+          completionMessage: `The investigation concludes. ${effectiveReward} Marks received.`,
         })
       } else if (result === 'partial') {
         const halfReward = Math.floor(quest.rewardMarks / 2)
@@ -539,6 +570,7 @@ const gameSlice = createSlice({
         })
       } else {
         settleQuestFailure(state, questId, {
+          applyStanding: bonusType !== 'reduce_penalty',
           failureMessage: 'The investigation goes nowhere. The opportunity is lost.',
           journalEntry: 'The lead went cold and the opportunity slipped away.',
         })

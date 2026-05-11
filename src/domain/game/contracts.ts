@@ -130,6 +130,9 @@ export const gameStateSchema = z
       questId: z.string(),
       districtId: z.string().nullable(),
       rollResult: z.enum(['pending', 'success', 'partial', 'failure']).default('pending'),
+      stage: z.enum(['approach-selection', 'ready-to-resolve']).default('approach-selection'),
+      chosenApproachId: z.string().nullable().default(null),
+      clueText: z.string().nullable().default(null),
     }).nullable().default(null),
     lastFiredDay: z.record(z.string(), z.number()).default({}),
     rivalOrgActions: z.array(z.object({
