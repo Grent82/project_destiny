@@ -183,13 +183,13 @@ describe('endDay', () => {
         stage: 'lead-found' as const,
         lastClue: 'The vault letter points toward Tessaly Ash.',
       },
-      availableQuests: [],
+      availableQuestLeads: [],
     }
 
     const next = endDay(state)
 
     expect(next.mainQuest.stage).toBe('lead-found')
-    expect(next.availableQuests).toContain('quest-mira-rescue')
+    expect(next.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue')).toBe(true)
     expect(next.mainQuest.lastClue).toContain('Tessaly Ash')
   })
 

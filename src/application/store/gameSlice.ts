@@ -330,11 +330,14 @@ const gameSlice = createSlice({
 
     acceptQuest(state, action: PayloadAction<{ questId: string }>) {
       const { questId } = action.payload
-      if (!state.availableQuests.includes(questId)) return
+      const leadIndex = state.availableQuestLeads.findIndex(
+        (lead) => lead.questId === questId && (lead.expiresOnDay == null || state.day <= lead.expiresOnDay),
+      )
+      if (leadIndex === -1) return
       const quest = getQuestTemplates().find((q) => q.id === questId)
       if (!quest) return
-      state.availableQuests = state.availableQuests.filter((id) => id !== questId)
-      state.activeQuests.push(createQuestRuntime(quest, state.day))
+      const [lead] = state.availableQuestLeads.splice(leadIndex, 1)
+      state.activeQuests.push(createQuestRuntime(quest, state.day, lead))
       state.activityLog.unshift({
         id: `log-${state.day}-${state.timeSlot}-accept-${questId}`,
         day: state.day,

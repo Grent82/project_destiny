@@ -1,4 +1,5 @@
 import type { GameState } from '../../domain'
+import { createQuestLeadRuntime } from '../../domain/quests/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 
@@ -15,13 +16,21 @@ export function applyFactionQuestBonus(state: GameState): GameState {
     const factionQuest = allQuests.find(
       (q) =>
         q.rewardStandingFactionId === factionId &&
-        !next.availableQuests.includes(q.id) &&
+        !next.availableQuestLeads.some((lead) => lead.questId === q.id) &&
         !next.completedQuestIds.includes(q.id) &&
         !next.activeQuests.some((aq) => aq.questId === q.id) &&
         (!q.requiredFactionStanding || standing >= q.requiredFactionStanding.minStanding),
     )
     if (factionQuest) {
-      next = { ...next, availableQuests: [...next.availableQuests, factionQuest.id] }
+      next = {
+        ...next,
+        availableQuestLeads: [
+          ...next.availableQuestLeads,
+          createQuestLeadRuntime(factionQuest, next.day, {
+            issuerFactionId: factionQuest.rewardStandingFactionId ?? factionQuest.employerFactionId,
+          }),
+        ],
+      }
     }
   }
 

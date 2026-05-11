@@ -196,7 +196,7 @@ describe('gameStateSchema', () => {
       selectedSquadNpcIds: [],
       activeCombat: null,
       pendingEvents: [],
-      availableQuests: [],
+      availableQuestLeads: [],
       activeQuests: [
         {
           questId: 'quest-harborwatch',

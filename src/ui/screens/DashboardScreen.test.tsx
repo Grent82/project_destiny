@@ -40,7 +40,7 @@ describe('DashboardScreen', () => {
       ...initialGameStateSnapshot,
       currentDistrictId: 'district-the-pale',
       activeQuests: [createQuestRuntime(harborwatch, 1)],
-      availableQuests: [],
+      availableQuestLeads: [],
     })
 
     render(

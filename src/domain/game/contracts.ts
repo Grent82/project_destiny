@@ -14,7 +14,7 @@ import {
   weaponDefinitionSchema,
 } from '../items/contracts'
 import { attributesSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
-import { questRuntimeSchema } from '../quests/contracts'
+import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
 
@@ -116,7 +116,7 @@ export const gameStateSchema = z
     pendingEvents: z.array(pendingEventSchema).default([]),
     currentDistrictId: z.string().nullable().default(null),
     availableForHire: z.array(hireOfferSchema).default([]),
-    availableQuests: z.array(z.string()).default([]),
+    availableQuestLeads: z.array(questLeadRuntimeSchema).default([]),
     activeQuests: z.array(questRuntimeSchema).default([]),
     completedQuestIds: z.array(z.string()).default([]),
     councilSeats: councilSeatCountSchema.default({}),

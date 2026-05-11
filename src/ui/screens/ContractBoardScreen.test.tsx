@@ -4,17 +4,26 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
-import { createQuestRuntime } from '../../domain/quests/contracts'
+import { createQuestLeadRuntime, createQuestRuntime } from '../../domain/quests/contracts'
 import { getQuestTemplates } from '../../application/content/contentCatalog'
 import { AppProviders } from '../app/AppProviders'
 import { ContractBoardScreen } from './ContractBoardScreen'
+
+function makeLead(questId: string, day = 1) {
+  const template = getQuestTemplates().find((quest) => quest.id === questId)
+  if (!template) {
+    throw new Error(`Expected quest template in test fixtures: ${questId}`)
+  }
+
+  return createQuestLeadRuntime(template, day)
+}
 
 describe('ContractBoardScreen', () => {
   it('shows issuer and origin for available leads and can accept them into active contracts', async () => {
     const user = userEvent.setup()
     const store = createGameStore({
       ...initialGameStateSnapshot,
-      availableQuests: ['quest-harborwatch'],
+      availableQuestLeads: [makeLead('quest-harborwatch')],
       activeQuests: [],
       completedQuestIds: [],
     })
@@ -48,7 +57,7 @@ describe('ContractBoardScreen', () => {
       ...initialGameStateSnapshot,
       currentDistrictId: 'district-the-pale',
       activeQuests: [createQuestRuntime(harborwatch, 1)],
-      availableQuests: [],
+      availableQuestLeads: [],
       completedQuestIds: [],
     })
 
@@ -79,7 +88,7 @@ describe('ContractBoardScreen', () => {
       ...initialGameStateSnapshot,
       currentDistrictId: 'district-the-hollows',
       activeQuests: [createQuestRuntime(deliveryQuest, 1)],
-      availableQuests: [],
+      availableQuestLeads: [],
       completedQuestIds: [],
     })
 

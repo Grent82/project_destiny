@@ -2,29 +2,38 @@ import { createSelector } from '@reduxjs/toolkit'
 import { getQuestTemplates, contentCatalog } from '../content/contentCatalog'
 import { getQuestPresentation } from '../content/questPresentation'
 import type { RootState } from '../store/gameStore'
+import { getQuestLeadFreshness, isQuestLeadExpired } from '../../domain/quests/contracts'
 
 export const selectAvailableQuests = createSelector(
-  (state: RootState) => state.game.availableQuests,
+  (state: RootState) => state.game.availableQuestLeads,
   (state: RootState) => state.game.factionStandings,
   (state: RootState) => state.game.completedQuestIds,
-  (availableQuestIds, factionStandings, completedQuestIds) =>
-    getQuestTemplates().filter((q) => {
-      if (!availableQuestIds.includes(q.id)) return false
+  (state: RootState) => state.game.day,
+  (availableQuestLeads, factionStandings, completedQuestIds, day) =>
+    availableQuestLeads.flatMap((lead) => {
+      if (isQuestLeadExpired(lead, day)) return []
+      const q = getQuestTemplates().find((quest) => quest.id === lead.questId)
+      if (!q) return []
       if (q.requiredFactionStanding) {
         const standing = factionStandings[q.requiredFactionStanding.factionId] ?? 0
-        if (standing < q.requiredFactionStanding.minStanding) return false
+        if (standing < q.requiredFactionStanding.minStanding) return []
       }
       if (q.prerequisiteQuestId && !completedQuestIds.includes(q.prerequisiteQuestId)) {
-        return false
+        return []
       }
-      return true
+      return [{ lead, template: q }]
     }),
 )
 
 export const selectAvailableQuestLeads = createSelector(
   selectAvailableQuests,
-  (templates) =>
-    templates.map((template) => ({
+  (state: RootState) => state.game.day,
+  (entries, day) =>
+    entries.map(({ lead, template }) => ({
+      lead: {
+        ...lead,
+        freshness: getQuestLeadFreshness(lead, day),
+      },
       template,
       presentation: getQuestPresentation(template),
     })),

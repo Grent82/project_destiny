@@ -38,6 +38,17 @@ function formatStageLabel(stageId: string) {
     .replace(/\b\w/g, (match) => match.toUpperCase())
 }
 
+function formatLeadFreshnessLabel(freshness: 'fresh' | 'aging' | 'stale') {
+  switch (freshness) {
+    case 'fresh':
+      return 'Fresh lead'
+    case 'aging':
+      return 'Aging lead'
+    case 'stale':
+      return 'Stale lead'
+  }
+}
+
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -93,14 +104,22 @@ export function ContractBoardScreen() {
             <p className="summary">No fresh leads at the moment. Work is either already in hand or not yet surfaced.</p>
           ) : (
             <div className="mission-list">
-              {availableQuestLeads.map(({ template, presentation }) => (
-                <div key={template.id} className="mission-row">
+              {availableQuestLeads.map(({ lead, template, presentation }) => {
+                const discoveryDistrictName = lead.discoveryDistrictId
+                  ? contentCatalog.districtsById.get(lead.discoveryDistrictId)?.name ?? lead.discoveryDistrictId
+                  : null
+
+                return (
+                <div key={lead.leadId} className="mission-row">
                   <div className="mission-row-header">
                     <strong>{template.title}</strong>
                     {template.questType === 'story' && (
                       <span className="badge badge-story">◆ House Obligation</span>
                     )}
                     <span className="badge">{presentation.categoryLabel}</span>
+                    <span className={`badge ${lead.freshness === 'stale' ? 'badge-warning' : lead.freshness === 'aging' ? 'badge-warning' : 'badge-positive'}`}>
+                      {formatLeadFreshnessLabel(lead.freshness)}
+                    </span>
                     {template.timeLimitDays != null && template.timeLimitDays <= 2 && (
                       <span className="badge badge-warning">Urgent</span>
                     )}
@@ -113,6 +132,9 @@ export function ContractBoardScreen() {
                   <div className="quest-meta">
                     {template.rewardMarks > 0 && <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>}
                     {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
+                    <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
+                    {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}
+                    {discoveryDistrictName && <span>Found in: <strong>{discoveryDistrictName}</strong></span>}
                     {template.districtId && (
                       <span>
                         District: {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
@@ -127,7 +149,8 @@ export function ContractBoardScreen() {
                     Accept contract
                   </button>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </article>

@@ -248,9 +248,31 @@
       "turnsAvailable": 8
     }
   ],
-  "availableQuests": [
-    "quest-harborwatch",
-    "quest-foundry-escort"
+  "availableQuestLeads": [
+    {
+      "leadId": "quest-harborwatch-lead-1",
+      "questId": "quest-harborwatch",
+      "discoveredDay": 1,
+      "discoverySource": "guild",
+      "discoveryDistrictId": "district-harbor",
+      "sourceNpcId": null,
+      "sourcePoiId": "poi-harbor-guild-hall",
+      "issuerFactionId": "faction-civic-compact",
+      "expiresOnDay": 5,
+      "freshness": "fresh"
+    },
+    {
+      "leadId": "quest-foundry-escort-lead-1",
+      "questId": "quest-foundry-escort",
+      "discoveredDay": 1,
+      "discoverySource": "guild",
+      "discoveryDistrictId": "district-ironworks",
+      "sourceNpcId": null,
+      "sourcePoiId": "poi-ironworks-foundry-league",
+      "issuerFactionId": "faction-foundry-league",
+      "expiresOnDay": 4,
+      "freshness": "fresh"
+    }
   ],
   "activeQuests": [],
   "completedQuestIds": [],

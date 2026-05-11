@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const questObjectiveTypeSchema = z.enum(['combat', 'delivery', 'investigation', 'survival'])
 export const questDiscoverySourceSchema = z.enum(['bar', 'guild', 'court', 'event', 'npc', 'notice_board'])
+export const questLeadFreshnessSchema = z.enum(['fresh', 'aging', 'stale'])
 
 export const questTemplateSchema = z.object({
   id: z.string(),
@@ -53,6 +54,19 @@ export const questRuntimeContextSchema = z.object({
   retryBehavior: z.enum(['fail', 'retryable', 'branch']).default('fail'),
 }).strict()
 
+export const questLeadRuntimeSchema = z.object({
+  leadId: z.string(),
+  questId: z.string(),
+  discoveredDay: z.number().int().positive(),
+  discoverySource: questDiscoverySourceSchema.nullable().default(null),
+  discoveryDistrictId: z.string().nullable().default(null),
+  sourceNpcId: z.string().nullable().default(null),
+  sourcePoiId: z.string().nullable().default(null),
+  issuerFactionId: z.string().nullable().default(null),
+  expiresOnDay: z.number().int().positive().nullable().default(null),
+  freshness: questLeadFreshnessSchema.default('fresh'),
+}).strict()
+
 export const questRuntimeSchema = z.object({
   questId: z.string(),
   acceptedOnDay: z.number(),
@@ -98,8 +112,57 @@ export type QuestObjectiveType = z.infer<typeof questObjectiveTypeSchema>
 export type QuestRuntime = z.infer<typeof questRuntimeSchema>
 export type QuestRuntimeContext = z.infer<typeof questRuntimeContextSchema>
 export type QuestRuntimeProgress = z.infer<typeof questRuntimeProgressSchema>
+export type QuestLeadFreshness = z.infer<typeof questLeadFreshnessSchema>
+export type QuestLeadRuntime = z.infer<typeof questLeadRuntimeSchema>
 
-export function createQuestRuntime(template: QuestTemplate, acceptedOnDay: number): QuestRuntime {
+function resolveQuestLeadFreshness(daysVisible: number, expiresOnDay: number | null, currentDay: number): QuestLeadFreshness {
+  if (expiresOnDay != null) {
+    const remainingDays = expiresOnDay - currentDay
+    if (remainingDays <= 1) return 'stale'
+    if (remainingDays <= 3) return 'aging'
+  }
+
+  if (daysVisible >= 6) return 'stale'
+  if (daysVisible >= 3) return 'aging'
+  return 'fresh'
+}
+
+export function getQuestLeadFreshness(lead: QuestLeadRuntime, currentDay: number): QuestLeadFreshness {
+  return resolveQuestLeadFreshness(currentDay - lead.discoveredDay, lead.expiresOnDay, currentDay)
+}
+
+export function isQuestLeadExpired(lead: QuestLeadRuntime, currentDay: number) {
+  return lead.expiresOnDay != null && currentDay > lead.expiresOnDay
+}
+
+type QuestLeadRuntimeOverrides = Partial<Omit<QuestLeadRuntime, 'leadId' | 'questId' | 'discoveredDay' | 'expiresOnDay' | 'freshness'>>
+
+export function createQuestLeadRuntime(
+  template: QuestTemplate,
+  discoveredDay: number,
+  overrides: QuestLeadRuntimeOverrides = {},
+): QuestLeadRuntime {
+  const expiresOnDay = template.timeLimitDays != null ? discoveredDay + template.timeLimitDays : null
+
+  return questLeadRuntimeSchema.parse({
+    leadId: `${template.id}-lead-${discoveredDay}`,
+    questId: template.id,
+    discoveredDay,
+    discoverySource: overrides.discoverySource ?? template.discoverySource,
+    discoveryDistrictId: overrides.discoveryDistrictId ?? template.discoveryDistrictId,
+    sourceNpcId: overrides.sourceNpcId ?? template.sourceNpcId,
+    sourcePoiId: overrides.sourcePoiId ?? null,
+    issuerFactionId: overrides.issuerFactionId ?? template.employerFactionId,
+    expiresOnDay,
+    freshness: resolveQuestLeadFreshness(0, expiresOnDay, discoveredDay),
+  })
+}
+
+export function createQuestRuntime(
+  template: QuestTemplate,
+  acceptedOnDay: number,
+  lead: QuestLeadRuntime | null = null,
+): QuestRuntime {
   const acceptedBriefing = template.openingText ?? template.briefing ?? null
   const initialJournalEntries = acceptedBriefing ? [acceptedBriefing] : []
 
@@ -119,10 +182,10 @@ export function createQuestRuntime(template: QuestTemplate, acceptedOnDay: numbe
     },
     context: {
       incidentDistrictId: template.districtId,
-      issuerFactionId: template.employerFactionId,
-      sourceNpcId: template.sourceNpcId,
-      discoverySource: template.discoverySource,
-      discoveryDistrictId: template.discoveryDistrictId,
+      issuerFactionId: lead?.issuerFactionId ?? template.employerFactionId,
+      sourceNpcId: lead?.sourceNpcId ?? template.sourceNpcId,
+      discoverySource: lead?.discoverySource ?? template.discoverySource,
+      discoveryDistrictId: lead?.discoveryDistrictId ?? template.discoveryDistrictId,
       selectedBranchId: null,
       retryBehavior: 'fail',
     },

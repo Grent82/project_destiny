@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
+import { createQuestLeadRuntime } from '../../domain/quests/contracts'
 import { appendActivityLogEntry } from './activityLog'
-import { getCouncilVoteTemplates } from '../content/contentCatalog'
+import { getCouncilVoteTemplates, getQuestTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
 
@@ -209,7 +210,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     const alreadyFired = 'event-mira-location' in next.lastFiredDay
     if (!alreadyFired) {
       const hasRescueLead =
-        next.availableQuests.includes('quest-mira-rescue') ||
+        next.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue') ||
         next.activeQuests.some((quest) => quest.questId === 'quest-mira-rescue') ||
         next.completedQuestIds.includes('quest-mira-rescue')
       next = {
@@ -218,7 +219,18 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
           ...next.mainQuest,
           lastClue: 'Tessaly Ash says she can name the place if you are willing to move on it. The Pale Sisters are using an old tannery in the Pale.',
         },
-        availableQuests: hasRescueLead ? next.availableQuests : [...next.availableQuests, 'quest-mira-rescue'],
+        availableQuestLeads: hasRescueLead
+          ? next.availableQuestLeads
+          : [
+              ...next.availableQuestLeads,
+              createQuestLeadRuntime(getQuestTemplates().find((quest) => quest.id === 'quest-mira-rescue')!, next.day, {
+                discoverySource: 'npc',
+                discoveryDistrictId: 'district-the-pale',
+                sourceNpcId: 'npc-tessaly-ash',
+                sourcePoiId: 'poi-pale-wren-safe-house',
+                issuerFactionId: 'faction-restored',
+              }),
+            ],
         lastFiredDay: { ...next.lastFiredDay, 'event-mira-location': next.day },
       }
       next = appendActivityLogEntry(

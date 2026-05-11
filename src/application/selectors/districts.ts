@@ -41,16 +41,20 @@ export function selectDistrictPOIs(districtId: string) {
   return (state: RootState) => {
     const pois = contentCatalog.poisByDistrictId.get(districtId) ?? []
     const availableForHire = state.game.availableForHire
-    const availableQuests = state.game.availableQuests
+    const availableQuestLeads = state.game.availableQuestLeads
     return pois.map((poi) => {
       const npcDef = poi.npcId ? contentCatalog.npcsById.get(poi.npcId) : undefined
       return {
         ...poi,
         hasHireables: poi.actions.includes('hire') && availableForHire.some((o) => o.discoveredInDistrictId === districtId),
-        hasContracts: poi.actions.includes('contracts') && availableQuests.some((qId) => {
-          const template = contentCatalog.questsById.get(qId)
-          return template?.discoveryDistrictId === districtId
-        }),
+        hasContracts:
+          poi.actions.includes('contracts') &&
+          availableQuestLeads.some(
+            (lead) =>
+              lead.discoveryDistrictId === districtId &&
+              (lead.sourcePoiId == null || lead.sourcePoiId === poi.id) &&
+              (lead.expiresOnDay == null || state.game.day <= lead.expiresOnDay),
+          ),
         dialogueId: npcDef?.dialogueId ?? null,
       }
     })

@@ -23,7 +23,7 @@ const baseState: GameState = {
   pendingEvents: [],
   currentDistrictId: null,
   availableForHire: [],
-  availableQuests: [],
+  availableQuestLeads: [],
   activeQuests: [],
   completedQuestIds: [],
   councilSeats: {},
