@@ -288,14 +288,14 @@ export function ContractBoardScreen() {
                   )}
                   {(template?.objectiveType === 'delivery' || template?.objectiveType === 'survival') && (() => {
                     const inDistrict = !template.districtId || template.districtId === currentDistrictId
-                    const label = template.objectiveType === 'delivery' ? 'Complete Delivery' : 'Complete Job'
+                    const label = template.objectiveType === 'delivery' ? 'Open on-site handoff →' : 'Open on-site watch →'
                     const hint = template.districtId && !inDistrict
                       ? `Travel to ${template.districtId.replace('district-', '').replace(/-/g, ' ')} first`
                       : undefined
                     return (
                       <button
                         className="action-button action-button--primary"
-                        onClick={() => dispatch(gameActions.resolveSimpleContract({ questId: runtime.questId }))}
+                        onClick={() => navigate(`/contracts/${runtime.questId}/execute`)}
                         disabled={!inDistrict}
                         title={hint}
                         type="button"

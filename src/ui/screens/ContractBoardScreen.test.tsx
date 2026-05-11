@@ -68,4 +68,30 @@ describe('ContractBoardScreen', () => {
       screen.getByRole('heading', { name: 'Recommended Next Step' }),
     ).toBeInTheDocument()
   })
+
+  it('routes delivery contracts into an on-site execution step instead of instant completion', () => {
+    const deliveryQuest = getQuestTemplates().find((quest) => quest.id === 'quest-nightbloom-extract')
+    if (!deliveryQuest) {
+      throw new Error('Expected delivery quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-hollows',
+      activeQuests: [createQuestRuntime(deliveryQuest, 1)],
+      availableQuests: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('button', { name: /Open on-site handoff/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Complete Delivery/i })).not.toBeInTheDocument()
+  })
 })

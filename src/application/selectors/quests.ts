@@ -116,6 +116,44 @@ export const selectActiveQuests = createSelector(
           }
         }
 
+        if (entry.template?.objectiveType === 'delivery') {
+          if (incidentDistrictId && currentDistrictId !== incidentDistrictId) {
+            return {
+              state: 'blocked-location',
+              label: `Travel to ${districtName ?? 'the drop site'}`,
+              detail: 'The handoff can only happen on-site in the target district.',
+              route: incidentDistrictId ? `/district/${incidentDistrictId}` : '/contracts',
+              blocked: true,
+            }
+          }
+          return {
+            state: 'ready-now',
+            label: 'Open on-site handoff',
+            detail: 'Meet the contact in person, spend the watch, and make the exchange.',
+            route: `/contracts/${entry.runtime.questId}/execute`,
+            blocked: false,
+          }
+        }
+
+        if (entry.template?.objectiveType === 'survival') {
+          if (incidentDistrictId && currentDistrictId !== incidentDistrictId) {
+            return {
+              state: 'blocked-location',
+              label: `Travel to ${districtName ?? 'the contract site'}`,
+              detail: 'The watch must be held in the assigned district.',
+              route: incidentDistrictId ? `/district/${incidentDistrictId}` : '/contracts',
+              blocked: true,
+            }
+          }
+          return {
+            state: 'ready-now',
+            label: 'Open on-site watch',
+            detail: 'Hold position through the current watch and absorb the local risk.',
+            route: `/contracts/${entry.runtime.questId}/execute`,
+            blocked: false,
+          }
+        }
+
         if (incidentDistrictId && currentDistrictId !== incidentDistrictId) {
           return {
             state: 'blocked-location',
