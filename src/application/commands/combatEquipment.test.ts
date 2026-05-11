@@ -103,7 +103,6 @@ const BASE_GAME_STATE = {
   inventory: [],
   cityResources: { foodSecurity: 62, waterAccess: 70, materialStock: 50, corridorStatus: 'open' as const },
   activityLog: [],
-  activeQuestIds: [],
   selectedSquadNpcIds: ['npc-1', 'npc-2'],
   activeCombat: null,
   rngSeed: 42,

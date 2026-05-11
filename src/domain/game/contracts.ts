@@ -110,7 +110,6 @@ export const gameStateSchema = z
     inventory: z.array(inventoryEntrySchema),
     cityResources: cityResourcesSchema,
     activityLog: z.array(activityLogEntrySchema).max(100),
-    activeQuestIds: z.array(entityIdSchema),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
     activeCombat: activeCombatStateSchema.nullable(),
     pendingEvents: z.array(pendingEventSchema).default([]),

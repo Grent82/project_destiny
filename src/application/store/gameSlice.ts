@@ -4,7 +4,6 @@ import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { Attributes, Skills, Traits } from '../../domain/npc/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
-import { createQuestLeadRuntime, createQuestRuntime } from '../../domain/quests/contracts'
 import {
   concludeCombatEncounter,
   performCombatAction,
@@ -26,46 +25,16 @@ import { applyRelationshipDelta } from '../commands/adjustRelationship'
 import { computeBestInvestigationSkill, rollInvestigationOutcome } from '../commands/investigation'
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import {
+  addQuestLeadIfNew,
+  acceptQuestFromLead,
+  expireTimedQuestsOnState,
+  resolveSimpleContractObjective,
+} from '../commands/questLifecycle'
+import {
   generateExpeditionEncounter,
   rollDiscovery,
   applyExpeditionDiscoveries,
 } from '../commands/expedition'
-
-function appendSystemActivity(state: GameState, message: string) {
-  state.activityLog.unshift({
-    id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
-    day: state.day,
-    timeSlot: state.timeSlot,
-    category: 'system',
-    message,
-  })
-  if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-}
-
-function canDiscoverQuest(state: GameState, questId: string) {
-  return (
-    !state.availableQuestLeads.some((lead) => lead.questId === questId) &&
-    !state.activeQuests.some((quest) => quest.questId === questId) &&
-    !state.completedQuestIds.includes(questId)
-  )
-}
-
-function addQuestLeadIfNew(
-  state: GameState,
-  questId: string,
-  overrides: Parameters<typeof createQuestLeadRuntime>[2] = {},
-) {
-  const template = getQuestTemplates().find((quest) => quest.id === questId)
-  if (!template || !canDiscoverQuest(state, questId)) return false
-  if (template.requiredFactionStanding) {
-    const standing = state.factionStandings[template.requiredFactionStanding.factionId] ?? 0
-    if (standing < template.requiredFactionStanding.minStanding) return false
-  }
-
-  state.availableQuestLeads.push(createQuestLeadRuntime(template, state.day, overrides))
-  appendSystemActivity(state, `New lead discovered: ${template.title}.`)
-  return true
-}
 
 const gameSlice = createSlice({
   name: 'game',
@@ -102,33 +71,7 @@ const gameSlice = createSlice({
     endDay(state) {
       const afterDay = endDayCommand(state)
       afterDay.isFirstRun = false
-      // Expire timed quests at end of day
-      afterDay.activeQuests.forEach((q) => {
-        const template = getQuestTemplates().find((t) => t.id === q.questId)
-        if (template?.timeLimitDays != null) {
-          if (afterDay.day - q.acceptedOnDay >= template.timeLimitDays) {
-            q.status = 'failed'
-          }
-        }
-      })
-      const failedQuests = afterDay.activeQuests.filter((q) => q.status === 'failed')
-      afterDay.activeQuests = afterDay.activeQuests.filter((q) => q.status === 'active')
-      for (const failed of failedQuests) {
-        const template = getQuestTemplates().find((t) => t.id === failed.questId)
-        if (template?.rewardStandingFactionId) {
-          afterDay.factionStandings[template.rewardStandingFactionId] = Math.max(
-            -100,
-            (afterDay.factionStandings[template.rewardStandingFactionId] ?? 0) + template.penaltyStandingDelta,
-          )
-        }
-        afterDay.activityLog.unshift({
-          id: `log-${afterDay.day}-${afterDay.timeSlot}-quest-expire-${failed.questId}`,
-          day: afterDay.day,
-          timeSlot: afterDay.timeSlot,
-          category: 'system',
-          message: `Contract failed: "${template?.title ?? failed.questId}". The house bears the cost.${template?.rewardStandingFactionId && template.penaltyStandingDelta < 0 ? ` Standing with ${contentCatalog.factionsById.get(template.rewardStandingFactionId)?.name ?? template.rewardStandingFactionId} suffers.` : ''}`,
-        })
-      }
+      expireTimedQuestsOnState(afterDay)
       if (
         !afterDay.debtPaid &&
         !afterDay.debtCrisisTriggered &&
@@ -160,30 +103,7 @@ const gameSlice = createSlice({
         const snapshot = current(state) as GameState
         const afterDay = endDayCommand(snapshot)
         afterDay.isFirstRun = false
-        afterDay.activeQuests.forEach((q) => {
-          const template = getQuestTemplates().find((t) => t.id === q.questId)
-          if (template?.timeLimitDays != null && afterDay.day - q.acceptedOnDay >= template.timeLimitDays) {
-            q.status = 'failed'
-          }
-        })
-        const failedQuests = afterDay.activeQuests.filter((q) => q.status === 'failed')
-        afterDay.activeQuests = afterDay.activeQuests.filter((q) => q.status === 'active')
-        for (const failed of failedQuests) {
-          const template = getQuestTemplates().find((t) => t.id === failed.questId)
-          if (template?.rewardStandingFactionId) {
-            afterDay.factionStandings[template.rewardStandingFactionId] = Math.max(
-              -100,
-              (afterDay.factionStandings[template.rewardStandingFactionId] ?? 0) + template.penaltyStandingDelta,
-            )
-          }
-          afterDay.activityLog.unshift({
-            id: `log-${afterDay.day}-${afterDay.timeSlot}-quest-expire-${failed.questId}`,
-            day: afterDay.day,
-            timeSlot: afterDay.timeSlot,
-            category: 'system',
-            message: `Contract failed: "${template?.title ?? failed.questId}". The house bears the cost.${template?.rewardStandingFactionId && template.penaltyStandingDelta < 0 ? ` Standing with ${contentCatalog.factionsById.get(template.rewardStandingFactionId)?.name ?? template.rewardStandingFactionId} suffers.` : ''}`,
-          })
-        }
+        expireTimedQuestsOnState(afterDay)
         if (!afterDay.debtPaid && !afterDay.debtCrisisTriggered && afterDay.day >= afterDay.debtDueDay && afterDay.money < afterDay.debtAmount) {
           afterDay.debtCrisisTriggered = true
           afterDay.activityLog.unshift({
@@ -366,30 +286,7 @@ const gameSlice = createSlice({
     },
 
     acceptQuest(state, action: PayloadAction<{ questId: string }>) {
-      const { questId } = action.payload
-      const leadIndex = state.availableQuestLeads.findIndex(
-        (lead) => lead.questId === questId && (lead.expiresOnDay == null || state.day <= lead.expiresOnDay),
-      )
-      if (leadIndex === -1) return
-      const quest = getQuestTemplates().find((q) => q.id === questId)
-      if (!quest) return
-      const [lead] = state.availableQuestLeads.splice(leadIndex, 1)
-      state.activeQuests.push(createQuestRuntime(quest, state.day, lead))
-      state.activityLog.unshift({
-        id: `log-${state.day}-${state.timeSlot}-accept-${questId}`,
-        day: state.day,
-        timeSlot: state.timeSlot,
-        category: 'system',
-        message: `Contract accepted: ${quest?.title ?? questId}.`,
-      })
-      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-
-      if (questId === 'quest-mira-rescue' && state.mainQuest.stage === 'lead-found') {
-        state.mainQuest.stage = 'location-known'
-        state.mainQuest.lastClue =
-          "Tessaly Ash confirms it: Mira is in the old tannery on the Pale's eastern edge. You know where she is. Now you need a way in."
-      }
-
+      acceptQuestFromLead(state, action.payload.questId)
     },
 
     discoverQuestLeadsAtPoi(state, action: PayloadAction<{ districtId: string; poiId: string }>) {
@@ -437,19 +334,7 @@ const gameSlice = createSlice({
     },
 
     resolveSimpleContract(state, action: PayloadAction<{ questId: string }>) {
-      const { questId } = action.payload
-      const hasRuntime = state.activeQuests.some((entry) => entry.questId === questId)
-      if (!hasRuntime) return
-      const quest = getQuestTemplates().find((q) => q.id === questId)
-      if (!quest) return
-      if (quest.objectiveType !== 'delivery' && quest.objectiveType !== 'survival') return
-
-      const label = quest.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
-      settleQuestSuccess(state, questId, {
-        objectiveLabel: 'The on-site work is done. Return and settle accounts.',
-        journalEntry: 'The contract was completed on-site.',
-        completionMessage: `${label}: "${quest.title}".`,
-      })
+      resolveSimpleContractObjective(state, action.payload.questId)
     },
 
     failQuest(state, action: PayloadAction<{ questId: string }>) {
@@ -457,27 +342,7 @@ const gameSlice = createSlice({
     },
 
     expireTimedQuests(state) {
-      const failed: string[] = []
-      state.activeQuests.forEach((q) => {
-        const template = getQuestTemplates().find((t) => t.id === q.questId)
-        if (template?.timeLimitDays != null) {
-          if (state.day - q.acceptedOnDay >= template.timeLimitDays) {
-            q.status = 'failed'
-            q.stageId = 'failed'
-            q.currentObjectiveLabel = 'The contract expired before the house acted.'
-            q.progress.lastAdvancedDay = state.day
-            q.journalEntries = [...q.journalEntries, 'Time ran out before the contract could be completed.']
-            failed.push(q.questId)
-          }
-        }
-      })
-      state.activeQuests = state.activeQuests.filter((q) => q.status === 'active')
-      for (const questId of failed) {
-        settleQuestFailure(state, questId, {
-          objectiveLabel: 'The contract expired before the house acted.',
-          journalEntry: 'Time ran out before the contract could be completed.',
-        })
-      }
+      expireTimedQuestsOnState(state)
     },
     adjustRelationship(
       state,

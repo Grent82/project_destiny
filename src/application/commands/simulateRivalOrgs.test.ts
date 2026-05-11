@@ -17,7 +17,6 @@ const baseState: GameState = {
   inventory: [],
   cityResources: { foodSecurity: 60, waterAccess: 60, materialStock: 60, corridorStatus: 'open' },
   activityLog: [],
-  activeQuestIds: [],
   selectedSquadNpcIds: [],
   activeCombat: null,
   pendingEvents: [],

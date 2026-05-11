@@ -27,7 +27,6 @@ function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
       corridorStatus: 'open',
     },
     activityLog: [],
-    activeQuestIds: [],
     selectedSquadNpcIds: [],
     activeCombat: null,
     ...overrides,
