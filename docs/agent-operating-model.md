@@ -78,6 +78,8 @@ If a conflict exists between two higher-priority documents, stop and create a Be
 
 Beads is the only backlog system for this project.
 
+Use [docs/workflows/bead-creation.md](docs/workflows/bead-creation.md) when creating or materially refining Beads.
+
 Do not use:
 
 - markdown TODO lists as planning source of truth
@@ -113,6 +115,14 @@ If a task depends on another task’s output, encode that dependency in Beads. D
 - `task` for bounded implementation
 - `decision` for architecture or process decisions
 - `chore` for tooling, maintenance, and automation
+
+### Bead quality rules
+
+- Separate `audit`, `decision`, `implementation`, and `polish` work unless there is a strong reason not to.
+- Every Bead should explain `why`, `what`, `why now`, `player impact`, `system impact`, and explicit non-goals.
+- Audit-derived Beads must record `finding coverage`.
+- Narrative-heavy Beads must record a `fiction contract`.
+- Prefer capability Beads before content-expansion Beads.
 
 ## Task Lifecycle
 

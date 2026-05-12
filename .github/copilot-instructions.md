@@ -19,6 +19,20 @@ bd close <id>         # mark done when finished
 
 Use `bd` for ALL task tracking. Do not use markdown TODO lists or other tools.
 
+When creating or materially refining a Bead, follow `docs/workflows/bead-creation.md`.
+At minimum, include:
+
+- `why`
+- `what`
+- `why now`
+- `player impact`
+- `system impact`
+- explicit non-goals
+- acceptance criteria
+- finding coverage
+
+For narrative-heavy Beads, also include a `fiction contract`.
+
 ## Build, Test & Lint
 
 ```bash

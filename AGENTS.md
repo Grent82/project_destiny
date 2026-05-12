@@ -7,6 +7,7 @@ Project Destiny uses a coordinator-led multi-agent workflow with Beads as the on
 - Read [docs/agent-operating-model.md](docs/agent-operating-model.md).
 - Follow [docs/engineering-standards.md](docs/engineering-standards.md).
 - Use the task structure in [docs/task-contract.md](docs/task-contract.md).
+- Use [docs/workflows/bead-creation.md](docs/workflows/bead-creation.md) when creating or refining Beads.
 - Respect role boundaries in [docs/roles](docs/roles).
 - Use [docs/workflows](docs/workflows) when the task is narrative, UI-heavy, or art-direction-heavy.
 
@@ -34,11 +35,13 @@ The RPG audit answers four questions about whether this session's planned work a
 
 - Use `bd` for all backlog and dependency tracking.
 - Prefer small, testable tasks with explicit file ownership.
+- When creating or updating a Bead, include `why`, `what`, `why now`, `player impact`, `system impact`, explicit non-goals, acceptance, and finding coverage.
 - Follow clean architecture boundaries.
 - Use TDD for domain and application behavior by default.
 - Treat `Narrative`, `UI/UX`, and `Art Direction` as explicit project roles, not ad hoc creative side work.
 - Record blockers and assumptions in the active Bead instead of leaving them in chat only.
 - Create a new Bead for follow-up work rather than silently expanding scope.
+- For narrative-heavy Beads, record a `fiction contract`.
 
 ## Audit → Bead Traceability Rule
 

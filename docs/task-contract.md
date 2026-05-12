@@ -2,15 +2,29 @@
 
 Every Bead assigned to an agent should include the following structure.
 
+For backlog quality rules and authoring guidance, also read [docs/workflows/bead-creation.md](docs/workflows/bead-creation.md).
+
 ## Template
 
 ### Objective
 
 What must be achieved, in one sentence.
 
+### Why
+
+What player-facing or system-facing problem exists.
+
+### Why Now
+
+Why this task should happen in the current milestone or before adjacent work.
+
 ### Scope
 
 What is in scope and out of scope.
+
+### Player Impact
+
+What the player will understand, do, observe, or feel differently after completion.
 
 ### Ownership
 
@@ -24,6 +38,10 @@ Documents, contracts, and existing modules that are authoritative for this task.
 
 Concrete deliverables, not vague intent.
 
+### Evidence
+
+The findings, files, screens, or user reports that justify the task.
+
 ### Validation
 
 Exact checks required before handoff.
@@ -35,6 +53,14 @@ Dependency rules or layering constraints that must not be broken.
 ### TDD Expectation
 
 State which tests must be written first or what behavior must be covered.
+
+### Finding Coverage
+
+Which audit or review findings this task covers. If coverage is only partial, say so explicitly.
+
+### Fiction Contract
+
+Required for narrative-heavy work. State the diegetic truth the task must preserve.
 
 ### Stop Conditions
 

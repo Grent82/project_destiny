@@ -7,6 +7,7 @@ This file provides instructions and context for AI coding agents working on this
 - Read `docs/agent-operating-model.md` before starting significant work.
 - Follow `docs/engineering-standards.md` for architecture and code quality rules.
 - Use `docs/task-contract.md` when creating or refining tasks.
+- Use `docs/workflows/bead-creation.md` when creating or materially refining Beads.
 - Treat Beads as the only backlog and dependency tracker.
 
 ## Architecture and Quality Priorities
@@ -16,6 +17,8 @@ This file provides instructions and context for AI coding agents working on this
 - TDD for domain and application behavior
 - Small, bounded tasks with clear ownership
 - No business rules hidden in UI components
+- Beads must record `why`, `what`, `why now`, `player impact`, `system impact`, explicit non-goals, acceptance, and finding coverage
+- Narrative-heavy Beads must also record a `fiction contract`
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
