@@ -24,6 +24,7 @@ import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
 import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigationApproach, rollInvestigationOutcome } from '../commands/investigation'
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
+import { resolveDialogueChoice } from '../commands/dialogue'
 import {
   addQuestLeadIfNew,
   acceptQuestFromLead,
@@ -856,6 +857,11 @@ const gameSlice = createSlice({
         state.visitedDialogueNodes[state.activeDialogueId] = nodeId
       }
       state.activeDialogueNodeId = nodeId
+    },
+
+    selectDialogueChoice(state, action: PayloadAction<{ choiceId: string }>) {
+      const snapshot = current(state) as GameState
+      return resolveDialogueChoice(snapshot, action.payload.choiceId)
     },
 
     endDialogue(state) {

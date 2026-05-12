@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom'
 
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
-import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { isDialogueChoiceAvailable } from '../../application/commands/dialogue'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import type { DialogueChoice, DialogueCondition } from '../../domain/dialogue/contracts'
+import type { DialogueChoice } from '../../domain/dialogue/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
 
 export function DialogueScreen() {
@@ -20,59 +20,15 @@ export function DialogueScreen() {
 
   const npcDef = tree ? contentCatalog.npcsById.get(tree.npcId) : null
 
-  function meetsCondition(cond: DialogueCondition): boolean {
-    switch (cond.type) {
-      case 'dayMin': return gameState.day >= (cond.value as number)
-      case 'dayMax': return gameState.day <= (cond.value as number)
-      case 'debtPaid': return gameState.debtPaid === (cond.value as boolean)
-      case 'minRenown': return gameState.playerCharacter.renown >= (cond.value as number)
-      case 'minNpcTrust': {
-        if (!cond.npcId) return true
-        const key = buildRelationshipKey('player', cond.npcId)
-        return (gameState.relationships[key]?.trust ?? 0) >= (cond.value as number)
-      }
-      case 'minNpcLoyalty': {
-        if (!cond.npcId) return true
-        const key = buildRelationshipKey('player', cond.npcId)
-        return (gameState.relationships[key]?.loyalty ?? 0) >= (cond.value as number)
-      }
-      default: return true
-    }
-  }
-
   function handleLeave() {
     dispatch(gameActions.endDialogue())
     navigate(-1)
   }
 
   function handleChoice(choice: DialogueChoice) {
-    if (choice.outcome) {
-      const { type, value, targetId } = choice.outcome
-      const npcId = targetId ?? tree!.npcId
-
-      if ((type === 'loyalty' || type === 'trust' || type === 'respect') && typeof value === 'number') {
-        dispatch(
-          gameActions.adjustRelationship({
-            fromId: 'player',
-            toId: npcId,
-            axis: type as 'loyalty' | 'trust' | 'respect',
-            delta: value,
-          }),
-        )
-      } else if (type === 'factionStanding' && typeof value === 'number' && targetId) {
-        dispatch(gameActions.adjustFactionStanding({ factionId: targetId, delta: value }))
-      } else if (type === 'mainQuestHint' && typeof value === 'string') {
-        dispatch(gameActions.recordMainQuestHint({ hint: value }))
-      } else if (type === 'activityLog' && typeof value === 'string') {
-        dispatch(gameActions.appendSystemLog({ message: value }))
-      }
-    }
-
+    dispatch(gameActions.selectDialogueChoice({ choiceId: choice.id }))
     if (choice.nextNodeId === null) {
-      dispatch(gameActions.endDialogue())
       navigate(-1)
-    } else {
-      dispatch(gameActions.advanceDialogue({ nodeId: choice.nextNodeId }))
     }
   }
 
@@ -89,7 +45,7 @@ export function DialogueScreen() {
   }
 
   const portraitId = tree.npcId.replace('npc-', '')
-  const visibleChoices = node.choices.filter((c) => !c.condition || meetsCondition(c.condition))
+  const visibleChoices = node.choices.filter((c) => isDialogueChoiceAvailable(gameState, tree.id, c))
   const isEndNode = visibleChoices.length === 0
 
   return (

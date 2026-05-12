@@ -401,6 +401,7 @@
   },
   "activeDialogueId": null,
   "activeDialogueNodeId": null,
+  "resolvedDialogueChoices": {},
   "house": {
     "rooms": [
       {

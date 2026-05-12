@@ -71,6 +71,7 @@ const baseState: GameState = {
   activeDialogueId: null,
   activeDialogueNodeId: null,
   visitedDialogueNodes: {},
+  resolvedDialogueChoices: {},
   house: {
     rooms: [
       { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false },

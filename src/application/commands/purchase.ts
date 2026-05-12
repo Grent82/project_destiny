@@ -1,20 +1,7 @@
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
-
-function addInventoryEntry(state: GameState, itemId: string): GameState['inventory'] {
-  const existingEntry = state.inventory.find((entry) => entry.itemId === itemId)
-
-  if (!existingEntry) {
-    return [...state.inventory, { itemId, quantity: 1 }]
-  }
-
-  return state.inventory.map((entry) =>
-    entry.itemId === itemId
-      ? { ...entry, quantity: entry.quantity + 1 }
-      : entry,
-  )
-}
+import { addInventoryEntry } from './inventory'
 
 export function purchaseItemFromShop(
   state: GameState,
@@ -40,6 +27,6 @@ export function purchaseItemFromShop(
   return appendActivityLogEntry({
     ...state,
     money: state.money - offer.price,
-    inventory: addInventoryEntry(state, itemId),
+    inventory: addInventoryEntry(state.inventory, itemId),
   }, 'economy', `Purchased ${offer.itemId} from ${shop.name} for ${offer.price} credits.`)
 }

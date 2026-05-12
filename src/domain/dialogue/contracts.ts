@@ -2,15 +2,25 @@ import { z } from 'zod'
 
 export const dialogueConditionSchema = z
   .object({
-    type: z.enum(['dayMin', 'dayMax', 'debtPaid', 'minRenown', 'minNpcTrust', 'minNpcLoyalty']),
-    value: z.union([z.number(), z.boolean()]),
+    type: z.enum([
+      'dayMin',
+      'dayMax',
+      'debtPaid',
+      'minRenown',
+      'minNpcTrust',
+      'minNpcLoyalty',
+      'mainQuestStage',
+      'choiceTaken',
+      'choiceNotTaken',
+    ]),
+    value: z.union([z.number(), z.boolean(), z.string()]),
     npcId: z.string().optional(),
   })
   .strict()
 
 export const dialogueOutcomeSchema = z
   .object({
-    type: z.enum(['loyalty', 'trust', 'respect', 'mainQuestHint', 'standing', 'questUnlock', 'item', 'factionStanding', 'activityLog']),
+    type: z.enum(['loyalty', 'trust', 'respect', 'mainQuestHint', 'questUnlock', 'item', 'factionStanding', 'activityLog']),
     value: z.union([z.number(), z.string()]),
     targetId: z.string().optional(),
   })

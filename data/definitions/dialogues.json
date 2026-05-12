@@ -109,6 +109,15 @@
             "id": "marion-choice-early-bristle",
             "label": "\"I know how to run a household.\"",
             "nextNodeId": "marion-node-early-bristle-b"
+          },
+          {
+            "id": "marion-choice-early-orren",
+            "label": "\"Who kept the original accounts before all this?\"",
+            "nextNodeId": "marion-node-orren-hook-b",
+            "condition": {
+              "type": "choiceNotTaken",
+              "value": "marion-choice-orren-act"
+            }
           }
         ]
       },
@@ -123,6 +132,27 @@
         "npcId": "npc-marion-vale",
         "text": "She holds your gaze for a moment. Then she closes the ledger and sets it back in front of herself. \"As you say.\" She does not offer the numbers again.",
         "choices": []
+      },
+      {
+        "id": "marion-node-orren-hook-b",
+        "npcId": "npc-marion-vale",
+        "text": "Marion's expression shutters for a moment. \"Orren Wex. He kept the original debt books. The Compact took him six weeks ago and buried him in the Hollows under quiet custody.\" She lowers her voice. \"If anyone can prove the tally was bent before it reached your name, it's Orren.\"",
+        "choices": [
+          {
+            "id": "marion-choice-orren-act",
+            "label": "\"Then I need to get to him before they make him disappear.\"",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-orren-wex-rescue"
+            }
+          },
+          {
+            "id": "marion-choice-orren-wait",
+            "label": "\"Not yet. I need more room to move first.\"",
+            "nextNodeId": null
+          }
+        ]
       },
       {
         "id": "marion-node-debt-crisis-intro",
@@ -485,7 +515,11 @@
           {
             "id": "wren-choice-ask",
             "label": "What do you know about the Pale Sisters?",
-            "nextNodeId": "wren-node-pale"
+            "nextNodeId": "wren-node-pale",
+            "condition": {
+              "type": "choiceNotTaken",
+              "value": "wren-choice-thanks"
+            }
           },
           {
             "id": "wren-choice-nothing",
@@ -504,8 +538,8 @@
             "label": "I owe you.",
             "nextNodeId": null,
             "outcome": {
-              "type": "mainQuestHint",
-              "value": "The Pale Sisters move assets through the Harbor \u2014 a lead worth following."
+              "type": "item",
+              "value": "item-papers-false-citizen"
             }
           }
         ]

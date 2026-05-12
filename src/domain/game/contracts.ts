@@ -209,6 +209,7 @@ export const gameStateSchema = z
     activeDialogueId: z.string().nullable().default(null),
     activeDialogueNodeId: z.string().nullable().default(null),
     visitedDialogueNodes: z.record(z.string(), z.string()).default({}),
+    resolvedDialogueChoices: z.record(z.string(), z.array(z.string())).default({}),
     house: houseStateSchema.default(() => ({
       rooms: [
         { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false },
