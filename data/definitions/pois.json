@@ -318,12 +318,10 @@
     "districtId": "district-the-pale",
     "name": "Wren Safe House",
     "type": "residence",
-    "description": "A Tallow Ring safe house. Someone matching Tessaly Ash's description was seen entering here.",
+    "description": "A Tallow Ring safe house where Tessaly Ash hides under borrowed names and keeps one eye on the Pale.",
     "factionId": "faction-tallow-ring",
-    "actions": [
-      "hire"
-    ],
-    "npcId": "npc-sister-vael"
+    "actions": [],
+    "npcId": "npc-tessaly-ash"
   },
   {
     "id": "poi-pale-the-pale-court",

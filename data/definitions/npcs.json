@@ -1368,6 +1368,7 @@
   {
     "id": "npc-tessaly-ash",
     "name": "Tessaly Ash",
+    "dialogueId": "dialogue-tessaly-ash",
     "npcType": "story",
     "districtId": "district-the-pale",
     "origin": "The Pale",

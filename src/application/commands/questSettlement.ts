@@ -82,6 +82,21 @@ function applyMiraRescueResolution(state: GameState, questId: string) {
   )
 }
 
+function applyOrrenRescueResolution(state: GameState, questId: string) {
+  if (questId !== 'quest-orren-wex-rescue') return
+
+  state.mainQuest.stage = 'lead-found'
+  state.mainQuest.lastClue =
+    "Orren points you toward Tessaly Ash at the Wren Safe House in the Pale. She knows where Mira was moved and why the Court still keeps her breathing."
+
+  pushActivityLog(
+    state,
+    'system',
+    '◆ Orren names Tessaly Ash as the next living link in Mira’s trail. The Wren Safe House in the Pale is now your next stop.',
+    `orren-lead-${questId}`,
+  )
+}
+
 export function settleQuestSuccess(state: GameState, questId: string, options: QuestSuccessOptions = {}) {
   const settlementTarget = findQuestSettlementTarget(state, questId)
   if (!settlementTarget) return false
@@ -241,6 +256,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   )
 
   applyMiraRescueResolution(state, questId)
+  applyOrrenRescueResolution(state, questId)
   return true
 }
 

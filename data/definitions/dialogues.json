@@ -721,5 +721,79 @@
         ]
       }
     ]
+  },
+  {
+    "id": "dialogue-tessaly-ash",
+    "npcId": "npc-tessaly-ash",
+    "openingNodeId": "tessaly-node-1",
+    "nodes": [
+      {
+        "id": "tessaly-node-1",
+        "npcId": "npc-tessaly-ash",
+        "text": "The woman in the safe house studies you before she speaks. \"Marion was right,\" she says. \"You still come looking like the house is on fire, even when you're trying to play lord.\" She lets the old name hang between you. Tessaly Ash. Alive. Waiting.",
+        "choices": [
+          {
+            "id": "tessaly-choice-mira",
+            "label": "\"Orren said you know where Mira was taken.\"",
+            "nextNodeId": "tessaly-node-mira-a",
+            "condition": {
+              "type": "mainQuestStage",
+              "value": "lead-found"
+            }
+          },
+          {
+            "id": "tessaly-choice-letter",
+            "label": "Show her Mira's sealed envelope.",
+            "nextNodeId": "tessaly-node-letter-a",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-letter-mira-sealed"
+            }
+          },
+          {
+            "id": "tessaly-choice-leave",
+            "label": "\"Not today.\"",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "tessaly-node-mira-a",
+        "npcId": "npc-tessaly-ash",
+        "text": "\"Taken isn't the word,\" Tessaly says. \"Moved, hidden, watched, and nearly traded. The Court keeps her in the old tannery on the Pale's eastern edge. If you go, go hard and go now. They haven't decided what she's worth yet.\"",
+        "choices": [
+          {
+            "id": "tessaly-choice-mira-confirm",
+            "label": "\"Then put the lead in my hand.\"",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-mira-rescue"
+            }
+          }
+        ]
+      },
+      {
+        "id": "tessaly-node-letter-a",
+        "npcId": "npc-tessaly-ash",
+        "text": "Tessaly does not touch the envelope at first. \"She kept that?\" The question is quieter than the room. After a moment she exhales. \"Then she was trying to leave you a trail. Good. That means she thought you'd still be alive to follow it.\"",
+        "choices": [
+          {
+            "id": "tessaly-choice-letter-answer",
+            "label": "\"I need the rest of the trail.\"",
+            "nextNodeId": "tessaly-node-mira-a",
+            "condition": {
+              "type": "mainQuestStage",
+              "value": "lead-found"
+            }
+          },
+          {
+            "id": "tessaly-choice-letter-wait",
+            "label": "\"Then I'll come back when I can move on it.\"",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -175,7 +175,7 @@ describe('endDay', () => {
     vi.restoreAllMocks()
   })
 
-  it('surfaces Mira rescue work as a lead without auto-advancing the story stage', () => {
+  it('nudges the player back toward Tessaly without passively creating Mira rescue work', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 11,
@@ -189,8 +189,8 @@ describe('endDay', () => {
     const next = endDay(state)
 
     expect(next.mainQuest.stage).toBe('lead-found')
-    expect(next.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue')).toBe(true)
-    expect(next.mainQuest.lastClue).toContain('Tessaly Ash')
+    expect(next.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue')).toBe(false)
+    expect(next.activityLog.some((entry) => entry.message.includes('Tessaly Ash'))).toBe(true)
   })
 
   it('does not auto-rescue Mira from passive politics or elapsed days', () => {

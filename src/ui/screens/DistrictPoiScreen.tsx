@@ -178,7 +178,7 @@ export function DistrictPoiScreen() {
                 if (!poi.dialogueId) {
                   return
                 }
-                if (npc) {
+                if (npc && !npc.dialogueId) {
                   dispatch(gameActions.discoverQuestLeadsFromNpc({
                     districtId: district.id,
                     npcId: npc.id,

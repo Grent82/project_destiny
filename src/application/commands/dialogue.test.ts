@@ -6,6 +6,7 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { contentCatalog } from '../content/contentCatalog'
 import { gameStateSchema } from '../../domain'
 import { dialogueTreeSchema, type DialogueChoice } from '../../domain/dialogue/contracts'
+import { createQuestRuntime } from '../../domain/quests/contracts'
 import { isDialogueChoiceAvailable } from './dialogue'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
@@ -16,6 +17,14 @@ function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
 afterEach(() => {
   contentCatalog.dialoguesById.delete('dialogue-test-faction-standing')
 })
+
+function makeActiveQuest(questId: string) {
+  const template = contentCatalog.questsById.get(questId)
+  if (!template) {
+    throw new Error(`Unknown quest template: ${questId}`)
+  }
+  return createQuestRuntime(template, 1)
+}
 
 describe('dialogue conditions', () => {
   it('supports story-stage and choice-memory gating', () => {
@@ -141,5 +150,28 @@ describe('dialogue consequence resolution', () => {
     const state = store.getState().game
     expect(state.factionStandings['faction-civic-compact']).toBe(9)
     expect(state.activityLog[0]?.message).toContain('Standing shifted with')
+  })
+
+  it('turns Orren into an explicit ladder beat that points to Tessaly and Mira', () => {
+    const store = makeStore({
+      availableQuestLeads: [],
+      activeQuests: [makeActiveQuest('quest-orren-wex-rescue')],
+      completedQuestIds: [],
+      mainQuest: { stage: 'searching', lastClue: '' },
+    })
+
+    store.dispatch(gameActions.completeQuest({ questId: 'quest-orren-wex-rescue' }))
+
+    let state = store.getState().game
+    expect(state.mainQuest.stage).toBe('lead-found')
+    expect(state.mainQuest.lastClue).toContain('Tessaly Ash')
+
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-tessaly-ash', nodeId: 'tessaly-node-1' }))
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'tessaly-choice-mira' }))
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'tessaly-choice-mira-confirm' }))
+
+    state = store.getState().game
+    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue')).toBe(true)
+    expect(state.activityLog[0]?.message).toContain('New lead discovered: The Pale Cage.')
   })
 })
