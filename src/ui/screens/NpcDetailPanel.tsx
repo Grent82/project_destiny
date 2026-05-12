@@ -136,9 +136,15 @@ function getDominantTraitSentences(traits: Record<string, number>): string[] {
 function CharacterSection({ detail }: { detail: NpcDetail }) {
   if (!detail.background) return null
   const traitSentences = getDominantTraitSentences(detail.traits)
+  const motivationLine = detail.motivation?.publicGoal ?? detail.motivation?.privateNeed
 
   return (
     <div style={{ padding: '0.75rem 0 0.75rem', borderBottom: '1px solid var(--border)' }}>
+      {(detail.ageBand || detail.sex) && (
+        <p style={{ fontSize: 'var(--size-sm)', color: 'var(--text-muted)', margin: '0 0 0.35rem', textTransform: 'capitalize' }}>
+          {[detail.sex, detail.ageBand].filter(Boolean).join(' · ')}
+        </p>
+      )}
       <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.35rem' }}>
         {detail.background}
       </p>
@@ -147,10 +153,17 @@ function CharacterSection({ detail }: { detail: NpcDetail }) {
           {traitSentences.join(' ')}
         </p>
       )}
-      {detail.motivation && (
+      {motivationLine && (
         <p style={{ fontSize: 'var(--size-sm)', fontStyle: 'italic', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
-          — {detail.motivation}
+          — {motivationLine}
         </p>
+      )}
+      {detail.quirks.length > 0 && (
+        <ul style={{ margin: '0.5rem 0 0', padding: '0 0 0 1rem', fontSize: 'var(--size-sm)', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+          {detail.quirks.map((q) => (
+            <li key={q}>{q}</li>
+          ))}
+        </ul>
       )}
     </div>
   )

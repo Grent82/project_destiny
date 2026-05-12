@@ -93,7 +93,9 @@ export function MissionPrepScreen() {
                 <span className="threat-panel__faction">{threatNpc.factionName}</span>
               )}
               {threatNpc.motivation && (
-                <p className="threat-panel__motivation">"{threatNpc.motivation}"</p>
+                <p className="threat-panel__motivation">
+                  "{threatNpc.motivation.immediatePressure ?? threatNpc.motivation.publicGoal ?? ''}"
+                </p>
               )}
             </div>
           </div>

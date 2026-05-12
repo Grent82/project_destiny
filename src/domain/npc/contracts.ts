@@ -106,6 +106,15 @@ export const factionRelationshipSchema = z
   })
   .strict()
 
+export const npcAgeBandSchema = z.enum(['young', 'adult', 'middle', 'elder'])
+
+export const npcMotivationSchema = z.object({
+  publicGoal: z.string().optional(),
+  privateNeed: z.string().optional(),
+  immediatePressure: z.string().optional(),
+  lineTheyWontCross: z.string().optional(),
+})
+
 export const npcDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -122,7 +131,11 @@ export const npcDefinitionSchema = z
     startingSkills: skillsSchema,
     startingTraits: traitsSchema,
     allowedTitleIds: z.array(entityIdSchema).default([]),
-    motivation: z.string().optional(),
+    motivation: npcMotivationSchema.optional(),
+    ageBand: npcAgeBandSchema.optional(),
+    sex: z.string().optional(),
+    appearanceTags: z.array(z.string()).optional(),
+    quirks: z.array(z.string()).optional(),
     dialogueId: entityIdSchema.optional(),
   })
   .strict()
@@ -147,8 +160,10 @@ export const npcRuntimeStateSchema = z
   .strict()
 
 export type Attributes = z.infer<typeof attributesSchema>
+export type NpcAgeBand = z.infer<typeof npcAgeBandSchema>
 export type NpcAssignment = z.infer<typeof npcAssignmentSchema>
 export type NpcDefinition = z.infer<typeof npcDefinitionSchema>
+export type NpcMotivation = z.infer<typeof npcMotivationSchema>
 export type NpcType = z.infer<typeof npcDefinitionSchema>['npcType']
 export type NpcRuntimeState = z.infer<typeof npcRuntimeStateSchema>
 export type NpcStatus = z.infer<typeof npcStatusSchema>

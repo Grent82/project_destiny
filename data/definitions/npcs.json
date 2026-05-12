@@ -46,7 +46,21 @@
       "title-quartermaster",
       "title-steward"
     ],
-    "motivation": "To rebuild something worth serving. She does not say this aloud."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "ink-stained fingers",
+      "worn harbor coat",
+      "steady hands"
+    ],
+    "quirks": [
+      "catalogues every exit on entering a room",
+      "never discusses what came before the docks"
+    ],
+    "motivation": {
+      "publicGoal": "To rebuild something worth serving.",
+      "privateNeed": "To be needed in a way that does not shame her."
+    }
   },
   {
     "id": "npc-ida-rhys",
@@ -95,13 +109,27 @@
       "title-chief-engineer",
       "title-trainer"
     ],
-    "motivation": "Coin, at least for now. Something else, maybe. She has not decided."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "burn scars on both forearms",
+      "oil-dark knuckles",
+      "heavy work boots"
+    ],
+    "quirks": [
+      "taps pipes and walls before trusting a structure",
+      "keeps a spare bolt in her left boot"
+    ],
+    "motivation": {
+      "publicGoal": "Enough coin to leave on her own terms.",
+      "privateNeed": "To know what she actually wants."
+    }
   },
   {
     "id": "npc-verek-holst",
     "name": "Verek Holst",
     "origin": "Civic Quarter",
-    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce \u2014 which makes him reliable and irritating in equal measure.",
+    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce — which makes him reliable and irritating in equal measure.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-civic-compact",
@@ -144,13 +172,28 @@
       "title-quartermaster",
       "title-trainer"
     ],
-    "motivation": "To enforce something that holds. The law was convenient once. He is less certain now."
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "broken nose reset badly",
+      "regulation posture even at rest",
+      "scar along the jaw"
+    ],
+    "quirks": [
+      "recites statutes under his breath when nervous",
+      "will not sit with his back to a door"
+    ],
+    "motivation": {
+      "publicGoal": "To maintain order by force of will if not law.",
+      "privateNeed": "To believe he is still on the right side of something.",
+      "immediatePressure": "His old precinct is quietly purging former officers."
+    }
   },
   {
     "id": "npc-sable-wrent",
     "name": "Sable Wrent",
     "origin": "Ironworks",
-    "background": "Lost two fingers on a wall-repair crew eight years ago \u2014 League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
+    "background": "Lost two fingers on a wall-repair crew eight years ago — League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -192,13 +235,28 @@
     "allowedTitleIds": [
       "title-chief-engineer"
     ],
-    "motivation": "To make the League pay what it owes. She has not decided what currency yet."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "foundry calluses",
+      "short-clipped nails",
+      "a burn scar at her collarbone she covers deliberately"
+    ],
+    "quirks": [
+      "keeps a tally of every favour given and owed — never writes it down",
+      "will not say the League's name aloud"
+    ],
+    "motivation": {
+      "publicGoal": "To call in the debt the League owes her.",
+      "privateNeed": "Reparation in a form she can live with.",
+      "immediatePressure": "Someone is still looking for what she took when she left."
+    }
   },
   {
     "id": "npc-aldric-vane",
     "name": "Aldric Vane",
     "origin": "Gilded Heights",
-    "background": "Second son of a minor Court house that no longer exists \u2014 lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
+    "background": "Second son of a minor Court house that no longer exists — lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": null,
@@ -241,7 +299,22 @@
       "title-steward",
       "title-quartermaster"
     ],
-    "motivation": "To recover the name, if not the house. He will settle for one if he cannot have both."
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "old noble bearing, unpolished",
+      "faded ring mark where a signet once sat",
+      "careful posture"
+    ],
+    "quirks": [
+      "addresses everyone by rank or title even in informal settings",
+      "drinks only water since the fall"
+    ],
+    "motivation": {
+      "publicGoal": "To restore House Vane to a station worth naming.",
+      "privateNeed": "To stop being the man who let it fall.",
+      "lineTheyWontCross": "Selling the family crest or serving those who destroyed it."
+    }
   },
   {
     "id": "npc-dara-slink",
@@ -289,7 +362,21 @@
     "allowedTitleIds": [
       "title-quartermaster"
     ],
-    "motivation": "To keep moving. The packages, the routes, the contacts \u2014 these are just the mechanism."
+    "ageBand": "young",
+    "sex": "woman",
+    "appearanceTags": [
+      "courier's pack at all times",
+      "constantly scanning faces",
+      "quick hands"
+    ],
+    "quirks": [
+      "memorises route layouts before entering any district",
+      "counts exits before unpacking"
+    ],
+    "motivation": {
+      "publicGoal": "Safe passage and an ongoing commission.",
+      "privateNeed": "To never be trapped in one place long enough to be found."
+    }
   },
   {
     "id": "npc-oswin-farr",
@@ -338,7 +425,22 @@
       "title-steward",
       "title-medic"
     ],
-    "motivation": "To see the Warrens fed without permission from anyone. He is still mapping the logistics."
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "broad build",
+      "flour-dust on everything",
+      "a voice built for crowds"
+    ],
+    "quirks": [
+      "mentally prices every meal he sees",
+      "keeps emergency rations in his coat"
+    ],
+    "motivation": {
+      "publicGoal": "Food security for the Warrens, independent of civic permission.",
+      "privateNeed": "To believe collective effort can still accomplish something.",
+      "immediatePressure": "Someone is undercutting his supply arrangements."
+    }
   },
   {
     "id": "npc-cress-aldmoor",
@@ -386,13 +488,28 @@
     "allowedTitleIds": [
       "title-medic"
     ],
-    "motivation": "To practice medicine without becoming the physician she left behind. It is harder than it sounds."
+    "ageBand": "middle",
+    "sex": "woman",
+    "appearanceTags": [
+      "calloused hands from fieldwork",
+      "surgical economy of movement",
+      "a brace on her left wrist"
+    ],
+    "quirks": [
+      "checks pulse on wrists without thinking when someone sits close",
+      "never loses count of doses"
+    ],
+    "motivation": {
+      "publicGoal": "To practice medicine on her own terms.",
+      "privateNeed": "To believe she has not become what drove her out.",
+      "lineTheyWontCross": "Treating a patient she knows will be sent back to die."
+    }
   },
   {
     "id": "npc-tav",
     "name": "Tav",
     "origin": "The Warrens",
-    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract \u2014 limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
+    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract — limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": "faction-restored",
@@ -435,13 +552,28 @@
       "title-trainer",
       "title-quartermaster"
     ],
-    "motivation": "To never be owned again. He has not decided what comes after that."
+    "ageBand": "young",
+    "sex": "man",
+    "appearanceTags": [
+      "brand scar on the left forearm, partially obscured",
+      "deliberate stillness",
+      "watchful eyes"
+    ],
+    "quirks": [
+      "reads every document he is asked to sign, takes as long as needed",
+      "will not stand behind anyone"
+    ],
+    "motivation": {
+      "publicGoal": "Autonomy above all else.",
+      "privateNeed": "A reason to stay once he has it.",
+      "lineTheyWontCross": "Any arrangement that resembles ownership."
+    }
   },
   {
     "id": "npc-maret-sunne",
     "name": "Maret Sunne",
     "origin": "Civic Quarter",
-    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt \u2014 she is precise about the difference between what the rules say and what actually happens.",
+    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt — she is precise about the difference between what the rules say and what actually happens.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -483,13 +615,27 @@
     "allowedTitleIds": [
       "title-steward"
     ],
-    "motivation": "To ensure the record is complete and accurate. What others do with it afterward is their own concern."
+    "ageBand": "middle",
+    "sex": "woman",
+    "appearanceTags": [
+      "ink-stained fingers",
+      "a worn satchel of ledgers",
+      "precise handwriting posture"
+    ],
+    "quirks": [
+      "corrects spoken errors in documents even when not asked",
+      "keeps a personal log she has shown no one"
+    ],
+    "motivation": {
+      "publicGoal": "An accurate and complete record of events.",
+      "privateNeed": "To be believed when it matters."
+    }
   },
   {
     "id": "npc-rutha-kael",
     "name": "Rutha Kael",
     "origin": "Thornwall Approach",
-    "background": "Survived the Thornwall Incident \u2014 the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
+    "background": "Survived the Thornwall Incident — the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": null,
@@ -532,13 +678,27 @@
       "title-trainer",
       "title-quartermaster"
     ],
-    "motivation": "To choose employers more carefully next time. She is still refining the criteria."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "deliberate military posture",
+      "short hair kept tight",
+      "eyes that count what is in a room"
+    ],
+    "quirks": [
+      "vets employers with three questions before accepting any offer",
+      "keeps a kill list in a code she has not shared"
+    ],
+    "motivation": {
+      "publicGoal": "A contract that does not cost more than it pays.",
+      "privateNeed": "To know she will not make the same mistake twice."
+    }
   },
   {
     "id": "npc-lirien-ashcroft",
     "name": "Lirien Ashcroft",
     "origin": "Gilded Heights",
-    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago \u2014 her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
+    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago — her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -580,7 +740,22 @@
     "allowedTitleIds": [
       "title-steward"
     ],
-    "motivation": "To bring her father home and settle her house's debts. The Court can wait."
+    "ageBand": "young",
+    "sex": "woman",
+    "appearanceTags": [
+      "Pale Court training in her posture",
+      "a house signet worn inside the cuff",
+      "youth and iron discipline"
+    ],
+    "quirks": [
+      "marks the day on her wrist with ink each morning",
+      "will not discuss her family in groups"
+    ],
+    "motivation": {
+      "publicGoal": "To locate her father and clear the Ashcroft family debts.",
+      "privateNeed": "To be taken seriously before she runs out of time.",
+      "immediatePressure": "The Court's patience is not indefinite."
+    }
   },
   {
     "id": "npc-mira",
@@ -627,7 +802,20 @@
       "zeal": 0
     },
     "allowedTitleIds": [],
-    "motivation": "Unknown. Rumoured to be involved with the Pale Court \u2014 or captured by them."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "deliberately difficult to describe",
+      "forgettable clothes",
+      "unsettling stillness when observed"
+    ],
+    "quirks": [
+      "never answers a direct question directly"
+    ],
+    "motivation": {
+      "publicGoal": "Unknown.",
+      "immediatePressure": "Captivity, or something that looks like it."
+    }
   },
   {
     "id": "npc-garet-doyle",
@@ -676,8 +864,23 @@
       "zeal": 15
     },
     "allowedTitleIds": [],
-    "motivation": "To keep The Ashen Cup standing. The ledger is insurance. The drinks are cover.",
-    "dialogueId": "dialogue-garet-doyle"
+    "dialogueId": "dialogue-garet-doyle",
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "barkeep's build",
+      "a clean apron over everything",
+      "careful eyes"
+    ],
+    "quirks": [
+      "memorises what everyone orders and cross-references it against mood",
+      "keeps a locked box behind the bar he has not explained"
+    ],
+    "motivation": {
+      "publicGoal": "To keep The Ashen Cup profitable and protected.",
+      "privateNeed": "The ledger guarantees his survival. He knows it.",
+      "lineTheyWontCross": "Anything that burns his establishment."
+    }
   },
   {
     "id": "npc-sister-vael",
@@ -726,15 +929,29 @@
       "zeal": 30
     },
     "allowedTitleIds": [],
-    "motivation": "To know things before they become crises. She does not consider this surveillance.",
-    "dialogueId": "dialogue-sister-vael"
+    "dialogueId": "dialogue-sister-vael",
+    "ageBand": "elder",
+    "sex": "woman",
+    "appearanceTags": [
+      "restored robes kept impeccably",
+      "a carved bone token she fingers when thinking",
+      "silence that lands like weight"
+    ],
+    "quirks": [
+      "leaves conversations exactly when she has what she came for",
+      "never prays where she can be heard"
+    ],
+    "motivation": {
+      "publicGoal": "Foreknowledge, for the protection of the faithful.",
+      "privateNeed": "To never again be caught without warning."
+    }
   },
   {
     "id": "npc-torvald-messe",
     "name": "Torvald Messe",
     "npcType": "world",
     "districtId": "district-harbor",
-    "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
+    "description": "Guild registrar. Officious by nature, he can unlock contract access — for a price.",
     "origin": "Harbor Ward",
     "background": "Torvald has processed guild registrations for the Compact for fifteen years. He knows every loophole and enjoys enforcing the ones that hurt.",
     "rarity": "common",
@@ -776,7 +993,22 @@
       "zeal": 35
     },
     "allowedTitleIds": [],
-    "motivation": "To ensure the process is followed. He is aware this makes him useful to very different people."
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "civil service grey",
+      "a pocket watch he checks compulsively",
+      "ink on the right hand only"
+    ],
+    "quirks": [
+      "quotes the relevant statute before any decision",
+      "keeps three copies of every filed document"
+    ],
+    "motivation": {
+      "publicGoal": "Procedural correctness in all civic matters.",
+      "privateNeed": "To remain indispensable without choosing a side.",
+      "lineTheyWontCross": "Direct falsification of official record."
+    }
   },
   {
     "id": "npc-lira-ashcroft",
@@ -785,7 +1017,7 @@
     "districtId": "district-harbor",
     "description": "Black market fence operating from behind a legitimate spice stall.",
     "origin": "Harbor Ward",
-    "background": "Lira\u2019s spice stall smells of cardamom and old money. What moves through the back room has no smell at all.",
+    "background": "Lira’s spice stall smells of cardamom and old money. What moves through the back room has no smell at all.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": null,
@@ -825,8 +1057,24 @@
       "zeal": 20
     },
     "allowedTitleIds": [],
-    "motivation": "To remain exactly where she is, doing exactly what she does. The question is who lets her.",
-    "dialogueId": "dialogue-lira-ashcroft"
+    "dialogueId": "dialogue-lira-ashcroft",
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "Ashcroft bearing without the polish",
+      "a calm that looks practiced",
+      "careful with words"
+    ],
+    "quirks": [
+      "never raises her voice, even when she should",
+      "has not visited the old district in years and does not explain why"
+    ],
+    "motivation": {
+      "publicGoal": "Stability. The life she has built.",
+      "privateNeed": "Permission to stop being responsible for the family.",
+      "immediatePressure": "Lirien's return reopens everything she had closed.",
+      "lineTheyWontCross": "Leaving the city."
+    }
   },
   {
     "id": "npc-bog",
@@ -875,8 +1123,23 @@
       "zeal": 30
     },
     "allowedTitleIds": [],
-    "motivation": "To keep the docks running. He has opinions about who deserves to benefit from that.",
-    "dialogueId": "dialogue-bog"
+    "dialogueId": "dialogue-bog",
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "dock worker's build, hardened",
+      "a length of rope worn as a belt",
+      "a voice that carries over water"
+    ],
+    "quirks": [
+      "knows every dock worker by name and rotation",
+      "gives a firm handshake to assess intentions"
+    ],
+    "motivation": {
+      "publicGoal": "Functional docks, fair distribution of dock work.",
+      "privateNeed": "To be acknowledged as someone who makes things move.",
+      "lineTheyWontCross": "Allowing work to be cut from workers without contest."
+    }
   },
   {
     "id": "npc-fenwick-pale",
@@ -925,7 +1188,21 @@
       "zeal": 15
     },
     "allowedTitleIds": [],
-    "motivation": "To keep the routes open. He will not say for whom, only that the list is longer than it looks."
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "pale trade-district clothes",
+      "a ledger that never leaves his person",
+      "quiet authority in tight spaces"
+    ],
+    "quirks": [
+      "speaks in past tense when discussing arrangements he is closing",
+      "names ships he has not worked with recently as a memory test"
+    ],
+    "motivation": {
+      "publicGoal": "Open trade routes with minimal scrutiny.",
+      "privateNeed": "His client list is longer than his official business suggests."
+    }
   },
   {
     "id": "npc-the-wren",
@@ -934,7 +1211,7 @@
     "districtId": "district-the-warrens",
     "description": "Nameless information broker. Deals only in secrets.",
     "origin": "Unknown",
-    "background": "No one knows The Wren\u2019s real name, face, or history. Only that they know yours.",
+    "background": "No one knows The Wren’s real name, face, or history. Only that they know yours.",
     "rarity": "rare",
     "status": "criminal",
     "factionAffinityId": null,
@@ -974,8 +1251,22 @@
       "zeal": 20
     },
     "allowedTitleIds": [],
-    "motivation": "Unknown. This is the point.",
-    "dialogueId": "dialogue-the-wren"
+    "dialogueId": "dialogue-the-wren",
+    "ageBand": "adult",
+    "sex": "person",
+    "appearanceTags": [
+      "deliberately unremarkable appearance",
+      "accent shifts by district",
+      "no identifiable marks"
+    ],
+    "quirks": [
+      "has never used the same name twice in one place",
+      "answers questions about their past with questions"
+    ],
+    "motivation": {
+      "publicGoal": "Unknown. The ambiguity is functional.",
+      "privateNeed": "Unknown. Even to themselves, perhaps."
+    }
   },
   {
     "id": "npc-osanna-cray",
@@ -1024,7 +1315,22 @@
       "zeal": 20
     },
     "allowedTitleIds": [],
-    "motivation": "To stay far enough from the Court that what she knows remains a shield and not a liability."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "Pale Court posture, deliberately softened",
+      "careful diction",
+      "a stillness that reads as trained"
+    ],
+    "quirks": [
+      "never discusses the Court directly, always obliquely",
+      "has memorised escape routes in every district she frequents"
+    ],
+    "motivation": {
+      "publicGoal": "Distance from the Pale Court and what she witnessed.",
+      "privateNeed": "To know whether what she saw was exceptional or typical.",
+      "lineTheyWontCross": "Returning to the Court's direct service."
+    }
   },
   {
     "id": "npc-cutter",
@@ -1073,7 +1379,21 @@
       "zeal": 30
     },
     "allowedTitleIds": [],
-    "motivation": "To find the thing that makes it worth everything that came before. He is still looking."
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "blade calluses on both hands",
+      "old scars from multiple conflicts",
+      "moves quietly for his size"
+    ],
+    "quirks": [
+      "sharpens his blade at the same time each night, no exceptions",
+      "never starts a fight but always prepares to finish one"
+    ],
+    "motivation": {
+      "publicGoal": "Something worth the cost of his past.",
+      "privateNeed": "To stop accumulating regrets before the cost gets higher."
+    }
   },
   {
     "id": "npc-old-maret",
@@ -1122,15 +1442,29 @@
       "zeal": 25
     },
     "allowedTitleIds": [],
-    "motivation": "To outlast it. She has outlasted everything else.",
-    "dialogueId": "dialogue-old-maret"
+    "dialogueId": "dialogue-old-maret",
+    "ageBand": "elder",
+    "sex": "woman",
+    "appearanceTags": [
+      "oldest woman in any room",
+      "layers of worn cloth that have outlasted their owners",
+      "eyes that have stopped being surprised"
+    ],
+    "quirks": [
+      "speaks of dead people in the present tense",
+      "knows the price of everything in the city from memory"
+    ],
+    "motivation": {
+      "publicGoal": "Survival. Continuation. Another season.",
+      "privateNeed": "To not be the last one standing."
+    }
   },
   {
     "id": "npc-enemy-harlen-voss",
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "A Collectors enforcer who has spent fifteen years ensuring debts are paid \u2014 or that the consequences of not paying them are instructive. He does not distinguish between the debt and the person who owes it. Both are property until settled.",
+    "background": "A Collectors enforcer who has spent fifteen years ensuring debts are paid — or that the consequences of not paying them are instructive. He does not distinguish between the debt and the person who owes it. Both are property until settled.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -1170,14 +1504,28 @@
       "zeal": 30
     },
     "allowedTitleIds": [],
-    "motivation": "Debt is sacred. He takes it personally."
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "collector's build",
+      "an expensive watch on a cheap chain",
+      "a ledger in his coat"
+    ],
+    "quirks": [
+      "names the principal before the interest",
+      "never raises his voice when threatening"
+    ],
+    "motivation": {
+      "publicGoal": "Collection. Every mark, with interest.",
+      "privateNeed": "To be respected, not just feared."
+    }
   },
   {
     "id": "npc-enemy-the-dockmaster",
     "name": "The Dockmaster",
     "npcType": "enemy",
     "origin": "Harbor Ward",
-    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut \u2014 in coin, in silence, or in favors owed. He considers this fair market rate.",
+    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut — in coin, in silence, or in favors owed. He considers this fair market rate.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": "faction-civic-compact",
@@ -1217,14 +1565,28 @@
       "zeal": 28
     },
     "allowedTitleIds": [],
-    "motivation": "Controls the morning work boards. Protecting his cut."
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "dock official's badge worn prominently",
+      "ink-stained work board",
+      "physical size used to settle arguments"
+    ],
+    "quirks": [
+      "arrives before anyone else each morning",
+      "writes every assignment twice"
+    ],
+    "motivation": {
+      "publicGoal": "Control of the dock work assignments.",
+      "privateNeed": "His cut stays untouched."
+    }
   },
   {
     "id": "npc-enemy-lady-sorn",
     "name": "Lady Sorn",
     "npcType": "enemy",
     "origin": "Gilded Heights",
-    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
+    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest — quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -1264,7 +1626,22 @@
       "zeal": 22
     },
     "allowedTitleIds": [],
-    "motivation": "Information is currency. She collects both."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "Court dress worn outside court settings",
+      "perfect recall of every introduction",
+      "never in the same seat twice"
+    ],
+    "quirks": [
+      "asks questions she already knows the answer to",
+      "remembers the names of everyone's dead"
+    ],
+    "motivation": {
+      "publicGoal": "An ever-growing intelligence network.",
+      "privateNeed": "To hold leverage over every significant faction.",
+      "lineTheyWontCross": "Losing information she once possessed."
+    }
   },
   {
     "id": "npc-dalen-morke",
@@ -1312,7 +1689,21 @@
       "zeal": 22
     },
     "allowedTitleIds": [],
-    "motivation": "He told himself it was survival. Now he is not sure what it is."
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "ordinary civic dress",
+      "a nervous habit of adjusting his collar",
+      "the careful bearing of someone performing calm"
+    ],
+    "quirks": [
+      "apologises before delivering bad news",
+      "has not slept well in years"
+    ],
+    "motivation": {
+      "publicGoal": "Maintaining his arrangement.",
+      "privateNeed": "To decide whether he is the villain of his own story."
+    }
   },
   {
     "id": "npc-orren-wex",
@@ -1363,7 +1754,21 @@
       "title-quartermaster",
       "title-steward"
     ],
-    "motivation": "The books balance. The house does not. He keeps the ledger out of habit."
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "accountant's build",
+      "clean ink fingers",
+      "a ledger always within reach"
+    ],
+    "quirks": [
+      "calculates the cost of every conversation he enters",
+      "has not eaten a meal that was not accounted for in years"
+    ],
+    "motivation": {
+      "publicGoal": "Ledger balance. The habit of accounting.",
+      "privateNeed": "Something to justify the precision."
+    }
   },
   {
     "id": "npc-tessaly-ash",
@@ -1372,7 +1777,7 @@
     "npcType": "story",
     "districtId": "district-the-pale",
     "origin": "The Pale",
-    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly \u2014 but not entirely freely.",
+    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly — but not entirely freely.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-tallow-ring",
@@ -1412,7 +1817,22 @@
       "zeal": 36
     },
     "allowedTitleIds": [],
-    "motivation": "She let them believe she was dead. It has served her well so far."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "deliberately forgettable appearance",
+      "no jewellery, no identifying marks",
+      "a face that changes by company"
+    ],
+    "quirks": [
+      "never sleeps in the same location twice",
+      "carries identification for three different people"
+    ],
+    "motivation": {
+      "publicGoal": "To remain dead to those who would act on her being alive.",
+      "privateNeed": "To know whether the cause is still worth the concealment.",
+      "lineTheyWontCross": "Being found before she is ready."
+    }
   },
   {
     "id": "npc-sanna-veld",
@@ -1462,7 +1882,22 @@
     "allowedTitleIds": [
       "title-quartermaster"
     ],
-    "motivation": "She ran. She has not forgiven herself for it. She would not run again."
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "running clothes even at rest",
+      "eyes that do not stop moving",
+      "a wiry frame from years of movement"
+    ],
+    "quirks": [
+      "never carries more than she can run with",
+      "has a prepared response for every accusation she expects"
+    ],
+    "motivation": {
+      "publicGoal": "To not run. Whatever that costs.",
+      "privateNeed": "Forgiveness, starting with her own.",
+      "lineTheyWontCross": "Abandoning someone who cannot leave."
+    }
   },
   {
     "id": "npc-brand",
@@ -1510,6 +1945,20 @@
       "zeal": 46
     },
     "allowedTitleIds": [],
-    "motivation": "He is waiting for someone to give him a reason to come back."
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "former militia build gone soft at the edges",
+      "a signet ring he no longer explains",
+      "the stillness of someone who has stopped planning ahead"
+    ],
+    "quirks": [
+      "repeats orders back before executing them, as if expecting them to change",
+      "keeps his weapon clean and his ambitions unclear"
+    ],
+    "motivation": {
+      "publicGoal": "A reason. Any reason.",
+      "privateNeed": "Permission to stop waiting."
+    }
   }
 ]

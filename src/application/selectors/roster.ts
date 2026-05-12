@@ -48,6 +48,10 @@ export function selectRosterDetail(state: RootState, npcId: string) {
     factionAffinityId: definition?.factionAffinityId ?? null,
     allowedTitleIds: definition?.allowedTitleIds ?? [],
     motivation: definition?.motivation,
+    ageBand: definition?.ageBand,
+    sex: definition?.sex,
+    appearanceTags: definition?.appearanceTags ?? [],
+    quirks: definition?.quirks ?? [],
     attributes: {
       might: runtime.attributes.might,
       agility: runtime.attributes.agility,
