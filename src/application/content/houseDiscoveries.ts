@@ -1,92 +1,143 @@
+export type HouseDiscoveryArtifact = {
+  itemId: string
+  label: string
+}
+
 export type HouseDiscovery = {
   marks: number
   message: string
-  finds: string[]
+  flavorFinds: string[]
+  actionableFinds: HouseDiscoveryArtifact[]
+  followUp: string | null
+  mainQuestHint?: string
 }
 
 const BASE_DISCOVERIES: Record<string, HouseDiscovery> = {
   'room-entrance-hall': {
     marks: 0,
     message: 'Dust, boot-scuffs, and a broken wax seal show how the house was turned over after the seizure.',
-    finds: [
+    flavorFinds: [
       'A snapped house seal from the debt officers',
       'Drag marks leading deeper into the house',
     ],
+    actionableFinds: [],
+    followUp: null,
   },
   'room-marion-quarters': {
     marks: 0,
     message: 'The room is plainly kept but not preserved as a shrine. Marion carved a workable sleeping space out of the ruin and left only what she intended to share.',
-    finds: [
+    flavorFinds: [
       'Folded work clothes and a sharpened ledger quill',
       'Copied notices from the debt proceedings, neatly tied with twine',
     ],
+    actionableFinds: [],
+    followUp: 'The room reads as lived-in, not memorialized. It is worth asking Marion what she kept and what she burned.',
   },
   'room-bureau': {
     marks: 22,
     message: 'A forgotten strongbox behind the panelling still holds old reserve coin and one surviving account note.',
-    finds: [
+    flavorFinds: [
       '22 Marks in pre-Breach reserve coin',
-      'An inventory chit naming two ledgers removed the night the house fell',
     ],
+    actionableFinds: [
+      {
+        itemId: 'item-chit-ledger-removal',
+        label: 'An inventory chit naming two ledgers removed the night the house fell',
+      },
+    ],
+    followUp: 'Show the removal chit to Marion. Someone chose which books vanished.',
   },
   'room-kitchen': {
     marks: 8,
     message: 'Behind the spice rack sits a survivor\'s cache: coin, dried stock, and proof that someone planned for a siege.',
-    finds: [
+    flavorFinds: [
       '8 Marks in kitchen emergency coin',
       'A wrapped bundle of salt and marrow stock fit for two hard meals',
     ],
+    actionableFinds: [],
+    followUp: null,
   },
   'room-study': {
     marks: 15,
     message: 'Between cracked folios you find a promissory note, margin codes in your father\'s hand, and a reference to "the arrangement below."',
-    finds: [
+    flavorFinds: [
       '15 Marks pressed flat in a folio binding',
-      'A letter fragment hinting at something hidden beneath the house',
     ],
+    actionableFinds: [
+      {
+        itemId: 'item-note-arrangement-below',
+        label: 'A letter fragment hinting at something hidden beneath the house',
+      },
+    ],
+    followUp: 'This note and the bureau chit belong together. Someone knew the vault mattered.',
   },
   'room-master-chamber': {
     marks: 30,
     message: 'Behind the wainscoting is a sealed envelope, a stranger\'s ring, and Mira\'s name written in a hand you trust too much.',
-    finds: [
+    flavorFinds: [
       '30 Marks wrapped inside an old signet pouch',
-      'A sealed envelope addressed to Mira',
-      'A ring bearing an unfamiliar crest',
     ],
+    actionableFinds: [
+      {
+        itemId: 'item-letter-mira-sealed',
+        label: 'A sealed envelope addressed to Mira',
+      },
+      {
+        itemId: 'item-ring-unfamiliar-crest',
+        label: 'A ring bearing an unfamiliar crest',
+      },
+    ],
+    followUp: 'The envelope points toward Mira. The ring can be shown to someone old enough to know the crest.',
+    mainQuestHint: 'A sealed envelope addressed to Mira was hidden in the master chamber alongside a ring bearing an unfamiliar crest.',
   },
   'room-servant-quarters': {
     marks: 5,
     message: 'Abandoned cots and hurried departures. What remains is practical: coin, blankets, and the sense that people left expecting to return.',
-    finds: [
+    flavorFinds: [
       '5 Marks tucked inside a boot lining',
       'Two usable blankets and a stitched kitchen token',
     ],
+    actionableFinds: [],
+    followUp: null,
   },
   'room-barracks': {
     marks: 12,
     message: 'The racks are half stripped, but a fighter always hides something for the bad week that finally comes.',
-    finds: [
+    flavorFinds: [
       '12 Marks hidden in a cracked practice helm',
       'A serviceable whetstone and two spare bowstrings',
     ],
+    actionableFinds: [],
+    followUp: null,
   },
   'room-garret': {
     marks: 18,
     message: 'The top floor chest gives way to force. Inside: household silver, an old district sketch, and a line-of-sight over the street.',
-    finds: [
+    flavorFinds: [
       '18 Marks worth of unmelted household silver',
-      'A hand-drawn watch sketch of the lane outside the house',
     ],
+    actionableFinds: [
+      {
+        itemId: 'item-sketch-watch-lane',
+        label: 'A hand-drawn watch sketch of the lane outside the house',
+      },
+    ],
+    followUp: 'The sketch could help you read who watched the house — or who expected trouble before it came.',
   },
 }
 
 const VAULT_DISCOVERY: HouseDiscovery = {
   marks: 0,
   message: "The vault yields a hidden letter in Mira's hand. She left willingly — but not freely.",
-  finds: [
-    'A sealed letter from Mira',
-    'A clue tying her disappearance to the forces moving against the house',
+  flavorFinds: [],
+  actionableFinds: [
+    {
+      itemId: 'item-ledger-bureau',
+      label: 'A surviving bureau ledger tucked beside Mira\'s hidden letter',
+    },
   ],
+  followUp: 'The letter and ledger together turn the house ruin into a live investigation.',
+  mainQuestHint: "A letter from Mira, hidden in the vault. She left willingly — but not freely.",
 }
 
 export function getHouseDiscovery(roomId: string, vaultUnlocked: boolean): HouseDiscovery | null {

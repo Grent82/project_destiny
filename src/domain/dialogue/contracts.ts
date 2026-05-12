@@ -10,6 +10,7 @@ export const dialogueConditionSchema = z
       'minNpcTrust',
       'minNpcLoyalty',
       'mainQuestStage',
+      'hasItem',
       'choiceTaken',
       'choiceNotTaken',
     ]),

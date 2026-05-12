@@ -181,31 +181,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     }
   }
 
-  // Step 7g: Marion finds the vault key — triggers once after day 5 if not yet unlocked
-  if (!next.house.vaultUnlocked && next.day >= 5) {
-    const alreadyPending = next.pendingEvents.some((e) => e.eventId === 'event-vault-key-found')
-    const alreadyFired = 'event-vault-key-found' in next.lastFiredDay
-    if (!alreadyPending && !alreadyFired) {
-      next = {
-        ...next,
-        house: {
-          ...next.house,
-          vaultUnlocked: true,
-          rooms: next.house.rooms.map((r) =>
-            r.roomId === 'room-vault' ? { ...r, state: 'intact' as const } : r,
-          ),
-        },
-        lastFiredDay: { ...next.lastFiredDay, 'event-vault-key-found': next.day },
-      }
-      next = appendActivityLogEntry(
-        next,
-        'system',
-        `Marion comes to you with a tarnished iron key. She found it behind a loose stone in her room — your father's old vault key. "I didn't know what it opened," she says. "Now I do." The vault below can be searched.`,
-      )
-    }
-  }
-
-  // Step 7h: Main quest pressure and lead surfacing
+  // Step 7g: Main quest pressure and lead surfacing
   if (next.mainQuest.stage === 'lead-found' && next.day >= 12) {
     const alreadyFired = 'event-mira-location' in next.lastFiredDay
     if (!alreadyFired) {

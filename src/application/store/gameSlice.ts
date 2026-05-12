@@ -17,7 +17,6 @@ import { MAX_ACTIVITY_ENTRIES } from '../commands/activityLog'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
-import { getHouseDiscovery } from '../content/houseDiscoveries'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 import { initialGameStateSnapshot } from './initialGameState'
@@ -25,6 +24,7 @@ import { applyRelationshipDelta } from '../commands/adjustRelationship'
 import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigationApproach, rollInvestigationOutcome } from '../commands/investigation'
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import { resolveDialogueChoice } from '../commands/dialogue'
+import { searchHouseRoom } from '../commands/houseSearch'
 import {
   addQuestLeadIfNew,
   acceptQuestFromLead,
@@ -933,27 +933,8 @@ const gameSlice = createSlice({
     },
 
     searchRoom(state, action: PayloadAction<string>) {
-      const room = state.house.rooms.find((r) => r.roomId === action.payload)
-      if (!room || room.searched) return
-      if (room.state === 'locked' || room.state === 'collapsed' || room.state === 'destroyed') return
-      room.searched = true
-
-      const discovery = getHouseDiscovery(room.roomId, state.house.vaultUnlocked)
-      if (discovery) {
-        if (discovery.marks > 0) state.money += discovery.marks
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-search-${room.roomId}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'system',
-          message: discovery.message,
-        })
-      }
-
-      if (room.roomId === 'room-vault' && state.house.vaultUnlocked) {
-        state.mainQuest.stage = 'lead-found'
-        state.mainQuest.lastClue = "A letter from Mira, hidden in the vault. She left willingly — but not freely."
-      }
+      const snapshot = current(state) as GameState
+      return searchHouseRoom(snapshot, action.payload)
     },
 
     unlockVault(state) {

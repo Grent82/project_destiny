@@ -769,5 +769,95 @@
     "effects": [],
     "description": "Compressed blocks of activated wood-char, used in water filtration, antitoxin preparation, and a half-dozen apothecary compound recipes — sold by weight at most chemistry stalls in the market district.",
     "shopPrice": 8
+  },
+  {
+    "id": "item-chit-ledger-removal",
+    "name": "Ledger Removal Chit (House Valdric Inventory Note)",
+    "category": "document",
+    "tier": 1,
+    "value": 35,
+    "weight": 0.1,
+    "rarity": "uncommon",
+    "tags": [
+      "document",
+      "house-clue",
+      "evidence",
+      "ledger"
+    ],
+    "effects": [],
+    "description": "A narrow inventory slip naming two ledgers removed from the house on the night of the seizure, with a quartermaster's hand-sign and a number Marion immediately recognizes.",
+    "shopPrice": 0
+  },
+  {
+    "id": "item-note-arrangement-below",
+    "name": "Margin Note: \"The Arrangement Below\"",
+    "category": "document",
+    "tier": 1,
+    "value": 40,
+    "weight": 0.1,
+    "rarity": "rare",
+    "tags": [
+      "document",
+      "house-clue",
+      "vault",
+      "evidence"
+    ],
+    "effects": [],
+    "description": "A letter fragment in your father's hand referring to an arrangement below the house and a catch that was never to be named in open correspondence.",
+    "shopPrice": 0
+  },
+  {
+    "id": "item-letter-mira-sealed",
+    "name": "Sealed Envelope Addressed to Mira",
+    "category": "document",
+    "tier": 1,
+    "value": 60,
+    "weight": 0.1,
+    "rarity": "rare",
+    "tags": [
+      "document",
+      "house-clue",
+      "mira",
+      "evidence"
+    ],
+    "effects": [],
+    "description": "A sealed envelope tucked behind the wainscoting of the master's chamber — addressed to Mira in a hand you know but do not trust.",
+    "shopPrice": 0
+  },
+  {
+    "id": "item-ring-unfamiliar-crest",
+    "name": "Unfamiliar Crest Ring",
+    "category": "gift",
+    "tier": 1,
+    "value": 55,
+    "weight": 0.2,
+    "rarity": "rare",
+    "tags": [
+      "crest",
+      "house-clue",
+      "evidence",
+      "jewelry"
+    ],
+    "effects": [],
+    "description": "A ring bearing a crest not of House Valdric nor any ward-line you readily name. The metal is expensive; the engraving is meant to be noticed.",
+    "shopPrice": 0
+  },
+  {
+    "id": "item-sketch-watch-lane",
+    "name": "Lane Watch Sketch (House Approach)",
+    "category": "document",
+    "tier": 1,
+    "value": 28,
+    "weight": 0.1,
+    "rarity": "uncommon",
+    "tags": [
+      "document",
+      "house-clue",
+      "watch",
+      "surveillance"
+    ],
+    "effects": [],
+    "description": "A hand-drawn watch sketch from the garret showing sight lines, approach timings, and two blind points overlooking the lane outside the house.",
+    "shopPrice": 0
   }
 ]

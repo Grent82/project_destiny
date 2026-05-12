@@ -33,6 +33,24 @@
             }
           },
           {
+            "id": "marion-choice-ledger-chit",
+            "label": "Show her the bureau chit.",
+            "nextNodeId": "marion-node-ledger-chit",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-chit-ledger-removal"
+            }
+          },
+          {
+            "id": "marion-choice-arrangement-below",
+            "label": "Ask about the note on \"the arrangement below.\"",
+            "nextNodeId": "marion-node-arrangement-below",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-note-arrangement-below"
+            }
+          },
+          {
             "id": "marion-choice-debt-talk",
             "label": "\"What do we do if the debt breaks us?\"",
             "nextNodeId": "marion-node-debt-crisis-intro",
@@ -73,6 +91,38 @@
         "npcId": "npc-marion-vale",
         "text": "She nods slowly. 'Then let me carry some of it.' Her hand rests near yours for a moment, then she steps back.",
         "choices": []
+      },
+      {
+        "id": "marion-node-ledger-chit",
+        "npcId": "npc-marion-vale",
+        "text": "Marion takes the chit and goes still. \"This is one of ours. Two ledgers pulled the night the house was stripped — not stolen at random. Chosen.\" She taps the quartermaster mark with one nail. \"Someone knew exactly which pages mattered.\"",
+        "choices": [
+          {
+            "id": "marion-choice-ledger-chit-keep",
+            "label": "\"Then the debt was handled before it ever reached me.\"",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "The bureau chit proves the ledgers were selected, not looted at random. The debt may have been shaped before it reached your name."
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-arrangement-below",
+        "npcId": "npc-marion-vale",
+        "text": "Marion reads the fragment twice. \"'The arrangement below' wasn't poetry.\" She looks toward the cellar stairs. \"Your father never trusted a single lock when a hidden catch would do. If this note is real, the vault didn't need a key first. It needed the right clue.\"",
+        "choices": [
+          {
+            "id": "marion-choice-arrangement-below-understood",
+            "label": "\"Then we read the house before we force it.\"",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Marion believes the vault opens by hidden release, not by key alone. The house is meant to be read like a ledger."
+            }
+          }
+        ]
       },
       {
         "id": "marion-node-early-intro",
@@ -562,6 +612,15 @@
             "nextNodeId": "maret-node-promise"
           },
           {
+            "id": "maret-choice-ring",
+            "label": "Show her the crest ring from the house.",
+            "nextNodeId": "maret-node-ring",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-ring-unfamiliar-crest"
+            }
+          },
+          {
             "id": "maret-choice-leave",
             "label": "I don't have time for old stories.",
             "nextNodeId": null
@@ -580,6 +639,22 @@
             "outcome": {
               "type": "mainQuestHint",
               "value": "Old Maret suggests the Breach may not have been the first \u2014 and your grandfather knew."
+            }
+          }
+        ]
+      },
+      {
+        "id": "maret-node-ring",
+        "npcId": "npc-old-maret",
+        "text": "Old Maret takes the ring between two fingers and turns it toward the light. \"River office work,\" she says at last. \"Gilded Court money with Compact habits. Not old blood — hired hands who dressed themselves up to look ancestral.\" She presses it back into your palm. \"Someone respectable wanted Mira to trust the wrong crest.\"",
+        "choices": [
+          {
+            "id": "maret-choice-ring-understood",
+            "label": "\"Then the house was approached, not merely raided.\"",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Old Maret ties the crest ring to Gilded Court river factors using Compact intermediaries. Mira was courted before the house was broken."
             }
           }
         ]

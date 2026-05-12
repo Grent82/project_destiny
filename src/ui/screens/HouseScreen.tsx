@@ -69,12 +69,29 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
           <p className="house-room__effect" style={{ fontStyle: 'normal' }}>
             {discovery.message}
           </p>
-          {discovery.finds.length > 0 && (
+          {discovery.actionableFinds.length > 0 && (
+            <div style={{ marginTop: '0.4rem' }}>
+              <p className="house-room__effect" style={{ fontStyle: 'normal', marginBottom: '0.25rem' }}>
+                Actionable discoveries
+              </p>
+              <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
+                {discovery.actionableFinds.map((find) => (
+                  <li key={find.itemId}>{find.label}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {discovery.flavorFinds.length > 0 && (
             <ul style={{ margin: '0.35rem 0 0', paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--text-secondary, #9e8c6e)' }}>
-              {discovery.finds.map((find) => (
+              {discovery.flavorFinds.map((find) => (
                 <li key={find}>{find}</li>
               ))}
             </ul>
+          )}
+          {discovery.followUp && (
+            <p className="house-room__effect" style={{ marginTop: '0.45rem', fontStyle: 'normal' }}>
+              Next: {discovery.followUp}
+            </p>
           )}
         </div>
       )}
@@ -106,7 +123,7 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
           </button>
         )}
         {room.state === 'locked' && (
-          <p className="house-room__cost-note">Sealed. Requires a key or a quest.</p>
+          <p className="house-room__cost-note">Sealed. The hidden catch has not been found.</p>
         )}
         {room.state === 'collapsed' && room.repairCost > 0 && marks < room.repairCost && (
           <p className="house-room__cost-note">Structural collapse. Clear rubble: {room.repairCost} Mk.</p>
@@ -127,7 +144,8 @@ export function HouseScreen() {
       <h1>The House</h1>
       <p className="summary">
         The family seat in The Pale. Most of it was stripped or broken during the Breach. Marion
-        has kept the entrance hall presentable. The vault below has not been opened since.
+        has kept the entrance hall presentable. The vault below will only open if the surviving
+        clues in the house are read together.
       </p>
       <VenueContextBanner />
 

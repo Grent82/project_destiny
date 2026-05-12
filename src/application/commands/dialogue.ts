@@ -58,6 +58,8 @@ export function meetsDialogueCondition(
     }
     case 'mainQuestStage':
       return state.mainQuest.stage === cond.value
+    case 'hasItem':
+      return state.inventory.some((entry) => entry.itemId === cond.value)
     case 'choiceTaken':
       return (state.resolvedDialogueChoices[dialogueId] ?? []).includes(cond.value as string)
     case 'choiceNotTaken':
