@@ -2,8 +2,9 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain'
 import type { EventTemplate } from '../../domain/events/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+import type { Rng } from './seededRng'
 
-function checkConditions(template: EventTemplate, state: GameState): boolean {
+function checkConditions(template: EventTemplate, state: GameState, rng: Rng): boolean {
   const cond = template.triggerConditions
 
   if (cond.minUnrest !== undefined && state.cityDials.unrest < cond.minUnrest) return false
@@ -39,7 +40,7 @@ function checkConditions(template: EventTemplate, state: GameState): boolean {
     if (standing < cond.factionStandingAbove.threshold) return false
   }
 
-  if (Math.random() > (cond.probability ?? 1)) return false
+  if (rng() > (cond.probability ?? 1)) return false
 
   return true
 }
@@ -51,7 +52,7 @@ function isOnCooldown(template: EventTemplate, state: GameState): boolean {
   return state.day - lastDay < (template.cooldownDays ?? 7)
 }
 
-export function evaluateEvents(state: GameState): GameState {
+export function evaluateEvents(state: GameState, rng: Rng = Math.random): GameState {
   const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
   const newPending: typeof state.pendingEvents = []
   const newLastFiredDay: Record<string, number> = {}
@@ -59,7 +60,7 @@ export function evaluateEvents(state: GameState): GameState {
   for (const template of contentCatalog.events) {
     if (alreadyPending.has(template.id)) continue
     if (isOnCooldown(template, state)) continue
-    if (checkConditions(template, state)) {
+    if (checkConditions(template, state, rng)) {
       newPending.push({ eventId: template.id, firedOnDay: state.day })
       newLastFiredDay[template.id] = state.day
     }

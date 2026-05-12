@@ -4,7 +4,7 @@ import { evaluateEvents } from "./evaluateEvents"
 import { expireHireOffers } from "./recruitment"
 import { contentCatalog } from "../content/contentCatalog"
 import { generateDistrictHireOffers } from "./generateHireOffers"
-import { createRng } from "./seededRng"
+import { createRng, type Rng } from "./seededRng"
 import { applyWages } from "./applyWages"
 import { applyStateDecay } from "./applyStateDecay"
 import { applyThresholds } from "./applyThresholds"
@@ -69,14 +69,14 @@ export function applyEndOfDayResources(state: GameState): GameState {
   return next
 }
 
-function resolveRumorEvents(state: GameState): GameState {
+function resolveRumorEvents(state: GameState, rng: Rng): GameState {
   const rumorPending = state.pendingEvents.filter((pe) => {
     const template = contentCatalog.eventsById.get(pe.eventId)
     return template?.isAutoResolved === true && template.tags.includes("rumor")
   })
   if (rumorPending.length === 0) return state
 
-  const chosen = rumorPending[Math.floor(Math.random() * rumorPending.length)]!
+  const chosen = rumorPending[Math.floor(rng() * rumorPending.length)]!
   const template = contentCatalog.eventsById.get(chosen.eventId)!
 
   let next = appendActivityLogEntry(state, "system", `Rumor: ${template.description}`)
@@ -138,10 +138,10 @@ export function endDay(state: GameState): GameState {
   let afterEvents: GameState
   if (nextDay % 3 === 0 && afterExpiry.currentDistrictId) {
     const refreshed: GameState = { ...afterExpiry, availableForHire: [...afterExpiry.availableForHire] }
-    generateDistrictHireOffers(refreshed, afterExpiry.currentDistrictId)
-    afterEvents = evaluateEvents(refreshed)
+    generateDistrictHireOffers(refreshed, afterExpiry.currentDistrictId, undefined, rng)
+    afterEvents = evaluateEvents(refreshed, rng)
   } else {
-    afterEvents = evaluateEvents(afterExpiry)
+    afterEvents = evaluateEvents(afterExpiry, rng)
   }
 
   // Step 9: Faction quest bonus, NPC agency, faction agenda, district tension
@@ -150,7 +150,7 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyFactionActivity(afterEvents)
 
   // Steps 10-11: Rumor events + main quest progression
-  afterEvents = resolveRumorEvents(afterEvents)
+  afterEvents = resolveRumorEvents(afterEvents, rng)
   const finalState = checkMainQuestProgression(afterEvents)
 
   // Store advanced RNG seed for next day's deterministic run

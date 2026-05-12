@@ -1,6 +1,7 @@
 import type { GameState, HireOffer } from '../../domain/game/contracts'
 import type { NpcDefinition } from '../../domain/npc/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+import type { Rng } from './seededRng'
 
 function calculatePrimarySkillAvg(npcDef: NpcDefinition): number {
   const values = Object.values(npcDef.startingSkills) as number[]
@@ -23,6 +24,7 @@ export function generateDistrictHireOffers(
   state: GameState,
   districtId: string,
   reputationScore: number = computeReputationScore(state),
+  rng: Rng = Math.random,
 ): void {
   const alreadyHired = new Set(state.roster.map((r) => r.npcId))
   const alreadyOffered = new Set(state.availableForHire.map((o) => o.npcId))
@@ -45,7 +47,7 @@ export function generateDistrictHireOffers(
 
     const matchesFaction = npcDef.factionAffinityId === controllingFactionId && controllingFactionId !== null
     const isIndependent = !npcDef.factionAffinityId
-    const randomAppearance = Math.random() < 0.1
+    const randomAppearance = rng() < 0.1
 
     if (!matchesFaction && !isIndependent && !randomAppearance) continue
 

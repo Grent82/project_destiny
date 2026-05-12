@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
@@ -134,8 +134,6 @@ describe('endDay', () => {
   })
 
   it('council vote fires every 5 days when no active vote is present', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0)
-
     // day 4 → endDay → day 5 → 5 % 5 === 0 triggers vote
     const state = {
       ...initialGameStateSnapshot,
@@ -146,8 +144,6 @@ describe('endDay', () => {
     expect(next.activeCouncilVotes.length).toBeGreaterThan(0)
     const logEntry = next.activityLog.find((e) => e.message.includes('vote is called'))
     expect(logEntry).toBeDefined()
-
-    vi.restoreAllMocks()
   })
 
   it('does not crash when roster is empty', () => {
@@ -162,17 +158,18 @@ describe('endDay', () => {
   })
 
   it('evaluateEvents: fires pending events when conditions are met after endDay', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0) // probability check always passes
-
+    // event-rumor-ledger-keeper: dayMin=1, probability=1 — always fires deterministically.
+    // It is isAutoResolved=true so it is consumed by resolveRumorEvents in the same endDay
+    // cycle; check the activity log for the resolved message instead of pendingEvents.
     const state = {
       ...initialGameStateSnapshot,
-      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      day: 1,
       pendingEvents: [],
+      lastFiredDay: {},
     }
     const next = endDay(state)
-    expect(next.pendingEvents.length).toBeGreaterThan(0)
-
-    vi.restoreAllMocks()
+    const hasRumorEntry = next.activityLog.some((e) => e.message.includes('ledger-keeper'))
+    expect(hasRumorEntry).toBe(true)
   })
 
   it('nudges the player back toward Tessaly without passively creating Mira rescue work', () => {

@@ -8,7 +8,9 @@ import type { Rng } from './seededRng'
 
 type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks'
 
-/** Step 9a: NPC world agency — working NPCs shape the world through their actions. */
+/** Step 9a: NPC world agency — working NPCs shape the world through their actions.
+ *  Always called from endDay with a seeded rng; the Math.random default is only a
+ *  safety net for direct test calls that don't inject a seed. */
 export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameState {
   let afterEvents = state
   const workingNpcs = afterEvents.roster.filter((r) => r.assignment === 'working')
