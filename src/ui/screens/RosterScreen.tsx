@@ -6,7 +6,6 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { getJobForNpc } from '../../application/content/jobCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
-
 const ROSTER_GROUPS = [
   { key: 'deployed', label: 'Deployed' },
   { key: 'assigned_title', label: 'On Duty' },
@@ -25,6 +24,7 @@ function computeWorkingIncome(skills: Record<string, number>): number {
 export function RosterScreen() {
   const navigate = useNavigate()
   const rosterEntries = useAppSelector(selectRosterEntries)
+  const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(
     rosterEntries[0]?.npcId ?? null,
   )
@@ -40,14 +40,20 @@ export function RosterScreen() {
       <p className="summary">
         Personnel in house service. Their condition — health, morale, loyalty — is yours to account for.
       </p>
-      <button
-        className="action-button action-button--secondary"
-        type="button"
-        onClick={() => navigate('/recruitment')}
-        style={{ marginBottom: '1rem' }}
-      >
-        + Hire New Hands
-      </button>
+      {currentDistrictId ? (
+        <button
+          className="action-button action-button--secondary"
+          type="button"
+          onClick={() => navigate('/recruitment')}
+          style={{ marginBottom: '1rem' }}
+        >
+          + Hire in {currentDistrictId.replace('district-', '').replace(/-/g, ' ')}
+        </button>
+      ) : (
+        <p className="summary text-muted" style={{ marginBottom: '1rem' }}>
+          Travel to a district to find available hands.
+        </p>
+      )}
 
       <div className="roster-layout">
         <div className="list-panel" role="list" aria-label="Roster entries">

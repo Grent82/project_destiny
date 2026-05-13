@@ -51,6 +51,24 @@ export function ShopsScreen() {
         ? 'Prices +15% (corridor disrupted)'
         : null
 
+  // Guard: if not in a district, redirect to the district map
+  if (!currentDistrictId) {
+    return (
+      <section className="screen-panel">
+        <p className="eyebrow">House Valdris</p>
+        <h1>The Market</h1>
+        <p className="summary">Markets are found in districts. Travel first, then trade.</p>
+        <button
+          className="action-button action-button--primary"
+          type="button"
+          onClick={() => navigate('/district-map')}
+        >
+          Go to Districts →
+        </button>
+      </section>
+    )
+  }
+
   return (
     <section className="screen-panel">
       <p className="eyebrow">House Valdris</p>
@@ -167,9 +185,6 @@ export function ShopsScreen() {
             </article>
           ))}
         </div>
-      )}
-      {!currentDistrictId && (
-        <p className="summary text-danger">You are not in a district. Travel to a district to access shops.</p>
       )}
       <section className="repair-section">
         <h2>Equipment Stash</h2>
