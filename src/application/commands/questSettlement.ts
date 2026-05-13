@@ -97,6 +97,52 @@ function applyOrrenRescueResolution(state: GameState, questId: string) {
   )
 }
 
+import type { QuestAftermath } from '../../domain/quests/contracts'
+
+function applyQuestAftermath(state: GameState, aftermath: QuestAftermath | null, questTitle: string): void {
+  if (!aftermath) return
+
+  // Faction impacts from aftermath (in addition to template standing changes)
+  for (const impact of aftermath.factionImpacts) {
+    const current = state.factionStandings[impact.factionId] ?? 0
+    state.factionStandings[impact.factionId] = Math.max(-100, Math.min(100, current + impact.delta))
+    const factionName = contentCatalog.factionsById.get(impact.factionId)?.name ?? impact.factionId
+    const direction = impact.delta > 0 ? 'improves' : 'worsens'
+    pushActivityLog(state, 'system', `Aftermath of ${questTitle}: standing with ${factionName} ${direction}.`, `aftermath-faction-${impact.factionId}`)
+  }
+
+  // NPC unlocks from aftermath
+  for (const npcId of aftermath.unlockNpcIds) {
+    const alreadyHired = state.roster.some((e) => e.npcId === npcId)
+    const alreadyAvailable = state.availableForHire.some((e) => e.npcId === npcId)
+    if (!alreadyHired && !alreadyAvailable) {
+      const npcDef = getNpcDefinitions().find((e) => e.id === npcId)
+      if (npcDef) {
+        state.availableForHire.push({
+          npcId: npcDef.id,
+          discoveredInDistrictId: null,
+          wagePerDay: 0,
+          signingBonus: 0,
+          requiredFactionId: null,
+          requiredFactionStanding: 0,
+          turnsAvailable: 10,
+        })
+        pushActivityLog(state, 'system', `${npcDef.name} surfaces after the resolution of ${questTitle}.`, `aftermath-npc-${npcId}`)
+      }
+    }
+  }
+
+  // World consequence log entries
+  for (const consequenceId of aftermath.worldConsequenceIds) {
+    pushActivityLog(state, 'system', `World consequence: ${consequenceId}`, `aftermath-consequence-${consequenceId}`)
+  }
+
+  // Narrative summary
+  if (aftermath.narrativeSummary) {
+    pushActivityLog(state, 'system', aftermath.narrativeSummary, `aftermath-narrative-${questTitle}`)
+  }
+}
+
 export function settleQuestSuccess(state: GameState, questId: string, options: QuestSuccessOptions = {}) {
   const settlementTarget = findQuestSettlementTarget(state, questId)
   if (!settlementTarget) return false
@@ -140,6 +186,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
       options.completionMessage ?? `Contract complete: ${questTitle}.`,
       `complete-${questId}`,
     )
+    applyQuestAftermath(state, runtime.aftermath, questTitle)
     return true
   }
 
@@ -257,6 +304,66 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
 
   applyMiraRescueResolution(state, questId)
   applyOrrenRescueResolution(state, questId)
+
+  // Apply structured aftermath: faction impacts, NPC unlocks, world consequence log
+  applyQuestAftermath(state, runtime.aftermath, questTitle)
+
+  return true
+}
+
+/**
+ * Partial success: reduced rewards, aftermath with failure-flavoured world consequences.
+ * Used for contracts where the objective was partially met — guards passed, but the price was higher.
+ */
+export function settleQuestPartialSuccess(state: GameState, questId: string, options: Omit<QuestSuccessOptions, 'rewardScale'> & { partialReason?: string } = {}) {
+  const settlementTarget = findQuestSettlementTarget(state, questId)
+  if (!settlementTarget) return false
+
+  const { questIndex, runtime, template } = settlementTarget
+  runtime.status = 'completed'
+  runtime.stageId = 'resolved-partial'
+  runtime.objectiveMet = true
+  runtime.currentObjectiveLabel = options.objectiveLabel ?? 'Objective met under strain. A messy resolution.'
+  runtime.progress.completedSteps = runtime.progress.requiredSteps
+  runtime.progress.lastAdvancedDay = state.day
+  if (options.partialReason) {
+    runtime.journalEntries = [...runtime.journalEntries, options.partialReason]
+  }
+  if (template?.aftermathText) {
+    runtime.journalEntries = [...runtime.journalEntries, template.aftermathText]
+  }
+
+  state.activeQuests.splice(questIndex, 1)
+  if (!state.completedQuestIds.includes(questId)) {
+    state.completedQuestIds.push(questId)
+  }
+
+  const questTitle = template?.title ?? runtime.acceptedTitle
+  const halfReward = template ? Math.floor(template.rewardMarks * 0.5) : 0
+  if (halfReward > 0) {
+    state.money += halfReward
+  }
+
+  // Half standing on partial
+  if (template?.rewardStandingFactionId && template.rewardStandingDelta !== 0) {
+    const delta = Math.floor(template.rewardStandingDelta / 2)
+    state.factionStandings[template.rewardStandingFactionId] = Math.min(
+      100,
+      Math.max(-100, (state.factionStandings[template.rewardStandingFactionId] ?? 0) + delta),
+    )
+  }
+
+  applyMiraRescueResolution(state, questId)
+  applyOrrenRescueResolution(state, questId)
+  applyQuestAftermath(state, runtime.aftermath, questTitle)
+
+  pushActivityLog(
+    state,
+    options.completionCategory ?? 'system',
+    options.completionMessage ?? `${questTitle} — partial resolution. ${halfReward} Marks recovered. The cost was higher than expected.`,
+    `partial-${questId}`,
+  )
+
   return true
 }
 
@@ -295,6 +402,9 @@ export function settleQuestFailure(state: GameState, questId: string, options: Q
     options.failureMessage ?? `Contract failed: ${questTitle}. The house bears the cost.`,
     `fail-${questId}`,
   )
+
+  // Apply aftermath (failure aftermath may have different world consequences than success)
+  applyQuestAftermath(state, runtime.aftermath, questTitle)
 
   return true
 }

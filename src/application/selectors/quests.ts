@@ -288,3 +288,12 @@ export const selectRecommendedQuestAction = createSelector(
     return null
   },
 )
+
+/**
+ * Returns activity log entries that are aftermath-tagged (from quest settlement aftermath).
+ * Useful for a "World Consequences" panel in the UI.
+ */
+export const selectQuestAftermathLog = createSelector(
+  (state: RootState) => state.game.activityLog,
+  (log) => log.filter((entry) => entry.id?.startsWith('aftermath-')),
+)
