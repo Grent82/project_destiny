@@ -2715,5 +2715,450 @@
       "publicGoal": "A reason. Any reason.",
       "privateNeed": "Permission to stop waiting."
     }
+  },
+  {
+    "id": "npc-orven-pell",
+    "name": "Orven Pell",
+    "npcType": "world",
+    "districtId": "district-the-northbank",
+    "origin": "Municipal archive quarter, Northbank",
+    "background": "A bent record-keeper who can recite old property lines and burial permissions from memory. Survived the Breach by being too useful to remove. Kept the one unburned ledger naming which house benefited from the Valdris erasure. Has been waiting for someone to ask the right question.",
+    "rarity": "rare",
+    "status": "citizen",
+    "factionAffinityId": "faction-civic-compact",
+    "baseAttributes": {
+      "might": 20,
+      "agility": 30,
+      "endurance": 35,
+      "intellect": 80,
+      "perception": 65,
+      "presence": 45,
+      "resolve": 55
+    },
+    "startingSkills": {
+      "academics": 85,
+      "administration": 70,
+      "intrigue": 50,
+      "melee": 10,
+      "ranged": 10,
+      "medicine": 10,
+      "engineering": 10,
+      "negotiation": 10,
+      "survival": 10,
+      "security": 10,
+      "crafting": 10,
+      "performance": 10
+    },
+    "startingTraits": {
+      "loyalty": 60,
+      "discipline": 65,
+      "empathy": 40,
+      "ruthlessness": 25,
+      "ambition": 20,
+      "prudence": 80,
+      "vanity": 15,
+      "dominance": 30,
+      "curiosity": 55,
+      "zeal": 20
+    },
+    "allowedTitleIds": [],
+    "ageBand": "elder",
+    "sex": "man",
+    "appearanceTags": [
+      "ink-yellowed fingers",
+      "coat with too many interior pockets",
+      "never closes a door completely"
+    ],
+    "quirks": [
+      {
+        "text": "answers questions about records with the filing date first",
+        "tags": [
+          "meticulous",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "record",
+          "document",
+          "ledger",
+          "date",
+          "archive"
+        ]
+      },
+      {
+        "text": "has memorised which ledgers burned and which merely vanished",
+        "tags": [
+          "meticulous",
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "fire",
+          "loss",
+          "missing",
+          "burn",
+          "destroy"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "Retirement. Obscurity. One more quiet season.",
+      "privateNeed": "To give the ledger to someone who will use it before he dies.",
+      "lineTheyWontCross": "Destroying a record he has sworn to preserve."
+    }
+  },
+  {
+    "id": "npc-alis-vey",
+    "name": "Alis Vey",
+    "npcType": "world",
+    "districtId": "district-the-northbank",
+    "origin": "Former noble quarter, now the Northbank margins",
+    "background": "Her house once served as a cadet ally to House Valdris. Sold Valdris property under coercion during the Breach. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale \u2014 the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
+    "rarity": "uncommon",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 35,
+      "agility": 45,
+      "endurance": 45,
+      "intellect": 65,
+      "perception": 60,
+      "presence": 60,
+      "resolve": 50
+    },
+    "startingSkills": {
+      "administration": 60,
+      "negotiation": 55,
+      "intrigue": 65,
+      "melee": 10,
+      "ranged": 10,
+      "medicine": 10,
+      "engineering": 10,
+      "survival": 10,
+      "security": 10,
+      "crafting": 10,
+      "performance": 10,
+      "academics": 10
+    },
+    "startingTraits": {
+      "loyalty": 45,
+      "discipline": 70,
+      "empathy": 55,
+      "ruthlessness": 30,
+      "ambition": 35,
+      "prudence": 75,
+      "vanity": 40,
+      "dominance": 25,
+      "curiosity": 50,
+      "zeal": 35
+    },
+    "allowedTitleIds": [],
+    "ageBand": "middle",
+    "sex": "woman",
+    "appearanceTags": [
+      "widow black without mourning status",
+      "good boots worn past their use",
+      "a crest ring worn face-inward"
+    ],
+    "quirks": [
+      {
+        "text": "speaks of her house in the past tense without affect",
+        "tags": [
+          "nostalgic",
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "house",
+          "family",
+          "title",
+          "noble",
+          "past"
+        ]
+      },
+      {
+        "text": "keeps a record of every favor she has received since the Breach",
+        "tags": [
+          "meticulous",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "favor",
+          "debt",
+          "obligation",
+          "ledger",
+          "record"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To clear a name she no longer uses.",
+      "privateNeed": "Restitution before confession. She must give something back before she can speak.",
+      "lineTheyWontCross": "Surrendering the transfer documents to anyone who would use them to harm, not restore."
+    }
+  },
+  {
+    "id": "npc-brannic-thule",
+    "name": "Brannic Thule",
+    "npcType": "world",
+    "districtId": "district-the-warrens",
+    "origin": "Old household quarter, now the Warrens",
+    "background": "Former steward's assistant at House Valdris. Now works as a repairman who recognises silver by touch and timber by smell. The only living person who served in the Valdris halls and remained in Valdenmoor. Knows where family seals and heir artifacts were hidden before the fall. Swore an oath to deliver them to the returning heir.",
+    "rarity": "rare",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 55,
+      "agility": 35,
+      "endurance": 60,
+      "intellect": 60,
+      "perception": 55,
+      "presence": 50,
+      "resolve": 65
+    },
+    "startingSkills": {
+      "engineering": 55,
+      "administration": 45,
+      "survival": 50,
+      "medicine": 35,
+      "melee": 10,
+      "ranged": 10,
+      "negotiation": 10,
+      "security": 10,
+      "crafting": 10,
+      "performance": 10,
+      "academics": 10,
+      "intrigue": 10
+    },
+    "startingTraits": {
+      "loyalty": 90,
+      "discipline": 75,
+      "empathy": 60,
+      "ruthlessness": 15,
+      "ambition": 10,
+      "prudence": 65,
+      "vanity": 10,
+      "dominance": 40,
+      "curiosity": 40,
+      "zeal": 60
+    },
+    "allowedTitleIds": [],
+    "ageBand": "elder",
+    "sex": "man",
+    "appearanceTags": [
+      "heavy hands that move carefully around anything old",
+      "a steward badge worn under his shirt",
+      "stops to assess every room he enters"
+    ],
+    "quirks": [
+      {
+        "text": "addresses the player by the correct honorific from the first meeting",
+        "tags": [
+          "principled",
+          "loyal"
+        ],
+        "triggerKeywords": [
+          "title",
+          "honorific",
+          "noble",
+          "house",
+          "lord"
+        ]
+      },
+      {
+        "text": "names every room in a building by its old function before its current one",
+        "tags": [
+          "nostalgic",
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "room",
+          "hall",
+          "building",
+          "house",
+          "past"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "Useful work. A dry room. Nothing owed.",
+      "privateNeed": "To deliver the artifacts before he dies. He swore an oath.",
+      "lineTheyWontCross": "Surrendering the heir artifacts to anyone he has not confirmed as the legitimate heir."
+    }
+  },
+  {
+    "id": "npc-veyran-malk",
+    "name": "Ser Veyran Malk",
+    "npcType": "enemy",
+    "districtId": "district-the-northbank",
+    "origin": "Credit-house district, Northbank",
+    "background": "A debt enforcer from a family ruined by House Valdris in pre-Breach power games. Hates the return of Valdris as historical revenge, not ideology. Polite always. Never loud. His father forged the paper trail that destroyed the old house \u2014 which means if anyone finds that paper, Malk's grievance becomes an embarrassment and his methods a crime.",
+    "rarity": "uncommon",
+    "status": "noble",
+    "factionAffinityId": "faction-house-merrow",
+    "baseAttributes": {
+      "might": 45,
+      "agility": 50,
+      "endurance": 50,
+      "intellect": 70,
+      "perception": 65,
+      "presence": 70,
+      "resolve": 60
+    },
+    "startingSkills": {
+      "negotiation": 75,
+      "intrigue": 70,
+      "administration": 60,
+      "melee": 10,
+      "ranged": 10,
+      "medicine": 10,
+      "engineering": 10,
+      "survival": 10,
+      "security": 10,
+      "crafting": 10,
+      "performance": 10,
+      "academics": 10
+    },
+    "startingTraits": {
+      "loyalty": 30,
+      "discipline": 80,
+      "empathy": 20,
+      "ruthlessness": 70,
+      "ambition": 65,
+      "prudence": 85,
+      "vanity": 45,
+      "dominance": 60,
+      "curiosity": 40,
+      "zeal": 30
+    },
+    "allowedTitleIds": [],
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "clean coat, no badge",
+      "speaks with pauses that feel practised",
+      "always faces the door"
+    ],
+    "quirks": [
+      {
+        "text": "thanks people before delivering ultimatums",
+        "tags": [
+          "principled",
+          "volatile"
+        ],
+        "triggerKeywords": [
+          "threat",
+          "ultimatum",
+          "demand",
+          "courtesy",
+          "politeness"
+        ]
+      },
+      {
+        "text": "never repeats a threat \u2014 once is sufficient",
+        "tags": [
+          "principled",
+          "paranoid"
+        ],
+        "triggerKeywords": [
+          "threat",
+          "warning",
+          "repeat",
+          "once",
+          "sufficient"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "Collection of legitimate outstanding accounts.",
+      "privateNeed": "To see House Valdris fail again, quietly, with paperwork.",
+      "lineTheyWontCross": "Allowing anyone to find the forged paper trail his father left."
+    }
+  },
+  {
+    "id": "npc-cessa-rill",
+    "name": "Cessa Rill",
+    "npcType": "world",
+    "districtId": "district-the-pale",
+    "origin": "Pale archive chapel",
+    "background": "Quiet keeper of baptisms, adoptions, and death names in the Pale archive chapel. Can prove or erase a maternal lineage. She altered one noble birth entry years ago to save a child from inheritance law \u2014 a decision she has lived with since. Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain.",
+    "rarity": "rare",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 25,
+      "agility": 40,
+      "endurance": 40,
+      "intellect": 75,
+      "perception": 70,
+      "presence": 55,
+      "resolve": 60
+    },
+    "startingSkills": {
+      "academics": 80,
+      "administration": 70,
+      "medicine": 40,
+      "intrigue": 55,
+      "melee": 10,
+      "ranged": 10,
+      "engineering": 10,
+      "negotiation": 10,
+      "survival": 10,
+      "security": 10,
+      "crafting": 10,
+      "performance": 10
+    },
+    "startingTraits": {
+      "loyalty": 65,
+      "discipline": 80,
+      "empathy": 60,
+      "ruthlessness": 20,
+      "ambition": 25,
+      "prudence": 85,
+      "vanity": 10,
+      "dominance": 20,
+      "curiosity": 60,
+      "zeal": 40
+    },
+    "allowedTitleIds": [],
+    "ageBand": "middle",
+    "sex": "woman",
+    "appearanceTags": [
+      "archive dust on dark robes",
+      "ink that does not wash from her left thumb",
+      "reads people like entries"
+    ],
+    "quirks": [
+      {
+        "text": "corrects names silently and never aloud",
+        "tags": [
+          "meticulous",
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "name",
+          "record",
+          "correction",
+          "accuracy",
+          "entry"
+        ]
+      },
+      {
+        "text": "knows which records have been reviewed and by whom, and when",
+        "tags": [
+          "paranoid",
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "record",
+          "review",
+          "access",
+          "archive",
+          "who"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "Accuracy. Completeness. The record as it should be.",
+      "privateNeed": "To know whether the alteration she made saved or condemned.",
+      "lineTheyWontCross": "Destroying a birth record, regardless of the political consequence of keeping it."
+    }
   }
 ]
