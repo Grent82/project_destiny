@@ -14,6 +14,7 @@ const ROOM_EFFECTS: Record<string, string> = {
   'room-study': 'When intact: training NPCs gain +25% more skill per day.',
   'room-bureau': 'Administrative hub of the house.',
   'room-master-chamber': 'Your private chamber. Symbol of the house\'s standing.',
+  'room-marion-quarters': 'One of the few rooms Marion kept usable during your absence. Practical habitation, not a sealed preserve.',
   'room-servant-quarters': 'When repaired: unlocks +1 roster slot.',
   'room-barracks': 'When repaired: unlocks +1 roster slot.',
   'room-east-wing': 'When repaired: unlocks +2 roster slots.',
@@ -144,8 +145,9 @@ export function HouseScreen() {
       <h1>The House</h1>
       <p className="summary">
         The family seat in The Pale. Most of it was stripped or broken during the Breach. Marion
-        has kept the entrance hall presentable. The vault below will only open if the surviving
-        clues in the house are read together.
+        consolidated what little survived: the entrance hall is presentable, and a handful of other
+        rooms remain usable through her work. The cellar vault is sealed — it needs a key or the
+        right evidence to open.
       </p>
       <VenueContextBanner />
 

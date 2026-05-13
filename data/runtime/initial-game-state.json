@@ -408,7 +408,7 @@
       },
       {
         "roomId": "room-marion-quarters",
-        "name": "Marion's Quarters",
+        "name": "Salvaged Room (Marion)",
         "state": "intact",
         "repairCost": 0,
         "searched": false,
