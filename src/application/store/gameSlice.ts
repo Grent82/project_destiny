@@ -2,6 +2,7 @@ import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { Attributes, Skills, Traits, WorldNpcDisposition } from '../../domain/npc/contracts'
+import type { HouseExteriorTier } from '../../domain/game/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import {
@@ -978,6 +979,16 @@ const gameSlice = createSlice({
       state.house.vaultUnlocked = true
       const vault = state.house.rooms.find((r) => r.roomId === 'room-vault')
       if (vault) vault.state = 'intact'
+    },
+
+    /** Advance the house exterior tier by one step. Only advances if current < target. */
+    advanceExteriorState(state, action: PayloadAction<{ targetTier: HouseExteriorTier }>) {
+      const TIERS: HouseExteriorTier[] = ['ruined', 'patched', 'maintained', 'restored', 'grand']
+      const currentIdx = TIERS.indexOf(state.house.exteriorState)
+      const targetIdx = TIERS.indexOf(action.payload.targetTier)
+      if (targetIdx > currentIdx) {
+        state.house.exteriorState = action.payload.targetTier
+      }
     },
 
     /** Record or update a world NPC's runtime state (disposition, flags, location override, last contact). */

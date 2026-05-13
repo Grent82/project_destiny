@@ -79,6 +79,7 @@ const baseState: GameState = {
     ],
     vaultUnlocked: false,
     rosterBonus: 0,
+    exteriorState: 'ruined' as const,
   },
   saveVersion: 1,
   rngSeed: 42,

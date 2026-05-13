@@ -463,7 +463,9 @@
         "roomFunction": null
       }
     ],
-    "vaultUnlocked": false
+    "vaultUnlocked": false,
+    "rosterBonus": 0,
+    "exteriorState": "ruined"
   },
   "visitedDialogueNodes": {},
   "saveVersion": 2,

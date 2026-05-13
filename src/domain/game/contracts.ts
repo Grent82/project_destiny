@@ -89,11 +89,15 @@ export const houseRoomSchema = z
   })
   .strict()
 
+export const houseExteriorTierSchema = z.enum(['ruined', 'patched', 'maintained', 'restored', 'grand'])
+export type HouseExteriorTier = z.infer<typeof houseExteriorTierSchema>
+
 export const houseStateSchema = z
   .object({
     rooms: z.array(houseRoomSchema),
     vaultUnlocked: z.boolean().default(false),
     rosterBonus: z.number().int().nonnegative().default(0),
+    exteriorState: houseExteriorTierSchema.default('ruined'),
   })
   .strict()
 
@@ -243,6 +247,7 @@ export const gameStateSchema = z
       ],
       vaultUnlocked: false,
       rosterBonus: 0,
+      exteriorState: 'ruined' as const,
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),
