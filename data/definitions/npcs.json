@@ -2044,7 +2044,7 @@
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances.",
+    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests \u2014 not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -2119,7 +2119,8 @@
     ],
     "motivation": {
       "publicGoal": "To complete the foreclosure against House Valdris and recover what is owed.",
-      "privateNeed": "To complete the foreclosure before anyone finds the coercion papers."
+      "privateNeed": "To complete the foreclosure before anyone finds the coercion papers.",
+      "immediatePressure": "A Merrow intermediary has indicated that time is running out. Complete the foreclosure or lose Merrow's backing."
     }
   },
   {
@@ -2211,7 +2212,7 @@
     "name": "Lady Sorn",
     "npcType": "enemy",
     "origin": "Gilded Heights",
-    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
+    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants. She and House Merrow compete for the same legitimacy space in the Northbank registry. They cooperate only when House Valdris is the common target \u2014 and even then, they watch each other.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -2288,7 +2289,8 @@
     "motivation": {
       "publicGoal": "An ever-growing intelligence network.",
       "privateNeed": "To hold leverage over every significant faction.",
-      "lineTheyWontCross": "Losing information she once possessed."
+      "lineTheyWontCross": "Losing information she once possessed.",
+      "immediatePressure": "House Merrow has filed a duplicate claim on the same document trail she is tracking. She needs it resolved first."
     }
   },
   {
