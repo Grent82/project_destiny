@@ -255,6 +255,20 @@
           "trust",
           "danger"
         ]
+      },
+      {
+        "text": "has memorised the exact statute number for every fine he has ever paid \u2014 and every one he has avoided",
+        "tags": [
+          "meticulous",
+          "principled"
+        ],
+        "triggerKeywords": [
+          "law",
+          "statute",
+          "fine",
+          "record",
+          "authority"
+        ]
       }
     ],
     "motivation": {
@@ -1096,6 +1110,20 @@
           "answers",
           "direct"
         ]
+      },
+      {
+        "text": "recounts the number of days since she last saw open sky \u2014 aloud, if no one stops her",
+        "tags": [
+          "compulsive",
+          "grief-prone"
+        ],
+        "triggerKeywords": [
+          "captivity",
+          "freedom",
+          "sky",
+          "time",
+          "days"
+        ]
       }
     ],
     "motivation": {
@@ -1182,6 +1210,20 @@
           "count",
           "ledger"
         ]
+      },
+      {
+        "text": "gives everyone who enters a nickname based on their order \u2014 never uses their real name until they pay twice",
+        "tags": [
+          "compulsive",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "trust",
+          "name",
+          "customer",
+          "coin",
+          "loyalty"
+        ]
       }
     ],
     "motivation": {
@@ -1266,6 +1308,20 @@
           "never",
           "prays",
           "where"
+        ]
+      },
+      {
+        "text": "lights a second candle when she lies \u2014 she has never explained this to anyone",
+        "tags": [
+          "superstitious",
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "confession",
+          "lie",
+          "truth",
+          "secret",
+          "ritual"
         ]
       }
     ],
@@ -1352,6 +1408,20 @@
           "keeps",
           "three",
           "copies"
+        ]
+      },
+      {
+        "text": "makes three copies of every document he touches \u2014 habit inherited from a father who lost everything to a single forged paper",
+        "tags": [
+          "meticulous",
+          "paranoid"
+        ],
+        "triggerKeywords": [
+          "document",
+          "record",
+          "copy",
+          "forgery",
+          "ledger"
         ]
       }
     ],
@@ -1947,6 +2017,20 @@
           "knows",
           "price",
           "everything"
+        ]
+      },
+      {
+        "text": "knows the weight of a grain sack by the sound it makes when set down \u2014 and has been wrong exactly once in forty years",
+        "tags": [
+          "meticulous",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "grain",
+          "trade",
+          "ledger",
+          "market",
+          "weight"
         ]
       }
     ],

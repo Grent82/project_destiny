@@ -277,7 +277,8 @@
     "dominantExchangeSystem": "debt",
     "rumorClimate": "saturated",
     "socialDensity": 4,
-    "reputation": 45
+    "reputation": 45,
+    "narrativeHook": "The dockmaster keeps a second ledger under the floor of her office. She has been waiting for someone to ask about it."
   },
   {
     "id": "district-the-mireward",
@@ -308,7 +309,8 @@
     "dominantExchangeSystem": "favor",
     "rumorClimate": "moderate",
     "socialDensity": 2,
-    "reputation": 65
+    "reputation": 65,
+    "narrativeHook": "Sister Vael lights a candle for every confession she receives. The ash from a particular candle has not been emptied in three years."
   },
   {
     "id": "district-cinder-row",
@@ -339,7 +341,8 @@
     "dominantExchangeSystem": "coin",
     "rumorClimate": "saturated",
     "socialDensity": 5,
-    "reputation": 35
+    "reputation": 35,
+    "narrativeHook": "The Lantern Vale has a room on the upper floor that has been booked under the same name \u2014 \"Holst\" \u2014 for eleven years running, though no one matching that description has slept in it."
   },
   {
     "id": "district-the-northbank",
@@ -369,7 +372,8 @@
     "dominantExchangeSystem": "information",
     "rumorClimate": "dry",
     "socialDensity": 2,
-    "reputation": 75
+    "reputation": 75,
+    "narrativeHook": "The Salt Ledger Register has a gap of six pages dated to the week of the Breach. The pages were not destroyed. They were simply never filed."
   },
   {
     "id": "district-the-below",
@@ -399,6 +403,7 @@
     "dominantExchangeSystem": "violence",
     "rumorClimate": "moderate",
     "socialDensity": 3,
-    "reputation": 20
+    "reputation": 20,
+    "narrativeHook": "There is no agreed-upon entrance. Everyone who uses The Below learned from someone else, and no one admits they taught them."
   }
 ]

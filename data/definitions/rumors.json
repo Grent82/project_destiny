@@ -5,10 +5,17 @@
     "districtId": "district-the-warrens",
     "originNpcId": "npc-garet-doyle",
     "text": "Old Maret keeps a book that can unmake a lord.",
-    "subjectNpcIds": ["npc-old-maret"],
+    "subjectNpcIds": [
+      "npc-old-maret"
+    ],
     "truth": "true",
     "credibility": 60,
-    "tags": ["quest-hook", "house-valdris", "maret", "merrow-threat"]
+    "tags": [
+      "quest-hook",
+      "house-valdris",
+      "maret",
+      "merrow-threat"
+    ]
   },
   {
     "id": "rumor-highborn-captive",
@@ -16,10 +23,16 @@
     "districtId": "district-the-warrens",
     "originNpcId": "npc-marion-vale",
     "text": "A highborn girl is kept somewhere no herald can find her.",
-    "subjectNpcIds": ["npc-mira"],
+    "subjectNpcIds": [
+      "npc-mira"
+    ],
     "truth": "true",
     "credibility": 40,
-    "tags": ["quest-hook", "mira-arc", "captivity"]
+    "tags": [
+      "quest-hook",
+      "mira-arc",
+      "captivity"
+    ]
   },
   {
     "id": "rumor-merrow-legitimacy",
@@ -27,10 +40,16 @@
     "districtId": "district-gilded-heights",
     "originNpcId": null,
     "text": "House Merrow means to buy legitimacy, not earn it.",
-    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "subjectNpcIds": [
+      "npc-enemy-lady-sorn"
+    ],
     "truth": "mixed",
     "credibility": 55,
-    "tags": ["faction", "merrow", "legitimacy-contest"]
+    "tags": [
+      "faction",
+      "merrow",
+      "legitimacy-contest"
+    ]
   },
   {
     "id": "rumor-mireward-confessions",
@@ -38,10 +57,16 @@
     "districtId": "district-the-pale",
     "originNpcId": null,
     "text": "Confessions in the Pale do not die in the shrine.",
-    "subjectNpcIds": ["npc-sister-vael"],
+    "subjectNpcIds": [
+      "npc-sister-vael"
+    ],
     "truth": "mixed",
     "credibility": 35,
-    "tags": ["vael-maret-bond", "information-leak", "hidden-bond"]
+    "tags": [
+      "vael-maret-bond",
+      "information-leak",
+      "hidden-bond"
+    ]
   },
   {
     "id": "rumor-holst-owes-doyle",
@@ -49,10 +74,17 @@
     "districtId": "district-harbor",
     "originNpcId": null,
     "text": "Verek Holst never refuses Garet Doyle. Word is he owes him something bigger than coin.",
-    "subjectNpcIds": ["npc-verek-holst", "npc-garet-doyle"],
+    "subjectNpcIds": [
+      "npc-verek-holst",
+      "npc-garet-doyle"
+    ],
     "truth": "true",
     "credibility": 50,
-    "tags": ["doyle-holst-bond", "hidden-bond", "debt"]
+    "tags": [
+      "doyle-holst-bond",
+      "hidden-bond",
+      "debt"
+    ]
   },
   {
     "id": "rumor-valdris-eyes",
@@ -60,9 +92,66 @@
     "districtId": "district-gilded-heights",
     "originNpcId": "npc-enemy-lady-sorn",
     "text": "Someone in House Valdris still has loyal eyes watching from inside the city.",
-    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "subjectNpcIds": [
+      "npc-enemy-lady-sorn"
+    ],
     "truth": "false",
     "credibility": 45,
-    "tags": ["sorn-planted", "paranoia", "valdris"]
+    "tags": [
+      "sorn-planted",
+      "paranoia",
+      "valdris"
+    ]
+  },
+  {
+    "id": "rumor-holst-below-debt",
+    "kind": "ambient",
+    "districtId": "district-cinder-row",
+    "originNpcId": null,
+    "text": "Holst has been seen in The Below. Whatever he owes has apparently been owed long enough that it found a new creditor.",
+    "subjectNpcIds": [
+      "npc-verek-holst"
+    ],
+    "truth": "mixed",
+    "credibility": 40,
+    "tags": [
+      "debt",
+      "the-below",
+      "holst"
+    ]
+  },
+  {
+    "id": "rumor-vael-candle",
+    "kind": "ambient",
+    "districtId": "district-the-mireward",
+    "originNpcId": null,
+    "text": "A woman in the Mireward lights two candles for every confessant. The second one is always taller. No one has asked her why.",
+    "subjectNpcIds": [
+      "npc-sister-vael"
+    ],
+    "truth": "true",
+    "credibility": 35,
+    "tags": [
+      "confession",
+      "vael",
+      "ritual"
+    ]
+  },
+  {
+    "id": "rumor-doyle-room",
+    "kind": "ambient",
+    "districtId": "district-cinder-row",
+    "originNpcId": null,
+    "text": "The Lantern Vale has a room paid for eleven years by someone who never sleeps in it. Garet just shrugs and says the sheets are always clean.",
+    "subjectNpcIds": [
+      "npc-garet-doyle"
+    ],
+    "truth": "true",
+    "credibility": 55,
+    "tags": [
+      "doyle",
+      "lantern-vale",
+      "mystery"
+    ]
   }
 ]
