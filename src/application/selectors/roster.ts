@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
+import { selectCharacterSignature } from './characterSignature'
 
 export const selectRosterEntries = createSelector(
   (state: RootState) => state.game.roster,
@@ -107,5 +108,6 @@ export function selectRosterDetail(state: RootState, npcId: string) {
     wagesOwedDays: runtime.wagesOwedDays,
     trainingFocus: runtime.trainingFocus,
     rarity: definition?.rarity ?? 'common',
+    signature: definition ? selectCharacterSignature(state, npcId) : '',
   }
 }

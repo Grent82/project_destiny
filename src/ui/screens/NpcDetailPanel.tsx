@@ -165,6 +165,11 @@ function CharacterSection({ detail }: { detail: NpcDetail }) {
           ))}
         </ul>
       )}
+      {detail.signature && (
+        <p style={{ marginTop: '0.75rem', fontSize: 'var(--size-sm)', color: 'var(--text-accent)', fontStyle: 'italic', borderLeft: '2px solid var(--border-accent)', paddingLeft: '0.5rem' }}>
+          {detail.signature}
+        </p>
+      )}
     </div>
   )
 }
