@@ -28,6 +28,7 @@ import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigat
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import { resolveDialogueChoice } from '../commands/dialogue'
 import { searchHouseRoom } from '../commands/houseSearch'
+import { installModule as installModuleCommand } from '../commands/installModule'
 import { useItem as useItemCommand } from '../commands/useItem'
 import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
 import {
@@ -1290,6 +1291,27 @@ const gameSlice = createSlice({
         message: `${npc.name} has been rescued. Condition at rescue: ${cap.condition}.`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+    },
+
+    /** Move an owned item to a different location (inventory, house_storage, mission_pack, etc.) */
+    moveItem(state, action: PayloadAction<{ instanceId: string; location: import('../../domain/items/contracts').OwnedItemLocation }>) {
+      const { instanceId, location } = action.payload
+      const item = state.ownedItems.find((o) => o.instanceId === instanceId)
+      if (item) item.location = location
+    },
+
+    /** Give an item from ownedItems to an NPC (removes from player inventory) */
+    giveItemToNpc(state, action: PayloadAction<{ instanceId: string; npcId: string }>) {
+      const { instanceId } = action.payload
+      state.ownedItems = state.ownedItems.filter((o) => o.instanceId !== instanceId)
+    },
+
+    /** Install a household module item into the house (delegates to installModule command) */
+    installModuleItem(state, action: PayloadAction<{ instanceId: string }>) {
+      const result = installModuleCommand(current(state) as GameState, action.payload.instanceId)
+      if (result.success) {
+        Object.assign(state, result.state)
+      }
     },
   },
 })
