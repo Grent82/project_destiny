@@ -87,6 +87,8 @@ const baseState: GameState = {
   rumors: [],
   bondVisibility: {},
   ownedItems: [],
+  houseStorageCapacity: 40,
+  installedHouseModules: [],
   eventInstances: [],
   worldNpcStates: [],
   pendingConsumableDecision: null,

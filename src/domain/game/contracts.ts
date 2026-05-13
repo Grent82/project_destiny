@@ -10,6 +10,7 @@ import { eventInstanceSchema, pendingEventSchema } from '../events/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
 import {
   armorDefinitionSchema,
+  installedModuleSchema,
   inventoryEntrySchema,
   itemDefinitionSchema,
   ownedItemSchema,
@@ -129,6 +130,8 @@ export const gameStateSchema = z
     roster: z.array(npcRuntimeStateSchema),
     inventory: z.array(inventoryEntrySchema).default([]),
     ownedItems: z.array(ownedItemSchema).default([]),
+    houseStorageCapacity: z.number().int().positive().default(40),
+    installedHouseModules: z.array(installedModuleSchema).default([]),
     cityResources: cityResourcesSchema,
     activityLog: z.array(activityLogEntrySchema).max(100),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),

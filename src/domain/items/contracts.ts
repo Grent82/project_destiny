@@ -35,6 +35,8 @@ export const itemEffectSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('relationship_gift'), target: z.string(), value: z.number() }),
   z.object({ type: z.literal('evidence_use'), disposition: documentDispositionSchema.optional() }),
   z.object({ type: z.literal('training_bonus'), skill: z.string(), value: z.number() }),
+  z.object({ type: z.literal('storage_expand'), value: z.number().int().positive() }),
+  z.object({ type: z.literal('rest_quality_bonus'), value: z.number().int() }),
 ])
 
 export const itemDefinitionSchema = z
@@ -53,6 +55,13 @@ export const itemDefinitionSchema = z
     typedEffects: z.array(itemEffectSchema).default([]),
   })
   .strict()
+
+export const installedModuleSchema = z.object({
+  moduleItemId: entityIdSchema,
+  installedAtDay: z.number().int().nonnegative(),
+}).strict()
+
+export type InstalledModule = z.infer<typeof installedModuleSchema>
 
 export const weaponClassSchema = z.enum([
   'dagger',

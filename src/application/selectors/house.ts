@@ -129,3 +129,21 @@ export const selectDefenseRating = createSelector([selectGame], (game): number =
 
   return fortScore + crewScore + renownScore
 })
+
+/**
+ * Returns house storage info including base capacity, used slots, and installed modules.
+ *
+ * The effective capacity = houseStorageCapacity (base) + storage_expand effects applied at install time.
+ * Module expansion is applied directly to houseStorageCapacity when installModule runs — this selector
+ * reads the already-updated capacity from state (no catalog lookup needed at read time).
+ */
+export const selectHouseStorageInfo = createSelector([selectGame], (game) => {
+  const usedSlots = game.ownedItems.filter((i) => i.location === 'house_storage').length
+
+  return {
+    capacity: game.houseStorageCapacity,
+    usedSlots,
+    available: Math.max(0, game.houseStorageCapacity - usedSlots),
+    installedModules: game.installedHouseModules,
+  }
+})
