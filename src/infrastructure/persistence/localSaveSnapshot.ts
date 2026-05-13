@@ -57,6 +57,35 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 1) {
+    // v1 → v2: add ownedItems from inventory[] + stash (if not already present)
+    const raw1 = raw as Record<string, unknown>
+    if (!raw1['ownedItems']) {
+      const oldInventory = (raw1['inventory'] as Array<{ itemId: string; quantity: number; currentDurability?: number }>) ?? []
+      const oldStash = (raw1['stash'] as { weapons?: string[]; armors?: string[] }) ?? {}
+      const ownedItems: Array<{
+        instanceId: string; itemId: string; location: string; quantity: number; currentDurability?: number
+      }> = []
+      oldInventory.forEach((entry, i) => {
+        ownedItems.push({
+          instanceId: `migrated-${entry.itemId}-${i}`,
+          itemId: entry.itemId,
+          location: 'inventory',
+          quantity: entry.quantity,
+          ...(entry.currentDurability !== undefined ? { currentDurability: entry.currentDurability } : {}),
+        })
+      })
+      ;(oldStash.weapons ?? []).forEach((id, i) => {
+        ownedItems.push({ instanceId: `migrated-stash-w-${id}-${i}`, itemId: id, location: 'house_storage', quantity: 1 })
+      })
+      ;(oldStash.armors ?? []).forEach((id, i) => {
+        ownedItems.push({ instanceId: `migrated-stash-a-${id}-${i}`, itemId: id, location: 'house_storage', quantity: 1 })
+      })
+      return gameStateSchema.safeParse({ ...raw1, saveVersion: 2, ownedItems }).data ?? null
+    }
+    return gameStateSchema.safeParse({ ...raw1, saveVersion: 2 }).data ?? null
+  }
+
+  if (version === 2) {
     return gameStateSchema.safeParse(raw).data ?? null
   }
 

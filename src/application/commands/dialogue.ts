@@ -4,7 +4,7 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
-import { addInventoryEntry } from './inventory'
+import { addOwnedItem } from './inventory'
 import { addQuestLeadIfNew } from './questLifecycle'
 
 function cloneDialogueState(state: GameState): GameState {
@@ -12,7 +12,7 @@ function cloneDialogueState(state: GameState): GameState {
     ...state,
     relationships: { ...state.relationships },
     factionStandings: { ...state.factionStandings },
-    inventory: [...state.inventory],
+    ownedItems: [...state.ownedItems],
     availableQuestLeads: [...state.availableQuestLeads],
     activityLog: [...state.activityLog],
     resolvedDialogueChoices: { ...state.resolvedDialogueChoices },
@@ -59,7 +59,7 @@ export function meetsDialogueCondition(
     case 'mainQuestStage':
       return state.mainQuest.stage === cond.value
     case 'hasItem':
-      return state.inventory.some((entry) => entry.itemId === cond.value)
+      return state.ownedItems.some((o) => o.itemId === cond.value)
     case 'choiceTaken':
       return (state.resolvedDialogueChoices[dialogueId] ?? []).includes(cond.value as string)
     case 'choiceNotTaken':
@@ -130,10 +130,10 @@ function applyDialogueOutcome(
     }
     case 'item': {
       if (typeof outcome.value !== 'string') return state
-      state.inventory = addInventoryEntry(state.inventory, outcome.value)
+      const afterItem = addOwnedItem(state, outcome.value)
       const itemName = contentCatalog.itemsById.get(outcome.value)?.name ?? outcome.value
       const npcName = contentCatalog.npcsById.get(npcId)?.name ?? npcId
-      return appendActivityLogEntry(state, 'system', `${npcName} gave you ${itemName}.`)
+      return appendActivityLogEntry(afterItem, 'system', `${npcName} gave you ${itemName}.`)
     }
     default:
       return state

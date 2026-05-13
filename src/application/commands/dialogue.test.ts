@@ -81,16 +81,16 @@ describe('dialogue consequence resolution', () => {
 
   it('can grant an item from dialogue through typed outcome handling', () => {
     const store = makeStore({
-      inventory: [],
+      ownedItems: [],
     })
 
     store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-the-wren', nodeId: 'wren-node-pale' }))
     store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'wren-choice-thanks' }))
 
     const state = store.getState().game
-    expect(state.inventory).toEqual(
+    expect(state.ownedItems).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ itemId: 'item-papers-false-citizen', quantity: 1 }),
+        expect.objectContaining({ itemId: 'item-papers-false-citizen', quantity: 1, location: 'inventory' }),
       ]),
     )
     expect(state.activityLog[0]?.message).toContain('The Wren gave you False Citizen Papers')

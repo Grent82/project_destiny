@@ -12,6 +12,7 @@ import {
   armorDefinitionSchema,
   inventoryEntrySchema,
   itemDefinitionSchema,
+  ownedItemSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
 import { attributesSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
@@ -121,7 +122,8 @@ export const gameStateSchema = z
     factionStates: z.array(factionRuntimeStateSchema),
     districts: z.array(districtRuntimeStateSchema),
     roster: z.array(npcRuntimeStateSchema),
-    inventory: z.array(inventoryEntrySchema),
+    inventory: z.array(inventoryEntrySchema).default([]),
+    ownedItems: z.array(ownedItemSchema).default([]),
     cityResources: cityResourcesSchema,
     activityLog: z.array(activityLogEntrySchema).max(100),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
@@ -241,7 +243,7 @@ export const gameStateSchema = z
       vaultUnlocked: false,
       rosterBonus: 0,
     })),
-    saveVersion: z.number().int().min(1).default(1),
+    saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),
     rumors: z.array(rumorSchema).default([]),
     bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),

@@ -732,53 +732,54 @@ const gameSlice = createSlice({
     addToStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string; price: number }>) {
       const { type, id, price } = action.payload
       if (state.money < price) return
-      if (type === 'weapon' && !state.stash.weapons.includes(id)) {
-        state.stash.weapons.push(id)
+      const alreadyOwned = state.ownedItems.some(
+        (o) => o.itemId === id && o.location === 'house_storage'
+      )
+      if (!alreadyOwned) {
+        state.ownedItems.push({
+          instanceId: `inst-${id}-${Date.now()}`,
+          itemId: id,
+          location: 'house_storage',
+          quantity: 1,
+        })
         state.money -= price
-      } else if (type === 'armor' && !state.stash.armors.includes(id)) {
-        state.stash.armors.push(id)
-        state.money -= price
+        // Keep legacy stash in sync for backward compat
+        if (type === 'weapon') state.stash.weapons.push(id)
+        else state.stash.armors.push(id)
       }
     },
 
     removeFromStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
       const { type, id } = action.payload
-      if (type === 'weapon') {
-        state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
-      } else {
-        state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
-      }
+      state.ownedItems = state.ownedItems.filter(
+        (o) => !(o.itemId === id && o.location === 'house_storage')
+      )
+      if (type === 'weapon') state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
+      else state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
     },
 
     sellFromStash(state, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
       const { type, id } = action.payload
+      const owned = state.ownedItems.find((o) => o.itemId === id && o.location === 'house_storage')
+      if (!owned) return
+      let sellPrice = 0
       if (type === 'weapon') {
-        if (!state.stash.weapons.includes(id)) return
-        const sellPrice = Math.floor(getWeaponRepairCost(id) * 2.5) // ~50% of shop price
+        sellPrice = Math.floor(getWeaponRepairCost(id) * 2.5)
         state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
-        state.money += sellPrice
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-sell-${id}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'economy',
-          message: `Sold weapon from stash. +${sellPrice} Marks.`,
-        })
-        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       } else {
-        if (!state.stash.armors.includes(id)) return
-        const sellPrice = Math.floor(getArmorRepairCost(id) * 2.5)
+        sellPrice = Math.floor(getArmorRepairCost(id) * 2.5)
         state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
-        state.money += sellPrice
-        state.activityLog.unshift({
-          id: `log-${state.day}-${state.timeSlot}-sell-${id}`,
-          day: state.day,
-          timeSlot: state.timeSlot,
-          category: 'economy',
-          message: `Sold armor from stash. +${sellPrice} Marks.`,
-        })
-        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
+      state.ownedItems = state.ownedItems.filter((o) => o !== owned)
+      state.money += sellPrice
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-sell-${id}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'economy',
+        message: `Sold ${type} from stash. +${sellPrice} Marks.`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
 
     setPlayerCharacter(

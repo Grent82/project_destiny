@@ -4,7 +4,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
 
 const selectMoney = (state: RootState) => state.game.money
-const selectInventory = (state: RootState) => state.game.inventory
+const selectOwnedItems = (state: RootState) => state.game.ownedItems
 const selectDistrictStates = (state: RootState) => state.game.districts
 const selectCurrentDistrictId = (state: RootState) => state.game.currentDistrictId
 const selectFactionStandings = (state: RootState) => state.game.factionStandings
@@ -19,9 +19,11 @@ export const selectShopsInCurrentDistrict = (state: RootState) => {
 }
 
 export const selectShopOverview = createSelector(
-  [selectMoney, selectInventory, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding, selectDistrictTension],
-  (money, inventory, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding, districtTension) => {
-    const quantities = new Map(inventory.map((entry) => [entry.itemId, entry.quantity]))
+  [selectMoney, selectOwnedItems, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding, selectDistrictTension],
+  (money, ownedItems, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding, districtTension) => {
+    const quantities = new Map(
+      ownedItems.filter((o) => o.location === 'inventory').map((o) => [o.itemId, o.quantity])
+    )
     const lowestPriceByItem = new Map<string, number>()
     const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
 

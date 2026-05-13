@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { addOwnedItem } from './inventory'
 import type { ExpeditionDiscovery } from '../../domain/expedition/contracts'
 
 /**
@@ -75,20 +76,7 @@ export function applyExpeditionDiscoveries(
         `Expedition return: +${discovery.amount} Marks recovered.`,
       )
     } else if (discovery.type === 'item' && discovery.itemId) {
-      const existing = next.inventory.find((i) => i.itemId === discovery.itemId)
-      if (existing) {
-        next = {
-          ...next,
-          inventory: next.inventory.map((i) =>
-            i.itemId === discovery.itemId ? { ...i, quantity: i.quantity + 1 } : i,
-          ),
-        }
-      } else {
-        next = {
-          ...next,
-          inventory: [...next.inventory, { itemId: discovery.itemId, quantity: 1 }],
-        }
-      }
+      next = addOwnedItem(next, discovery.itemId)
       const itemDef = contentCatalog.itemsById.get(discovery.itemId)
       next = appendActivityLogEntry(
         next,

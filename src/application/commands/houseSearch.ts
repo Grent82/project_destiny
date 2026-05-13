@@ -1,18 +1,18 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
-import { addInventoryEntry } from './inventory'
+import { addOwnedItem } from './inventory'
 import { getHouseDiscovery } from '../content/houseDiscoveries'
 
 const VAULT_CLUE_ITEM_IDS = ['item-chit-ledger-removal', 'item-note-arrangement-below'] as const
 
 function hasInventoryItem(state: GameState, itemId: string) {
-  return state.inventory.some((entry) => entry.itemId === itemId)
+  return state.ownedItems.some((o) => o.itemId === itemId && o.location === 'inventory')
 }
 
 function cloneHouseState(state: GameState): GameState {
   return {
     ...state,
-    inventory: [...state.inventory],
+    ownedItems: [...state.ownedItems],
     activityLog: [...state.activityLog],
     mainQuest: { ...state.mainQuest },
     house: {
@@ -56,7 +56,7 @@ export function searchHouseRoom(
   if (!room || room.searched) return state
   if (room.state === 'locked' || room.state === 'collapsed' || room.state === 'destroyed') return state
 
-  const next = cloneHouseState(state)
+  let next = cloneHouseState(state)
   const nextRoom = next.house.rooms.find((entry) => entry.roomId === roomId)
   if (!nextRoom) return state
   nextRoom.searched = true
@@ -71,10 +71,10 @@ export function searchHouseRoom(
   }
 
   for (const artifact of discovery.actionableFinds) {
-    if (!hasInventoryItem(next, artifact.itemId)) {
-      next.inventory = addInventoryEntry(next.inventory, artifact.itemId)
+      if (!hasInventoryItem(next, artifact.itemId)) {
+        next = addOwnedItem(next, artifact.itemId)
+      }
     }
-  }
 
   let afterSearch = appendActivityLogEntry(next, 'system', discovery.message)
 

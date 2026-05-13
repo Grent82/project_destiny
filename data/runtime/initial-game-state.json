@@ -466,7 +466,27 @@
     "vaultUnlocked": false
   },
   "visitedDialogueNodes": {},
-  "saveVersion": 1,
+  "saveVersion": 2,
   "rumors": [],
-  "bondVisibility": {}
+  "bondVisibility": {},
+  "ownedItems": [
+    {
+      "instanceId": "inst-item-medkit-field-18ef14bc",
+      "itemId": "item-medkit-field",
+      "location": "inventory",
+      "quantity": 2
+    },
+    {
+      "instanceId": "inst-item-ledger-bureau-de5c4e28",
+      "itemId": "item-ledger-bureau",
+      "location": "inventory",
+      "quantity": 1
+    },
+    {
+      "instanceId": "inst-item-spare-parts-8a488cdf",
+      "itemId": "item-spare-parts",
+      "location": "inventory",
+      "quantity": 3
+    }
+  ]
 }

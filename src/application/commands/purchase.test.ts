@@ -16,7 +16,7 @@ describe('purchaseItemFromShop', () => {
 
     expect(nextState.money).toBe(430)
     expect(
-      nextState.inventory.find((entry) => entry.itemId === 'item-spare-parts')
+      nextState.ownedItems.find((o) => o.itemId === 'item-spare-parts' && o.location === 'inventory')
         ?.quantity,
     ).toBe(4)
     expect(nextState.activityLog[0]?.message).toMatch(/Purchased item-spare-parts/i)

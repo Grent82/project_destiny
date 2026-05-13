@@ -19,9 +19,9 @@ describe('house discoveries', () => {
     store.dispatch(gameActions.searchRoom('room-bureau'))
 
     const state = store.getState().game
-    expect(state.inventory).toEqual(
+    expect(state.ownedItems).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ itemId: 'item-chit-ledger-removal', quantity: 1 }),
+        expect.objectContaining({ itemId: 'item-chit-ledger-removal', quantity: 1, location: 'inventory' }),
       ]),
     )
     expect(state.activityLog[0]?.message).toContain('forgotten strongbox')
@@ -38,7 +38,7 @@ describe('house discoveries', () => {
             : room,
         ),
       },
-      inventory: [],
+      ownedItems: [],
     })
 
     store.dispatch(gameActions.searchRoom('room-bureau'))

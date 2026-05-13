@@ -128,10 +128,30 @@ export const inventoryEntrySchema = z
   })
   .strict()
 
+export const ownedItemLocationSchema = z.enum([
+  'inventory',
+  'house_storage',
+  'equipped',
+  'mission_pack',
+  'archived',
+])
+
+export const ownedItemSchema = z
+  .object({
+    instanceId: z.string().min(1),
+    itemId: entityIdSchema,
+    location: ownedItemLocationSchema,
+    quantity: positiveIntegerSchema,
+    currentDurability: positiveIntegerSchema.optional(),
+  })
+  .strict()
+
 export type ArmorDefinition = z.infer<typeof armorDefinitionSchema>
 export type EquipmentDefinition = z.infer<typeof equipmentDefinitionSchema>
 export type InventoryEntry = z.infer<typeof inventoryEntrySchema>
 export type ItemDefinition = z.infer<typeof itemDefinitionSchema>
+export type OwnedItem = z.infer<typeof ownedItemSchema>
+export type OwnedItemLocation = z.infer<typeof ownedItemLocationSchema>
 export type Loadout = z.infer<typeof loadoutSchema>
 export type WeaponDefinition = z.infer<typeof weaponDefinitionSchema>
 

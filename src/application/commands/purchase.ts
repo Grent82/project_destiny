@@ -1,7 +1,7 @@
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
-import { addInventoryEntry } from './inventory'
+import { addOwnedItem } from './inventory'
 
 export function purchaseItemFromShop(
   state: GameState,
@@ -24,9 +24,9 @@ export function purchaseItemFromShop(
     return state
   }
 
-  return appendActivityLogEntry({
-    ...state,
-    money: state.money - offer.price,
-    inventory: addInventoryEntry(state.inventory, itemId),
-  }, 'economy', `Purchased ${offer.itemId} from ${shop.name} for ${offer.price} credits.`)
+  const afterPurchase = addOwnedItem(
+    { ...state, money: state.money - offer.price },
+    itemId,
+  )
+  return appendActivityLogEntry(afterPurchase, 'economy', `Purchased ${offer.itemId} from ${shop.name} for ${offer.price} credits.`)
 }
