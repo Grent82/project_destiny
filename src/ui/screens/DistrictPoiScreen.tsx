@@ -154,12 +154,6 @@ export function DistrictPoiScreen() {
         </article>
 
         <article className="detail-panel">
-          <h2>Continuity hooks</h2>
-          <ul className="detail-list">
-            <li>Future bespoke art can anchor to this venue rather than a generic district menu.</li>
-            <li>Named NPCs, rumors, and local incidents can attach here without changing higher-level routes.</li>
-            <li>Leaving a local feature returns you to this place instead of throwing away the district context.</li>
-          </ul>
           {npc && (
             <>
               <h3 style={{ marginTop: '1rem' }}>Known presence</h3>

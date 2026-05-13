@@ -72,12 +72,13 @@ export function DistrictInteriorScreen() {
     .filter(Boolean)
 
   function handleEnter() {
-    if (!isHere && districtId) {
+    if (!isHere && districtId && district && !district.accessRestricted) {
       dispatch(gameActions.travelToDistrict(districtId))
     }
   }
 
-  function handleTravelTo(targetId: string) {
+  function handleTravelTo(targetId: string, targetRestricted: boolean) {
+    if (targetRestricted) return
     dispatch(gameActions.travelToDistrict(targetId))
     navigate(`/district/${targetId}`)
   }
@@ -100,10 +101,15 @@ export function DistrictInteriorScreen() {
       <h1>{district.name}</h1>
       <p className="summary">{district.narrativeSummary}</p>
 
-      {!isHere && (
+      {!isHere && !district.accessRestricted && (
         <button className="action-button action-button--primary" type="button" onClick={handleEnter}>
           Enter {district.name}
         </button>
+      )}
+      {!isHere && district.accessRestricted && (
+        <p className="badge badge-warning" style={{ marginBottom: '1rem', display: 'inline-block' }}>
+          Access restricted
+        </p>
       )}
       {isHere && (
         <span className="badge badge-positive" style={{ marginBottom: '1rem', display: 'inline-block' }}>
@@ -167,20 +173,24 @@ export function DistrictInteriorScreen() {
               {adjacentDistricts.map((adj) => {
                 if (!adj) return null
                 const borderType = district.borderTypes[adj.id] ?? 'open'
+                const isRestricted = adj.accessRestricted
                 return (
                   <div key={adj.id} className="mission-row">
                     <div className="mission-row-header">
                       <strong>{adj.name}</strong>
                       <span className="badge">{BORDER_LABELS[borderType] ?? borderType}</span>
+                      {isRestricted && <span className="badge badge-warning">Restricted</span>}
                     </div>
-                    <button
-                      className="action-button"
-                      type="button"
-                      onClick={() => handleTravelTo(adj.id)}
-                      style={{ fontSize: '0.8rem', padding: '0.3rem 0.7rem' }}
-                    >
-                      Travel →
-                    </button>
+                    {!isRestricted && (
+                      <button
+                        className="action-button"
+                        type="button"
+                        onClick={() => handleTravelTo(adj.id, false)}
+                        style={{ fontSize: '0.8rem', padding: '0.3rem 0.7rem' }}
+                      >
+                        Travel →
+                      </button>
+                    )}
                   </div>
                 )
               })}

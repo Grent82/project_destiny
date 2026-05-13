@@ -162,10 +162,12 @@ export function resolveDialogueChoice(
   }
 
   if (choice.nextNodeId === null) {
+    const { [tree.id]: _removed, ...remainingVisited } = next.visitedDialogueNodes
     return {
       ...next,
       activeDialogueId: null,
       activeDialogueNodeId: null,
+      visitedDialogueNodes: remainingVisited,
     }
   }
 
