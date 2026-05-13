@@ -42,6 +42,8 @@ export const districtDefinitionSchema = z
     rumorClimate: rumorClimateSchema.default('moderate'),
     socialDensity: z.number().int().min(1).max(5).default(3),
     reputation: z.number().int().min(0).max(100).default(50),
+    // Fauna and creature presence (narrative texture)
+    faunaPresence: z.array(z.string()).default([]),
   })
   .strict()
 

@@ -41,7 +41,13 @@
     "rumorClimate": "saturated",
     "dominantExchangeSystem": "coin",
     "socialDensity": 4,
-    "reputation": 50
+    "reputation": 50,
+    "faunaPresence": [
+      "Bloated harbour rats that move like they know they own the docks.",
+      "Pale eels surfacing at low tide \u2014 a bad sign, locals say.",
+      "Herring gulls with oil-black wingtips, unnaturally quiet.",
+      "Barnacle crabs that cluster at the Breach-wall waterline and won't be shifted."
+    ]
   },
   {
     "id": "district-gilded-heights",
@@ -79,7 +85,13 @@
     "rumorClimate": "dry",
     "dominantExchangeSystem": "information",
     "socialDensity": 2,
-    "reputation": 70
+    "reputation": 70,
+    "faunaPresence": [
+      "Decorative peacocks that occasionally scream in the night without cause.",
+      "Pampered lap-hounds whose owners have not noticed their eyes have gone wrong.",
+      "A singular very old tortoise that has lived in the garden maze for at least four families.",
+      "Moth swarms that appear near open books and candlelight \u2014 Breach-drawn, some whisper."
+    ]
   },
   {
     "id": "district-ironworks",
@@ -119,7 +131,13 @@
     "rumorClimate": "moderate",
     "dominantExchangeSystem": "coin",
     "socialDensity": 4,
-    "reputation": 40
+    "reputation": 40,
+    "faunaPresence": [
+      "Furnace beetles \u2014 fireproof, thumb-sized, bred deliberately to detect gas leaks.",
+      "Draft horses with brand scars that have started refusing certain loading bays.",
+      "Ash-rats nesting in wall insulation, surviving temperatures that should kill them.",
+      "Crows that roost on cooling chimneys and mimic the factory bells."
+    ]
   },
   {
     "id": "district-the-pale",
@@ -166,7 +184,13 @@
     "rumorClimate": "moderate",
     "dominantExchangeSystem": "favor",
     "socialDensity": 2,
-    "reputation": 55
+    "reputation": 55,
+    "faunaPresence": [
+      "Thin long-legged spiders that spin grey webs between memorial stones.",
+      "Rooks that land only on the graves of the Breach dead, never the pre-Breach plots.",
+      "Silence-moths, wings like ash paper, no sound at all when they flutter.",
+      "Something that sounds like a dog crying but has not been found."
+    ]
   },
   {
     "id": "district-the-warrens",
@@ -208,7 +232,13 @@
     "rumorClimate": "saturated",
     "dominantExchangeSystem": "violence",
     "socialDensity": 5,
-    "reputation": 25
+    "reputation": 25,
+    "faunaPresence": [
+      "Feral cats in large numbers \u2014 worshipped quietly by several families as luck.",
+      "Sewer centipedes as long as a forearm, venomous, mostly harmless to adults.",
+      "A colony of rats that do not flee torchlight and seem to watch.",
+      "Starlings that roost inside the tenements and have learned to imitate specific voices."
+    ]
   },
   {
     "id": "district-the-hollows",
@@ -246,7 +276,13 @@
     "rumorClimate": "moderate",
     "dominantExchangeSystem": "debt",
     "socialDensity": 3,
-    "reputation": 35
+    "reputation": 35,
+    "faunaPresence": [
+      "House crows that pick through collapsed rooms and collect mirror fragments.",
+      "Blind fish in the flooded cellar-tunnels beneath the derelict blocks.",
+      "Something large that moves at night through the upper floors of the empty academy.",
+      "Spore-flies that emerge from certain walls and vanish by dawn."
+    ]
   },
   {
     "id": "district-ash-quay",
@@ -278,7 +314,13 @@
     "rumorClimate": "saturated",
     "socialDensity": 4,
     "reputation": 45,
-    "narrativeHook": "The dockmaster keeps a second ledger under the floor of her office. She has been waiting for someone to ask about it."
+    "narrativeHook": "The dockmaster keeps a second ledger under the floor of her office. She has been waiting for someone to ask about it.",
+    "faunaPresence": [
+      "Tide-crawlers \u2014 crustaceans with translucent shells, emerged only after the Breach.",
+      "Gulls that refuse to land here despite the fish offal, driven off by something.",
+      "Silver eels rising at the black-water channel mouths near the old rendering works.",
+      "A singular grey heron seen standing motionless at the same spot each dawn."
+    ]
   },
   {
     "id": "district-the-mireward",
@@ -310,7 +352,13 @@
     "rumorClimate": "moderate",
     "socialDensity": 2,
     "reputation": 65,
-    "narrativeHook": "Sister Vael lights a candle for every confession she receives. The ash from a particular candle has not been emptied in three years."
+    "narrativeHook": "Sister Vael lights a candle for every confession she receives. The ash from a particular candle has not been emptied in three years.",
+    "faunaPresence": [
+      "Biting midges in clouds so thick they can choke a man who breathes wrong.",
+      "Marsh adders \u2014 fat, sluggish, extremely venomous, surprisingly common in cellars.",
+      "Frogs that sing in tones too low to hear but rattle the teeth.",
+      "Something people call the Wading Man, seen at the canal edge, never approached."
+    ]
   },
   {
     "id": "district-cinder-row",
@@ -342,7 +390,13 @@
     "rumorClimate": "saturated",
     "socialDensity": 5,
     "reputation": 35,
-    "narrativeHook": "The Lantern Vale has a room on the upper floor that has been booked under the same name \u2014 \"Holst\" \u2014 for eleven years running, though no one matching that description has slept in it."
+    "narrativeHook": "The Lantern Vale has a room on the upper floor that has been booked under the same name \u2014 \"Holst\" \u2014 for eleven years running, though no one matching that description has slept in it.",
+    "faunaPresence": [
+      "Scorch-pigeons \u2014 urban pigeons whose feathers are permanently discoloured by the old fires.",
+      "Tallow-rats that eat candle-grease from shrines and have become unnaturally fat.",
+      "A pair of large brindle dogs with no owner, tolerated by residents, vicious to strangers.",
+      "Ashflies \u2014 small, black-winged, mute, seem drawn to grief."
+    ]
   },
   {
     "id": "district-the-northbank",
@@ -373,7 +427,13 @@
     "rumorClimate": "dry",
     "socialDensity": 2,
     "reputation": 75,
-    "narrativeHook": "The Salt Ledger Register has a gap of six pages dated to the week of the Breach. The pages were not destroyed. They were simply never filed."
+    "narrativeHook": "The Salt Ledger Register has a gap of six pages dated to the week of the Breach. The pages were not destroyed. They were simply never filed.",
+    "faunaPresence": [
+      "Merchant horses of unusual quality \u2014 several have started refusing specific streets.",
+      "Caged songbirds in almost every window; their song occasionally syncs unnervingly.",
+      "Well-fed alley cats with territorial ranges that correspond exactly to guild boundaries.",
+      "Pigeons with message-capsule clips still attached, unclaimed."
+    ]
   },
   {
     "id": "district-the-below",
@@ -404,6 +464,12 @@
     "rumorClimate": "moderate",
     "socialDensity": 3,
     "reputation": 20,
-    "narrativeHook": "There is no agreed-upon entrance. Everyone who uses The Below learned from someone else, and no one admits they taught them."
+    "narrativeHook": "There is no agreed-upon entrance. Everyone who uses The Below learned from someone else, and no one admits they taught them.",
+    "faunaPresence": [
+      "Eyeless fish in the flooded shafts that are still alive and have never seen light.",
+      "Pale millipedes by the thousands in the older tunnels \u2014 harmless, disturbing.",
+      "Something that sounds like mining picks striking stone in rhythms no miner would use.",
+      "Thin translucent worms that emerge from the walls when there is a Breach-weather event."
+    ]
   }
 ]
