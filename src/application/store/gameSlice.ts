@@ -23,6 +23,7 @@ import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content
 import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 import { initialGameStateSnapshot } from './initialGameState'
 import { applyRelationshipDelta } from '../commands/adjustRelationship'
+import { EXPEDITION_CARRY_LIMITS } from '../selectors/expeditionCarry'
 import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigationApproach, rollInvestigationOutcome } from '../commands/investigation'
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import { resolveDialogueChoice } from '../commands/dialogue'
@@ -621,6 +622,22 @@ const gameSlice = createSlice({
       if (!destination) return
       if (squadNpcIds.length === 0) return
       if ((state.cityResources?.foodSecurity ?? 0) < supplies) return
+
+      // Enforce carry limits: block departure if any category exceeds its cap
+      const missionItems = state.ownedItems.filter((i) => i.location === 'mission_pack')
+      const categoryCounts: Record<string, number> = {}
+      for (const item of missionItems) {
+        const def = contentCatalog.itemsById.get(item.itemId)
+        const rawCat = def?.category ?? 'other'
+        const cat = rawCat === 'tradeGood' ? 'trade_good' : rawCat
+        categoryCounts[cat] = (categoryCounts[cat] ?? 0) + item.quantity
+      }
+      const isOverLimit = Object.entries(categoryCounts).some(([cat, count]) => {
+        const key = cat as keyof typeof EXPEDITION_CARRY_LIMITS
+        const limit = EXPEDITION_CARRY_LIMITS[key]
+        return limit !== null && count > limit
+      })
+      if (isOverLimit) return
 
       for (const npc of state.roster) {
         if (squadNpcIds.includes(npc.npcId)) {
