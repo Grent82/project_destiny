@@ -99,3 +99,33 @@ export const selectHousePrestige = createSelector([selectGame], (game): number =
   return Math.min(100, base + functionBonus)
 })
 
+// Defense constants
+const FORTIFICATION_WEIGHT = 15
+const GUARD_CREW_WEIGHT = 10
+const RENOWN_DETERRENCE_PER_LEVEL = 5
+
+/**
+ * Computes the house defense rating from:
+ *  fortificationLevel × hardware weight
+ *  + NPCs on 'defense' assignment × crew weight
+ *  + renown level × deterrence modifier
+ *
+ * Higher defenseRating → more likely to deter or repel a raid.
+ */
+export const selectDefenseRating = createSelector([selectGame], (game): number => {
+  const fortScore = game.house.fortificationLevel * FORTIFICATION_WEIGHT
+  const guardCount = game.roster.filter((n) => n.assignment === 'defense').length
+  const crewScore = guardCount * GUARD_CREW_WEIGHT
+
+  // Renown level from progression (uses getRenownLevel via prestige)
+  const prestige = (() => {
+    const tierScore: Record<HouseExteriorTier, number> = {
+      ruined: 0, patched: 10, maintained: 25, restored: 50, grand: 80,
+    }
+    return tierScore[game.house.exteriorState]
+  })()
+  const renownLevel = Math.floor(prestige / 20) // 0–4
+  const renownScore = renownLevel * RENOWN_DETERRENCE_PER_LEVEL
+
+  return fortScore + crewScore + renownScore
+})

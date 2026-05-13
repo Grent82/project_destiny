@@ -465,7 +465,8 @@
     ],
     "vaultUnlocked": false,
     "rosterBonus": 0,
-    "exteriorState": "ruined"
+    "exteriorState": "ruined",
+    "fortificationLevel": 0
   },
   "visitedDialogueNodes": {},
   "saveVersion": 2,

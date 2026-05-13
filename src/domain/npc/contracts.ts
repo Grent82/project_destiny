@@ -28,6 +28,7 @@ export const npcAssignmentSchema = z.enum([
   'assigned_title',
   'deployed',
   'recovering',
+  'defense',
 ])
 
 export const attributesSchema = z

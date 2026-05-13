@@ -1067,6 +1067,105 @@ const gameSlice = createSlice({
     },
 
     /** Record or update a world NPC's runtime state (disposition, flags, location override, last contact). */
+    /** Upgrade house fortificationLevel by 1 (max 5), costs money. */
+    upgradeFortification(state, action: PayloadAction<{ cost: number }>) {
+      if (state.house.fortificationLevel >= 5) return
+      if (state.money < action.payload.cost) return
+      state.money -= action.payload.cost
+      state.house.fortificationLevel = Math.min(5, state.house.fortificationLevel + 1)
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-fortify`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `Fortification improved. Level: ${state.house.fortificationLevel}.`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+    },
+
+    /**
+     * Resolve a raid event.
+     * raidStrength: attacker power (provided by event resolution).
+     * raidType: 'faction_enforcement' | 'criminal' | 'the_remainder'
+     *
+     * If defenseRating > raidStrength → repel (no loss).
+     * Otherwise → inflict consequence based on raidType.
+     */
+    resolveRaid(
+      state,
+      action: PayloadAction<{
+        raidStrength: number
+        raidType: 'faction_enforcement' | 'criminal' | 'the_remainder'
+      }>
+    ) {
+      const { raidStrength, raidType } = action.payload
+      const snap = current(state) as GameState
+
+      // Compute defense rating inline (mirrors selectDefenseRating)
+      const fortScore = snap.house.fortificationLevel * 15
+      const guardCount = snap.roster.filter((n) => n.assignment === 'defense').length
+      const crewScore = guardCount * 10
+      const tierScore: Record<string, number> = {
+        ruined: 0, patched: 10, maintained: 25, restored: 50, grand: 80,
+      }
+      const renownLevel = Math.floor((tierScore[snap.house.exteriorState] ?? 0) / 20)
+      const defenseRating = fortScore + crewScore + renownLevel * 5
+
+      const repelled = defenseRating > raidStrength
+
+      if (repelled) {
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-raid-repelled`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: raidType === 'faction_enforcement'
+            ? "The notary's agents withdraw. Your defenses held long enough for them to doubt the warrant."
+            : raidType === 'criminal'
+              ? 'The opportunists find the house better defended than expected. They fall back.'
+              : 'The Remainder retreats, for now. It does not forget.',
+        })
+      } else {
+        // Consequence by raid type
+        if (raidType === 'faction_enforcement') {
+          // Legal raid: loses vault documents / legitimacy → money penalty
+          const loss = Math.floor(raidStrength * 5)
+          state.money = Math.max(0, state.money - loss)
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-raid-legal`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'system',
+            message: `The notary's agents seized ledgers and ${loss} Marks in assessed penalties. Legitimacy costs.`,
+          })
+        } else if (raidType === 'criminal') {
+          // Theft: loses money proportional to raid strength
+          const stolen = Math.floor(raidStrength * 3)
+          state.money = Math.max(0, state.money - stolen)
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-raid-theft`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'system',
+            message: `Night thieves emptied what they could find. ${stolen} Marks lost.`,
+          })
+        } else {
+          // The Remainder: morale and stress penalty for all roster NPCs
+          state.roster.forEach((npc) => {
+            npc.states.morale = Math.max(0, npc.states.morale - 15)
+            npc.states.stress = Math.min(100, npc.states.stress + 20)
+          })
+          state.activityLog.unshift({
+            id: `log-${state.day}-${state.timeSlot}-raid-remainder`,
+            day: state.day,
+            timeSlot: state.timeSlot,
+            category: 'system',
+            message: 'Something moved through the house last night. No one speaks of it. Everyone felt it.',
+          })
+        }
+      }
+    },
+
     updateWorldNpcState(
       state,
       action: PayloadAction<{

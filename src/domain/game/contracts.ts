@@ -98,6 +98,7 @@ export const houseStateSchema = z
     vaultUnlocked: z.boolean().default(false),
     rosterBonus: z.number().int().nonnegative().default(0),
     exteriorState: houseExteriorTierSchema.default('ruined'),
+    fortificationLevel: z.number().int().min(0).max(5).default(0),
   })
   .strict()
 
@@ -255,6 +256,7 @@ export const gameStateSchema = z
       vaultUnlocked: false,
       rosterBonus: 0,
       exteriorState: 'ruined' as const,
+      fortificationLevel: 0,
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),
