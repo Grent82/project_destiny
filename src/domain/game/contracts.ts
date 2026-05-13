@@ -155,6 +155,13 @@ export const gameStateSchema = z
       chosenApproachId: z.string().nullable().default(null),
       clueText: z.string().nullable().default(null),
     }).nullable().default(null),
+    pendingConsumableDecision: z.object({
+      npcId: z.string(),
+      npcName: z.string(),
+      instanceId: z.string(),
+      itemName: z.string(),
+      injuryContext: z.string(),
+    }).nullable().default(null),
     lastFiredDay: z.record(z.string(), z.number()).default({}),
     rivalOrgActions: z.array(z.object({
       orgId: z.string(),

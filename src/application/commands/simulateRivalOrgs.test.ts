@@ -88,6 +88,7 @@ const baseState: GameState = {
   ownedItems: [],
   eventInstances: [],
   worldNpcStates: [],
+  pendingConsumableDecision: null,
 }
 
 describe('simulateRivalOrgs', () => {

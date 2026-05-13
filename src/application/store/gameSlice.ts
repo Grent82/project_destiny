@@ -674,6 +674,34 @@ const gameSlice = createSlice({
         if (discovery) exp.discoveries.push(discovery)
       }
 
+      if (encounter.type === 'combat') {
+        // Apply combat injury to a random squad member and check for consumable decision
+        const squadNpcs = state.roster.filter((n) => exp.squadNpcIds.includes(n.npcId))
+        if (squadNpcs.length > 0) {
+          const target = squadNpcs[Math.floor(Math.random() * squadNpcs.length)]!
+          target.states.health = Math.max(0, target.states.health - 15)
+          target.states.injury = Math.min(100, target.states.injury + 10)
+          // Check if the injured NPC has a heal consumable packed
+          const healInstanceId = target.loadout.consumableIds
+            .map((id) => state.ownedItems.find((o) => o.instanceId === id))
+            .filter(Boolean)
+            .find((inst) => {
+              const def = contentCatalog.itemsById.get(inst!.itemId)
+              return def?.typedEffects?.some((e) => e.type === 'heal') ?? false
+            })
+          if (healInstanceId) {
+            const def = contentCatalog.itemsById.get(healInstanceId.itemId)!
+            state.pendingConsumableDecision = {
+              npcId: target.npcId,
+              npcName: target.name,
+              instanceId: healInstanceId.instanceId,
+              itemName: def.name,
+              injuryContext: encounter.label,
+            }
+          }
+        }
+      }
+
       exp.encounters.push({
         day: exp.daysDeparted + 1,
         type: encounter.type,
@@ -973,6 +1001,53 @@ const gameSlice = createSlice({
     sleepToMorning(state) {
       const snapshot = current(state) as GameState
       return sleepToMorning(snapshot)
+    },
+
+    /** Player chooses to use the consumable on the injured NPC. */
+    resolveConsumableUse(state) {
+      const decision = state.pendingConsumableDecision
+      if (!decision) return
+      const { npcId, instanceId, itemName, npcName } = decision
+      const instance = state.ownedItems.find((o) => o.instanceId === instanceId)
+      if (!instance) { state.pendingConsumableDecision = null; return }
+      const def = contentCatalog.itemsById.get(instance.itemId)
+      const healEffect = def?.typedEffects?.find((e) => e.type === 'heal')
+      const healValue = typeof healEffect?.value === 'number' ? healEffect.value : 0
+      const npc = state.roster.find((n) => n.npcId === npcId)
+      if (npc) {
+        npc.states.health = Math.min(100, npc.states.health + healValue)
+        npc.states.injury = Math.max(0, npc.states.injury - Math.floor(healValue / 2))
+      }
+      state.ownedItems = state.ownedItems.filter((o) => o.instanceId !== instanceId)
+      // Remove from NPC loadout
+      if (npc) {
+        npc.loadout.consumableIds = npc.loadout.consumableIds.filter((id) => id !== instanceId)
+      }
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-consumable-used`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `You used the ${itemName} on ${npcName}. The wound was tended. +${healValue} health.`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      state.pendingConsumableDecision = null
+    },
+
+    /** Player chooses to save the consumable. NPC carries the injury forward. */
+    skipConsumableUse(state) {
+      const decision = state.pendingConsumableDecision
+      if (!decision) return
+      const { npcName, itemName } = decision
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-consumable-saved`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `You kept the ${itemName}. ${npcName}'s wound tightened overnight.`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      state.pendingConsumableDecision = null
     },
 
     unlockVault(state) {
