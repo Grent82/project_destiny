@@ -36,6 +36,8 @@ import {
   acceptQuestFromLead,
   expireTimedQuestsOnState,
   resolveSimpleContractObjective,
+  advanceToOnSiteStep,
+  resolveWithComplicationCheck,
 } from '../commands/questLifecycle'
 import {
   generateExpeditionEncounter,
@@ -353,6 +355,14 @@ const gameSlice = createSlice({
 
     resolveSimpleContract(state, action: PayloadAction<{ questId: string }>) {
       resolveSimpleContractObjective(state, action.payload.questId)
+    },
+
+    advanceToOnSiteStep(state, action: PayloadAction<{ questId: string }>) {
+      advanceToOnSiteStep(state, action.payload.questId)
+    },
+
+    resolveContractWithComplicationCheck(state, action: PayloadAction<{ questId: string; complicationRisk?: number }>) {
+      resolveWithComplicationCheck(state, action.payload.questId, action.payload.complicationRisk ?? 0)
     },
 
     failQuest(state, action: PayloadAction<{ questId: string }>) {

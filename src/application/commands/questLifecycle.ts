@@ -85,6 +85,9 @@ export function resolveSimpleContractObjective(state: GameState, questId: string
   if (!template) return false
   if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return false
 
+  const runtime = state.activeQuests.find((q) => q.questId === questId)!
+  if (runtime.progress.completedSteps < 2) return false
+
   const label = template.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
   settleQuestSuccess(state, questId, {
     objectiveLabel: 'The on-site work is done. Return and settle accounts.',
@@ -92,6 +95,72 @@ export function resolveSimpleContractObjective(state: GameState, questId: string
     completionMessage: `${label}: "${template.title}". ${template.rewardMarks} Marks received.`,
   })
   return true
+}
+
+/**
+ * Advances a delivery or survival quest from its initial state to the 'on-site' step.
+ * Represents transit to the district and initial contact / position-taking.
+ * Returns true if advancement succeeded.
+ */
+export function advanceToOnSiteStep(state: GameState, questId: string): boolean {
+  const runtime = state.activeQuests.find((q) => q.questId === questId)
+  if (!runtime) return false
+  const template = getQuestTemplates().find((q) => q.id === questId)
+  if (!template) return false
+  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return false
+  if (runtime.progress.completedSteps >= 2) return false
+
+  const stepLabel = template.objectiveType === 'delivery'
+    ? 'Contact reached. Confirm terms and wait for the exchange window.'
+    : 'Position established. Hold through the watch until the job is marked clear.'
+
+  runtime.stageId = 'on-site'
+  runtime.progress.completedSteps = 2
+  runtime.progress.lastAdvancedDay = state.day
+  runtime.currentObjectiveLabel = stepLabel
+  runtime.journalEntries.push(stepLabel)
+  return true
+}
+
+/**
+ * Resolves a delivery or survival quest with a complication check.
+ * complicationRisk: 0–1 probability of failure. Deterministic for testing when > 0.
+ * Returns 'success' | 'failed' | 'not_ready' | 'not_applicable'.
+ */
+export function resolveWithComplicationCheck(
+  state: GameState,
+  questId: string,
+  complicationRisk: number,
+): 'success' | 'failed' | 'not_ready' | 'not_applicable' {
+  const runtime = state.activeQuests.find((q) => q.questId === questId)
+  if (!runtime) return 'not_applicable'
+  const template = getQuestTemplates().find((q) => q.id === questId)
+  if (!template) return 'not_applicable'
+  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return 'not_applicable'
+  if (runtime.progress.completedSteps < 2) return 'not_ready'
+
+  if (complicationRisk > 0) {
+    const deterministicRoll = (state.day + questId.charCodeAt(questId.length - 1)) % 100 / 100
+    if (deterministicRoll < complicationRisk) {
+      const reason = template.objectiveType === 'delivery'
+        ? 'The exchange was intercepted. The delivery failed.'
+        : 'The squad could not hold the position. The job is forfeit.'
+      settleQuestFailure(state, questId, {
+        objectiveLabel: reason,
+        journalEntry: reason,
+        failureMessage: `Contract failed: "${template.title}". ${reason}`,
+      })
+      return 'failed'
+    }
+  }
+
+  const label = template.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
+  settleQuestSuccess(state, questId, {
+    objectiveLabel: 'The on-site work is done. Return and settle accounts.',
+    journalEntry: 'The contract was completed on-site.',
+    completionMessage: `${label}: "${template.title}". ${template.rewardMarks} Marks received.`,
+  })
+  return 'success'
 }
 
 

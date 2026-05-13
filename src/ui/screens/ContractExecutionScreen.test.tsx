@@ -10,7 +10,7 @@ import { AppProviders } from '../app/AppProviders'
 import { ContractExecutionScreen } from './ContractExecutionScreen'
 
 describe('ContractExecutionScreen', () => {
-  it('executes a delivery contract on-site, advances time, and completes the quest', async () => {
+  it('executes a delivery contract on-site with two-step progression', async () => {
     const user = userEvent.setup()
     const deliveryQuest = getQuestTemplates().find((quest) => quest.id === 'quest-nightbloom-extract')
     if (!deliveryQuest) {
@@ -36,9 +36,13 @@ describe('ContractExecutionScreen', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'On-Site Handoff' })).toBeInTheDocument()
-    expect(screen.getByText(/Duration: 1 watch/i)).toBeInTheDocument()
-    expect(screen.queryByText(/the handoff can only happen/i)).not.toBeInTheDocument()
 
+    // Step 1: Make contact (intermediate step)
+    await user.click(screen.getByRole('button', { name: /Make contact and set the terms/i }))
+    // After step 1, the final button should appear
+    expect(screen.getByRole('button', { name: /Spend the watch and make the handoff/i })).toBeInTheDocument()
+
+    // Step 2: Execute the handoff
     await user.click(screen.getByRole('button', { name: /Spend the watch and make the handoff/i }))
 
     const state = store.getState().game

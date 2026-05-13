@@ -162,6 +162,8 @@ describe('resolveSimpleContractObjective (via resolveSimpleContract action)', ()
       activeQuests: [makeActiveQuest('quest-nightbloom-extract')],
       completedQuestIds: [],
     })
+    // Must advance to on-site step first (step guard in resolveSimpleContractObjective)
+    store.dispatch(gameActions.advanceToOnSiteStep({ questId: 'quest-nightbloom-extract' }))
     store.dispatch(gameActions.resolveSimpleContract({ questId: 'quest-nightbloom-extract' }))
     const state = store.getState().game
     expect(state.activeQuests.some((q) => q.questId === 'quest-nightbloom-extract')).toBe(false)

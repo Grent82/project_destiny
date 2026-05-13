@@ -119,26 +119,37 @@ export function ContractExecutionScreen() {
         </article>
       ) : (
         <div className="session-actions">
-          <button
-            className="action-button action-button--primary action-button--cta"
-            onClick={() => {
-              dispatch(
-                gameActions.updateQuestRuntime({
-                  questId: runtime.questId,
-                  stageId: 'executing',
-                  currentObjectiveLabel: copy.journalLabel,
-                  completedSteps: 2,
-                  appendJournalEntry: copy.journalLabel,
-                }),
-              )
-              dispatch(gameActions.advanceTimeSlot())
-              dispatch(gameActions.resolveSimpleContract({ questId: runtime.questId }))
-              navigate('/contracts')
-            }}
-            type="button"
-          >
-            {copy.actionLabel}
-          </button>
+          {runtime.progress.completedSteps < 2 ? (
+            <button
+              className="action-button action-button--primary"
+              onClick={() => {
+                dispatch(gameActions.advanceToOnSiteStep({ questId: runtime.questId }))
+              }}
+              type="button"
+            >
+              {template.objectiveType === 'delivery' ? 'Make contact and set the terms' : 'Establish position on-site'}
+            </button>
+          ) : (
+            <>
+              <p className="quest-briefing" style={{ opacity: 0.85 }}>
+                <strong>Next:</strong> {runtime.currentObjectiveLabel}
+              </p>
+              <button
+                className="action-button action-button--primary action-button--cta"
+                onClick={() => {
+                  dispatch(gameActions.advanceTimeSlot())
+                  dispatch(gameActions.resolveContractWithComplicationCheck({
+                    questId: runtime.questId,
+                    complicationRisk: 0,
+                  }))
+                  navigate('/contracts')
+                }}
+                type="button"
+              >
+                {copy.actionLabel}
+              </button>
+            </>
+          )}
         </div>
       )}
     </section>
