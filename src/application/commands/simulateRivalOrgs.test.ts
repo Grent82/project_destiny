@@ -19,6 +19,7 @@ const baseState: GameState = {
   activityLog: [],
   selectedSquadNpcIds: [],
   activeCombat: null,
+  lastEncounterSummary: null,
   pendingEvents: [],
   currentDistrictId: null,
   availableForHire: [],

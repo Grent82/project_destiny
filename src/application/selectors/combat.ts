@@ -61,3 +61,5 @@ export const selectCombatScreenState = createSelector(
     }
   },
 )
+
+export const selectLastEncounterSummary = (state: RootState) => state.game.lastEncounterSummary

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { gameActions, selectCombatScreenState } from '../../application'
+import { gameActions, selectCombatScreenState, selectLastEncounterSummary } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const RANGE_LABELS: Record<string, { label: string; description: string }> = {
@@ -44,6 +44,7 @@ export function CombatScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const combat = useAppSelector(selectCombatScreenState)
+  const lastEncounterSummary = useAppSelector(selectLastEncounterSummary)
   const rangeInfo = combat.range ? RANGE_LABELS[combat.range] : null
   const commandStatusMessage = !combat.hasActiveCombat
     ? 'No combat commands are available until an encounter begins.'
@@ -68,6 +69,24 @@ export function CombatScreen() {
           <p className="summary">
             No encounter is active. Combat only begins after a contract or expedition has been taken on-site into preparation.
           </p>
+          {lastEncounterSummary && (
+            <article className="detail-panel combat-aftermath-recap">
+              <h2>
+                Last Engagement —{' '}
+                <span className={lastEncounterSummary.outcome === 'victory' ? 'badge badge-positive' : 'badge badge-warning'}>
+                  {lastEncounterSummary.label}
+                </span>
+              </h2>
+              <p className="summary">Day {lastEncounterSummary.day}, {lastEncounterSummary.timeSlot}</p>
+              {lastEncounterSummary.noteLines.length > 0 && (
+                <ul className="combat-aftermath-notes">
+                  {lastEncounterSummary.noteLines.map((note, i) => (
+                    <li key={i}>{note}</li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          )}
           <button className="action-button" onClick={() => navigate('/contracts')} type="button">
             Return to contracts
           </button>
@@ -240,13 +259,17 @@ export function CombatScreen() {
                   {combat.outcome === 'victory' ? 'Victory' : 'Defeat'}
                 </span>
               </h2>
+              <p className="summary">Resolve the encounter to lock in aftermath and return to operations.</p>
               <div className="combat-action-row">
                 <button
-                  className="action-button"
-                  onClick={() => navigate('/dashboard')}
+                  className="action-button action-button--primary"
+                  onClick={() => {
+                    dispatch(gameActions.concludeCombatEncounter())
+                    navigate('/dashboard')
+                  }}
                   type="button"
                 >
-                  Return to Operations
+                  Conclude and Return
                 </button>
                 <button
                   className="action-button"

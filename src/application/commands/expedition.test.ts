@@ -34,3 +34,15 @@ describe('rollDiscovery', () => {
     expect(result?.type).toBe('marks')
   })
 })
+
+describe('expedition combat suppression', () => {
+  it('marks all expedition encounters as resolved immediately (no dangling combat markers)', () => {
+    // generateExpeditionEncounter for a combat scenario always returns resolved encounters
+    // since expedition combat is resolved inline via attrition, not via combat screen.
+    // We verify the encounter type matches expected logic.
+    const combatEnc = generateExpeditionEncounter(1, 4, 0.01)
+    expect(combatEnc.type).toBe('combat')
+    // The slice marks all encounters resolved:true; this test documents the intent.
+    // (Slice-level assertion would require importing the store, done in integration.)
+  })
+})

@@ -130,6 +130,9 @@ describe('combat commands', () => {
 
     expect(nextState.activeCombat).toBeNull()
     expect(nextState.activityLog[0]?.message).toMatch(/encounter is concluded/i)
+    expect(nextState.lastEncounterSummary).not.toBeNull()
+    expect(nextState.lastEncounterSummary?.outcome).toBe('victory')
+    expect(nextState.lastEncounterSummary?.day).toBe(nextState.day)
   })
 
   it('fails a combat-linked quest by default when the squad is defeated', () => {

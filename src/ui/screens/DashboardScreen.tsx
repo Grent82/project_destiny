@@ -8,6 +8,7 @@ import {
   saveCurrentSession,
   selectDashboardSummary,
   selectDebtStatus,
+  selectLastEncounterSummary,
   selectMainQuest,
   selectPlayerCharacter,
   selectProtagonistName,
@@ -40,6 +41,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const playerCharacter = useAppSelector(selectPlayerCharacter)
   const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
   const debt = useAppSelector(selectDebtStatus)
+  const lastEncounterSummary = useAppSelector(selectLastEncounterSummary)
   const mainQuest = useAppSelector(selectMainQuest)
   const recommendedQuestAction = useAppSelector(selectRecommendedQuestAction)
   const [sessionMessage, setSessionMessage] = useState<string | null>(null)
@@ -287,6 +289,18 @@ export function DashboardScreen(props: DashboardScreenProps) {
           </article>
           <article className="detail-panel dashboard-activity-panel">
             <h2>The Log</h2>
+            {lastEncounterSummary && (
+              <div className="dashboard-last-encounter">
+                <strong>Last Engagement</strong>
+                <span className={lastEncounterSummary.outcome === 'victory' ? 'badge badge-positive' : 'badge badge-warning'} style={{ marginLeft: '0.4rem' }}>
+                  {lastEncounterSummary.label}
+                </span>
+                <span className="summary" style={{ display: 'block', marginTop: '0.2rem', fontSize: '0.8rem' }}>
+                  Day {lastEncounterSummary.day} · {lastEncounterSummary.timeSlot}
+                  {lastEncounterSummary.noteLines.length > 0 && ' — ' + lastEncounterSummary.noteLines.join(' ')}
+                </span>
+              </div>
+            )}
             <div className="combat-log-list">
               {summary.recentActivity.length > 0 ? (
                 summary.recentActivity.map((entry) => (

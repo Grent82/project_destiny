@@ -735,7 +735,7 @@ const gameSlice = createSlice({
         day: exp.daysDeparted + 1,
         type: encounter.type,
         label: encounter.label,
-        resolved: encounter.type !== 'combat',
+        resolved: true, // expedition combat is resolved inline via attrition — no separate combat screen
       })
 
       exp.daysDeparted += 1

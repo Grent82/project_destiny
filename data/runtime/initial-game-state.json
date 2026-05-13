@@ -178,6 +178,7 @@
     "npc-marion-vale"
   ],
   "activeCombat": null,
+  "lastEncounterSummary": null,
   "factionStandings": {
     "faction-civic-compact": 10,
     "faction-gilded-court": -65,

@@ -1173,6 +1173,32 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
   }
 
+  const outcomeLabel = combat.outcome === 'victory' ? 'Victory' : 'Defeat'
+  const summaryNotes: string[] = []
+  const defeatedCount = combat.combatants.filter((c) => c.side === 'enemies' && c.health <= 0).length
+  const koCount = combat.combatants.filter((c) => c.side === 'allies' && c.health <= 0).length
+  if (combat.outcome === 'victory' && defeatedCount > 0) {
+    summaryNotes.push(`${defeatedCount} opponent${defeatedCount !== 1 ? 's' : ''} put down.`)
+  }
+  if (koCount > 0) {
+    summaryNotes.push(`${koCount} ally${koCount !== 1 ? 's' : ''} knocked out.`)
+  }
+  if (combat.linkedQuestId) {
+    summaryNotes.push(combat.outcome === 'victory' ? 'Contract obligation settled.' : 'Contract at risk.')
+  }
+
+  nextState = {
+    ...nextState,
+    lastEncounterSummary: {
+      outcome: combat.outcome as 'victory' | 'defeat',
+      label: outcomeLabel,
+      day: state.day,
+      timeSlot: state.timeSlot,
+      linkedQuestId: combat.linkedQuestId ?? null,
+      noteLines: summaryNotes,
+    },
+  }
+
   return advanceTimeSlotInState(
     appendActivityLogEntry(
       { ...nextState, rngSeed: seeded.getSeed() },
