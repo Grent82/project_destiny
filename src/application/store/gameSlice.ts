@@ -1,7 +1,7 @@
 import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
-import type { Attributes, Skills, Traits, WorldNpcDisposition } from '../../domain/npc/contracts'
+import type { Attributes, Skills, Traits, WorldNpcDisposition, CaptivityState } from '../../domain/npc/contracts'
 import type { HouseExteriorTier } from '../../domain/game/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
@@ -1095,6 +1095,66 @@ const gameSlice = createSlice({
       if (removeFlags) {
         entry.flags = entry.flags.filter((f) => !removeFlags.includes(f))
       }
+    },
+
+    /**
+     * Mark an NPC as captive/missing with an optional captivity state.
+     * Used by event resolution, quest outcomes, and world sim — never direct player action.
+     */
+    setCaptivityState(
+      state,
+      action: PayloadAction<{ npcId: string; captivityState: CaptivityState | null }>
+    ) {
+      const { npcId, captivityState } = action.payload
+      const npc = state.roster.find((n) => n.npcId === npcId)
+      if (!npc) return
+      if (captivityState === null) {
+        delete npc.captivityState
+      } else {
+        npc.captivityState = captivityState
+      }
+    },
+
+    /**
+     * Rescue an NPC from captivity.
+     * Clears captivityState (marking them 'rescued'), applies recovery debuffs based on condition,
+     * and returns them to 'idle' assignment.
+     *
+     * pregnancyState, if it will be set, is handled separately by event resolution logic —
+     * never here, and never by direct player action.
+     */
+    rescueNpc(state, action: PayloadAction<{ npcId: string }>) {
+      const { npcId } = action.payload
+      const npc = state.roster.find((n) => n.npcId === npcId)
+      if (!npc || !npc.captivityState) return
+      const cap = npc.captivityState
+
+      // Apply recovery debuffs based on condition at time of rescue
+      const conditionPenalties: Record<string, number> = {
+        healthy: 0,
+        hurt: 10,
+        broken: 25,
+        altered: 20,
+      }
+      const penalty = conditionPenalties[cap.condition] ?? 0
+      if (penalty > 0) {
+        npc.states.health = Math.max(0, npc.states.health - penalty)
+        npc.states.stress = Math.min(100, npc.states.stress + penalty * 1.5)
+        npc.states.morale = Math.max(0, npc.states.morale - penalty)
+      }
+
+      // Trust drops, fear rises from captivity trauma
+      npc.captivityState = { ...cap, status: 'rescued' }
+      npc.assignment = 'recovering'
+
+      state.activityLog.unshift({
+        id: `log-${state.day}-${state.timeSlot}-rescue-${npcId}`,
+        day: state.day,
+        timeSlot: state.timeSlot,
+        category: 'system',
+        message: `${npc.name} has been rescued. Condition at rescue: ${cap.condition}.`,
+      })
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
   },
 })

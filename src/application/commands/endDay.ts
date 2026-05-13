@@ -1,4 +1,5 @@
 import type { GameState } from "../../domain"
+import type { CaptivityCondition } from "../../domain/npc/contracts"
 import { appendActivityLogEntry } from "./activityLog"
 import { evaluateEvents } from "./evaluateEvents"
 import { expireHireOffers } from "./recruitment"
@@ -88,6 +89,38 @@ function resolveRumorEvents(state: GameState, rng: Rng): GameState {
   return next
 }
 
+/** Every 7 days held: condition steps down one tier. At 'broken': rescue difficulty rises. */
+const CAPTIVITY_DEGRADATION_DAYS = 7
+const CONDITION_PROGRESSION: CaptivityCondition[] = ['healthy', 'hurt', 'broken', 'altered']
+
+function applyCaptivityDegradation(state: GameState): GameState {
+  const hasCaptives = state.roster.some(
+    (n) =>
+      n.captivityState?.status === 'missing' || n.captivityState?.status === 'captive',
+  )
+  if (!hasCaptives) return state
+
+  return {
+    ...state,
+    roster: state.roster.map((npc) => {
+      const cap = npc.captivityState
+      if (!cap || (cap.status !== 'missing' && cap.status !== 'captive')) return npc
+      const newDays = cap.timeHeldDays + 1
+      const shouldDegrade =
+        newDays > 0 && newDays % CAPTIVITY_DEGRADATION_DAYS === 0
+      const currentIdx = CONDITION_PROGRESSION.indexOf(cap.condition)
+      const newCondition: CaptivityCondition =
+        shouldDegrade && currentIdx < CONDITION_PROGRESSION.length - 1
+          ? CONDITION_PROGRESSION[currentIdx + 1]!
+          : cap.condition
+      return {
+        ...npc,
+        captivityState: { ...cap, timeHeldDays: newDays, condition: newCondition },
+      }
+    }),
+  }
+}
+
 function checkMainQuestProgression(state: GameState): GameState {
   const { stage } = state.mainQuest
 
@@ -151,8 +184,9 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyFactionActivity(afterEvents)
   afterEvents = applyRumorSpread(afterEvents, rng)
 
-  // Steps 10-11: Rumor events + main quest progression
+  // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)
+  afterEvents = applyCaptivityDegradation(afterEvents)
   const finalState = checkMainQuestProgression(afterEvents)
 
   // Store advanced RNG seed for next day's deterministic run

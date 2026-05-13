@@ -215,6 +215,45 @@ export const worldNpcRuntimeStateSchema = z.object({
 export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>
 export type WorldNpcRuntimeState = z.infer<typeof worldNpcRuntimeStateSchema>
 
+// ─── Captivity and pregnancy schemas ─────────────────────────────────────────
+
+export const captivityStatusSchema = z.enum(['missing', 'captive', 'rescued', 'returned', 'dead'])
+
+export const captivityConditionSchema = z.enum(['healthy', 'hurt', 'broken', 'altered'])
+
+export const captivityComplianceSchema = z.enum(['resistant', 'conflicted', 'compliant'])
+
+export const captivityBondTypeSchema = z.enum(['none', 'fear', 'dependency', 'affection', 'coercion'])
+
+export const captivityStateSchema = z.object({
+  status: captivityStatusSchema,
+  holderId: z.string().nullable().default(null),
+  condition: captivityConditionSchema.default('healthy'),
+  compliance: captivityComplianceSchema.default('resistant'),
+  bondType: captivityBondTypeSchema.default('none'),
+  timeHeldDays: z.number().int().nonnegative().default(0),
+  questTag: z.string().nullable().default(null),
+})
+
+/**
+ * pregnancyState is NEVER set by direct player action.
+ * It is set only by event resolution logic as a rare world-generated aftermath.
+ * context: 'unknown' = captivity aftermath (coercion linkage never surfaced as player label).
+ * context: 'consensual' = freely chosen relationships.
+ */
+export const pregnancyStateSchema = z.object({
+  context: z.enum(['consensual', 'unknown']),
+  daysElapsed: z.number().int().nonnegative().default(0),
+  questTag: z.string().nullable().default(null),
+})
+
+export type CaptivityStatus = z.infer<typeof captivityStatusSchema>
+export type CaptivityCondition = z.infer<typeof captivityConditionSchema>
+export type CaptivityCompliance = z.infer<typeof captivityComplianceSchema>
+export type CaptivityBondType = z.infer<typeof captivityBondTypeSchema>
+export type CaptivityState = z.infer<typeof captivityStateSchema>
+export type PregnancyState = z.infer<typeof pregnancyStateSchema>
+
 export const MAX_NPC_MEMORY_ENTRIES = 20
 
 export const npcRuntimeStateSchema = z
@@ -232,6 +271,8 @@ export const npcRuntimeStateSchema = z
     states: statesSchema,
     loadout: loadoutSchema,
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
+    captivityState: captivityStateSchema.optional(),
+    pregnancyState: pregnancyStateSchema.optional(),
   })
   .strict()
 
