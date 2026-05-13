@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { getRenownLevel } from '../../domain/progression/contracts'
+import { writeLossMemories } from './grief'
 
 export function recruitNpc(state: GameState, npcId: string): GameState {
   const offer = state.availableForHire.find((o) => o.npcId === npcId)
@@ -85,10 +86,14 @@ export function dismissNpc(state: GameState, npcId: string): GameState {
   const npcDef = contentCatalog.npcsById.get(npcId)
   const name = npcDef?.name ?? entry.name
 
-  let next: GameState = {
-    ...state,
-    roster: state.roster.filter((r) => r.npcId !== npcId),
-    selectedSquadNpcIds: state.selectedSquadNpcIds.filter((id) => id !== npcId),
+  // Write loss memories on related NPCs (pass state before NPC removal so roster still has them)
+  let next = writeLossMemories(state, npcId, state.day)
+
+  // Now remove the NPC from roster and squad
+  next = {
+    ...next,
+    roster: next.roster.filter((r) => r.npcId !== npcId),
+    selectedSquadNpcIds: next.selectedSquadNpcIds.filter((id) => id !== npcId),
   }
 
   next = appendActivityLogEntry(

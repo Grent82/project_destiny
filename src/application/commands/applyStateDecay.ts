@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
+import { deriveGriefState, deriveGriefMoraleModifier } from './grief'
 
 /** Modifiers per ageBand: stress/fatigue accumulation rate and recovery rate. */
 const AGE_BAND_MODIFIERS = {
@@ -42,8 +43,10 @@ export function applyStateDecay(state: GameState): GameState {
       // Intoxication: decays naturally (sobers up)
       const newIntox = Math.max(0, (npc.states.intoxication ?? 0) - 15)
 
-      // Morale penalty from poor conditions
-      const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0)
+      // Morale penalty from poor conditions + grief
+      const grief = deriveGriefState(npc, state.day, state.relationships)
+      const griefMoraleMod = deriveGriefMoraleModifier(grief)
+      const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0) + (-griefMoraleMod)
 
       // Fatigue: resting recovery is boosted by ageMod.recovery; deployed accumulation scaled by ageMod.accum
       const fatigueDelta = isResting
