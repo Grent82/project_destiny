@@ -636,6 +636,10 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     (left, right) => right.speed - left.speed || right.skill - left.skill,
   )
 
+  const linkedQuestTemplate = linkedQuest
+    ? (contentCatalog.questsById?.get(linkedQuest.questId) ?? null)
+    : null
+
   const encounter: ActiveCombatState = {
     encounterId: `encounter-day-${state.day}-${state.timeSlot}`,
     round: 1,
@@ -652,6 +656,16 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     ],
     factionId: 'faction-civic-compact',
     linkedQuestId: linkedQuestId ?? null,
+    provenance: {
+      sourceType: linkedQuestId ? 'quest' : 'district',
+      linkedQuestId: linkedQuestId ?? null,
+      linkedMissionId: linkedQuestTemplate?.linkedMissionId ?? null,
+      linkedFactionId: linkedQuest?.context.issuerFactionId ?? 'faction-civic-compact',
+      districtId: linkedQuest?.context.incidentDistrictId ?? state.currentDistrictId,
+      destinationId: null,
+      enemyTemplateIds: [],
+      enemyDefinitionIds: enemies.map((e) => e.sourceNpcId).filter((id): id is string => id != null),
+    },
   }
 
   const nextActiveQuests = linkedQuest
@@ -927,7 +941,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
     }
 
-    const factionId = combat.factionId
+    const factionId = combat.provenance?.linkedFactionId ?? combat.factionId
     if (factionId) {
       const current = nextState.factionStandings[factionId] ?? 0
       nextState = {
@@ -1028,7 +1042,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
     }
 
-    const factionId = combat.factionId
+    const factionId = combat.provenance?.linkedFactionId ?? combat.factionId
     if (factionId && !handledLinkedQuestFailure) {
       const current = nextState.factionStandings[factionId] ?? 0
       nextState = {

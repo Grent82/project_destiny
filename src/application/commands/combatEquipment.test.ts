@@ -151,6 +151,7 @@ function makeEncounter(overrides: Partial<ActiveCombatState> = {}): ActiveCombat
       }),
     ],
     log: [],
+    provenance: null,
     ...overrides,
   }
 }

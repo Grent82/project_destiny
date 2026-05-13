@@ -64,6 +64,19 @@ export const combatantStateSchema = z
     }
   })
 
+export const combatSourceTypeSchema = z.enum(['quest', 'expedition', 'district', 'scripted'])
+
+export const combatProvenanceSchema = z.object({
+  sourceType: combatSourceTypeSchema,
+  linkedQuestId: z.string().nullable().default(null),
+  linkedMissionId: z.string().nullable().default(null),
+  linkedFactionId: z.string().nullable().default(null),
+  districtId: z.string().nullable().default(null),
+  destinationId: z.string().nullable().default(null),
+  enemyTemplateIds: z.array(z.string()).default([]),
+  enemyDefinitionIds: z.array(z.string()).default([]),
+}).strict()
+
 export const activeCombatStateSchema = z
   .object({
     encounterId: entityIdSchema,
@@ -73,8 +86,11 @@ export const activeCombatStateSchema = z
     activeCombatantId: entityIdSchema.nullable(),
     combatants: z.array(combatantStateSchema).min(2),
     log: z.array(combatLogEntrySchema),
+    // Legacy fields (kept for backward compat)
     factionId: entityIdSchema.optional(),
     linkedQuestId: z.string().nullable().optional(),
+    // Explicit provenance — new canonical source of truth
+    provenance: combatProvenanceSchema.nullable().default(null),
   })
   .strict()
 
@@ -84,3 +100,5 @@ export type CombatLogEntry = z.infer<typeof combatLogEntrySchema>
 export type CombatOutcome = z.infer<typeof combatOutcomeSchema>
 export type CombatSide = z.infer<typeof combatSideSchema>
 export type CombatantState = z.infer<typeof combatantStateSchema>
+export type CombatSourceType = z.infer<typeof combatSourceTypeSchema>
+export type CombatProvenance = z.infer<typeof combatProvenanceSchema>
