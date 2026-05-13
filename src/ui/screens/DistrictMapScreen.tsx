@@ -74,7 +74,7 @@ export function DistrictMapScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>The City</h1>
       <p className="summary">
         Six districts. Each one holds something. Move carefully — the city watches who passes through.

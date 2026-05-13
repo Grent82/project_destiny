@@ -33,7 +33,7 @@ function ScreenPlaceholder(props: { title: string; summary: string }) {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>{title}</h1>
       <p className="summary">{summary}</p>
       <div className="placeholder-grid">
@@ -61,7 +61,7 @@ export function App() {
     <div className="app-shell">
       <EventModal />
       <aside className="sidebar">
-        <p className="sidebar-brand">House Valdric</p>
+        <p className="sidebar-brand">House Valdris</p>
 
         <nav aria-label="Primary" className="nav-list">
           {screenCatalog.map((screen) => {

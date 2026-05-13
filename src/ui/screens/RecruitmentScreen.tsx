@@ -38,7 +38,7 @@ export function RecruitmentScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Available for Service</h1>
       <p className="summary">
         Those seeking arrangement with the house. An offer not taken today may not stand tomorrow.

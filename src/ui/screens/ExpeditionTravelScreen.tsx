@@ -16,7 +16,7 @@ export function ExpeditionTravelScreen() {
   if (!expState || expState.status === 'idle') {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>No Active Expedition</h1>
         <button
           className="action-button"
@@ -32,7 +32,7 @@ export function ExpeditionTravelScreen() {
   if (expState.status === 'returned') {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>Expedition Complete</h1>
         <p className="summary">Your squad has returned.</p>
         <button
@@ -51,7 +51,7 @@ export function ExpeditionTravelScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>{destination?.name ?? 'Expedition'}</h1>
       <p className="summary">{destination?.description}</p>
 

@@ -34,7 +34,7 @@ export function MissionPrepScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Squad Deployment</h1>
       <p className="summary">
         Assemble your unit and commit to the engagement only after reaching the incident site.

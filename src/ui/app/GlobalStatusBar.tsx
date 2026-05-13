@@ -11,7 +11,7 @@ export function GlobalStatusBar() {
   const reputationTier = useAppSelector(selectReputationTier)
   const pendingEventsCount = useAppSelector(selectPendingEventsCount)
 
-  const displayName = playerCharacter.name || protagonistName || 'Valdric'
+  const displayName = playerCharacter.name || protagonistName || 'Valdris'
   const renownLevel = getRenownLevel(playerCharacter.renown)
   const renownProgress = getRenownProgress(playerCharacter.renown)
   const nextThreshold = RENOWN_THRESHOLDS.find((t) => t.level === renownLevel.level + 1)

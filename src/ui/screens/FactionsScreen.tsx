@@ -70,17 +70,17 @@ export function FactionsScreen() {
   const canInfluenceVotes = restoredWardSeats > 0 || chamberSponsors > 0
   const voteAccessSummary =
     restoredWardSeats > 0
-      ? `House Valdric has restored ${restoredWardSeats} ward seat${restoredWardSeats !== 1 ? 's' : ''}. Renown also grants ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} into committee chambers.`
+      ? `House Valdris has restored ${restoredWardSeats} ward seat${restoredWardSeats !== 1 ? 's' : ''}. Renown also grants ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} into committee chambers.`
       : chamberSponsors > 0
-        ? `House Valdric holds no restored ward seat, but its name carries enough weight for ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} inside council committees.`
-        : 'House Valdric currently holds no restored ward seat and no sponsor channel into the chamber.'
+        ? `House Valdris holds no restored ward seat, but its name carries enough weight for ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} inside council committees.`
+        : 'House Valdris currently holds no restored ward seat and no sponsor channel into the chamber.'
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Factions</h1>
       <p className="summary">
-        Where House Valdric stands with each power in Valdenmoor. Standing shifts with every choice.
+        Where House Valdris stands with each power in Valdenmoor. Standing shifts with every choice.
       </p>
 
       <div className="city-stability-section">
@@ -169,13 +169,13 @@ export function FactionsScreen() {
       <article className="detail-panel" style={{ marginTop: '2rem' }}>
         <h2>House Political Footing</h2>
         <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)', marginBottom: '0.75rem' }}>
-          House Valdric once held three ward seats before the debt proceedings stripped them. What remains now is reputation, access, and whatever sponsors can be coaxed into carrying your position.
+          House Valdris once held three ward seats before the debt proceedings stripped them. What remains now is reputation, access, and whatever sponsors can be coaxed into carrying your position.
         </p>
         <div className="stat-row" style={{ flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
           <span className="stat-label" style={{ minWidth: '10rem' }}>Restored ward seats</span>
           <span className="stat-value">{restoredWardSeats}</span>
           <span style={{ fontSize: '0.8em', color: 'var(--color-text-secondary, #999)', flexBasis: '100%' }}>
-            Literal representation under House Valdric's control.
+            Literal representation under House Valdris's control.
           </span>
         </div>
         <div className="stat-row" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -207,7 +207,7 @@ export function FactionsScreen() {
                   </span>
                   <p style={{ fontSize: '0.75em', color: 'var(--color-text-secondary, #999)', marginTop: '0.5rem' }}>
                     {restoredWardSeats > 0
-                      ? 'This is a literal ward vote carried under House Valdric\'s name.'
+                      ? 'This is a literal ward vote carried under House Valdris\'s name.'
                       : 'This is not a literal seat. It reflects sponsors and committee allies carrying your preferred stance.'}
                   </p>
                 </>

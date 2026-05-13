@@ -48,7 +48,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   )
   const [activeTab, setActiveTab] = useState<DashboardTab>('Overview')
 
-  const displayName = playerCharacter.name || protagonistName || 'Valdric'
+  const displayName = playerCharacter.name || protagonistName || 'Valdris'
 
   return (
     <section className="screen-panel">
@@ -102,7 +102,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
       {activeTab === 'Overview' && (
         <>
           <p className="summary">
-            The debt claim against House Valdric is active. Marion is waiting. The ledgers are in
+            The debt claim against House Valdris is active. Marion is waiting. The ledgers are in
             worse shape than they look.
           </p>
           {recommendedQuestAction ? (

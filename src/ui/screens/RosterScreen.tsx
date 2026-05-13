@@ -35,7 +35,7 @@ export function RosterScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>The Roster</h1>
       <p className="summary">
         Personnel in house service. Their condition — health, morale, loyalty — is yours to account for.

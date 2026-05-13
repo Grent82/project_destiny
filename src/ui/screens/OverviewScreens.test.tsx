@@ -50,7 +50,7 @@ describe('overview screens', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByText(/House Valdric once held three ward seats/i)).toBeInTheDocument()
+    expect(screen.getByText(/House Valdris once held three ward seats/i)).toBeInTheDocument()
     expect(screen.getByText(/Restored ward seats/i)).toBeInTheDocument()
     expect(screen.getByText(/Sponsor channels/i)).toBeInTheDocument()
     expect(screen.getByText(/holds no restored ward seat, but its name carries enough weight/i)).toBeInTheDocument()

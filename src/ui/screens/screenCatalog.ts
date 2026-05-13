@@ -22,7 +22,7 @@ export const screenCatalog = [
   {
     path: '/factions',
     title: 'Factions',
-    summary: 'Where House Valdric stands with each faction in Valdenmoor.',
+    summary: 'Where House Valdris stands with each faction in Valdenmoor.',
   },
   {
     path: '/event-log',

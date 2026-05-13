@@ -61,7 +61,7 @@ export function ContractBoardScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Work Board</h1>
       <p className="summary">
         Contracts the house has taken on. Obligations, briefings, and what is owed if you fail.

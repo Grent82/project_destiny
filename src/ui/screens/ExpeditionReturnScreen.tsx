@@ -15,7 +15,7 @@ export function ExpeditionReturnScreen() {
   if (!expState || expState.status !== 'returned') {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>No Expedition to Debrief</h1>
         <button className="action-button" onClick={() => navigate('/expedition')} type="button">
           Expeditions →
@@ -26,7 +26,7 @@ export function ExpeditionReturnScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Return from {destination?.name ?? 'the field'}</h1>
       <p className="summary">
         {expState.squadNpcIds.length} operative

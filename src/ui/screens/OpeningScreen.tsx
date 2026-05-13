@@ -91,7 +91,7 @@ export function OpeningScreen() {
   }
 
   function confirmName() {
-    const trimmed = name.trim() || 'Valdric'
+    const trimmed = name.trim() || 'Valdris'
     dispatch(gameActions.setProtagonistName(trimmed))
     setStep('lore')
   }
@@ -103,7 +103,7 @@ export function OpeningScreen() {
   function beginGame() {
     const bg = BACKGROUNDS.find((b) => b.id === selectedBackground)
     if (!bg || selectedTraitKeys.length < 2) return
-    const finalName = name.trim() || 'Valdric'
+    const finalName = name.trim() || 'Valdris'
     dispatch(gameActions.setPlayerCharacter({
       name: finalName,
       backgroundId: bg.id,

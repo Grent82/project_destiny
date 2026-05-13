@@ -20,7 +20,7 @@ export function InvestigationScreen() {
   if (!data) {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>Investigation</h1>
         <p className="summary">No investigation is currently active.</p>
         <button className="action-button" onClick={() => navigate('/contracts')} type="button">
@@ -78,7 +78,7 @@ export function InvestigationScreen() {
 
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>Investigation Complete</h1>
 
         {rollResult === 'success' && (
@@ -120,7 +120,7 @@ export function InvestigationScreen() {
   if (stage === 'approach-selection') {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>{template?.title ?? 'Investigation'}</h1>
         <p className="summary">{template?.briefing}</p>
 
@@ -164,7 +164,7 @@ export function InvestigationScreen() {
   // Step 2 — clue revealed, assign operatives
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>{template?.title ?? 'Investigation'}</h1>
 
       {investigation.clueText && (

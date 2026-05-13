@@ -6,7 +6,7 @@ export function EventLogScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>The Record</h1>
       <p className="summary">
         What has been logged. Economy shifts, encounters, the state of things as the days turn.

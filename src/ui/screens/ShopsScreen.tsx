@@ -53,7 +53,7 @@ export function ShopsScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>The Market</h1>
       <p className="summary">
         District vendors. What they carry depends on who controls the ward and how much pressure the market is under.
@@ -111,7 +111,7 @@ export function ShopsScreen() {
               {shop.accessDenied ? (
                 <p className="summary badge badge-warning">
                   {'institutionalBlock' in shop && shop.institutionalBlock
-                    ? 'This faction has closed their doors to House Valdric. Blacklisted.'
+                    ? 'This faction has closed their doors to House Valdris. Blacklisted.'
                     : 'This establishment does not welcome you.'}
                 </p>
               ) : (

@@ -42,7 +42,7 @@ export function ContractExecutionScreen() {
   if (!activeContract?.template) {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>Contract Execution</h1>
         <p className="summary">
           No active on-site contract is selected. Return to the Work Board and choose a local job.
@@ -67,7 +67,7 @@ export function ContractExecutionScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>{copy.title}</h1>
       <p className="summary">
         This contract resolves on-site. It consumes the current watch and cannot be settled from the board.

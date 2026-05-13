@@ -57,7 +57,7 @@ export function CombatScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Engagement</h1>
       <p className="summary">
         Three-range command combat. You direct the line by issuing orders, not by manually picking targets.

@@ -381,7 +381,7 @@ const gameSlice = createSlice({
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'system',
-          message: `House Valdric has been blacklisted by ${factionId}. Enforcement will follow.`,
+          message: `House Valdris has been blacklisted by ${factionId}. Enforcement will follow.`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       } else if (tier === 'hostile') {
@@ -444,8 +444,8 @@ const gameSlice = createSlice({
         category: 'system',
         message:
           totalSeats > 0
-            ? `House Valdric casts a ${stance} ward vote on "${vote.title}".`
-            : `House Valdric leans on chamber sponsors to ${stance} "${vote.title}".`,
+            ? `House Valdris casts a ${stance} ward vote on "${vote.title}".`
+            : `House Valdris leans on chamber sponsors to ${stance} "${vote.title}".`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },

@@ -25,7 +25,7 @@ export function ExpeditionPrepScreen() {
   if (expStatus === 'traveling') {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>Expedition Underway</h1>
         <p className="summary">An expedition is in the field. Advance days on the Expedition screen.</p>
         <button
@@ -42,7 +42,7 @@ export function ExpeditionPrepScreen() {
   if (expStatus === 'returned') {
     return (
       <section className="screen-panel">
-        <p className="eyebrow">House Valdric</p>
+        <p className="eyebrow">House Valdris</p>
         <h1>Expedition Returned</h1>
         <p className="summary">Your squad has returned. Debrief and collect what they found.</p>
         <button
@@ -82,7 +82,7 @@ export function ExpeditionPrepScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdric</p>
+      <p className="eyebrow">House Valdris</p>
       <h1>Expeditions</h1>
       <p className="summary">
         The world outside Valdenmoor does not wait. Choose a destination, commit a squad, and
