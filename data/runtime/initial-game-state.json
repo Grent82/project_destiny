@@ -489,5 +489,6 @@
       "quantity": 3
     }
   ],
-  "eventInstances": []
+  "eventInstances": [],
+  "worldNpcStates": []
 }

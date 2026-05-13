@@ -202,6 +202,19 @@ export const npcMemoryEntrySchema = z.object({
   axisDelta: z.record(z.string(), z.number()).optional(),
 })
 
+export const worldNpcDispositionSchema = z.enum(['neutral', 'friendly', 'hostile', 'afraid', 'unknown'])
+
+export const worldNpcRuntimeStateSchema = z.object({
+  npcId: entityIdSchema,
+  lastContactDay: z.number().int().nonnegative().nullable().default(null),
+  disposition: worldNpcDispositionSchema.default('neutral'),
+  locationOverride: z.string().nullable().default(null),
+  flags: z.array(z.string()).default([]),
+}).strict()
+
+export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>
+export type WorldNpcRuntimeState = z.infer<typeof worldNpcRuntimeStateSchema>
+
 export const MAX_NPC_MEMORY_ENTRIES = 20
 
 export const npcRuntimeStateSchema = z

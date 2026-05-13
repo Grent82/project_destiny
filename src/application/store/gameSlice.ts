@@ -1,7 +1,7 @@
 import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
-import type { Attributes, Skills, Traits } from '../../domain/npc/contracts'
+import type { Attributes, Skills, Traits, WorldNpcDisposition } from '../../domain/npc/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import {
@@ -978,6 +978,37 @@ const gameSlice = createSlice({
       state.house.vaultUnlocked = true
       const vault = state.house.rooms.find((r) => r.roomId === 'room-vault')
       if (vault) vault.state = 'intact'
+    },
+
+    /** Record or update a world NPC's runtime state (disposition, flags, location override, last contact). */
+    updateWorldNpcState(
+      state,
+      action: PayloadAction<{
+        npcId: string
+        lastContactDay?: number
+        disposition?: WorldNpcDisposition
+        locationOverride?: string | null
+        addFlags?: string[]
+        removeFlags?: string[]
+      }>
+    ) {
+      const { npcId, lastContactDay, disposition, locationOverride, addFlags, removeFlags } = action.payload
+      let entry = state.worldNpcStates.find((s) => s.npcId === npcId)
+      if (!entry) {
+        state.worldNpcStates.push({ npcId, lastContactDay: null, disposition: 'neutral', locationOverride: null, flags: [] })
+        entry = state.worldNpcStates[state.worldNpcStates.length - 1]
+      }
+      if (lastContactDay !== undefined) entry.lastContactDay = lastContactDay
+      if (disposition !== undefined) entry.disposition = disposition
+      if (locationOverride !== undefined) entry.locationOverride = locationOverride
+      if (addFlags) {
+        for (const f of addFlags) {
+          if (!entry.flags.includes(f)) entry.flags.push(f)
+        }
+      }
+      if (removeFlags) {
+        entry.flags = entry.flags.filter((f) => !removeFlags.includes(f))
+      }
     },
   },
 })
