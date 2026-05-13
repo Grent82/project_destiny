@@ -2,6 +2,14 @@ import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 
+/** Modifiers per ageBand: stress/fatigue accumulation rate and recovery rate. */
+const AGE_BAND_MODIFIERS = {
+  young:  { accum: 1.05, recovery: 1.08 },
+  adult:  { accum: 1.00, recovery: 1.00 },
+  middle: { accum: 1.00, recovery: 1.00 },
+  elder:  { accum: 1.08, recovery: 0.95 },
+} as const
+
 /** Steps 2, 2b: hunger/fatigue/stress decay and health recovery for recovering NPCs. */
 export function applyStateDecay(state: GameState): GameState {
   const waterScarcity = (state.cityResources?.waterAccess ?? 100) < 30
@@ -16,6 +24,10 @@ export function applyStateDecay(state: GameState): GameState {
       const isResting = npc.assignment !== 'deployed'
       const highAnger = (npc.states.anger ?? 0) > ANGER_PENALTY_THRESHOLD
       const highHygiene = (npc.states.hygiene ?? 0) > HYGIENE_PENALTY_THRESHOLD
+
+      const npcDef = contentCatalog.npcsById.get(npc.npcId)
+      const ageBand = npcDef?.ageBand ?? 'adult'
+      const ageMod = AGE_BAND_MODIFIERS[ageBand] ?? AGE_BAND_MODIFIERS.adult
 
       // Anger: increases with low morale or high fear, decays slowly
       const angerFromMorale = npc.states.morale < anger_morale_threshold ? 5 : 0
@@ -33,16 +45,19 @@ export function applyStateDecay(state: GameState): GameState {
       // Morale penalty from poor conditions
       const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0)
 
+      // Fatigue: resting recovery is boosted by ageMod.recovery; deployed accumulation scaled by ageMod.accum
+      const fatigueDelta = isResting
+        ? -Math.round(10 * ageMod.recovery)
+        : Math.round(5 * ageMod.accum)
+
       return {
         ...npc,
         states: {
           ...npc.states,
-          hunger: Math.min(100, npc.states.hunger + 8),
-          fatigue: isResting
-            ? Math.max(0, npc.states.fatigue - 10)
-            : Math.min(100, npc.states.fatigue + 5),
+          hunger: Math.min(100, npc.states.hunger + Math.round(8 * ageMod.accum)),
+          fatigue: Math.max(0, Math.min(100, npc.states.fatigue + fatigueDelta)),
           stress: isResting
-            ? Math.max(0, npc.states.stress - 3)
+            ? Math.max(0, npc.states.stress - Math.round(3 * ageMod.recovery))
             : npc.states.stress,
           morale: Math.max(0, npc.states.morale - moralePenalty),
           anger: newAnger,
@@ -72,10 +87,12 @@ export function applyStateDecay(state: GameState): GameState {
   const medicBonus = hasMedic ? 10 : 0
 
   for (const npc of next.roster.filter((r) => r.assignment === 'recovering')) {
-    const newHealth = Math.min(100, npc.states.health + baseRecovery + medicBonus)
-    const fullyRecovered = newHealth >= 80
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const npcName = npcDef?.name ?? npc.npcId
+    const ageBand = npcDef?.ageBand ?? 'adult'
+    const ageMod = AGE_BAND_MODIFIERS[ageBand] ?? AGE_BAND_MODIFIERS.adult
+    const newHealth = Math.min(100, npc.states.health + Math.round((baseRecovery + medicBonus) * ageMod.recovery))
+    const fullyRecovered = newHealth >= 80
 
     next = {
       ...next,
