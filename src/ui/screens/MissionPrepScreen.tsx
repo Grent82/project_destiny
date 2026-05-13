@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react'
 import { NavLink, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -11,6 +12,7 @@ import {
   squadRules,
 } from '../../application'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import { checkLineTheyWontCross } from '../../domain/npc/checkLineTheyWontCross'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { contentCatalog } from '../../application/content/contentCatalog'
 
@@ -31,6 +33,26 @@ export function MissionPrepScreen() {
   const isOnSite = Boolean(incidentDistrictId && currentDistrictId === incidentDistrictId)
   const hasOngoingEncounter =
     combatState.hasActiveCombat && combatState.outcome === 'ongoing'
+
+  // Derive action context tags from the active contract briefing for lineTheyWontCross check
+  const missionContextTags = useMemo(() => {
+    const brief = [
+      activeContract?.template?.briefing ?? '',
+      activeContract?.displayTitle ?? '',
+      activeContract?.objectiveLabel ?? '',
+    ].join(' ').toLowerCase()
+    return brief.split(/\W+/).filter((w) => w.length > 3)
+  }, [activeContract])
+
+  const [proceededDespiteConflict, setProceededDespiteConflict] = useState(false)
+
+  const squadConflicts = useMemo(() => {
+    if (proceededDespiteConflict) return []
+    return summary.selectedSquad.flatMap((entry) => {
+      const line = checkLineTheyWontCross(entry.npcId, missionContextTags)
+      return line ? [{ name: entry.name, line }] : []
+    })
+  }, [summary.selectedSquad, missionContextTags, proceededDespiteConflict])
 
   return (
     <section className="screen-panel">
@@ -117,6 +139,39 @@ export function MissionPrepScreen() {
         <p className="summary">
           <strong>Funnel step:</strong> {activeContract.runtime.stageId.replace(/-/g, ' ')}
         </p>
+      )}
+
+      {squadConflicts.length > 0 && (
+        <div role="alert" style={{ margin: '0.75rem 0', padding: '0.6rem 0.75rem', background: 'var(--color-danger-bg, #2d1010)', border: '1px solid var(--color-danger, #c0392b)', borderRadius: '4px' }}>
+          {squadConflicts.map(({ name, line }) => (
+            <p key={name} style={{ margin: '0 0 0.35rem', fontSize: 'var(--size-sm)', color: 'var(--color-danger, #e74c3c)', fontStyle: 'italic' }}>
+              <strong>{name}:</strong> {line}
+            </p>
+          ))}
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <button
+              className="action-button"
+              onClick={() => setProceededDespiteConflict(true)}
+              type="button"
+            >
+              Proceed anyway
+            </button>
+            <button
+              className="action-button"
+              onClick={() => {
+                const firstConflictNpcId = summary.selectedSquad.find((e) =>
+                  checkLineTheyWontCross(e.npcId, missionContextTags)
+                )?.npcId
+                if (firstConflictNpcId) {
+                  dispatch(gameActions.removeNpcFromSelectedSquad(firstConflictNpcId))
+                }
+              }}
+              type="button"
+            >
+              Change order
+            </button>
+          </div>
+        </div>
       )}
 
       <div className="session-actions">
