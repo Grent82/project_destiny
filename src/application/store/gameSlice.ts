@@ -185,6 +185,17 @@ const gameSlice = createSlice({
       if (!quest) return
       if (action.payload.stageId !== undefined) {
         quest.stageId = action.payload.stageId
+
+        // Auto-apply authored mid-quest beats for this stage
+        const template = getQuestTemplates().find((t) => t.id === quest.questId)
+        if (template?.midQuestBeats) {
+          for (const beat of template.midQuestBeats) {
+            if (beat.atStageId === action.payload.stageId) {
+              quest.currentObjectiveLabel = beat.label
+              quest.journalEntries = [...quest.journalEntries, beat.journalEntry]
+            }
+          }
+        }
       }
       if (action.payload.currentObjectiveLabel !== undefined) {
         quest.currentObjectiveLabel = action.payload.currentObjectiveLabel

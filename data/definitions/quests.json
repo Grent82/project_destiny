@@ -5,7 +5,7 @@
     "employerFactionId": "faction-civic-compact",
     "enemyFactionId": "faction-tallow-ring",
     "districtId": "district-the-warrens",
-    "briefing": "A Compact checkpoint at the harbor gate is being shaken down nightly. Three wardens hurt last week. They want it stopped quietly — nothing in the Register.",
+    "briefing": "A Compact checkpoint at the harbor gate is being shaken down nightly. Three wardens hurt last week. They want it stopped quietly \u2014 nothing in the Register.",
     "objectiveType": "combat",
     "rewardMarks": 180,
     "rewardStandingFactionId": "faction-civic-compact",
@@ -18,7 +18,15 @@
     "requiredFactionStanding": null,
     "enemyNpcId": "npc-enemy-the-dockmaster",
     "rewardCityDialId": "unrest",
-    "rewardCityDialDelta": -5
+    "rewardCityDialDelta": -5,
+    "successorQuestId": "quest-harborwatch-followup",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The watchpost is abandoned. Someone cleared it out before you arrived.",
+        "journalEntry": "No one is at the Harborwatch post. The dispute may run deeper than a missing guard."
+      }
+    ]
   },
   {
     "id": "quest-ledger-recovery",
@@ -37,7 +45,16 @@
     "discoverySource": "court",
     "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
-    "enemyNpcId": "npc-enemy-lady-sorn"
+    "enemyNpcId": "npc-enemy-lady-sorn",
+    "successorQuestId": "quest-ledger-debt-followup",
+    "successorOnFailQuestId": "quest-ledger-burned",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The ledger chamber is not empty. Someone is already here.",
+        "journalEntry": "A Compact agent is already inside the archive. He has not noticed you yet."
+      }
+    ]
   },
   {
     "id": "quest-foundry-escort",
@@ -63,7 +80,7 @@
     "employerFactionId": null,
     "enemyFactionId": "faction-tallow-ring",
     "districtId": "district-the-hollows",
-    "briefing": "Someone is using a dead man's name to collect on old Ring debts. The payments are real — the claims are not. You have a lead. Follow it before the next collection.",
+    "briefing": "Someone is using a dead man's name to collect on old Ring debts. The payments are real \u2014 the claims are not. You have a lead. Follow it before the next collection.",
     "objectiveType": "investigation",
     "rewardMarks": 200,
     "rewardStandingFactionId": "faction-tallow-ring",
@@ -79,7 +96,15 @@
     },
     "enemyNpcId": "npc-enemy-harlen-voss",
     "rewardCityDialId": "unrest",
-    "rewardCityDialDelta": 5
+    "rewardCityDialDelta": 5,
+    "successorOnFailQuestId": "quest-ring-debt-collection",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The creditor sends word: pay in full or bring blood money.",
+        "journalEntry": "A runner delivers a final demand from the Ring. Negotiation is no longer an option."
+      }
+    ]
   },
   {
     "id": "quest-restored-appeal",
@@ -87,7 +112,7 @@
     "employerFactionId": "faction-restored",
     "enemyFactionId": "faction-gilded-court",
     "districtId": null,
-    "briefing": "They need a document retrieved from a Court archive before it is sealed. No violence — they are specific about this. Get in, find the record, leave. The Restored will handle the rest.",
+    "briefing": "They need a document retrieved from a Court archive before it is sealed. No violence \u2014 they are specific about this. Get in, find the record, leave. The Restored will handle the rest.",
     "objectiveType": "investigation",
     "rewardMarks": 150,
     "rewardStandingFactionId": "faction-restored",
@@ -147,7 +172,7 @@
     "employerFactionId": null,
     "enemyFactionId": null,
     "districtId": "district-the-hollows",
-    "briefing": "Three units of nightbloom extract. No paperwork, no licensed supplier, no questions. The buyer is not available for discussion. You will need the right contacts — the Hollows is where you start.",
+    "briefing": "Three units of nightbloom extract. No paperwork, no licensed supplier, no questions. The buyer is not available for discussion. You will need the right contacts \u2014 the Hollows is where you start.",
     "objectiveType": "delivery",
     "rewardMarks": 160,
     "rewardStandingFactionId": null,
@@ -221,7 +246,7 @@
     "employerFactionId": null,
     "enemyFactionId": null,
     "districtId": "district-the-pale",
-    "briefing": "Two minor bond-holder houses are disputing a shared contract and the costs are mounting. A neutral third party is needed — someone with no position in the outcome. Tact is the minimum requirement. Discretion is assumed.",
+    "briefing": "Two minor bond-holder houses are disputing a shared contract and the costs are mounting. A neutral third party is needed \u2014 someone with no position in the outcome. Tact is the minimum requirement. Discretion is assumed.",
     "objectiveType": "investigation",
     "rewardMarks": 150,
     "rewardStandingFactionId": null,
@@ -297,7 +322,7 @@
     "employerFactionId": null,
     "enemyFactionId": "faction-gilded-court",
     "districtId": "district-the-pale",
-    "briefing": "Mira is alive — held somewhere in The Pale under Gilded Court supervision. Getting her out means going through their people.",
+    "briefing": "Mira is alive \u2014 held somewhere in The Pale under Gilded Court supervision. Getting her out means going through their people.",
     "objectiveType": "combat",
     "rewardMarks": 0,
     "rewardStandingFactionId": "faction-tallow-ring",
@@ -312,8 +337,8 @@
     "riskLevel": "extreme",
     "flavorNote": "Tessaly says she left a note. She did not say what it contains.",
     "questType": "story",
-    "openingText": "Tessaly sets down the cup before she speaks. 'She is alive. The Gilded Court has her in the old tannery on the Pale's eastern edge. They are not using her yet — but they will.' She does not elaborate on what *yet* means. She does not need to.",
-    "aftermathText": "Mira walks out on her own feet, which tells you something. She does not speak on the way back. When she does, it is only to say: 'I knew you would come. I did not know if that was a good thing.' She has a name for you now, too — one you have not heard before. House Valdric, she says, as if she is testing the weight of it.",
+    "openingText": "Tessaly sets down the cup before she speaks. 'She is alive. The Gilded Court has her in the old tannery on the Pale's eastern edge. They are not using her yet \u2014 but they will.' She does not elaborate on what *yet* means. She does not need to.",
+    "aftermathText": "Mira walks out on her own feet, which tells you something. She does not speak on the way back. When she does, it is only to say: 'I knew you would come. I did not know if that was a good thing.' She has a name for you now, too \u2014 one you have not heard before. House Valdric, she says, as if she is testing the weight of it.",
     "prerequisiteQuestId": null,
     "unlocksNpcId": "npc-mira",
     "rewardCityDialId": "control",
@@ -326,7 +351,7 @@
     "employerFactionId": null,
     "enemyFactionId": "faction-civic-compact",
     "districtId": "district-the-hollows",
-    "briefing": "Orren Wex, your former steward, is in Compact custody in The Hollows. His knowledge of House Valdric's debts could change everything — if you can get him out.",
+    "briefing": "Orren Wex, your former steward, is in Compact custody in The Hollows. His knowledge of House Valdric's debts could change everything \u2014 if you can get him out.",
     "objectiveType": "investigation",
     "rewardMarks": 0,
     "rewardStandingFactionId": null,
@@ -341,12 +366,66 @@
     "riskLevel": "high",
     "flavorNote": "Marion knows where he is. She has known for weeks.",
     "questType": "story",
-    "openingText": "Marion does not sit when she brings this to you. She stands near the door, as if she is not certain you will want her in the room when she is done. 'Orren Wex is in Compact custody. He has been for six weeks. They are not charging him — they are keeping him available. He knows every number in the house's original accounts. If they let him talk to the right people, the debt becomes very clearly yours.'",
-    "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him — the copy, not the original — and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question — one he is too tired to answer tonight.",
+    "openingText": "Marion does not sit when she brings this to you. She stands near the door, as if she is not certain you will want her in the room when she is done. 'Orren Wex is in Compact custody. He has been for six weeks. They are not charging him \u2014 they are keeping him available. He knows every number in the house's original accounts. If they let him talk to the right people, the debt becomes very clearly yours.'",
+    "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him \u2014 the copy, not the original \u2014 and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question \u2014 one he is too tired to answer tonight.",
     "prerequisiteQuestId": null,
     "unlocksNpcId": "npc-orren-wex",
     "rewardDebtReduction": 80,
     "rewardCityDialId": null,
     "rewardCityDialDelta": 0
+  },
+  {
+    "id": "quest-harborwatch-followup",
+    "title": "The Harborwatch Reckoning",
+    "questType": "contract",
+    "employerFactionId": "faction-civic-compact",
+    "enemyFactionId": "faction-tallow-ring",
+    "districtId": "district-the-warrens",
+    "briefing": "The Harborwatch dispute is unresolved \u2014 the post was cleared before you arrived. The Compact wants to know who gave the order. Track the Ring's hand in this.",
+    "objectiveType": "investigation",
+    "rewardMarks": 250,
+    "rewardStandingFactionId": "faction-civic-compact",
+    "rewardStandingDelta": 10,
+    "penaltyStandingDelta": -8,
+    "timeLimitDays": 7,
+    "prerequisiteQuestId": "quest-harborwatch",
+    "riskLevel": "medium",
+    "flavorNote": "The Compact is embarrassed. They want evidence, not a body count."
+  },
+  {
+    "id": "quest-ledger-debt-followup",
+    "title": "The Ledger's Second Page",
+    "questType": "contract",
+    "employerFactionId": "faction-gilded-court",
+    "enemyFactionId": null,
+    "districtId": "district-the-pale",
+    "briefing": "You recovered the ledger, but a second page was torn free before you arrived. The Court believes it was sold to the Foundry League. Retrieve it before they use it.",
+    "objectiveType": "delivery",
+    "rewardMarks": 300,
+    "rewardStandingFactionId": "faction-gilded-court",
+    "rewardStandingDelta": 12,
+    "penaltyStandingDelta": -10,
+    "timeLimitDays": 6,
+    "prerequisiteQuestId": "quest-ledger-recovery",
+    "riskLevel": "high",
+    "flavorNote": "The Foundry League will not negotiate. They will however be distracted."
+  },
+  {
+    "id": "quest-ledger-burned",
+    "title": "Ashes Where the Ledger Was",
+    "questType": "contract",
+    "employerFactionId": "faction-gilded-court",
+    "enemyFactionId": null,
+    "districtId": "district-the-pale",
+    "briefing": "The ledger is gone \u2014 burned before you could reach it. The Court's reaction is controlled fury. They want someone to name. Find who ordered the burning and make a case.",
+    "objectiveType": "investigation",
+    "rewardMarks": 180,
+    "rewardStandingFactionId": "faction-gilded-court",
+    "rewardStandingDelta": 5,
+    "penaltyStandingDelta": -15,
+    "timeLimitDays": 8,
+    "prerequisiteQuestId": "quest-ledger-recovery",
+    "riskLevel": "medium",
+    "flavorNote": "A failure can still be profitable if someone else is blamed."
   }
 ]

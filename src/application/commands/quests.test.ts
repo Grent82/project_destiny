@@ -231,8 +231,9 @@ describe('completeQuest', () => {
     store.dispatch(gameActions.completeQuest({ questId: 'quest-harborwatch' }))
 
     const log = store.getState().game.activityLog
-    expect(log[0].message).toContain('Contract complete')
-    expect(log[0].message).toContain('180 Marks')
+    const completionLog = log.find((e) => e.message.includes('Contract complete'))
+    expect(completionLog?.message).toContain('Contract complete')
+    expect(completionLog?.message).toContain('180 Marks')
   })
 
   it('rescues Mira only when the dedicated rescue quest is completed', () => {

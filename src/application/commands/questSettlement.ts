@@ -98,6 +98,7 @@ function applyOrrenRescueResolution(state: GameState, questId: string) {
 }
 
 import type { QuestAftermath } from '../../domain/quests/contracts'
+import { createQuestLeadRuntime } from '../../domain/quests/contracts'
 
 function applyQuestAftermath(state: GameState, aftermath: QuestAftermath | null, questTitle: string): void {
   if (!aftermath) return
@@ -141,6 +142,25 @@ function applyQuestAftermath(state: GameState, aftermath: QuestAftermath | null,
   if (aftermath.narrativeSummary) {
     pushActivityLog(state, 'system', aftermath.narrativeSummary, `aftermath-narrative-${questTitle}`)
   }
+}
+
+function activateSuccessorQuestLead(state: GameState, successorQuestId: string, fromQuestTitle: string): void {
+  const alreadyHasLead = state.availableQuestLeads.some((l) => l.questId === successorQuestId)
+  const alreadyCompleted = state.completedQuestIds.includes(successorQuestId)
+  const alreadyActive = state.activeQuests.some((q) => q.questId === successorQuestId)
+  if (alreadyHasLead || alreadyCompleted || alreadyActive) return
+
+  const successorTemplate = getQuestTemplates().find((q) => q.id === successorQuestId)
+  if (!successorTemplate) return
+
+  const lead = createQuestLeadRuntime(successorTemplate, state.day, { discoverySource: 'npc' })
+  state.availableQuestLeads.push(lead)
+  pushActivityLog(
+    state,
+    'system',
+    `A new lead emerged from ${fromQuestTitle}: "${successorTemplate.title}" — check the Work Board.`,
+    `successor-${successorQuestId}`,
+  )
 }
 
 export function settleQuestSuccess(state: GameState, questId: string, options: QuestSuccessOptions = {}) {
@@ -308,6 +328,11 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   // Apply structured aftermath: faction impacts, NPC unlocks, world consequence log
   applyQuestAftermath(state, runtime.aftermath, questTitle)
 
+  // Unlock successor quest lead if defined
+  if (template?.successorQuestId) {
+    activateSuccessorQuestLead(state, template.successorQuestId, questTitle)
+  }
+
   return true
 }
 
@@ -405,6 +430,11 @@ export function settleQuestFailure(state: GameState, questId: string, options: Q
 
   // Apply aftermath (failure aftermath may have different world consequences than success)
   applyQuestAftermath(state, runtime.aftermath, questTitle)
+
+  // Unlock fail-branch successor quest lead
+  if (template?.successorOnFailQuestId) {
+    activateSuccessorQuestLead(state, template.successorOnFailQuestId, questTitle)
+  }
 
   return true
 }

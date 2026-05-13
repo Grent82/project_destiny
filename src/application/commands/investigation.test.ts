@@ -207,7 +207,7 @@ describe('resolveInvestigation', () => {
     expect(state.factionStandings['faction-gilded-court']).toBe(30) // 20 + 10
     expect(state.completedQuestIds).toContain('quest-ledger-recovery')
     expect(state.activeQuests.find((q) => q.questId === 'quest-ledger-recovery')).toBeUndefined()
-    expect(state.activityLog[0].message).toMatch(/investigation concludes/i)
+    expect(state.activityLog.some((e) => e.message.match(/investigation concludes/i))).toBe(true)
   })
 
   it('produces success with surveillance approach (no marks bonus)', () => {
@@ -258,7 +258,7 @@ describe('resolveInvestigation', () => {
     expect(state.activeInvestigation).toBeNull()
     expect(state.money).toBe(125) // half of 250
     expect(state.completedQuestIds).toContain('quest-ledger-recovery')
-    expect(state.activityLog[0].message).toMatch(/yields something/i)
+    expect(state.activityLog.some((e) => e.message.match(/yields something/i))).toBe(true)
   })
 
   it('produces failure with low skill and low roll', () => {
@@ -280,7 +280,7 @@ describe('resolveInvestigation', () => {
     expect(state.money).toBe(100) // no reward
     expect(state.factionStandings['faction-gilded-court']).toBe(12) // 20 + (-8 penalty)
     expect(state.completedQuestIds).not.toContain('quest-ledger-recovery')
-    expect(state.activityLog[0].message).toMatch(/goes nowhere/i)
+    expect(state.activityLog.some((e) => e.message.match(/goes nowhere/i))).toBe(true)
   })
 
   it('records (paper trail) approach suppresses standing penalty on failure', () => {

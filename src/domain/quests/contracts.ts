@@ -36,6 +36,13 @@ export const questTemplateSchema = z.object({
   rewardCityDialDelta: z.number().default(0),
   rewardDebtReduction: z.number().default(0),
   unlocksNpcId: z.string().nullable().default(null),
+  successorQuestId: z.string().nullable().default(null),
+  successorOnFailQuestId: z.string().nullable().default(null),
+  midQuestBeats: z.array(z.object({
+    atStageId: z.string(),
+    label: z.string(),
+    journalEntry: z.string(),
+  })).default([]),
 }).strict()
 
 export const questClueSchema = z.object({
