@@ -22,7 +22,7 @@ describe('RosterScreen', () => {
 
     expect(screen.getByRole('heading', { name: 'The Roster' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Marion Vale/i })).toBeInTheDocument()
-    expect(screen.getByText(/A former dock broker/i)).toBeInTheDocument()
+    expect(screen.getByText(/'Before the docks' means she survived/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Ida Rhys/i }))
 

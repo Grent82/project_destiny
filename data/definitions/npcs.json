@@ -3,7 +3,7 @@
     "id": "npc-marion-vale",
     "name": "Marion Vale",
     "origin": "Harbor Ward",
-    "background": "A former dock broker who learned to keep crews loyal and manifests flexible.",
+    "background": "'Before the docks' means she survived the taking of the old harbor. Her family handled illicit cargo for a noble house and she knows which house shipped people \u2014 not goods \u2014 out of Valdenmoor during the first panic. The dock work is legitimate cover for a network built on that original contract. Her supply chain runs partly through a noble hand she will not name.",
     "rarity": "uncommon",
     "status": "retainer",
     "factionAffinityId": "faction-civic-compact",
@@ -58,8 +58,8 @@
       "never discusses what came before the docks"
     ],
     "motivation": {
-      "publicGoal": "To rebuild something worth serving.",
-      "privateNeed": "To be needed in a way that does not shame her."
+      "publicGoal": "To manage the house efficiently and keep the finances clean.",
+      "privateNeed": "To never be the person who made that cargo run again \u2014 and to never admit she still could."
     }
   },
   {
@@ -129,7 +129,7 @@
     "id": "npc-verek-holst",
     "name": "Verek Holst",
     "origin": "Civic Quarter",
-    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce — which makes him reliable and irritating in equal measure.",
+    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce \u2014 which makes him reliable and irritating in equal measure.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-civic-compact",
@@ -193,7 +193,7 @@
     "id": "npc-sable-wrent",
     "name": "Sable Wrent",
     "origin": "Ironworks",
-    "background": "Lost two fingers on a wall-repair crew eight years ago — League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
+    "background": "Lost two fingers on a wall-repair crew eight years ago \u2014 League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -243,7 +243,7 @@
       "a burn scar at her collarbone she covers deliberately"
     ],
     "quirks": [
-      "keeps a tally of every favour given and owed — never writes it down",
+      "keeps a tally of every favour given and owed \u2014 never writes it down",
       "will not say the League's name aloud"
     ],
     "motivation": {
@@ -256,7 +256,7 @@
     "id": "npc-aldric-vane",
     "name": "Aldric Vane",
     "origin": "Gilded Heights",
-    "background": "Second son of a minor Court house that no longer exists — lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
+    "background": "Second son of a minor Court house that no longer exists \u2014 lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": null,
@@ -509,7 +509,7 @@
     "id": "npc-tav",
     "name": "Tav",
     "origin": "The Warrens",
-    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract — limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
+    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract \u2014 limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": "faction-restored",
@@ -573,7 +573,7 @@
     "id": "npc-maret-sunne",
     "name": "Maret Sunne",
     "origin": "Civic Quarter",
-    "background": "Thirty-one years processing Compact documentation. Has access to permit records, Register histories, and the sealed files that accumulate when institutions do things they later prefer to classify. She is not corrupt — she is precise about the difference between what the rules say and what actually happens.",
+    "background": "Bastard granddaughter of Old Maret, raised under a different surname to hide paternity. Became a clerk and archivist because she inherited Old Maret's memory for prices, names, and omissions. Holds a ledger that proves who profited from the fall of House Valdris. Does not know Old Maret knows she has it. Treats the ledger as an inheritance she has not yet understood.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -627,15 +627,15 @@
       "keeps a personal log she has shown no one"
     ],
     "motivation": {
-      "publicGoal": "An accurate and complete record of events.",
-      "privateNeed": "To be believed when it matters."
+      "publicGoal": "To establish herself as a reliable independent archivist.",
+      "privateNeed": "To understand what the ledger means before using it \u2014 and who she would become if she did."
     }
   },
   {
     "id": "npc-rutha-kael",
     "name": "Rutha Kael",
     "origin": "Thornwall Approach",
-    "background": "Survived the Thornwall Incident — the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
+    "background": "Survived the Thornwall Incident \u2014 the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": null,
@@ -698,7 +698,7 @@
     "id": "npc-lirien-ashcroft",
     "name": "Lirien Ashcroft",
     "origin": "Gilded Heights",
-    "background": "Daughter of a Court house that backed the wrong faction in a succession dispute two years ago — her father is under informal arrest at the family estate. She is in the city, nominally free, with a name that opens some doors and closes others, and she is learning which is which.",
+    "background": "Lira's daughter, born outside sanctioned marriage. The wrist-marking is a survival tally \u2014 dates of deaths in her family, debt notices, and names she is not supposed to remember. Refuses family discussion in groups because she knows the real scandal is not the name but the blood. Understands more than her mother thinks she does.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -752,9 +752,8 @@
       "will not discuss her family in groups"
     ],
     "motivation": {
-      "publicGoal": "To locate her father and clear the Ashcroft family debts.",
-      "privateNeed": "To be taken seriously before she runs out of time.",
-      "immediatePressure": "The Court's patience is not indefinite."
+      "publicGoal": "To apprentice somewhere that will not ask too many questions about her name.",
+      "privateNeed": "To find out whether she is heiress or evidence \u2014 and whether it matters either way."
     }
   },
   {
@@ -824,7 +823,7 @@
     "districtId": "district-the-pale",
     "description": "Innkeeper of The Ashen Cup. Knows everyone who passes through, and owes a few debts to The Collectors.",
     "origin": "The Pale",
-    "background": "Garet has run The Ashen Cup for over a decade. He trades in warm ale and overheard conversations, and his ledger holds names no one should forget.",
+    "background": "Son of an innkeeper whose establishment served Valdris retainers before the Breach. The locked box behind the bar contains service tokens, ring fragments, and unpaid writs from the old house. Memorises orders because his father memorised noble table habits for a Valdris patron who later vanished. Has been waiting for someone to ask about the box for years.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -877,9 +876,8 @@
       "keeps a locked box behind the bar he has not explained"
     ],
     "motivation": {
-      "publicGoal": "To keep The Ashen Cup profitable and protected.",
-      "privateNeed": "The ledger guarantees his survival. He knows it.",
-      "lineTheyWontCross": "Anything that burns his establishment."
+      "publicGoal": "To keep the Lantern Vale running and out of debt.",
+      "privateNeed": "To return the box to someone who will know what to do with it without making him responsible for what happens next."
     }
   },
   {
@@ -889,7 +887,7 @@
     "districtId": "district-the-pale",
     "description": "A healer who trades in information as readily as remedies.",
     "origin": "The Pale",
-    "background": "Sister Vael runs a small infirmary near the old sanctuary. She asks careful questions and remembers every answer.",
+    "background": "Her foreknowledge comes from reading confessions, not visions. Has a dead sister erased from temple records after the Breach \u2014 smuggled out under plague blankets by a patron whose name she has been hunting ever since. Her information network is built entirely on confessions she was never meant to keep. The shrine is as much an archive as a place of worship.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -942,8 +940,8 @@
       "never prays where she can be heard"
     ],
     "motivation": {
-      "publicGoal": "Foreknowledge, for the protection of the faithful.",
-      "privateNeed": "To never again be caught without warning."
+      "publicGoal": "To maintain the chapel as sanctuary for the displaced.",
+      "privateNeed": "To find the name of the patron who arranged her sister's erasure before she runs out of time to matter."
     }
   },
   {
@@ -951,9 +949,9 @@
     "name": "Torvald Messe",
     "npcType": "world",
     "districtId": "district-harbor",
-    "description": "Guild registrar. Officious by nature, he can unlock contract access — for a price.",
+    "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
     "origin": "Harbor Ward",
-    "background": "Torvald has processed guild registrations for the Compact for fifteen years. He knows every loophole and enjoys enforcing the ones that hurt.",
+    "background": "Son of a municipal notary who copied all noble grants before the Breach. Three copies of every document exist because his family lost everything to forged records. Knows which legal form erased House Valdris the first time \u2014 and has kept a copy of that form. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -1005,9 +1003,8 @@
       "keeps three copies of every filed document"
     ],
     "motivation": {
-      "publicGoal": "Procedural correctness in all civic matters.",
-      "privateNeed": "To remain indispensable without choosing a side.",
-      "lineTheyWontCross": "Direct falsification of official record."
+      "publicGoal": "To maintain his position as a reliable municipal clerk.",
+      "privateNeed": "To hand the copy to someone who can use it before his nerve fails."
     }
   },
   {
@@ -1017,7 +1014,7 @@
     "districtId": "district-harbor",
     "description": "Black market fence operating from behind a legitimate spice stall.",
     "origin": "Harbor Ward",
-    "background": "Lira’s spice stall smells of cardamom and old money. What moves through the back room has no smell at all.",
+    "background": "Had Lirien outside a sanctioned marriage. The Ashcroft name was kept through a debt-forgiveness bargain with a surviving noble patron whose identity she will not name. Left the old district to protect Lirien from whatever the family owes. Knows why the Ashcrofts were allowed to keep their name when others were stripped \u2014 and has never told Lirien.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": null,
@@ -1070,10 +1067,8 @@
       "has not visited the old district in years and does not explain why"
     ],
     "motivation": {
-      "publicGoal": "Stability. The life she has built.",
-      "privateNeed": "Permission to stop being responsible for the family.",
-      "immediatePressure": "Lirien's return reopens everything she had closed.",
-      "lineTheyWontCross": "Leaving the city."
+      "publicGoal": "To keep the stall profitable and Lirien out of trouble.",
+      "privateNeed": "To die before Lirien finds out what name they were almost given instead."
     }
   },
   {
@@ -1211,7 +1206,7 @@
     "districtId": "district-the-warrens",
     "description": "Nameless information broker. Deals only in secrets.",
     "origin": "Unknown",
-    "background": "No one knows The Wren’s real name, face, or history. Only that they know yours.",
+    "background": "No one knows The Wren\u2019s real name, face, or history. Only that they know yours.",
     "rarity": "rare",
     "status": "criminal",
     "factionAffinityId": null,
@@ -1402,7 +1397,7 @@
     "districtId": "district-the-hollows",
     "description": "Remembers the city before the Breach. Not all of her memories are safe.",
     "origin": "The Hollows",
-    "background": "Old Maret was already old before the Breach. She sits in the same doorway she has sat in for thirty years and watches the city become something else.",
+    "background": "Lower household accounts keeper for House Valdris before the Breach. Survived by knowing who was starving before they admitted it. Falsified grain ledgers during a pre-Breach winter riot to keep the house fed. Last living witness to the Valdris servants hall. Has not spoken the house name aloud in years, but refers to the old rooms by name as if she still works there.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -1455,8 +1450,8 @@
       "knows the price of everything in the city from memory"
     ],
     "motivation": {
-      "publicGoal": "Survival. Continuation. Another season.",
-      "privateNeed": "To not be the last one standing."
+      "publicGoal": "To keep her stall running and her creditors satisfied.",
+      "privateNeed": "To give her granddaughter the ledger before she dies \u2014 without admitting she knows she has it."
     }
   },
   {
@@ -1464,7 +1459,7 @@
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "A Collectors enforcer who has spent fifteen years ensuring debts are paid — or that the consequences of not paying them are instructive. He does not distinguish between the debt and the person who owes it. Both are property until settled.",
+    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -1516,8 +1511,8 @@
       "never raises his voice when threatening"
     ],
     "motivation": {
-      "publicGoal": "Collection. Every mark, with interest.",
-      "privateNeed": "To be respected, not just feared."
+      "publicGoal": "To complete the foreclosure against House Valdris and recover what is owed.",
+      "privateNeed": "To complete the foreclosure before anyone finds the coercion papers."
     }
   },
   {
@@ -1525,7 +1520,7 @@
     "name": "The Dockmaster",
     "npcType": "enemy",
     "origin": "Harbor Ward",
-    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut — in coin, in silence, or in favors owed. He considers this fair market rate.",
+    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut \u2014 in coin, in silence, or in favors owed. He considers this fair market rate.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": "faction-civic-compact",
@@ -1586,7 +1581,7 @@
     "name": "Lady Sorn",
     "npcType": "enemy",
     "origin": "Gilded Heights",
-    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest — quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
+    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -1777,7 +1772,7 @@
     "npcType": "story",
     "districtId": "district-the-pale",
     "origin": "The Pale",
-    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly — but not entirely freely.",
+    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly \u2014 but not entirely freely.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-tallow-ring",
