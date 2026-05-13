@@ -107,7 +107,6 @@ describe('npcRuntimeStateSchema', () => {
           trust: 33,
         },
       },
-      factionRelationships: [],
     })
 
     expect(result.success).toBe(false)

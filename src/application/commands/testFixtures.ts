@@ -69,7 +69,6 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
     consumableIds: [],
   },
   relationships: {},
-  factionRelationships: [{ factionId: 'faction-foundry-league', standing: 24 }],
 }
 
 /** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */

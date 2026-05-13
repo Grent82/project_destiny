@@ -155,7 +155,6 @@ export const npcRuntimeStateSchema = z
     states: statesSchema,
     loadout: loadoutSchema,
     relationships: z.record(entityIdSchema, relationshipAxesSchema),
-    factionRelationships: z.array(factionRelationshipSchema),
   })
   .strict()
 

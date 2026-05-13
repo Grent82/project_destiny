@@ -86,7 +86,6 @@ const BASE_NPC_STATE = {
     consumableIds: [] as string[],
   },
   relationships: {},
-  factionRelationships: [],
 }
 
 const BASE_GAME_STATE = {

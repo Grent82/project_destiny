@@ -95,7 +95,6 @@ describe('generateDistrictHireOffers', () => {
               states: { health: 100, fatigue: 0, stress: 0, morale: 80, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 100 },
               loadout: { primaryWeaponId: null, sidearmId: null, armorId: null },
               relationships: {},
-              factionRelationships: [],
             },
             npcId: 'npc-marion-vale',
           },

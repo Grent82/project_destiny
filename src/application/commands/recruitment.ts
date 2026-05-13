@@ -57,9 +57,6 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
       consumableIds: [],
     },
     relationships: {},
-    factionRelationships: npcDef.factionAffinityId
-      ? [{ factionId: npcDef.factionAffinityId, standing: 0 }]
-      : [],
   }
 
   let next: GameState = {

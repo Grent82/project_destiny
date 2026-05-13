@@ -150,12 +150,6 @@
         ]
       },
       "relationships": {},
-      "factionRelationships": [
-        {
-          "factionId": "faction-civic-compact",
-          "standing": 18
-        }
-      ],
       "trainingFocus": null
     }
   ],
