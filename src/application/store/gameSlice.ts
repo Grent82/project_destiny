@@ -28,6 +28,7 @@ import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigat
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import { resolveDialogueChoice } from '../commands/dialogue'
 import { searchHouseRoom } from '../commands/houseSearch'
+import { acceptWard as acceptWardCommand, formalizeAdultWard as formalizeAdultWardCommand, type WardOriginId } from '../commands/houseWard'
 import { installModule as installModuleCommand } from '../commands/installModule'
 import { useItem as useItemCommand } from '../commands/useItem'
 import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
@@ -1322,6 +1323,18 @@ const gameSlice = createSlice({
       if (result.success) {
         Object.assign(state, result.state)
       }
+    },
+
+    acceptWard(state, action: PayloadAction<{ wardId: string; wardName: string; originId: WardOriginId }>) {
+      const { wardId, wardName, originId } = action.payload
+      const snapshot = current(state) as GameState
+      return acceptWardCommand(snapshot, wardId, wardName, originId)
+    },
+
+    formalizeAdultWard(state, action: PayloadAction<{ wardId: string } & Parameters<typeof formalizeAdultWardCommand>[2]>) {
+      const { wardId, ...baseNpc } = action.payload
+      const snapshot = current(state) as GameState
+      return formalizeAdultWardCommand(snapshot, wardId, baseNpc)
     },
   },
 })

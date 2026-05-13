@@ -93,6 +93,18 @@ export const houseRoomSchema = z
 export const houseExteriorTierSchema = z.enum(['ruined', 'patched', 'maintained', 'restored', 'grand'])
 export type HouseExteriorTier = z.infer<typeof houseExteriorTierSchema>
 
+export const heirStageSchema = z.enum(['child', 'ward', 'apprentice', 'adult'])
+export type HeirStage = z.infer<typeof heirStageSchema>
+
+export const heirSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  originStory: z.string(),
+  stage: heirStageSchema.default('child'),
+  arrivalDay: z.number().int(),
+})
+export type Heir = z.infer<typeof heirSchema>
+
 export const houseStateSchema = z
   .object({
     rooms: z.array(houseRoomSchema),
@@ -100,6 +112,7 @@ export const houseStateSchema = z
     rosterBonus: z.number().int().nonnegative().default(0),
     exteriorState: houseExteriorTierSchema.default('ruined'),
     fortificationLevel: z.number().int().min(0).max(5).default(0),
+    houseHeirs: z.array(heirSchema).max(2).default([]),
   })
   .strict()
 
@@ -268,6 +281,7 @@ export const gameStateSchema = z
       rosterBonus: 0,
       exteriorState: 'ruined' as const,
       fortificationLevel: 0,
+      houseHeirs: [],
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),

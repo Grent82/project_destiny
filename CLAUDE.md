@@ -1,6 +1,6 @@
-# Project Instructions for AI Agents
+# CLAUDE.md
 
-This file provides instructions and context for AI coding agents working on this project.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Workflow
 
@@ -70,23 +70,115 @@ bd close <id>         # Complete work
 
 ## Build & Test
 
-Use the baseline validation loop below.
-
 ```bash
 pnpm lint
 pnpm format
-pnpm test
-pnpm test:run
+pnpm test           # watch mode
+pnpm test:run       # single pass, all tests
 pnpm typecheck
 pnpm build
 ```
 
-## Architecture Overview
+**Run a single test file:**
+```bash
+pnpm exec vitest run src/application/commands/combat.test.ts
+```
 
-The architecture docs will be created and maintained through the Architect role. Until then, use the design intent from `GAME_DESIGN_DOCUMENT.md` and the operating constraints in `docs/engineering-standards.md`.
+**Run a specific test by name:**
+```bash
+pnpm exec vitest run src/application/commands/combat.test.ts -t "advances rngSeed"
+```
 
-## Conventions & Patterns
+**Playthrough regression suites:**
+```bash
+pnpm test:playthrough:golden    # canonical regression (fastest)
+pnpm test:playthrough:all       # all playthrough scenarios
+pnpm test:playthrough:funnel    # quest funnel scenarios
+pnpm test:playthrough:browser   # browser smoke
+```
 
-- Domain logic should remain framework-agnostic.
-- Business behavior should be covered by tests first when changed.
-- Use explicit contracts and narrow write scopes for agent tasks.
+## Architecture
+
+The project uses clean architecture with a strict inward dependency direction:
+
+```
+UI → Application → Domain
+Infrastructure → Application → Domain
+```
+
+Domain must not import from UI, Infrastructure, or any browser/framework API.
+
+### Layer Overview
+
+**`src/domain/`** — Pure game rules; no framework dependencies.
+Each subdomain has a `contracts.ts` that exports Zod schemas and inferred types. Key subdomains: `game`, `npc`, `combat`, `quests`, `events`, `factions`, `items`, `relationships`, `governance`, `districts`, `expedition`, `rumors`, `titles`, `dialogue`, `progression`, `shared`.
+
+The central aggregate is `GameState` (defined in `src/domain/game/contracts.ts`). Everything mutable lives in `GameState`. Immutable content definitions (NPC defs, item defs, faction defs) live separately in `data/definitions/*.json` and are loaded into `contentCatalog` at startup.
+
+**`src/application/`** — Orchestration and use cases.
+- `commands/` — Pure functions `(state: GameState, ...params) → GameState`. Name them as imperative domain actions (`endDay`, `startCombatEncounter`, `recruitNpc`). Side effects are forbidden here.
+- `selectors/` — Memoized Redux selectors that compose runtime state with content definitions to produce view models. Nothing in UI computes a view model itself.
+- `store/gameSlice.ts` — One Redux slice wrapping all commands as thin reducers. Reducers call commands and return their result.
+- `content/contentCatalog.ts` — Static registry of all game definitions loaded from JSON. Access definitions by array or by ID.
+- `ports/` — Interfaces (e.g. `SaveGameStore`) implemented by infrastructure.
+- `playthrough/` — Declarative end-to-end scenario specs (`runner.ts` executes them step-by-step).
+
+**`src/infrastructure/`** — Adapters and persistence. `localSaveSnapshot.ts` implements `SaveGameStore`, handles save migration (v0→v1→v2), and validates with `gameStateSchema` before persisting.
+
+**`src/ui/`** — React + Redux. Screens select data via `useAppSelector` and dispatch actions via `useAppDispatch`. No business logic in components. 21 screen routes defined in `App.tsx`.
+
+### Key Patterns
+
+**Command (pure state transformer):**
+```ts
+export function commandName(state: GameState, params: ...): GameState {
+  // return new state, never mutate
+}
+```
+
+**Reducer (thin wrapper in gameSlice.ts):**
+```ts
+actionName(state, action: PayloadAction<...>) {
+  const snapshot = current(state) as GameState
+  return commandFn(snapshot, action.payload)
+}
+```
+
+**Selector (view model composer):**
+```ts
+export const selectSomething = createSelector(
+  [selectGame],
+  (game) => /* merge runtime state with contentCatalog definitions */
+)
+```
+
+**Schema + type (domain contracts):**
+```ts
+export const thingSchema = z.object({ ... })
+export type Thing = z.infer<typeof thingSchema>
+```
+Always use `import type { Foo }` when the import is type-only (`verbatimModuleSyntax` is enabled).
+
+### Determinism and RNG
+
+All randomness flows through `state.rngSeed`. Commands that need randomness derive a seeded RNG from it and advance the seed in the returned state. Tests rely on the deterministic seed — do not introduce `Math.random()`.
+
+### Activity Log
+
+`appendActivityLogEntry(state, category, message)` adds player-visible feedback to `state.activityLog` (capped at 100). Valid categories: `'economy' | 'combat' | 'system'`.
+
+### Test Fixtures
+
+`src/application/commands/testFixtures.ts` exports:
+- `idaRhysRosterEntry` — a pre-built `NpcRuntimeState`
+- `initialStateWithIda` — a `GameState` with Ida on the roster
+
+Use these as the base for command tests rather than constructing state from scratch.
+
+## Conventions
+
+- Schemas named `*Schema`, types inferred as `z.infer<typeof *Schema>`.
+- Module names describe domain purpose, not technical role (`applyNpcAgency`, not `npcUtils`).
+- Tests co-located with their command files (e.g. `combat.ts` → `combat.test.ts`).
+- Content definitions are immutable; mutable save-state is versioned and validated on load.
+- Refactor only when: duplication causes maintenance risk, current structure blocks a feature, tests are hard to write, or domain concepts are leaking across layers.

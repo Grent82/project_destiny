@@ -16,6 +16,7 @@ import { applyPolitics } from "./applyPolitics"
 import { applyNpcAgency } from "./applyNpcAgency"
 import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
 import { applyRumorSpread } from "./applyRumorSpread"
+import { tickWardStages } from "./houseWard"
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -191,6 +192,7 @@ export function endDay(state: GameState): GameState {
   // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)
   afterEvents = applyCaptivityDegradation(afterEvents)
+  afterEvents = tickWardStages(afterEvents)
   const finalState = checkMainQuestProgression(afterEvents)
 
   // Store advanced RNG seed for next day's deterministic run

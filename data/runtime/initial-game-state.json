@@ -467,7 +467,8 @@
     "vaultUnlocked": false,
     "rosterBonus": 0,
     "exteriorState": "ruined",
-    "fortificationLevel": 0
+    "fortificationLevel": 0,
+    "houseHeirs": []
   },
   "visitedDialogueNodes": {},
   "saveVersion": 2,

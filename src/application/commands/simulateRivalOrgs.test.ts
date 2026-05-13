@@ -82,6 +82,7 @@ const baseState: GameState = {
     rosterBonus: 0,
     exteriorState: 'ruined' as const,
     fortificationLevel: 0,
+    houseHeirs: [],
   },
   saveVersion: 1,
   rngSeed: 42,
