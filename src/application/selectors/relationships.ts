@@ -1,15 +1,12 @@
 import type { RootState } from '../store/gameStore'
 import type { RelationshipAxes } from '../../domain/relationships/contracts'
-import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
-
-const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
 
 export const selectRelationshipWithPlayer =
   (npcId: string) =>
   (state: RootState): RelationshipAxes => {
-    const key = `player-${npcId}`
-    return state.game.relationships[key] ?? EMPTY_AXES
+    return getRelationship(state.game.relationships, 'player', npcId)
   }
 
 export const selectAllRelationships = (state: RootState): Record<string, RelationshipAxes> =>

@@ -3,6 +3,7 @@ import type { RumorClimate } from '../../domain/districts/contracts'
 import type { Rumor } from '../../domain/rumors/contracts'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
+import { getRelationship } from '../../domain/relationships/contracts'
 
 const CLIMATE_MULTIPLIER: Record<RumorClimate, number> = {
   dry: 0.6,
@@ -88,14 +89,16 @@ function computePassChance(rumor: Rumor, state: GameState): number {
   // Trust toward origin NPC (if known); fall back to 50 if no relationship exists
   const avgTrust =
     roster.reduce((sum, npc) => {
-      const rel = rumor.originNpcId ? npc.relationships[rumor.originNpcId] : null
+      const rel = rumor.originNpcId
+        ? getRelationship(state.relationships, npc.npcId, rumor.originNpcId)
+        : null
       return sum + (rel?.trust ?? 50)
     }, 0) / roster.length
 
   // Loyalty toward any subject NPC (suppress spreading harmful info about allies)
   const subjectLoyaltySum = rumor.subjectNpcIds.reduce((total, subjectId) => {
     const avgForSubject =
-      roster.reduce((sum, npc) => sum + (npc.relationships[subjectId]?.loyalty ?? 50), 0) /
+      roster.reduce((sum, npc) => sum + (getRelationship(state.relationships, npc.npcId, subjectId).loyalty ?? 50), 0) /
       roster.length
     return total + avgForSubject
   }, 0)

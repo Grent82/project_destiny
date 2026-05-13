@@ -212,7 +212,6 @@ export const npcRuntimeStateSchema = z
     traits: traitsSchema,
     states: statesSchema,
     loadout: loadoutSchema,
-    relationships: z.record(entityIdSchema, relationshipAxesSchema),
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
   })
   .strict()
