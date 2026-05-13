@@ -38,6 +38,30 @@ export const questTemplateSchema = z.object({
   unlocksNpcId: z.string().nullable().default(null),
 }).strict()
 
+export const questClueSchema = z.object({
+  clueId: z.string(),
+  label: z.string(),
+  discovered: z.boolean().default(false),
+  discoveredOnDay: z.number().int().positive().nullable().default(null),
+  usedInBranchId: z.string().nullable().default(null),
+}).strict()
+
+export const questParticipantSchema = z.object({
+  npcId: z.string(),
+  role: z.enum(['employer', 'target', 'ally', 'witness', 'victim', 'unknown']),
+  status: z.enum(['active', 'dead', 'missing', 'captured', 'fled']).default('active'),
+}).strict()
+
+export const questAftermathSchema = z.object({
+  worldConsequenceIds: z.array(z.string()).default([]),
+  factionImpacts: z.array(z.object({
+    factionId: z.string(),
+    delta: z.number(),
+  })).default([]),
+  unlockNpcIds: z.array(z.string()).default([]),
+  narrativeSummary: z.string().nullable().default(null),
+}).strict()
+
 export const questRuntimeProgressSchema = z.object({
   requiredSteps: z.number().int().nonnegative().default(1),
   completedSteps: z.number().int().nonnegative().default(0),
@@ -91,6 +115,9 @@ export const questRuntimeSchema = z.object({
     retryBehavior: 'fail' as const,
   })),
   journalEntries: z.array(z.string()).default([]),
+  clues: z.array(questClueSchema).default([]),
+  participants: z.array(questParticipantSchema).default([]),
+  aftermath: questAftermathSchema.nullable().default(null),
 }).strict()
 
 const REQUIRED_STEPS_BY_OBJECTIVE: Record<QuestObjectiveType, number> = {
@@ -115,6 +142,9 @@ export type QuestRuntimeContext = z.infer<typeof questRuntimeContextSchema>
 export type QuestRuntimeProgress = z.infer<typeof questRuntimeProgressSchema>
 export type QuestLeadFreshness = z.infer<typeof questLeadFreshnessSchema>
 export type QuestLeadRuntime = z.infer<typeof questLeadRuntimeSchema>
+export type QuestClue = z.infer<typeof questClueSchema>
+export type QuestParticipant = z.infer<typeof questParticipantSchema>
+export type QuestAftermath = z.infer<typeof questAftermathSchema>
 
 function resolveQuestLeadFreshness(daysVisible: number, expiresOnDay: number | null, currentDay: number): QuestLeadFreshness {
   if (expiresOnDay != null) {
@@ -167,6 +197,16 @@ export function createQuestRuntime(
   const acceptedBriefing = template.openingText ?? template.briefing ?? null
   const initialJournalEntries = acceptedBriefing ? [acceptedBriefing] : []
 
+  // Seed initial participants from template
+  const participants: QuestParticipant[] = []
+  const sourceNpc = lead?.sourceNpcId ?? template.sourceNpcId
+  if (sourceNpc) {
+    participants.push({ npcId: sourceNpc, role: 'employer', status: 'active' })
+  }
+  if (template.enemyNpcId) {
+    participants.push({ npcId: template.enemyNpcId, role: 'target', status: 'active' })
+  }
+
   return questRuntimeSchema.parse({
     questId: template.id,
     acceptedOnDay,
@@ -191,5 +231,8 @@ export function createQuestRuntime(
       retryBehavior: 'fail',
     },
     journalEntries: initialJournalEntries,
+    clues: [],
+    participants,
+    aftermath: null,
   })
 }
