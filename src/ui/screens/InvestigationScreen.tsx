@@ -5,6 +5,7 @@ import {
   gameActions,
   selectActiveInvestigationQuest,
 } from '../../application'
+import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { INVESTIGATION_APPROACHES, type InvestigationApproach } from '../../application/commands/investigation'
 
@@ -76,6 +77,9 @@ export function InvestigationScreen() {
       ? Math.floor((template?.rewardMarks ?? 0) * 1.25)
       : (template?.rewardMarks ?? 0)
 
+    const lastJournalEntry = null
+    const lastClue = investigation.clueText ?? null
+
     return (
       <section className="screen-panel">
         <p className="eyebrow">House Valdris</p>
@@ -83,7 +87,9 @@ export function InvestigationScreen() {
 
         {rollResult === 'success' && (
           <div className="detail-panel">
-            <p className="summary">The matter is resolved.</p>
+            <h2>What Was Found</h2>
+            {lastClue && <p className="summary">{lastClue}</p>}
+            {lastJournalEntry && <p className="summary" style={{ opacity: 0.85 }}>{lastJournalEntry}</p>}
             <p>Reward received: <strong>{successReward} Marks</strong>
               {bonusType === 'extra_marks' && <span className="badge badge--bonus"> +25% network bonus</span>}
             </p>
@@ -91,21 +97,26 @@ export function InvestigationScreen() {
         )}
         {rollResult === 'partial' && (
           <div className="detail-panel">
-            <p className="summary">Something was recovered, not everything.</p>
+            <h2>A Partial Lead</h2>
+            <p className="summary">
+              Something was recovered — enough to act on, but not the full picture.
+              {lastJournalEntry && ` ${lastJournalEntry}`}
+            </p>
             <p>Partial reward received: <strong>{Math.floor((template?.rewardMarks ?? 0) / 2)} Marks</strong>.</p>
           </div>
         )}
         {rollResult === 'failure' && (
           <div className="detail-panel">
-            <p className="summary">Nothing came of it.</p>
-            <p>
-              The opportunity is lost.
+            <h2>Nothing Came of It</h2>
+            <p className="summary">
+              The trail went cold. The opportunity is lost.
               {bonusType === 'reduce_penalty'
                 ? ' The paper trail kept the house deniable — no standing lost.'
                 : template?.rewardStandingFactionId
                   ? ' Standing penalty applied.'
                   : ''}
             </p>
+            {lastJournalEntry && <p className="summary" style={{ opacity: 0.75 }}>{lastJournalEntry}</p>}
           </div>
         )}
 
@@ -118,11 +129,36 @@ export function InvestigationScreen() {
 
   // Step 1 — approach selection
   if (stage === 'approach-selection') {
+    const districtName = investigation.districtId
+      ? contentCatalog.districtsById.get(investigation.districtId)?.name ?? districtLabel
+      : null
+
     return (
       <section className="screen-panel">
         <p className="eyebrow">House Valdris</p>
         <h1>{template?.title ?? 'Investigation'}</h1>
         <p className="summary">{template?.briefing}</p>
+
+        {districtName && (
+          <div className="detail-panel">
+            <p><strong>Location:</strong> {districtName}</p>
+            <p className="summary" style={{ opacity: 0.8 }}>
+              The work happens on-site. Travel to {districtName} before committing your operatives.
+            </p>
+            {districtMismatch && (
+              <button
+                className="action-button"
+                onClick={() => {
+                  dispatch(gameActions.travelToDistrict(investigation.districtId!))
+                  navigate(`/district/${investigation.districtId}`)
+                }}
+                type="button"
+              >
+                Travel to {districtName} →
+              </button>
+            )}
+          </div>
+        )}
 
         <h2>Choose Your Approach</h2>
         <p className="summary">
@@ -179,7 +215,19 @@ export function InvestigationScreen() {
 
       {districtMismatch && districtLabel && (
         <div className="warning-banner">
-          You must be in <strong>{districtLabel}</strong> to run this investigation.
+          <p>This investigation takes place in <strong>{districtLabel}</strong>. Your people are not on-site.</p>
+          {investigation.districtId && (
+            <button
+              className="action-button action-button--primary"
+              onClick={() => {
+                dispatch(gameActions.travelToDistrict(investigation.districtId!))
+                navigate(`/district/${investigation.districtId}`)
+              }}
+              type="button"
+            >
+              Travel to {contentCatalog.districtsById.get(investigation.districtId)?.name ?? districtLabel} →
+            </button>
+          )}
         </div>
       )}
 
@@ -188,6 +236,9 @@ export function InvestigationScreen() {
           <h2>Send Your People</h2>
           <p className="summary">
             Select investigators with strong <strong>{primarySkills.join(' / ')}</strong>.
+            {chosenApproach && (
+              <span> {chosenApproach.label} requires people who can {chosenApproach.description.toLowerCase().split('.')[0]}.</span>
+            )}
           </p>
 
           {idleRoster.length === 0 ? (
