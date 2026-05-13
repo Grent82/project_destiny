@@ -161,7 +161,7 @@ function CharacterSection({ detail }: { detail: NpcDetail }) {
       {detail.quirks.length > 0 && (
         <ul style={{ margin: '0.5rem 0 0', padding: '0 0 0 1rem', fontSize: 'var(--size-sm)', color: 'var(--text-muted)', fontStyle: 'italic' }}>
           {detail.quirks.map((q) => (
-            <li key={q}>{q}</li>
+            <li key={q.text}>{q.text}</li>
           ))}
         </ul>
       )}

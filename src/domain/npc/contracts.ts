@@ -108,6 +108,29 @@ export const factionRelationshipSchema = z
 
 export const npcAgeBandSchema = z.enum(['young', 'adult', 'middle', 'elder'])
 
+export const quirkTagSchema = z.enum([
+  'cautious',
+  'superstitious',
+  'protective',
+  'vengeful',
+  'compulsive',
+  'loyal',
+  'secretive',
+  'volatile',
+  'grief-prone',
+  'meticulous',
+  'paranoid',
+  'principled',
+  'nostalgic',
+  'ambitious',
+])
+
+export const npcQuirkSchema = z.object({
+  text: z.string().min(1),
+  tags: z.array(quirkTagSchema).default([]),
+  triggerKeywords: z.array(z.string()).default([]),
+})
+
 export const npcMotivationSchema = z.object({
   publicGoal: z.string().optional(),
   privateNeed: z.string().optional(),
@@ -135,7 +158,7 @@ export const npcDefinitionSchema = z
     ageBand: npcAgeBandSchema.optional(),
     sex: z.string().optional(),
     appearanceTags: z.array(z.string()).optional(),
-    quirks: z.array(z.string()).optional(),
+    quirks: z.array(npcQuirkSchema).default([]),
     dialogueId: entityIdSchema.optional(),
   })
   .strict()
@@ -163,6 +186,8 @@ export type NpcAgeBand = z.infer<typeof npcAgeBandSchema>
 export type NpcAssignment = z.infer<typeof npcAssignmentSchema>
 export type NpcDefinition = z.infer<typeof npcDefinitionSchema>
 export type NpcMotivation = z.infer<typeof npcMotivationSchema>
+export type NpcQuirk = z.infer<typeof npcQuirkSchema>
+export type QuirkTag = z.infer<typeof quirkTagSchema>
 export type NpcType = z.infer<typeof npcDefinitionSchema>['npcType']
 export type NpcRuntimeState = z.infer<typeof npcRuntimeStateSchema>
 export type NpcStatus = z.infer<typeof npcStatusSchema>

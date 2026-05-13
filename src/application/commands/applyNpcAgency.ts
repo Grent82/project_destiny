@@ -4,6 +4,7 @@ import { applyRelationshipDelta } from './adjustRelationship'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { getJobForNpc } from '../content/jobCatalog'
+import { matchQuirkToContext } from '../../domain/npc/matchQuirkToContext'
 import type { Rng } from './seededRng'
 
 type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks'
@@ -42,24 +43,39 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
 
     if (action === 'rumor') {
       const rumors = contentCatalog.rumors
-      const snippet = rumors[Math.floor(rng() * rumors.length)]!
+      const template = rumors[Math.floor(rng() * rumors.length)]!
+      const snippet = template.text
       afterEvents = appendActivityLogEntry(
         afterEvents,
         'system',
         `${npcName} overheard something useful while working in ${district}. Word is: ${snippet}`,
       )
     } else if (action === 'incident') {
-      afterEvents = appendActivityLogEntry(
-        afterEvents,
-        'system',
-        `${npcName} got into a confrontation at ${district}. Tension is running higher there.`,
-      )
+      const npcDef = contentCatalog.npcsById.get(npc.npcId)
+      const cautionQuirk = npcDef
+        ? matchQuirkToContext(npcDef, ['danger', 'hazard', 'trust', 'threat', 'conflict'])
+        : null
+      const tensionGain = cautionQuirk ? 1 : 3
+
+      if (cautionQuirk) {
+        afterEvents = appendActivityLogEntry(
+          afterEvents,
+          'system',
+          `${npcName} sensed trouble in ${district} early and stepped back. ${cautionQuirk.text.charAt(0).toUpperCase() + cautionQuirk.text.slice(1)}.`,
+        )
+      } else {
+        afterEvents = appendActivityLogEntry(
+          afterEvents,
+          'system',
+          `${npcName} got into a confrontation at ${district}. Tension is running higher there.`,
+        )
+      }
       if (afterEvents.districtTension[districtId] !== undefined) {
         afterEvents = {
           ...afterEvents,
           districtTension: {
             ...afterEvents.districtTension,
-            [districtId]: Math.min(100, (afterEvents.districtTension[districtId] ?? 0) + 3),
+            [districtId]: Math.min(100, (afterEvents.districtTension[districtId] ?? 0) + tensionGain),
           },
         }
       }

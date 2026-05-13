@@ -54,8 +54,34 @@
       "steady hands"
     ],
     "quirks": [
-      "catalogues every exit on entering a room",
-      "never discusses what came before the docks"
+      {
+        "text": "catalogues every exit on entering a room",
+        "tags": [
+          "cautious",
+          "paranoid",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "never discusses what came before the docks",
+        "tags": [
+          "cautious",
+          "secretive",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To manage the house efficiently and keep the finances clean.",
@@ -117,8 +143,31 @@
       "heavy work boots"
     ],
     "quirks": [
-      "taps pipes and walls before trusting a structure",
-      "keeps a spare bolt in her left boot"
+      {
+        "text": "taps pipes and walls before trusting a structure",
+        "tags": [
+          "cautious",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "keeps a spare bolt in her left boot",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Enough coin to leave on her own terms.",
@@ -180,8 +229,33 @@
       "scar along the jaw"
     ],
     "quirks": [
-      "recites statutes under his breath when nervous",
-      "will not sit with his back to a door"
+      {
+        "text": "recites statutes under his breath when nervous",
+        "tags": [
+          "compulsive",
+          "principled"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      },
+      {
+        "text": "will not sit with his back to a door",
+        "tags": [
+          "cautious",
+          "paranoid",
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To maintain order by force of will if not law.",
@@ -243,8 +317,31 @@
       "a burn scar at her collarbone she covers deliberately"
     ],
     "quirks": [
-      "keeps a tally of every favour given and owed \u2014 never writes it down",
-      "will not say the League's name aloud"
+      {
+        "text": "keeps a tally of every favour given and owed \u2014 never writes it down",
+        "tags": [
+          "compulsive",
+          "vengeful"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      },
+      {
+        "text": "will not say the League's name aloud",
+        "tags": [
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "interrogation",
+          "confession",
+          "question",
+          "information"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To call in the debt the League owes her.",
@@ -307,8 +404,30 @@
       "careful posture"
     ],
     "quirks": [
-      "addresses everyone by rank or title even in informal settings",
-      "drinks only water since the fall"
+      {
+        "text": "addresses everyone by rank or title even in informal settings",
+        "tags": [
+          "principled",
+          "ambitious"
+        ],
+        "triggerKeywords": [
+          "authority",
+          "law",
+          "rule",
+          "hierarchy"
+        ]
+      },
+      {
+        "text": "drinks only water since the fall",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "drinks",
+          "only",
+          "water"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To restore House Vane to a station worth naming.",
@@ -370,8 +489,34 @@
       "quick hands"
     ],
     "quirks": [
-      "memorises route layouts before entering any district",
-      "counts exits before unpacking"
+      {
+        "text": "memorises route layouts before entering any district",
+        "tags": [
+          "cautious",
+          "compulsive",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "counts exits before unpacking",
+        "tags": [
+          "cautious",
+          "paranoid",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Safe passage and an ongoing commission.",
@@ -433,8 +578,29 @@
       "a voice built for crowds"
     ],
     "quirks": [
-      "mentally prices every meal he sees",
-      "keeps emergency rations in his coat"
+      {
+        "text": "mentally prices every meal he sees",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      },
+      {
+        "text": "keeps emergency rations in his coat",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "keeps",
+          "emergency",
+          "rations"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Food security for the Warrens, independent of civic permission.",
@@ -496,8 +662,30 @@
       "a brace on her left wrist"
     ],
     "quirks": [
-      "checks pulse on wrists without thinking when someone sits close",
-      "never loses count of doses"
+      {
+        "text": "checks pulse on wrists without thinking when someone sits close",
+        "tags": [
+          "cautious"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "never loses count of doses",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To practice medicine on her own terms.",
@@ -560,8 +748,30 @@
       "watchful eyes"
     ],
     "quirks": [
-      "reads every document he is asked to sign, takes as long as needed",
-      "will not stand behind anyone"
+      {
+        "text": "reads every document he is asked to sign, takes as long as needed",
+        "tags": [
+          "superstitious"
+        ],
+        "triggerKeywords": [
+          "omen",
+          "ritual",
+          "luck",
+          "curse"
+        ]
+      },
+      {
+        "text": "will not stand behind anyone",
+        "tags": [
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "interrogation",
+          "confession",
+          "question",
+          "information"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Autonomy above all else.",
@@ -623,8 +833,30 @@
       "precise handwriting posture"
     ],
     "quirks": [
-      "corrects spoken errors in documents even when not asked",
-      "keeps a personal log she has shown no one"
+      {
+        "text": "corrects spoken errors in documents even when not asked",
+        "tags": [
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "document",
+          "record",
+          "accuracy",
+          "detail"
+        ]
+      },
+      {
+        "text": "keeps a personal log she has shown no one",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To establish herself as a reliable independent archivist.",
@@ -686,8 +918,32 @@
       "eyes that count what is in a room"
     ],
     "quirks": [
-      "vets employers with three questions before accepting any offer",
-      "keeps a kill list in a code she has not shared"
+      {
+        "text": "vets employers with three questions before accepting any offer",
+        "tags": [
+          "cautious",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "keeps a kill list in a code she has not shared",
+        "tags": [
+          "compulsive",
+          "principled"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "A contract that does not cost more than it pays.",
@@ -748,8 +1004,29 @@
       "youth and iron discipline"
     ],
     "quirks": [
-      "marks the day on her wrist with ink each morning",
-      "will not discuss her family in groups"
+      {
+        "text": "marks the day on her wrist with ink each morning",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "marks",
+          "wrist",
+          "with"
+        ]
+      },
+      {
+        "text": "will not discuss her family in groups",
+        "tags": [
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "interrogation",
+          "confession",
+          "question",
+          "information"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To apprentice somewhere that will not ask too many questions about her name.",
@@ -809,7 +1086,17 @@
       "unsettling stillness when observed"
     ],
     "quirks": [
-      "never answers a direct question directly"
+      {
+        "text": "never answers a direct question directly",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "answers",
+          "direct"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Unknown.",
@@ -872,8 +1159,30 @@
       "careful eyes"
     ],
     "quirks": [
-      "memorises what everyone orders and cross-references it against mood",
-      "keeps a locked box behind the bar he has not explained"
+      {
+        "text": "memorises what everyone orders and cross-references it against mood",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      },
+      {
+        "text": "keeps a locked box behind the bar he has not explained",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To keep the Lantern Vale running and out of debt.",
@@ -936,8 +1245,29 @@
       "silence that lands like weight"
     ],
     "quirks": [
-      "leaves conversations exactly when she has what she came for",
-      "never prays where she can be heard"
+      {
+        "text": "leaves conversations exactly when she has what she came for",
+        "tags": [
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "document",
+          "record",
+          "accuracy",
+          "detail"
+        ]
+      },
+      {
+        "text": "never prays where she can be heard",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "prays",
+          "where"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To maintain the chapel as sanctuary for the displaced.",
@@ -999,8 +1329,31 @@
       "ink on the right hand only"
     ],
     "quirks": [
-      "quotes the relevant statute before any decision",
-      "keeps three copies of every filed document"
+      {
+        "text": "quotes the relevant statute before any decision",
+        "tags": [
+          "cautious",
+          "principled",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "keeps three copies of every filed document",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "keeps",
+          "three",
+          "copies"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To maintain his position as a reliable municipal clerk.",
@@ -1063,8 +1416,29 @@
       "careful with words"
     ],
     "quirks": [
-      "never raises her voice, even when she should",
-      "has not visited the old district in years and does not explain why"
+      {
+        "text": "never raises her voice, even when she should",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "raises",
+          "voice"
+        ]
+      },
+      {
+        "text": "has not visited the old district in years and does not explain why",
+        "tags": [
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "past",
+          "history",
+          "memory",
+          "old-ways"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To keep the stall profitable and Lirien out of trouble.",
@@ -1127,8 +1501,28 @@
       "a voice that carries over water"
     ],
     "quirks": [
-      "knows every dock worker by name and rotation",
-      "gives a firm handshake to assess intentions"
+      {
+        "text": "knows every dock worker by name and rotation",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "knows",
+          "every",
+          "dock"
+        ]
+      },
+      {
+        "text": "gives a firm handshake to assess intentions",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "gives",
+          "firm",
+          "handshake"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Functional docks, fair distribution of dock work.",
@@ -1191,8 +1585,29 @@
       "quiet authority in tight spaces"
     ],
     "quirks": [
-      "speaks in past tense when discussing arrangements he is closing",
-      "names ships he has not worked with recently as a memory test"
+      {
+        "text": "speaks in past tense when discussing arrangements he is closing",
+        "tags": [
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "past",
+          "history",
+          "memory",
+          "old-ways"
+        ]
+      },
+      {
+        "text": "names ships he has not worked with recently as a memory test",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "names",
+          "ships",
+          "worked"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Open trade routes with minimal scrutiny.",
@@ -1255,8 +1670,29 @@
       "no identifiable marks"
     ],
     "quirks": [
-      "has never used the same name twice in one place",
-      "answers questions about their past with questions"
+      {
+        "text": "has never used the same name twice in one place",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "used",
+          "same"
+        ]
+      },
+      {
+        "text": "answers questions about their past with questions",
+        "tags": [
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "past",
+          "history",
+          "memory",
+          "old-ways"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Unknown. The ambiguity is functional.",
@@ -1318,8 +1754,31 @@
       "a stillness that reads as trained"
     ],
     "quirks": [
-      "never discusses the Court directly, always obliquely",
-      "has memorised escape routes in every district she frequents"
+      {
+        "text": "never discusses the Court directly, always obliquely",
+        "tags": [
+          "secretive",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "interrogation",
+          "confession",
+          "question",
+          "information"
+        ]
+      },
+      {
+        "text": "has memorised escape routes in every district she frequents",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Distance from the Pale Court and what she witnessed.",
@@ -1382,8 +1841,29 @@
       "moves quietly for his size"
     ],
     "quirks": [
-      "sharpens his blade at the same time each night, no exceptions",
-      "never starts a fight but always prepares to finish one"
+      {
+        "text": "sharpens his blade at the same time each night, no exceptions",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "sharpens",
+          "blade",
+          "same"
+        ]
+      },
+      {
+        "text": "never starts a fight but always prepares to finish one",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Something worth the cost of his past.",
@@ -1446,8 +1926,29 @@
       "eyes that have stopped being surprised"
     ],
     "quirks": [
-      "speaks of dead people in the present tense",
-      "knows the price of everything in the city from memory"
+      {
+        "text": "speaks of dead people in the present tense",
+        "tags": [
+          "grief-prone"
+        ],
+        "triggerKeywords": [
+          "loss",
+          "death",
+          "mourning",
+          "grief"
+        ]
+      },
+      {
+        "text": "knows the price of everything in the city from memory",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "knows",
+          "price",
+          "everything"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To keep her stall running and her creditors satisfied.",
@@ -1507,8 +2008,30 @@
       "a ledger in his coat"
     ],
     "quirks": [
-      "names the principal before the interest",
-      "never raises his voice when threatening"
+      {
+        "text": "names the principal before the interest",
+        "tags": [
+          "cautious",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "never raises his voice when threatening",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "raises",
+          "voice"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To complete the foreclosure against House Valdris and recover what is owed.",
@@ -1568,8 +2091,31 @@
       "physical size used to settle arguments"
     ],
     "quirks": [
-      "arrives before anyone else each morning",
-      "writes every assignment twice"
+      {
+        "text": "arrives before anyone else each morning",
+        "tags": [
+          "cautious",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "writes every assignment twice",
+        "tags": [
+          "superstitious"
+        ],
+        "triggerKeywords": [
+          "omen",
+          "ritual",
+          "luck",
+          "curse"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Control of the dock work assignments.",
@@ -1629,8 +2175,31 @@
       "never in the same seat twice"
     ],
     "quirks": [
-      "asks questions she already knows the answer to",
-      "remembers the names of everyone's dead"
+      {
+        "text": "asks questions she already knows the answer to",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "asks",
+          "questions",
+          "already"
+        ]
+      },
+      {
+        "text": "remembers the names of everyone's dead",
+        "tags": [
+          "nostalgic",
+          "grief-prone",
+          "vengeful"
+        ],
+        "triggerKeywords": [
+          "past",
+          "history",
+          "memory",
+          "old-ways"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "An ever-growing intelligence network.",
@@ -1692,8 +2261,30 @@
       "the careful bearing of someone performing calm"
     ],
     "quirks": [
-      "apologises before delivering bad news",
-      "has not slept well in years"
+      {
+        "text": "apologises before delivering bad news",
+        "tags": [
+          "cautious",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "has not slept well in years",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "slept",
+          "well",
+          "years"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Maintaining his arrangement.",
@@ -1757,8 +2348,29 @@
       "a ledger always within reach"
     ],
     "quirks": [
-      "calculates the cost of every conversation he enters",
-      "has not eaten a meal that was not accounted for in years"
+      {
+        "text": "calculates the cost of every conversation he enters",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "calculates",
+          "cost",
+          "every"
+        ]
+      },
+      {
+        "text": "has not eaten a meal that was not accounted for in years",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "routine",
+          "record",
+          "count",
+          "ledger"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "Ledger balance. The habit of accounting.",
@@ -1820,8 +2432,28 @@
       "a face that changes by company"
     ],
     "quirks": [
-      "never sleeps in the same location twice",
-      "carries identification for three different people"
+      {
+        "text": "never sleeps in the same location twice",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "sleeps",
+          "same"
+        ]
+      },
+      {
+        "text": "carries identification for three different people",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "carries",
+          "identification",
+          "three"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To remain dead to those who would act on her being alive.",
@@ -1885,8 +2517,28 @@
       "a wiry frame from years of movement"
     ],
     "quirks": [
-      "never carries more than she can run with",
-      "has a prepared response for every accusation she expects"
+      {
+        "text": "never carries more than she can run with",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "never",
+          "carries",
+          "more"
+        ]
+      },
+      {
+        "text": "has a prepared response for every accusation she expects",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "prepared",
+          "response",
+          "every"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "To not run. Whatever that costs.",
@@ -1948,8 +2600,30 @@
       "the stillness of someone who has stopped planning ahead"
     ],
     "quirks": [
-      "repeats orders back before executing them, as if expecting them to change",
-      "keeps his weapon clean and his ambitions unclear"
+      {
+        "text": "repeats orders back before executing them, as if expecting them to change",
+        "tags": [
+          "cautious",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "hazard",
+          "structure",
+          "trust",
+          "danger"
+        ]
+      },
+      {
+        "text": "keeps his weapon clean and his ambitions unclear",
+        "tags": [
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "keeps",
+          "weapon",
+          "clean"
+        ]
+      }
     ],
     "motivation": {
       "publicGoal": "A reason. Any reason.",
