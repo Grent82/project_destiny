@@ -38,11 +38,11 @@ export function LedgerScreen() {
 
   return (
     <section className="screen-panel">
-      <p className="eyebrow">House Valdris</p>
+      <p className="eyebrow">House Accounts</p>
       <h1>The Ledger</h1>
       <p className="summary">
-        The founding legal record of House Valdris. Every contract signed, every wage promised,
-        every debt owed. Whoever holds the Ledger holds the house.
+        The founding legal record of House Valdris — kept in the manor. Every contract signed,
+        every wage promised, every debt owed. Whoever holds the Ledger holds the house.
       </p>
 
       {/* Debt block */}

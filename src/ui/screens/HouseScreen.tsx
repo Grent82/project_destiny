@@ -8,6 +8,7 @@ import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { HouseRoom, RoomState } from '../../domain/game/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
+import { Link } from 'react-router-dom'
 
 const ROOM_EFFECTS: Record<string, string> = {
   'room-kitchen': 'When intact: reduces each NPC\'s daily wage by 1 Mk (house provides meals).',
@@ -171,6 +172,10 @@ export function HouseScreen() {
           <RoomCard key={room.roomId} marks={debt.marks} room={room} />
         ))}
       </div>
+
+      <p className="house-ledger-link">
+        <Link to="/ledger">View House Accounts →</Link>
+      </p>
     </section>
   )
 }

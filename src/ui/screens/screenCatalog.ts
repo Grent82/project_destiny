@@ -2,7 +2,7 @@ export const screenCatalog = [
   {
     path: '/dashboard',
     title: 'Dashboard',
-    summary: 'The house ledger. Roster pressure, Marks, and city standing at a glance.',
+    summary: 'Roster pressure, Marks, and city standing at a glance.',
   },
   {
     path: '/roster',
@@ -33,10 +33,5 @@ export const screenCatalog = [
     path: '/house',
     title: 'The House',
     summary: 'The Valdris family seat in The Pale. Damaged, stripped, but still standing.',
-  },
-  {
-    path: '/ledger',
-    title: 'Ledger',
-    summary: 'The founding legal record of House Valdris. Debt, wages, contracts, obligations.',
   },
 ] as const

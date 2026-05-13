@@ -239,6 +239,9 @@ strong { color: var(--text-secondary); }
 
 .status-district { color: var(--text-muted); font-size: var(--size-sm); }
 .status-rep { color: var(--text-secondary); font-size: var(--size-sm); }
+.status-debt { color: var(--text-secondary); font-size: var(--size-sm); }
+.status-debt--urgent { color: #e05050; }
+.status-debt strong { color: inherit; }
 .status-events-badge { animation: pulse 1.5s infinite; }
 
 .squad-cohesion {
@@ -2121,6 +2124,14 @@ a:focus-visible,
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
 }
+
+.house-ledger-link {
+  margin-top: 1.5rem;
+  font-size: var(--size-sm);
+  color: var(--text-secondary);
+}
+
+.house-ledger-link a { color: var(--text-accent, #c5a55a); }
 
 .house-room {
   padding: 1rem;

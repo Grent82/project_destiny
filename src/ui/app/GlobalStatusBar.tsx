@@ -1,4 +1,4 @@
-import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectReputationTier } from '../../application'
+import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectDebtStatus, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectReputationTier } from '../../application'
 import { getRenownLevel, getRenownProgress, RENOWN_THRESHOLDS } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from './hooks'
 
@@ -10,6 +10,8 @@ export function GlobalStatusBar() {
   const currentDistrict = useAppSelector(selectCurrentDistrict)
   const reputationTier = useAppSelector(selectReputationTier)
   const pendingEventsCount = useAppSelector(selectPendingEventsCount)
+
+  const debt = useAppSelector(selectDebtStatus)
 
   const displayName = playerCharacter.name || protagonistName || 'Valdris'
   const renownLevel = getRenownLevel(playerCharacter.renown)
@@ -32,6 +34,14 @@ export function GlobalStatusBar() {
         <span className="status-marks">
           <strong>{summary.money}</strong> <abbr title="Marks">Mk</abbr>
         </span>
+        {!debt.debtPaid && (
+          <span
+            className={`status-debt${debt.daysRemaining <= 5 ? ' status-debt--urgent' : ''}`}
+            title={`Debt: ${debt.debtAmount} Mk due in ${debt.daysRemaining} days`}
+          >
+            Debt: <strong>{debt.daysRemaining}d</strong>
+          </span>
+        )}
         <span className="status-rep">{reputationTier}</span>
         <span className="status-renown" title={renownTooltip}>
           ✦ {renownLevel.label}
