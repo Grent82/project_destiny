@@ -21,6 +21,7 @@ import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng, type Rng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
+import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
 import { advanceTimeSlotInState } from './timeAdvance'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
@@ -845,18 +846,10 @@ export function performCombatAction(
     nextState = { ...nextState, equippedItemDurabilities: durabilities }
   }
 
-  // Fear generation: allies who take heavy damage become frightened
-  for (const allyCombatant of nextEncounter.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)) {
-    const before = encounter.combatants.find((c) => c.combatantId === allyCombatant.combatantId)
-    if (!before) continue
-    const damageTaken = before.health - allyCombatant.health
-    if (damageTaken <= 0) continue
-    const threshold = allyCombatant.maxHealth * 0.25
-    if (damageTaken >= threshold) {
-      const fearGain = allyCombatant.health <= allyCombatant.maxHealth * 0.2 ? 12 : 6
-      applyRelationshipDelta(nextState, 'player', allyCombatant.sourceNpcId!, 'fear', fearGain)
-    }
-  }
+  // Battlefield panic — purely tactical. Relationship fear is NOT updated here.
+  // Fear bleeds into relationship only at encounter resolution (bridge rule in fearModel.ts).
+  // Note: checkFearRefuseAdvance uses npc.states.fear (relationship fear) to determine
+  // panic susceptibility, so the two systems are connected at the threshold read point only.
 
   nextState = appendCombatActivityEntries(nextState, nextEncounter, previousLogLength)
 
@@ -900,12 +893,20 @@ export function concludeCombatEncounter(state: GameState): GameState {
       )
     }
 
-    // Relationship gains for victory
+    // Relationship gains for victory + bridge rule: near-death allies gain relationship fear
     const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
     nextState = { ...nextState, relationships: { ...nextState.relationships } }
     for (const ally of allyCombatants) {
       applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 3)
       applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 2)
+
+      // Bridge rule: near-death → relationship fear increase (reduced on victory)
+      const rosterEntry = nextState.roster.find((e) => e.npcId === ally.sourceNpcId)
+      const currentFear = rosterEntry?.states.fear ?? 0
+      const fearDelta = computePostCombatFearDelta(ally.health, ally.maxHealth, 'victory', currentFear)
+      if (fearDelta > 0) {
+        applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
+      }
     }
 
     // Recruitable defeated enemies
@@ -982,7 +983,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
   }
 
   if (combat.outcome === 'defeat') {
-    // Relationship penalties for defeat
+    // Relationship penalties for defeat + bridge rule: full fear delta applies
     const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
     nextState = { ...nextState, relationships: { ...nextState.relationships } }
     for (const ally of allyCombatants) {
@@ -993,6 +994,13 @@ export function concludeCombatEncounter(state: GameState): GameState {
           'system',
           `${ally.name} questions the player's leadership after the defeat.`,
         )
+      }
+      // Bridge rule: full fear delta for near-death on defeat
+      const rosterEntry = nextState.roster.find((e) => e.npcId === ally.sourceNpcId)
+      const currentFear = rosterEntry?.states.fear ?? 0
+      const fearDelta = computePostCombatFearDelta(ally.health, ally.maxHealth, 'defeat', currentFear)
+      if (fearDelta > 0) {
+        applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
       }
     }
 
