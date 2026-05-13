@@ -138,6 +138,31 @@ export const npcMotivationSchema = z.object({
   lineTheyWontCross: z.string().optional(),
 })
 
+export const bondTypeSchema = z.enum([
+  'sibling',
+  'ex-lover',
+  'creditor',
+  'debtor',
+  'rival',
+  'fosterling',
+  'handler',
+  'dead-spouse',
+  'old-comrade',
+  'hated-foreman',
+  'missing-child',
+  'favored-animal',
+  'parent',
+  'child',
+  'bastard-kin',
+  'witness',
+])
+
+export const npcBondSchema = z.object({
+  type: bondTypeSchema,
+  targetId: z.string().min(1),
+  note: z.string().optional(),
+})
+
 export const npcDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -159,6 +184,7 @@ export const npcDefinitionSchema = z
     sex: z.string().optional(),
     appearanceTags: z.array(z.string()).optional(),
     quirks: z.array(npcQuirkSchema).default([]),
+    bonds: z.array(npcBondSchema).default([]),
     dialogueId: entityIdSchema.optional(),
   })
   .strict()
@@ -184,6 +210,8 @@ export const npcRuntimeStateSchema = z
 export type Attributes = z.infer<typeof attributesSchema>
 export type NpcAgeBand = z.infer<typeof npcAgeBandSchema>
 export type NpcAssignment = z.infer<typeof npcAssignmentSchema>
+export type NpcBond = z.infer<typeof npcBondSchema>
+export type BondType = z.infer<typeof bondTypeSchema>
 export type NpcDefinition = z.infer<typeof npcDefinitionSchema>
 export type NpcMotivation = z.infer<typeof npcMotivationSchema>
 export type NpcQuirk = z.infer<typeof npcQuirkSchema>

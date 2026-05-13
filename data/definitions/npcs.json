@@ -86,7 +86,14 @@
     "motivation": {
       "publicGoal": "To manage the house efficiently and keep the finances clean.",
       "privateNeed": "To never be the person who made that cargo run again \u2014 and to never admit she still could."
-    }
+    },
+    "bonds": [
+      {
+        "type": "handler",
+        "targetId": "npc-ghost-valdris-cargo-patron",
+        "note": "Family handled illicit cargo for a noble house. Knows which house shipped people out of Valdenmoor during the first panic."
+      }
+    ]
   },
   {
     "id": "npc-ida-rhys",
@@ -172,7 +179,14 @@
     "motivation": {
       "publicGoal": "Enough coin to leave on her own terms.",
       "privateNeed": "To know what she actually wants."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-verek-holst",
+        "note": "Both came through the same labor disputes. Holst keeps a tally; Ida keeps moving forward. Uncomfortable trust."
+      }
+    ]
   },
   {
     "id": "npc-verek-holst",
@@ -275,7 +289,19 @@
       "publicGoal": "To maintain order by force of will if not law.",
       "privateNeed": "To believe he is still on the right side of something.",
       "immediatePressure": "His old precinct is quietly purging former officers."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ida-rhys",
+        "note": "Shares labor dispute history with Ida. He catalogues favors; she ignores them. The asymmetry is mutual."
+      },
+      {
+        "type": "debtor",
+        "targetId": "npc-garet-doyle",
+        "note": "Owes Doyle something from before the Breach. Doyle has not called it in. Yet."
+      }
+    ]
   },
   {
     "id": "npc-sable-wrent",
@@ -361,7 +387,14 @@
       "publicGoal": "To call in the debt the League owes her.",
       "privateNeed": "Reparation in a form she can live with.",
       "immediatePressure": "Someone is still looking for what she took when she left."
-    }
+    },
+    "bonds": [
+      {
+        "type": "hated-foreman",
+        "targetId": "npc-ghost-league-overseer",
+        "note": "League overseer who ran the job that broke her. Name she will not say aloud."
+      }
+    ]
   },
   {
     "id": "npc-aldric-vane",
@@ -447,7 +480,14 @@
       "publicGoal": "To restore House Vane to a station worth naming.",
       "privateNeed": "To stop being the man who let it fall.",
       "lineTheyWontCross": "Selling the family crest or serving those who destroyed it."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Former household retainer. Knows the family crest history and who took what during the fall."
+      }
+    ]
   },
   {
     "id": "npc-dara-slink",
@@ -535,7 +575,14 @@
     "motivation": {
       "publicGoal": "Safe passage and an ongoing commission.",
       "privateNeed": "To never be trapped in one place long enough to be found."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ghost-past-crew",
+        "note": "Ran with a crew before taking house service. Still owes a favor she cannot repay."
+      }
+    ]
   },
   {
     "id": "npc-oswin-farr",
@@ -620,7 +667,14 @@
       "publicGoal": "Food security for the Warrens, independent of civic permission.",
       "privateNeed": "To believe collective effort can still accomplish something.",
       "immediatePressure": "Someone is undercutting his supply arrangements."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ghost-past-garrison",
+        "note": "Former garrison service. Lost contact with the only officer who treated him fairly."
+      }
+    ]
   },
   {
     "id": "npc-cress-aldmoor",
@@ -705,7 +759,14 @@
       "publicGoal": "To practice medicine on her own terms.",
       "privateNeed": "To believe she has not become what drove her out.",
       "lineTheyWontCross": "Treating a patient she knows will be sent back to die."
-    }
+    },
+    "bonds": [
+      {
+        "type": "dead-spouse",
+        "targetId": "npc-ghost-aldmoor-patient",
+        "note": "Lost a patient she knew she could not save back to where they came from. Never fully reconciled it."
+      }
+    ]
   },
   {
     "id": "npc-tav",
@@ -791,7 +852,14 @@
       "publicGoal": "Autonomy above all else.",
       "privateNeed": "A reason to stay once he has it.",
       "lineTheyWontCross": "Any arrangement that resembles ownership."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-bog",
+        "note": "Shared a work crew for three seasons before Bog retired. Tav still checks on him."
+      }
+    ]
   },
   {
     "id": "npc-maret-sunne",
@@ -875,7 +943,14 @@
     "motivation": {
       "publicGoal": "To establish herself as a reliable independent archivist.",
       "privateNeed": "To understand what the ledger means before using it \u2014 and who she would become if she did."
-    }
+    },
+    "bonds": [
+      {
+        "type": "bastard-kin",
+        "targetId": "npc-old-maret",
+        "note": "Does not know Old Maret knows. Carries a ledger proving who profited from the fall of House Valdris."
+      }
+    ]
   },
   {
     "id": "npc-rutha-kael",
@@ -962,7 +1037,14 @@
     "motivation": {
       "publicGoal": "A contract that does not cost more than it pays.",
       "privateNeed": "To know she will not make the same mistake twice."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ghost-rutha-crew",
+        "note": "The only survivor of a work crew that collapsed three seasons ago. Carries the roster list."
+      }
+    ]
   },
   {
     "id": "npc-lirien-ashcroft",
@@ -1045,7 +1127,14 @@
     "motivation": {
       "publicGoal": "To apprentice somewhere that will not ask too many questions about her name.",
       "privateNeed": "To find out whether she is heiress or evidence \u2014 and whether it matters either way."
-    }
+    },
+    "bonds": [
+      {
+        "type": "parent",
+        "targetId": "npc-lira-ashcroft",
+        "note": "Knows the name is not the real scandal \u2014 the blood is. May be heiress or evidence."
+      }
+    ]
   },
   {
     "id": "npc-mira",
@@ -1129,7 +1218,14 @@
     "motivation": {
       "publicGoal": "Unknown.",
       "immediatePressure": "Captivity, or something that looks like it."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-cessa-rill",
+        "note": "The birth record Mira was tracking leads to Cessa Rill. The final link in the maternal lineage chain."
+      }
+    ]
   },
   {
     "id": "npc-garet-doyle",
@@ -1229,7 +1325,14 @@
     "motivation": {
       "publicGoal": "To keep the Lantern Vale running and out of debt.",
       "privateNeed": "To return the box to someone who will know what to do with it without making him responsible for what happens next."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Father ran inn serving Valdris retainers. Locked box contains service tokens and unpaid writs from the old house."
+      }
+    ]
   },
   {
     "id": "npc-sister-vael",
@@ -1328,7 +1431,14 @@
     "motivation": {
       "publicGoal": "To maintain the chapel as sanctuary for the displaced.",
       "privateNeed": "To find the name of the patron who arranged her sister's erasure before she runs out of time to matter."
-    }
+    },
+    "bonds": [
+      {
+        "type": "dead-spouse",
+        "targetId": "npc-ghost-dead-sister-vael",
+        "note": "Sister erased from temple records after the Breach \u2014 smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
+      }
+    ]
   },
   {
     "id": "npc-torvald-messe",
@@ -1428,7 +1538,14 @@
     "motivation": {
       "publicGoal": "To maintain his position as a reliable municipal clerk.",
       "privateNeed": "To hand the copy to someone who can use it before his nerve fails."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Father copied all noble grants before the Breach. Holds copy of the legal form that erased Valdris the first time."
+      }
+    ]
   },
   {
     "id": "npc-lira-ashcroft",
@@ -1513,7 +1630,14 @@
     "motivation": {
       "publicGoal": "To keep the stall profitable and Lirien out of trouble.",
       "privateNeed": "To die before Lirien finds out what name they were almost given instead."
-    }
+    },
+    "bonds": [
+      {
+        "type": "parent",
+        "targetId": "npc-lirien-ashcroft",
+        "note": "Had Lirien outside a sanctioned marriage. Ashcroft name kept through a debt-forgiveness bargain with a surviving noble patron."
+      }
+    ]
   },
   {
     "id": "npc-bog",
@@ -1598,7 +1722,14 @@
       "publicGoal": "Functional docks, fair distribution of dock work.",
       "privateNeed": "To be acknowledged as someone who makes things move.",
       "lineTheyWontCross": "Allowing work to be cut from workers without contest."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-tav",
+        "note": "Tav carries Bog's old habits. Bog pretends not to notice."
+      }
+    ]
   },
   {
     "id": "npc-fenwick-pale",
@@ -1682,7 +1813,14 @@
     "motivation": {
       "publicGoal": "Open trade routes with minimal scrutiny.",
       "privateNeed": "His client list is longer than his official business suggests."
-    }
+    },
+    "bonds": [
+      {
+        "type": "hated-foreman",
+        "targetId": "npc-ghost-pale-creditor",
+        "note": "A creditor from the Pale district who owns the debt that brought Fenwick into house service."
+      }
+    ]
   },
   {
     "id": "npc-the-wren",
@@ -1767,7 +1905,14 @@
     "motivation": {
       "publicGoal": "Unknown. The ambiguity is functional.",
       "privateNeed": "Unknown. Even to themselves, perhaps."
-    }
+    },
+    "bonds": [
+      {
+        "type": "missing-child",
+        "targetId": "npc-ghost-wren-child",
+        "note": "Lost a child to the Breach displacement. Has not stopped looking."
+      }
+    ]
   },
   {
     "id": "npc-osanna-cray",
@@ -1854,7 +1999,14 @@
       "publicGoal": "Distance from the Pale Court and what she witnessed.",
       "privateNeed": "To know whether what she saw was exceptional or typical.",
       "lineTheyWontCross": "Returning to the Court's direct service."
-    }
+    },
+    "bonds": [
+      {
+        "type": "rival",
+        "targetId": "npc-ghost-pale-court",
+        "note": "Left direct Court service under duress. The Court has not stopped watching."
+      }
+    ]
   },
   {
     "id": "npc-cutter",
@@ -1938,7 +2090,14 @@
     "motivation": {
       "publicGoal": "Something worth the cost of his past.",
       "privateNeed": "To stop accumulating regrets before the cost gets higher."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ghost-cutter-crew",
+        "note": "Ran with a hire crew for three seasons. The crew scattered after a job went wrong. Cutter is the one who got away."
+      }
+    ]
   },
   {
     "id": "npc-old-maret",
@@ -2037,7 +2196,19 @@
     "motivation": {
       "publicGoal": "To keep her stall running and her creditors satisfied.",
       "privateNeed": "To give her granddaughter the ledger before she dies \u2014 without admitting she knows she has it."
-    }
+    },
+    "bonds": [
+      {
+        "type": "bastard-kin",
+        "targetId": "npc-maret-sunne",
+        "note": "Granddaughter raised under a different surname to hide paternity. Old Maret knows she holds the Valdris ledger."
+      },
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Was lower household accounts keeper. Falsified grain ledgers during pre-Breach winter riot. Last living witness to the servants hall."
+      }
+    ]
   },
   {
     "id": "npc-enemy-harlen-voss",
@@ -2121,7 +2292,19 @@
       "publicGoal": "To complete the foreclosure against House Valdris and recover what is owed.",
       "privateNeed": "To complete the foreclosure before anyone finds the coercion papers.",
       "immediatePressure": "A Merrow intermediary has indicated that time is running out. Complete the foreclosure or lose Merrow's backing."
-    }
+    },
+    "bonds": [
+      {
+        "type": "creditor",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Grandfather purchased Valdris arrears after the Breach. Wealth began with a coerced default. Claim is legally void if duress can be proven."
+      },
+      {
+        "type": "handler",
+        "targetId": "faction-house-merrow",
+        "note": "Debt operations serve Merrow interests by alignment. Merrow provides cover; Voss applies the legal pressure."
+      }
+    ]
   },
   {
     "id": "npc-enemy-the-dockmaster",
@@ -2205,7 +2388,14 @@
     "motivation": {
       "publicGoal": "Control of the dock work assignments.",
       "privateNeed": "His cut stays untouched."
-    }
+    },
+    "bonds": [
+      {
+        "type": "handler",
+        "targetId": "faction-house-merrow",
+        "note": "Operates under Merrow license. The second ledger under her floor belongs to them."
+      }
+    ]
   },
   {
     "id": "npc-enemy-lady-sorn",
@@ -2291,7 +2481,19 @@
       "privateNeed": "To hold leverage over every significant faction.",
       "lineTheyWontCross": "Losing information she once possessed.",
       "immediatePressure": "House Merrow has filed a duplicate claim on the same document trail she is tracking. She needs it resolved first."
-    }
+    },
+    "bonds": [
+      {
+        "type": "rival",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "House stood by while Valdris was stripped. Legitimacy structurally depends on Valdris staying fallen. Keeps the list of who was taken."
+      },
+      {
+        "type": "rival",
+        "targetId": "faction-house-merrow",
+        "note": "Competes for the same legitimacy space. Cooperates with Merrow only when Valdris is the common target."
+      }
+    ]
   },
   {
     "id": "npc-dalen-morke",
@@ -2375,7 +2577,14 @@
     "motivation": {
       "publicGoal": "Maintaining his arrangement.",
       "privateNeed": "To decide whether he is the villain of his own story."
-    }
+    },
+    "bonds": [
+      {
+        "type": "debtor",
+        "targetId": "npc-ghost-morke-creditor",
+        "note": "Owes a sum that cannot be repaid on a soldier's wages. House service is the arrangement."
+      }
+    ]
   },
   {
     "id": "npc-orren-wex",
@@ -2461,7 +2670,14 @@
     "motivation": {
       "publicGoal": "Ledger balance. The habit of accounting.",
       "privateNeed": "Something to justify the precision."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ghost-wex-handler",
+        "note": "Learned the trade from someone who taught him to survive in debt. The teacher is gone; the method remains."
+      }
+    ]
   },
   {
     "id": "npc-tessaly-ash",
@@ -2545,7 +2761,14 @@
       "publicGoal": "To remain dead to those who would act on her being alive.",
       "privateNeed": "To know whether the cause is still worth the concealment.",
       "lineTheyWontCross": "Being found before she is ready."
-    }
+    },
+    "bonds": [
+      {
+        "type": "rival",
+        "targetId": "npc-ghost-tessaly-hunter",
+        "note": "Someone is still looking for her. She is not ready to be found."
+      }
+    ]
   },
   {
     "id": "npc-sanna-veld",
@@ -2630,7 +2853,14 @@
       "publicGoal": "To not run. Whatever that costs.",
       "privateNeed": "Forgiveness, starting with her own.",
       "lineTheyWontCross": "Abandoning someone who cannot leave."
-    }
+    },
+    "bonds": [
+      {
+        "type": "fosterling",
+        "targetId": "npc-ghost-sanna-ward",
+        "note": "Responsible for someone who cannot leave on their own. The commitment is the reason she took house service."
+      }
+    ]
   },
   {
     "id": "npc-brand",
@@ -2714,7 +2944,14 @@
     "motivation": {
       "publicGoal": "A reason. Any reason.",
       "privateNeed": "Permission to stop waiting."
-    }
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ghost-brand-crew",
+        "note": "Came up with a group that no longer exists. Brand is the last one still working."
+      }
+    ]
   },
   {
     "id": "npc-orven-pell",
@@ -2803,7 +3040,14 @@
       "publicGoal": "Retirement. Obscurity. One more quiet season.",
       "privateNeed": "To give the ledger to someone who will use it before he dies.",
       "lineTheyWontCross": "Destroying a record he has sworn to preserve."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Kept the one unburned ledger naming which house benefited from the Valdris erasure."
+      }
+    ]
   },
   {
     "id": "npc-alis-vey",
@@ -2892,7 +3136,19 @@
       "publicGoal": "To clear a name she no longer uses.",
       "privateNeed": "Restitution before confession. She must give something back before she can speak.",
       "lineTheyWontCross": "Surrendering the transfer documents to anyone who would use them to harm, not restore."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Sold Valdris property under coercion. Holds the original transfer documents."
+      },
+      {
+        "type": "rival",
+        "targetId": "npc-enemy-lady-sorn",
+        "note": "Sorn pressured the sale. Alis has not forgiven it."
+      }
+    ]
   },
   {
     "id": "npc-brannic-thule",
@@ -2981,7 +3237,14 @@
       "publicGoal": "Useful work. A dry room. Nothing owed.",
       "privateNeed": "To deliver the artifacts before he dies. He swore an oath.",
       "lineTheyWontCross": "Surrendering the heir artifacts to anyone he has not confirmed as the legitimate heir."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Served in Valdris halls before the fall. Knows where family seals and heir artifacts were hidden."
+      }
+    ]
   },
   {
     "id": "npc-veyran-malk",
@@ -3070,7 +3333,19 @@
       "publicGoal": "Collection of legitimate outstanding accounts.",
       "privateNeed": "To see House Valdris fail again, quietly, with paperwork.",
       "lineTheyWontCross": "Allowing anyone to find the forged paper trail his father left."
-    }
+    },
+    "bonds": [
+      {
+        "type": "rival",
+        "targetId": "npc-ghost-valdris-fall",
+        "note": "Family ruined by Valdris in pre-Breach dealings. Father forged the paper trail that destroyed the house."
+      },
+      {
+        "type": "handler",
+        "targetId": "npc-enemy-harlen-voss",
+        "note": "Coordinates pressure operations with Voss. Voss carries the legal weight; Malk provides the political signal."
+      }
+    ]
   },
   {
     "id": "npc-cessa-rill",
@@ -3159,6 +3434,13 @@
       "publicGoal": "Accuracy. Completeness. The record as it should be.",
       "privateNeed": "To know whether the alteration she made saved or condemned.",
       "lineTheyWontCross": "Destroying a birth record, regardless of the political consequence of keeping it."
-    }
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-mira",
+        "note": "Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain."
+      }
+    ]
   }
 ]
