@@ -12,8 +12,9 @@
       "mission"
     ],
     "effects": [],
-    "description": "A sealed canvas roll of League-surplus dressings, thread, and a small vial of antiseptic wash — standard expedition kit, sold at most general stores without documentation.",
-    "shopPrice": 15
+    "description": "A sealed canvas roll of League-surplus dressings, thread, and a small vial of antiseptic wash \u2014 standard expedition kit, sold at most general stores without documentation.",
+    "shopPrice": 15,
+    "typedEffects": []
   },
   {
     "id": "item-ledger-bureau",
@@ -28,8 +29,9 @@
       "intel"
     ],
     "effects": [],
-    "description": "A Compact-stamped bound ledger with ward-council formatting printed on every page — useful as evidence, cover, or raw intelligence on whichever bureau's name appears on the cover.",
-    "shopPrice": 30
+    "description": "A Compact-stamped bound ledger with ward-council formatting printed on every page \u2014 useful as evidence, cover, or raw intelligence on whichever bureau's name appears on the cover.",
+    "shopPrice": 30,
+    "typedEffects": []
   },
   {
     "id": "item-spare-parts",
@@ -44,8 +46,9 @@
       "crafting"
     ],
     "effects": [],
-    "description": "A crate of unsorted mechanical salvage — gears, brackets, fasteners, and cut lengths of rod — sourced from workshop floor sweepings and sold by weight at the League margin.",
-    "shopPrice": 20
+    "description": "A crate of unsorted mechanical salvage \u2014 gears, brackets, fasteners, and cut lengths of rod \u2014 sourced from workshop floor sweepings and sold by weight at the League margin.",
+    "shopPrice": 20,
+    "typedEffects": []
   },
   {
     "id": "item-dressing-league-surplus",
@@ -66,8 +69,14 @@
         "value": 8
       }
     ],
-    "description": "A waxed-paper packet of linen strips, a bone needle, and a small tin of pine-tar wound paste — the League prints these in bulk and they turn up in almost every district market.",
-    "shopPrice": 8
+    "description": "A waxed-paper packet of linen strips, a bone needle, and a small tin of pine-tar wound paste \u2014 the League prints these in bulk and they turn up in almost every district market.",
+    "shopPrice": 8,
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 8
+      }
+    ]
   },
   {
     "id": "item-tincture-wound-close",
@@ -93,7 +102,13 @@
       }
     ],
     "description": "A dark glass vial of fermented alum and herb-ash solution, carried by field surgeons and sold quietly by apothecaries who ask what happened to the other person.",
-    "shopPrice": 20
+    "shopPrice": 20,
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 15
+      }
+    ]
   },
   {
     "id": "item-ration-compact-brick",
@@ -115,8 +130,15 @@
         "value": -30
       }
     ],
-    "description": "A dense block of ground grain, rendered fat, and salt pressed into a waxy rectangle — designed by Compact nutritionists to sustain a watchman through a twelve-hour shift and no more.",
-    "shopPrice": 5
+    "description": "A dense block of ground grain, rendered fat, and salt pressed into a waxy rectangle \u2014 designed by Compact nutritionists to sustain a watchman through a twelve-hour shift and no more.",
+    "shopPrice": 5,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "hunger",
+        "value": -30
+      }
+    ]
   },
   {
     "id": "item-tonic-fatigue-ironworks",
@@ -138,8 +160,15 @@
         "value": -25
       }
     ],
-    "description": "A bitter brown liquid brewed by League workshop apothecaries for extended production shifts — it works for about four hours, then the collapse is worse than the original fatigue.",
-    "shopPrice": 8
+    "description": "A bitter brown liquid brewed by League workshop apothecaries for extended production shifts \u2014 it works for about four hours, then the collapse is worse than the original fatigue.",
+    "shopPrice": 8,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "fatigue",
+        "value": -25
+      }
+    ]
   },
   {
     "id": "item-graydust",
@@ -166,8 +195,15 @@
         "value": "mild-impairment"
       }
     ],
-    "description": "A pale powder sold by Tallow Ring distributors as a ceremonial compound and used primarily as a stress suppressant — the Compact classifies it as a controlled substance without making meaningful effort to restrict it.",
-    "shopPrice": 25
+    "description": "A pale powder sold by Tallow Ring distributors as a ceremonial compound and used primarily as a stress suppressant \u2014 the Compact classifies it as a controlled substance without making meaningful effort to restrict it.",
+    "shopPrice": 25,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "stress",
+        "value": -40
+      }
+    ]
   },
   {
     "id": "item-antitoxin-riverpurge",
@@ -195,7 +231,14 @@
       }
     ],
     "description": "A small brown bottle of activated charcoal suspension and binding agents, taken after consuming water from the two fouled rivers or any unsanctioned well below the third district tier.",
-    "shopPrice": 12
+    "shopPrice": 12,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "toxin",
+        "value": -20
+      }
+    ]
   },
   {
     "id": "item-stimulant-combat",
@@ -223,8 +266,16 @@
         "value": "combat-stimulated"
       }
     ],
-    "description": "A chalk-white pressed tablet smuggled in from a pre-Breach pharmaceutical source; the Tallow Ring sells them to dockhands, guards, and anyone who knows the right knock — the crash afterward lasts a day.",
-    "shopPrice": 25
+    "description": "A chalk-white pressed tablet smuggled in from a pre-Breach pharmaceutical source; the Tallow Ring sells them to dockhands, guards, and anyone who knows the right knock \u2014 the crash afterward lasts a day.",
+    "shopPrice": 25,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "strength",
+        "value": 8,
+        "duration": 3
+      }
+    ]
   },
   {
     "id": "item-poultice-tarthatch",
@@ -250,8 +301,14 @@
         "value": "infection-risk"
       }
     ],
-    "description": "A cheap wound covering made from pine pitch, rendered tallow, and dried herb pulp — it seals the wound and may or may not seal the infection inside, but it costs six Marks and is available everywhere.",
-    "shopPrice": 6
+    "description": "A cheap wound covering made from pine pitch, rendered tallow, and dried herb pulp \u2014 it seals the wound and may or may not seal the infection inside, but it costs six Marks and is available everywhere.",
+    "shopPrice": 6,
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 5
+      }
+    ]
   },
   {
     "id": "item-salve-burngrade",
@@ -276,8 +333,14 @@
         "value": "burn"
       }
     ],
-    "description": "A greasy white compound issued in small tins by League workshop medics — it draws out burn heat, reduces scarring when applied within the hour, and is sold in bulk to anyone working near smelting pits.",
-    "shopPrice": 10
+    "description": "A greasy white compound issued in small tins by League workshop medics \u2014 it draws out burn heat, reduces scarring when applied within the hour, and is sold in bulk to anyone working near smelting pits.",
+    "shopPrice": 10,
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 6
+      }
+    ]
   },
   {
     "id": "item-lockpick-ringcut",
@@ -300,8 +363,9 @@
         "value": 15
       }
     ],
-    "description": "Seven picks, two tension bars, and a rake, ground from high-carbon steel wire by a Ring-affiliated locksmith who does not write receipts — the case is a folded strip of soft leather that makes no sound.",
-    "shopPrice": 35
+    "description": "Seven picks, two tension bars, and a rake, ground from high-carbon steel wire by a Ring-affiliated locksmith who does not write receipts \u2014 the case is a folded strip of soft leather that makes no sound.",
+    "shopPrice": 35,
+    "typedEffects": []
   },
   {
     "id": "item-caliper-league-engineering",
@@ -324,8 +388,9 @@
         "value": 12
       }
     ],
-    "description": "A vernier caliper in a fitted wooden case, stamped with the Foundry League's calibration mark — used for precision measurement in workshop fitting, structural assessment, and mechanical repair.",
-    "shopPrice": 30
+    "description": "A vernier caliper in a fitted wooden case, stamped with the Foundry League's calibration mark \u2014 used for precision measurement in workshop fitting, structural assessment, and mechanical repair.",
+    "shopPrice": 30,
+    "typedEffects": []
   },
   {
     "id": "item-forgery-scribe-kit",
@@ -350,7 +415,8 @@
       }
     ],
     "description": "A flat case containing four nib sizes, three ink blends matched to Compact paper stock, a wax-seal press with interchangeable dies, and a folded reference sheet of official document layouts.",
-    "shopPrice": 80
+    "shopPrice": 80,
+    "typedEffects": []
   },
   {
     "id": "item-lamp-signal-expedition",
@@ -372,8 +438,9 @@
         "action": "long-range-signal"
       }
     ],
-    "description": "A shuttered oil lantern with a mirrored back-plate and a hand-operated baffles for coded light signaling — standard equipment for expedition teams operating beyond wall-sight distance.",
-    "shopPrice": 25
+    "description": "A shuttered oil lantern with a mirrored back-plate and a hand-operated baffles for coded light signaling \u2014 standard equipment for expedition teams operating beyond wall-sight distance.",
+    "shopPrice": 25,
+    "typedEffects": []
   },
   {
     "id": "item-permit-reproduction",
@@ -396,8 +463,13 @@
         "right": "second-child-legal"
       }
     ],
-    "description": "A watermarked vellum certificate issued by the Compact Breeding Register authorizing the holder to register one additional child without penalty — eight months of a wage worker's salary, available only through proper channels, and transferable to whoever holds it.",
-    "shopPrice": 80
+    "description": "A watermarked vellum certificate issued by the Compact Breeding Register authorizing the holder to register one additional child without penalty \u2014 eight months of a wage worker's salary, available only through proper channels, and transferable to whoever holds it.",
+    "shopPrice": 80,
+    "typedEffects": [
+      {
+        "type": "evidence_use"
+      }
+    ]
   },
   {
     "id": "item-papers-false-citizen",
@@ -420,8 +492,13 @@
         "status": "false-citizen-identity"
       }
     ],
-    "description": "A complete set of forged Compact registration documents — name, ward assignment, and citizen classification — produced on genuine paper stock using ink that matches archived entries; detectable only by deep cross-reference.",
-    "shopPrice": 60
+    "description": "A complete set of forged Compact registration documents \u2014 name, ward assignment, and citizen classification \u2014 produced on genuine paper stock using ink that matches archived entries; detectable only by deep cross-reference.",
+    "shopPrice": 60,
+    "typedEffects": [
+      {
+        "type": "evidence_use"
+      }
+    ]
   },
   {
     "id": "item-tally-debt-instrument",
@@ -443,8 +520,13 @@
         "value": 400
       }
     ],
-    "description": "A written credit certificate payable to the bearer at a named counting-house, signed and wax-sealed — functionally currency for transactions too large to carry in coin, and difficult to trace if the original issuer has reason to look away.",
-    "shopPrice": 50
+    "description": "A written credit certificate payable to the bearer at a named counting-house, signed and wax-sealed \u2014 functionally currency for transactions too large to carry in coin, and difficult to trace if the original issuer has reason to look away.",
+    "shopPrice": 50,
+    "typedEffects": [
+      {
+        "type": "evidence_use"
+      }
+    ]
   },
   {
     "id": "item-form-ward-petition",
@@ -466,8 +548,13 @@
         "action": "file-ward-petition"
       }
     ],
-    "description": "A pre-stamped Compact petition form authorizing a ward-council submission — blank, genuine, and technically requiring a forty-day response window that is observed in the breach more than in fact.",
-    "shopPrice": 10
+    "description": "A pre-stamped Compact petition form authorizing a ward-council submission \u2014 blank, genuine, and technically requiring a forty-day response window that is observed in the breach more than in fact.",
+    "shopPrice": 10,
+    "typedEffects": [
+      {
+        "type": "evidence_use"
+      }
+    ]
   },
   {
     "id": "item-iron-raw-ingots",
@@ -484,8 +571,9 @@
       "trade"
     ],
     "effects": [],
-    "description": "A stack of thumb-shaped iron ingots poured at a League smelter and stamped with the foundry mark — valued by independent smiths, workshop operators, and anyone who needs to buy League cooperation without saying so directly.",
-    "shopPrice": 20
+    "description": "A stack of thumb-shaped iron ingots poured at a League smelter and stamped with the foundry mark \u2014 valued by independent smiths, workshop operators, and anyone who needs to buy League cooperation without saying so directly.",
+    "shopPrice": 20,
+    "typedEffects": []
   },
   {
     "id": "item-mechanism-pre-breach",
@@ -503,8 +591,9 @@
       "high-value"
     ],
     "effects": [],
-    "description": "A sealed metal housing recovered from a pre-Breach site beyond the walls — the internal gearing moves with tolerances no current workshop can match, and three different factions have standing purchase interest for this category of find.",
-    "shopPrice": 50
+    "description": "A sealed metal housing recovered from a pre-Breach site beyond the walls \u2014 the internal gearing moves with tolerances no current workshop can match, and three different factions have standing purchase interest for this category of find.",
+    "shopPrice": 50,
+    "typedEffects": []
   },
   {
     "id": "item-tallow-bricks",
@@ -521,8 +610,9 @@
       "trade"
     ],
     "effects": [],
-    "description": "Rendered animal fat pressed into standard fuel bricks, sourced through Tallow Ring distribution channels — the primary heating and lamp fuel in lower-district households, controlled by the Ring and priced accordingly.",
-    "shopPrice": 10
+    "description": "Rendered animal fat pressed into standard fuel bricks, sourced through Tallow Ring distribution channels \u2014 the primary heating and lamp fuel in lower-district households, controlled by the Ring and priced accordingly.",
+    "shopPrice": 10,
+    "typedEffects": []
   },
   {
     "id": "item-salt-block",
@@ -539,8 +629,9 @@
       "scarce"
     ],
     "effects": [],
-    "description": "A dense block of compressed salt — scarce since the trade roads beyond the gates collapsed, valued for food preservation, medical use, and the simple fact that very little of it enters the city in any given month.",
-    "shopPrice": 35
+    "description": "A dense block of compressed salt \u2014 scarce since the trade roads beyond the gates collapsed, valued for food preservation, medical use, and the simple fact that very little of it enters the city in any given month.",
+    "shopPrice": 35,
+    "typedEffects": []
   },
   {
     "id": "item-tradegood-coal-sack",
@@ -557,8 +648,9 @@
       "industrial"
     ],
     "effects": [],
-    "description": "A sealed burlap sack of certified-weight metallurgical coal with the League assay stamp — the only coal in Valdenmoor that comes with legal weight guarantee, and therefore the only kind League workshops accept without argument.",
-    "shopPrice": 15
+    "description": "A sealed burlap sack of certified-weight metallurgical coal with the League assay stamp \u2014 the only coal in Valdenmoor that comes with legal weight guarantee, and therefore the only kind League workshops accept without argument.",
+    "shopPrice": 15,
+    "typedEffects": []
   },
   {
     "id": "item-gift-fine-ink",
@@ -582,8 +674,15 @@
         "value": 12
       }
     ],
-    "description": "A sealed glass vial of deep-black iron-gall ink, ground with lamp-black for permanence — a meaningful gift to any scribe, magistrate, or scholar, representing about a month of their professional supply.",
-    "shopPrice": 40
+    "description": "A sealed glass vial of deep-black iron-gall ink, ground with lamp-black for permanence \u2014 a meaningful gift to any scribe, magistrate, or scholar, representing about a month of their professional supply.",
+    "shopPrice": 40,
+    "typedEffects": [
+      {
+        "type": "relationship_gift",
+        "target": "scholar-npc",
+        "value": 12
+      }
+    ]
   },
   {
     "id": "item-gift-pressed-flower-fold",
@@ -606,8 +705,15 @@
         "value": 8
       }
     ],
-    "description": "A dried flower pressed between waxed paper, sourced from the small settlement at Carrath's Fold — rare in Valdenmoor and valued as proof that something living survives beyond the walls.",
-    "shopPrice": 25
+    "description": "A dried flower pressed between waxed paper, sourced from the small settlement at Carrath's Fold \u2014 rare in Valdenmoor and valued as proof that something living survives beyond the walls.",
+    "shopPrice": 25,
+    "typedEffects": [
+      {
+        "type": "relationship_gift",
+        "target": "any-npc",
+        "value": 8
+      }
+    ]
   },
   {
     "id": "item-gift-bone-token",
@@ -631,8 +737,15 @@
         "value": 6
       }
     ],
-    "description": "A small disc of carved bone incised with ward-specific luck marks — sold by market stall carvers in working districts, given between neighbors, coworkers, and people who want to say they're thinking of someone without spending words.",
-    "shopPrice": 12
+    "description": "A small disc of carved bone incised with ward-specific luck marks \u2014 sold by market stall carvers in working districts, given between neighbors, coworkers, and people who want to say they're thinking of someone without spending words.",
+    "shopPrice": 12,
+    "typedEffects": [
+      {
+        "type": "relationship_gift",
+        "target": "working-district-npc",
+        "value": 6
+      }
+    ]
   },
   {
     "id": "item-gift-calling-token",
@@ -660,8 +773,15 @@
         "location": "gilded-heights-events"
       }
     ],
-    "description": "A small gold-alloy disc engraved with a House crest and the bearer's name — given between Gilded Heights families as an acknowledgment of social standing; receiving one implies an invitation is possible.",
-    "shopPrice": 80
+    "description": "A small gold-alloy disc engraved with a House crest and the bearer's name \u2014 given between Gilded Heights families as an acknowledgment of social standing; receiving one implies an invitation is possible.",
+    "shopPrice": 80,
+    "typedEffects": [
+      {
+        "type": "relationship_gift",
+        "target": "noble-npc",
+        "value": 20
+      }
+    ]
   },
   {
     "id": "item-module-water-purifier",
@@ -684,8 +804,9 @@
         "value": 2
       }
     ],
-    "description": "A three-stage ceramic filtration stack packed with activated char and clean sand — installed over a collection basin, it removes the primary contaminants from fouled-source water well enough to drink without antitoxin.",
-    "shopPrice": 55
+    "description": "A three-stage ceramic filtration stack packed with activated char and clean sand \u2014 installed over a collection basin, it removes the primary contaminants from fouled-source water well enough to drink without antitoxin.",
+    "shopPrice": 55,
+    "typedEffects": []
   },
   {
     "id": "item-module-herb-garden",
@@ -708,8 +829,9 @@
         "value": 1
       }
     ],
-    "description": "A deep window-mounted planting box with a soil mix already conditioned — grows medicinal and culinary herbs from seed in a south-facing opening, producing enough to meaningfully supplement consumable costs per season.",
-    "shopPrice": 20
+    "description": "A deep window-mounted planting box with a soil mix already conditioned \u2014 grows medicinal and culinary herbs from seed in a south-facing opening, producing enough to meaningfully supplement consumable costs per season.",
+    "shopPrice": 20,
+    "typedEffects": []
   },
   {
     "id": "item-module-lock-reinforcement",
@@ -731,8 +853,9 @@
         "value": 1
       }
     ],
-    "description": "A fitted iron bar that brackets across a door frame on the interior, preventing forced entry without cutting through the wall — sold at League ironmongers and installed in about an hour.",
-    "shopPrice": 15
+    "description": "A fitted iron bar that brackets across a door frame on the interior, preventing forced entry without cutting through the wall \u2014 sold at League ironmongers and installed in about an hour.",
+    "shopPrice": 15,
+    "typedEffects": []
   },
   {
     "id": "item-material-scrap-cloth",
@@ -749,8 +872,9 @@
       "repair"
     ],
     "effects": [],
-    "description": "A bundle of mixed-weight fabric offcuts from tailor floors and salvage piles — used in padding, patching, and cheap wound dressing when nothing better is available.",
-    "shopPrice": 5
+    "description": "A bundle of mixed-weight fabric offcuts from tailor floors and salvage piles \u2014 used in padding, patching, and cheap wound dressing when nothing better is available.",
+    "shopPrice": 5,
+    "typedEffects": []
   },
   {
     "id": "item-material-charcoal-bricks",
@@ -767,8 +891,9 @@
       "crafting"
     ],
     "effects": [],
-    "description": "Compressed blocks of activated wood-char, used in water filtration, antitoxin preparation, and a half-dozen apothecary compound recipes — sold by weight at most chemistry stalls in the market district.",
-    "shopPrice": 8
+    "description": "Compressed blocks of activated wood-char, used in water filtration, antitoxin preparation, and a half-dozen apothecary compound recipes \u2014 sold by weight at most chemistry stalls in the market district.",
+    "shopPrice": 8,
+    "typedEffects": []
   },
   {
     "id": "item-chit-ledger-removal",
@@ -786,7 +911,8 @@
     ],
     "effects": [],
     "description": "A narrow inventory slip naming two ledgers removed from the house on the night of the seizure, with a quartermaster's hand-sign and a number Marion immediately recognizes.",
-    "shopPrice": 0
+    "shopPrice": 0,
+    "typedEffects": []
   },
   {
     "id": "item-note-arrangement-below",
@@ -804,7 +930,8 @@
     ],
     "effects": [],
     "description": "A letter fragment in your father's hand referring to an arrangement below the house and a catch that was never to be named in open correspondence.",
-    "shopPrice": 0
+    "shopPrice": 0,
+    "typedEffects": []
   },
   {
     "id": "item-letter-mira-sealed",
@@ -821,8 +948,9 @@
       "evidence"
     ],
     "effects": [],
-    "description": "A sealed envelope tucked behind the wainscoting of the master's chamber — addressed to Mira in a hand you know but do not trust.",
-    "shopPrice": 0
+    "description": "A sealed envelope tucked behind the wainscoting of the master's chamber \u2014 addressed to Mira in a hand you know but do not trust.",
+    "shopPrice": 0,
+    "typedEffects": []
   },
   {
     "id": "item-ring-unfamiliar-crest",
@@ -840,7 +968,8 @@
     ],
     "effects": [],
     "description": "A ring bearing a crest not of House Valdric nor any ward-line you readily name. The metal is expensive; the engraving is meant to be noticed.",
-    "shopPrice": 0
+    "shopPrice": 0,
+    "typedEffects": []
   },
   {
     "id": "item-sketch-watch-lane",
@@ -858,6 +987,7 @@
     ],
     "effects": [],
     "description": "A hand-drawn watch sketch from the garret showing sight lines, approach timings, and two blind points overlooking the lane outside the house.",
-    "shopPrice": 0
+    "shopPrice": 0,
+    "typedEffects": []
   }
 ]

@@ -25,6 +25,18 @@ export const itemCategorySchema = z.enum([
   'gift',
 ])
 
+export const useActionTypeSchema = z.enum(['equip', 'consume', 'install', 'present', 'archive'])
+
+export const documentDispositionSchema = z.enum(['filed', 'presented', 'burned'])
+
+export const itemEffectSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('heal'), value: z.number() }),
+  z.object({ type: z.literal('stat_mod'), stat: z.string(), value: z.number(), duration: z.number().optional() }),
+  z.object({ type: z.literal('relationship_gift'), target: z.string(), value: z.number() }),
+  z.object({ type: z.literal('evidence_use'), disposition: documentDispositionSchema.optional() }),
+  z.object({ type: z.literal('training_bonus'), skill: z.string(), value: z.number() }),
+])
+
 export const itemDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -38,6 +50,7 @@ export const itemDefinitionSchema = z
     tags: z.array(z.string().min(1)).default([]),
     description: z.string().optional(),
     effects: z.array(z.record(z.string(), z.unknown())).optional(),
+    typedEffects: z.array(itemEffectSchema).default([]),
   })
   .strict()
 
@@ -147,12 +160,15 @@ export const ownedItemSchema = z
   .strict()
 
 export type ArmorDefinition = z.infer<typeof armorDefinitionSchema>
+export type DocumentDisposition = z.infer<typeof documentDispositionSchema>
 export type EquipmentDefinition = z.infer<typeof equipmentDefinitionSchema>
 export type InventoryEntry = z.infer<typeof inventoryEntrySchema>
 export type ItemDefinition = z.infer<typeof itemDefinitionSchema>
+export type ItemEffect = z.infer<typeof itemEffectSchema>
 export type OwnedItem = z.infer<typeof ownedItemSchema>
 export type OwnedItemLocation = z.infer<typeof ownedItemLocationSchema>
 export type Loadout = z.infer<typeof loadoutSchema>
+export type UseActionType = z.infer<typeof useActionTypeSchema>
 export type WeaponDefinition = z.infer<typeof weaponDefinitionSchema>
 
 export interface WeaponProfile {

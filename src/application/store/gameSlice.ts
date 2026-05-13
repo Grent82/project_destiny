@@ -25,6 +25,7 @@ import { computeBestInvestigationSkill, computeApproachSkillValue, getInvestigat
 import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlement'
 import { resolveDialogueChoice } from '../commands/dialogue'
 import { searchHouseRoom } from '../commands/houseSearch'
+import { useItem as useItemCommand } from '../commands/useItem'
 import {
   addQuestLeadIfNew,
   acceptQuestFromLead,
@@ -936,6 +937,11 @@ const gameSlice = createSlice({
     searchRoom(state, action: PayloadAction<string>) {
       const snapshot = current(state) as GameState
       return searchHouseRoom(snapshot, action.payload)
+    },
+
+    useItem(state, action: PayloadAction<{ instanceId: string; action: 'equip' | 'consume' | 'install' | 'present' | 'archive'; targetNpcId?: string }>) {
+      const snapshot = current(state) as GameState
+      return useItemCommand(snapshot, action.payload)
     },
 
     unlockVault(state) {

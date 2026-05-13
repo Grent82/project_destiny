@@ -11,13 +11,17 @@ const baseNpc: NpcDefinition = {
   rarity: 'common',
   status: 'citizen',
   factionAffinityId: null,
-  baseAttributes: { strength: 10, agility: 10, intelligence: 10, endurance: 10, presence: 10 },
-  startingSkills: {},
+  baseAttributes: { might: 10, agility: 10, endurance: 10, intellect: 10, perception: 10, presence: 10, resolve: 10 },
+  startingSkills: {
+    melee: 50, ranged: 50, medicine: 50, administration: 50, engineering: 50, negotiation: 50,
+    survival: 50, security: 50, crafting: 50, performance: 50, academics: 50, intrigue: 50,
+  },
   startingTraits: {
     loyalty: 50, discipline: 50, empathy: 50, ruthlessness: 50,
-    ambition: 50, prudence: 50, vanity: 50, dominance: 50,
+    ambition: 50, prudence: 50, vanity: 50, dominance: 50, curiosity: 50, zeal: 50,
   },
   allowedTitleIds: [],
+  bonds: [],
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

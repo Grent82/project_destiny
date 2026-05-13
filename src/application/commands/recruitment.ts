@@ -57,6 +57,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
       consumableIds: [],
     },
     relationships: {},
+    npcMemory: [],
   }
 
   let next: GameState = {
