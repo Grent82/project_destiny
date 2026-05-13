@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { gameActions, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
+import { gameActions, selectActionTimeCost, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { TimeCostBadge } from '../components/TimeCostBadge'
 
 const DISTRICT_IMAGE_MAP: Record<string, string> = {
   'district-the-pale': 'the-pale',
@@ -192,6 +193,12 @@ export function DistrictMapScreen() {
               {isCurrent && (
                 <p className="badge badge--inline badge--mt">
                   You are here
+                </p>
+              )}
+
+              {!isCurrent && !district.accessRestricted && (
+                <p className="badge badge--inline badge--mt badge--timecost">
+                  <TimeCostBadge cost={selectActionTimeCost('travel')} />
                 </p>
               )}
 

@@ -58,3 +58,21 @@ export const selectDistrictTension = createSelector(
   [selectGame],
   (game) => game.districtTension,
 )
+
+/**
+ * Returns the slot cost for a named action type.
+ * Travel and combat each cost 1 slot; expeditions cost 2.
+ * Suitable for use in TimeCostBadge.
+ */
+export function selectActionTimeCost(actionType: 'travel' | 'combat' | 'expedition' | 'wait' | 'sleep_brief' | 'sleep_full'): number {
+  switch (actionType) {
+    case 'expedition': return 2
+    case 'sleep_full': return 4
+    case 'travel':
+    case 'combat':
+    case 'wait':
+    case 'sleep_brief':
+    default:
+      return 1
+  }
+}

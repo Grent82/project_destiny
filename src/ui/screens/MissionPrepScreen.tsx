@@ -3,6 +3,7 @@ import { NavLink, useNavigate, useParams } from 'react-router-dom'
 
 import {
   gameActions,
+  selectActionTimeCost,
   selectCombatScreenState,
   selectCurrentDistrictId,
   selectMissionPrepSummary,
@@ -175,6 +176,13 @@ export function MissionPrepScreen() {
       )}
 
       <div className="session-actions">
+        <p className="mission-time-cost-note">
+          <strong>Time cost:</strong> Committing squad costs <strong>{selectActionTimeCost('combat')} slot</strong>{' '}
+          {(() => {
+            const slot = summary.selectedSquad.length > 0 ? 'on deployment' : ''
+            return slot
+          })()}
+        </p>
         <button
           className="action-button action-button--primary action-button--cta"
           disabled={
