@@ -1,28 +1,17 @@
 import type { GameState } from '../../domain'
+import type { RumorClimate } from '../../domain/districts/contracts'
 import type { Rumor } from '../../domain/rumors/contracts'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
 
-// Maps real district IDs to their rumour climate.
-// When destiny-sh6x (districts content bead) adds rumorClimate to districts.json,
-// replace this lookup with contentCatalog.getDistricts().find(d => d.id === id)?.rumorClimate.
-const DISTRICT_CLIMATE: Record<string, 'dry' | 'moderate' | 'saturated'> = {
-  'district-harbor': 'saturated',
-  'district-gilded-heights': 'dry',
-  'district-ironworks': 'moderate',
-  'district-the-pale': 'moderate',
-  'district-the-warrens': 'saturated',
-  'district-the-hollows': 'moderate',
-}
-
-const CLIMATE_MULTIPLIER: Record<'dry' | 'moderate' | 'saturated', number> = {
+const CLIMATE_MULTIPLIER: Record<RumorClimate, number> = {
   dry: 0.6,
   moderate: 1.0,
   saturated: 1.4,
 }
 
 // TTL in days per climate (measured from lastSpreadDay)
-const CLIMATE_TTL: Record<'dry' | 'moderate' | 'saturated', number> = {
+const CLIMATE_TTL: Record<RumorClimate, number> = {
   dry: 4,
   moderate: 6,
   saturated: 8,
@@ -44,8 +33,8 @@ function bondId(npcIds: readonly string[]): string {
   return [...npcIds].sort().join('::')
 }
 
-function getClimate(districtId: string): 'dry' | 'moderate' | 'saturated' {
-  return DISTRICT_CLIMATE[districtId] ?? 'moderate'
+function getClimate(districtId: string): RumorClimate {
+  return contentCatalog.districtsById.get(districtId)?.rumorClimate ?? 'moderate'
 }
 
 /**

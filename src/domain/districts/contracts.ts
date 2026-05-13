@@ -10,6 +10,16 @@ export const borderTypeSchema = z.enum([
   'restricted_gate',
 ])
 
+export const dominantExchangeSystemSchema = z.enum([
+  'coin',
+  'debt',
+  'favor',
+  'information',
+  'violence',
+])
+
+export const rumorClimateSchema = z.enum(['dry', 'moderate', 'saturated'])
+
 export const districtDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -27,8 +37,15 @@ export const districtDefinitionSchema = z
     adjacentDistrictIds: z.array(entityIdSchema).default([]),
     borderTypes: z.record(z.string(), borderTypeSchema).default({}),
     minControlFactionStanding: z.number().nullable().default(null),
+    // Social simulation fields (optional for backward compatibility)
+    dominantExchangeSystem: dominantExchangeSystemSchema.default('coin'),
+    rumorClimate: rumorClimateSchema.default('moderate'),
+    socialDensity: z.number().int().min(1).max(5).default(3),
+    reputation: z.number().int().min(0).max(100).default(50),
   })
   .strict()
 
 export type BorderType = z.infer<typeof borderTypeSchema>
 export type DistrictDefinition = z.infer<typeof districtDefinitionSchema>
+export type DominantExchangeSystem = z.infer<typeof dominantExchangeSystemSchema>
+export type RumorClimate = z.infer<typeof rumorClimateSchema>

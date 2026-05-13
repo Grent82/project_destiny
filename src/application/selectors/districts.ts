@@ -99,3 +99,22 @@ export const selectDistrictMapEntries = createSelector(
       isAdjacent: currentId !== null && def.adjacentDistrictIds.includes(currentId),
     })),
 )
+
+export const selectDistrictById = (districtId: string) =>
+  contentCatalog.districtsById.get(districtId) ?? null
+
+export const selectDistrictSocialProfile = (districtId: string) => {
+  const def = contentCatalog.districtsById.get(districtId)
+  if (!def) return null
+  return {
+    id: def.id,
+    name: def.name,
+    rumorClimate: def.rumorClimate,
+    dominantExchangeSystem: def.dominantExchangeSystem,
+    socialDensity: def.socialDensity,
+    reputation: def.reputation,
+  }
+}
+
+export const selectDistrictReputation = (districtId: string) =>
+  contentCatalog.districtsById.get(districtId)?.reputation ?? 50

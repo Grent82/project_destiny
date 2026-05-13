@@ -19,7 +19,7 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes — goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
+    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes \u2014 goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
     "narrativeHook": "The trade roads run south. Bandits own them after the third milestone.",
     "hooks": [
       "Dock foremen are hiring. The kind of work that doesn't ask questions.",
@@ -37,7 +37,11 @@
       "district-the-hollows": "compact_checkpoint",
       "district-gilded-heights": "restricted_gate"
     },
-    "minControlFactionStanding": null
+    "minControlFactionStanding": null,
+    "rumorClimate": "saturated",
+    "dominantExchangeSystem": "coin",
+    "socialDensity": 4,
+    "reputation": 50
   },
   {
     "id": "district-gilded-heights",
@@ -57,7 +61,7 @@
     ],
     "dangerLevel": 1,
     "accessRestricted": true,
-    "narrativeSummary": "Gilded Heights does not have guards at the gate — it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
+    "narrativeSummary": "Gilded Heights does not have guards at the gate \u2014 it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
     "narrativeHook": "The highland passes are nominally under Civic Compact jurisdiction. Nominally.",
     "hooks": [
       "Guild notices cover the market boards. Three contracts, one suspicious.",
@@ -71,7 +75,11 @@
       "district-harbor": "restricted_gate",
       "district-the-pale": "restricted_gate"
     },
-    "minControlFactionStanding": 20
+    "minControlFactionStanding": 20,
+    "rumorClimate": "dry",
+    "dominantExchangeSystem": "information",
+    "socialDensity": 2,
+    "reputation": 70
   },
   {
     "id": "district-ironworks",
@@ -91,7 +99,7 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here — on paper; in practice, the terms are set by who can keep the furnaces lit.",
+    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here \u2014 on paper; in practice, the terms are set by who can keep the furnaces lit.",
     "narrativeHook": "The mines are three days east. Some still produce. Most are haunted.",
     "hooks": [
       "The League is short on contract workers. The foreman doesn't ask about your history.",
@@ -107,12 +115,16 @@
       "district-the-pale": "open",
       "district-the-warrens": "ring_toll"
     },
-    "minControlFactionStanding": null
+    "minControlFactionStanding": null,
+    "rumorClimate": "moderate",
+    "dominantExchangeSystem": "coin",
+    "socialDensity": 4,
+    "reputation": 40
   },
   {
     "id": "district-the-pale",
     "name": "The Pale",
-    "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks — nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
+    "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks \u2014 nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
     "controllingFactionId": null,
     "contestedByFactionIds": [
       "faction-civic-compact",
@@ -132,7 +144,7 @@
     ],
     "dangerLevel": 3,
     "accessRestricted": false,
-    "narrativeSummary": "The Pale is where the city's accounting breaks down — too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
+    "narrativeSummary": "The Pale is where the city's accounting breaks down \u2014 too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
     "narrativeHook": "The old garrison road leads to the ruins of the previous city. Nobody comes back unchanged.",
     "hooks": [
       "Crumbling manor walls hide older debts. A letter from the Collectors awaits.",
@@ -150,12 +162,16 @@
       "district-gilded-heights": "restricted_gate",
       "district-the-warrens": "condemned_barrier"
     },
-    "minControlFactionStanding": null
+    "minControlFactionStanding": null,
+    "rumorClimate": "moderate",
+    "dominantExchangeSystem": "favor",
+    "socialDensity": 2,
+    "reputation": 55
   },
   {
     "id": "district-the-warrens",
     "name": "The Warrens",
-    "summary": "The oldest residential district — six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
+    "summary": "The oldest residential district \u2014 six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
     "controllingFactionId": "faction-civic-compact",
     "contestedByFactionIds": [
       "faction-restored"
@@ -172,7 +188,7 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives — crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
+    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives \u2014 crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
     "narrativeHook": "The sewers connect to the undercroft. Older than the city. Darker too.",
     "hooks": [
       "The Restored have opened a new relief house. The Compact hasn't decided whether to shut it down yet.",
@@ -188,7 +204,11 @@
       "district-the-pale": "condemned_barrier",
       "district-the-hollows": "open"
     },
-    "minControlFactionStanding": null
+    "minControlFactionStanding": null,
+    "rumorClimate": "saturated",
+    "dominantExchangeSystem": "violence",
+    "socialDensity": 5,
+    "reputation": 25
   },
   {
     "id": "district-the-hollows",
@@ -208,7 +228,7 @@
     ],
     "dangerLevel": 5,
     "accessRestricted": true,
-    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching — collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
+    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching \u2014 collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
     "narrativeHook": "The Hollows backs up against the outer wall. There are doors in that wall. Unofficial ones.",
     "hooks": [
       "Something was dug up in the eastern rubble. The people who found it aren't talking.",
@@ -222,6 +242,163 @@
       "district-harbor": "compact_checkpoint",
       "district-the-warrens": "open"
     },
-    "minControlFactionStanding": null
+    "minControlFactionStanding": null,
+    "rumorClimate": "moderate",
+    "dominantExchangeSystem": "debt",
+    "socialDensity": 3,
+    "reputation": 35
+  },
+  {
+    "id": "district-ash-quay",
+    "name": "Ash Quay",
+    "summary": "The city's wet throat. Imports, debts, and dock leverage.",
+    "controllingFactionId": "faction-house-merrow",
+    "contestedByFactionIds": [],
+    "shopTypes": [
+      "dock-trade",
+      "customs-broker",
+      "debt-collector"
+    ],
+    "tags": [
+      "dock",
+      "creditor",
+      "customs-leverage",
+      "house-merrow"
+    ],
+    "dangerLevel": 3,
+    "accessRestricted": false,
+    "narrativeSummary": "The city's wet throat. Imports come through here; so does every debt that touches water. House Merrow's seal is everywhere. A conversation at the dock becomes a rumor in the Northbank within one endDay cycle.",
+    "adjacentDistrictIds": [
+      "district-the-northbank",
+      "district-cinder-row"
+    ],
+    "borderTypes": {},
+    "minControlFactionStanding": null,
+    "dominantExchangeSystem": "debt",
+    "rumorClimate": "saturated",
+    "socialDensity": 4,
+    "reputation": 45
+  },
+  {
+    "id": "district-the-mireward",
+    "name": "The Mireward",
+    "summary": "Chapels, infirmaries, and the favors that sustain them.",
+    "controllingFactionId": null,
+    "contestedByFactionIds": [],
+    "shopTypes": [
+      "apothecary",
+      "shrine-service",
+      "infirmary"
+    ],
+    "tags": [
+      "shrines",
+      "confession",
+      "birth-records",
+      "sanctuary-adjacent"
+    ],
+    "dangerLevel": 1,
+    "accessRestricted": false,
+    "narrativeSummary": "Chapels, infirmaries, and the people who maintain them. Favors are the currency here \u2014 not recorded, not forgotten. What is said in the Mireward is usually true, which makes it dangerous.",
+    "adjacentDistrictIds": [
+      "district-cinder-row",
+      "district-the-northbank"
+    ],
+    "borderTypes": {},
+    "minControlFactionStanding": null,
+    "dominantExchangeSystem": "favor",
+    "rumorClimate": "moderate",
+    "socialDensity": 2,
+    "reputation": 65
+  },
+  {
+    "id": "district-cinder-row",
+    "name": "Cinder Row",
+    "summary": "Where people who work for a living eat and argue.",
+    "controllingFactionId": null,
+    "contestedByFactionIds": [],
+    "shopTypes": [
+      "tavern",
+      "labor-hire",
+      "information-broker"
+    ],
+    "tags": [
+      "labor",
+      "taverns",
+      "information-market"
+    ],
+    "dangerLevel": 2,
+    "accessRestricted": false,
+    "narrativeSummary": "Where people who work for a living eat and argue. The Lantern Vale Inn is its center of gravity. Tavern conversations here are cheaply bought and expensively ignored.",
+    "adjacentDistrictIds": [
+      "district-ash-quay",
+      "district-the-mireward",
+      "district-the-below"
+    ],
+    "borderTypes": {},
+    "minControlFactionStanding": null,
+    "dominantExchangeSystem": "coin",
+    "rumorClimate": "saturated",
+    "socialDensity": 5,
+    "reputation": 35
+  },
+  {
+    "id": "district-the-northbank",
+    "name": "The Northbank",
+    "summary": "The city that thinks of itself as the city.",
+    "controllingFactionId": "faction-house-sorn",
+    "contestedByFactionIds": [],
+    "shopTypes": [
+      "legal-registry",
+      "civic-seal",
+      "noble-house"
+    ],
+    "tags": [
+      "civic",
+      "legal",
+      "contracts"
+    ],
+    "dangerLevel": 1,
+    "accessRestricted": false,
+    "narrativeSummary": "The city that thinks of itself as the city. Civic seals, contract registries, old money. Nothing said publicly here is accidental. The dry rumor climate is a choice, not a condition.",
+    "adjacentDistrictIds": [
+      "district-ash-quay",
+      "district-the-mireward"
+    ],
+    "borderTypes": {},
+    "minControlFactionStanding": null,
+    "dominantExchangeSystem": "information",
+    "rumorClimate": "dry",
+    "socialDensity": 2,
+    "reputation": 75
+  },
+  {
+    "id": "district-the-below",
+    "name": "The Below",
+    "summary": "Does not appear on any official city map.",
+    "controllingFactionId": null,
+    "contestedByFactionIds": [],
+    "shopTypes": [
+      "black-market",
+      "oath-broker",
+      "debt-underground"
+    ],
+    "tags": [
+      "dens",
+      "oath-brokers",
+      "no-face-names",
+      "debt-underground"
+    ],
+    "dangerLevel": 5,
+    "accessRestricted": true,
+    "narrativeSummary": "Does not appear on any official city map. Three kinds of person operate here: those who owe something they cannot repay publicly, those who collect on such debts, and those who broker between them.",
+    "adjacentDistrictIds": [
+      "district-cinder-row"
+    ],
+    "borderTypes": {},
+    "minControlFactionStanding": null,
+    "dominantExchangeSystem": "violence",
+    "rumorClimate": "moderate",
+    "socialDensity": 3,
+    "reputation": 20
   }
 ]
