@@ -74,8 +74,8 @@ const baseState: GameState = {
   resolvedDialogueChoices: {},
   house: {
     rooms: [
-      { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false },
-      { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false },
+      { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false, roomFunction: null },
+      { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false, roomFunction: null },
     ],
     vaultUnlocked: false,
     rosterBonus: 0,

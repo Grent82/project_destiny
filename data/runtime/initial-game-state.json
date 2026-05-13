@@ -403,56 +403,64 @@
         "name": "Entrance Hall",
         "state": "intact",
         "repairCost": 0,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-marion-quarters",
         "name": "Marion's Quarters",
         "state": "intact",
         "repairCost": 0,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-bureau",
         "name": "Bureau",
         "state": "damaged",
         "repairCost": 15,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-kitchen",
         "name": "Kitchen",
         "state": "damaged",
         "repairCost": 20,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-study",
         "name": "Study",
         "state": "stripped",
         "repairCost": 35,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-master-chamber",
         "name": "Master's Chamber",
         "state": "stripped",
         "repairCost": 45,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-vault",
         "name": "Cellar / Vault",
         "state": "locked",
         "repairCost": 0,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       },
       {
         "roomId": "room-garret",
         "name": "Garret",
         "state": "collapsed",
         "repairCost": 130,
-        "searched": false
+        "searched": false,
+        "roomFunction": null
       }
     ],
     "vaultUnlocked": false

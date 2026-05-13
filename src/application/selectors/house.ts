@@ -20,3 +20,22 @@ export const selectHouseRepairSummary = createSelector([selectGame], (game) => {
   )
   return { totalRepairCost, damagedCount, intactCount, canAffordAny, vaultUnlocked: game.house.vaultUnlocked }
 })
+
+import { ROOM_FUNCTION_CAPACITY_BONUS } from '../commands/assignRoomFunction'
+
+const BASE_CREW_CAPACITY = 4
+
+export const selectCrewCapacity = createSelector([selectGame], (game) => {
+  const functionBonus = game.house.rooms
+    .filter((r) => r.state === 'intact' && r.roomFunction !== null)
+    .reduce((sum, r) => sum + (ROOM_FUNCTION_CAPACITY_BONUS[r.roomFunction!] ?? 0), 0)
+
+  const total = BASE_CREW_CAPACITY + game.house.rosterBonus + functionBonus
+  return {
+    base: BASE_CREW_CAPACITY,
+    rosterBonus: game.house.rosterBonus,
+    functionBonus,
+    total,
+    filled: game.roster.length,
+  }
+})
