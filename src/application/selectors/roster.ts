@@ -8,6 +8,7 @@ export const selectRosterEntries = createSelector(
   (roster) => roster.map((npc) => {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const def = npcDef ?? contentCatalog.enemyNpcsById.get(npc.npcId)
+    const quirks = npcDef?.quirks ?? []
     return {
       npcId: npc.npcId,
       name: def?.name ?? npc.npcId,
@@ -21,6 +22,11 @@ export const selectRosterEntries = createSelector(
       fatigue: npc.states.fatigue,
       loyalty: npc.traits.loyalty,
       skills: npc.skills,
+      // Attachment moment fields
+      firstQuirkText: quirks[0]?.text ?? null,
+      backgroundPhrase: npcDef?.background ? npcDef.background.split('.')[0] : null,
+      ageBand: npcDef?.ageBand ?? null,
+      sex: npcDef?.sex ?? null,
     }
   }),
 )

@@ -89,6 +89,11 @@ export function RosterScreen() {
                         )
                       })()}
                     </span>
+                    {entry.firstQuirkText && (
+                      <p style={{ margin: '0.1rem 0 0', fontSize: 'var(--size-xs, 0.75rem)', color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'left', lineHeight: 1.3 }}>
+                        {entry.firstQuirkText.charAt(0).toUpperCase() + entry.firstQuirkText.slice(1)}.
+                      </p>
+                    )}
                     <div className="badge-row">
                       <span className="badge">{entry.status}</span>
                     </div>
