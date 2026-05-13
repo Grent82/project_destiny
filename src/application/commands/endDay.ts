@@ -1,5 +1,6 @@
 import type { GameState } from "../../domain"
 import type { CaptivityCondition } from "../../domain/npc/contracts"
+import { selectNpcCoercionRisk } from "../selectors/npcs"
 import { appendActivityLogEntry } from "./activityLog"
 import { evaluateEvents } from "./evaluateEvents"
 import { expireHireOffers } from "./recruitment"
@@ -106,8 +107,11 @@ function applyCaptivityDegradation(state: GameState): GameState {
       const cap = npc.captivityState
       if (!cap || (cap.status !== 'missing' && cap.status !== 'captive')) return npc
       const newDays = cap.timeHeldDays + 1
+      // High coercionRisk NPCs degrade at double speed (halved threshold)
+      const risk = selectNpcCoercionRisk(npc)
+      const threshold = risk > 0.6 ? Math.max(1, Math.floor(CAPTIVITY_DEGRADATION_DAYS / 2)) : CAPTIVITY_DEGRADATION_DAYS
       const shouldDegrade =
-        newDays > 0 && newDays % CAPTIVITY_DEGRADATION_DAYS === 0
+        newDays > 0 && newDays % threshold === 0
       const currentIdx = CONDITION_PROGRESSION.indexOf(cap.condition)
       const newCondition: CaptivityCondition =
         shouldDegrade && currentIdx < CONDITION_PROGRESSION.length - 1

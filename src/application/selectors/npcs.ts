@@ -11,7 +11,7 @@
 
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
-import type { CaptivityState, PregnancyState } from '../../domain/npc/contracts'
+import type { CaptivityState, NpcRuntimeState, PregnancyState } from '../../domain/npc/contracts'
 
 export const selectRoster = (state: RootState) => state.game.roster
 
@@ -43,3 +43,33 @@ export function selectNpcPregnancyState(
 export const selectRescuedNpcs = createSelector(selectRoster, (roster) =>
   roster.filter((npc) => npc.captivityState?.status === 'rescued'),
 )
+
+/**
+ * Compute coercion risk score for an NPC (0.0 = resilient, 1.0 = highly vulnerable).
+ *
+ * Formula: ((100 - resolve) × 0.4 + fear × 0.3 + (100 - dominance) × 0.2 + loyalty × 0.1) / 100
+ *
+ * This is a protection signal — never exposed as a raw number in the UI.
+ * The player sees only the resilience label (resilient / at risk / vulnerable).
+ */
+export function selectNpcCoercionRisk(npc: NpcRuntimeState): number {
+  const resolve = npc.attributes.resolve
+  const fear = npc.states.fear
+  const dominance = npc.traits.dominance
+  const loyalty = npc.traits.loyalty
+  return ((100 - resolve) * 0.4 + fear * 0.3 + (100 - dominance) * 0.2 + loyalty * 0.1) / 100
+}
+
+/**
+ * Derive a player-visible resilience label from coercionRisk.
+ *
+ * resilient  = risk < 0.35
+ * at risk    = risk 0.35–0.60
+ * vulnerable = risk > 0.60
+ */
+export function selectNpcResilienceLabel(npc: NpcRuntimeState): 'resilient' | 'at risk' | 'vulnerable' {
+  const risk = selectNpcCoercionRisk(npc)
+  if (risk < 0.35) return 'resilient'
+  if (risk <= 0.60) return 'at risk'
+  return 'vulnerable'
+}

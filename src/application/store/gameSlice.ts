@@ -2,6 +2,7 @@ import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { CorridorStatus, CouncilVoteEvent, GameState } from '../../domain'
 import type { Attributes, Skills, Traits, WorldNpcDisposition, CaptivityState } from '../../domain/npc/contracts'
+import { selectNpcCoercionRisk } from '../selectors/npcs'
 import type { HouseExteriorTier } from '../../domain/game/contracts'
 import type { InstitutionalTier } from '../../domain/governance/contracts'
 import { getRenownLevel } from '../../domain/progression/contracts'
@@ -1228,6 +1229,10 @@ const gameSlice = createSlice({
       if (!npc || !npc.captivityState) return
       const cap = npc.captivityState
 
+      // coercionRisk amplifies recovery penalties — vulnerable NPCs take longer to recover
+      const risk = selectNpcCoercionRisk(npc)
+      const riskMultiplier = 1 + risk // 1.0–2.0
+
       // Apply recovery debuffs based on condition at time of rescue
       const conditionPenalties: Record<string, number> = {
         healthy: 0,
@@ -1235,7 +1240,8 @@ const gameSlice = createSlice({
         broken: 25,
         altered: 20,
       }
-      const penalty = conditionPenalties[cap.condition] ?? 0
+      const basePenalty = conditionPenalties[cap.condition] ?? 0
+      const penalty = Math.round(basePenalty * riskMultiplier)
       if (penalty > 0) {
         npc.states.health = Math.max(0, npc.states.health - penalty)
         npc.states.stress = Math.min(100, npc.states.stress + penalty * 1.5)
@@ -1245,6 +1251,19 @@ const gameSlice = createSlice({
       // Trust drops, fear rises from captivity trauma
       npc.captivityState = { ...cap, status: 'rescued' }
       npc.assignment = 'recovering'
+
+      // Rare world-generated aftermath: coercionRisk + timeHeld + condition as contributing factors.
+      // Probability is NEVER exposed to the player; set only via internal event resolution.
+      if (cap.condition === 'broken' || cap.condition === 'altered') {
+        const aftermathRoll = (npcId.charCodeAt(npcId.length - 1) + cap.timeHeldDays) % 100 / 100
+        if (aftermathRoll < risk * 0.5) {
+          npc.pregnancyState = {
+            context: 'unknown',
+            daysElapsed: 0,
+            questTag: null,
+          }
+        }
+      }
 
       state.activityLog.unshift({
         id: `log-${state.day}-${state.timeSlot}-rescue-${npcId}`,
