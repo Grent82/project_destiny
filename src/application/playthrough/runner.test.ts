@@ -167,3 +167,87 @@ describe('playthrough runner contract', () => {
     })
   })
 })
+
+import { formatPlaythroughReport, diffBranchResults } from './runner'
+import type { RunResult } from './contracts'
+import { initialGameStateSnapshot } from '../store/initialGameState'
+
+function makeRunResult(overrides: Partial<RunResult> = {}): RunResult {
+  return {
+    scenarioId: 'test-scenario',
+    finalState: { ...initialGameStateSnapshot },
+    checkpoints: {},
+    trace: [{ label: 'step-1', status: 'ok' }],
+    failures: [],
+    passed: true,
+    ...overrides,
+  }
+}
+
+describe('formatPlaythroughReport', () => {
+  it('includes scenario id and PASSED status for clean run', () => {
+    const report = formatPlaythroughReport(makeRunResult())
+    expect(report).toContain('test-scenario')
+    expect(report).toContain('PASSED')
+  })
+
+  it('shows FAILED and failure count when there are failures', () => {
+    const result = makeRunResult({
+      passed: false,
+      failures: [{ stepLabel: 'step-1', assertionId: 'a', description: 'money too low' }],
+    })
+    const report = formatPlaythroughReport(result)
+    expect(report).toContain('FAILED')
+    expect(report).toContain('1 failure')
+    expect(report).toContain('money too low')
+  })
+
+  it('includes final state metrics', () => {
+    const report = formatPlaythroughReport(makeRunResult())
+    expect(report).toContain('Day:')
+    expect(report).toContain('Money:')
+    expect(report).toContain('Roster:')
+    expect(report).toContain('Unrest:')
+  })
+
+  it('shows branch summary when branches are present', () => {
+    const result = makeRunResult({
+      branches: {
+        'branch-a': makeRunResult({ scenarioId: 'branch-a', passed: true }),
+        'branch-b': makeRunResult({ scenarioId: 'branch-b', passed: false, failures: [{ stepLabel: 's', assertionId: 'x', description: 'fail' }] }),
+      },
+    })
+    const report = formatPlaythroughReport(result)
+    expect(report).toContain('branch-a')
+    expect(report).toContain('branch-b')
+  })
+})
+
+describe('diffBranchResults', () => {
+  it('reports no meaningful deltas when states are identical', () => {
+    const r = makeRunResult()
+    const diff = diffBranchResults('A', r, 'B', r)
+    expect(diff).toContain('no meaningful metric deltas')
+  })
+
+  it('highlights money difference', () => {
+    const base = makeRunResult({ finalState: { ...initialGameStateSnapshot, money: 100 } })
+    const compare = makeRunResult({ finalState: { ...initialGameStateSnapshot, money: 250 } })
+    const diff = diffBranchResults('base', base, 'compare', compare)
+    expect(diff).toContain('Money')
+    expect(diff).toContain('+150')
+  })
+
+  it('highlights last encounter outcome change', () => {
+    const base = makeRunResult({ finalState: { ...initialGameStateSnapshot, lastEncounterSummary: null } })
+    const compare = makeRunResult({
+      finalState: {
+        ...initialGameStateSnapshot,
+        lastEncounterSummary: { outcome: 'victory', label: 'Victory', day: 1, timeSlot: 'morning', linkedQuestId: null, noteLines: [] },
+      },
+    })
+    const diff = diffBranchResults('base', base, 'compare', compare)
+    expect(diff).toContain('Last encounter')
+    expect(diff).toContain('victory')
+  })
+})

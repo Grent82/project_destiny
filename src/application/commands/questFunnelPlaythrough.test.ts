@@ -44,13 +44,13 @@ describe('Quest funnel — delivery contract (quest-nightbloom-extract)', () => 
 
   it('adds a lead and exposes it as available', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     expect(state.availableQuestLeads.some((l) => l.questId === QUEST_ID)).toBe(true)
   })
 
   it('accepts the lead and creates an active quest', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     const accepted = acceptQuestFromLead(state, QUEST_ID)
     expect(accepted).toBe(true)
     const runtime = state.activeQuests.find((q) => q.questId === QUEST_ID)
@@ -60,7 +60,7 @@ describe('Quest funnel — delivery contract (quest-nightbloom-extract)', () => 
 
   it('cannot skip to execution without advancing to on-site first', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     // resolveSimpleContractObjective requires completedSteps >= 2
     const resolved = resolveSimpleContractObjective(state, QUEST_ID)
@@ -71,7 +71,7 @@ describe('Quest funnel — delivery contract (quest-nightbloom-extract)', () => 
 
   it('travel to incident district is required before on-site step', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     // Quest context marks the incident district
     const runtime = state.activeQuests.find((q) => q.questId === QUEST_ID)
@@ -80,7 +80,7 @@ describe('Quest funnel — delivery contract (quest-nightbloom-extract)', () => 
 
   it('advances to on-site after explicit step', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     const advanced = advanceToOnSiteStep(state, QUEST_ID)
     expect(advanced).toBe(true)
@@ -90,7 +90,7 @@ describe('Quest funnel — delivery contract (quest-nightbloom-extract)', () => 
 
   it('resolves the quest after on-site step is taken', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     advanceToOnSiteStep(state, QUEST_ID)
     const resolved = resolveSimpleContractObjective(state, QUEST_ID)
@@ -102,7 +102,7 @@ describe('Quest funnel — delivery contract (quest-nightbloom-extract)', () => 
   it('preserves quest identity (questId and title) through the full funnel', () => {
     const template = findQuest(QUEST_ID)
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     const runtime = state.activeQuests.find((q) => q.questId === QUEST_ID)
     expect(runtime?.questId).toBe(QUEST_ID)
@@ -118,7 +118,7 @@ describe('Quest funnel — investigation contract (quest-ledger-recovery)', () =
 
   it('accepted investigation quest starts in the correct district', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     const runtime = state.activeQuests.find((q) => q.questId === QUEST_ID)
     expect(runtime?.context.incidentDistrictId).toBe(DISTRICT_ID)
@@ -126,7 +126,7 @@ describe('Quest funnel — investigation contract (quest-ledger-recovery)', () =
 
   it('quest remains active and open after acceptance without resolution', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     const runtime = state.activeQuests.find((q) => q.questId === QUEST_ID)
     expect(runtime?.status).toBe('active')
@@ -135,7 +135,7 @@ describe('Quest funnel — investigation contract (quest-ledger-recovery)', () =
 
   it('travel to incident district updates game location context', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     const afterTravel = travelToDistrict(state, DISTRICT_ID)
     expect(afterTravel.currentDistrictId).toBe(DISTRICT_ID)
@@ -150,7 +150,7 @@ describe('Quest funnel — delivery contract complication check (quest-nightbloo
 
   it('complication risk 0 always succeeds', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     advanceToOnSiteStep(state, QUEST_ID)
     const result = resolveWithComplicationCheck(state, QUEST_ID, 0)
@@ -159,7 +159,7 @@ describe('Quest funnel — delivery contract complication check (quest-nightbloo
 
   it('complication risk 1 always triggers complication (failed)', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     advanceToOnSiteStep(state, QUEST_ID)
     const result = resolveWithComplicationCheck(state, QUEST_ID, 1)
@@ -168,7 +168,7 @@ describe('Quest funnel — delivery contract complication check (quest-nightbloo
 
   it('not_ready returned if on-site step not taken first', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     const result = resolveWithComplicationCheck(state, QUEST_ID, 0)
     expect(result).toBe('not_ready')
@@ -176,7 +176,7 @@ describe('Quest funnel — delivery contract complication check (quest-nightbloo
 
   it('aftermath: failed quest is removed from active quests (no dangling state)', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, QUEST_ID, { districtId: DISTRICT_ID })
+    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
     acceptQuestFromLead(state, QUEST_ID)
     advanceToOnSiteStep(state, QUEST_ID)
     resolveWithComplicationCheck(state, QUEST_ID, 1)
@@ -192,8 +192,8 @@ describe('Quest funnel — delivery contract complication check (quest-nightbloo
 describe('Quest funnel — lead deduplication', () => {
   it('adding the same lead twice does not duplicate it', () => {
     const state = freshState()
-    addQuestLeadIfNew(state, 'quest-nightbloom-extract', { districtId: 'district-the-hollows' })
-    addQuestLeadIfNew(state, 'quest-nightbloom-extract', { districtId: 'district-the-hollows' })
+    addQuestLeadIfNew(state, 'quest-nightbloom-extract', { discoveryDistrictId: 'district-the-hollows' })
+    addQuestLeadIfNew(state, 'quest-nightbloom-extract', { discoveryDistrictId: 'district-the-hollows' })
     const leads = state.availableQuestLeads.filter((l) => l.questId === 'quest-nightbloom-extract')
     expect(leads).toHaveLength(1)
   })
