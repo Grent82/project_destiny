@@ -150,7 +150,8 @@
         ]
       },
       "relationships": {},
-      "trainingFocus": null
+      "trainingFocus": null,
+      "npcMemory": []
     }
   ],
   "inventory": [

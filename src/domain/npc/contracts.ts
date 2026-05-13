@@ -189,6 +189,15 @@ export const npcDefinitionSchema = z
   })
   .strict()
 
+export const npcMemoryEntrySchema = z.object({
+  day: z.number().int().nonnegative(),
+  event: z.string().min(1),
+  participants: z.array(z.string()).optional(),
+  axisDelta: z.record(z.string(), z.number()).optional(),
+})
+
+export const MAX_NPC_MEMORY_ENTRIES = 20
+
 export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
@@ -204,6 +213,7 @@ export const npcRuntimeStateSchema = z
     states: statesSchema,
     loadout: loadoutSchema,
     relationships: z.record(entityIdSchema, relationshipAxesSchema),
+    npcMemory: z.array(npcMemoryEntrySchema).default([]),
   })
   .strict()
 
@@ -213,6 +223,7 @@ export type NpcAssignment = z.infer<typeof npcAssignmentSchema>
 export type NpcBond = z.infer<typeof npcBondSchema>
 export type BondType = z.infer<typeof bondTypeSchema>
 export type NpcDefinition = z.infer<typeof npcDefinitionSchema>
+export type NpcMemoryEntry = z.infer<typeof npcMemoryEntrySchema>
 export type NpcMotivation = z.infer<typeof npcMotivationSchema>
 export type NpcQuirk = z.infer<typeof npcQuirkSchema>
 export type QuirkTag = z.infer<typeof quirkTagSchema>

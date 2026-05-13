@@ -69,6 +69,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
     consumableIds: [],
   },
   relationships: {},
+  npcMemory: [],
 }
 
 /** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */

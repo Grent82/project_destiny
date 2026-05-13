@@ -4,8 +4,10 @@ import {
   applyRelationshipDelta,
   applyPassiveDrift,
   applyProximityGains,
+  writeNpcMemory,
 } from './adjustRelationship'
 import type { GameState } from '../../domain'
+import { initialStateWithIda } from './testFixtures'
 
 function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
   return gameStateSchema.parse({
@@ -126,5 +128,28 @@ describe('applyProximityGains', () => {
     const state = makeMinimalState()
     applyProximityGains(state, [])
     expect(Object.keys(state.relationships).length).toBe(0)
+  })
+})
+
+describe('npcMemory — writeNpcMemory', () => {
+  it('writes a memory entry to a roster NPC', () => {
+    const state = structuredClone(initialStateWithIda)
+    writeNpcMemory(state, 'npc-ida-rhys', 'Test event')
+    const npc = state.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    expect(npc.npcMemory.length).toBe(1)
+    expect(npc.npcMemory[0]!.event).toBe('Test event')
+  })
+
+  it('caps memory at MAX_NPC_MEMORY_ENTRIES', () => {
+    const state = structuredClone(initialStateWithIda)
+    for (let i = 0; i < 25; i++) writeNpcMemory(state, 'npc-ida-rhys', `event-${i}`)
+    const npc = state.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    expect(npc.npcMemory.length).toBe(20)
+    expect(npc.npcMemory[npc.npcMemory.length - 1]!.event).toBe('event-24')
+  })
+
+  it('no-ops for unknown npcId', () => {
+    const state = structuredClone(initialStateWithIda)
+    expect(() => writeNpcMemory(state, 'npc-ghost-doesnotexist', 'ignored')).not.toThrow()
   })
 })

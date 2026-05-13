@@ -1,6 +1,6 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
-import { applyRelationshipDelta } from './adjustRelationship'
+import { applyRelationshipDelta, writeNpcMemory } from './adjustRelationship'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { getJobForNpc } from '../content/jobCatalog'
@@ -63,12 +63,14 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
           'system',
           `${npcName} sensed trouble in ${district} early and stepped back. ${cautionQuirk.text.charAt(0).toUpperCase() + cautionQuirk.text.slice(1)}.`,
         )
+        writeNpcMemory(afterEvents, npc.npcId, `Sensed trouble in ${district} and withdrew`, [districtId])
       } else {
         afterEvents = appendActivityLogEntry(
           afterEvents,
           'system',
           `${npcName} got into a confrontation at ${district}. Tension is running higher there.`,
         )
+        writeNpcMemory(afterEvents, npc.npcId, `Got into a confrontation in ${district}`, [districtId])
       }
       if (afterEvents.districtTension[districtId] !== undefined) {
         afterEvents = {
@@ -97,6 +99,7 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
         'system',
         `${npcName} made a useful contact in ${district}. A new opportunity may follow.`,
       )
+      writeNpcMemory(afterEvents, npc.npcId, `Made a contact in ${district}`)
     } else if (action === 'faction_favor') {
       const factionIds = contentCatalog.factions.map((f) => f.id)
       const factionId = factionIds[Math.floor(rng() * factionIds.length)]!
