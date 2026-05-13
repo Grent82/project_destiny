@@ -63,10 +63,10 @@ export function DashboardScreen(props: DashboardScreenProps) {
         </p>
         <button
           className="action-button action-button--primary"
-          onClick={() => dispatch(gameActions.advanceTimeSlot())}
+          onClick={() => dispatch(gameActions.wait())}
           type="button"
         >
-          {summary.timeSlot === 'night' ? 'End Night →' : `End ${summary.timeSlot.charAt(0).toUpperCase() + summary.timeSlot.slice(1)} →`}
+          Wait (1 slot)
         </button>
       </div>
       <div className="dashboard-critical-strip">

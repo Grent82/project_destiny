@@ -26,6 +26,7 @@ import { settleQuestFailure, settleQuestSuccess } from '../commands/questSettlem
 import { resolveDialogueChoice } from '../commands/dialogue'
 import { searchHouseRoom } from '../commands/houseSearch'
 import { useItem as useItemCommand } from '../commands/useItem'
+import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
 import {
   addQuestLeadIfNew,
   acceptQuestFromLead,
@@ -942,6 +943,24 @@ const gameSlice = createSlice({
     useItem(state, action: PayloadAction<{ instanceId: string; action: 'equip' | 'consume' | 'install' | 'present' | 'archive'; targetNpcId?: string }>) {
       const snapshot = current(state) as GameState
       return useItemCommand(snapshot, action.payload)
+    },
+
+    /** Intentional time spend: 'Wait' — costs 1 slot, no other effect. */
+    wait(state) {
+      const snapshot = current(state) as GameState
+      return advanceTimeSlotInState(snapshot)
+    },
+
+    /** Brief rest: 1 slot advance, partial fatigue/stress recovery. */
+    sleepBrief(state) {
+      const snapshot = current(state) as GameState
+      return sleepBrief(snapshot)
+    },
+
+    /** Full sleep: advance to next morning, full fatigue + partial stress recovery. */
+    sleepToMorning(state) {
+      const snapshot = current(state) as GameState
+      return sleepToMorning(snapshot)
     },
 
     unlockVault(state) {

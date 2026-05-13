@@ -21,6 +21,7 @@ import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng, type Rng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
+import { advanceTimeSlotInState } from './timeAdvance'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
 
@@ -1150,9 +1151,11 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
   }
 
-  return appendActivityLogEntry(
-    { ...nextState, rngSeed: seeded.getSeed() },
-    'system',
-    'The encounter is concluded. The squad returns.',
+  return advanceTimeSlotInState(
+    appendActivityLogEntry(
+      { ...nextState, rngSeed: seeded.getSeed() },
+      'system',
+      'The encounter is concluded. The squad returns.',
+    ),
   )
 }

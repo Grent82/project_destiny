@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { generateDistrictHireOffers } from './generateHireOffers'
+import { advanceTimeSlotInState } from './timeAdvance'
 
 function buildTravelMessage(name: string, dangerLevel: number): string {
   if (dangerLevel >= 5) return `You move through ${name}. The street remembers you.`
@@ -58,5 +59,6 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
     }
   }
 
-  return nextState
+  // Travel costs 1 time slot
+  return advanceTimeSlotInState(nextState)
 }
