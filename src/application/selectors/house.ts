@@ -87,16 +87,100 @@ export const selectExteriorTierAdvanceable = createSelector(
   }
 )
 
-/** House prestige score (0–100), weighted by exterior tier + functional rooms. */
-export const selectHousePrestige = createSelector([selectGame], (game): number => {
+/** House prestige tier names */
+export type HousePrestigeTier = 'collapsed' | 'occupied' | 'established' | 'recognized' | 'prominent'
+
+export const PRESTIGE_TIER_LABELS: Record<HousePrestigeTier, string> = {
+  collapsed: 'Collapsed',
+  occupied: 'Occupied',
+  established: 'Established',
+  recognized: 'Recognized',
+  prominent: 'Prominent',
+}
+
+/** Minimum prestige score for each tier. */
+const PRESTIGE_TIER_THRESHOLDS: Array<{ tier: HousePrestigeTier; min: number }> = [
+  { tier: 'prominent',   min: 75 },
+  { tier: 'recognized',  min: 50 },
+  { tier: 'established', min: 25 },
+  { tier: 'occupied',    min: 10 },
+  { tier: 'collapsed',   min: 0 },
+]
+
+function computePrestigeTier(score: number): HousePrestigeTier {
+  return PRESTIGE_TIER_THRESHOLDS.find((t) => score >= t.min)?.tier ?? 'collapsed'
+}
+
+/**
+ * House prestige is a DERIVED metric — never stored, always computed.
+ *
+ * Score formula:
+ *   exteriorState tier value (0–80)
+ *   + repaired rooms with assigned functions × 3
+ *   + intact rooms (without function) × 1
+ *   + installed house modules × 4
+ *
+ * Max theoretical score: ~120+ (clamped to 100)
+ */
+export const selectHousePrestige = createSelector([selectGame], (game) => {
   const tierScore: Record<HouseExteriorTier, number> = {
     ruined: 0, patched: 10, maintained: 25, restored: 50, grand: 80,
   }
-  const base = tierScore[game.house.exteriorState]
-  const functionBonus = game.house.rooms.filter(
+  const exteriorScore = tierScore[game.house.exteriorState]
+  const roomsWithFunction = game.house.rooms.filter(
     (r) => r.state === 'intact' && r.roomFunction !== null
-  ).length * 2
-  return Math.min(100, base + functionBonus)
+  ).length
+  const intactOnly = game.house.rooms.filter(
+    (r) => r.state === 'intact' && r.roomFunction === null
+  ).length
+  const moduleScore = game.installedHouseModules.length * 4
+
+  const score = Math.min(100, exteriorScore + roomsWithFunction * 3 + intactOnly * 1 + moduleScore)
+  const tier = computePrestigeTier(score)
+
+  return {
+    score,
+    tier,
+    label: PRESTIGE_TIER_LABELS[tier],
+    breakdown: {
+      exteriorScore,
+      roomsWithFunction,
+      intactOnly,
+      moduleScore,
+    },
+  }
+})
+
+export type ContractTier = 'petty' | 'standard' | 'high_tier' | 'senior'
+
+/**
+ * Content gates derived from house prestige tier.
+ *
+ * collapsed:    no faction contracts, no specialist recruitment
+ * occupied:     petty contracts, basic NPCs
+ * established:  standard contracts, reputation-sensitive NPCs
+ * recognized:   high-tier contracts, social scenes unlocked
+ * prominent:    senior guild contacts, full political access
+ */
+export const selectContentGates = createSelector(selectHousePrestige, (prestige) => {
+  const tier = prestige.tier
+
+  const contractsByTier: Record<HousePrestigeTier, ContractTier[]> = {
+    collapsed:   [],
+    occupied:    ['petty'],
+    established: ['petty', 'standard'],
+    recognized:  ['petty', 'standard', 'high_tier'],
+    prominent:   ['petty', 'standard', 'high_tier', 'senior'],
+  }
+
+  return {
+    canAccessContracts: contractsByTier[tier],
+    socialScenesUnlocked: tier === 'recognized' || tier === 'prominent',
+    specialistRecruitUnlocked: tier !== 'collapsed',
+    politicalLeverageUnlocked: tier === 'prominent',
+    prestigeTier: tier,
+    prestigeLabel: PRESTIGE_TIER_LABELS[tier],
+  }
 })
 
 // Defense constants

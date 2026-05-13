@@ -100,15 +100,21 @@ describe('house exterior state selectors', () => {
   })
 
   describe('selectHousePrestige', () => {
-    it('starts at 0 for ruined house', () => {
+    it('starts at collapsed tier for ruined house', () => {
       const store = createGameStore()
-      expect(selectHousePrestige(store.getState())).toBe(0)
+      // Initial state may have some intact rooms giving a small score, but tier is still collapsed
+      expect(selectHousePrestige(store.getState()).tier).toBe('collapsed')
     })
 
-    it('increases when exterior tier advances', () => {
+    it('returns collapsed tier for ruined house', () => {
+      const store = createGameStore()
+      expect(selectHousePrestige(store.getState()).tier).toBe('collapsed')
+    })
+
+    it('increases score when exterior tier advances', () => {
       const store = createGameStore()
       store.dispatch(gameActions.advanceExteriorState({ targetTier: 'restored' }))
-      expect(selectHousePrestige(store.getState())).toBeGreaterThan(0)
+      expect(selectHousePrestige(store.getState()).score).toBeGreaterThan(0)
     })
   })
 })
