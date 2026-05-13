@@ -9,6 +9,9 @@ export const eventOutcomeTypeSchema = z.enum([
   'addActivityLogEntry',
   'setCorridorStatus',
   'adjustNpcRelationship',
+  'createQuestLead',
+  'updateQuestStage',
+  'unlockNpc',
 ])
 
 export const eventOutcomeSchema = z
@@ -20,6 +23,9 @@ export const eventOutcomeSchema = z
     message: z.string().optional(),
     npcId: z.string().optional(),
     axis: z.enum(['affinity', 'respect', 'fear', 'trust', 'loyalty']).optional(),
+    questId: z.string().optional(),
+    stageId: z.string().optional(),
+    objectiveLabel: z.string().optional(),
   })
   .strict()
 
@@ -76,6 +82,9 @@ export const eventTemplateSchema = z
     tags: z.array(z.string()).default([]),
     repeatable: z.boolean().default(false),
     cooldownDays: z.number().int().min(1).default(7),
+    sourceDistrictId: z.string().nullable().default(null),
+    sourceNpcId: z.string().nullable().default(null),
+    presentationFlavour: z.string().nullable().default(null),
   })
   .strict()
 
@@ -86,7 +95,22 @@ export const pendingEventSchema = z
   })
   .strict()
 
+/** Richer event instance with provenance and resolution history. */
+export const eventInstanceSchema = z
+  .object({
+    instanceId: z.string(),
+    eventId: entityIdSchema,
+    firedOnDay: z.number().int().positive(),
+    resolvedOnDay: z.number().int().positive().nullable().default(null),
+    chosenOptionId: z.string().nullable().default(null),
+    sourceDistrictId: z.string().nullable().default(null),
+    sourceNpcId: z.string().nullable().default(null),
+    presentationText: z.string().nullable().default(null),
+  })
+  .strict()
+
 export type EventTemplate = z.infer<typeof eventTemplateSchema>
 export type EventChoice = z.infer<typeof eventChoiceSchema>
 export type EventOutcome = z.infer<typeof eventOutcomeSchema>
 export type PendingEvent = z.infer<typeof pendingEventSchema>
+export type EventInstance = z.infer<typeof eventInstanceSchema>

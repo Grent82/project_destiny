@@ -68,6 +68,9 @@ describe('evaluateEvents', () => {
         tags: [],
         repeatable: false,
         cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(

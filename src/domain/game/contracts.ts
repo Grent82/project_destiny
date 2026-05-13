@@ -6,7 +6,7 @@ import { expeditionStateSchema } from '../expedition/contracts'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
 import { relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
-import { pendingEventSchema } from '../events/contracts'
+import { eventInstanceSchema, pendingEventSchema } from '../events/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
 import {
   armorDefinitionSchema,
@@ -106,7 +106,7 @@ export const hireOfferSchema = z
     requiredFactionId: z.string().nullable().default(null),
     requiredFactionStanding: z.number().default(0),
     turnsAvailable: z.number().default(3),
-    source: z.enum(['district', 'combat']).optional(),
+    source: z.enum(['district', 'combat', 'event']).optional(),
   })
   .strict()
 
@@ -129,6 +129,7 @@ export const gameStateSchema = z
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
     activeCombat: activeCombatStateSchema.nullable(),
     pendingEvents: z.array(pendingEventSchema).default([]),
+    eventInstances: z.array(eventInstanceSchema).default([]),
     currentDistrictId: z.string().nullable().default(null),
     availableForHire: z.array(hireOfferSchema).default([]),
     availableQuestLeads: z.array(questLeadRuntimeSchema).default([]),

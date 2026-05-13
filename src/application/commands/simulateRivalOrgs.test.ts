@@ -85,6 +85,7 @@ const baseState: GameState = {
   rumors: [],
   bondVisibility: {},
   ownedItems: [],
+  eventInstances: [],
 }
 
 describe('simulateRivalOrgs', () => {

@@ -84,6 +84,76 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
           }
         }
         break
+      case 'createQuestLead':
+        if (outcome.questId) {
+          const alreadyHasLead = next.availableQuestLeads.some((l) => l.questId === outcome.questId)
+          const alreadyActive = next.activeQuests.some((q) => q.questId === outcome.questId)
+          if (!alreadyHasLead && !alreadyActive) {
+            next = {
+              ...next,
+              availableQuestLeads: [
+                ...next.availableQuestLeads,
+                {
+                  leadId: `${outcome.questId}-lead-${next.day}`,
+                  questId: outcome.questId,
+                  discoveredDay: next.day,
+                  discoverySource: null,
+                  discoveryDistrictId: null,
+                  sourceNpcId: null,
+                  sourcePoiId: null,
+                  issuerFactionId: null,
+                  expiresOnDay: null,
+                  freshness: 'fresh' as const,
+                },
+              ],
+            }
+          }
+        }
+        break
+      case 'updateQuestStage':
+        if (outcome.questId && outcome.stageId) {
+          next = {
+            ...next,
+            activeQuests: next.activeQuests.map((q) =>
+              q.questId === outcome.questId
+                ? {
+                    ...q,
+                    stageId: outcome.stageId!,
+                    currentObjectiveLabel: outcome.objectiveLabel ?? q.currentObjectiveLabel,
+                    journalEntries: outcome.message
+                      ? [...q.journalEntries, outcome.message]
+                      : q.journalEntries,
+                  }
+                : q,
+            ),
+          }
+        }
+        break
+      case 'unlockNpc': {
+        if (outcome.npcId) {
+          const alreadyHired = next.roster.some((r) => r.npcId === outcome.npcId)
+          const alreadyOffered = next.availableForHire.some((o) => o.npcId === outcome.npcId)
+          if (!alreadyHired && !alreadyOffered) {
+            next = {
+              ...next,
+              availableForHire: [
+                ...next.availableForHire,
+                {
+                  npcId: outcome.npcId,
+                  discoveredInDistrictId: next.currentDistrictId ?? '',
+                  wagePerDay: 15,
+                  signingBonus: 0,
+                  requiredFactionId: null,
+                  requiredFactionStanding: 0,
+                  turnsAvailable: 5,
+                  source: 'event' as const,
+                },
+              ],
+            }
+          }
+        }
+        break
+      }
     }
   }
   return next

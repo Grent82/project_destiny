@@ -488,5 +488,6 @@
       "location": "inventory",
       "quantity": 3
     }
-  ]
+  ],
+  "eventInstances": []
 }
