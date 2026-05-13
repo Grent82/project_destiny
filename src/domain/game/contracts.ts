@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { activeCombatStateSchema } from '../combat/contracts'
+import { rumorSchema, bondVisibilitySchema } from '../rumors/contracts'
 import { expeditionStateSchema } from '../expedition/contracts'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
 import { relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
@@ -229,6 +230,8 @@ export const gameStateSchema = z
     })),
     saveVersion: z.number().int().min(1).default(1),
     rngSeed: z.number().int().nonnegative().default(42),
+    rumors: z.array(rumorSchema).default([]),
+    bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),
   })
   .strict()
 

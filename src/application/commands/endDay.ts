@@ -13,6 +13,7 @@ import { applyNpcConsequences } from "./applyNpcConsequences"
 import { applyPolitics } from "./applyPolitics"
 import { applyNpcAgency } from "./applyNpcAgency"
 import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
+import { applyRumorSpread } from "./applyRumorSpread"
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -148,6 +149,7 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyFactionQuestBonus(afterEvents)
   afterEvents = applyNpcAgency(afterEvents, rng)
   afterEvents = applyFactionActivity(afterEvents)
+  afterEvents = applyRumorSpread(afterEvents, rng)
 
   // Steps 10-11: Rumor events + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)

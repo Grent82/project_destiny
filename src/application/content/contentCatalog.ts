@@ -27,6 +27,7 @@ import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/con
 import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
+import { rumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
 
 const poiSchema = z.object({
   id: z.string(),
@@ -52,6 +53,7 @@ const parsedItems = itemDefinitionSchema.array().parse(items)
 const parsedShops = shopDefinitionSchema.array().parse(shops)
 const parsedEvents = eventTemplateSchema.array().parse(events)
 const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
+const parsedRumorTemplates = rumorTemplateSchema.array().parse(rumorsData)
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -90,7 +92,8 @@ export const contentCatalog = {
       parsedPois.filter((p) => p.districtId === districtId),
     ])
   ),
-  rumors: rumorsData as string[],
+  rumors: parsedRumorTemplates,
+  rumorsById: toMap(parsedRumorTemplates),
   districtNameToId: new Map(parsedDistricts.map((d) => [d.name, d.id])),
 }
 
@@ -116,4 +119,8 @@ export function getDialogueTrees(): DialogueTree[] {
 
 export function safeGetNpc(npcId: string): NpcDefinition | null {
   return contentCatalog.npcsById.get(npcId) ?? null
+}
+
+export function getRumorTemplates(): RumorTemplate[] {
+  return contentCatalog.rumors
 }

@@ -464,5 +464,7 @@
     "vaultUnlocked": false
   },
   "visitedDialogueNodes": {},
-  "saveVersion": 1
+  "saveVersion": 1,
+  "rumors": [],
+  "bondVisibility": {}
 }

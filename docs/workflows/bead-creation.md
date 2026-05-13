@@ -185,44 +185,82 @@ If it changes story/world logic, it should also identify:
 - the player-facing consequence
 - the follow-through surface where the change becomes visible
 
+## Enforcement
+
+Three mechanisms ensure the template is used:
+
+### 1. Validation on create (automatic)
+
+`validation.on-create = warn` is set in `.beads/config.yaml`.
+Every `bd create` call automatically warns when `## Acceptance Criteria` is missing.
+Use `--validate` to get an error (blocks creation) instead of a warning.
+
+```bash
+bd create "My bead" --description "$(cat .beads/templates/bead-description.md)" --validate
+```
+
+### 2. Lint on session close (manual gate)
+
+Run before every session-close push:
+
+```bash
+bd lint          # check all open issues for missing sections
+bd preflight     # full pre-push check (lint + stale + orphans)
+```
+
+A bead that fails `bd lint` is not shippable. Fix the description before closing the session.
+
+### 3. Template file (authoring scaffold)
+
+The canonical scaffold is at `.beads/templates/bead-description.md`.
+
+For agents: copy-paste or pipe it as the starting point for every new description.
+
+```bash
+# Start a new bead with the template pre-filled
+bd create "Title here" \
+  --description "$(cat .beads/templates/bead-description.md)" \
+  --validate
+```
+
+Fill in each section. Remove `Fiction contract` for non-narrative Beads.
+
 ## Lightweight authoring template
 
-Use this template when creating or rewriting a Bead description.
+> The canonical scaffold lives at `.beads/templates/bead-description.md`.
+> Use that file as the authoritative source. The summary below is for quick reference only.
 
 ```text
-Why
+## Why
 What player/system problem exists?
 
-What
+## What
 What behavior changes after this bead?
 
-Why now
+## Why now
 Why is this important in the current milestone/order?
 
-Player impact
+## Player impact
 What becomes clearer, playable, or more meaningful?
 
-System impact
+## System impact
 Which models, commands, selectors, UI surfaces, content packs, or docs are affected?
 
-Does not include
+## Does not include
 Explicit non-goals.
 
-Evidence
+## Evidence
 Findings, files, screens, tests, or user reports that justify the work.
 
-Acceptance
+## Acceptance Criteria
 1. Player-visible acceptance
 2. System / technical acceptance
 3. Tests / verification acceptance
 
-Dependencies
-Required prior beads.
-
-Finding coverage
+## Finding coverage
 Which findings this bead covers.
 
-Fiction contract
+## Fiction contract
 Only when narrative-heavy.
 ```
 

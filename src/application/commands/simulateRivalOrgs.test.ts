@@ -82,6 +82,8 @@ const baseState: GameState = {
   },
   saveVersion: 1,
   rngSeed: 42,
+  rumors: [],
+  bondVisibility: {},
 }
 
 describe('simulateRivalOrgs', () => {
