@@ -12,12 +12,20 @@ import { VenueContextBanner } from './VenueContextBanner'
 export function RecruitmentScreen() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const offers = useAppSelector(selectAvailableForHire)
+  const offersRaw = useAppSelector(selectAvailableForHire)
+  const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
   const marks = useAppSelector((state) => state.game.money)
   const capacity = useAppSelector(selectRosterCapacity)
   const ledger = useAppSelector(selectLedgerSummary)
   const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
   const venueContext = useVenueContext()
+
+  // Sort: district-matched offers first, then others
+  const offers = [...offersRaw].sort((a, b) => {
+    const aMatch = a.discoveredInDistrictId === currentDistrictId ? 0 : 1
+    const bMatch = b.discoveredInDistrictId === currentDistrictId ? 0 : 1
+    return aMatch - bMatch
+  })
 
   const { isFull, current: rosterSize, total: totalSlots, houseBonus } = capacity
 
@@ -162,6 +170,9 @@ export function RecruitmentScreen() {
                   <span className="badge">{offer.turnsAvailable} day{offer.turnsAvailable !== 1 ? 's' : ''} remaining</span>
                   {offer.source === 'combat' && (
                     <span className="badge hire-badge--combat">Former Enemy</span>
+                  )}
+                  {offer.discoveredInDistrictName && (
+                    <span className="badge hire-badge--district">⬡ {offer.discoveredInDistrictName}</span>
                   )}
                 </div>
                 {canAfford && (

@@ -35,6 +35,10 @@ export const selectAvailableForHire = createSelector(
           requiredFactionStanding: offer.requiredFactionStanding,
           source: offer.source,
           institutionalBlock,
+          discoveredInDistrictId: offer.discoveredInDistrictId,
+          discoveredInDistrictName: offer.discoveredInDistrictId
+            ? contentCatalog.districtsById.get(offer.discoveredInDistrictId)?.name ?? offer.discoveredInDistrictId
+            : null,
         }
       })
       .filter((o) => !o.institutionalBlock),
