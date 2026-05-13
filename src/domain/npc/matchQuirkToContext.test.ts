@@ -22,6 +22,7 @@ const baseNpc: NpcDefinition = {
   },
   allowedTitleIds: [],
   bonds: [],
+  schedule: {},
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

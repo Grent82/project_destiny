@@ -80,7 +80,8 @@ export function selectDistrictPOIs(districtId: string) {
 export const selectDistrictMapEntries = createSelector(
   (state: RootState) => state.game.currentDistrictId,
   (state: RootState) => state.game.districtTension,
-  (currentId, tension) =>
+  (state: RootState) => state.game.timeSlot,
+  (currentId, tension, timeSlot) =>
     contentCatalog.districts.map((def) => ({
       id: def.id,
       name: def.name,
@@ -93,7 +94,7 @@ export const selectDistrictMapEntries = createSelector(
       hooks: def.hooks,
       isCurrent: def.id === currentId,
       tension: tension[def.id] ?? null,
-      worldNpcs: selectWorldNpcsByDistrict(def.id),
+      worldNpcs: selectWorldNpcsByDistrictAndSlot(def.id, timeSlot),
       adjacentDistrictIds: def.adjacentDistrictIds,
       borderTypes: def.borderTypes,
       isAdjacent: currentId !== null && def.adjacentDistrictIds.includes(currentId),
@@ -118,3 +119,43 @@ export const selectDistrictSocialProfile = (districtId: string) => {
 
 export const selectDistrictReputation = (districtId: string) =>
   contentCatalog.districtsById.get(districtId)?.reputation ?? 50
+
+import type { TimeSlot } from '../../domain'
+
+/**
+ * Returns whether a POI is available (open) in the given time slot.
+ * POIs with no availableSlots restriction default to all slots.
+ */
+export function selectPoiAvailability(poiId: string, timeSlot: TimeSlot): boolean {
+  const poi = contentCatalog.pois.find((p) => p.id === poiId)
+  if (!poi) return false
+  return poi.availableSlots.includes(timeSlot)
+}
+
+/**
+ * Returns the locationId where the NPC is currently found based on their schedule.
+ * Returns null if no schedule entry for the current slot.
+ */
+export function selectNpcCurrentLocation(npcId: string, timeSlot: TimeSlot): string | null {
+  const npc = contentCatalog.npcsById.get(npcId)
+  if (!npc?.schedule) return null
+  return (npc.schedule as Record<string, string>)[timeSlot] ?? null
+}
+
+/**
+ * Returns world NPCs in a district who are present in the current time slot.
+ */
+export function selectWorldNpcsByDistrictAndSlot(districtId: string, timeSlot: TimeSlot) {
+  return contentCatalog.npcs
+    .filter((npc) => npc.npcType === 'world' && npc.districtId === districtId)
+    .filter((npc) => {
+      if (!npc.schedule || Object.keys(npc.schedule).length === 0) return true
+      return (npc.schedule as Record<string, string>)[timeSlot] === districtId
+    })
+    .map((npc) => ({
+      id: npc.id,
+      name: npc.name,
+      description: npc.description ?? npc.background,
+      presentInSlot: true,
+    }))
+}

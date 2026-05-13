@@ -9,6 +9,10 @@
     "actions": [
       "contracts",
       "hire"
+    ],
+    "availableSlots": [
+      "morning",
+      "afternoon"
     ]
   },
   {
@@ -78,6 +82,10 @@
     "actions": [
       "shop",
       "contracts"
+    ],
+    "availableSlots": [
+      "evening",
+      "night"
     ]
   },
   {
@@ -111,6 +119,10 @@
     "factionId": "faction-gilded-court",
     "actions": [
       "shop"
+    ],
+    "availableSlots": [
+      "morning",
+      "afternoon"
     ]
   },
   {

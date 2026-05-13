@@ -1332,7 +1332,12 @@
         "targetId": "npc-ghost-valdris-fall",
         "note": "Father ran inn serving Valdris retainers. Locked box contains service tokens and unpaid writs from the old house."
       }
-    ]
+    ],
+    "schedule": {
+      "morning": "district-the-pale",
+      "afternoon": "district-the-pale",
+      "evening": "district-the-pale"
+    }
   },
   {
     "id": "npc-sister-vael",
@@ -1438,7 +1443,12 @@
         "targetId": "npc-ghost-dead-sister-vael",
         "note": "Sister erased from temple records after the Breach \u2014 smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
       }
-    ]
+    ],
+    "schedule": {
+      "morning": "district-the-pale",
+      "afternoon": "district-the-pale",
+      "evening": "district-the-pale"
+    }
   },
   {
     "id": "npc-torvald-messe",
@@ -1545,7 +1555,12 @@
         "targetId": "npc-ghost-valdris-fall",
         "note": "Father copied all noble grants before the Breach. Holds copy of the legal form that erased Valdris the first time."
       }
-    ]
+    ],
+    "schedule": {
+      "afternoon": "district-harbor",
+      "evening": "district-harbor",
+      "night": "district-harbor"
+    }
   },
   {
     "id": "npc-lira-ashcroft",
@@ -1729,7 +1744,12 @@
         "targetId": "npc-tav",
         "note": "Tav carries Bog's old habits. Bog pretends not to notice."
       }
-    ]
+    ],
+    "schedule": {
+      "afternoon": "district-ironworks",
+      "evening": "district-ironworks",
+      "night": "district-ironworks"
+    }
   },
   {
     "id": "npc-fenwick-pale",
@@ -1912,7 +1932,11 @@
         "targetId": "npc-ghost-wren-child",
         "note": "Lost a child to the Breach displacement. Has not stopped looking."
       }
-    ]
+    ],
+    "schedule": {
+      "evening": "district-the-warrens",
+      "night": "district-the-warrens"
+    }
   },
   {
     "id": "npc-osanna-cray",
@@ -2097,7 +2121,11 @@
         "targetId": "npc-ghost-cutter-crew",
         "note": "Ran with a hire crew for three seasons. The crew scattered after a job went wrong. Cutter is the one who got away."
       }
-    ]
+    ],
+    "schedule": {
+      "morning": "district-the-hollows",
+      "afternoon": "district-the-hollows"
+    }
   },
   {
     "id": "npc-old-maret",
@@ -2208,7 +2236,12 @@
         "targetId": "npc-ghost-valdris-fall",
         "note": "Was lower household accounts keeper. Falsified grain ledgers during pre-Breach winter riot. Last living witness to the servants hall."
       }
-    ]
+    ],
+    "schedule": {
+      "morning": "district-the-hollows",
+      "afternoon": "district-the-hollows",
+      "evening": "district-the-hollows"
+    }
   },
   {
     "id": "npc-enemy-harlen-voss",

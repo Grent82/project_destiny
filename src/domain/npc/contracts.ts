@@ -186,6 +186,12 @@ export const npcDefinitionSchema = z
     quirks: z.array(npcQuirkSchema).default([]),
     bonds: z.array(npcBondSchema).default([]),
     dialogueId: entityIdSchema.optional(),
+    schedule: z.object({
+      morning: z.string().optional(),
+      afternoon: z.string().optional(),
+      evening: z.string().optional(),
+      night: z.string().optional(),
+    }).default(() => ({})),
   })
   .strict()
 

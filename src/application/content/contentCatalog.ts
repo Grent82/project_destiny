@@ -20,6 +20,7 @@ import {
   itemDefinitionSchema,
   npcDefinitionSchema,
   shopDefinitionSchema,
+  timeSlotSchema,
   type NpcDefinition,
 } from '../../domain'
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
@@ -38,6 +39,7 @@ const poiSchema = z.object({
   factionId: z.string().nullable(),
   actions: z.array(z.enum(['contracts', 'hire', 'shop'])),
   npcId: z.string().optional(),
+  availableSlots: z.array(timeSlotSchema).default(['morning', 'afternoon', 'evening', 'night']),
 })
 export type PoiDefinition = z.infer<typeof poiSchema>
 
