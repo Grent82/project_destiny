@@ -240,6 +240,28 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       default:
         break
     }
+
+    // Faction affinity passive standing: +1 every 2 days, capped at standing 30 from this mechanic
+    if (next.day % 2 === 0) {
+      const npcDef = contentCatalog.npcsById.get(npc.npcId)
+      const affinityFactionId = npcDef?.factionAffinityId
+      if (affinityFactionId) {
+        const currentStanding = next.factionStandings[affinityFactionId] ?? 0
+        if (currentStanding < 30) {
+          const newStanding = Math.min(30, currentStanding + 1)
+          next = {
+            ...next,
+            factionStandings: { ...next.factionStandings, [affinityFactionId]: newStanding },
+          }
+          const factionName = contentCatalog.factionsById.get(affinityFactionId)?.name ?? affinityFactionId
+          next = appendActivityLogEntry(
+            next,
+            'system',
+            `${npc.name}'s ties to ${factionName} quietly improve your standing. (+1 standing as ${npc.activeTitle?.replace('title-', '') ?? 'title'})`,
+          )
+        }
+      }
+    }
   }
 
   // Step 4b: Training NPCs gain skills each day
