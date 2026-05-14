@@ -45,6 +45,9 @@ export function HouseStoragePanel() {
       case 'give':
         if (targetNpcId) dispatch(gameActions.giveItemToNpc({ instanceId, npcId: targetNpcId }))
         break
+      case 'sell':
+        dispatch(gameActions.sellItem({ instanceId }))
+        break
       default:
         break
     }

@@ -31,6 +31,7 @@ import { searchHouseRoom } from '../commands/houseSearch'
 import { acceptWard as acceptWardCommand, formalizeAdultWard as formalizeAdultWardCommand, type WardOriginId } from '../commands/houseWard'
 import { installModule as installModuleCommand } from '../commands/installModule'
 import { useItem as useItemCommand } from '../commands/useItem'
+import { sellItem as sellItemCommand } from '../commands/sellItem'
 import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
 import {
   addQuestLeadIfNew,
@@ -1315,6 +1316,12 @@ const gameSlice = createSlice({
     giveItemToNpc(state, action: PayloadAction<{ instanceId: string; npcId: string }>) {
       const { instanceId } = action.payload
       state.ownedItems = state.ownedItems.filter((o) => o.instanceId !== instanceId)
+    },
+
+    /** Sell a trade good or material from inventory at the current district market price */
+    sellItem(state, action: PayloadAction<{ instanceId: string }>) {
+      const result = sellItemCommand(current(state) as GameState, action.payload.instanceId)
+      Object.assign(state, result)
     },
 
     /** Install a household module item into the house (delegates to installModule command) */
