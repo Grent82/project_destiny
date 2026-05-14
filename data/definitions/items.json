@@ -1165,5 +1165,132 @@
         "action": "use-watch-sketch"
       }
     ]
+  },
+  {
+    "id": "item-compact-permit-official",
+    "name": "Compact Official Permit (Ward Investigation Authority)",
+    "category": "document",
+    "tier": 2,
+    "value": 120,
+    "weight": 0.1,
+    "rarity": "rare",
+    "tags": [
+      "document",
+      "permit",
+      "investigation",
+      "faction-compact",
+      "faction-exclusive"
+    ],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "present-official-permit"
+      }
+    ],
+    "description": "A stamped and sealed permit from the Civic Compact granting the bearer authority to conduct ward-council-sanctioned investigation — significantly reduces the scrutiny applied to house business conducted under its cover.",
+    "shopPrice": 55,
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "present-official-permit"
+      }
+    ]
+  },
+  {
+    "id": "item-league-tool-set-precision",
+    "name": "Foundry League Precision Tool Kit",
+    "category": "tool",
+    "tier": 2,
+    "value": 160,
+    "weight": 2.5,
+    "rarity": "rare",
+    "tags": [
+      "tool",
+      "engineering",
+      "faction-league",
+      "faction-exclusive",
+      "crafting"
+    ],
+    "effects": [
+      {
+        "type": "training_bonus",
+        "skill": "engineering",
+        "value": 8
+      }
+    ],
+    "description": "A fitted case of League-certified measuring instruments and machinist tools — calibrated to workshop tolerances most independent smiths never achieve, and sold exclusively to houses in good standing with the Foundry League.",
+    "shopPrice": 65,
+    "typedEffects": [
+      {
+        "type": "training_bonus",
+        "skill": "engineering",
+        "value": 8
+      }
+    ]
+  },
+  {
+    "id": "item-ring-stimulant-rush",
+    "name": "Ring Stimulant Compound (Contraband Grade)",
+    "category": "consumable",
+    "tier": 2,
+    "value": 110,
+    "weight": 0.2,
+    "rarity": "rare",
+    "tags": [
+      "consumable",
+      "stimulant",
+      "combat",
+      "faction-ring",
+      "faction-exclusive",
+      "contraband"
+    ],
+    "effects": [
+      {
+        "type": "stat_mod",
+        "stat": "agility",
+        "value": 20,
+        "duration": 1
+      }
+    ],
+    "description": "A compact vial of rendered and concentrated stimulant compound — sourced through Tallow Ring channels and not available through any Compact-registered outlet. Delivers a sharp surge of reaction speed, sold quietly to trusted contacts.",
+    "shopPrice": 45,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "agility",
+        "value": 20,
+        "duration": 1
+      }
+    ]
+  },
+  {
+    "id": "item-restored-compound-healing",
+    "name": "Restored Order Healing Compound",
+    "category": "consumable",
+    "tier": 2,
+    "value": 140,
+    "weight": 0.5,
+    "rarity": "rare",
+    "tags": [
+      "consumable",
+      "healing",
+      "faction-restored",
+      "faction-exclusive",
+      "medicine"
+    ],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 40
+      }
+    ],
+    "description": "A prepared medicinal compound mixed and blessed by the Restored Order — efficacy substantially above League-surplus dressings, offered only to houses the Order judges worthy of resupply, and never sold for coin to strangers.",
+    "shopPrice": 60,
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 40
+      }
+    ]
   }
 ]

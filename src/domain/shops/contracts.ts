@@ -22,6 +22,7 @@ export const shopOfferSchema = z
     itemId: entityIdSchema,
     price: positiveIntegerSchema,
     order: nonNegativeIntegerSchema,
+    minStanding: z.number().int().optional(),
   })
   .strict()
 

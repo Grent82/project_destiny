@@ -16,6 +16,12 @@
         "itemId": "item-ledger-bureau",
         "price": 45,
         "order": 1
+      },
+      {
+        "itemId": "item-compact-permit-official",
+        "price": 120,
+        "order": 90,
+        "minStanding": 75
       }
     ]
   },
@@ -51,6 +57,12 @@
         "itemId": "item-spare-parts",
         "price": 70,
         "order": 1
+      },
+      {
+        "itemId": "item-league-tool-set-precision",
+        "price": 160,
+        "order": 90,
+        "minStanding": 75
       }
     ]
   },
@@ -114,7 +126,8 @@
       { "itemId": "item-dressing-league-surplus", "price": 10, "order": 1 },
       { "itemId": "weapon-dagger-wasterunner", "price": 40, "order": 2 },
       { "itemId": "item-lockpick-ringcut", "price": 40, "order": 3 },
-      { "itemId": "armor-light-tallow-work-coat", "price": 50, "order": 4 }
+      { "itemId": "armor-light-tallow-work-coat", "price": 50, "order": 4 },
+      { "itemId": "item-restored-compound-healing", "price": 140, "order": 90, "minStanding": 75 }
     ]
   },
   {
@@ -154,7 +167,8 @@
       { "itemId": "item-form-ward-petition", "price": 12, "order": 1 },
       { "itemId": "item-dressing-league-surplus", "price": 10, "order": 2 },
       { "itemId": "weapon-spear-ironworks-pike", "price": 60, "order": 3 },
-      { "itemId": "armor-light-waste-runner-vest", "price": 65, "order": 4 }
+      { "itemId": "armor-light-waste-runner-vest", "price": 65, "order": 4 },
+      { "itemId": "item-ring-stimulant-rush", "price": 110, "order": 90, "minStanding": 75 }
     ]
   },
   {

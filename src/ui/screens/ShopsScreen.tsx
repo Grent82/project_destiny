@@ -123,6 +123,16 @@ export function ShopsScreen() {
                       Market pressure {shop.marketPressure}
                     </span>
                   )}
+                  {'factionPriceModifier' in shop && typeof shop.factionPriceModifier === 'number' && shop.factionPriceModifier !== 1.0 && (
+                    <span
+                      className={shop.factionPriceModifier < 1.0 ? 'badge badge-success' : 'badge badge-warning'}
+                      title={`${shop.controllingFactionName ?? 'Faction'} standing discount applied`}
+                    >
+                      {shop.factionPriceModifier < 1.0
+                        ? `${Math.round((1 - shop.factionPriceModifier) * 100)}% faction discount`
+                        : `${Math.round((shop.factionPriceModifier - 1) * 100)}% surcharge`}
+                    </span>
+                  )}
                 </div>
               </header>
               <p>{shop.summary}</p>
