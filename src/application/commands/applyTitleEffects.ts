@@ -131,6 +131,112 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
+      case 'title-scout': {
+        const survivalSkill = npc.skills['survival'] ?? 40
+        const tensionReduction = survivalSkill > 55 ? 5 : 3
+        const districtId = next.currentDistrictId
+        if (districtId) {
+          const current = next.districtTension[districtId] ?? 0
+          next = {
+            ...next,
+            districtTension: {
+              ...next.districtTension,
+              [districtId]: Math.max(0, current - tensionReduction),
+            },
+          }
+          if (current > 0) {
+            next = appendActivityLogEntry(
+              next,
+              'system',
+              `${npcName} read the streets. District tension eased by ${tensionReduction}.`,
+            )
+          }
+        }
+        break
+      }
+
+      case 'title-fence': {
+        const intrigueSkill = npc.skills['intrigue'] ?? 40
+        const fenceIncome = intrigueSkill > 55 ? 10 : 5
+        next = { ...next, money: next.money + fenceIncome }
+        next = appendActivityLogEntry(
+          next,
+          'economy',
+          `${npcName} sourced off-register goods. +${fenceIncome} Marks.`,
+        )
+        break
+      }
+
+      case 'title-archivist': {
+        const academicsSkill = npc.skills['academics'] ?? 45
+        const boostCount = academicsSkill > 60 ? 2 : 1
+        const activeRumors = next.rumors.filter((r) => r.heat < 100)
+        for (let i = 0; i < Math.min(boostCount, activeRumors.length); i++) {
+          const target = activeRumors[i]!
+          next = {
+            ...next,
+            rumors: next.rumors.map((r) =>
+              r.id === target.id ? { ...r, heat: Math.min(100, r.heat + 5) } : r,
+            ),
+          }
+        }
+        if (activeRumors.length > 0) {
+          next = appendActivityLogEntry(
+            next,
+            'system',
+            `${npcName} cross-referenced the house records. ${boostCount === 2 ? 'Two rumors spread faster.' : 'A rumor spread faster.'}`,
+          )
+        }
+        break
+      }
+
+      case 'title-warden': {
+        const securitySkill = npc.skills['security'] ?? 45
+        const recoveryInterval = securitySkill > 60 ? 3 : 5
+        const CONDITION_RECOVER: { [k: string]: string } = {
+          altered: 'broken',
+          broken: 'hurt',
+          hurt: 'healthy',
+        }
+        const captives = next.roster.filter(
+          (r) => r.captivityState?.status === 'captive' || r.captivityState?.status === 'missing',
+        )
+        for (const captive of captives) {
+          const cap = captive.captivityState!
+          if (cap.condition === 'healthy') continue
+          if (next.day % recoveryInterval !== 0) continue
+          const newCondition = CONDITION_RECOVER[cap.condition] ?? cap.condition
+          next = {
+            ...next,
+            roster: next.roster.map((r) =>
+              r.npcId === captive.npcId
+                ? { ...r, captivityState: { ...cap, condition: newCondition as typeof cap.condition } }
+                : r,
+            ),
+          }
+          next = appendActivityLogEntry(
+            next,
+            'system',
+            `${npcName} tended to ${captive.name}'s custody conditions. Their state improved.`,
+          )
+        }
+        break
+      }
+
+      case 'title-negotiator': {
+        const negotiationSkill = npc.skills['negotiation'] ?? 45
+        const debtReduction = negotiationSkill > 60 ? 5 : 2
+        if (next.debtAmount > 0) {
+          next = { ...next, debtAmount: Math.max(0, next.debtAmount - debtReduction) }
+          next = appendActivityLogEntry(
+            next,
+            'economy',
+            `${npcName} renegotiated terms. House debt reduced by ${debtReduction} Marks.`,
+          )
+        }
+        break
+      }
+
       default:
         break
     }

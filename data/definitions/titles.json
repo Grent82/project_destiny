@@ -43,5 +43,50 @@
     "requiredSkillThreshold": 50,
     "dailyEffect": "Oversees workshop output. Reduces material costs on district projects.",
     "synergyNote": "High engineering skill (>50) increases material output (5→10+ per day)."
+  },
+  {
+    "id": "title-scout",
+    "name": "House Scout",
+    "description": "Reads the city for threats before they arrive. Keeps the house informed and the streets quieter.",
+    "requiredSkill": "survival",
+    "requiredSkillThreshold": 40,
+    "dailyEffect": "Reduces district tension by 3 in the current district each day.",
+    "synergyNote": "High survival skill (>55) reduces tension by 5 per day."
+  },
+  {
+    "id": "title-fence",
+    "name": "Procurement Officer",
+    "description": "Sources goods through unofficial channels. Knows which hands to grease and which to avoid.",
+    "requiredSkill": "intrigue",
+    "requiredSkillThreshold": 40,
+    "dailyEffect": "Brings in 5–10 Marks per day from off-register procurement.",
+    "synergyNote": "High intrigue skill (>55) increases daily earnings (5→10 Marks)."
+  },
+  {
+    "id": "title-archivist",
+    "name": "House Archivist",
+    "description": "Catalogues information and tracks the city's open secrets. Rumors find the house faster.",
+    "requiredSkill": "academics",
+    "requiredSkillThreshold": 45,
+    "dailyEffect": "Boosts the heat of one active rumor each day, accelerating its spread.",
+    "synergyNote": "High academics skill (>60) boosts two rumors per day instead of one."
+  },
+  {
+    "id": "title-warden",
+    "name": "House Warden",
+    "description": "Maintains order within the house walls and manages those in the house's custody.",
+    "requiredSkill": "security",
+    "requiredSkillThreshold": 45,
+    "dailyEffect": "Improves the condition of captive roster members by 1 step every 5 days.",
+    "synergyNote": "High security skill (>60) halves the recovery interval (every 3 days instead of 5)."
+  },
+  {
+    "id": "title-negotiator",
+    "name": "House Factor",
+    "description": "Works the house's debts and obligations. Turns obligations into opportunities when given time.",
+    "requiredSkill": "negotiation",
+    "requiredSkillThreshold": 45,
+    "dailyEffect": "Reduces house debt by 2–5 Marks per day through renegotiated terms.",
+    "synergyNote": "High negotiation skill (>60) increases daily debt reduction (2→5 Marks)."
   }
 ]
