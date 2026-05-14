@@ -192,5 +192,225 @@
       "compact"
     ],
     "autoSpawn": false
+  },
+  {
+    "id": "rumor-merrow-customs-seal",
+    "kind": "ambient",
+    "districtId": "district-ash-quay",
+    "originNpcId": null,
+    "text": "Merrow's customs stamps have been appearing on cargo that was never inspected. Either the Compact is blind or it is paid to be.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["merrow", "customs", "corruption", "ash-quay"]
+  },
+  {
+    "id": "rumor-merrow-foreclosure",
+    "kind": "ambient",
+    "districtId": "district-the-northbank",
+    "originNpcId": null,
+    "text": "Harlen Voss was calling in debts before the debtors had defaulted. House Merrow does not wait for what it already considers its own.",
+    "subjectNpcIds": ["npc-enemy-harlen-voss"],
+    "truth": "mixed",
+    "credibility": 50,
+    "tags": ["merrow", "voss", "debt", "foreclosure"]
+  },
+  {
+    "id": "rumor-merrow-ledger-fear",
+    "kind": "ambient",
+    "districtId": "district-gilded-heights",
+    "originNpcId": null,
+    "text": "Someone told Merrow that the old steward's ledger names them in a transaction they would rather not have documented.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "true",
+    "credibility": 45,
+    "tags": ["merrow", "orren-wex", "ledger", "fear"]
+  },
+  {
+    "id": "rumor-merrow-northbank-registry",
+    "kind": "ambient",
+    "districtId": "district-the-northbank",
+    "originNpcId": null,
+    "text": "House Merrow filed six succession claims this month. Only three of them are contested. The others are not yet aware they should be.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "true",
+    "credibility": 60,
+    "tags": ["merrow", "northbank", "succession", "registry"]
+  },
+  {
+    "id": "rumor-gilded-court-valdric-freeze",
+    "kind": "ambient",
+    "districtId": "district-gilded-heights",
+    "originNpcId": null,
+    "text": "House Valdric was blacklisted after the debt was called. Nobody signed the order. It was simply applied.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "true",
+    "credibility": 50,
+    "tags": ["gilded-court", "valdric", "blacklist", "debt"]
+  },
+  {
+    "id": "rumor-gilded-court-sorn-evidence",
+    "kind": "planted",
+    "districtId": "district-the-pale",
+    "originNpcId": "npc-enemy-lady-sorn",
+    "text": "Lady Sorn holds documentation that reframes the Valdric debt entirely. She has not decided what to do with it yet.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "mixed",
+    "credibility": 40,
+    "tags": ["sorn", "debt", "evidence", "gilded-court"]
+  },
+  {
+    "id": "rumor-gilded-court-mira-leverage",
+    "kind": "ambient",
+    "districtId": "district-the-pale",
+    "originNpcId": null,
+    "text": "The Court is not keeping the girl as leverage. They are keeping her as proof that they can. The distinction matters.",
+    "subjectNpcIds": ["npc-mira"],
+    "truth": "mixed",
+    "credibility": 35,
+    "tags": ["gilded-court", "mira", "captivity", "power"]
+  },
+  {
+    "id": "rumor-ash-quay-merrow-tariff",
+    "kind": "ambient",
+    "districtId": "district-ash-quay",
+    "originNpcId": null,
+    "text": "Merrow doubled the landing fee on Ash Quay this season. No one appealed. The Compact has not commented. The Harbor Ward is watching.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "truth": "true",
+    "credibility": 65,
+    "tags": ["merrow", "ash-quay", "tariff", "commerce"]
+  },
+  {
+    "id": "rumor-ash-quay-contraband",
+    "kind": "ambient",
+    "districtId": "district-ash-quay",
+    "originNpcId": null,
+    "text": "Not everything that enters through Ash Quay appears in the customs house. The gap has a name. People who use it pay a fixed percentage to keep it unnamed.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["ash-quay", "contraband", "customs", "merrow"]
+  },
+  {
+    "id": "rumor-mireward-vael-network",
+    "kind": "bond",
+    "districtId": "district-the-mireward",
+    "originNpcId": null,
+    "text": "Sister Vael's confession network reaches further than the shrine. She hears confessions from people who have never entered the building.",
+    "subjectNpcIds": ["npc-sister-vael"],
+    "truth": "true",
+    "credibility": 40,
+    "tags": ["vael", "confession", "network", "mireward"]
+  },
+  {
+    "id": "rumor-mireward-debt-sanctuary",
+    "kind": "ambient",
+    "districtId": "district-the-mireward",
+    "originNpcId": null,
+    "text": "The Mireward has served as informal debt sanctuary for twenty years. The Ring knows. They have not moved on it because whoever maintains the sanctuary is worth more unconfronted.",
+    "subjectNpcIds": ["npc-sister-vael"],
+    "truth": "mixed",
+    "credibility": 45,
+    "tags": ["mireward", "debt", "sanctuary", "ring"]
+  },
+  {
+    "id": "rumor-cinder-ring-smelter",
+    "kind": "ambient",
+    "districtId": "district-cinder-row",
+    "originNpcId": null,
+    "text": "The Ring smelter in Cinder Row produces twice what the Compact's inspection showed. The inspector filed an accurate report. The report was amended before it reached the Register.",
+    "subjectNpcIds": ["npc-enemy-harlen-voss"],
+    "truth": "true",
+    "credibility": 50,
+    "tags": ["cinder-row", "ring", "smelter", "corruption"]
+  },
+  {
+    "id": "rumor-cinder-compact-withdrawal",
+    "kind": "ambient",
+    "districtId": "district-cinder-row",
+    "originNpcId": "npc-garet-doyle",
+    "text": "The Compact pulled their patrol from Cinder Row eighteen months ago. Garet Doyle was asked about it once. He said it was a budget decision. He did not look like he believed it.",
+    "subjectNpcIds": ["npc-garet-doyle"],
+    "truth": "mixed",
+    "credibility": 40,
+    "tags": ["cinder-row", "compact", "doyle", "withdrawal"]
+  },
+  {
+    "id": "rumor-northbank-merrow-proxy",
+    "kind": "ambient",
+    "districtId": "district-the-northbank",
+    "originNpcId": null,
+    "text": "The new claimant to the Elden estate filed through an advocate who has represented House Merrow in three prior succession disputes.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "true",
+    "credibility": 50,
+    "tags": ["northbank", "merrow", "succession", "proxy"]
+  },
+  {
+    "id": "rumor-northbank-couriers-read",
+    "kind": "ambient",
+    "districtId": "district-the-northbank",
+    "originNpcId": null,
+    "text": "The Northbank couriers have been reading the sealed letters. Not all of them. Not always. But the ones that matter.",
+    "subjectNpcIds": ["npc-tessaly-ash"],
+    "truth": "mixed",
+    "credibility": 35,
+    "tags": ["northbank", "couriers", "intelligence", "leak"]
+  },
+  {
+    "id": "rumor-below-holst-creditor",
+    "kind": "bond",
+    "districtId": "district-the-below",
+    "originNpcId": null,
+    "text": "Holst's debts in The Below belong to someone who is not Garet Doyle and who does not share Doyle's patience with slow repayment.",
+    "subjectNpcIds": ["npc-verek-holst", "npc-garet-doyle"],
+    "truth": "true",
+    "credibility": 45,
+    "tags": ["below", "holst", "debt", "doyle"]
+  },
+  {
+    "id": "rumor-below-three-roads",
+    "kind": "ambient",
+    "districtId": "district-the-below",
+    "originNpcId": null,
+    "text": "There are three ways into The Below that do not require Compact clearance. Two of them are known. The third is not discussed in the same room as the other two.",
+    "subjectNpcIds": ["npc-verek-holst"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["below", "access", "compact", "underground"]
+  },
+  {
+    "id": "rumor-ashfields-departure",
+    "kind": "ambient",
+    "districtId": "district-cinder-row",
+    "originNpcId": null,
+    "text": "The Ashfields weren't abandoned. Everyone there chose to leave at the same time. That is different from abandonment. No one has explained what the difference cost.",
+    "subjectNpcIds": ["npc-garet-doyle"],
+    "truth": "mixed",
+    "credibility": 40,
+    "tags": ["ashfields", "expedition", "mystery", "mass-departure"]
+  },
+  {
+    "id": "rumor-ruined-garrison-gate",
+    "kind": "ambient",
+    "districtId": "district-harbor",
+    "originNpcId": null,
+    "text": "The garrison commander locked the gates from the inside. Whatever was left outside the walls never needed to be let in.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "truth": "mixed",
+    "credibility": 35,
+    "tags": ["ruined-garrison", "expedition", "mystery", "gates"]
+  },
+  {
+    "id": "rumor-green-corridor-buried",
+    "kind": "ambient",
+    "districtId": "district-gilded-heights",
+    "originNpcId": null,
+    "text": "The Green Corridor dispute is not about access. It is about what is buried under the road. Three parties know. None of them will say so openly.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "truth": "mixed",
+    "credibility": 40,
+    "tags": ["green-corridor", "expedition", "contest", "hidden"]
   }
 ]
