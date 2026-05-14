@@ -551,5 +551,232 @@
       "shop",
       "hire"
     ]
+  },
+  {
+    "id": "poi-ash-quay-customs-house",
+    "districtId": "district-ash-quay",
+    "name": "Ash Quay Customs House",
+    "type": "court",
+    "description": "House Merrow controls what enters and leaves through Ash Quay. Permits are expensive. Delays are free.",
+    "factionId": "faction-house-merrow",
+    "actions": ["contracts"]
+  },
+  {
+    "id": "poi-ash-quay-berth-registry",
+    "districtId": "district-ash-quay",
+    "name": "Berth Registry",
+    "type": "guild",
+    "description": "The official record of ship arrivals, cargo manifests, and departure bonds. Clerks here know who moves what.",
+    "factionId": "faction-house-merrow",
+    "actions": ["contracts", "hire"]
+  },
+  {
+    "id": "poi-ash-quay-dock-market",
+    "districtId": "district-ash-quay",
+    "name": "Ash Quay Dock Market",
+    "type": "market",
+    "description": "Goods that arrive before the customs clerks do. Prices fluctuate with tide schedules.",
+    "factionId": null,
+    "actions": ["shop"]
+  },
+  {
+    "id": "poi-ash-quay-chandler-exchange",
+    "districtId": "district-ash-quay",
+    "name": "The Chandler Exchange",
+    "type": "shop",
+    "description": "Naval supplies, rope, lamp oil, and preserved food. The Exchange supplies anything that floats.",
+    "factionId": null,
+    "actions": ["shop"]
+  },
+  {
+    "id": "poi-ash-quay-merrow-counting-house",
+    "districtId": "district-ash-quay",
+    "name": "Merrow Counting House",
+    "type": "faction_hq",
+    "description": "House Merrow's financial arm operates here. Debt collection, advance contracts, and employment for those Merrow vouches for.",
+    "factionId": "faction-house-merrow",
+    "actions": ["contracts", "hire"]
+  },
+  {
+    "id": "poi-mireward-shrine",
+    "districtId": "district-the-mireward",
+    "name": "The Mireward Shrine",
+    "type": "court",
+    "description": "An old shrine, still tended. People come here to confess things they cannot say elsewhere. Sister Vael hears them all.",
+    "factionId": null,
+    "actions": ["contracts"],
+    "npcId": "npc-sister-vael"
+  },
+  {
+    "id": "poi-mireward-apothecary",
+    "districtId": "district-the-mireward",
+    "name": "Mireward Apothecary Stall",
+    "type": "shop",
+    "description": "Hedge medicines, poultices, and remedies that do not appear in the licensed pharmacopoeia. No questions about provenance.",
+    "factionId": null,
+    "actions": ["shop"]
+  },
+  {
+    "id": "poi-mireward-low-water-tavern",
+    "districtId": "district-the-mireward",
+    "name": "The Low-Water Mark",
+    "type": "tavern",
+    "description": "A drinking house that stays open when the tide is low and the dockside workers need somewhere to be. Rumors arrive here first.",
+    "factionId": null,
+    "actions": ["hire", "contracts"]
+  },
+  {
+    "id": "poi-mireward-pawn-fence",
+    "districtId": "district-the-mireward",
+    "name": "Mireward Pawn",
+    "type": "black_market",
+    "description": "Items come in. New owners leave with them. No receipt. The operator has been in the same corner for thirty years.",
+    "factionId": null,
+    "actions": ["shop"]
+  },
+  {
+    "id": "poi-mireward-physician",
+    "districtId": "district-the-mireward",
+    "name": "The Hedge Physician",
+    "type": "residence",
+    "description": "A healer who works by appointment and instinct. No guild license, no registered address. Effective for people who cannot use registered practitioners.",
+    "factionId": null,
+    "actions": ["hire"]
+  },
+  {
+    "id": "poi-cinder-coal-yard",
+    "districtId": "district-cinder-row",
+    "name": "Lorne's Coal Yard",
+    "type": "market",
+    "description": "Coal, coke, and industrial feedstock. The yard also takes on heavy labor. Work is scarce here and workers are cheaper.",
+    "factionId": null,
+    "actions": ["shop", "hire"]
+  },
+  {
+    "id": "poi-cinder-ring-smelter",
+    "districtId": "district-cinder-row",
+    "name": "The Ring Smelter",
+    "type": "faction_hq",
+    "description": "The Tallow Ring runs a smelting operation here as cover. What goes in is metal. What comes out is not always accounted for.",
+    "factionId": "faction-tallow-ring",
+    "actions": ["contracts", "hire"]
+  },
+  {
+    "id": "poi-cinder-tools-exchange",
+    "districtId": "district-cinder-row",
+    "name": "Tools and Scrap Exchange",
+    "type": "shop",
+    "description": "Secondhand industrial equipment, salvage from closed forges, and tools that have changed hands several times.",
+    "factionId": null,
+    "actions": ["shop"]
+  },
+  {
+    "id": "poi-cinder-abandoned-watchpost",
+    "districtId": "district-cinder-row",
+    "name": "The Empty Watchpost",
+    "type": "residence",
+    "description": "The Compact pulled their patrol from Cinder Row eighteen months ago. The post is still standing. Someone uses it for meetings.",
+    "factionId": null,
+    "actions": ["contracts"]
+  },
+  {
+    "id": "poi-cinder-tenements",
+    "districtId": "district-cinder-row",
+    "name": "Cinder Row Tenements",
+    "type": "residence",
+    "description": "Workers' housing so old the foundations have settled unevenly. People here work anywhere they are taken. Loyalty is purchasable.",
+    "factionId": null,
+    "actions": ["hire"]
+  },
+  {
+    "id": "poi-northbank-succession-registry",
+    "districtId": "district-the-northbank",
+    "name": "Succession Registry Office",
+    "type": "court",
+    "description": "Claims on estates, noble title disputes, and inheritance filings. Moving slowly is how the Registry earns its fees.",
+    "factionId": "faction-gilded-court",
+    "actions": ["contracts"]
+  },
+  {
+    "id": "poi-northbank-advocates-row",
+    "districtId": "district-the-northbank",
+    "name": "Advocates' Row Branch",
+    "type": "court",
+    "description": "A satellite office of the Gilded Heights lawyers. They handle Northbank estate disputes for clients who cannot be seen in the Heights.",
+    "factionId": "faction-gilded-court",
+    "actions": ["contracts", "hire"]
+  },
+  {
+    "id": "poi-northbank-courier-post",
+    "districtId": "district-the-northbank",
+    "name": "Northbank Courier Post",
+    "type": "guild",
+    "description": "Sealed correspondence and small parcels moved between the noble estates. Couriers hear things. Some are willing to share.",
+    "factionId": null,
+    "actions": ["hire", "contracts"]
+  },
+  {
+    "id": "poi-northbank-private-club",
+    "districtId": "district-the-northbank",
+    "name": "The Morke Annex",
+    "type": "faction_hq",
+    "description": "A private club affiliated with Gilded Court interests. Membership is unstated. Business is conducted over wine and carefully chosen words.",
+    "factionId": "faction-gilded-court",
+    "actions": ["contracts"]
+  },
+  {
+    "id": "poi-northbank-estate-gate",
+    "districtId": "district-the-northbank",
+    "name": "Northbank Estate Row",
+    "type": "residence",
+    "description": "The visible face of old money. Stewards and household staff move between the gates. Some are looking for something better.",
+    "factionId": null,
+    "actions": ["hire"]
+  },
+  {
+    "id": "poi-below-debtors-room",
+    "districtId": "district-the-below",
+    "name": "The Debtor's Meeting Room",
+    "type": "court",
+    "description": "Below the gate, disputes are settled here without ledgers or advocates. Holst's people moderate. Outcomes are binding.",
+    "factionId": null,
+    "actions": ["contracts"],
+    "npcId": "npc-verek-holst"
+  },
+  {
+    "id": "poi-below-underground-exchange",
+    "districtId": "district-the-below",
+    "name": "The Underground Exchange",
+    "type": "black_market",
+    "description": "Goods that cannot move through the surface trade. No manifests, no marks, no interference.",
+    "factionId": null,
+    "actions": ["shop"]
+  },
+  {
+    "id": "poi-below-access-tunnel",
+    "districtId": "district-the-below",
+    "name": "Below-the-Gate Tunnel",
+    "type": "residence",
+    "description": "The entry point for people who cannot use the main roads. It is also a hiring point — certain kinds of work originate here.",
+    "factionId": null,
+    "actions": ["hire", "contracts"]
+  },
+  {
+    "id": "poi-below-lantern-shop",
+    "districtId": "district-the-below",
+    "name": "The Only Lantern",
+    "type": "shop",
+    "description": "The Below's single licensed lamp shop doubles as a message drop, loan exchange, and listening post. The proprietor knows everyone.",
+    "factionId": null,
+    "actions": ["shop", "hire"]
+  },
+  {
+    "id": "poi-below-apothecary",
+    "districtId": "district-the-below",
+    "name": "Back-Door Apothecary",
+    "type": "black_market",
+    "description": "Not everything sold here is on the pharmaceutical register. The back room handles requests that require neither name nor proof of need.",
+    "factionId": null,
+    "actions": ["shop"]
   }
 ]
