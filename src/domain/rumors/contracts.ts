@@ -42,6 +42,7 @@ export const rumorTemplateSchema = z
     credibility: z.number().int().min(0).max(100).default(50),
     tags: z.array(z.string()).default([]),
     consequences: rumorConsequenceSchema.optional(),
+    autoSpawn: z.boolean().default(true),
   })
   .strict()
 

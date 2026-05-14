@@ -48,7 +48,7 @@ function spawnAuthoredRumors(state: GameState): GameState {
   const activeTemplateIds = new Set(state.rumors.map((r) => r.templateId).filter(Boolean))
 
   const toAdd: Rumor[] = templates
-    .filter((t) => !activeTemplateIds.has(t.id))
+    .filter((t) => t.autoSpawn !== false && !activeTemplateIds.has(t.id))
     .map((t) => ({
       id: `${t.id}-d${state.day}`,
       kind: t.kind,

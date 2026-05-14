@@ -20,6 +20,7 @@
     "rewardCityDialId": "unrest",
     "rewardCityDialDelta": -5,
     "successorQuestId": "quest-harborwatch-followup",
+    "successorRumorIds": ["rumor-valdris-cleared-harborwatch"],
     "midQuestBeats": [
       {
         "atStageId": "on-site-prep",
@@ -46,6 +47,7 @@
     "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
     "enemyNpcId": "npc-enemy-lady-sorn",
+    "rewardItemIds": ["item-ledger-bureau"],
     "successorQuestId": "quest-ledger-debt-followup",
     "successorOnFailQuestId": "quest-ledger-burned",
     "midQuestBeats": [
@@ -182,7 +184,8 @@
     "linkedMissionId": null,
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-hollows",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "rewardItemIds": ["item-nightbloom-extract"]
   },
   {
     "id": "quest-pale-wagon-escort",
@@ -343,7 +346,8 @@
     "unlocksNpcId": "npc-mira",
     "rewardCityDialId": "control",
     "rewardCityDialDelta": -8,
-    "rewardDebtReduction": 0
+    "rewardDebtReduction": 0,
+    "rewardRelationshipDeltas": [{"npcId": "npc-mira", "trust": 40, "fear": -20}]
   },
   {
     "id": "quest-orren-wex-rescue",
@@ -372,7 +376,8 @@
     "unlocksNpcId": "npc-orren-wex",
     "rewardDebtReduction": 80,
     "rewardCityDialId": null,
-    "rewardCityDialDelta": 0
+    "rewardCityDialDelta": 0,
+    "rewardRelationshipDeltas": [{"npcId": "npc-orren-wex", "trust": 30, "loyalty": 20}]
   },
   {
     "id": "quest-harborwatch-followup",

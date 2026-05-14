@@ -322,6 +322,60 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
     `complete-${questId}`,
   )
 
+  // Add inventory items authored in the quest template
+  for (const itemId of template.rewardItemIds) {
+    const itemDef = contentCatalog.itemsById.get(itemId)
+    if (!itemDef) continue
+    const existingOwned = state.ownedItems.find((o) => o.itemId === itemId && o.location === 'inventory')
+    if (existingOwned) {
+      existingOwned.quantity += 1
+    } else {
+      state.ownedItems.push({
+        instanceId: `inst-${itemId}-${state.day}-reward`,
+        itemId,
+        location: 'inventory',
+        quantity: 1,
+      })
+    }
+    pushActivityLog(state, 'system', `${itemDef.name} added to inventory.`, `reward-item-${itemId}`)
+  }
+
+  // Apply relationship deltas authored in the quest template
+  for (const delta of template.rewardRelationshipDeltas) {
+    const key = `player→${delta.npcId}`
+    const existing = state.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
+    state.relationships[key] = {
+      affinity: Math.max(-100, Math.min(100, (existing.affinity) + (delta.affinity ?? 0))),
+      respect: Math.max(-100, Math.min(100, (existing.respect) + (delta.respect ?? 0))),
+      fear: Math.max(-100, Math.min(100, (existing.fear) + (delta.fear ?? 0))),
+      trust: Math.max(-100, Math.min(100, (existing.trust) + (delta.trust ?? 0))),
+      loyalty: Math.max(-100, Math.min(100, (existing.loyalty) + (delta.loyalty ?? 0))),
+    }
+  }
+
+  // Spawn successor rumors authored in the quest template (spawned fresh at heat 50)
+  const activeTemplateIds = new Set(state.rumors.map((r) => r.templateId).filter(Boolean))
+  for (const rumorTemplateId of template.successorRumorIds) {
+    if (activeTemplateIds.has(rumorTemplateId)) continue
+    const rumorTemplate = contentCatalog.rumors.find((r) => r.id === rumorTemplateId)
+    if (!rumorTemplate) continue
+    state.rumors.push({
+      id: `${rumorTemplateId}-d${state.day}-quest`,
+      kind: rumorTemplate.kind,
+      source: 'authored' as const,
+      districtId: rumorTemplate.districtId,
+      originNpcId: rumorTemplate.originNpcId,
+      templateId: rumorTemplate.id,
+      text: rumorTemplate.text,
+      subjectNpcIds: rumorTemplate.subjectNpcIds,
+      truth: rumorTemplate.truth,
+      credibility: rumorTemplate.credibility,
+      heat: 50,
+      createdDay: state.day,
+      lastSpreadDay: state.day,
+    })
+  }
+
   applyMiraRescueResolution(state, questId)
   applyOrrenRescueResolution(state, questId)
 

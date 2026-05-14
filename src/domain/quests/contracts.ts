@@ -43,6 +43,16 @@ export const questTemplateSchema = z.object({
     label: z.string(),
     journalEntry: z.string(),
   })).default([]),
+  rewardItemIds: z.array(z.string()).default([]),
+  rewardRelationshipDeltas: z.array(z.object({
+    npcId: z.string(),
+    trust: z.number().optional(),
+    affinity: z.number().optional(),
+    respect: z.number().optional(),
+    fear: z.number().optional(),
+    loyalty: z.number().optional(),
+  }).strict()).default([]),
+  successorRumorIds: z.array(z.string()).default([]),
 }).strict()
 
 export const questClueSchema = z.object({

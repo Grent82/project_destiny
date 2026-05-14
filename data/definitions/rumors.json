@@ -173,5 +173,24 @@
       "lantern-vale",
       "mystery"
     ]
+  },
+  {
+    "id": "rumor-valdris-cleared-harborwatch",
+    "kind": "ambient",
+    "districtId": "district-harbor",
+    "originNpcId": null,
+    "text": "Word in the Harbor is that a rising house cleared the Compact checkpoint trouble. Quietly. No names in the register.",
+    "subjectNpcIds": [
+      "npc-enemy-the-dockmaster"
+    ],
+    "truth": "true",
+    "credibility": 60,
+    "tags": [
+      "valdris",
+      "harborwatch",
+      "reputation",
+      "compact"
+    ],
+    "autoSpawn": false
   }
 ]
