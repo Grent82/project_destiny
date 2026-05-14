@@ -15,7 +15,11 @@
       "house-valdris",
       "maret",
       "merrow-threat"
-    ]
+    ],
+    "consequences": {
+      "heatThreshold": 45,
+      "unlocksQuestId": "quest-hollows-ledger"
+    }
   },
   {
     "id": "rumor-highborn-captive",
@@ -32,7 +36,11 @@
       "quest-hook",
       "mira-arc",
       "captivity"
-    ]
+    ],
+    "consequences": {
+      "heatThreshold": 50,
+      "unlocksQuestId": "quest-mira-rescue"
+    }
   },
   {
     "id": "rumor-merrow-legitimacy",
@@ -66,7 +74,11 @@
       "vael-maret-bond",
       "information-leak",
       "hidden-bond"
-    ]
+    ],
+    "consequences": {
+      "heatThreshold": 50,
+      "unlocksQuestId": "quest-ledger-recovery"
+    }
   },
   {
     "id": "rumor-holst-owes-doyle",
@@ -84,7 +96,11 @@
       "doyle-holst-bond",
       "hidden-bond",
       "debt"
-    ]
+    ],
+    "consequences": {
+      "heatThreshold": 45,
+      "unlocksQuestId": "quest-harborwatch"
+    }
   },
   {
     "id": "rumor-valdris-eyes",
@@ -101,7 +117,11 @@
       "sorn-planted",
       "paranoia",
       "valdris"
-    ]
+    ],
+    "consequences": {
+      "heatThreshold": 40,
+      "unlocksQuestId": "quest-compact-watch"
+    }
   },
   {
     "id": "rumor-holst-below-debt",

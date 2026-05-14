@@ -23,6 +23,13 @@ export const rumorSchema = z
   })
   .strict()
 
+export const rumorConsequenceSchema = z
+  .object({
+    heatThreshold: z.number().int().min(0).max(100),
+    unlocksQuestId: z.string().min(1),
+  })
+  .strict()
+
 export const rumorTemplateSchema = z
   .object({
     id: z.string().min(1),
@@ -34,10 +41,12 @@ export const rumorTemplateSchema = z
     truth: rumorTruthSchema.default('mixed'),
     credibility: z.number().int().min(0).max(100).default(50),
     tags: z.array(z.string()).default([]),
+    consequences: rumorConsequenceSchema.optional(),
   })
   .strict()
 
 export type Rumor = z.infer<typeof rumorSchema>
+export type RumorConsequence = z.infer<typeof rumorConsequenceSchema>
 export type RumorKind = z.infer<typeof rumorKindSchema>
 export type RumorTemplate = z.infer<typeof rumorTemplateSchema>
 export type BondVisibility = z.infer<typeof bondVisibilitySchema>

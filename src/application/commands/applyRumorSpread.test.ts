@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { applyRumorSpread } from './applyRumorSpread'
 import type { GameState } from '../../domain'
 import type { Rumor } from '../../domain/rumors/contracts'
+import { getQuestTemplates } from '../content/contentCatalog'
+import { createQuestRuntime } from '../../domain/quests/contracts'
 
 // Minimal GameState fixture
 function makeState(overrides: Partial<GameState> = {}): GameState {
@@ -270,6 +272,106 @@ describe('applyRumorSpread', () => {
       })
       const result = applyRumorSpread(state, alwaysFail)
       expect(result.bondVisibility['npc-m::npc-n']).toBe('known')
+    })
+  })
+
+  describe('rumor consequences (heat threshold → quest lead)', () => {
+    it('adds quest lead when rumor heat crosses template threshold', () => {
+      // rumor-highborn-captive has consequences: { heatThreshold: 50, unlocksQuestId: 'quest-mira-rescue' }
+      // Starting heat 44 + gain 8 = 52 → crosses 50
+      const rumor = makeRumor({
+        id: 'test-captive',
+        templateId: 'rumor-highborn-captive',
+        heat: 44,
+        districtId: 'district-the-warrens',
+        subjectNpcIds: ['npc-mira'],
+        credibility: 40,
+      })
+      const state = makeState({ rumors: [rumor] })
+      const result = applyRumorSpread(state, alwaysPass)
+      expect(result.availableQuestLeads.some((l) => l.questId === 'quest-mira-rescue')).toBe(true)
+    })
+
+    it('does not fire consequence when heat stays below threshold', () => {
+      // Starting heat 30 + gain 8 = 38 → does not cross 50
+      const rumor = makeRumor({
+        id: 'test-captive-low',
+        templateId: 'rumor-highborn-captive',
+        heat: 30,
+        districtId: 'district-the-warrens',
+        subjectNpcIds: ['npc-mira'],
+        credibility: 40,
+      })
+      const state = makeState({ rumors: [rumor] })
+      const result = applyRumorSpread(state, alwaysPass)
+      expect(result.availableQuestLeads.some((l) => l.questId === 'quest-mira-rescue')).toBe(false)
+    })
+
+    it('does not fire consequence when heat was already above threshold', () => {
+      // Heat already 55 — threshold already crossed in a previous tick
+      const rumor = makeRumor({
+        id: 'test-captive-already',
+        templateId: 'rumor-highborn-captive',
+        heat: 55,
+        districtId: 'district-the-warrens',
+        subjectNpcIds: ['npc-mira'],
+        credibility: 40,
+      })
+      const state = makeState({ rumors: [rumor] })
+      const result = applyRumorSpread(state, alwaysPass)
+      expect(result.availableQuestLeads.some((l) => l.questId === 'quest-mira-rescue')).toBe(false)
+    })
+
+    it('does not add quest lead when quest is already active', () => {
+      const rumor = makeRumor({
+        id: 'test-captive-active',
+        templateId: 'rumor-highborn-captive',
+        heat: 44,
+        districtId: 'district-the-warrens',
+        subjectNpcIds: ['npc-mira'],
+        credibility: 40,
+      })
+      const state = makeState({
+        rumors: [rumor],
+        activeQuests: [createQuestRuntime(
+          getQuestTemplates().find((q) => q.id === 'quest-mira-rescue')!,
+          1,
+          undefined,
+        )],
+      })
+      const result = applyRumorSpread(state, alwaysPass)
+      expect(result.availableQuestLeads.some((l) => l.questId === 'quest-mira-rescue')).toBe(false)
+    })
+
+    it('does not add quest lead when quest is already completed', () => {
+      const rumor = makeRumor({
+        id: 'test-captive-done',
+        templateId: 'rumor-highborn-captive',
+        heat: 44,
+        districtId: 'district-the-warrens',
+        subjectNpcIds: ['npc-mira'],
+        credibility: 40,
+      })
+      const state = makeState({
+        rumors: [rumor],
+        completedQuestIds: ['quest-mira-rescue'],
+      })
+      const result = applyRumorSpread(state, alwaysPass)
+      expect(result.availableQuestLeads.some((l) => l.questId === 'quest-mira-rescue')).toBe(false)
+    })
+
+    it('rumor-maret-book consequence fires at heat 45 and unlocks quest-hollows-ledger', () => {
+      const rumor = makeRumor({
+        id: 'test-maret',
+        templateId: 'rumor-maret-book',
+        heat: 38,
+        districtId: 'district-the-warrens',
+        subjectNpcIds: ['npc-old-maret'],
+        credibility: 60,
+      })
+      const state = makeState({ rumors: [rumor] })
+      const result = applyRumorSpread(state, alwaysPass)
+      expect(result.availableQuestLeads.some((l) => l.questId === 'quest-hollows-ledger')).toBe(true)
     })
   })
 })

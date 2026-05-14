@@ -4,6 +4,7 @@ import type { Rumor } from '../../domain/rumors/contracts'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
 import { getRelationship } from '../../domain/relationships/contracts'
+import { addQuestLeadIfNew } from './questLifecycle'
 
 const CLIMATE_MULTIPLIER: Record<RumorClimate, number> = {
   dry: 0.6,
@@ -213,18 +214,51 @@ function pruneRumors(rumors: Rumor[], currentDay: number): Rumor[] {
 }
 
 /**
+ * Check if any rumor crossed its template's heatThreshold this tick.
+ * On first crossing, add the linked quest lead to availableQuestLeads.
+ * Mutates the passed state (availableQuestLeads + activityLog).
+ */
+function applyRumorConsequences(state: GameState, preSpread: Rumor[], afterSpread: Rumor[]): void {
+  const templates = contentCatalog.rumors
+  for (const after of afterSpread) {
+    if (!after.templateId) continue
+    const template = templates.find((t) => t.id === after.templateId)
+    if (!template?.consequences) continue
+
+    const { heatThreshold, unlocksQuestId } = template.consequences
+    const before = preSpread.find((r) => r.id === after.id)
+    const heatBefore = before?.heat ?? 0
+
+    if (heatBefore < heatThreshold && after.heat >= heatThreshold) {
+      addQuestLeadIfNew(state, unlocksQuestId)
+    }
+  }
+}
+
+/**
  * Main entry point — called once per endDay tick.
  * 1. Spawn authored templates (day 1 only)
  * 2. Spread + decay all active rumours
  * 3. Update bondVisibility
- * 4. Prune expired / over-cap rumours
+ * 4. Check consequence triggers (rumor heat → quest lead)
+ * 5. Prune expired / over-cap rumours
  */
 export function applyRumorSpread(state: GameState, rng: Rng): GameState {
   const next = spawnAuthoredRumors(state)
-  const { afterSpread, afterDecay } = spreadAndDecay(next.rumors, next, rng)
-  // Bond visibility promotes based on spread heat (before decay) — captures momentum
+  const preSpread = next.rumors
+  const { afterSpread, afterDecay } = spreadAndDecay(preSpread, next, rng)
   const newBondVisibility = updateBondVisibility(next.bondVisibility, afterSpread)
   const pruned = pruneRumors(afterDecay, next.day)
 
-  return { ...next, rumors: pruned, bondVisibility: newBondVisibility }
+  // Build the returning state and apply consequence mutations to it
+  const result: GameState = {
+    ...next,
+    rumors: pruned,
+    bondVisibility: newBondVisibility,
+    availableQuestLeads: [...next.availableQuestLeads],
+    activityLog: [...next.activityLog],
+  }
+  applyRumorConsequences(result, preSpread, afterSpread)
+
+  return result
 }
