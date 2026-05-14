@@ -34,7 +34,7 @@ describe('selectExpeditionCarryLoad', () => {
     const load = selectExpeditionCarryLoad(store.getState())
     const cats = load.map((c) => c.category)
     expect(cats).toContain('document')
-    expect(cats).toContain('trade_good')
+    expect(cats).toContain('tradeGood')
     expect(cats).toContain('tool')
     expect(cats).toContain('material')
     expect(cats).toContain('consumable')
@@ -99,8 +99,8 @@ describe('EXPEDITION_CARRY_LIMITS constants', () => {
     expect(EXPEDITION_CARRY_LIMITS.document).toBe(5)
   })
 
-  it('has correct trade_good limit', () => {
-    expect(EXPEDITION_CARRY_LIMITS.trade_good).toBe(8)
+  it('has correct tradeGood limit', () => {
+    expect(EXPEDITION_CARRY_LIMITS.tradeGood).toBe(8)
   })
 
   it('has correct tool limit', () => {

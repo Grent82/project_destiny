@@ -15,7 +15,6 @@ const CATEGORY_PRIMARY_ACTION: Record<string, ItemAction> = {
   tool: { type: 'equip', label: 'Equip', requiresTarget: false },
   householdModule: { type: 'install', label: 'Install in House', requiresTarget: false },
   module: { type: 'install', label: 'Install in House', requiresTarget: false },
-  trade_good: { type: 'sell', label: 'Sell', requiresTarget: false },
   tradeGood: { type: 'sell', label: 'Sell', requiresTarget: false },
   material: { type: 'sell', label: 'Sell', requiresTarget: false },
   weapon: { type: 'equip', label: 'Equip', requiresTarget: false },

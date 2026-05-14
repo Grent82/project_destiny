@@ -15,7 +15,6 @@ export const itemCategorySchema = z.enum([
   'armor',
   'accessory',
   'consumable',
-  'trade_good',
   'tradeGood',
   'tool',
   'document',

@@ -9,24 +9,23 @@ import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 
-export type CarryCategory = 'document' | 'trade_good' | 'tool' | 'material' | 'consumable' | 'other'
+export type CarryCategory = 'document' | 'tradeGood' | 'tool' | 'material' | 'consumable' | 'other'
 
 /** Max slots per category in a mission pack. null = no hard limit. */
 export const EXPEDITION_CARRY_LIMITS: Record<CarryCategory, number | null> = {
   document: 5,
-  trade_good: 8,
+  tradeGood: 8,
   tool: 2,
   material: 8,
   consumable: null, // governed by NPC loadout
   other: null,
 }
 
-/** Map item category strings (including legacy variants) to CarryCategory keys */
+/** Map item category strings to CarryCategory keys. */
 function toCarryCategory(itemCategory: string): CarryCategory {
   switch (itemCategory) {
     case 'document': return 'document'
-    case 'trade_good':
-    case 'tradeGood': return 'trade_good'
+    case 'tradeGood': return 'tradeGood'
     case 'tool': return 'tool'
     case 'material': return 'material'
     case 'consumable': return 'consumable'

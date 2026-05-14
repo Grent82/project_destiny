@@ -658,8 +658,7 @@ const gameSlice = createSlice({
       const categoryCounts: Record<string, number> = {}
       for (const item of missionItems) {
         const def = contentCatalog.itemsById.get(item.itemId)
-        const rawCat = def?.category ?? 'other'
-        const cat = rawCat === 'tradeGood' ? 'trade_good' : rawCat
+        const cat = def?.category ?? 'other'
         categoryCounts[cat] = (categoryCounts[cat] ?? 0) + item.quantity
       }
       const isOverLimit = Object.entries(categoryCounts).some(([cat, count]) => {
