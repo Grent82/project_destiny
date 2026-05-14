@@ -26,6 +26,16 @@
         "atStageId": "on-site-prep",
         "label": "The watchpost is abandoned. Someone cleared it out before you arrived.",
         "journalEntry": "No one is at the Harborwatch post. The dispute may run deeper than a missing guard."
+      },
+      {
+        "atStageId": "engaged",
+        "label": "The shakedown crew is on the gate. Three Ring men, armed.",
+        "journalEntry": "Contact at the Harborwatch post. The Ring's men are still here — the clearing story was a lie told to the Compact to buy time."
+      },
+      {
+        "atStageId": "setback",
+        "label": "Backup arrived from the dockside. Someone gave the crew warning.",
+        "journalEntry": "Additional Ring men moved in. The post has more protection than the Compact knew — this was never just a shakedown."
       }
     ]
   },
@@ -55,6 +65,16 @@
         "atStageId": "on-site-prep",
         "label": "The ledger chamber is not empty. Someone is already here.",
         "journalEntry": "A Compact agent is already inside the archive. He has not noticed you yet."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "Three transfers in four days. The ledger is being used as leverage before it disappears.",
+        "journalEntry": "The trail leads to a counting house in the lower Pale. Someone is circulating the ledger deliberately — it has been moved twice since it was first reported missing."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Inside the archive. The ledger is here. So is a Compact agent who has not noticed you yet.",
+        "journalEntry": "The final address is a locked archive room beneath the Notary Quarter. The ledger is on the desk. The agent is reading from it."
       }
     ]
   },
@@ -105,6 +125,16 @@
         "atStageId": "on-site-prep",
         "label": "The creditor sends word: pay in full or bring blood money.",
         "journalEntry": "A runner delivers a final demand from the Ring. Negotiation is no longer an option."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "The fraud runs through a dead man's seal. Harlen Voss died eight months ago.",
+        "journalEntry": "The debt claims use Voss's authorization mark — forged, or held in trust by someone with access to his estate. The collection is being run by someone who knows exactly what they are doing."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The safehouse is in the lower Hollows. One collector. Two witnesses. They have not realized who is watching.",
+        "journalEntry": "The collection point smells like old paper and new coin. The collector has not recognized the house yet."
       }
     ]
   },
@@ -145,7 +175,19 @@
     "linkedMissionId": null,
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-warrens",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "midQuestBeats": [
+      {
+        "atStageId": "engaged",
+        "label": "Found them. They are not alone — someone is standing watch.",
+        "journalEntry": "The runaway took shelter with a sympathizer in the Warrens. The guard situation is not what the employer described."
+      },
+      {
+        "atStageId": "setback",
+        "label": "The shelter occupant ran for help. Someone else now knows the house is here.",
+        "journalEntry": "Noise carries in the Warrens. The sympathizer's call is going to bring attention the extraction plan cannot afford."
+      }
+    ]
   },
   {
     "id": "quest-ring-debt-collection",
@@ -223,7 +265,19 @@
     "discoveryDistrictId": "district-ironworks",
     "requiredFactionStanding": null,
     "rewardCityDialId": "corruption",
-    "rewardCityDialDelta": 6
+    "rewardCityDialDelta": 6,
+    "midQuestBeats": [
+      {
+        "atStageId": "engaged",
+        "label": "The forge floor is live. Workers still at their stations — this is messier than promised.",
+        "journalEntry": "The forge runs a double crew tonight. Getting to the throughput machinery means going through people who have no part in the dispute."
+      },
+      {
+        "atStageId": "setback",
+        "label": "The League flagged the intrusion. A foreman is bringing security from the east corridor.",
+        "journalEntry": "League security is moving in. The window for clean interference has closed."
+      }
+    ]
   },
   {
     "id": "quest-hollows-ledger",
@@ -279,7 +333,19 @@
     "linkedMissionId": null,
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-pale",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "Vorn visits the archive quarter three times in two days. He is retrieving, not auditing.",
+        "journalEntry": "Assessor Vorn is pulling sealed case files — not writing new ones. Whatever he is looking for has already been recorded somewhere."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Third meeting: a closed courtyard behind the eastern precinct. A document exchange. Neither party wore a mark.",
+        "journalEntry": "Vorn handed off a sealed folder to an unmarked contact. The folder was not Compact issue. The exchange was practiced — this is not the first time."
+      }
+    ]
   },
   {
     "id": "quest-gilded-auction-guard",
@@ -347,7 +413,19 @@
     "rewardCityDialId": "control",
     "rewardCityDialDelta": -8,
     "rewardDebtReduction": 0,
-    "rewardRelationshipDeltas": [{"npcId": "npc-mira", "trust": 40, "fear": -20}]
+    "rewardRelationshipDeltas": [{"npcId": "npc-mira", "trust": 40, "fear": -20}],
+    "midQuestBeats": [
+      {
+        "atStageId": "engaged",
+        "label": "Inside the tannery. The guards are not expecting resistance — but they are positioned.",
+        "journalEntry": "The tannery's inner ring is occupied. Mira is somewhere past the holding floor, which means going through. The guards look like they have been told to expect someone."
+      },
+      {
+        "atStageId": "setback",
+        "label": "One guard called for relief. The extraction window is closing.",
+        "journalEntry": "A runner slipped out before the squad could cut the route. They know someone is inside. Time is now the primary enemy."
+      }
+    ]
   },
   {
     "id": "quest-orren-wex-rescue",
@@ -377,7 +455,19 @@
     "rewardDebtReduction": 80,
     "rewardCityDialId": null,
     "rewardCityDialDelta": 0,
-    "rewardRelationshipDeltas": [{"npcId": "npc-orren-wex", "trust": 30, "loyalty": 20}]
+    "rewardRelationshipDeltas": [{"npcId": "npc-orren-wex", "trust": 30, "loyalty": 20}],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "Orren is held in a converted warehouse two streets from the Compact district office. Not a formal cell.",
+        "journalEntry": "The detention is unofficial — a holding room dressed as a debtor's residence. The Compact is keeping it quiet because the custody is not sanctioned by any Register entry."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Forty seconds when the door goes unobserved. The guard rotation is irregular.",
+        "journalEntry": "Inside. Orren recognized the house's people before they had to explain. He is older than his records suggested — and more careful."
+      }
+    ]
   },
   {
     "id": "quest-harborwatch-followup",
