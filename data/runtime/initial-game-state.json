@@ -39,6 +39,14 @@
       "activePressure": 5
     },
     {
+      "factionId": "faction-house-merrow",
+      "power": 58,
+      "wealth": 65,
+      "security": 60,
+      "standingWithPlayer": -15,
+      "activePressure": 30
+    },
+    {
       "factionId": "faction-restored",
       "power": 30,
       "wealth": 25,
@@ -184,7 +192,8 @@
     "faction-gilded-court": -65,
     "faction-foundry-league": 5,
     "faction-tallow-ring": 15,
-    "faction-restored": 0
+    "faction-restored": 0,
+    "faction-house-merrow": -15
   },
   "cityDials": {
     "control": 45,
