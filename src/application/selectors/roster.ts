@@ -3,6 +3,13 @@ import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import { selectCharacterSignature } from './characterSignature'
 
+const WORKING_INCOME_SKILLS = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics'] as const
+
+export function computeWorkingIncome(skills: Record<string, number>): number {
+  const bestSkill = Math.max(...WORKING_INCOME_SKILLS.map((s) => skills[s] ?? 0))
+  return Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
+}
+
 export const selectRosterEntries = createSelector(
   (state: RootState) => state.game.roster,
   (roster) => roster.map((npc) => {
@@ -22,6 +29,7 @@ export const selectRosterEntries = createSelector(
       fatigue: npc.states.fatigue,
       loyalty: npc.traits.loyalty,
       skills: npc.skills,
+      workingIncome: computeWorkingIncome(npc.skills),
       // Attachment moment fields
       firstQuirkText: quirks[0]?.text ?? null,
       backgroundPhrase: npcDef?.background ? npcDef.background.split('.')[0] : null,
