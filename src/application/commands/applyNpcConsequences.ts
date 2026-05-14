@@ -1,9 +1,91 @@
-import type { GameState } from '../../domain'
+import type { GameState, HireOffer } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { applyPassiveDrift, applyProximityGains } from './adjustRelationship'
 import { evaluateNpcDeparture } from './npcDeparture'
-import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 import type { Rng } from './seededRng'
+
+interface RelationshipMilestone {
+  readonly npcId: string
+  readonly axis: 'trust' | 'loyalty'
+  readonly threshold: number
+  readonly eventId: string
+  readonly hireOffer?: HireOffer
+}
+
+const RELATIONSHIP_MILESTONES: readonly RelationshipMilestone[] = [
+  {
+    npcId: 'npc-marion-vale',
+    axis: 'trust',
+    threshold: 65,
+    eventId: 'event-marion-milestone-motivation',
+  },
+  {
+    npcId: 'npc-ida-rhys',
+    axis: 'loyalty',
+    threshold: 70,
+    eventId: 'event-ida-milestone-contact',
+    hireOffer: {
+      npcId: 'npc-dara-slink',
+      discoveredInDistrictId: 'district-the-below',
+      wagePerDay: 10,
+      signingBonus: 0,
+      requiredFactionId: null,
+      requiredFactionStanding: 0,
+      turnsAvailable: 12,
+      source: 'relationship',
+    },
+  },
+  {
+    npcId: 'npc-garet-doyle',
+    axis: 'trust',
+    threshold: 60,
+    eventId: 'event-doyle-milestone-holst',
+  },
+  {
+    npcId: 'npc-sister-vael',
+    axis: 'trust',
+    threshold: 55,
+    eventId: 'event-vael-milestone-network',
+  },
+]
+
+function milestoneKey(npcId: string, axis: string, threshold: number): string {
+  return `rel-milestone-${npcId}-${axis}-${threshold}`
+}
+
+function checkRelationshipMilestones(state: GameState): GameState {
+  let next = state
+  for (const milestone of RELATIONSHIP_MILESTONES) {
+    const key = milestoneKey(milestone.npcId, milestone.axis, milestone.threshold)
+    if (key in next.lastFiredDay) continue
+
+    const rel = getRelationship(next.relationships, 'player', milestone.npcId)
+    const value = rel[milestone.axis]
+    if (value < milestone.threshold) continue
+
+    next = {
+      ...next,
+      lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
+      pendingEvents: [...next.pendingEvents, { eventId: milestone.eventId, firedOnDay: next.day }],
+    }
+
+    if (milestone.hireOffer) {
+      const alreadyAvailable = next.availableForHire.some((o) => o.npcId === milestone.hireOffer!.npcId)
+      const alreadyOnRoster = next.roster.some((r) => r.npcId === milestone.hireOffer!.npcId)
+      if (!alreadyAvailable && !alreadyOnRoster) {
+        next = { ...next, availableForHire: [...next.availableForHire, milestone.hireOffer] }
+      }
+    }
+
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `Relationship milestone reached with ${milestone.npcId}.`,
+    )
+  }
+  return next
+}
 
 /** Steps 5b–5d: relationship drift, ambition frustration, NPC departure/betrayal, durability warnings.
  *  Receives the original start-of-day relationships to correctly evaluate departure risk. */
@@ -21,6 +103,9 @@ export function applyNpcConsequences(
   if (deployedNpcIds.length > 0) {
     applyProximityGains(next, deployedNpcIds)
   }
+
+  // Step 5b-post: Relationship milestone unlock check
+  next = checkRelationshipMilestones(next)
 
   // Step 5c-pre: Ambition frustration morale drain
   for (const npc of next.roster) {

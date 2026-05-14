@@ -125,7 +125,7 @@ export const hireOfferSchema = z
     requiredFactionId: z.string().nullable().default(null),
     requiredFactionStanding: z.number().default(0),
     turnsAvailable: z.number().default(3),
-    source: z.enum(['district', 'combat', 'event']).optional(),
+    source: z.enum(['district', 'combat', 'event', 'relationship']).optional(),
   })
   .strict()
 

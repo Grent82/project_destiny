@@ -3052,5 +3052,181 @@
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": null
+  },
+  {
+    "id": "event-marion-milestone-motivation",
+    "title": "Marion Speaks Plainly",
+    "description": "Marion corners you after the others have gone. She does not make speeches. She tells you what she is actually here for \u2014 not the marks, not the work. Something older and quieter. You listen.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1.0
+    },
+    "choices": [
+      {
+        "id": "choice-marion-listen",
+        "label": "Listen without interrupting",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "target": "npc-marion-vale",
+            "axis": "trust",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion told you something she has not told anyone else. That is worth something."
+          }
+        ]
+      },
+      {
+        "id": "choice-marion-deflect",
+        "label": "Keep it professional",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion closes up. She does not bring it up again."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "relationship",
+      "character"
+    ],
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-marion-vale",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-ida-milestone-contact",
+    "title": "Ida's Recommendation",
+    "description": "Ida drops a name without ceremony: Dara Slink, a runner she trusts, has been looking for steadier work. Ida does not vouch for people lightly. The implication is clear.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1.0
+    },
+    "choices": [
+      {
+        "id": "choice-ida-contact-follow-up",
+        "label": "Tell Ida to send word",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Dara Slink is now available to hire. Ida seems satisfied."
+          }
+        ]
+      },
+      {
+        "id": "choice-ida-contact-decline",
+        "label": "Not right now",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Ida shrugs. The offer stands for now."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "relationship",
+      "recruitment"
+    ],
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-ida-rhys",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-doyle-milestone-holst",
+    "title": "What Doyle Knows About Holst",
+    "description": "Doyle does not often talk about Holst. Tonight he does. Not everything \u2014 he is not built that way \u2014 but enough. The locked box he carries is mentioned. So is the name of a man who should not still be alive.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1.0
+    },
+    "choices": [
+      {
+        "id": "choice-doyle-press",
+        "label": "Ask about the man he mentioned",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "target": "npc-garet-doyle",
+            "axis": "trust",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Doyle tells you more than he meant to. He does not seem to regret it."
+          }
+        ]
+      },
+      {
+        "id": "choice-doyle-leave-it",
+        "label": "Leave it alone",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "target": "npc-garet-doyle",
+            "axis": "trust",
+            "delta": 5
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You do not push. Doyle remembers that."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "relationship",
+      "character",
+      "lore"
+    ],
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-garet-doyle",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-vael-milestone-network",
+    "title": "Vael's Accounting",
+    "description": "Sister Vael tells you she has been keeping an informal record \u2014 debts, movements, faces in the Pale's confessionals. She offers to share what is relevant. Her price is discretion. You can live with that.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1.0
+    },
+    "choices": [
+      {
+        "id": "choice-vael-accept-network",
+        "label": "Accept the arrangement",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Vael's network is now available to you. Investigation work in the Pale carries a bonus."
+          }
+        ]
+      },
+      {
+        "id": "choice-vael-decline-network",
+        "label": "Decline \u2014 too entangled",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Vael accepts the refusal with grace. The door remains open."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "relationship",
+      "character",
+      "investigation"
+    ],
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-sister-vael",
+    "presentationFlavour": null
   }
 ]
