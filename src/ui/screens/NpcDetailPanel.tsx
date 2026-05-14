@@ -236,10 +236,10 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
         </p>
       )}
       {detail.assignment === 'working' && (() => {
-        const job = getJobForNpc(detail.skills as Record<string, number>)
+        const job = getJobForNpc(detail.skills)
         const income = Math.max(3, Math.min(15, Math.floor(
-          Math.max(...['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
-            .map((s) => (detail.skills as Record<string, number>)[s] ?? 0)) / 7
+          Math.max(...(['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics'] as const)
+            .map((s) => detail.skills[s] ?? 0)) / 7
         )))
         return (
           <div style={{ marginTop: '0.5rem', fontFamily: 'var(--font-body)', fontSize: 'var(--size-sm)', color: 'var(--text-muted)' }}>

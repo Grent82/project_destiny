@@ -90,6 +90,6 @@ describe('travelToDistrict — hostile faction district pressure', () => {
       e.message.includes('hostile territory'),
     )
     expect(hostileLog).toBeDefined()
-    expect(hostileLog?.message).toContain('civic-compact')
+    expect(hostileLog?.message).toContain('Civic Compact')
   })
 })

@@ -24,7 +24,8 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   let next = state
 
   // Step 4: Title effects
-  for (const npc of next.roster) {
+  for (let npcIdx = 0; npcIdx < next.roster.length; npcIdx++) {
+    const npc = next.roster[npcIdx]!
     if (!npc.activeTitle) continue
     const npcName = npc.name
 
@@ -243,7 +244,8 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
 
     // Faction affinity passive standing: +1 every 2 days, capped at standing 30 from this mechanic
     if (next.day % 2 === 0) {
-      const npcDef = contentCatalog.npcsById.get(npc.npcId)
+      const currentNpc = next.roster[npcIdx]!  // re-read after any roster mutations above
+      const npcDef = contentCatalog.npcsById.get(currentNpc.npcId)
       const affinityFactionId = npcDef?.factionAffinityId
       if (affinityFactionId) {
         const currentStanding = next.factionStandings[affinityFactionId] ?? 0
@@ -257,7 +259,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
           next = appendActivityLogEntry(
             next,
             'system',
-            `${npc.name}'s ties to ${factionName} quietly improve your standing. (+1 standing as ${npc.activeTitle?.replace('title-', '') ?? 'title'})`,
+          `${currentNpc.name}'s ties to ${factionName} quietly improve your standing. (+1 standing as ${contentCatalog.titlesById.get(currentNpc.activeTitle!)?.name ?? currentNpc.activeTitle})`,
           )
         }
       }
@@ -284,14 +286,13 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       const npcDef = contentCatalog.npcsById.get(npc.npcId)
       const rarityCap = RARITY_SKILL_CAPS[npcDef?.rarity ?? 'common'] ?? 70
 
-      const focusedSkill =
-        npc.trainingFocus &&
-        (npc.skills as Record<string, number>)[npc.trainingFocus] !== undefined
-          ? npc.trainingFocus
+      const focusedSkill: keyof Skills | null =
+        npc.trainingFocus && (SKILL_KEYS as string[]).includes(npc.trainingFocus)
+          ? (npc.trainingFocus as keyof Skills)
           : null
       const skillKey = focusedSkill ?? SKILL_KEYS[Math.floor(rng() * SKILL_KEYS.length)]!
 
-      const currentVal = (npc.skills as Record<string, number>)[skillKey] ?? 0
+      const currentVal = npc.skills[skillKey] ?? 0
       if (currentVal >= rarityCap) {
         next = appendActivityLogEntry(
           next,
@@ -340,8 +341,8 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
     if (!npcDef) continue
 
-    const skills = runtimeNpc.skills as Record<string, number>
-    const nonCombatSkills = [
+    const skills = runtimeNpc.skills
+    const nonCombatSkills: (keyof Skills)[] = [
       'administration', 'medicine', 'engineering', 'negotiation',
       'security', 'crafting', 'academics',
     ]

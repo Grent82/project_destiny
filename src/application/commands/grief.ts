@@ -11,7 +11,7 @@
 
 import type { GameState } from '../../domain/game/contracts'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
-import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 
 /** Minimum trust score to trigger grief on NPC loss. */
 const GRIEF_TRUST_THRESHOLD = 30
@@ -76,8 +76,8 @@ export function writeLossMemories(
       if (npc.npcId === lostNpcId) return npc
 
       const relKey = buildRelationshipKey(npc.npcId, lostNpcId)
-      const rel = state.relationships[relKey]
-      const trust = (rel as { trust?: number } | undefined)?.trust ?? 0
+      const rel = state.relationships[relKey] as RelationshipAxes | undefined
+      const trust = rel?.trust ?? 0
 
       if (trust < GRIEF_TRUST_THRESHOLD) return npc
 

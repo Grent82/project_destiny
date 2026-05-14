@@ -2,11 +2,12 @@ import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import { selectCharacterSignature } from './characterSignature'
+import type { Skills } from '../../domain/npc/contracts'
 
-const WORKING_INCOME_SKILLS = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics'] as const
+const WORKING_INCOME_SKILLS: (keyof Skills)[] = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
 
-export function computeWorkingIncome(skills: Record<string, number>): number {
-  const bestSkill = Math.max(...WORKING_INCOME_SKILLS.map((s) => skills[s] ?? 0))
+export function computeWorkingIncome(skills: Partial<Skills>): number {
+  const bestSkill = Math.max(0, ...WORKING_INCOME_SKILLS.map((s) => skills[s] ?? 0))
   return Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
 }
 

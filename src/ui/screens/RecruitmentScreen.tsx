@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { gameActions, selectAvailableForHire, selectRosterCapacity } from '../../application'
+import { gameActions, selectAvailableForHire, selectRosterCapacity, selectRarityDescriptions, selectRaritySkillCaps } from '../../application'
 import { selectLedgerSummary } from '../../application/selectors/ledger'
 import { contentCatalog } from '../../application/content/contentCatalog'
-import { RARITY_DESCRIPTIONS, RARITY_SKILL_CAPS } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useVenueContext } from './locationContext'
 import { VenueContextBanner } from './VenueContextBanner'
@@ -17,6 +16,8 @@ export function RecruitmentScreen() {
   const marks = useAppSelector((state) => state.game.money)
   const capacity = useAppSelector(selectRosterCapacity)
   const ledger = useAppSelector(selectLedgerSummary)
+  const RARITY_DESCRIPTIONS = selectRarityDescriptions()
+  const RARITY_SKILL_CAPS = selectRaritySkillCaps()
   const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
   const venueContext = useVenueContext()
 

@@ -19,7 +19,7 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue
 
-    const job = getJobForNpc(npc.skills as Record<string, number>)
+    const job = getJobForNpc(npc.skills)
     const district = job.districtHint
     const districtId = contentCatalog.districtNameToId.get(district)
       ?? `district-${district.toLowerCase().replace(/\s+/g, '-')}`

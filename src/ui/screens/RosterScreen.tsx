@@ -81,8 +81,7 @@ export function RosterScreen() {
                         </span>
                       )}
                       {key === 'working' && (() => {
-                        const skills = entry.skills as Record<string, number>
-                        const job = getJobForNpc(skills)
+                        const job = getJobForNpc(entry.skills)
                         return (
                           <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
                             {' — '}{job.name} — ~{entry.workingIncome} Marks/day

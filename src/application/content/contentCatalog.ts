@@ -20,6 +20,7 @@ import {
   factionDefinitionSchema,
   itemDefinitionSchema,
   npcDefinitionSchema,
+  enemyNpcDefinitionSchema,
   shopDefinitionSchema,
   timeSlotSchema,
   type NpcDefinition,
@@ -58,6 +59,7 @@ const parsedEvents = eventTemplateSchema.array().parse(events)
 const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
 const parsedRumorTemplates = rumorTemplateSchema.array().parse(rumorsData)
 const parsedEventRumorTemplates = eventRumorTemplateSchema.array().parse(eventRumorTemplatesData)
+const parsedEnemyNpcs = enemyNpcDefinitionSchema.array().parse(enemyNpcsData)
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -76,8 +78,8 @@ export const contentCatalog = {
   itemsById: toMap(parsedItems),
   npcs: parsedNpcs,
   npcsById: toMap(parsedNpcs),
-  enemyNpcs: enemyNpcsData as Array<{ id: string; name: string; [key: string]: unknown }>,
-  enemyNpcsById: new Map((enemyNpcsData as Array<{ id: string; name: string }>).map((e) => [e.id, e])),
+  enemyNpcs: parsedEnemyNpcs,
+  enemyNpcsById: toMap(parsedEnemyNpcs),
   shops: parsedShops,
   shopsById: toMap(parsedShops),
   events: parsedEvents,

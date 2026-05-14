@@ -20,7 +20,6 @@ import { applyRelationshipDelta } from './adjustRelationship'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng, type Rng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
-import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
 import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
@@ -642,6 +641,10 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     ? (contentCatalog.questsById?.get(linkedQuest.questId) ?? null)
     : null
 
+  const districtFactionId =
+    contentCatalog.districtsById.get(state.currentDistrictId ?? '')?.controllingFactionId
+    ?? 'faction-civic-compact'
+
   const encounter: ActiveCombatState = {
     encounterId: `encounter-day-${state.day}-${state.timeSlot}`,
     round: 1,
@@ -656,13 +659,13 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
         summary: 'A patrol moves to cut the squad off. The gap between them closes fast.',
       },
     ],
-    factionId: 'faction-civic-compact',
+    factionId: districtFactionId,
     linkedQuestId: linkedQuestId ?? null,
     provenance: {
       sourceType: linkedQuestId ? 'quest' : 'district',
       linkedQuestId: linkedQuestId ?? null,
       linkedMissionId: linkedQuestTemplate?.linkedMissionId ?? null,
-      linkedFactionId: linkedQuest?.context.issuerFactionId ?? 'faction-civic-compact',
+      linkedFactionId: linkedQuest?.context.issuerFactionId ?? districtFactionId,
       districtId: linkedQuest?.context.incidentDistrictId ?? state.currentDistrictId,
       destinationId: null,
       enemyTemplateIds: [],
@@ -911,7 +914,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
 
     // Recruitable defeated enemies
-    const recruitableDefs = (enemyNpcsData as Array<{ id: string; name: string; recruitableOnDefeat: boolean }>)
+    const recruitableDefs = contentCatalog.enemyNpcs
       .filter((en) => en.recruitableOnDefeat)
     if (recruitableDefs.length > 0) {
       const alreadyOffered = new Set(nextState.availableForHire.map((o) => o.npcId))

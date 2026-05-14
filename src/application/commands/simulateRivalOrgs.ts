@@ -1,5 +1,6 @@
 import type { GameState } from '../../domain/game/contracts'
 import { appendActivityLogEntry } from './activityLog'
+import { contentCatalog } from '../content/contentCatalog'
 
 export type RivalAction = {
   orgId: string
@@ -11,10 +12,12 @@ export type RivalAction = {
 /**
  * Pure function: returns list of rival actions taken this day.
  * Called from endDay with injected random values for testability.
+ * randoms[i] selects the action; randoms[i + orgs.length] selects the bribe target faction.
  */
 export function simulateRivalOrgs(state: GameState, randoms: number[]): RivalAction[] {
   const actions: RivalAction[] = []
   const orgs = ['org-iron-covenant', 'org-pale-sisters']
+  const factionIds = contentCatalog.factions.map((f) => f.id)
 
   orgs.forEach((orgId, i) => {
     const r = randoms[i] ?? 0.5
@@ -27,8 +30,8 @@ export function simulateRivalOrgs(state: GameState, randoms: number[]): RivalAct
     } else if (r < 0.40 && playerStanding < 40) {
       actions.push({ orgId, actionType: 'pressure', day: state.day })
     } else if (r < 0.48) {
-      const factions = ['faction-tallow-ring', 'faction-civic-compact', 'faction-foundry-league']
-      const target = factions[Math.floor((r * 100) % factions.length)]!
+      const bribeRng = randoms[orgs.length + i] ?? 0.5
+      const target = factionIds[Math.floor(bribeRng * factionIds.length)] ?? factionIds[0]!
       actions.push({ orgId, actionType: 'bribe', targetFactionId: target, day: state.day })
     }
   })

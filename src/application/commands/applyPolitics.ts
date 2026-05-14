@@ -93,7 +93,10 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
 
   // Step 7c: Rival org simulation
   const controlAdj = next.cityDials.control >= 60 ? 0.05 : next.cityDials.control <= 30 ? -0.05 : 0
-  const rivalActions = simulateRivalOrgs(next, [rng() + controlAdj, rng() + controlAdj])
+  const rivalActions = simulateRivalOrgs(next, [
+    rng() + controlAdj, rng() + controlAdj,  // action selection for each org
+    rng(), rng(),                              // bribe target faction selection for each org
+  ])
   next = applyRivalActions(next, rivalActions)
 
   // Step 7d: City stability crisis event

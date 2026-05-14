@@ -139,7 +139,7 @@ export function selectPoiAvailability(poiId: string, timeSlot: TimeSlot): boolea
 export function selectNpcCurrentLocation(npcId: string, timeSlot: TimeSlot): string | null {
   const npc = contentCatalog.npcsById.get(npcId)
   if (!npc?.schedule) return null
-  return (npc.schedule as Record<string, string>)[timeSlot] ?? null
+  return npc.schedule[timeSlot] ?? null
 }
 
 /**
@@ -150,7 +150,7 @@ export function selectWorldNpcsByDistrictAndSlot(districtId: string, timeSlot: T
     .filter((npc) => npc.npcType === 'world' && npc.districtId === districtId)
     .filter((npc) => {
       if (!npc.schedule || Object.keys(npc.schedule).length === 0) return true
-      return (npc.schedule as Record<string, string>)[timeSlot] === districtId
+      return npc.schedule[timeSlot] === districtId
     })
     .map((npc) => ({
       id: npc.id,

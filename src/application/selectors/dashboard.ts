@@ -1,6 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store/gameStore'
+import {
+  getRenownLevel,
+  getRenownProgress,
+  RENOWN_THRESHOLDS,
+  RARITY_DESCRIPTIONS,
+  RARITY_SKILL_CAPS,
+} from '../../domain/progression/contracts'
+import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 
 const selectGame = (state: RootState) => state.game
 
@@ -76,3 +84,31 @@ export function selectActionTimeCost(actionType: 'travel' | 'combat' | 'expediti
       return 1
   }
 }
+
+// ── Renown selectors ────────────────────────────────────────────────────────
+
+export const selectRenown = createSelector(
+  [selectGame],
+  (game) => game.playerCharacter.renown,
+)
+
+export const selectRenownLevel = createSelector(
+  [selectRenown],
+  (renown) => getRenownLevel(renown),
+)
+
+export const selectRenownProgress = createSelector(
+  [selectRenown],
+  (renown) => getRenownProgress(renown),
+)
+
+export const selectRenownThresholds = () => RENOWN_THRESHOLDS
+
+// ── Rarity selectors (static, no state dependency) ─────────────────────────
+
+export const selectRarityDescriptions = () => RARITY_DESCRIPTIONS
+export const selectRaritySkillCaps = () => RARITY_SKILL_CAPS
+
+// ── NPC state thresholds (static) ──────────────────────────────────────────
+
+export const selectNpcStateThresholds = () => NPC_STATE_THRESHOLDS

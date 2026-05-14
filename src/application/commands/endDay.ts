@@ -36,13 +36,10 @@ export function applyEndOfDayResources(state: GameState): GameState {
         },
       })),
     }
-    // Push unrest up if cityDials exists (added by destiny-suq)
-    if ("cityDials" in next && next.cityDials != null) {
-      const dials = next.cityDials as { unrest: number }
-      next = {
-        ...next,
-        cityDials: { ...dials, unrest: Math.min(100, dials.unrest + 5) },
-      } as GameState
+    // Push unrest up each day
+    next = {
+      ...next,
+      cityDials: { ...next.cityDials, unrest: Math.min(100, next.cityDials.unrest + 5) },
     }
   }
 

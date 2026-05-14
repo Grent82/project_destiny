@@ -22,7 +22,7 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
       return appendActivityLogEntry(
         state,
         'system',
-        `Access denied. ${name} is closed to those without standing with ${district.controllingFactionId.replace('faction-', '')}.`,
+        `Access denied. ${name} is closed to those without standing with ${contentCatalog.factionsById.get(district.controllingFactionId)?.name ?? district.controllingFactionId}.`,
       )
     }
   }
@@ -40,7 +40,7 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
       nextState = appendActivityLogEntry(
         nextState,
         'system',
-        `Moving through hostile territory. ${controlFactionId.replace('faction-', '')} enforcers watch every corner.`,
+        `Moving through hostile territory. ${contentCatalog.factionsById.get(controlFactionId)?.name ?? controlFactionId} enforcers watch every corner.`,
       )
       nextState = {
         ...nextState,

@@ -12,8 +12,8 @@ import {
   selectThreatNpcForQuest,
   squadRules,
 } from '../../application'
-import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
-import { checkLineTheyWontCross } from '../../domain/npc/checkLineTheyWontCross'
+import { selectNpcStateThresholds } from '../../application'
+import { checkLineTheyWontCross } from '../../application/npc/checkLineTheyWontCross'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { contentCatalog } from '../../application/content/contentCatalog'
 
@@ -45,6 +45,7 @@ export function MissionPrepScreen() {
     return brief.split(/\W+/).filter((w) => w.length > 3)
   }, [activeContract])
 
+  const NPC_STATE_THRESHOLDS = selectNpcStateThresholds()
   const [proceededDespiteConflict, setProceededDespiteConflict] = useState(false)
 
   const squadConflicts = useMemo(() => {

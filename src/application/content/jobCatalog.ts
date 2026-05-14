@@ -19,10 +19,12 @@ export const JOB_CATALOG: JobEntry[] = [
   { id: 'job-laborer',    name: 'General Labor',       districtHint: 'The Warrens',    primarySkill: 'melee' },
 ]
 
-export function getJobForNpc(skills: Record<string, number>): JobEntry {
-  const nonCombatSkills = ['administration', 'medicine', 'engineering', 'negotiation',
+import type { Skills } from '../../domain/npc/contracts'
+
+export function getJobForNpc(skills: Skills): JobEntry {
+  const nonCombatSkills: (keyof Skills)[] = ['administration', 'medicine', 'engineering', 'negotiation',
                            'security', 'crafting', 'performance', 'academics', 'intrigue', 'survival']
-  let best = { skill: 'survival', value: 0 }
+  let best: { skill: keyof Skills; value: number } = { skill: 'survival', value: 0 }
   for (const sk of nonCombatSkills) {
     if ((skills[sk] ?? 0) > best.value) best = { skill: sk, value: skills[sk] ?? 0 }
   }

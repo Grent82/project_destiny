@@ -1,5 +1,4 @@
-import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectDebtStatus, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectReputationTier } from '../../application'
-import { getRenownLevel, getRenownProgress, RENOWN_THRESHOLDS } from '../../domain/progression/contracts'
+import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectDebtStatus, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectRenownLevel, selectRenownProgress, selectRenownThresholds, selectReputationTier } from '../../application'
 import { useAppDispatch, useAppSelector } from './hooks'
 
 export function GlobalStatusBar() {
@@ -14,8 +13,9 @@ export function GlobalStatusBar() {
   const debt = useAppSelector(selectDebtStatus)
 
   const displayName = playerCharacter.name || protagonistName || 'Valdris'
-  const renownLevel = getRenownLevel(playerCharacter.renown)
-  const renownProgress = getRenownProgress(playerCharacter.renown)
+  const renownLevel = useAppSelector(selectRenownLevel)
+  const renownProgress = useAppSelector(selectRenownProgress)
+  const RENOWN_THRESHOLDS = selectRenownThresholds()
   const nextThreshold = RENOWN_THRESHOLDS.find((t) => t.level === renownLevel.level + 1)
   const renownTooltip = nextThreshold
     ? `Renown: ${playerCharacter.renown} · ${renownLevel.label} (Level ${renownLevel.level}) · Roster slots: ${renownLevel.rosterSlots} · Next rank at ${nextThreshold.renown} (${renownProgress.pct}%)`

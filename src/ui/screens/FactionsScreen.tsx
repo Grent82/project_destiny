@@ -1,8 +1,7 @@
 import type React from 'react'
 
-import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, gameActions } from '../../application'
+import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions } from '../../application'
 import type { InstitutionalTier } from '../../domain'
-import { getRenownLevel } from '../../domain/progression/contracts'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const COUNCIL_FACTIONS = [
@@ -63,8 +62,7 @@ export function FactionsScreen() {
   const councilSeats = useAppSelector(selectCouncilSeats)
   const cityStability = useAppSelector(selectCityStability)
   const activeCouncilVotes = useAppSelector(selectActiveCouncilVotes)
-  const playerRenown = useAppSelector((state) => state.game.playerCharacter.renown)
-  const renownLevel = getRenownLevel(playerRenown)
+  const renownLevel = useAppSelector(selectRenownLevel)
   const restoredWardSeats = Object.values(councilSeats).reduce((sum, s) => sum + s, 0)
   const chamberSponsors = renownLevel.councilSeats
   const canInfluenceVotes = restoredWardSeats > 0 || chamberSponsors > 0
