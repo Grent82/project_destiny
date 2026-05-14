@@ -33,7 +33,6 @@ export type GriefState = {
 export function deriveGriefState(
   npc: NpcRuntimeState,
   currentDay: number,
-  _relationships: Record<string, unknown>,
 ): GriefState | null {
   const lossMemories = npc.npcMemory.filter((m) => m.event === 'loss')
   if (lossMemories.length === 0) return null

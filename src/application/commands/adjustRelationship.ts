@@ -23,7 +23,6 @@ export function writeNpcMemory(
   const entry = { day: state.day, event, ...(participants ? { participants } : {}), ...(axisDelta ? { axisDelta } : {}) }
   const existing = state.roster[npcIndex]!.npcMemory ?? []
   const updated = [...existing, entry].slice(-MAX_NPC_MEMORY_ENTRIES)
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   state.roster[npcIndex] = { ...state.roster[npcIndex]!, npcMemory: updated }
 }
 

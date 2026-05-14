@@ -44,7 +44,7 @@ export function applyStateDecay(state: GameState): GameState {
       const newIntox = Math.max(0, (npc.states.intoxication ?? 0) - 15)
 
       // Morale penalty from poor conditions + grief
-      const grief = deriveGriefState(npc, state.day, state.relationships)
+      const grief = deriveGriefState(npc, state.day)
       const griefMoraleMod = deriveGriefMoraleModifier(grief)
       const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0) + (-griefMoraleMod)
 

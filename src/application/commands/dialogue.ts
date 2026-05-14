@@ -162,7 +162,8 @@ export function resolveDialogueChoice(
   }
 
   if (choice.nextNodeId === null) {
-    const { [tree.id]: _removed, ...remainingVisited } = next.visitedDialogueNodes
+    const remainingVisited = { ...next.visitedDialogueNodes }
+    delete remainingVisited[tree.id]
     return {
       ...next,
       activeDialogueId: null,

@@ -834,12 +834,12 @@ const gameSlice = createSlice({
       const { type, id } = action.payload
       const owned = state.ownedItems.find((o) => o.itemId === id && o.location === 'house_storage')
       if (!owned) return
-      let sellPrice = 0
+      const sellPrice = type === 'weapon'
+        ? Math.floor(getWeaponRepairCost(id) * 2.5)
+        : Math.floor(getArmorRepairCost(id) * 2.5)
       if (type === 'weapon') {
-        sellPrice = Math.floor(getWeaponRepairCost(id) * 2.5)
         state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
       } else {
-        sellPrice = Math.floor(getArmorRepairCost(id) * 2.5)
         state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
       }
       state.ownedItems = state.ownedItems.filter((o) => o !== owned)

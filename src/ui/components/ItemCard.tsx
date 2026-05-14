@@ -11,7 +11,6 @@ interface ItemCardProps {
 }
 
 export function ItemCard({
-  instanceId: _instanceId,
   name,
   category,
   quantity,

@@ -220,7 +220,7 @@ function pruneRumors(rumors: Rumor[], currentDay: number): Rumor[] {
  * 4. Prune expired / over-cap rumours
  */
 export function applyRumorSpread(state: GameState, rng: Rng): GameState {
-  let next = spawnAuthoredRumors(state)
+  const next = spawnAuthoredRumors(state)
   const { afterSpread, afterDecay } = spreadAndDecay(next.rumors, next, rng)
   // Bond visibility promotes based on spread heat (before decay) — captures momentum
   const newBondVisibility = updateBondVisibility(next.bondVisibility, afterSpread)

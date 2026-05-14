@@ -25,14 +25,14 @@ function npcWith(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
 describe('deriveGriefState', () => {
   it('returns null when no loss memories', () => {
     const npc = npcWith({ npcMemory: [] })
-    expect(deriveGriefState(npc, 10, {})).toBeNull()
+    expect(deriveGriefState(npc, 10)).toBeNull()
   })
 
   it('returns active grief when loss memory is recent', () => {
     const npc = npcWith({
       npcMemory: [{ day: 5, event: 'loss', participants: ['npc-other'] }],
     })
-    const grief = deriveGriefState(npc, 7, {})
+    const grief = deriveGriefState(npc, 7)
     expect(grief).not.toBeNull()
     expect(grief?.lostNpcId).toBe('npc-other')
     expect(grief?.intensity).toBeGreaterThan(0)
@@ -43,8 +43,8 @@ describe('deriveGriefState', () => {
     const npc = npcWith({
       npcMemory: [{ day: 0, event: 'loss', participants: ['npc-other'] }],
     })
-    const earlyGrief = deriveGriefState(npc, 1, {})
-    const laterGrief = deriveGriefState(npc, 10, {})
+    const earlyGrief = deriveGriefState(npc, 1)
+    const laterGrief = deriveGriefState(npc, 10)
     expect(earlyGrief!.intensity).toBeGreaterThan(laterGrief!.intensity)
   })
 
@@ -53,14 +53,14 @@ describe('deriveGriefState', () => {
       npcMemory: [{ day: 0, event: 'loss', participants: ['npc-other'] }],
     })
     const fadedDays = Math.ceil(GRIEF_INITIAL_INTENSITY / GRIEF_DECAY_PER_DAY) + 1
-    expect(deriveGriefState(npc, fadedDays, {})).toBeNull()
+    expect(deriveGriefState(npc, fadedDays)).toBeNull()
   })
 
   it('ignores non-loss memory events', () => {
     const npc = npcWith({
       npcMemory: [{ day: 5, event: 'conversation', participants: ['npc-other'] }],
     })
-    expect(deriveGriefState(npc, 7, {})).toBeNull()
+    expect(deriveGriefState(npc, 7)).toBeNull()
   })
 })
 
