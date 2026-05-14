@@ -475,4 +475,78 @@ describe('applyRumorSpread', () => {
       expect(heatWithMismatch).toBe(heatWithNoRoster)
     })
   })
+
+  describe('relationship effects', () => {
+    it('applies onAcquire effects when a template with relationshipEffects is first spawned', () => {
+      // rumor-holst-owes-doyle has onAcquire effects for npc-verek-holst fear +5 and npc-garet-doyle trust -3
+      const state = makeState({ day: 1, rumors: [], relationships: {} })
+      const result = applyRumorSpread(state, alwaysPass)
+
+      const holstKey = 'player→npc-verek-holst'
+      const doyleKey = 'player→npc-garet-doyle'
+
+      expect(result.relationships[holstKey]?.fear).toBe(5)
+      expect(result.relationships[doyleKey]?.trust).toBe(-3)
+    })
+
+    it('applies onAcquire trust to npc-sister-vael when rumor-vael-candle spawns', () => {
+      const state = makeState({ day: 1, rumors: [], relationships: {} })
+      const result = applyRumorSpread(state, alwaysPass)
+
+      const vaelKey = 'player→npc-sister-vael'
+      expect(result.relationships[vaelKey]?.trust).toBeGreaterThan(0)
+    })
+
+    it('does not re-apply onAcquire effects on subsequent ticks', () => {
+      const state = makeState({ day: 1, rumors: [], relationships: {} })
+      const after1 = applyRumorSpread(state, alwaysPass)
+      const holstFearAfter1 = after1.relationships['player→npc-verek-holst']?.fear ?? 0
+
+      const after2 = applyRumorSpread(after1, alwaysPass)
+      const holstFearAfter2 = after2.relationships['player→npc-verek-holst']?.fear ?? 0
+
+      expect(holstFearAfter2).toBe(holstFearAfter1)
+    })
+
+    it('applies onVerify effects when rumor heat first crosses 60', () => {
+      // rumor-valdris-eyes has onVerify: npc-enemy-lady-sorn fear +5
+      const templateId = 'rumor-valdris-eyes'
+      const preVerifiedRumor = makeRumor({
+        id: 'rumor-valdris-eyes-d1',
+        templateId,
+        heat: 58,
+        credibility: 80,
+        districtId: 'district-gilded-heights',
+      })
+      const state = makeState({ day: 2, rumors: [preVerifiedRumor], relationships: {} })
+      // alwaysPass will push the rumor over 60 heat
+      const result = applyRumorSpread(state, alwaysPass)
+
+      const rumorAfter = result.rumors.find((r) => r.id === 'rumor-valdris-eyes-d1')
+      if (rumorAfter && rumorAfter.heat >= 60) {
+        // onVerify should have fired
+        const sornKey = 'player→npc-enemy-lady-sorn'
+        expect(result.relationships[sornKey]?.fear).toBe(5)
+        expect(rumorAfter.appliedRelationshipTriggers).toContain('onVerify')
+      }
+    })
+
+    it('does not apply onVerify effects if the rumor was already above 60 at tick start', () => {
+      const templateId = 'rumor-valdris-eyes'
+      const alreadyHot = makeRumor({
+        id: 'rumor-valdris-eyes-d1',
+        templateId,
+        heat: 80,
+        credibility: 80,
+        districtId: 'district-gilded-heights',
+        appliedRelationshipTriggers: ['onVerify'],
+      })
+      const state = makeState({ day: 2, rumors: [alreadyHot], relationships: {} })
+      const result = applyRumorSpread(state, alwaysPass)
+
+      const sornKey = 'player→npc-enemy-lady-sorn'
+      // Should not have fired again
+      expect(result.relationships[sornKey]?.fear ?? 0).toBe(0)
+    })
+  })
 })

@@ -5,6 +5,21 @@ export const rumorSourceSchema = z.enum(['authored', 'generated', 'player'])
 export const rumorTruthSchema = z.enum(['true', 'false', 'mixed'])
 export const bondVisibilitySchema = z.enum(['hidden', 'rumored', 'known'])
 
+/** Per-axis relationship delta applied when the player learns or verifies a rumor. */
+export const rumorRelationshipEffectSchema = z
+  .object({
+    npcId: z.string().min(1),
+    axes: z.object({
+      affinity: z.number().optional(),
+      respect: z.number().optional(),
+      fear: z.number().optional(),
+      trust: z.number().optional(),
+      loyalty: z.number().optional(),
+    }),
+    trigger: z.enum(['onAcquire', 'onVerify']),
+  })
+  .strict()
+
 export const rumorSchema = z
   .object({
     id: z.string().min(1),
@@ -22,6 +37,8 @@ export const rumorSchema = z
     lastSpreadDay: z.number().int().positive(),
     // Provenance field for event-generated rumors; null for authored/player rumors
     eventSource: z.string().nullable().optional(),
+    // Tracks which relationship effect triggers have already fired for this instance
+    appliedRelationshipTriggers: z.array(z.string()).optional(),
   })
   .strict()
 
@@ -45,6 +62,7 @@ export const rumorTemplateSchema = z
     tags: z.array(z.string()).default([]),
     consequences: rumorConsequenceSchema.optional(),
     autoSpawn: z.boolean().default(true),
+    relationshipEffects: z.array(rumorRelationshipEffectSchema).optional(),
   })
   .strict()
 
@@ -69,5 +87,6 @@ export type Rumor = z.infer<typeof rumorSchema>
 export type RumorConsequence = z.infer<typeof rumorConsequenceSchema>
 export type RumorKind = z.infer<typeof rumorKindSchema>
 export type RumorTemplate = z.infer<typeof rumorTemplateSchema>
+export type RumorRelationshipEffect = z.infer<typeof rumorRelationshipEffectSchema>
 export type EventRumorTemplate = z.infer<typeof eventRumorTemplateSchema>
 export type BondVisibility = z.infer<typeof bondVisibilitySchema>

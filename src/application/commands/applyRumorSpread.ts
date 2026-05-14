@@ -5,6 +5,7 @@ import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
 import { getRelationship } from '../../domain/relationships/contracts'
 import { addQuestLeadIfNew } from './questLifecycle'
+import { applyRelationshipDelta } from './adjustRelationship'
 
 const CLIMATE_MULTIPLIER: Record<RumorClimate, number> = {
   dry: 0.6,
@@ -234,6 +235,47 @@ function pruneRumors(rumors: Rumor[], currentDay: number): Rumor[] {
 }
 
 /**
+ * Apply relationship effects from a set of rumor templates to the player.
+ * Fires only effects matching `trigger` and only when not already applied.
+ * Mutates `state.relationships` and updates `rumorsWithApplied` in-place by
+ * tagging the matching rumor entries with the applied trigger.
+ */
+function applyRumorRelationshipEffects(
+  state: GameState,
+  rumors: Rumor[],
+  trigger: 'onAcquire' | 'onVerify',
+): Rumor[] {
+  const templateMap = new Map(contentCatalog.rumors.map((t) => [t.id, t]))
+  return rumors.map((rumor) => {
+    if (!rumor.templateId) return rumor
+    const template = templateMap.get(rumor.templateId)
+    if (!template?.relationshipEffects?.length) return rumor
+
+    const alreadyApplied = rumor.appliedRelationshipTriggers ?? []
+    if (alreadyApplied.includes(trigger)) return rumor
+
+    const matching = template.relationshipEffects.filter((e) => e.trigger === trigger)
+    if (matching.length === 0) return rumor
+
+    for (const effect of matching) {
+      const { axes, npcId } = effect
+      if (axes.affinity !== undefined && axes.affinity !== 0)
+        applyRelationshipDelta(state, 'player', npcId, 'affinity', axes.affinity)
+      if (axes.respect !== undefined && axes.respect !== 0)
+        applyRelationshipDelta(state, 'player', npcId, 'respect', axes.respect)
+      if (axes.fear !== undefined && axes.fear !== 0)
+        applyRelationshipDelta(state, 'player', npcId, 'fear', axes.fear)
+      if (axes.trust !== undefined && axes.trust !== 0)
+        applyRelationshipDelta(state, 'player', npcId, 'trust', axes.trust)
+      if (axes.loyalty !== undefined && axes.loyalty !== 0)
+        applyRelationshipDelta(state, 'player', npcId, 'loyalty', axes.loyalty)
+    }
+
+    return { ...rumor, appliedRelationshipTriggers: [...alreadyApplied, trigger] }
+  })
+}
+
+/**
  * Check if any rumor crossed its template's heatThreshold this tick.
  * On first crossing, add the linked quest lead to availableQuestLeads.
  * Mutates the passed state (availableQuestLeads + activityLog).
@@ -261,24 +303,51 @@ function applyRumorConsequences(state: GameState, preSpread: Rumor[], afterSprea
  * 2. Spread + decay all active rumours
  * 3. Update bondVisibility
  * 4. Check consequence triggers (rumor heat → quest lead)
- * 5. Prune expired / over-cap rumours
+ * 5. Apply relationship effects (onAcquire for new rumors, onVerify for heat ≥ 60)
+ * 6. Prune expired / over-cap rumours
  */
 export function applyRumorSpread(state: GameState, rng: Rng): GameState {
+  const beforeSpawn = state
   const next = spawnAuthoredRumors(state)
+
+  // Find newly added rumors (onAcquire trigger)
+  const newlyAdded = next.rumors.filter(
+    (r) => !beforeSpawn.rumors.some((old) => old.id === r.id),
+  )
+
   const preSpread = next.rumors
   const { afterSpread, afterDecay } = spreadAndDecay(preSpread, next, rng)
+
+  // Find rumors that crossed heat ≥ 60 this tick (onVerify trigger)
+  const verified = afterSpread.filter((r) => {
+    const before = preSpread.find((old) => old.id === r.id)
+    return r.heat >= 60 && (before?.heat ?? 0) < 60
+  })
+
   const newBondVisibility = updateBondVisibility(next.bondVisibility, afterSpread)
   const pruned = pruneRumors(afterDecay, next.day)
 
-  // Build the returning state and apply consequence mutations to it
+  // Build the returning state and apply consequence + relationship mutations
   const result: GameState = {
     ...next,
     rumors: pruned,
     bondVisibility: newBondVisibility,
     availableQuestLeads: [...next.availableQuestLeads],
     activityLog: [...next.activityLog],
+    relationships: { ...next.relationships },
   }
+
   applyRumorConsequences(result, preSpread, afterSpread)
+
+  // Apply onAcquire relationship effects for newly spawned rumors
+  if (newlyAdded.length > 0) {
+    result.rumors = applyRumorRelationshipEffects(result, result.rumors, 'onAcquire')
+  }
+
+  // Apply onVerify relationship effects for rumors newly crossing heat ≥ 60
+  if (verified.length > 0) {
+    result.rumors = applyRumorRelationshipEffects(result, result.rumors, 'onVerify')
+  }
 
   return result
 }

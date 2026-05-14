@@ -19,7 +19,10 @@
     "consequences": {
       "heatThreshold": 45,
       "unlocksQuestId": "quest-hollows-ledger"
-    }
+    },
+    "relationshipEffects": [
+      { "npcId": "npc-old-maret", "axes": { "trust": 5 }, "trigger": "onAcquire" }
+    ]
   },
   {
     "id": "rumor-highborn-captive",
@@ -100,7 +103,11 @@
     "consequences": {
       "heatThreshold": 45,
       "unlocksQuestId": "quest-harborwatch"
-    }
+    },
+    "relationshipEffects": [
+      { "npcId": "npc-verek-holst", "axes": { "fear": 5 }, "trigger": "onAcquire" },
+      { "npcId": "npc-garet-doyle", "axes": { "trust": -3 }, "trigger": "onAcquire" }
+    ]
   },
   {
     "id": "rumor-valdris-eyes",
@@ -121,7 +128,10 @@
     "consequences": {
       "heatThreshold": 40,
       "unlocksQuestId": "quest-compact-watch"
-    }
+    },
+    "relationshipEffects": [
+      { "npcId": "npc-enemy-lady-sorn", "axes": { "fear": 5 }, "trigger": "onVerify" }
+    ]
   },
   {
     "id": "rumor-holst-below-debt",
@@ -138,6 +148,9 @@
       "debt",
       "the-below",
       "holst"
+    ],
+    "relationshipEffects": [
+      { "npcId": "npc-verek-holst", "axes": { "respect": -5 }, "trigger": "onAcquire" }
     ]
   },
   {
@@ -155,6 +168,9 @@
       "confession",
       "vael",
       "ritual"
+    ],
+    "relationshipEffects": [
+      { "npcId": "npc-sister-vael", "axes": { "trust": 8 }, "trigger": "onAcquire" }
     ]
   },
   {
