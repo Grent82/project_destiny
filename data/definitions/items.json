@@ -1292,5 +1292,47 @@
         "value": 40
       }
     ]
+  },
+  {
+    "id": "item-nightbloom-extract",
+    "name": "Nightbloom Extract (Distilled)",
+    "category": "consumable",
+    "tier": 2,
+    "value": 180,
+    "weight": 0.3,
+    "rarity": "rare",
+    "tags": [
+      "consumable",
+      "healing",
+      "rare-ingredient",
+      "apothecary",
+      "quest-reward"
+    ],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 35
+      },
+      {
+        "type": "stat_mod",
+        "stat": "stress",
+        "value": -20,
+        "duration": 1
+      }
+    ],
+    "description": "A small sealed vial of distilled nightbloom oil — a rare botanical found only in overgrown ruins beyond the walls, with documented use in both wound care and stabilizing shock response. Acquiring it required someone to go somewhere most people avoid.",
+    "shopPrice": 0,
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 35
+      },
+      {
+        "type": "stat_mod",
+        "stat": "stress",
+        "value": -20,
+        "duration": 1
+      }
+    ]
   }
 ]
