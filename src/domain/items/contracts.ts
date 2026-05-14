@@ -37,6 +37,8 @@ export const itemEffectSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('training_bonus'), skill: z.string(), value: z.number() }),
   z.object({ type: z.literal('storage_expand'), value: z.number().int().positive() }),
   z.object({ type: z.literal('rest_quality_bonus'), value: z.number().int() }),
+  z.object({ type: z.literal('tradeValue'), value: z.number().nonnegative() }),
+  z.object({ type: z.literal('enableAction'), action: z.string().min(1) }),
 ])
 
 export const itemDefinitionSchema = z

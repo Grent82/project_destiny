@@ -11,10 +11,20 @@
       "healing",
       "mission"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "heal",
+        "value": 25
+      }
+    ],
     "description": "A sealed canvas roll of League-surplus dressings, thread, and a small vial of antiseptic wash — standard expedition kit, sold at most general stores without documentation.",
     "shopPrice": 15,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "heal",
+        "value": 25
+      }
+    ]
   },
   {
     "id": "item-ledger-bureau",
@@ -28,10 +38,20 @@
       "administration",
       "intel"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "use-as-cover-document"
+      }
+    ],
     "description": "A Compact-stamped bound ledger with ward-council formatting printed on every page — useful as evidence, cover, or raw intelligence on whichever bureau's name appears on the cover.",
     "shopPrice": 30,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "use-as-cover-document"
+      }
+    ]
   },
   {
     "id": "item-spare-parts",
@@ -45,10 +65,20 @@
       "repair",
       "crafting"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 65
+      }
+    ],
     "description": "A crate of unsorted mechanical salvage — gears, brackets, fasteners, and cut lengths of rod — sourced from workshop floor sweepings and sold by weight at the League margin.",
     "shopPrice": 20,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 65
+      }
+    ]
   },
   {
     "id": "item-dressing-league-surplus",
@@ -570,10 +600,20 @@
       "faction-league",
       "trade"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 50
+      }
+    ],
     "description": "A stack of thumb-shaped iron ingots poured at a League smelter and stamped with the foundry mark — valued by independent smiths, workshop operators, and anyone who needs to buy League cooperation without saying so directly.",
     "shopPrice": 20,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 50
+      }
+    ]
   },
   {
     "id": "item-mechanism-pre-breach",
@@ -590,10 +630,20 @@
       "expedition",
       "high-value"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 380
+      }
+    ],
     "description": "A sealed metal housing recovered from a pre-Breach site beyond the walls — the internal gearing moves with tolerances no current workshop can match, and three different factions have standing purchase interest for this category of find.",
     "shopPrice": 50,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 380
+      }
+    ]
   },
   {
     "id": "item-tallow-bricks",
@@ -609,10 +659,20 @@
       "faction-ring",
       "trade"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 25
+      }
+    ],
     "description": "Rendered animal fat pressed into standard fuel bricks, sourced through Tallow Ring distribution channels — the primary heating and lamp fuel in lower-district households, controlled by the Ring and priced accordingly.",
     "shopPrice": 10,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 25
+      }
+    ]
   },
   {
     "id": "item-salt-block",
@@ -628,10 +688,20 @@
       "trade",
       "scarce"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 140
+      }
+    ],
     "description": "A dense block of compressed salt — scarce since the trade roads beyond the gates collapsed, valued for food preservation, medical use, and the simple fact that very little of it enters the city in any given month.",
     "shopPrice": 35,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 140
+      }
+    ]
   },
   {
     "id": "item-tradegood-coal-sack",
@@ -647,10 +717,20 @@
       "faction-league",
       "industrial"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 35
+      }
+    ],
     "description": "A sealed burlap sack of certified-weight metallurgical coal with the League assay stamp — the only coal in Valdenmoor that comes with legal weight guarantee, and therefore the only kind League workshops accept without argument.",
     "shopPrice": 15,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 35
+      }
+    ]
   },
   {
     "id": "item-gift-fine-ink",
@@ -891,10 +971,20 @@
       "crafting",
       "repair"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 10
+      }
+    ],
     "description": "A bundle of mixed-weight fabric offcuts from tailor floors and salvage piles — used in padding, patching, and cheap wound dressing when nothing better is available.",
     "shopPrice": 5,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 10
+      }
+    ]
   },
   {
     "id": "item-material-charcoal-bricks",
@@ -910,10 +1000,20 @@
       "medical",
       "crafting"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "tradeValue",
+        "value": 22
+      }
+    ],
     "description": "Compressed blocks of activated wood-char, used in water filtration, antitoxin preparation, and a half-dozen apothecary compound recipes — sold by weight at most chemistry stalls in the market district.",
     "shopPrice": 8,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "tradeValue",
+        "value": 22
+      }
+    ]
   },
   {
     "id": "item-chit-ledger-removal",
@@ -929,10 +1029,20 @@
       "evidence",
       "ledger"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "examine-ledger-chit"
+      }
+    ],
     "description": "A narrow inventory slip naming two ledgers removed from the house on the night of the seizure, with a quartermaster's hand-sign and a number Marion immediately recognizes.",
     "shopPrice": 0,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "examine-ledger-chit"
+      }
+    ]
   },
   {
     "id": "item-note-arrangement-below",
@@ -948,10 +1058,20 @@
       "vault",
       "evidence"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "examine-vault-note"
+      }
+    ],
     "description": "A letter fragment in your father's hand referring to an arrangement below the house and a catch that was never to be named in open correspondence.",
     "shopPrice": 0,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "examine-vault-note"
+      }
+    ]
   },
   {
     "id": "item-letter-mira-sealed",
@@ -967,10 +1087,20 @@
       "mira",
       "evidence"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "read-mira-letter"
+      }
+    ],
     "description": "A sealed envelope tucked behind the wainscoting of the master's chamber — addressed to Mira in a hand you know but do not trust.",
     "shopPrice": 0,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "read-mira-letter"
+      }
+    ]
   },
   {
     "id": "item-ring-unfamiliar-crest",
@@ -986,10 +1116,26 @@
       "evidence",
       "jewelry"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "affinityBonus",
+        "target": "any-npc",
+        "value": 5
+      },
+      {
+        "type": "enableAction",
+        "action": "examine-crest-ring"
+      }
+    ],
     "description": "A ring bearing a crest not of House Valdric nor any ward-line you readily name. The metal is expensive; the engraving is meant to be noticed.",
     "shopPrice": 0,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "relationship_gift",
+        "target": "any-npc",
+        "value": 5
+      }
+    ]
   },
   {
     "id": "item-sketch-watch-lane",
@@ -1005,9 +1151,19 @@
       "watch",
       "surveillance"
     ],
-    "effects": [],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "use-watch-sketch"
+      }
+    ],
     "description": "A hand-drawn watch sketch from the garret showing sight lines, approach timings, and two blind points overlooking the lane outside the house.",
     "shopPrice": 0,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "use-watch-sketch"
+      }
+    ]
   }
 ]
