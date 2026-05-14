@@ -263,6 +263,7 @@ export const npcRuntimeStateSchema = z
     name: z.string().min(1),
     status: npcStatusSchema,
     assignment: npcAssignmentSchema,
+    assignedDistrictId: z.string().nullable().default(null),
     activeTitle: entityIdSchema.nullable(),
     wagesOwedDays: nonNegativeIntegerSchema,
     trainingFocus: z.string().nullable().default(null),

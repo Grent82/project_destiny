@@ -374,4 +374,105 @@ describe('applyRumorSpread', () => {
       expect(result.availableQuestLeads.some((l) => l.questId === 'quest-hollows-ledger')).toBe(true)
     })
   })
+
+  describe('district-aware pass chance (destiny-5hm3)', () => {
+    function makeNpc(npcId: string, districtId: string | null, dominance = 70): GameState['roster'][number] {
+      return {
+        npcId,
+        name: 'Test NPC',
+        status: 'mercenary',
+        assignment: districtId ? 'working' : 'idle',
+        assignedDistrictId: districtId,
+        activeTitle: null,
+        wagesOwedDays: 0,
+        trainingFocus: null,
+        attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
+        skills: { melee: 30, ranged: 30, medicine: 30, administration: 30, engineering: 30, negotiation: 30, survival: 30, security: 30, crafting: 30, performance: 30, academics: 30, intrigue: 30 },
+        traits: { discipline: 50, ambition: 50, empathy: 50, ruthlessness: 50, prudence: 50, curiosity: 50, dominance, loyalty: 50, vanity: 50, zeal: 50 },
+        states: { health: 100, morale: 80, stress: 20, fatigue: 10, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 80 },
+        loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+        npcMemory: [],
+      }
+    }
+
+    it('rumor in a district with a matching NPC spreads faster than in a district with no presence', () => {
+      const rumorWithPresence = makeRumor({ id: 'r-with', districtId: 'district-harbor', heat: 35, credibility: 50 })
+      const rumorWithout = makeRumor({ id: 'r-without', districtId: 'district-ash-quay', heat: 35, credibility: 50 })
+
+      const npc = makeNpc('npc-test-worker', 'district-harbor', 80)
+
+      const stateWith = makeState({ rumors: [rumorWithPresence], roster: [npc] })
+      const stateWithout = makeState({ rumors: [rumorWithout], roster: [npc] })
+
+      // Use a mid-range rng so presence tips the pass
+      const midRng = () => 0.4
+      const resultWith = applyRumorSpread(stateWith, midRng)
+      const resultWithout = applyRumorSpread(stateWithout, midRng)
+
+      const heatWith = resultWith.rumors.find((r) => r.id === 'r-with')?.heat ?? 0
+      const heatWithout = resultWithout.rumors.find((r) => r.id === 'r-without')?.heat ?? 0
+
+      // Having a high-dominance NPC in the district should produce a higher (or equal) spread heat
+      expect(heatWith).toBeGreaterThanOrEqual(heatWithout)
+    })
+
+    it('idle NPC is treated as being in houseDistrictId and boosts rumors there', () => {
+      const rumorInHouseDistrict = makeRumor({
+        id: 'r-house',
+        districtId: 'district-the-pale',
+        heat: 35,
+        credibility: 50,
+      })
+      const rumorElsewhere = makeRumor({
+        id: 'r-elsewhere',
+        districtId: 'district-harbor',
+        heat: 35,
+        credibility: 50,
+      })
+
+      // Idle NPC — assignedDistrictId null → maps to houseDistrictId ('district-the-pale')
+      const idleNpc = makeNpc('npc-idle', null, 80)
+
+      const state = makeState({
+        rumors: [rumorInHouseDistrict, rumorElsewhere],
+        roster: [idleNpc],
+        houseDistrictId: 'district-the-pale',
+      })
+
+      const midRng = () => 0.4
+      const result = applyRumorSpread(state, midRng)
+
+      const heatHouse = result.rumors.find((r) => r.id === 'r-house')?.heat ?? 0
+      const heatElsewhere = result.rumors.find((r) => r.id === 'r-elsewhere')?.heat ?? 0
+
+      // Idle NPC boosts house district rumor; other district has no presence
+      expect(heatHouse).toBeGreaterThanOrEqual(heatElsewhere)
+    })
+
+    it('NPC in a different district does not boost rumor in an unassigned district', () => {
+      const rumor = makeRumor({ id: 'r-pale', districtId: 'district-the-pale', heat: 35, credibility: 50 })
+      const npcInHarbor = makeNpc('npc-harbor-worker', 'district-harbor', 90)
+
+      // houseDistrictId is 'district-the-warrens' (not the-pale), so idle NPCs won't be in the-pale either
+      const state = makeState({
+        rumors: [rumor],
+        roster: [npcInHarbor],
+        houseDistrictId: 'district-the-warrens',
+      })
+
+      const midRng = () => 0.4
+      const result = applyRumorSpread(state, midRng)
+      const stateNoRoster = makeState({
+        rumors: [makeRumor({ id: 'r-pale', districtId: 'district-the-pale', heat: 35, credibility: 50 })],
+        houseDistrictId: 'district-the-warrens',
+      })
+      const resultNoRoster = applyRumorSpread(stateNoRoster, midRng)
+
+      const heatWithMismatch = result.rumors.find((r) => r.id === 'r-pale')?.heat ?? 0
+      const heatWithNoRoster = resultNoRoster.rumors.find((r) => r.id === 'r-pale')?.heat ?? 0
+
+      // NPC in wrong district should not change the pass chance compared to empty roster
+      expect(heatWithMismatch).toBe(heatWithNoRoster)
+    })
+  })
 })

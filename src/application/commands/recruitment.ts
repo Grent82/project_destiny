@@ -32,6 +32,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     name: npcDef.name,
     status: npcDef.status,
     assignment: 'idle' as const,
+    assignedDistrictId: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

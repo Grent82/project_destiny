@@ -10,6 +10,7 @@ import items from '../../../data/definitions/items.json'
 import npcs from '../../../data/definitions/npcs.json'
 import questsData from '../../../data/definitions/quests.json'
 import rumorsData from '../../../data/definitions/rumors.json'
+import eventRumorTemplatesData from '../../../data/definitions/event-rumor-templates.json'
 import shops from '../../../data/definitions/shops.json'
 import titlesData from '../../../data/definitions/titles.json'
 import { z } from 'zod'
@@ -28,7 +29,7 @@ import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/con
 import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
-import { rumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
+import { rumorTemplateSchema, eventRumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
 
 const poiSchema = z.object({
   id: z.string(),
@@ -56,6 +57,7 @@ const parsedShops = shopDefinitionSchema.array().parse(shops)
 const parsedEvents = eventTemplateSchema.array().parse(events)
 const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
 const parsedRumorTemplates = rumorTemplateSchema.array().parse(rumorsData)
+const parsedEventRumorTemplates = eventRumorTemplateSchema.array().parse(eventRumorTemplatesData)
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -96,6 +98,7 @@ export const contentCatalog = {
   ),
   rumors: parsedRumorTemplates,
   rumorsById: toMap(parsedRumorTemplates),
+  eventRumorTemplates: parsedEventRumorTemplates,
   districtNameToId: new Map(parsedDistricts.map((d) => [d.name, d.id])),
 }
 

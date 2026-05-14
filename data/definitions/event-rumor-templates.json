@@ -1,0 +1,173 @@
+[
+  {
+    "id": "evt-ring-combat-victory",
+    "eventType": "combat-victory",
+    "enemyFactionId": "faction-tallow-ring",
+    "districtId": null,
+    "text": "A Ring crew was put down somewhere in the city. The report is short: professional, no unnecessary mess.",
+    "subjectNpcIds": ["npc-enemy-harlen-voss"],
+    "kind": "ambient",
+    "credibility": 55,
+    "startingHeat": 20
+  },
+  {
+    "id": "evt-compact-combat-victory",
+    "eventType": "combat-victory",
+    "enemyFactionId": "faction-civic-compact",
+    "districtId": null,
+    "text": "Compact guards ran into more resistance than expected. The squad that stopped them did not leave names in the register.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "kind": "ambient",
+    "credibility": 50,
+    "startingHeat": 20
+  },
+  {
+    "id": "evt-gilded-combat-victory",
+    "eventType": "combat-victory",
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": null,
+    "text": "Gilded Court security encountered a disciplined group. The Court is not publicizing the circumstances.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "kind": "ambient",
+    "credibility": 50,
+    "startingHeat": 20
+  },
+  {
+    "id": "evt-merrow-combat-victory",
+    "eventType": "combat-victory",
+    "enemyFactionId": "faction-house-merrow",
+    "districtId": null,
+    "text": "A Merrow operation was interrupted before it concluded. The people who stopped it are not named in any public record.",
+    "subjectNpcIds": ["npc-enemy-harlen-voss"],
+    "kind": "ambient",
+    "credibility": 50,
+    "startingHeat": 18
+  },
+  {
+    "id": "evt-generic-combat-victory",
+    "eventType": "combat-victory",
+    "enemyFactionId": null,
+    "districtId": null,
+    "text": "A house made a move last night. The area is quieter for it.",
+    "subjectNpcIds": ["npc-garet-doyle"],
+    "kind": "ambient",
+    "credibility": 40,
+    "startingHeat": 15
+  },
+  {
+    "id": "evt-generic-combat-defeat",
+    "eventType": "combat-defeat",
+    "enemyFactionId": null,
+    "districtId": null,
+    "text": "Someone took a loss last night. The district noticed, even if no one is saying what it was over.",
+    "subjectNpcIds": ["npc-garet-doyle"],
+    "kind": "ambient",
+    "credibility": 35,
+    "startingHeat": 12
+  },
+  {
+    "id": "evt-quest-resolved",
+    "eventType": "quest-complete",
+    "questOutcomeType": "quest-resolved",
+    "districtId": null,
+    "text": "Something was settled quietly. No names, no register entry. The result was apparently clean.",
+    "subjectNpcIds": ["npc-garet-doyle"],
+    "kind": "ambient",
+    "credibility": 40,
+    "startingHeat": 15
+  },
+  {
+    "id": "evt-captive-freed",
+    "eventType": "quest-complete",
+    "questOutcomeType": "captive-freed",
+    "districtId": null,
+    "text": "Someone was removed from custody without Compact involvement. The door was locked when the watch arrived.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "kind": "ambient",
+    "credibility": 50,
+    "startingHeat": 22
+  },
+  {
+    "id": "evt-evidence-secured",
+    "eventType": "quest-complete",
+    "questOutcomeType": "evidence-secured",
+    "districtId": null,
+    "text": "A document that certain people would prefer missing is apparently in someone's possession.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "kind": "ambient",
+    "credibility": 45,
+    "startingHeat": 18
+  },
+  {
+    "id": "evt-compact-standing-50",
+    "eventType": "faction-milestone",
+    "factionId": "faction-civic-compact",
+    "milestone": 50,
+    "districtId": "district-the-pale",
+    "text": "The Compact has found a house worth watching. Not a formal inquiry — something closer to professional acknowledgment.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "kind": "ambient",
+    "credibility": 50,
+    "startingHeat": 20
+  },
+  {
+    "id": "evt-compact-standing-75",
+    "eventType": "faction-milestone",
+    "factionId": "faction-civic-compact",
+    "milestone": 75,
+    "districtId": "district-harbor",
+    "text": "The Compact has named House Valdris as a preferred contractor in at least two internal reviews. The Ward has taken notice.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "kind": "ambient",
+    "credibility": 60,
+    "startingHeat": 25
+  },
+  {
+    "id": "evt-ring-standing-50",
+    "eventType": "faction-milestone",
+    "factionId": "faction-tallow-ring",
+    "milestone": 50,
+    "districtId": "district-the-warrens",
+    "text": "The Ring has stopped ignoring a new house. That is either good news or bad news, depending on what they decide next.",
+    "subjectNpcIds": ["npc-enemy-harlen-voss"],
+    "kind": "ambient",
+    "credibility": 50,
+    "startingHeat": 20
+  },
+  {
+    "id": "evt-ring-standing-75",
+    "eventType": "faction-milestone",
+    "factionId": "faction-tallow-ring",
+    "milestone": 75,
+    "districtId": "district-cinder-row",
+    "text": "The Ring is treating House Valdris like a fixture now. That means expectations on both sides.",
+    "subjectNpcIds": ["npc-enemy-harlen-voss"],
+    "kind": "ambient",
+    "credibility": 55,
+    "startingHeat": 22
+  },
+  {
+    "id": "evt-court-standing-50",
+    "eventType": "faction-milestone",
+    "factionId": "faction-gilded-court",
+    "milestone": 50,
+    "districtId": "district-gilded-heights",
+    "text": "The Court has begun mentioning House Valdris in conversations where they once would not have.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "kind": "ambient",
+    "credibility": 55,
+    "startingHeat": 20
+  },
+  {
+    "id": "evt-court-standing-75",
+    "eventType": "faction-milestone",
+    "factionId": "faction-gilded-court",
+    "milestone": 75,
+    "districtId": "district-gilded-heights",
+    "text": "The Court's inner circle has acknowledged House Valdris formally. This will have consequences for everyone who has been watching.",
+    "subjectNpcIds": ["npc-enemy-lady-sorn"],
+    "kind": "ambient",
+    "credibility": 65,
+    "startingHeat": 28
+  }
+]

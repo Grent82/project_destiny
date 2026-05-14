@@ -21,6 +21,7 @@ vi.mock('../content/contentCatalog', () => {
       npcsById: new Map(),
       shops: [],
       shopsById: new Map(),
+      eventRumorTemplates: [],
     },
     getQuestTemplates: () => [],
     getNpcDefinitions: () => [],

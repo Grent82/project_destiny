@@ -22,6 +22,7 @@ import { createRng, type Rng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
+import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
 
 const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
@@ -1201,7 +1202,14 @@ export function concludeCombatEncounter(state: GameState): GameState {
 
   return advanceTimeSlotInState(
     appendActivityLogEntry(
-      { ...nextState, rngSeed: seeded.getSeed() },
+      spawnEventRumor(
+        { ...nextState, rngSeed: seeded.getSeed() },
+        {
+          eventType: combat.outcome === 'victory' ? 'combat-victory' : 'combat-defeat',
+          districtId: combat.provenance?.districtId ?? nextState.currentDistrictId ?? 'district-the-pale',
+          enemyFactionId: combat.provenance?.linkedFactionId ?? combat.factionId ?? null,
+        },
+      ),
       'system',
       'The encounter is concluded. The squad returns.',
     ),

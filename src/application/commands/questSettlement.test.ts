@@ -53,7 +53,7 @@ describe('settleQuestSuccess — rewardItemIds', () => {
 describe('settleQuestSuccess — rewardRelationshipDeltas', () => {
   it('creates a player relationship entry for the target NPC', () => {
     const state = stateWithQuest('quest-mira-rescue')
-    state.mainQuest = { ...state.mainQuest, stage: 'opening' }
+    state.mainQuest = { ...state.mainQuest, stage: 'searching' }
     settleQuestSuccess(state, 'quest-mira-rescue')
     const rel = state.relationships['player→npc-mira']
     expect(rel).toBeDefined()
@@ -63,7 +63,7 @@ describe('settleQuestSuccess — rewardRelationshipDeltas', () => {
 
   it('clamps relationship values to [-100, 100]', () => {
     const state = stateWithQuest('quest-mira-rescue')
-    state.mainQuest = { ...state.mainQuest, stage: 'opening' }
+    state.mainQuest = { ...state.mainQuest, stage: 'searching' }
     state.relationships['player→npc-mira'] = { affinity: 0, respect: 0, fear: -90, trust: 80, loyalty: 0 }
     settleQuestSuccess(state, 'quest-mira-rescue')
     const rel = state.relationships['player→npc-mira']

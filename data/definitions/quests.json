@@ -76,7 +76,8 @@
         "label": "Inside the archive. The ledger is here. So is a Compact agent who has not noticed you yet.",
         "journalEntry": "The final address is a locked archive room beneath the Notary Quarter. The ledger is on the desk. The agent is reading from it."
       }
-    ]
+    ],
+    "successorRumorIds": ["rumor-ledger-recovered-northbank", "rumor-vael-maret-knowing"]
   },
   {
     "id": "quest-foundry-escort",
@@ -227,7 +228,8 @@
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-hollows",
     "requiredFactionStanding": null,
-    "rewardItemIds": ["item-nightbloom-extract"]
+    "rewardItemIds": ["item-nightbloom-extract"],
+    "successorRumorIds": ["rumor-nightbloom-pale-word"]
   },
   {
     "id": "quest-pale-wagon-escort",
@@ -295,7 +297,8 @@
     "linkedMissionId": null,
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-hollows",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "successorRumorIds": ["rumor-maret-settled-accounts"]
   },
   {
     "id": "quest-slaver-house-dispute",
@@ -345,7 +348,8 @@
         "label": "Third meeting: a closed courtyard behind the eastern precinct. A document exchange. Neither party wore a mark.",
         "journalEntry": "Vorn handed off a sealed folder to an unmarked contact. The folder was not Compact issue. The exchange was practiced — this is not the first time."
       }
-    ]
+    ],
+    "successorRumorIds": ["rumor-compact-watch-cleared"]
   },
   {
     "id": "quest-gilded-auction-guard",
@@ -425,7 +429,8 @@
         "label": "One guard called for relief. The extraction window is closing.",
         "journalEntry": "A runner slipped out before the squad could cut the route. They know someone is inside. Time is now the primary enemy."
       }
-    ]
+    ],
+    "successorRumorIds": ["rumor-mira-freed-pale", "rumor-mira-freed-mireward"]
   },
   {
     "id": "quest-orren-wex-rescue",
@@ -467,7 +472,8 @@
         "label": "Forty seconds when the door goes unobserved. The guard rotation is irregular.",
         "journalEntry": "Inside. Orren recognized the house's people before they had to explain. He is older than his records suggested — and more careful."
       }
-    ]
+    ],
+    "successorRumorIds": ["rumor-wex-alive-northbank"]
   },
   {
     "id": "quest-harborwatch-followup",
@@ -485,7 +491,8 @@
     "timeLimitDays": 7,
     "prerequisiteQuestId": "quest-harborwatch",
     "riskLevel": "medium",
-    "flavorNote": "The Compact is embarrassed. They want evidence, not a body count."
+    "flavorNote": "The Compact is embarrassed. They want evidence, not a body count.",
+    "successorRumorIds": ["rumor-valdris-harbor-committed"]
   },
   {
     "id": "quest-ledger-debt-followup",

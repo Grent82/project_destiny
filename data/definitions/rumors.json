@@ -412,5 +412,113 @@
     "truth": "mixed",
     "credibility": 40,
     "tags": ["green-corridor", "expedition", "contest", "hidden"]
+  },
+  {
+    "id": "rumor-mira-freed-pale",
+    "kind": "ambient",
+    "districtId": "district-the-pale",
+    "originNpcId": null,
+    "text": "The girl who was kept where no herald could find her has been freed. She was seen in the Pale at first light, asking directions to nowhere in particular.",
+    "subjectNpcIds": ["npc-mira"],
+    "truth": "true",
+    "credibility": 60,
+    "tags": ["mira-arc", "rescue", "pale", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-mira-freed-mireward",
+    "kind": "ambient",
+    "districtId": "district-the-mireward",
+    "originNpcId": null,
+    "text": "Sister Vael set two candles for a visitor she had not seen before. The young woman stayed long enough to confess something she described as a debt.",
+    "subjectNpcIds": ["npc-mira", "npc-sister-vael"],
+    "truth": "true",
+    "credibility": 45,
+    "tags": ["mira-arc", "vael", "mireward", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-wex-alive-northbank",
+    "kind": "ambient",
+    "districtId": "district-the-northbank",
+    "originNpcId": null,
+    "text": "Orren Wex is alive. He has been seen in the Northbank, speaking quietly with advocates about a transaction he will not name.",
+    "subjectNpcIds": ["npc-orren-wex"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["orren-wex", "northbank", "testament", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-compact-watch-cleared",
+    "kind": "ambient",
+    "districtId": "district-harbor",
+    "originNpcId": null,
+    "text": "The checkpoint on the harbor approach is open again. No official order was posted. The Ward is not asking who cleared it.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "truth": "true",
+    "credibility": 60,
+    "tags": ["compact-watch", "harbor", "valdris", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-nightbloom-pale-word",
+    "kind": "ambient",
+    "districtId": "district-ash-quay",
+    "originNpcId": null,
+    "text": "A nightbloom preparation changed hands somewhere near the Pale. The apothecaries in Ash Quay are still waiting to be told officially that it happened.",
+    "subjectNpcIds": ["npc-enemy-the-dockmaster"],
+    "truth": "true",
+    "credibility": 50,
+    "tags": ["nightbloom", "ash-quay", "botanical", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-ledger-recovered-northbank",
+    "kind": "ambient",
+    "districtId": "district-the-northbank",
+    "originNpcId": null,
+    "text": "The old steward's ledger is no longer missing. No one is saying where it is. That is itself a kind of answer.",
+    "subjectNpcIds": ["npc-orren-wex"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["ledger", "northbank", "valdris", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-vael-maret-knowing",
+    "kind": "bond",
+    "districtId": "district-the-mireward",
+    "originNpcId": null,
+    "text": "The old woman in the Warrens and the priest in the Mireward are not strangers. They have been passing names between each other for years.",
+    "subjectNpcIds": ["npc-old-maret", "npc-sister-vael"],
+    "truth": "true",
+    "credibility": 50,
+    "tags": ["vael-maret-bond", "bond", "mireward", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-maret-settled-accounts",
+    "kind": "ambient",
+    "districtId": "district-the-warrens",
+    "originNpcId": null,
+    "text": "Old Maret is quiet now in a different way than before. The Warrens has noticed. Something between her and the house above her has been resolved.",
+    "subjectNpcIds": ["npc-old-maret"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["maret", "warrens", "hollows-ledger", "sequel"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-valdris-harbor-committed",
+    "kind": "ambient",
+    "districtId": "district-harbor",
+    "originNpcId": null,
+    "text": "House Valdris has been to the harbor twice now on business that does not appear in the register. Whatever they want there is no longer speculation.",
+    "subjectNpcIds": ["npc-verek-holst"],
+    "truth": "true",
+    "credibility": 60,
+    "tags": ["valdris", "harbor", "reputation", "sequel"],
+    "autoSpawn": false
   }
 ]

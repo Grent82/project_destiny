@@ -46,6 +46,7 @@ import {
   rollDiscovery,
   applyExpeditionDiscoveries,
 } from '../commands/expedition'
+import { buildEventRumorEntry } from '../commands/spawnEventRumor'
 
 const gameSlice = createSlice({
   name: 'game',
@@ -230,8 +231,24 @@ const gameSlice = createSlice({
       action: PayloadAction<{ factionId: string; delta: number }>,
     ) {
       const { factionId, delta } = action.payload
-      const current = state.factionStandings[factionId] ?? 0
-      state.factionStandings[factionId] = Math.max(-100, Math.min(100, current + delta))
+      const prev = state.factionStandings[factionId] ?? 0
+      state.factionStandings[factionId] = Math.max(-100, Math.min(100, prev + delta))
+      const next = state.factionStandings[factionId]
+
+      // Spawn faction-milestone rumors when crossing 50 or 75 (once per milestone per playthrough)
+      for (const milestone of [50, 75] as const) {
+        if (prev < milestone && next >= milestone) {
+          const rumor = buildEventRumorEntry(
+            contentCatalog.eventRumorTemplates,
+            { eventType: 'faction-milestone', factionId, milestone },
+            state.currentDistrictId ?? 'district-the-pale',
+            state.day,
+          )
+          if (rumor && !state.rumors.some((r) => r.eventSource === rumor.eventSource)) {
+            state.rumors.push(rumor)
+          }
+        }
+      }
 
       if (delta < -10) {
         state.roster.forEach((rosterNpc) => {

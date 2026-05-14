@@ -3,6 +3,8 @@ import { getRenownLevel } from '../../domain/progression/contracts'
 import type { QuestTemplate } from '../../domain/quests/contracts'
 import { contentCatalog, getNpcDefinitions, getQuestTemplates } from '../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
+import { buildEventRumorEntry } from './spawnEventRumor'
+import type { QuestEventParams } from './spawnEventRumor'
 
 interface QuestSuccessOptions {
   completionMessage?: string
@@ -161,6 +163,12 @@ function activateSuccessorQuestLead(state: GameState, successorQuestId: string, 
     `A new lead emerged from ${fromQuestTitle}: "${successorTemplate.title}" — check the Work Board.`,
     `successor-${successorQuestId}`,
   )
+}
+
+function deriveQuestOutcomeType(questId: string): QuestEventParams['questOutcomeType'] {
+  if (questId.includes('rescue') || questId.includes('captive')) return 'captive-freed'
+  if (questId.includes('ledger') || questId.includes('evidence')) return 'evidence-secured'
+  return 'quest-resolved'
 }
 
 export function settleQuestSuccess(state: GameState, questId: string, options: QuestSuccessOptions = {}) {
@@ -385,6 +393,18 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   // Unlock successor quest lead if defined
   if (template?.successorQuestId) {
     activateSuccessorQuestLead(state, template.successorQuestId, questTitle)
+  }
+
+  // Spawn a world-reaction event rumor in the quest's district
+  const outcomeType = deriveQuestOutcomeType(questId)
+  const eventRumor = buildEventRumorEntry(
+    contentCatalog.eventRumorTemplates,
+    { eventType: 'quest-complete', questOutcomeType: outcomeType, districtId: template?.districtId ?? null } satisfies QuestEventParams,
+    state.currentDistrictId ?? 'district-the-pale',
+    state.day,
+  )
+  if (eventRumor) {
+    state.rumors.push(eventRumor)
   }
 
   return true

@@ -70,44 +70,64 @@ function spawnAuthoredRumors(state: GameState): GameState {
 }
 
 /**
+ * Resolve the effective district for a roster NPC.
+ * At-home assignments (idle/training/recovering/assigned_title) → house home district.
+ * Out assignments (working/deployed/defense) → explicit assignedDistrictId, then NPC definition home.
+ */
+function effectiveDistrictId(npc: GameState['roster'][number], houseDistrictId: string): string | null {
+  const atHome = ['idle', 'training', 'recovering', 'assigned_title'] as const
+  if ((atHome as readonly string[]).includes(npc.assignment)) return houseDistrictId
+  return npc.assignedDistrictId ?? contentCatalog.npcsById.get(npc.npcId)?.districtId ?? null
+}
+
+/**
  * Compute spread pass chance for a rumour in a given district.
- * Uses average NPC stats from the roster as a proxy carrier (destiny-c3sh will deepen this).
+ * Only roster NPCs assigned to the rumour's district contribute social stats.
+ * NPCs in other districts are ignored — district presence is a player-controlled variable.
  */
 function computePassChance(rumor: Rumor, state: GameState): number {
   const climate = getClimate(rumor.districtId)
   const multiplier = CLIMATE_MULTIPLIER[climate]
+  const base = 0.08 * multiplier + 0.30 * (rumor.credibility / 100)
 
-  // Use average roster stats as carrier proxy until destiny-c3sh provides per-NPC iteration
-  const roster = state.roster
-  if (roster.length === 0) {
-    return clamp(0.08 * multiplier + 0.30 * (rumor.credibility / 100), 0.02, 0.85)
+  // Filter to NPCs whose effective district matches this rumour's district
+  const districtRoster = state.roster.filter(
+    (npc) => effectiveDistrictId(npc, state.houseDistrictId) === rumor.districtId,
+  )
+
+  if (districtRoster.length === 0) {
+    // No presence in this district — only base credibility/climate drives spread
+    return clamp(base, 0.02, 0.85)
   }
 
-  // dominance lives on traits; trust/loyalty on per-NPC relationships
+  // dominance lives on traits
   const avgDominance =
-    roster.reduce((sum, npc) => sum + (npc.traits?.dominance ?? 50), 0) / roster.length
+    districtRoster.reduce((sum, npc) => sum + (npc.traits?.dominance ?? 50), 0) / districtRoster.length
 
   // Trust toward origin NPC (if known); fall back to 50 if no relationship exists
   const avgTrust =
-    roster.reduce((sum, npc) => {
+    districtRoster.reduce((sum, npc) => {
       const rel = rumor.originNpcId
         ? getRelationship(state.relationships, npc.npcId, rumor.originNpcId)
         : null
       return sum + (rel?.trust ?? 50)
-    }, 0) / roster.length
+    }, 0) / districtRoster.length
 
-  // Loyalty toward any subject NPC (suppress spreading harmful info about allies)
+  // Loyalty toward subject NPCs suppresses spreading harmful information about allies
   const subjectLoyaltySum = rumor.subjectNpcIds.reduce((total, subjectId) => {
     const avgForSubject =
-      roster.reduce((sum, npc) => sum + (getRelationship(state.relationships, npc.npcId, subjectId).loyalty ?? 50), 0) /
-      roster.length
+      districtRoster.reduce(
+        (sum, npc) => sum + (getRelationship(state.relationships, npc.npcId, subjectId).loyalty ?? 50),
+        0,
+      ) / districtRoster.length
     return total + avgForSubject
   }, 0)
-  const subjectLoyalty = subjectLoyaltySum / rumor.subjectNpcIds.length
+  const subjectLoyalty = rumor.subjectNpcIds.length > 0
+    ? subjectLoyaltySum / rumor.subjectNpcIds.length
+    : 50
 
   return clamp(
-    0.08 * multiplier +
-      0.30 * (rumor.credibility / 100) +
+    base +
       0.18 * ((avgTrust - 50) / 50) +
       0.18 * ((avgDominance - 50) / 50) -
       0.22 * (subjectLoyalty / 100),

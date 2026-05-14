@@ -11,6 +11,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   name: 'Ida Rhys',
   status: 'mercenary',
   assignment: 'idle',
+  assignedDistrictId: null,
   activeTitle: null,
   wagesOwedDays: 0,
   trainingFocus: null,
