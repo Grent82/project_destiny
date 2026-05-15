@@ -4138,5 +4138,96 @@
         "note": "Sable cut corners on a filtration job Tessaly had spec'd. People got sick. Tessaly reported it; Sable was fined, not dismissed. The grudge runs one direction only — Sable sees an obstacle, Tessaly sees a lesson no one learned."
       }
     ]
+  },
+  {
+    "id": "npc-elyn",
+    "name": "Elyn",
+    "origin": "The Warrens",
+    "background": "Seven years old. Brought to the house by Petra Sunn. Her situation was not safe where it was. Petra does not give many details. Elyn does not talk much yet. She watches. She has her mother's hands — Petra does not say whose mother.",
+    "rarity": "rare",
+    "status": "ward",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 20,
+      "agility": 20,
+      "endurance": 20,
+      "intellect": 20,
+      "perception": 20,
+      "presence": 20,
+      "resolve": 20
+    },
+    "startingSkills": {
+      "melee": 5,
+      "ranged": 5,
+      "medicine": 5,
+      "administration": 5,
+      "engineering": 5,
+      "negotiation": 5,
+      "survival": 5,
+      "security": 5,
+      "crafting": 5,
+      "performance": 5,
+      "academics": 5,
+      "intrigue": 5
+    },
+    "startingTraits": {
+      "discipline": 20,
+      "ambition": 15,
+      "empathy": 45,
+      "ruthlessness": 8,
+      "prudence": 28,
+      "curiosity": 62,
+      "dominance": 12,
+      "loyalty": 55,
+      "zeal": 18,
+      "vanity": 10
+    },
+    "allowedTitleIds": [],
+    "ageBand": "child",
+    "sex": "girl",
+    "appearanceTags": [
+      "always has something in her hands — a pebble, a piece of cord, someone else's forgotten button",
+      "takes up much less space than she has opinions",
+      "watches before she moves"
+    ],
+    "quirks": [
+      {
+        "text": "goes still and quiet when something frightens her, rather than fleeing",
+        "tags": [
+          "cautious",
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "danger",
+          "threat",
+          "fear",
+          "anger"
+        ]
+      },
+      {
+        "text": "asks questions only after everyone else has stopped talking",
+        "tags": [
+          "meticulous",
+          "loyal"
+        ],
+        "triggerKeywords": [
+          "question",
+          "understand",
+          "learn",
+          "trust"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To understand why things are the way they are.",
+      "privateNeed": "To know if this place is somewhere she is allowed to stay."
+    },
+    "bonds": [
+      {
+        "type": "handler",
+        "targetId": "npc-petra-sunn",
+        "note": "Petra moved her. Elyn does not know the word for what Petra is to her. She knows Petra came when it mattered."
+      }
+    ]
   }
 ]

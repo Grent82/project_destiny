@@ -4299,5 +4299,326 @@
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-arrival",
+    "title": "A Child at the Door",
+    "description": "Petra Sunn arrives at the house early in the morning. She has a child with her. Seven years old, maybe. Elyn. Petra says the situation she came from was not safe. She does not say what the situation was. The child watches you from behind Petra and does not speak.",
+    "triggerConditions": {
+      "dayMin": 3,
+      "dayMax": 5,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-take-her-in",
+        "label": "She stays.",
+        "outcomes": [
+          {
+            "type": "addNpcToRoster",
+            "npcId": "npc-elyn",
+            "arcId": "arc-ward-growing"
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn has come to stay in the house. She has not yet spoken."
+          }
+        ]
+      },
+      {
+        "id": "choice-decline",
+        "label": "We cannot take responsibility for a child.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You told Petra you could not take the child. She did not argue. She left with the same face she came with."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "petra", "elyn", "household"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-petra-sunn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-petra-elyn-silent",
+    "title": "Petra Watches",
+    "description": "Petra Sunn was near the door when Elyn was shown her space. No one spoke to her. She left before anyone else did.",
+    "triggerConditions": {
+      "dayMin": 3,
+      "dayMax": 7,
+      "requiredRosterNpcId": "npc-petra-sunn",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "Noted.",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 0
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Petra Sunn was near the door when Elyn arrived. She left before anyone spoke to her."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": true,
+    "tags": ["ward", "petra", "elyn", "household"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-petra-sunn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-first-word",
+    "title": "Elyn Speaks",
+    "description": "It has been some time since Elyn arrived. She has been watching. Today she said something — unprompted, to no one in particular. Something small. About the quality of the light, or the smell from the kitchen, or what a tool was called. It was not much. It was something.",
+    "triggerConditions": {
+      "dayMin": 150,
+      "dayMax": 250,
+      "requiredRosterNpcId": "npc-elyn",
+      "probability": 0.7
+    },
+    "choices": [
+      {
+        "id": "choice-let-it-be",
+        "label": "Let it be.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn said something today. You let it pass without comment. She seemed to prefer it that way."
+          }
+        ]
+      },
+      {
+        "id": "choice-respond",
+        "label": "Answer her.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn said something today. You answered. She looked at you for a long moment before going back to what she was doing."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "elyn", "milestone"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-elyn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-enters-childhood",
+    "title": "Elyn, Older",
+    "description": "Elyn has been in the house long enough to have opinions. She has preferences about food. She has people she goes to when something is wrong. She is not a problem the house solved — she is a person the house grew. You notice it one day in something small: she corrected someone. Gently. But correctly.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-elyn",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-watch-her-grow",
+        "label": "Watch her grow.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn is older now. The house shaped her. She is starting to shape it back."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "elyn", "arc-transition"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-elyn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-asks-to-help",
+    "title": "Elyn Wants to Be Useful",
+    "description": "Elyn comes to you directly, which she has never done before. She asks if there is something real she can do. Not errands. Something that matters. She uses that word — matters. She is watching your face when she says it.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-elyn",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-assign-irenne",
+        "label": "Have her assist Irenne's work.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn will work alongside Irenne. She will learn what it means to tend to people."
+          }
+        ]
+      },
+      {
+        "id": "choice-assign-study",
+        "label": "Set her to study.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn will study. You gave her materials and a space. She accepted both without comment."
+          }
+        ]
+      },
+      {
+        "id": "choice-assign-observation",
+        "label": "Let her observe house administration.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn will observe how the house runs. She has been watching anyway. Now it is formal."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "elyn", "arc-transition", "milestone"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-elyn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-knows-something",
+    "title": "Elyn Has Observed",
+    "description": "Elyn comes to you with something she has seen. She is careful about how she describes it — she got that from living here. She does not know if it is important. She thought you should know. It might be nothing. It might not be.",
+    "triggerConditions": {
+      "dayMin": 700,
+      "dayMax": 1000,
+      "requiredRosterNpcId": "npc-elyn",
+      "probability": 0.6
+    },
+    "choices": [
+      {
+        "id": "choice-take-it-seriously",
+        "label": "Tell me exactly what you saw.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn told you what she observed. You took it seriously. She left the room differently than she entered."
+          }
+        ]
+      },
+      {
+        "id": "choice-reassure",
+        "label": "Thank her and say you will look into it.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn told you what she observed. You thanked her. She did not ask if you believed her."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "elyn", "milestone", "intelligence"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-elyn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-asks-about-mother",
+    "title": "The Question",
+    "description": "Elyn asks about her mother. Not dramatically — she asks the way she asks everything: carefully, after watching, at a time when no one else is around. She says she knows you might not know. She says she is asking anyway. She has been waiting to ask for a long time.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-elyn",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-tell-what-you-know",
+        "label": "Tell her what you know.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You told Elyn what you knew about her mother. It was not enough. It was something."
+          }
+        ]
+      },
+      {
+        "id": "choice-honest-ignorance",
+        "label": "Tell her you do not know — honestly.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You told Elyn you did not know. She accepted this. She had been expecting it."
+          }
+        ]
+      },
+      {
+        "id": "choice-defer",
+        "label": "Tell her you need time to find out.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You told Elyn you would find out. She said she would wait. She has already been waiting."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "elyn", "arc-transition", "milestone", "narrative"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-elyn",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-elyn-chooses",
+    "title": "What Elyn Wants",
+    "description": "Elyn tells you what she wants to do with her life. She has thought about it for a long time — you can tell by how specific she is, how calm. She is not asking for permission. She is telling you, the way someone tells you something important when they trust you to hear it.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-elyn",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-support-her",
+        "label": "Support her choice.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Elyn has decided what she wants. You told her you would help her get there. She nodded. She already knew you would."
+          }
+        ]
+      },
+      {
+        "id": "choice-stay",
+        "label": "Ask if she wants to stay with the house.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You asked Elyn if she wanted to stay. She said: where else would I go? Then she smiled. It was the first time you had seen her smile without reservation."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "elyn", "arc-transition", "milestone", "narrative"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-elyn",
+    "presentationFlavour": null
   }
 ]

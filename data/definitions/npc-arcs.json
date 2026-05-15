@@ -73,5 +73,35 @@
         "transitionConditions": null
       }
     ]
+  },
+  {
+    "arcId": "arc-ward-growing",
+    "stages": [
+      {
+        "id": "early-childhood",
+        "transitionConditions": {
+          "minDaysInStage": 400
+        },
+        "transitionEventId": "event-elyn-enters-childhood"
+      },
+      {
+        "id": "childhood",
+        "transitionConditions": {
+          "minDaysInStage": 500
+        },
+        "transitionEventId": "event-elyn-asks-about-mother"
+      },
+      {
+        "id": "early-adolescence",
+        "transitionConditions": {
+          "minDaysInStage": 200
+        },
+        "transitionEventId": "event-elyn-chooses"
+      },
+      {
+        "id": "young-adult",
+        "transitionConditions": null
+      }
+    ]
   }
 ]

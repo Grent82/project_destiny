@@ -3,6 +3,9 @@ import type { EventOutcome } from '../../domain/events/contracts'
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { addQuestLeadIfNew } from './questLifecycle'
+import { contentCatalog } from '../content/contentCatalog'
+import { initializeRosterRelationships } from './initializeRosterRelationships'
+import { createRng } from './seededRng'
 
 export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameState {
   let next = state
@@ -135,6 +138,41 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
                   source: 'event' as const,
                 },
               ],
+            }
+          }
+        }
+        break
+      }
+      case 'addNpcToRoster': {
+        if (outcome.npcId) {
+          const alreadyOnRoster = next.roster.some((r) => r.npcId === outcome.npcId)
+          if (!alreadyOnRoster) {
+            const npcDef = contentCatalog.npcsById.get(outcome.npcId)
+            if (npcDef) {
+              const npcArc = outcome.arcId
+                ? { arcId: outcome.arcId, stage: 'early-childhood', stageEnteredDay: next.day, stageFlags: {}, driftHistory: [] }
+                : null
+              const newEntry = {
+                npcId: outcome.npcId,
+                name: npcDef.name,
+                status: npcDef.status,
+                assignment: 'idle' as const,
+                assignedDistrictId: null,
+                activeTitle: null,
+                wagesOwedDays: 0,
+                trainingFocus: null,
+                attributes: { ...npcDef.baseAttributes },
+                skills: { ...npcDef.startingSkills },
+                traits: { ...npcDef.startingTraits },
+                states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 70 },
+                loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+                npcMemory: [],
+                npcArc,
+              }
+              next = { ...next, roster: [...next.roster, newEntry] }
+              const { rng } = createRng(next.rngSeed)
+              next = initializeRosterRelationships(next, rng)
+              next = appendActivityLogEntry(next, 'system', `${npcDef.name} has come to stay in the house.`)
             }
           }
         }

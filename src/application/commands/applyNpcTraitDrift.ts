@@ -20,22 +20,33 @@ const STAGE_MULTIPLIERS: Record<string, number> = {
   set: 0,
 }
 
+// Children absorb from household adults at ×3 rate — their character is still forming.
+const WARD_STAGE_MULTIPLIERS: Record<string, number> = {
+  'early-childhood': 3.0,
+  childhood: 3.0,
+  'early-adolescence': 2.0,
+  'young-adult': 1.0,
+}
+
+const DRIFT_ARC_IDS = new Set(['arc-becoming', 'arc-ward-growing'])
+
 /** Step 9b: Experiential trait drift for arc-enabled NPCs.
- *  Only NPCs with npcArc.arcId === 'arc-becoming' receive drift — most people don't change
+ *  NPCs with arc-becoming or arc-ward-growing receive drift — most people don't change
  *  their fundamental nature from proximity. Young or fractured NPCs in specific arcs do. */
 export function applyNpcTraitDrift(state: GameState, rng: Rng = Math.random): GameState {
   const learners = state.roster.filter(
-    (npc) => npc.npcArc != null && npc.npcArc.arcId === 'arc-becoming',
+    (npc) => npc.npcArc != null && DRIFT_ARC_IDS.has(npc.npcArc.arcId),
   )
   if (learners.length === 0) return state
 
-  const influencers = state.roster.filter((npc) => npc.npcArc == null || npc.npcArc.arcId !== 'arc-becoming')
+  const influencers = state.roster.filter((npc) => npc.npcArc == null || !DRIFT_ARC_IDS.has(npc.npcArc.arcId))
 
   let next = state
 
   for (const learner of learners) {
     const arc = learner.npcArc!
-    const multiplier = STAGE_MULTIPLIERS[arc.stage] ?? 1.0
+    const multiplierMap = arc.arcId === 'arc-ward-growing' ? WARD_STAGE_MULTIPLIERS : STAGE_MULTIPLIERS
+    const multiplier = multiplierMap[arc.stage] ?? 1.0
     if (multiplier === 0) continue
 
     let updatedTraits = { ...learner.traits }

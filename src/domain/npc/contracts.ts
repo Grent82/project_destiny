@@ -19,6 +19,7 @@ export const npcStatusSchema = z.enum([
   'criminal',
   'prisoner',
   'family',
+  'ward',
 ])
 
 export const npcAssignmentSchema = z.enum([
@@ -107,7 +108,7 @@ export const factionRelationshipSchema = z
   })
   .strict()
 
-export const npcAgeBandSchema = z.enum(['young', 'adult', 'middle', 'elder'])
+export const npcAgeBandSchema = z.enum(['child', 'young', 'adult', 'middle', 'elder'])
 
 export const quirkTagSchema = z.enum([
   'cautious',

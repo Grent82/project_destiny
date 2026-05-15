@@ -790,5 +790,27 @@
       "fear": 0,
       "loyalty": 12
     }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-elyn",
+    "axes": {
+      "affinity": 28,
+      "trust": 22,
+      "respect": 18,
+      "fear": 0,
+      "loyalty": 30
+    }
+  },
+  {
+    "fromNpcId": "npc-elyn",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 24,
+      "trust": 18,
+      "respect": 16,
+      "fear": 0,
+      "loyalty": 28
+    }
   }
 ]

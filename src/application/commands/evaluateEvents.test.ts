@@ -216,6 +216,30 @@ describe('applyOutcomes', () => {
     expect(next.cityResources.corridorStatus).toBe('blocked')
   })
 
+  it('addNpcToRoster places NPC on roster with arc initialized', () => {
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
+    const elyn = next.roster.find((r) => r.npcId === 'npc-elyn')
+    expect(elyn).toBeDefined()
+    expect(elyn?.npcArc?.arcId).toBe('arc-ward-growing')
+    expect(elyn?.npcArc?.stage).toBe('early-childhood')
+  })
+
+  it('addNpcToRoster without arcId places NPC with null arc', () => {
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn' }])
+    const elyn = next.roster.find((r) => r.npcId === 'npc-elyn')
+    expect(elyn).toBeDefined()
+    expect(elyn?.npcArc).toBeNull()
+  })
+
+  it('addNpcToRoster is idempotent — does not duplicate if already on roster', () => {
+    const state = makeState()
+    const once = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
+    const twice = applyOutcomes(once, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
+    expect(twice.roster.filter((r) => r.npcId === 'npc-elyn')).toHaveLength(1)
+  })
+
   it('addActivityLogEntry appends a log message', () => {
     const state = makeState()
     const next = applyOutcomes(state, [{ type: 'addActivityLogEntry', message: 'Something happened.' }])

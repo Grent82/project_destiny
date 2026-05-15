@@ -151,6 +151,37 @@ describe('applyNpcTraitDrift', () => {
     expect(deltaF).toBeGreaterThan(deltaC)
   })
 
+  it('drifts arc-ward-growing NPCs at ×3 rate compared to arc-becoming', () => {
+    const makeWardNpc = (): NpcRuntimeState => ({
+      ...initialStateWithIda.roster[1]!,
+      npcId: 'npc-ward-test',
+      npcArc: { arcId: 'arc-ward-growing', stage: 'early-childhood', stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
+      traits: { ...initialStateWithIda.roster[1]!.traits, discipline: 30 },
+    })
+    const makeBecomingNpc = (): NpcRuntimeState => ({
+      ...initialStateWithIda.roster[1]!,
+      npcId: 'npc-becoming-test',
+      npcArc: { arcId: 'arc-becoming', stage: 'forming', stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
+      traits: { ...initialStateWithIda.roster[1]!.traits, discipline: 30 },
+    })
+    const influencer = {
+      ...initialStateWithIda.roster[0]!,
+      traits: { ...initialStateWithIda.roster[0]!.traits, discipline: 80 },
+    }
+
+    const stateWard = { ...initialStateWithIda, roster: [influencer, makeWardNpc()] }
+    const stateBecoming = { ...initialStateWithIda, roster: [influencer, makeBecomingNpc()] }
+
+    const resultWard = applyNpcTraitDrift(stateWard, () => 0)
+    const resultBecoming = applyNpcTraitDrift(stateBecoming, () => 0)
+
+    const deltaWard = resultWard.roster[1]!.traits.discipline - 30
+    const deltaBecoming = resultBecoming.roster[1]!.traits.discipline - 30
+
+    // Early-childhood ward multiplier (3.0) vs forming multiplier (2.0)
+    expect(deltaWard).toBeGreaterThan(deltaBecoming)
+  })
+
   it('same seed produces identical results (deterministic)', () => {
     const learner = makeArcNpc({ ...initialStateWithIda.roster[1]! })
     const state = { ...initialStateWithIda, roster: [initialStateWithIda.roster[0]!, learner] }

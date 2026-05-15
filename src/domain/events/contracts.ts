@@ -12,6 +12,7 @@ export const eventOutcomeTypeSchema = z.enum([
   'createQuestLead',
   'updateQuestStage',
   'unlockNpc',
+  'addNpcToRoster',
 ])
 
 export const eventOutcomeSchema = z
@@ -26,6 +27,7 @@ export const eventOutcomeSchema = z
     questId: z.string().optional(),
     stageId: z.string().optional(),
     objectiveLabel: z.string().optional(),
+    arcId: z.string().optional(),
   })
   .strict()
 
