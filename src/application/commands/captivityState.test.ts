@@ -159,6 +159,24 @@ describe('rescueNpc action', () => {
     expect(healthAfter).toBe(healthBefore)
   })
 
+  it('queues the mandatory discovery moment when unknown-context pregnancy is first discovered', () => {
+    const store = createGameStore(makeStateWithCaptive({ condition: 'broken', timeHeldDays: 0 }))
+    store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
+    const state = store.getState().game
+
+    expect(state.pendingEvents.some((event) => event.eventId === 'event-captivity-pregnancy-discovery')).toBe(true)
+    expect(
+      state.lastFiredDay['captivity-pregnancy-discovery-npc-marion-vale'],
+    ).toBe(state.day)
+    expect(
+      state.eventInstances.some(
+        (instance) =>
+          instance.eventId === 'event-captivity-pregnancy-discovery' &&
+          instance.sourceNpcId === 'npc-marion-vale',
+      ),
+    ).toBe(true)
+  })
+
   it('logs rescue event in activity log', () => {
     const store = createGameStore(makeStateWithCaptive())
     store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
