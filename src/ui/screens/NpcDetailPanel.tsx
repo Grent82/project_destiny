@@ -446,6 +446,12 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         )}
 
         <p className="text-muted">{detail.origin}</p>
+
+        {dialogueTree && (
+          <button className="action-button" type="button" onClick={handleTalk}>
+            Talk
+          </button>
+        )}
       </div>
 
       <div className="npc-stats-column">
@@ -606,11 +612,6 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           )}
           <DurabilityPanel npcId={detail.npcId} />
           <TitlePanel detail={detail} />
-          {dialogueTree && (
-            <button className="action-button" type="button" onClick={handleTalk}>
-              Talk
-            </button>
-          )}
           <button
             className="action-button"
             type="button"
