@@ -4044,5 +4044,99 @@
         "note": "Has been patching Dara since she was eleven. Maternal proximity without either naming it. Dara comes here when injured before she goes anywhere else. 15+ years."
       }
     ]
+  },
+  {
+    "id": "npc-tessaly-wode",
+    "name": "Tessaly Wode",
+    "origin": "Ironworks",
+    "background": "Master glassworker who spent thirty years running the Ironworks' precision instrument trade. Knows how to read a room the way she reads a lens — cracks, distortions, what light reveals that the surface hides. Has trained a dozen engineers who no longer credit her. Does not hold it against them personally; holds it against the institution.",
+    "rarity": "rare",
+    "status": "mercenary",
+    "factionAffinityId": "faction-foundry-league",
+    "baseAttributes": {
+      "might": 28,
+      "agility": 38,
+      "endurance": 52,
+      "intellect": 74,
+      "perception": 72,
+      "presence": 55,
+      "resolve": 68
+    },
+    "startingSkills": {
+      "engineering": 88,
+      "crafting": 82,
+      "administration": 44,
+      "academics": 56,
+      "negotiation": 34,
+      "melee": 12,
+      "ranged": 10,
+      "medicine": 18,
+      "security": 14,
+      "survival": 12,
+      "performance": 8,
+      "intrigue": 22
+    },
+    "startingTraits": {
+      "discipline": 88,
+      "prudence": 74,
+      "curiosity": 82,
+      "empathy": 44,
+      "loyalty": 58,
+      "ambition": 32,
+      "ruthlessness": 28,
+      "dominance": 24,
+      "zeal": 20,
+      "vanity": 15
+    },
+    "allowedTitleIds": [
+      "title-chief-engineer",
+      "title-trainer"
+    ],
+    "ageBand": "elder",
+    "sex": "woman",
+    "appearanceTags": [
+      "glass-dust in the creases of her hands",
+      "spectacles worn on a cord around her neck",
+      "deliberate movements, no wasted motion"
+    ],
+    "quirks": [
+      {
+        "text": "measures twice before speaking, once before acting",
+        "tags": [
+          "meticulous",
+          "cautious"
+        ],
+        "triggerKeywords": [
+          "plan",
+          "risk",
+          "decision",
+          "rush"
+        ]
+      },
+      {
+        "text": "keeps a small lens in her pocket and holds it to the light when thinking",
+        "tags": [
+          "compulsive",
+          "nostalgic"
+        ],
+        "triggerKeywords": [
+          "truth",
+          "clarity",
+          "see",
+          "understand"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To pass on the craft before the Ironworks forgets what precision means.",
+      "privateNeed": "To be seen as someone who built things, not merely someone who was used to build them."
+    },
+    "bonds": [
+      {
+        "type": "rival",
+        "targetId": "npc-sable-wrent",
+        "note": "Sable cut corners on a filtration job Tessaly had spec'd. People got sick. Tessaly reported it; Sable was fined, not dismissed. The grudge runs one direction only — Sable sees an obstacle, Tessaly sees a lesson no one learned."
+      }
+    ]
   }
 ]

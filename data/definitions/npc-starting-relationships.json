@@ -680,5 +680,115 @@
       "fear": 6,
       "loyalty": 0
     }
+  },
+  {
+    "fromNpcId": "npc-tessaly-wode",
+    "toNpcId": "npc-ida-rhys",
+    "axes": {
+      "affinity": 44,
+      "trust": 36,
+      "respect": 52,
+      "fear": 0,
+      "loyalty": 28
+    }
+  },
+  {
+    "fromNpcId": "npc-ida-rhys",
+    "toNpcId": "npc-tessaly-wode",
+    "axes": {
+      "affinity": 38,
+      "trust": 28,
+      "respect": 46,
+      "fear": 0,
+      "loyalty": 22
+    }
+  },
+  {
+    "fromNpcId": "npc-tessaly-wode",
+    "toNpcId": "npc-sable-wrent",
+    "axes": {
+      "affinity": 30,
+      "trust": 14,
+      "respect": 8,
+      "fear": 0,
+      "loyalty": 0
+    }
+  },
+  {
+    "fromNpcId": "npc-sable-wrent",
+    "toNpcId": "npc-tessaly-wode",
+    "axes": {
+      "affinity": 8,
+      "trust": -10,
+      "respect": 12,
+      "fear": 0,
+      "loyalty": 0
+    }
+  },
+  {
+    "fromNpcId": "npc-tessaly-wode",
+    "toNpcId": "npc-fenwick-pale",
+    "axes": {
+      "affinity": 42,
+      "trust": 38,
+      "respect": 40,
+      "fear": 0,
+      "loyalty": 24
+    }
+  },
+  {
+    "fromNpcId": "npc-fenwick-pale",
+    "toNpcId": "npc-tessaly-wode",
+    "axes": {
+      "affinity": 48,
+      "trust": 44,
+      "respect": 50,
+      "fear": 0,
+      "loyalty": 30
+    }
+  },
+  {
+    "fromNpcId": "npc-tessaly-wode",
+    "toNpcId": "npc-bog",
+    "axes": {
+      "affinity": 36,
+      "trust": 30,
+      "respect": 34,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-bog",
+    "toNpcId": "npc-tessaly-wode",
+    "axes": {
+      "affinity": 32,
+      "trust": 28,
+      "respect": 38,
+      "fear": 0,
+      "loyalty": 16
+    }
+  },
+  {
+    "fromNpcId": "npc-tessaly-wode",
+    "toNpcId": "npc-sanna-veld",
+    "axes": {
+      "affinity": 28,
+      "trust": 22,
+      "respect": 26,
+      "fear": 0,
+      "loyalty": 14
+    }
+  },
+  {
+    "fromNpcId": "npc-sanna-veld",
+    "toNpcId": "npc-tessaly-wode",
+    "axes": {
+      "affinity": 24,
+      "trust": 18,
+      "respect": 22,
+      "fear": 0,
+      "loyalty": 12
+    }
   }
 ]

@@ -42,7 +42,7 @@ describe('CombatScreen', () => {
     expect(screen.getByText(/Medium Range/i)).toBeInTheDocument()
     expect(screen.getByText(/Auto-target the most vulnerable enemy/i)).toBeInTheDocument()
     expect(
-      screen.getAllByText(/Ash Raider|Bog Skirmisher|Ruin Poacher|Fen Cutthroat/)
+      screen.getAllByText(/Territory Broker|Rogue Mercenary|Pale Scavenger|Opportunist/)
         .length,
     ).toBeGreaterThan(0)
 
