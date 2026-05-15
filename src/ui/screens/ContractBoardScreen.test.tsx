@@ -103,4 +103,52 @@ describe('ContractBoardScreen', () => {
     expect(screen.getByRole('button', { name: /Open on-site handoff/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Complete Delivery/i })).not.toBeInTheDocument()
   })
+
+  it('shows active quest journal entries and consequence history for tracked contracts', () => {
+    const storyQuest = getQuestTemplates().find((quest) => quest.id === 'quest-mira-rescue')
+    if (!storyQuest) {
+      throw new Error('Expected story quest in fixtures.')
+    }
+
+    const runtime = createQuestRuntime(storyQuest, 3)
+    runtime.stageId = 'briefed-by-tessaly'
+    runtime.currentObjectiveLabel = 'Reach the old tannery in The Pale before the Court moves Mira again.'
+    runtime.journalEntries = [
+      'Marion found the old ledgers wrapped in oilcloth beneath the stair.',
+      'A ledger chit survived the fire. Tessaly Wode may know what the mark means.',
+    ]
+    runtime.aftermath = {
+      narrativeSummary: 'The house now owes Tessaly an answer about the missing pages.',
+      factionImpacts: [{ factionId: 'faction-restored', delta: 3 }],
+      unlockNpcIds: ['npc-tessaly-wode'],
+      worldConsequenceIds: [],
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 5,
+      currentDistrictId: 'district-harbor-ward',
+      activeQuests: [runtime],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Quest Journal' })).toBeInTheDocument()
+    expect(screen.getByText(/Marion found the old ledgers wrapped in oilcloth beneath the stair/i)).toBeInTheDocument()
+    expect(screen.getByText(/Tessaly Wode may know what the mark means/i)).toBeInTheDocument()
+    expect(screen.getByText(/Reach the old tannery in The Pale before the Court moves Mira again/i)).toBeInTheDocument()
+    expect(screen.getByText(/Faction impact:/i)).toBeInTheDocument()
+    expect(screen.getByText(/The Restored \+3/i)).toBeInTheDocument()
+    expect(screen.getByText(/World consequence:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Control -8/i)).toBeInTheDocument()
+    expect(screen.getByText(/The house now owes Tessaly an answer about the missing pages/i)).toBeInTheDocument()
+  })
 })

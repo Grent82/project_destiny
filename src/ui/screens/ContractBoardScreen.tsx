@@ -20,6 +20,13 @@ const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-restored': 'Restored',
 }
 
+const CITY_DIAL_LABELS: Record<'prosperity' | 'unrest' | 'control' | 'corruption', string> = {
+  prosperity: 'Prosperity',
+  unrest: 'Unrest',
+  control: 'Control',
+  corruption: 'Corruption',
+}
+
 function FactionBadge({ factionId }: { factionId: string | null }) {
   if (!factionId) return <span className="badge">Independent</span>
   const label = FACTION_SHORT_NAMES[factionId] ?? factionId
@@ -49,6 +56,10 @@ function formatLeadFreshnessLabel(freshness: 'fresh' | 'aging' | 'stale') {
   }
 }
 
+function formatSignedDelta(value: number) {
+  return value > 0 ? `+${value}` : `${value}`
+}
+
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -58,6 +69,7 @@ export function ContractBoardScreen() {
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
   const activeCombat = useAppSelector((state) => state.game.activeCombat)
+  const currentDay = useAppSelector((state) => state.game.day)
 
   return (
     <section className="screen-panel">
@@ -167,6 +179,15 @@ export function ContractBoardScreen() {
               {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId, readiness }) => {
                 const isStory = template?.questType === 'story'
                 const isUrgent = (template?.timeLimitDays ?? 99) <= 2
+                const daysRemaining = template?.timeLimitDays != null
+                  ? Math.max(runtime.acceptedOnDay + template.timeLimitDays - currentDay, 0)
+                  : null
+                const factionImpactEntries = runtime.aftermath?.factionImpacts ?? []
+                const worldConsequenceEntries = [
+                  ...(template?.rewardCityDialId && template.rewardCityDialDelta !== 0
+                    ? [{ label: CITY_DIAL_LABELS[template.rewardCityDialId], delta: template.rewardCityDialDelta }]
+                    : []),
+                ]
                 return (
                 <div key={runtime.questId} className={`mission-row${isStory ? ' mission-row--story' : ''}`}>
                   <div className="mission-row-header">
@@ -229,11 +250,60 @@ export function ContractBoardScreen() {
                     {template?.timeLimitDays != null && (
                       <span>Time limit: <strong>{template.timeLimitDays} days</strong> (accepted day {runtime.acceptedOnDay})</span>
                     )}
+                    {daysRemaining != null && (
+                      <span>
+                        Days remaining: <strong>{daysRemaining}</strong>
+                      </span>
+                    )}
                     {incidentDistrictId && (
                       <span>
                         District: {contentCatalog.districtsById.get(incidentDistrictId)?.name ?? incidentDistrictId}
                       </span>
                     )}
+                  </div>
+                  <div className="quest-journal-block">
+                    <h3>Quest Journal</h3>
+                    {runtime.journalEntries.length === 0 ? (
+                      <p className="summary">No journal entries have been recorded for this contract yet.</p>
+                    ) : (
+                      <ol className="quest-journal-list">
+                        {runtime.journalEntries.map((entry, index) => (
+                          <li key={`${runtime.questId}-journal-${index}`}>{entry}</li>
+                        ))}
+                      </ol>
+                    )}
+                  </div>
+                  <div className="quest-journal-block">
+                    <h3>Consequence History</h3>
+                    {runtime.aftermath?.narrativeSummary ? (
+                      <p className="summary">{runtime.aftermath.narrativeSummary}</p>
+                    ) : (
+                      <p className="summary">No lasting consequences are logged yet.</p>
+                    )}
+                    {factionImpactEntries.length > 0 ? (
+                      <ul className="quest-journal-list">
+                        {factionImpactEntries.map((impact, index) => {
+                          const factionName =
+                            contentCatalog.factionsById.get(impact.factionId)?.name ??
+                            FACTION_SHORT_NAMES[impact.factionId] ??
+                            impact.factionId
+                          return (
+                            <li key={`${runtime.questId}-faction-impact-${index}`}>
+                              <strong>Faction impact:</strong> {factionName} {formatSignedDelta(impact.delta)}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    ) : null}
+                    {worldConsequenceEntries.length > 0 ? (
+                      <ul className="quest-journal-list">
+                        {worldConsequenceEntries.map((impact, index) => (
+                          <li key={`${runtime.questId}-world-impact-${index}`}>
+                            <strong>World consequence:</strong> {impact.label} {formatSignedDelta(impact.delta)}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
                   </div>
                   {template?.objectiveType === 'investigation' && (
                     <button
