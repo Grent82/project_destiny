@@ -19,6 +19,7 @@ import { checkNpcArcTransitions } from "./checkNpcArcTransitions"
 import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
 import { applyRumorSpread } from "./applyRumorSpread"
 import { tickWardStages } from "./houseWard"
+import { applyPersonalityFriction } from './applyPersonalityFriction'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -191,6 +192,11 @@ export function endDay(state: GameState): GameState {
   // Steps 9b-9c: Experiential trait drift and arc stage transitions
   afterEvents = applyNpcTraitDrift(afterEvents, rng)
   afterEvents = checkNpcArcTransitions(afterEvents, rng)
+
+  // Step 9d: personality friction and bonding events (every 2 days)
+  if (nextDay % 2 === 0) {
+    afterEvents = applyPersonalityFriction(afterEvents, rng)
+  }
 
   // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)

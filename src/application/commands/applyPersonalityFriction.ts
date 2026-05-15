@@ -1,0 +1,206 @@
+import type { GameState } from '../../domain'
+import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
+import { applyRelationshipDelta } from './adjustRelationship'
+import { appendActivityLogEntry } from './activityLog'
+import { contentCatalog } from '../content/contentCatalog'
+import type { Rng } from './seededRng'
+
+const MAX_EVENTS_PER_CYCLE = 2
+const FRICTION_COOLDOWN = 14
+const BONDING_COOLDOWN = 7
+
+function frictionKey(npcIdA: string, npcIdB: string, ruleId: string): string {
+  const [a, b] = npcIdA < npcIdB ? [npcIdA, npcIdB] : [npcIdB, npcIdA]
+  return `friction-${a}-${b}-${ruleId}`
+}
+
+function bondingKey(npcIdA: string, npcIdB: string, ruleId: string): string {
+  const [a, b] = npcIdA < npcIdB ? [npcIdA, npcIdB] : [npcIdB, npcIdA]
+  return `bonding-${a}-${b}-${ruleId}`
+}
+
+function isOnCooldown(state: GameState, key: string, cooldownDays: number): boolean {
+  const lastDay = state.lastFiredDay[key]
+  if (lastDay === undefined) return false
+  return state.day - lastDay < cooldownDays
+}
+
+/** Monthly pass: evaluates all eligible roster pairs for personality friction and bonding moments. */
+export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState {
+  const eligible = state.roster.filter(
+    (npc) =>
+      npc.assignment !== 'recovering' &&
+      npc.captivityState?.status !== 'captive' &&
+      npc.captivityState?.status !== 'missing',
+  )
+
+  if (eligible.length < 2) return state
+
+  let next = state
+  let generated = 0
+
+  outer: for (let i = 0; i < eligible.length; i++) {
+    for (let j = i + 1; j < eligible.length; j++) {
+      if (generated >= MAX_EVENTS_PER_CYCLE) break outer
+
+      const npcA = eligible[i]!
+      const npcB = eligible[j]!
+      const score = calculateBaseCompatibility(npcA.traits, npcB.traits)
+
+      // --- BONDING EVENTS (score > +20, both idle or deployed) ---
+      if (score > 20) {
+        const coPresent =
+          (npcA.assignment === 'deployed' || npcA.assignment === 'idle') &&
+          (npcB.assignment === 'deployed' || npcB.assignment === 'idle')
+
+        if (coPresent) {
+          // Late conversation: both high curiosity
+          if (npcA.traits.curiosity > 55 && npcB.traits.curiosity > 55) {
+            const key = bondingKey(npcA.npcId, npcB.npcId, 'late-conversation')
+            if (!isOnCooldown(next, key, BONDING_COOLDOWN)) {
+              next = { ...next, relationships: { ...next.relationships } }
+              applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'affinity', 3)
+              applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'affinity', 3)
+              applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'trust', 2)
+              applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'trust', 2)
+              next = appendActivityLogEntry(
+                next,
+                'system',
+                `${npcA.name} and ${npcB.name} were still talking when the lamps went out.`,
+              )
+              next = { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } }
+              generated++
+              continue
+            }
+          }
+
+          // Quiet respect: both high discipline
+          if (npcA.traits.discipline > 65 && npcB.traits.discipline > 65) {
+            const key = bondingKey(npcA.npcId, npcB.npcId, 'quiet-respect')
+            if (!isOnCooldown(next, key, BONDING_COOLDOWN)) {
+              next = { ...next, relationships: { ...next.relationships } }
+              applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'respect', 4)
+              applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'respect', 4)
+              next = appendActivityLogEntry(
+                next,
+                'system',
+                `${npcA.name} noted ${npcB.name}'s reliability without saying so.`,
+              )
+              next = { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } }
+              generated++
+              continue
+            }
+          }
+        }
+      }
+
+      // --- FRICTION EVENTS (rule conditions, independent of global score) ---
+
+      // Rule 1: Dominance rivalry — both dominance >65, no title differentiation
+      if (npcA.traits.dominance > 65 && npcB.traits.dominance > 65) {
+        const sameTitleStatus = (npcA.activeTitle === null) === (npcB.activeTitle === null)
+        if (sameTitleStatus) {
+          const key = frictionKey(npcA.npcId, npcB.npcId, 'dominance-rivalry')
+          if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
+            next = {
+              ...next,
+              lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
+              pendingEvents: [
+                ...next.pendingEvents,
+                { eventId: 'event-npc-dominance-tension', firedOnDay: next.day },
+              ],
+            }
+            generated++
+            continue
+          }
+        }
+      }
+
+      // Rule 2: Moral methods disagreement — one ruthless >60, one empathic >60
+      if (
+        (npcA.traits.ruthlessness > 60 && npcB.traits.empathy > 60) ||
+        (npcB.traits.ruthlessness > 60 && npcA.traits.empathy > 60)
+      ) {
+        const key = frictionKey(npcA.npcId, npcB.npcId, 'moral-methods')
+        if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
+          next = {
+            ...next,
+            lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
+            pendingEvents: [
+              ...next.pendingEvents,
+              { eventId: 'event-npc-methods-disagreement', firedOnDay: next.day },
+            ],
+          }
+          generated++
+          continue
+        }
+      }
+
+      // Rule 3: Ambition rivalry — both ambition >65, neither has a title
+      if (
+        npcA.traits.ambition > 65 &&
+        npcB.traits.ambition > 65 &&
+        npcA.activeTitle === null &&
+        npcB.activeTitle === null
+      ) {
+        const key = frictionKey(npcA.npcId, npcB.npcId, 'ambition-rivalry')
+        if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
+          next = {
+            ...next,
+            lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
+            pendingEvents: [
+              ...next.pendingEvents,
+              { eventId: 'event-npc-ambition-comparison', firedOnDay: next.day },
+            ],
+          }
+          generated++
+          continue
+        }
+      }
+
+      // Rule 4: Vanity recognition competition — both vanity >60
+      if (npcA.traits.vanity > 60 && npcB.traits.vanity > 60) {
+        const key = frictionKey(npcA.npcId, npcB.npcId, 'vanity-recognition')
+        if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
+          next = {
+            ...next,
+            lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
+            pendingEvents: [
+              ...next.pendingEvents,
+              { eventId: 'event-npc-recognition-rivalry', firedOnDay: next.day },
+            ],
+          }
+          generated++
+          continue
+        }
+      }
+
+      // Rule 5: Zeal clash — both zeal >60, opposing faction affiliations
+      if (npcA.traits.zeal > 60 && npcB.traits.zeal > 60) {
+        const defA = contentCatalog.npcsById.get(npcA.npcId)
+        const defB = contentCatalog.npcsById.get(npcB.npcId)
+        if (
+          defA?.factionAffinityId &&
+          defB?.factionAffinityId &&
+          defA.factionAffinityId !== defB.factionAffinityId
+        ) {
+          const key = frictionKey(npcA.npcId, npcB.npcId, 'zeal-clash')
+          if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
+            next = {
+              ...next,
+              lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
+              pendingEvents: [
+                ...next.pendingEvents,
+                { eventId: 'event-npc-ideological-friction', firedOnDay: next.day },
+              ],
+            }
+            generated++
+            continue
+          }
+        }
+      }
+    }
+  }
+
+  return next
+}
