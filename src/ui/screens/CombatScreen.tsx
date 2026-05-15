@@ -93,10 +93,36 @@ export function CombatScreen() {
         </div>
       ) : (
         <>
-          {rangeInfo && (
-            <div className={`range-indicator range-indicator-${combat.range}`}>
-              <span className="range-indicator-label">{rangeInfo.label}</span>
-              <span className="range-indicator-description">{rangeInfo.description}</span>
+          {combat.range && (
+            <div className="combat-range-zones">
+              {(['close', 'medium', 'distant'] as const).map((zone) => {
+                const inZone = [...combat.allies, ...combat.enemies].filter(
+                  (c) => c.effectiveRange === zone,
+                )
+                const isActive = zone === combat.range
+                return (
+                  <div key={zone} className={`range-zone${isActive ? ' range-zone--active' : ''}`}>
+                    <h3 className="range-zone-label">{RANGE_LABELS[zone]?.label ?? zone}</h3>
+                    {isActive && (
+                      <p className="range-zone-description">{RANGE_LABELS[zone]?.description}</p>
+                    )}
+                    <div className="range-zone-combatants">
+                      {inZone.length === 0 ? (
+                        <span className="range-zone-empty">—</span>
+                      ) : (
+                        inZone.map((c) => (
+                          <span
+                            key={c.combatantId}
+                            className={`range-zone-combatant range-zone-combatant--${c.side}`}
+                          >
+                            {c.name}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
 
@@ -180,6 +206,12 @@ export function CombatScreen() {
                       />
                     </div>
                     <span>Morale {combatant.morale}</span>
+                    <div className="hp-bar-track">
+                      <div
+                        className={`hp-bar-fill morale-bar-fill${combatant.morale < 30 ? ' hp-bar-critical' : ''}`}
+                        style={{ width: `${combatant.morale}%` }}
+                      />
+                    </div>
                     <div className="badge-row">
                       <span className={`badge ${combatant.effectiveRange === combat.range ? 'badge-positive' : ''}`}>
                         {combatant.effectiveRange === combat.range ? '✓ ' : '✗ '}{combatant.effectiveRange}
@@ -211,6 +243,12 @@ export function CombatScreen() {
                       />
                     </div>
                     <span>Morale {combatant.morale}</span>
+                    <div className="hp-bar-track">
+                      <div
+                        className={`hp-bar-fill morale-bar-fill${combatant.morale < 30 ? ' hp-bar-critical' : ''}`}
+                        style={{ width: `${combatant.morale}%` }}
+                      />
+                    </div>
                     {combatant.lore && (
                       <p className="enemy-lore">{combatant.lore}</p>
                     )}
