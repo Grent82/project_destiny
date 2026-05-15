@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
-import { selectWorldNpcStates, selectWorldNpcState, selectWorldNpcView } from './worldNpcs'
+import { selectWorldNpcStates, selectWorldNpcState, selectWorldNpcView, selectNpcBonds, selectDiscoverableBonds } from './worldNpcs'
 import { contentCatalog } from '../content/contentCatalog'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { initialGameStateSnapshot } from '../store/initialGameState'
 
 describe('worldNpc runtime state selectors', () => {
   it('starts with empty worldNpcStates', () => {
@@ -66,5 +68,57 @@ describe('worldNpc runtime state selectors', () => {
     const store = createGameStore()
     const view = selectWorldNpcView('npc-does-not-exist', 'morning')(store.getState())
     expect(view).toBeNull()
+  })
+
+  it('selectNpcBonds returns soft-bond edges for a world NPC', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      relationships: {
+        [buildRelationshipKey('npc-garet-doyle', 'npc-sister-vael')]: {
+          affinity: 18,
+          respect: 0,
+          fear: 0,
+          trust: 22,
+          loyalty: 8,
+          bondType: 'friendship',
+          softBond: { strength: 42, since: 3, visibility: 'rumored' },
+        },
+      },
+    })
+
+    const bonds = selectNpcBonds('npc-garet-doyle')(store.getState())
+    expect(bonds).toHaveLength(1)
+    expect(bonds[0]?.toNpcId).toBe('npc-sister-vael')
+    expect(bonds[0]?.softBond.visibility).toBe('rumored')
+  })
+
+  it('selectDiscoverableBonds only returns rumored or known soft bonds', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      relationships: {
+        [buildRelationshipKey('npc-garet-doyle', 'npc-sister-vael')]: {
+          affinity: 18,
+          respect: 0,
+          fear: 0,
+          trust: 22,
+          loyalty: 8,
+          bondType: 'friendship',
+          softBond: { strength: 42, since: 3, visibility: 'rumored' },
+        },
+        [buildRelationshipKey('npc-old-maret', 'npc-cutter')]: {
+          affinity: 10,
+          respect: 0,
+          fear: 0,
+          trust: 10,
+          loyalty: 4,
+          bondType: 'friendship',
+          softBond: { strength: 20, since: 4, visibility: 'hidden' },
+        },
+      },
+    })
+
+    const discoverable = selectDiscoverableBonds(store.getState())
+    expect(discoverable.some((bond) => bond.fromNpcId === 'npc-garet-doyle' && bond.toNpcId === 'npc-sister-vael')).toBe(true)
+    expect(discoverable.some((bond) => bond.fromNpcId === 'npc-old-maret' && bond.toNpcId === 'npc-cutter')).toBe(false)
   })
 })

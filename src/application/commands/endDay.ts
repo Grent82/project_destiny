@@ -21,6 +21,7 @@ import { applyRumorSpread } from "./applyRumorSpread"
 import { tickWardStages } from "./houseWard"
 import { applyPersonalityFriction } from './applyPersonalityFriction'
 import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
+import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -189,6 +190,7 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyNpcAgency(afterEvents, rng)
   afterEvents = applyInitiativeActions(afterEvents, rng)
   afterEvents = applyFactionActivity(afterEvents)
+  afterEvents = applyWorldNpcSocialSimulation(afterEvents, rng)
   afterEvents = applyRumorSpread(afterEvents, rng)
 
   // Steps 9b-9c: Experiential trait drift and arc stage transitions

@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import type { WorldNpcRuntimeState, WorldNpcDisposition } from '../../domain/npc/contracts'
+import type { RelationshipAxes, SoftBondState } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 
 /** Raw worldNpcStates array from game state */
@@ -76,4 +77,53 @@ export const selectWorldNpcViewsByDistrict = createSelector(
         } satisfies WorldNpcView
       })
   }
+)
+
+export interface NpcBondView {
+  fromNpcId: string
+  toNpcId: string
+  fromName: string
+  toName: string
+  bondType: string | null
+  softBond: SoftBondState
+  axes: RelationshipAxes
+}
+
+function buildNpcBondView(key: string, axes: RelationshipAxes): NpcBondView | null {
+  if (!axes.softBond) return null
+  const [fromNpcId, toNpcId] = key.split('→')
+  if (!fromNpcId || !toNpcId) return null
+  const from = contentCatalog.npcsById.get(fromNpcId)
+  const to = contentCatalog.npcsById.get(toNpcId)
+  if (!from || !to) return null
+
+  return {
+    fromNpcId,
+    toNpcId,
+    fromName: from.name,
+    toName: to.name,
+    bondType: axes.bondType ?? null,
+    softBond: axes.softBond,
+    axes,
+  }
+}
+
+export const selectNpcBonds =
+  (npcId: string) =>
+  createSelector(
+    (state: RootState) => state.game.relationships,
+    (relationships) =>
+      Object.entries(relationships)
+        .filter(([key, axes]) => key.startsWith(`${npcId}→`) && Boolean(axes.softBond))
+        .map(([key, axes]) => buildNpcBondView(key, axes))
+        .filter((entry): entry is NpcBondView => entry !== null),
+  )
+
+export const selectDiscoverableBonds = createSelector(
+  (state: RootState) => state.game.relationships,
+  (relationships) =>
+    Object.entries(relationships)
+      .filter(([, axes]) => Boolean(axes.softBond) && axes.softBond!.visibility !== 'hidden')
+      .map(([key, axes]) => buildNpcBondView(key, axes))
+      .filter((entry): entry is NpcBondView => entry !== null),
 )

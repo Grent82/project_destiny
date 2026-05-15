@@ -22,6 +22,8 @@ export function wageForStatus(status: NpcStatus): number {
       return 0
     case 'family':
       return 0
+    default:
+      return 0
   }
 }
 

@@ -19,9 +19,10 @@ const baseTraits = {
 }
 
 function makeNpc(partial: Partial<NpcRuntimeState> & { npcId: string; name: string }): NpcRuntimeState {
+  const { npcId, name, ...overrides } = partial
   return {
-    npcId: partial.npcId,
-    name: partial.name,
+    npcId,
+    name,
     status: 'mercenary',
     assignment: 'idle',
     assignedDistrictId: null,
@@ -49,7 +50,7 @@ function makeNpc(partial: Partial<NpcRuntimeState> & { npcId: string; name: stri
     },
     npcMemory: [],
     npcArc: null,
-    ...partial,
+    ...overrides,
   } as NpcRuntimeState
 }
 

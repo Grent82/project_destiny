@@ -154,7 +154,7 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
   return afterEvents
 }
 
-function evaluateInitiativeAction(state: GameState, npc: NpcRuntimeState, rng: Rng): InitiativeAction {
+function evaluateInitiativeAction(npc: NpcRuntimeState, rng: Rng): InitiativeAction {
   const pool: InitiativeAction[] = ['resource_move', 'npc_approach', 'resource_move']
   if (npc.traits.ambition > 60) pool.push('district_lever', 'faction_position')
   if (npc.traits.dominance > 55) pool.push('faction_position', 'district_lever')
@@ -172,7 +172,7 @@ export function applyInitiativeActions(state: GameState, rng: Rng = Math.random)
 
   for (const npc of initiatorNpcs) {
     const arc = npc.npcArc!
-    const action = evaluateInitiativeAction(state, npc, rng)
+    const action = evaluateInitiativeAction(npc, rng)
     const initiativeKey = `initiative-${state.day}`
     const updatedFlags = { ...arc.stageFlags, [initiativeKey]: true }
 

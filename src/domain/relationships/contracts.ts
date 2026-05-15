@@ -1,7 +1,14 @@
 import { z } from 'zod'
+import { bondVisibilitySchema } from '../rumors/contracts'
 
 export const intimacyStageSchema = z.enum(['none', 'affinity', 'attachment', 'committed'])
 export type IntimacyStage = z.infer<typeof intimacyStageSchema>
+
+export const softBondStateSchema = z.object({
+  strength: z.number().min(0).max(100),
+  since: z.number().int().positive(),
+  visibility: bondVisibilitySchema,
+})
 
 export const relationshipAxesSchema = z.object({
   affinity: z.number().min(-100).max(100).default(0),
@@ -12,9 +19,12 @@ export const relationshipAxesSchema = z.object({
   intimacyStage: intimacyStageSchema.optional(),
   bondType: z.string().optional(),
   legacyIntentActive: z.boolean().optional(),
+  hardBond: z.boolean().optional(),
+  softBond: softBondStateSchema.optional(),
 })
 
 export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>
+export type SoftBondState = z.infer<typeof softBondStateSchema>
 
 /** Directed key: '{fromId}→{toId}'. fromId is the feeler; toId is the target. */
 export function buildRelationshipKey(fromId: string, toId: string): string {

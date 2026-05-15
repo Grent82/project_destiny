@@ -45,7 +45,6 @@ export function CombatScreen() {
   const navigate = useNavigate()
   const combat = useAppSelector(selectCombatScreenState)
   const lastEncounterSummary = useAppSelector(selectLastEncounterSummary)
-  const rangeInfo = combat.range ? RANGE_LABELS[combat.range] : null
   const commandStatusMessage = !combat.hasActiveCombat
     ? 'No combat commands are available until an encounter begins.'
     : combat.outcome !== 'ongoing'

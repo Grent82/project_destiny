@@ -304,8 +304,6 @@ describe('combat commands', () => {
     function startedStateWithStaggeredPlayer() {
       const started = startCombatEncounter(initialGameStateSnapshot)
       const encounter = started.activeCombat!
-      // Find the player combatant and pre-stagger them
-      const playerCombatant = encounter.combatants.find((c) => c.combatantId === 'player')!
       return {
         ...started,
         activeCombat: {
@@ -373,7 +371,7 @@ describe('combat commands', () => {
       // performCombatAction routes through resolveEnemyTurns when the active is an enemy
       // We can verify stagger cleared by checking the enemy after a player action that
       // advances to the enemy turn — but the simplest is to check state after attack.
-      const result = performCombatAction(started, 'attack')
+      const result = performCombatAction(preStaggeredState, 'attack')
       // The enemy flag should be cleared in the resulting state (enemies process their turns)
       const enemyAfter = result.activeCombat?.combatants.find(
         (c) => c.combatantId === firstEnemy.combatantId,
