@@ -43,5 +43,90 @@
       { "type": "marks", "amount": 150, "weight": 2 }
     ],
     "narrativeHook": "The traders used to call it the safe road. They don't anymore."
+  },
+  {
+    "id": "dest-sunken-wharf",
+    "name": "The Sunken Wharf",
+    "description": "A drowned district below the harbor level. The flood came during the Breach and never fully receded. Good salvage. Very bad footing.",
+    "durationDays": 3,
+    "dangerLevel": 3,
+    "supplyConsumptionPerDay": 2,
+    "encounterEnemyIds": ["npc-enemy-rack", "npc-enemy-marsh"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-antitoxin-riverpurge", "weight": 3 },
+      { "type": "item", "itemId": "item-spare-parts", "weight": 2 },
+      { "type": "item", "itemId": "item-tallow-bricks", "weight": 2 },
+      { "type": "item", "itemId": "item-medkit-field", "weight": 1 },
+      { "type": "lore", "loreKey": "sunken-wharf-wreck", "label": "A cargo manifest sealed in oilcloth. Pre-Breach trade routes, fully intact.", "weight": 1 }
+    ],
+    "narrativeHook": "The waterline marks on the buildings are twelve feet up. The water is still knee-deep in the lower streets."
+  },
+  {
+    "id": "dest-breach-scar",
+    "name": "The Breach Scar",
+    "description": "The epicenter. Whatever opened during the Breach opened here. The ground is wrong. The mechanisms left behind are older than the city.",
+    "durationDays": 4,
+    "dangerLevel": 5,
+    "supplyConsumptionPerDay": 3,
+    "encounterEnemyIds": ["npc-enemy-director-forn", "npc-enemy-operative-weld"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-mechanism-pre-breach", "weight": 3 },
+      { "type": "item", "itemId": "item-iron-raw-ingots", "weight": 2 },
+      { "type": "item", "itemId": "item-caliper-league-engineering", "weight": 1 },
+      { "type": "marks", "amount": 300, "weight": 1 },
+      { "type": "lore", "loreKey": "breach-scar-inscription", "label": "Stone inscription in a language that predates Valdenmoor. The shapes feel like instructions.", "weight": 2 }
+    ],
+    "narrativeHook": "Three expeditions went in last month. Two came back. They don't talk about what they saw."
+  },
+  {
+    "id": "dest-charnel-ravine",
+    "name": "The Charnel Ravine",
+    "description": "A deep gully east of the Mireward where plague bodies were disposed of during the Breach years. The Restored have been sending people here. Nobody knows exactly why.",
+    "durationDays": 3,
+    "dangerLevel": 3,
+    "supplyConsumptionPerDay": 2,
+    "encounterEnemyIds": ["npc-enemy-contacts-rhen", "npc-enemy-sira-cole"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-nightbloom-extract", "weight": 3 },
+      { "type": "item", "itemId": "item-poultice-tarthatch", "weight": 2 },
+      { "type": "item", "itemId": "item-restored-compound-healing", "weight": 2 },
+      { "type": "item", "itemId": "item-material-charcoal-bricks", "weight": 1 },
+      { "type": "lore", "loreKey": "charnel-ravine-marker", "label": "A Restored Order burial marker with a name that appears in living records.", "weight": 1 }
+    ],
+    "narrativeHook": "The smell is gone. Something replaced it."
+  },
+  {
+    "id": "dest-toll-road-ruins",
+    "name": "The Toll Road Ruins",
+    "description": "The southern trade route before the Corridor was cut. Bandits from the Ring control the tollhouses now. Clearing them is dangerous. Not clearing them is more expensive.",
+    "durationDays": 3,
+    "dangerLevel": 3,
+    "supplyConsumptionPerDay": 2,
+    "encounterEnemyIds": ["npc-enemy-dovel", "npc-enemy-rack"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-salt-block", "weight": 3 },
+      { "type": "item", "itemId": "item-tradegood-coal-sack", "weight": 2 },
+      { "type": "item", "itemId": "item-iron-raw-ingots", "weight": 2 },
+      { "type": "marks", "amount": 200, "weight": 2 },
+      { "type": "lore", "loreKey": "toll-road-ledger", "label": "A tollhouse ledger. Somebody important was paying to move something through here.", "weight": 1 }
+    ],
+    "narrativeHook": "The toll gates are still standing. Someone keeps them in good repair."
+  },
+  {
+    "id": "dest-merrow-waypost",
+    "name": "Merrow's Waypost",
+    "description": "A contested transit point between the Northbank and Ash Quay. House Merrow claims it. The Compact contests that claim. The paperwork alone could fill a room.",
+    "durationDays": 2,
+    "dangerLevel": 2,
+    "supplyConsumptionPerDay": 1,
+    "encounterEnemyIds": ["npc-enemy-deputy-heller", "npc-enemy-tomas-rell"],
+    "discoveryTable": [
+      { "type": "item", "itemId": "item-forgery-scribe-kit", "weight": 2 },
+      { "type": "item", "itemId": "item-form-ward-petition", "weight": 2 },
+      { "type": "item", "itemId": "item-tally-debt-instrument", "weight": 2 },
+      { "type": "marks", "amount": 120, "weight": 3 },
+      { "type": "lore", "loreKey": "merrow-waypost-dispute", "label": "Transit logs with annotations from three different hands, each contradicting the last.", "weight": 1 }
+    ],
+    "narrativeHook": "Every faction in the city claims right-of-way here. Most of them are wrong."
   }
 ]

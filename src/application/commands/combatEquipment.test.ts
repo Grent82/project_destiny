@@ -18,6 +18,7 @@ vi.mock('../content/contentCatalog', () => ({
     npcs: [],
     shops: [],
     shopsById: new Map(),
+    encounterTablesByDistrict: new Map(),
   },
 }))
 
