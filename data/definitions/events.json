@@ -3228,5 +3228,245 @@
     "sourceDistrictId": null,
     "sourceNpcId": "npc-sister-vael",
     "presentationFlavour": null
+  },
+  {
+    "id": "event-rival-iron-covenant-counter-lead",
+    "title": "League Word: Covenant Muster",
+    "description": "A Foundry League factor sends word that the Iron Covenant are moving men and steel through a hidden muster route in the Ironworks. If the house wants a chance to cut the line, it needs to move before the route settles.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-iron-covenant-open-lead",
+        "label": "Have the Work Board mark it for the house",
+        "outcomes": [
+          {
+            "type": "createQuestLead",
+            "questId": "quest-rival-iron-covenant-counter"
+          }
+        ]
+      },
+      {
+        "id": "choice-rival-iron-covenant-ignore",
+        "label": "Ignore it for now",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Iron Covenant's movement is noted, but the house does not act on it yet."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "contracts"],
+    "sourceDistrictId": "district-ironworks",
+    "sourceNpcId": null,
+    "presentationFlavour": "The note is grease-marked and folded into a foundry tally sheet."
+  },
+  {
+    "id": "event-rival-pale-sisters-counter-lead",
+    "title": "A Name Passed Quietly",
+    "description": "A Compact clerk slips you a warning: the Pale Sisters are collecting names in the Pale and paying for silence in chapel coin. Someone needs to follow the chain before it turns into leverage.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-pale-sisters-open-lead",
+        "label": "Open a lead and start asking",
+        "outcomes": [
+          {
+            "type": "createQuestLead",
+            "questId": "quest-rival-pale-sisters-counter"
+          }
+        ]
+      },
+      {
+        "id": "choice-rival-pale-sisters-ignore",
+        "label": "Leave it buried",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Sisters' approach is filed away. For now, nothing more."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "contracts"],
+    "sourceDistrictId": "district-the-pale",
+    "sourceNpcId": null,
+    "presentationFlavour": "The warning comes in the margin of a chapel supply receipt."
+  },
+  {
+    "id": "event-rival-gilded-hand-counter-lead",
+    "title": "Upper Ward Contract Movement",
+    "description": "A Restored contact reports that the Gilded Hand are signing upper-ward security contracts faster than the Court can pretend not to notice. If the house wants leverage, it needs proof and timing before those contracts become permanent.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-gilded-hand-open-lead",
+        "label": "Open the file and follow the signatories",
+        "outcomes": [
+          {
+            "type": "createQuestLead",
+            "questId": "quest-rival-gilded-hand-counter"
+          }
+        ]
+      },
+      {
+        "id": "choice-rival-gilded-hand-ignore",
+        "label": "Let the upper wards keep their secrets",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Gilded Hand's new contracts stand unanswered."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "contracts"],
+    "sourceDistrictId": "district-gilded-heights",
+    "sourceNpcId": null,
+    "presentationFlavour": "The paper smells faintly of sealing wax and expensive tobacco."
+  },
+  {
+    "id": "event-rival-ashen-compact-counter-lead",
+    "title": "Forn Is Hiring Again",
+    "description": "Word out of the Warrens says Director Forn's people are making quiet offers to the displaced and the useful. Someone wants to know what shape the Compact are building before it shows up armed at the door.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-ashen-compact-open-lead",
+        "label": "Put eyes on the hiring trail",
+        "outcomes": [
+          {
+            "type": "createQuestLead",
+            "questId": "quest-rival-ashen-compact-counter"
+          }
+        ]
+      },
+      {
+        "id": "choice-rival-ashen-compact-ignore",
+        "label": "Let them spend their coin",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Ashen Compact's offers spread without answer."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "contracts"],
+    "sourceDistrictId": "district-the-warrens",
+    "sourceNpcId": null,
+    "presentationFlavour": "The report arrives second-hand, which is how Forn prefers his tracks."
+  },
+  {
+    "id": "event-rival-iron-covenant-bribe-warning",
+    "title": "A Ledger Changes Hands",
+    "description": "A League bookkeeper warns that the Iron Covenant have started paying for softer inspections and cleaner manifests. Someone on the district line just got expensive.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-iron-covenant-bribe-noted",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Iron Covenant's coin is in circulation. The house keeps the warning."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "warning"],
+    "sourceDistrictId": "district-ironworks",
+    "sourceNpcId": null,
+    "presentationFlavour": "The warning is written on the back of a scrap freight docket."
+  },
+  {
+    "id": "event-rival-pale-sisters-bribe-warning",
+    "title": "Someone Was Paid to Forget",
+    "description": "A parish contact murmurs that the Pale Sisters have started paying for closed mouths and missing names. If a record matters, trust it less today than yesterday.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-pale-sisters-bribe-noted",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Pale Sisters' payments are noted. Records from the Pale may already be compromised."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "warning"],
+    "sourceDistrictId": "district-the-pale",
+    "sourceNpcId": null,
+    "presentationFlavour": "The message is delivered with no signature and perfect handwriting."
+  },
+  {
+    "id": "event-rival-gilded-hand-bribe-warning",
+    "title": "Retainers in the Upper Ward",
+    "description": "A contact warns that Gilded Hand money is buying doors open in the upper wards. The move is clean, legal enough, and bad for anyone counting on neutral ground.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-gilded-hand-bribe-noted",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Gilded Hand's retainers are noted. Neutral rooms in the upper wards may no longer be neutral."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "warning"],
+    "sourceDistrictId": "district-gilded-heights",
+    "sourceNpcId": null,
+    "presentationFlavour": "The report arrives folded into a host's invitation."
+  },
+  {
+    "id": "event-rival-ashen-compact-bribe-warning",
+    "title": "Cheap Coin, Expensive Damage",
+    "description": "Someone in the Warrens is taking Ashen Compact money to point at loose crews, hungry hands, and weak houses. The offers are cheap. The consequences probably are not.",
+    "triggerConditions": {
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-rival-ashen-compact-bribe-noted",
+        "label": "Noted",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Ashen Compact's bribery is noted. Their recruiters now know where pressure will land first."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["rivals", "warning"],
+    "sourceDistrictId": "district-the-warrens",
+    "sourceNpcId": null,
+    "presentationFlavour": "The warning comes from someone who does not want their name written anywhere near it."
   }
 ]

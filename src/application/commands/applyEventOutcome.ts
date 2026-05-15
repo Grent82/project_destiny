@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import type { EventOutcome } from '../../domain/events/contracts'
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
+import { addQuestLeadIfNew } from './questLifecycle'
 
 export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameState {
   let next = state
@@ -86,28 +87,13 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         break
       case 'createQuestLead':
         if (outcome.questId) {
-          const alreadyHasLead = next.availableQuestLeads.some((l) => l.questId === outcome.questId)
-          const alreadyActive = next.activeQuests.some((q) => q.questId === outcome.questId)
-          if (!alreadyHasLead && !alreadyActive) {
-            next = {
-              ...next,
-              availableQuestLeads: [
-                ...next.availableQuestLeads,
-                {
-                  leadId: `${outcome.questId}-lead-${next.day}`,
-                  questId: outcome.questId,
-                  discoveredDay: next.day,
-                  discoverySource: null,
-                  discoveryDistrictId: null,
-                  sourceNpcId: null,
-                  sourcePoiId: null,
-                  issuerFactionId: null,
-                  expiresOnDay: null,
-                  freshness: 'fresh' as const,
-                },
-              ],
-            }
+          const mutable = {
+            ...next,
+            availableQuestLeads: [...next.availableQuestLeads],
+            activityLog: [...next.activityLog],
           }
+          addQuestLeadIfNew(mutable, outcome.questId, { discoverySource: 'event' })
+          next = mutable
         }
         break
       case 'updateQuestStage':

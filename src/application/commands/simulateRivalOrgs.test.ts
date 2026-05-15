@@ -97,36 +97,46 @@ const baseState: GameState = {
 }
 
 describe('simulateRivalOrgs', () => {
-  it('returns expand action when random < 0.15', () => {
-    const actions = simulateRivalOrgs(baseState, [0.05, 0.5])
+  it('returns expand action when random < 0.10', () => {
+    const actions = simulateRivalOrgs(baseState, [0.05, 0.5, 0.5, 0.5])
     expect(actions.some((a) => a.actionType === 'expand')).toBe(true)
   })
 
   it('returns no actions when random > 0.40', () => {
-    const actions = simulateRivalOrgs(baseState, [0.9, 0.9])
+    const actions = simulateRivalOrgs(baseState, [0.9, 0.9, 0.9, 0.9])
     expect(actions.length).toBe(0)
   })
 
-  it('returns recruit action when 0.15 <= random < 0.30', () => {
-    const actions = simulateRivalOrgs(baseState, [0.2, 0.9])
+  it('returns recruit action when 0.10 <= random < 0.22', () => {
+    const actions = simulateRivalOrgs(baseState, [0.2, 0.9, 0.9, 0.9])
     expect(actions.some((a) => a.actionType === 'recruit')).toBe(true)
   })
 
   it('does not return pressure action when cityStability >= 40', () => {
     const highStabilityState = { ...baseState, cityStability: 60 }
-    const actions = simulateRivalOrgs(highStabilityState, [0.35, 0.9])
+    const actions = simulateRivalOrgs(highStabilityState, [0.35, 0.9, 0.9, 0.9])
     expect(actions.some((a) => a.actionType === 'pressure')).toBe(false)
   })
 
-  it('returns pressure action when 0.30 <= random < 0.40 and cityStability < 40', () => {
+  it('returns pressure action when 0.22 <= random < 0.40 and cityStability < 40', () => {
     const lowStabilityState = { ...baseState, cityStability: 25 }
-    const actions = simulateRivalOrgs(lowStabilityState, [0.35, 0.9])
+    const actions = simulateRivalOrgs(lowStabilityState, [0.35, 0.9, 0.9, 0.9])
     expect(actions.some((a) => a.actionType === 'pressure')).toBe(true)
   })
 
   it('tags actions with the current day', () => {
-    const actions = simulateRivalOrgs(baseState, [0.05, 0.05])
+    const actions = simulateRivalOrgs(baseState, [0.05, 0.05, 0.05, 0.05])
     expect(actions.every((a) => a.day === 5)).toBe(true)
+  })
+
+  it('simulates all four rival organizations', () => {
+    const actions = simulateRivalOrgs(baseState, [0.05, 0.05, 0.05, 0.05])
+    expect(actions.map((action) => action.orgId)).toEqual([
+      'rival-org-gilded-hand',
+      'rival-org-ashen-compact',
+      'org-iron-covenant',
+      'org-pale-sisters',
+    ])
   })
 })
 
@@ -150,6 +160,57 @@ describe('applyRivalActions', () => {
       { orgId: 'org-pale-sisters', actionType: 'expand', day: 5 },
     ])
     expect(result.activityLog[0]?.message).toContain('Pale Sisters')
+  })
+
+  it('schedules a delayed counter-lead event after expansion', () => {
+    const result = applyRivalActions(baseState, [
+      { orgId: 'org-iron-covenant', actionType: 'expand', day: 5 },
+    ])
+    expect(result.pendingEvents.some((event) => event.eventId === 'event-rival-iron-covenant-counter-lead')).toBe(true)
+    const scheduled = result.pendingEvents.find((event) => event.eventId === 'event-rival-iron-covenant-counter-lead')
+    expect(scheduled?.firedOnDay).toBeGreaterThan(5)
+    expect(scheduled?.firedOnDay).toBeLessThanOrEqual(8)
+  })
+
+  it('does not schedule a second counter-lead event when that org already has a live lead', () => {
+    const stateWithLead = {
+      ...baseState,
+      availableQuestLeads: [
+        {
+          leadId: 'quest-rival-iron-covenant-counter-lead-5',
+          questId: 'quest-rival-iron-covenant-counter',
+          discoveredDay: 5,
+          discoverySource: 'event' as const,
+          discoveryDistrictId: 'district-ironworks',
+          sourceNpcId: null,
+          sourcePoiId: null,
+          issuerFactionId: 'faction-foundry-league',
+          expiresOnDay: 10,
+          freshness: 'fresh' as const,
+        },
+      ],
+    }
+    const result = applyRivalActions(stateWithLead, [
+      { orgId: 'org-iron-covenant', actionType: 'expand', day: 5 },
+    ])
+    expect(result.pendingEvents.some((event) => event.eventId === 'event-rival-iron-covenant-counter-lead')).toBe(false)
+  })
+
+  it('schedules a delayed investigation lead event after a recruit action', () => {
+    const result = applyRivalActions(baseState, [
+      { orgId: 'rival-org-ashen-compact', actionType: 'recruit', day: 5 },
+    ])
+    expect(result.pendingEvents.some((event) => event.eventId === 'event-rival-ashen-compact-counter-lead')).toBe(true)
+  })
+
+  it('creates a visible warning event on bribe actions', () => {
+    const result = applyRivalActions(baseState, [
+      { orgId: 'rival-org-gilded-hand', actionType: 'bribe', targetFactionId: 'faction-gilded-court', day: 5 },
+    ])
+    expect(result.pendingEvents).toContainEqual({
+      eventId: 'event-rival-gilded-hand-bribe-warning',
+      firedOnDay: 5,
+    })
   })
 
   it('reduces cityStability on pressure', () => {

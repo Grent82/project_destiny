@@ -131,6 +131,8 @@ export function applyNpcConsequences(
   // loyalty=0 by default, which would incorrectly flag new NPCs for departure.
   const rosterBeforeDepartures = next.roster
   for (const npc of rosterBeforeDepartures) {
+    const captivityStatus = npc.captivityState?.status
+    if (captivityStatus === 'captive' || captivityStatus === 'missing') continue
     if (npc.assignment === 'recovering' || npc.assignment === 'assigned_title') continue
     const relKey = buildRelationshipKey('player', npc.npcId)
     const rel = startOfDayRelationships[relKey]

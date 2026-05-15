@@ -9,6 +9,34 @@ export type RivalAction = {
   day: number
 }
 
+const RIVAL_ORG_IDS = [
+  'rival-org-gilded-hand',
+  'rival-org-ashen-compact',
+  'org-iron-covenant',
+  'org-pale-sisters',
+] as const
+
+const RIVAL_COUNTER_QUEST_IDS: Record<string, string> = {
+  'rival-org-gilded-hand': 'quest-rival-gilded-hand-counter',
+  'rival-org-ashen-compact': 'quest-rival-ashen-compact-counter',
+  'org-iron-covenant': 'quest-rival-iron-covenant-counter',
+  'org-pale-sisters': 'quest-rival-pale-sisters-counter',
+}
+
+const RIVAL_COUNTER_EVENT_IDS: Record<string, string> = {
+  'rival-org-gilded-hand': 'event-rival-gilded-hand-counter-lead',
+  'rival-org-ashen-compact': 'event-rival-ashen-compact-counter-lead',
+  'org-iron-covenant': 'event-rival-iron-covenant-counter-lead',
+  'org-pale-sisters': 'event-rival-pale-sisters-counter-lead',
+}
+
+const RIVAL_BRIBE_EVENT_IDS: Record<string, string> = {
+  'rival-org-gilded-hand': 'event-rival-gilded-hand-bribe-warning',
+  'rival-org-ashen-compact': 'event-rival-ashen-compact-bribe-warning',
+  'org-iron-covenant': 'event-rival-iron-covenant-bribe-warning',
+  'org-pale-sisters': 'event-rival-pale-sisters-bribe-warning',
+}
+
 /**
  * Pure function: returns list of rival actions taken this day.
  * Called from endDay with injected random values for testability.
@@ -16,7 +44,7 @@ export type RivalAction = {
  */
 export function simulateRivalOrgs(state: GameState, randoms: number[]): RivalAction[] {
   const actions: RivalAction[] = []
-  const orgs = ['org-iron-covenant', 'org-pale-sisters']
+  const orgs = [...RIVAL_ORG_IDS]
   const factionIds = contentCatalog.factions.map((f) => f.id)
 
   orgs.forEach((orgId, i) => {
@@ -40,8 +68,54 @@ export function simulateRivalOrgs(state: GameState, randoms: number[]): RivalAct
 }
 
 const ORG_NAMES: Record<string, string> = {
+  'rival-org-gilded-hand': 'The Gilded Hand',
+  'rival-org-ashen-compact': 'The Ashen Compact',
   'org-iron-covenant': 'The Iron Covenant',
   'org-pale-sisters': 'The Pale Sisters',
+}
+
+function formatFactionName(factionId: string) {
+  return factionId
+    .replace('faction-', '')
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase())
+}
+
+function resolveLeadDelayDays(action: RivalAction) {
+  const signature = `${action.orgId}:${action.actionType}:${action.day}`
+  const checksum = Array.from(signature).reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  return 1 + (checksum % 3)
+}
+
+function hasPendingEvent(state: GameState, eventId: string) {
+  return state.pendingEvents.some((event) => event.eventId === eventId)
+}
+
+function hasLiveCounterLeadForOrg(state: GameState, orgId: string) {
+  const questId = RIVAL_COUNTER_QUEST_IDS[orgId]
+  if (!questId) return false
+
+  return (
+    state.availableQuestLeads.some((lead) => lead.questId === questId) ||
+    state.activeQuests.some((quest) => quest.questId === questId && quest.status === 'active') ||
+    hasPendingEvent(state, RIVAL_COUNTER_EVENT_IDS[orgId])
+  )
+}
+
+function schedulePendingEvent(state: GameState, eventId: string, firedOnDay: number) {
+  if (hasPendingEvent(state, eventId)) return state
+
+  return {
+    ...state,
+    pendingEvents: [...state.pendingEvents, { eventId, firedOnDay }],
+  }
+}
+
+function scheduleCounterLeadEvent(state: GameState, action: RivalAction) {
+  const eventId = RIVAL_COUNTER_EVENT_IDS[action.orgId]
+  if (!eventId || hasLiveCounterLeadForOrg(state, action.orgId)) return state
+
+  return schedulePendingEvent(state, eventId, state.day + resolveLeadDelayDays(action))
 }
 
 /**
@@ -64,6 +138,7 @@ export function applyRivalActions(state: GameState, actions: RivalAction[]): Gam
         'system',
         `${ORG_NAMES[action.orgId] ?? action.orgId} have expanded their reach in the city.`,
       )
+      next = scheduleCounterLeadEvent(next, action)
     } else if (action.actionType === 'pressure') {
       next = { ...next, cityStability: Math.max(0, (next.cityStability ?? 60) - 5) }
       next = appendActivityLogEntry(
@@ -87,6 +162,7 @@ export function applyRivalActions(state: GameState, actions: RivalAction[]): Gam
         )
         void poached // used implicitly
       }
+      next = scheduleCounterLeadEvent(next, action)
     } else if (action.actionType === 'bribe') {
       // Rival org bribes a faction contact — standing with a faction drops
       const targetFaction = action.targetFactionId ?? 'faction-tallow-ring'
@@ -102,8 +178,12 @@ export function applyRivalActions(state: GameState, actions: RivalAction[]): Gam
       next = appendActivityLogEntry(
         next,
         'system',
-        `${orgName} moved against you. Standing with ${targetFaction.replace('faction-', '').replace(/-/g, ' ')} has fallen.`,
+        `${orgName} moved against you. Standing with ${formatFactionName(targetFaction)} has fallen.`,
       )
+      const bribeEventId = RIVAL_BRIBE_EVENT_IDS[action.orgId]
+      if (bribeEventId) {
+        next = schedulePendingEvent(next, bribeEventId, state.day)
+      }
     }
   }
 

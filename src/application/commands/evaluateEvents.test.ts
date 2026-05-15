@@ -6,6 +6,7 @@ import { evaluateEvents } from './evaluateEvents'
 import { applyOutcomes } from './applyEventOutcome'
 import { contentCatalog } from '../content/contentCatalog'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
+import { selectPendingEvents } from '../selectors/events'
 
 /** Deterministic rng that always returns the provided value — for test control. */
 const alwaysFire = () => 0   // rng() > probability is always false → event fires
@@ -248,5 +249,20 @@ describe('resolveEvent reducer', () => {
       gameActions.resolveEvent({ eventId: 'event-does-not-exist', choiceId: 'choice-foo' }),
     )
     expect(next).toEqual(initialState)
+  })
+})
+
+describe('pending event visibility', () => {
+  it('hides scheduled future events until their firedOnDay arrives', () => {
+    const state = makeState({
+      day: 5,
+      pendingEvents: [
+        { eventId: 'event-rival-iron-covenant-counter-lead', firedOnDay: 7 },
+        { eventId: 'event-rival-gilded-hand-bribe-warning', firedOnDay: 5 },
+      ],
+    })
+
+    const visible = selectPendingEvents({ game: state } as { game: GameState })
+    expect(visible).toEqual([{ eventId: 'event-rival-gilded-hand-bribe-warning', firedOnDay: 5 }])
   })
 })
