@@ -13,7 +13,7 @@ import { applyThresholds } from "./applyThresholds"
 import { applyTitleEffects } from "./applyTitleEffects"
 import { applyNpcConsequences } from "./applyNpcConsequences"
 import { applyPolitics } from "./applyPolitics"
-import { applyNpcAgency } from "./applyNpcAgency"
+import { applyNpcAgency, applyInitiativeActions } from "./applyNpcAgency"
 import { applyNpcTraitDrift } from "./applyNpcTraitDrift"
 import { checkNpcArcTransitions, checkFracturedArcBranching } from "./checkNpcArcTransitions"
 import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
@@ -186,6 +186,7 @@ export function endDay(state: GameState): GameState {
   // Step 9: Faction quest bonus, NPC agency, faction agenda, district tension
   afterEvents = applyFactionQuestBonus(afterEvents)
   afterEvents = applyNpcAgency(afterEvents, rng)
+  afterEvents = applyInitiativeActions(afterEvents, rng)
   afterEvents = applyFactionActivity(afterEvents)
   afterEvents = applyRumorSpread(afterEvents, rng)
 

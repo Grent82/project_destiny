@@ -856,5 +856,71 @@
       "fear": 0,
       "loyalty": 8
     }
+  },
+  {
+    "fromNpcId": "npc-nessa-vain",
+    "toNpcId": "npc-marion-vale",
+    "axes": {
+      "affinity": 30,
+      "trust": 22,
+      "respect": 34,
+      "fear": 0,
+      "loyalty": 14
+    }
+  },
+  {
+    "fromNpcId": "npc-marion-vale",
+    "toNpcId": "npc-nessa-vain",
+    "axes": {
+      "affinity": 26,
+      "trust": 18,
+      "respect": 30,
+      "fear": 0,
+      "loyalty": 12
+    }
+  },
+  {
+    "fromNpcId": "npc-nessa-vain",
+    "toNpcId": "npc-orren-wex",
+    "axes": {
+      "affinity": 36,
+      "trust": 28,
+      "respect": 40,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-orren-wex",
+    "toNpcId": "npc-nessa-vain",
+    "axes": {
+      "affinity": 32,
+      "trust": 24,
+      "respect": 36,
+      "fear": 0,
+      "loyalty": 16
+    }
+  },
+  {
+    "fromNpcId": "npc-nessa-vain",
+    "toNpcId": "npc-dael-morw",
+    "axes": {
+      "affinity": 22,
+      "trust": 14,
+      "respect": 20,
+      "fear": 0,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-dael-morw",
+    "toNpcId": "npc-nessa-vain",
+    "axes": {
+      "affinity": 20,
+      "trust": 16,
+      "respect": 24,
+      "fear": 0,
+      "loyalty": 10
+    }
   }
 ]

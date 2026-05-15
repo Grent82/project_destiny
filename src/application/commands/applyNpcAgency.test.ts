@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { applyNpcAgency } from './applyNpcAgency'
+import { applyNpcAgency, applyInitiativeActions } from './applyNpcAgency'
 import { initialStateWithIda } from './testFixtures'
 import { createRng } from './seededRng'
+import type { NpcRuntimeState } from '../../domain'
 
 describe('applyNpcAgency', () => {
   it('same seed produces identical outcome (deterministic)', () => {
@@ -53,6 +54,58 @@ describe('applyNpcAgency', () => {
     const alwaysTrigger = () => 0
     const result = applyNpcAgency(state, alwaysTrigger)
 
+    expect(result.activityLog.length).toBe(logBefore)
+  })
+})
+
+describe('applyInitiativeActions', () => {
+  function makeInitiatorNpc(): NpcRuntimeState {
+    return {
+      ...initialStateWithIda.roster[0]!,
+      npcId: 'npc-nessa-test',
+      name: 'Nessa Test',
+      traits: { ...initialStateWithIda.roster[0]!.traits, ambition: 80, dominance: 65 },
+      npcArc: { arcId: 'arc-initiator', stage: 'active', stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
+    }
+  }
+
+  it('does nothing when day is not divisible by 7', () => {
+    const nessa = makeInitiatorNpc()
+    const state = { ...initialStateWithIda, day: 6, roster: [nessa] }
+    const logBefore = state.activityLog.length
+    const result = applyInitiativeActions(state, () => 0)
+    expect(result.activityLog.length).toBe(logBefore)
+  })
+
+  it('fires an initiative action on day divisible by 7', () => {
+    const nessa = makeInitiatorNpc()
+    const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
+    const logBefore = state.activityLog.length
+    const result = applyInitiativeActions(state, () => 0)
+    expect(result.activityLog.length).toBeGreaterThan(logBefore)
+  })
+
+  it('records initiative in stageFlags', () => {
+    const nessa = makeInitiatorNpc()
+    const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
+    const result = applyInitiativeActions(state, () => 0)
+    const updated = result.roster.find((n) => n.npcId === nessa.npcId)!
+    expect(updated.npcArc!.stageFlags[`initiative-7`]).toBe(true)
+  })
+
+  it('resource_move adds money to house funds when selected', () => {
+    const nessa = makeInitiatorNpc()
+    const state = { ...initialStateWithIda, day: 7, money: 100, roster: [nessa] }
+    // rng=0: first call selects pool[0] = 'resource_move', subsequent calls fill in amount
+    const result = applyInitiativeActions(state, () => 0)
+    expect(result.money).toBeGreaterThan(100)
+  })
+
+  it('does nothing for NPCs without arc-initiator', () => {
+    const npcNoArc = { ...initialStateWithIda.roster[0]!, npcArc: null }
+    const state = { ...initialStateWithIda, day: 7, roster: [npcNoArc] }
+    const logBefore = state.activityLog.length
+    const result = applyInitiativeActions(state, () => 0)
     expect(result.activityLog.length).toBe(logBefore)
   })
 })

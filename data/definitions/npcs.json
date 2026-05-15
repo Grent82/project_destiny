@@ -4323,5 +4323,100 @@
         "note": "Both came out of Compact enforcement in different units. They know each other's names and reputation. Not friends — professional acknowledgment. Holst is one of the few people from that world Bren does not actively avoid."
       }
     ]
+  },
+  {
+    "id": "npc-nessa-vain",
+    "name": "Nessa Vain",
+    "origin": "Civic Quarter",
+    "background": "Spent eight years as a district resource coordinator for the Compact — the person who managed which water distribution points got funding, which wall sections got inspected, which rebuild contracts went to which crews. She learned, in those eight years, exactly how the city's physical layer and its power layer interact. She left the Compact when she understood that the Compact's interest in this knowledge was narrower than her own. She does not announce her plans. She makes moves.",
+    "rarity": "rare",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 34,
+      "agility": 44,
+      "endurance": 54,
+      "intellect": 74,
+      "perception": 68,
+      "presence": 62,
+      "resolve": 66
+    },
+    "startingSkills": {
+      "administration": 78,
+      "intrigue": 66,
+      "negotiation": 62,
+      "engineering": 52,
+      "survival": 44,
+      "security": 38,
+      "medicine": 11,
+      "melee": 18,
+      "ranged": 14,
+      "crafting": 12,
+      "performance": 16,
+      "academics": 48
+    },
+    "startingTraits": {
+      "discipline": 72,
+      "ambition": 78,
+      "empathy": 34,
+      "ruthlessness": 58,
+      "prudence": 66,
+      "curiosity": 74,
+      "dominance": 62,
+      "loyalty": 32,
+      "zeal": 28,
+      "vanity": 18
+    },
+    "allowedTitleIds": [
+      "title-steward",
+      "title-quartermaster"
+    ],
+    "defaultArcId": "arc-initiator",
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "carries annotated district maps she does not show people",
+      "addresses problems in terms of leverage points, not solutions",
+      "remembers every piece of infrastructure she has personally assessed"
+    ],
+    "quirks": [
+      {
+        "text": "mentally prices the replacement cost of every structure she enters",
+        "tags": [
+          "meticulous",
+          "ambitious"
+        ],
+        "triggerKeywords": [
+          "building",
+          "district",
+          "damage",
+          "repair"
+        ]
+      },
+      {
+        "text": "does not ask for permission for small actions — reports their outcomes instead",
+        "tags": [
+          "principled",
+          "ambitious"
+        ],
+        "triggerKeywords": [
+          "decision",
+          "plan",
+          "ask",
+          "permission"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To make the house a durable presence in the city, not a temporary one.",
+      "privateNeed": "To build something that will still be standing after she is not relevant to it."
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-marion-vale",
+        "note": "Both moved in Compact administrative channels. Marion filed; Nessa coordinated. Professional wariness — Marion recognizes someone who operates the way she herself does, and finds it uncomfortable."
+      }
+    ]
   }
 ]

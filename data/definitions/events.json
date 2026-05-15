@@ -4810,5 +4810,139 @@
     "sourceDistrictId": null,
     "sourceNpcId": "npc-bren-aldoth",
     "presentationFlavour": null
+  },
+  {
+    "id": "event-nessa-partner-district-node",
+    "title": "Nessa Has Been Working",
+    "description": "Nessa brings you something she has been building for three weeks. A district resource node — specifically, a water distribution relay point in the outer quarter — that she has quietly converted from a liability into a revenue stream. She is telling you because she needs your formal authorization to close the last step. Not your permission. Your signature.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-nessa-vain",
+      "dayMin": 150,
+      "probability": 0.4
+    },
+    "choices": [
+      {
+        "id": "choice-authorize",
+        "label": "Authorize it.",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": 80
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Nessa's district node acquisition is complete. 80 Marks added as first return. She thanks you. She has already moved on to the next thing."
+          }
+        ]
+      },
+      {
+        "id": "choice-question",
+        "label": "Ask more before you sign.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You asked more questions before signing. Nessa answered each one without impatience. Then waited. You signed."
+          },
+          {
+            "type": "addCredits",
+            "delta": 60
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["nessa", "arc-initiator", "partner", "resource"],
+    "repeatable": false,
+    "cooldownDays": 30,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-nessa-vain",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-nessa-partner-rival-neutralize",
+    "title": "The Operation Nessa Designed",
+    "description": "Nessa presents a plan to neutralize a rival faction's current infrastructure hold on the Harbor Ward transit lines. She has already done the groundwork. She needs 50 Marks and your agreement to let her complete it. She expects you to have questions. She has already answered most of them in the briefing document she hands you.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-nessa-vain",
+      "dayMin": 200,
+      "probability": 0.35
+    },
+    "choices": [
+      {
+        "id": "choice-fund-it",
+        "label": "Fund the operation.",
+        "outcomes": [
+          {
+            "type": "addCredits",
+            "delta": -50
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 5
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": -3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Nessa's operation succeeded. The rival faction's transit hold is broken. Your Compact standing improved. The Court noticed."
+          }
+        ]
+      },
+      {
+        "id": "choice-decline",
+        "label": "Decline for now.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You declined. Nessa accepted this. She filed the briefing and said nothing further."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["nessa", "arc-initiator", "partner", "faction"],
+    "repeatable": false,
+    "cooldownDays": 30,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-nessa-vain",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-nessa-partner-information-pipeline",
+    "title": "What Nessa Built",
+    "description": "Nessa tells you she has established a durable information pipeline through three district coordinators who owe her favors from her Compact days. She is not asking you to fund it. It is already built. She is informing you because it is yours now too, if you want it. The information it produces will come to you weekly.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-nessa-vain",
+      "dayMin": 250,
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-accept",
+        "label": "Accept the pipeline.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Nessa's information pipeline is now part of the house's infrastructure. You will receive weekly intelligence from three district coordinators. She asks for nothing for this. She has already been paid by the fact that it exists."
+          },
+          {
+            "type": "adjustCityDial",
+            "target": "control",
+            "delta": 3
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["nessa", "arc-initiator", "partner", "intelligence"],
+    "repeatable": false,
+    "cooldownDays": 30,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-nessa-vain",
+    "presentationFlavour": null
   }
 ]

@@ -59,23 +59,19 @@
     "arcId": "arc-initiator",
     "stages": [
       {
-        "id": "establishing",
+        "id": "active",
         "transitionConditions": {
-          "minDaysInStage": 21,
-          "anyTraitAbove": { "trait": "ambition", "threshold": 65 }
-        },
-        "transitionEventId": "nessa-pursuing-event"
+          "minDaysInStage": 49
+        }
       },
       {
-        "id": "pursuing",
+        "id": "aligned",
         "transitionConditions": {
-          "minDaysInStage": 60,
-          "anyTraitAbove": { "trait": "ambition", "threshold": 75 }
-        },
-        "transitionEventId": "nessa-arrived-event"
+          "minDaysInStage": 70
+        }
       },
       {
-        "id": "arrived",
+        "id": "partner",
         "transitionConditions": null
       }
     ]

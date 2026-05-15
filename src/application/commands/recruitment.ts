@@ -5,6 +5,11 @@ import { getRenownLevel } from '../../domain/progression/contracts'
 import { writeLossMemories } from './grief'
 import { initializeRosterRelationships } from './initializeRosterRelationships'
 import { createRng } from './seededRng'
+import npcArcsData from '../../../data/definitions/npc-arcs.json'
+import { npcArcDefinitionSchema } from '../../domain/npc/contracts'
+
+const npcArcDefs = npcArcDefinitionSchema.array().parse(npcArcsData)
+const npcArcDefsById = new Map(npcArcDefs.map((a) => [a.arcId, a]))
 
 export function recruitNpc(state: GameState, npcId: string): GameState {
   const offer = state.availableForHire.find((o) => o.npcId === npcId)
@@ -61,7 +66,13 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
       consumableIds: [],
     },
     npcMemory: [],
-    npcArc: null,
+    npcArc: npcDef.defaultArcId
+      ? (() => {
+          const arcDef = npcArcDefsById.get(npcDef.defaultArcId!)
+          if (!arcDef || arcDef.stages.length === 0) return null
+          return { arcId: npcDef.defaultArcId!, stage: arcDef.stages[0]!.id, stageEnteredDay: state.day, stageFlags: {}, driftHistory: [] }
+        })()
+      : null,
   }
 
   let next: GameState = {
