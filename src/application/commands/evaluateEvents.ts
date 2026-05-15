@@ -22,6 +22,7 @@ function checkConditions(template: EventTemplate, state: GameState, rng: Rng): b
   if (cond.debtPaid !== undefined && state.debtPaid !== cond.debtPaid) return false
   if (cond.minRosterSize !== undefined && state.roster.length < cond.minRosterSize) return false
   if (cond.completedQuestCountMin !== undefined && state.completedQuestIds.length < cond.completedQuestCountMin) return false
+  if (cond.isFirstRun !== undefined && state.isFirstRun !== cond.isFirstRun) return false
 
   if (cond.npcRelationshipMin !== undefined) {
     const { npcId, axis, min } = cond.npcRelationshipMin

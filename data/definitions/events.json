@@ -30,7 +30,7 @@
       },
       {
         "id": "choice-ignore",
-        "label": "Ignore it — they'll manage",
+        "label": "Ignore it \u2014 they'll manage",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -61,7 +61,7 @@
   {
     "id": "event-gilded-court-approach",
     "title": "A Gilded Messenger",
-    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting — on their terms. You are not foolish enough to think this is a kindness.",
+    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting \u2014 on their terms. You are not foolish enough to think this is a kindness.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-gilded-court",
@@ -87,7 +87,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You attend. The Court notes your cooperation — and your face."
+            "message": "You attend. The Court notes your cooperation \u2014 and your face."
           },
           {
             "type": "createQuestLead",
@@ -97,7 +97,7 @@
       },
       {
         "id": "choice-decline",
-        "label": "Decline — send a polite refusal",
+        "label": "Decline \u2014 send a polite refusal",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -145,13 +145,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The League thanks you. The Corridor is placed under watch — disrupted but not closed."
+            "message": "The League thanks you. The Corridor is placed under watch \u2014 disrupted but not closed."
           }
         ]
       },
       {
         "id": "choice-ignore-corridor",
-        "label": "Keep it quiet — not your problem",
+        "label": "Keep it quiet \u2014 not your problem",
         "outcomes": [
           {
             "type": "setCorridorStatus",
@@ -181,7 +181,7 @@
   {
     "id": "event-ring-smuggler-contact",
     "title": "A Ring Offer",
-    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods — restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
+    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods \u2014 restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-tallow-ring",
@@ -239,7 +239,7 @@
   {
     "id": "event-restored-appeal",
     "title": "A Petition from the Warrens",
-    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help — money, testimony, or a distraction that buys them time.",
+    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help \u2014 money, testimony, or a distraction that buys them time.",
     "triggerConditions": {
       "minUnrest": 40,
       "probability": 0.45,
@@ -266,7 +266,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The Restored accept your help quietly. Word will spread — in the right places."
+            "message": "The Restored accept your help quietly. Word will spread \u2014 in the right places."
           }
         ]
       },
@@ -319,7 +319,7 @@
   {
     "id": "event-market-price-spike",
     "title": "Supply Shortage in the Harbor",
-    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week — but this week it matters.",
+    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week \u2014 but this week it matters.",
     "triggerConditions": {
       "probability": 0.3,
       "dayMin": 3
@@ -372,7 +372,7 @@
   {
     "id": "event-foundry-inspection",
     "title": "League Safety Inspection",
-    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current — but inspections have a way of finding things.",
+    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current \u2014 but inspections have a way of finding things.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-foundry-league",
@@ -384,7 +384,7 @@
     "choices": [
       {
         "id": "choice-cooperate-fully",
-        "label": "Cooperate fully — nothing to hide",
+        "label": "Cooperate fully \u2014 nothing to hide",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -429,7 +429,7 @@
   {
     "id": "event-auto-npc-injury-complication",
     "title": "Injury Complications",
-    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover — but it will take time and rest.",
+    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover \u2014 but it will take time and rest.",
     "triggerConditions": {
       "probability": 0.25,
       "dayMin": 4
@@ -486,11 +486,11 @@
     "choices": [
       {
         "id": "choice-keep-moving",
-        "label": "Keep moving — head down",
+        "label": "Keep moving \u2014 head down",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You move through without incident. The Hollows lets you pass — this time."
+            "message": "You move through without incident. The Hollows lets you pass \u2014 this time."
           }
         ]
       },
@@ -523,7 +523,7 @@
   {
     "id": "event-pale-approach",
     "title": "The Pale Keeps Its Silence",
-    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate — politely, professionally, with a list of questions you were not expecting.",
+    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "probability": 0.3,
@@ -547,7 +547,7 @@
       },
       {
         "id": "choice-deflect-questions",
-        "label": "Deflect — you are here on private business",
+        "label": "Deflect \u2014 you are here on private business",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -608,7 +608,7 @@
   {
     "id": "event-loyal-npc-milestone",
     "title": "A Reliable Hand",
-    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "description": "One of your people has been consistent \u2014 steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
     "triggerConditions": {
       "dayMin": 10,
       "probability": 0.3
@@ -629,13 +629,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The bonus is delivered without ceremony. The work continues — better than before."
+            "message": "The bonus is delivered without ceremony. The work continues \u2014 better than before."
           }
         ]
       },
       {
         "id": "choice-acknowledge-words",
-        "label": "Acknowledge the work — no payment",
+        "label": "Acknowledge the work \u2014 no payment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -672,7 +672,7 @@
   {
     "id": "event-stressed-npc-warning",
     "title": "Someone Is Close to Breaking",
-    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
       "probability": 0.45,
@@ -681,7 +681,7 @@
     "choices": [
       {
         "id": "choice-give-rest",
-        "label": "Give them two days off — no assignments",
+        "label": "Give them two days off \u2014 no assignments",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -715,7 +715,7 @@
       },
       {
         "id": "choice-push-through",
-        "label": "Push through — the work does not wait",
+        "label": "Push through \u2014 the work does not wait",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -750,7 +750,7 @@
     "choices": [
       {
         "id": "choice-invest-shipment",
-        "label": "Buy in — invest 80 Marks",
+        "label": "Buy in \u2014 invest 80 Marks",
         "outcomes": [
           {
             "type": "addCredits",
@@ -768,13 +768,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
+            "message": "The goods clear the dock before the inspection. The investment was sound \u2014 the materials arrive and the margin holds."
           }
         ]
       },
       {
         "id": "choice-pass-windfall",
-        "label": "Pass — the timing is suspicious",
+        "label": "Pass \u2014 the timing is suspicious",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -812,7 +812,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Your team moves into the outer districts. Order is restored — for now. The Compact takes note."
+            "message": "Your team moves into the outer districts. Order is restored \u2014 for now. The Compact takes note."
           }
         ]
       },
@@ -1241,7 +1241,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street — second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
+            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street \u2014 second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
           }
         ]
       }
@@ -1272,7 +1272,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Oswin spreads a hand-drawn map on the table — distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
+            "message": "Oswin spreads a hand-drawn map on the table \u2014 distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
           }
         ]
       }
@@ -1303,7 +1303,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Cress notices the cut on your forearm and says nothing — just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
+            "message": "Cress notices the cut on your forearm and says nothing \u2014 just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
           }
         ]
       }
@@ -1365,7 +1365,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Maret sets a copied page on the table — a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
+            "message": "Maret sets a copied page on the table \u2014 a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
           }
         ]
       }
@@ -1504,7 +1504,7 @@
   {
     "id": "event-rumor-ashfields-convoy",
     "title": "Turned Back on the Ashfields Road",
-    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings.",
+    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings.",
     "triggerConditions": {
       "dayMin": 7,
       "probability": 1
@@ -1516,7 +1516,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings."
+            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings."
           }
         ]
       }
@@ -1922,7 +1922,7 @@
   {
     "id": "event-marion-first-success",
     "title": "Marion Takes Note",
-    "description": "You return from a completed job. Marion is waiting in the entrance hall — not to greet you, you understand. She was already there for other reasons. But she looks at you differently now.",
+    "description": "You return from a completed job. Marion is waiting in the entrance hall \u2014 not to greet you, you understand. She was already there for other reasons. But she looks at you differently now.",
     "triggerConditions": {
       "completedQuestCountMin": 1,
       "requiredRosterNpcId": "npc-marion-vale",
@@ -2142,7 +2142,7 @@
   {
     "id": "event-marion-loyal-stay",
     "title": "Marion Is Still Here",
-    "description": "The debt is past due. Others have noticed. Marion's old contacts in the Harbor Ward have sent her two discreet offers — you found the letters, by accident, in the kitchen fire. She hasn't taken either. She has not mentioned them. She is setting the table for supper.",
+    "description": "The debt is past due. Others have noticed. Marion's old contacts in the Harbor Ward have sent her two discreet offers \u2014 you found the letters, by accident, in the kitchen fire. She hasn't taken either. She has not mentioned them. She is setting the table for supper.",
     "triggerConditions": {
       "dayMin": 20,
       "debtPaid": false,
@@ -2184,7 +2184,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You sit. Marion serves without ceremony. The debt is not spoken of. It hangs in the air like smoke — but the table is set."
+            "message": "You sit. Marion serves without ceremony. The debt is not spoken of. It hangs in the air like smoke \u2014 but the table is set."
           }
         ]
       }
@@ -2391,7 +2391,7 @@
   {
     "id": "event-harbor-compact-inspection",
     "title": "Scheduled Inspection",
-    "description": "A Compact clerk informs you that a cargo inventory inspection is scheduled at your berth — apparently a routine check. Your name is on the list. How thorough this becomes depends on your standing.",
+    "description": "A Compact clerk informs you that a cargo inventory inspection is scheduled at your berth \u2014 apparently a routine check. Your name is on the list. How thorough this becomes depends on your standing.",
     "triggerConditions": {
       "currentDistrict": "district-harbor",
       "dayMin": 4,
@@ -2442,7 +2442,7 @@
   {
     "id": "event-harbor-dockworker-dispute",
     "title": "Dispute at the Gate",
-    "description": "Two crews are blocking the gate access, disputing a missing payment from a shipping contract. Neither will move until it's settled. Your people can't get through — and waiting costs time.",
+    "description": "Two crews are blocking the gate access, disputing a missing payment from a shipping contract. Neither will move until it's settled. Your people can't get through \u2014 and waiting costs time.",
     "triggerConditions": {
       "currentDistrict": "district-harbor",
       "dayMin": 3,
@@ -2499,7 +2499,7 @@
   {
     "id": "event-gilded-invitation",
     "title": "An Invitation to Supper",
-    "description": "A liveried messenger delivers a card embossed with a crest you half-recognize — a minor Court house extending an informal dinner invitation. The phrasing is pleasant and tells you nothing about why.",
+    "description": "A liveried messenger delivers a card embossed with a crest you half-recognize \u2014 a minor Court house extending an informal dinner invitation. The phrasing is pleasant and tells you nothing about why.",
     "triggerConditions": {
       "currentDistrict": "district-gilded-heights",
       "dayMin": 3,
@@ -2508,7 +2508,7 @@
     "choices": [
       {
         "id": "choice-gilded-attend",
-        "label": "Attend — it costs nothing to be seen",
+        "label": "Attend \u2014 it costs nothing to be seen",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -2602,7 +2602,7 @@
   {
     "id": "event-ironworks-labor-stoppage",
     "title": "Work Stoppage on Floor Three",
-    "description": "A section of League workers has stopped production over a safety dispute — part of a larger pattern of industrial grievances. The foreman wants someone with authority to hear the complaint. The League is watching.",
+    "description": "A section of League workers has stopped production over a safety dispute \u2014 part of a larger pattern of industrial grievances. The foreman wants someone with authority to hear the complaint. The League is watching.",
     "triggerConditions": {
       "currentDistrict": "district-ironworks",
       "dayMin": 3,
@@ -2611,7 +2611,7 @@
     "choices": [
       {
         "id": "choice-ironworks-side-workers",
-        "label": "Back the workers — the foreman was wrong",
+        "label": "Back the workers \u2014 the foreman was wrong",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -2631,7 +2631,7 @@
       },
       {
         "id": "choice-ironworks-side-league",
-        "label": "Back the League — work resumes",
+        "label": "Back the League \u2014 work resumes",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -2664,7 +2664,7 @@
   {
     "id": "event-ironworks-salvage-find",
     "title": "Something in the Wreckage",
-    "description": "A worker pulls you aside near a collapsed section of the old foundry annex. He's found something buried under the debris — tools, ingots, or something worth considerably more. He wants a cut to keep quiet.",
+    "description": "A worker pulls you aside near a collapsed section of the old foundry annex. He's found something buried under the debris \u2014 tools, ingots, or something worth considerably more. He wants a cut to keep quiet.",
     "triggerConditions": {
       "currentDistrict": "district-ironworks",
       "dayMin": 2,
@@ -2687,7 +2687,7 @@
       },
       {
         "id": "choice-ironworks-take-all",
-        "label": "Take it all — threaten his silence",
+        "label": "Take it all \u2014 threaten his silence",
         "outcomes": [
           {
             "type": "addCredits",
@@ -2775,7 +2775,7 @@
   {
     "id": "event-pale-breach-relic",
     "title": "Something Left by the Breach",
-    "description": "One of your people brings you an object they found in the rubble of the old gate district. It is clearly pre-Breach — its purpose is not immediately apparent, but it is intact. The Restored will pay for this. So will the right scholar.",
+    "description": "One of your people brings you an object they found in the rubble of the old gate district. It is clearly pre-Breach \u2014 its purpose is not immediately apparent, but it is intact. The Restored will pay for this. So will the right scholar.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "dayMin": 5,
@@ -2803,7 +2803,7 @@
       },
       {
         "id": "choice-pale-relic-keep",
-        "label": "Keep it — it might matter later",
+        "label": "Keep it \u2014 it might matter later",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -2826,7 +2826,7 @@
   {
     "id": "event-warrens-pickpocket-ring",
     "title": "A Familiar Pattern",
-    "description": "Three of your people have had their pockets turned inside out in the same block over two days. Someone is working the area systematically. The locals know who — they just won't say.",
+    "description": "Three of your people have had their pockets turned inside out in the same block over two days. Someone is working the area systematically. The locals know who \u2014 they just won't say.",
     "triggerConditions": {
       "currentDistrict": "district-the-warrens",
       "dayMin": 3,
@@ -2887,7 +2887,7 @@
   {
     "id": "event-warrens-night-patrol",
     "title": "Night Patrol Request",
-    "description": "A block elder approaches you: three assaults on the same street this week. The Compact patrol doesn't come after dark. He's asking if your people would walk the street one night — no contract, no payment. Just presence.",
+    "description": "A block elder approaches you: three assaults on the same street this week. The Compact patrol doesn't come after dark. He's asking if your people would walk the street one night \u2014 no contract, no payment. Just presence.",
     "triggerConditions": {
       "currentDistrict": "district-the-warrens",
       "dayMin": 4,
@@ -2967,7 +2967,7 @@
       },
       {
         "id": "choice-hollows-push-through",
-        "label": "Push through — show them what your people are",
+        "label": "Push through \u2014 show them what your people are",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -2982,7 +2982,7 @@
       },
       {
         "id": "choice-hollows-find-another-way",
-        "label": "Turn back — find another route",
+        "label": "Turn back \u2014 find another route",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3005,7 +3005,7 @@
   {
     "id": "event-hollows-missing-person",
     "title": "A Face You Almost Know",
-    "description": "A woman stops you on a narrow street and shows you a drawing — a young man's face, roughly done. 'He went in three days ago,' she says. 'He hasn't come out.' She is not asking for help exactly. She is just telling someone.",
+    "description": "A woman stops you on a narrow street and shows you a drawing \u2014 a young man's face, roughly done. 'He went in three days ago,' she says. 'He hasn't come out.' She is not asking for help exactly. She is just telling someone.",
     "triggerConditions": {
       "currentDistrict": "district-the-hollows",
       "dayMin": 3,
@@ -3033,7 +3033,7 @@
       },
       {
         "id": "choice-hollows-cant-help",
-        "label": "You can't help — move on",
+        "label": "You can't help \u2014 move on",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3056,7 +3056,7 @@
   {
     "id": "event-marion-milestone-motivation",
     "title": "Marion Speaks Plainly",
-    "description": "Marion corners you after the others have gone. She does not make speeches. She tells you what she is actually here for — not the marks, not the work. Something older and quieter. You listen.",
+    "description": "Marion corners you after the others have gone. She does not make speeches. She tells you what she is actually here for \u2014 not the marks, not the work. Something older and quieter. You listen.",
     "triggerConditions": {
       "dayMin": 1,
       "probability": 1.0
@@ -3140,7 +3140,7 @@
   {
     "id": "event-doyle-milestone-holst",
     "title": "What Doyle Knows About Holst",
-    "description": "Doyle does not often talk about Holst. Tonight he does. Not everything — he is not built that way — but enough. The locked box he carries is mentioned. So is the name of a man who should not still be alive.",
+    "description": "Doyle does not often talk about Holst. Tonight he does. Not everything \u2014 he is not built that way \u2014 but enough. The locked box he carries is mentioned. So is the name of a man who should not still be alive.",
     "triggerConditions": {
       "dayMin": 1,
       "probability": 1.0
@@ -3192,7 +3192,7 @@
   {
     "id": "event-vael-milestone-network",
     "title": "Vael's Accounting",
-    "description": "Sister Vael tells you she has been keeping an informal record — debts, movements, faces in the Pale's confessionals. She offers to share what is relevant. Her price is discretion. You can live with that.",
+    "description": "Sister Vael tells you she has been keeping an informal record \u2014 debts, movements, faces in the Pale's confessionals. She offers to share what is relevant. Her price is discretion. You can live with that.",
     "triggerConditions": {
       "dayMin": 1,
       "probability": 1.0
@@ -3210,7 +3210,7 @@
       },
       {
         "id": "choice-vael-decline-network",
-        "label": "Decline — too entangled",
+        "label": "Decline \u2014 too entangled",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3496,7 +3496,7 @@
   {
     "id": "lissel-first-shape",
     "title": "Something Is Settling",
-    "description": "Lissel finds you at a quiet moment. She has been watching herself in situations lately — the way she reacted to something, the space she took up or didn't. She is not sure what she is noticing. She is sure she is noticing it.",
+    "description": "Lissel finds you at a quiet moment. She has been watching herself in situations lately \u2014 the way she reacted to something, the space she took up or didn't. She is not sure what she is noticing. She is sure she is noticing it.",
     "triggerConditions": {
       "dayMin": 999999,
       "probability": 0
@@ -3514,7 +3514,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Lissel nods. She didn't need you to explain it — just to not dismiss it."
+            "message": "Lissel nods. She didn't need you to explain it \u2014 just to not dismiss it."
           }
         ]
       },
@@ -3570,7 +3570,7 @@
   {
     "id": "lissel-crystallized-disciplined",
     "title": "She Has Found Her Bearing",
-    "description": "Something has set in Lissel. You notice it before she names it — the way she organizes things without being asked, the way she doesn't leave tasks half-finished. She has found the framework she was missing. She requests more systematic responsibility.",
+    "description": "Something has set in Lissel. You notice it before she names it \u2014 the way she organizes things without being asked, the way she doesn't leave tasks half-finished. She has found the framework she was missing. She requests more systematic responsibility.",
     "triggerConditions": {
       "dayMin": 999999,
       "probability": 0
@@ -3623,7 +3623,7 @@
   {
     "id": "lissel-crystallized-empathic",
     "title": "She Sees What Others Miss",
-    "description": "Lissel has become a reader of people. She began doing it for survival; now she does it because she can't stop. She is beginning to use it intentionally — she tells you something about a house member you hadn't noticed yourself.",
+    "description": "Lissel has become a reader of people. She began doing it for survival; now she does it because she can't stop. She is beginning to use it intentionally \u2014 she tells you something about a house member you hadn't noticed yourself.",
     "triggerConditions": {
       "dayMin": 999999,
       "probability": 0
@@ -3676,7 +3676,7 @@
   {
     "id": "lissel-crystallized-ruthless",
     "title": "The Softness Has Gone Out of Her",
-    "description": "You notice it gradually, then all at once. Lissel doesn't flinch at things that used to slow her down. The house showed her certain things and she adjusted. She is not cruel — that is not what this is. But something that was uncertain in her has resolved into something harder.",
+    "description": "You notice it gradually, then all at once. Lissel doesn't flinch at things that used to slow her down. The house showed her certain things and she adjusted. She is not cruel \u2014 that is not what this is. But something that was uncertain in her has resolved into something harder.",
     "triggerConditions": {
       "dayMin": 999999,
       "probability": 0
@@ -3729,7 +3729,7 @@
   {
     "id": "lissel-crystallized-curious",
     "title": "She Has Found Her Question",
-    "description": "Lissel has become an investigator. Not in any official sense — she doesn't have the standing for that yet. But she has found the thing that makes her stay up late and wake up early: the need to understand. She brings you a thread she's been pulling on for weeks. It leads somewhere you hadn't looked.",
+    "description": "Lissel has become an investigator. Not in any official sense \u2014 she doesn't have the standing for that yet. But she has found the thing that makes her stay up late and wake up early: the need to understand. She brings you a thread she's been pulling on for weeks. It leads somewhere you hadn't looked.",
     "triggerConditions": {
       "dayMin": 999999,
       "probability": 0
@@ -3858,7 +3858,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You separate the question of rank from the question of respect. It holds — for now."
+            "message": "You separate the question of rank from the question of respect. It holds \u2014 for now."
           }
         ]
       },
@@ -3924,7 +3924,7 @@
       },
       {
         "id": "choice-mediate",
-        "label": "Mediate — both positions have merit",
+        "label": "Mediate \u2014 both positions have merit",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3947,7 +3947,7 @@
   {
     "id": "event-npc-ambition-comparison",
     "title": "The Comparison Is Made",
-    "description": "It has been spoken aloud — one of your people has measured themselves against another and found the accounting unfair. The comment was quiet, but everyone in the room heard it.",
+    "description": "It has been spoken aloud \u2014 one of your people has measured themselves against another and found the accounting unfair. The comment was quiet, but everyone in the room heard it.",
     "triggerConditions": {
       "probability": 0
     },
@@ -3958,13 +3958,13 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You redirect ambition into function. The comparison fades — for now."
+            "message": "You redirect ambition into function. The comparison fades \u2014 for now."
           }
         ]
       },
       {
         "id": "choice-deflect",
-        "label": "Deflect — change the subject",
+        "label": "Deflect \u2014 change the subject",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3997,7 +3997,7 @@
   {
     "id": "event-npc-recognition-rivalry",
     "title": "The Unacknowledged One",
-    "description": "Someone was praised and someone was not. The pointed remark came quietly, between tasks — but the bitterness behind it was not quiet at all.",
+    "description": "Someone was praised and someone was not. The pointed remark came quietly, between tasks \u2014 but the bitterness behind it was not quiet at all.",
     "triggerConditions": {
       "probability": 0
     },
@@ -4037,14 +4037,14 @@
   {
     "id": "event-npc-ideological-friction",
     "title": "The Same Outcome, Different Meanings",
-    "description": "A job was completed. Two of your people have interpreted what it meant in completely different terms — and neither interpretation is compatible with the other.",
+    "description": "A job was completed. Two of your people have interpreted what it meant in completely different terms \u2014 and neither interpretation is compatible with the other.",
     "triggerConditions": {
       "probability": 0
     },
     "choices": [
       {
         "id": "choice-arbitrate",
-        "label": "Arbitrate — name your own meaning for what was done",
+        "label": "Arbitrate \u2014 name your own meaning for what was done",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4130,6 +4130,172 @@
       "bonding",
       "discipline"
     ],
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-tutorial-house-debt",
+    "title": "The Debt",
+    "description": "Marion sets a folded paper on the table. The numbers are neat. The margin is not.\n\n800 Marks due at month's end. The house's accounts are near empty. Contracts, work orders, expedition returns \u2014 these are the only paths forward. The districts post public work. Start there.",
+    "triggerConditions": {
+      "isFirstRun": true,
+      "dayMin": 2,
+      "dayMax": 2,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "I understand the stakes.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Marion leaves the ledger where you will find it. She does not say anything else."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "tutorial",
+      "first-run",
+      "economy"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-tutorial-find-work",
+    "title": "Where the Work Is",
+    "description": "Contracts come from two places: district POIs post public work orders, and the Contract Board collects them. The Harbor Ward asks fewer questions about new operators. The Compact issues public leads. It is a place to start.\n\nNavigate to a district from the District Map, then visit a POI to pick up posted work.",
+    "triggerConditions": {
+      "isFirstRun": true,
+      "dayMin": 2,
+      "dayMax": 2,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "I know where to look.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The district boards are public. So is the Compact's record of outstanding work."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "tutorial",
+      "first-run",
+      "navigation"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-tutorial-end-day-rhythm",
+    "title": "The Day Turns",
+    "description": "At day's end, wages pull from your accounts. Your people's health, hunger, stress, and morale all shift based on their assignment and conditions. City events fire. Faction standings drift.\n\nEnd Day from the Dashboard. Don't let days run without a plan \u2014 the debt does not wait.",
+    "triggerConditions": {
+      "isFirstRun": true,
+      "dayMin": 2,
+      "dayMax": 2,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "Understood.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The rhythm of the house: plan, act, end the day, review."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "tutorial",
+      "first-run",
+      "mechanics"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-tutorial-equip-before-combat",
+    "title": "Ready Your People",
+    "description": "Ida Rhys arrived capable but unequipped. Before any field deployment, visit the Roster screen and assign a weapon and armor through the Loadout tab.\n\nAn unequipped operative fights at a significant disadvantage. The shops carry weapons and armor \u2014 buy before you send anyone into the field.",
+    "triggerConditions": {
+      "isFirstRun": true,
+      "dayMin": 2,
+      "dayMax": 2,
+      "requiredRosterNpcId": "npc-ida-rhys",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "I'll kit her out.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Ida Rhys is capable. A good weapon makes capable dangerous."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "tutorial",
+      "first-run",
+      "combat"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-tutorial-titles",
+    "title": "What a Title Means",
+    "description": "Your roster can earn while idle. From the Roster screen, assign a title to an NPC \u2014 each unlocks a passive bonus or income stream. A Fence generates marks from black-market contacts. A Quartermaster reduces supply costs. A Medic accelerates recovery.\n\nTitles do not require deployment. They work in the background.",
+    "triggerConditions": {
+      "isFirstRun": true,
+      "dayMin": 2,
+      "dayMax": 2,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-noted",
+        "label": "Good to know.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The right title in the right role compounds over time."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "tutorial",
+      "first-run",
+      "roster"
+    ],
+    "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": null

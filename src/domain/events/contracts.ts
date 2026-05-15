@@ -67,6 +67,7 @@ export const eventTriggerConditionsSchema = z
         min: z.number(),
       })
       .optional(),
+    isFirstRun: z.boolean().optional(),
     probability: z.number().min(0).max(1).default(1),
   })
   .strict()

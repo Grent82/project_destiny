@@ -252,6 +252,35 @@ describe('resolveEvent reducer', () => {
   })
 })
 
+describe('isFirstRun tutorial events', () => {
+  it('fires tutorial events on the first endDay (isFirstRun=true, day=2)', () => {
+    const state = makeState({ day: 2, isFirstRun: true })
+    const next = evaluateEvents(state, alwaysFire)
+    const tutorialIds = next.pendingEvents
+      .map((e) => e.eventId)
+      .filter((id) => id.startsWith('event-tutorial-'))
+    expect(tutorialIds.length).toBeGreaterThanOrEqual(4)
+  })
+
+  it('does not fire tutorial events after isFirstRun is false', () => {
+    const state = makeState({ day: 2, isFirstRun: false })
+    const next = evaluateEvents(state, alwaysFire)
+    const tutorialIds = next.pendingEvents
+      .map((e) => e.eventId)
+      .filter((id) => id.startsWith('event-tutorial-'))
+    expect(tutorialIds.length).toBe(0)
+  })
+
+  it('does not fire tutorial events after day 2 window', () => {
+    const state = makeState({ day: 5, isFirstRun: true })
+    const next = evaluateEvents(state, alwaysFire)
+    const tutorialIds = next.pendingEvents
+      .map((e) => e.eventId)
+      .filter((id) => id.startsWith('event-tutorial-'))
+    expect(tutorialIds.length).toBe(0)
+  })
+})
+
 describe('pending event visibility', () => {
   it('hides scheduled future events until their firedOnDay arrives', () => {
     const state = makeState({
