@@ -136,7 +136,21 @@ function buildAllyCombatant(
   }
 }
 
-function buildEnemyCombatant(index: number, allies: CombatantState[]): CombatantState {
+/** Stat multipliers applied per district danger tier (1-5). */
+const DANGER_TIER_MODIFIERS = [
+  { healthMult: 1.00, accuracyBonus: 0,  damageMod: 0 }, // tier 1
+  { healthMult: 1.10, accuracyBonus: 3,  damageMod: 1 }, // tier 2
+  { healthMult: 1.25, accuracyBonus: 6,  damageMod: 2 }, // tier 3
+  { healthMult: 1.40, accuracyBonus: 10, damageMod: 4 }, // tier 4
+  { healthMult: 1.60, accuracyBonus: 15, damageMod: 6 }, // tier 5
+] as const
+
+export function getEnemyDangerModifiers(dangerLevel: number) {
+  const idx = Math.max(0, Math.min(4, (dangerLevel ?? 1) - 1))
+  return DANGER_TIER_MODIFIERS[idx]!
+}
+
+function buildEnemyCombatant(index: number, allies: CombatantState[], dangerLevel = 1): CombatantState {
   const allyAverageSkill = Math.max(
     35,
     Math.floor(
@@ -151,18 +165,21 @@ function buildEnemyCombatant(index: number, allies: CombatantState[]): Combatant
     ) - 6,
   )
 
+  const tier = getEnemyDangerModifiers(dangerLevel)
+  const scaledHealth = Math.round(allyAverageHealth * tier.healthMult)
+
   return {
     combatantId: `enemy-${index + 1}`,
     sourceNpcId: null,
     name: ENEMY_NAMES[index % ENEMY_NAMES.length],
     side: 'enemies',
-    maxHealth: allyAverageHealth,
-    health: allyAverageHealth,
+    maxHealth: scaledHealth,
+    health: scaledHealth,
     morale: 58,
     skill: allyAverageSkill,
-    accuracy: Math.min(90, allyAverageSkill + 12),
-    damageMin: Math.max(7, Math.floor(allyAverageSkill / 7)),
-    damageMax: Math.max(11, Math.floor(allyAverageSkill / 5)),
+    accuracy: Math.min(90, allyAverageSkill + 12 + tier.accuracyBonus),
+    damageMin: Math.max(7, Math.floor(allyAverageSkill / 7) + tier.damageMod),
+    damageMax: Math.max(11, Math.floor(allyAverageSkill / 5) + tier.damageMod),
     effectiveRange: index % 2 === 0 ? 'close' : 'distant',
     soak: 10 + index * 2,
     speed: 4 + (index % 2),
@@ -623,6 +640,10 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     : state.timeSlot === 'afternoon' ? 3
     : 0
 
+  const currentDistrict = contentCatalog.districtsById.get(state.currentDistrictId ?? '')
+  const districtFactionId = currentDistrict?.controllingFactionId ?? 'faction-civic-compact'
+  const districtDangerLevel = currentDistrict?.dangerLevel ?? 1
+
   const npcAllies = squad.map((npc) => {
     const base = buildAllyCombatant(npc, state.equippedItemDurabilities, state.relationships)
     return timeSlotAccuracyMod !== 0
@@ -632,7 +653,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   const playerCombatant = buildPlayerCombatant(state.playerCharacter)
   const allies = [playerCombatant, ...npcAllies]
   // Enemy count matches NPC squad size only (not counting the player)
-  const enemies = npcAllies.map((_, index) => buildEnemyCombatant(index, npcAllies))
+  const enemies = npcAllies.map((_, index) => buildEnemyCombatant(index, npcAllies, districtDangerLevel))
   const combatants = [...allies, ...enemies].sort(
     (left, right) => right.speed - left.speed || right.skill - left.skill,
   )
@@ -640,10 +661,6 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   const linkedQuestTemplate = linkedQuest
     ? (contentCatalog.questsById?.get(linkedQuest.questId) ?? null)
     : null
-
-  const districtFactionId =
-    contentCatalog.districtsById.get(state.currentDistrictId ?? '')?.controllingFactionId
-    ?? 'faction-civic-compact'
 
   const encounter: ActiveCombatState = {
     encounterId: `encounter-day-${state.day}-${state.timeSlot}`,

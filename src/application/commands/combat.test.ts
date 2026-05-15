@@ -6,6 +6,7 @@ import { createQuestRuntime } from '../../domain/quests/contracts'
 import { initialStateWithIda } from './testFixtures'
 import {
   concludeCombatEncounter,
+  getEnemyDangerModifiers,
   performCombatAction,
   startCombatEncounter,
 } from './combat'
@@ -231,6 +232,72 @@ describe('combat commands', () => {
     expect(nextState.activeQuests.find((quest) => quest.questId === 'quest-harborwatch')).toBeUndefined()
     expect(nextState.completedQuestIds).not.toContain('quest-harborwatch')
     expect(nextState.activityLog.some((entry) => /driven back/i.test(entry.message))).toBe(true)
+  })
+
+  describe('district danger level scaling', () => {
+    it('enemies in The Below (danger 5) have more health than Harbor Ward (danger 2)', () => {
+      const harborState = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-harbor',
+        selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+      }
+      const belowState = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-the-below',
+        selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+      }
+
+      const harborResult = startCombatEncounter(harborState)
+      const belowResult = startCombatEncounter(belowState)
+
+      const harborEnemy = harborResult.activeCombat?.combatants.find((c) => c.side === 'enemies')
+      const belowEnemy = belowResult.activeCombat?.combatants.find((c) => c.side === 'enemies')
+
+      expect(harborEnemy).toBeDefined()
+      expect(belowEnemy).toBeDefined()
+      expect(belowEnemy!.maxHealth).toBeGreaterThan(harborEnemy!.maxHealth)
+      expect(belowEnemy!.accuracy).toBeGreaterThan(harborEnemy!.accuracy)
+    })
+
+    it('danger tier 1 enemies use base stats (no scaling)', () => {
+      const mods = getEnemyDangerModifiers(1)
+      expect(mods.healthMult).toBe(1.0)
+      expect(mods.accuracyBonus).toBe(0)
+      expect(mods.damageMod).toBe(0)
+    })
+
+    it('danger tier 5 enemies have 60% more health and +15 accuracy', () => {
+      const mods = getEnemyDangerModifiers(5)
+      expect(mods.healthMult).toBe(1.6)
+      expect(mods.accuracyBonus).toBe(15)
+      expect(mods.damageMod).toBe(6)
+    })
+
+    it('clamps out-of-range danger levels gracefully', () => {
+      const lowMods = getEnemyDangerModifiers(0)
+      const highMods = getEnemyDangerModifiers(10)
+      expect(lowMods).toEqual(getEnemyDangerModifiers(1))
+      expect(highMods).toEqual(getEnemyDangerModifiers(5))
+    })
+
+    it('enemies in gilded heights (danger 1) use base stats', () => {
+      const gildedState = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-gilded-heights',
+        selectedSquadNpcIds: ['npc-marion-vale'],
+      }
+      const result = startCombatEncounter(gildedState)
+      const enemy = result.activeCombat?.combatants.find((c) => c.side === 'enemies')
+      // Compare against unknown district (also defaults to danger 1)
+      const noDistrictState = {
+        ...initialStateWithIda,
+        currentDistrictId: null,
+        selectedSquadNpcIds: ['npc-marion-vale'],
+      }
+      const noDistrictResult = startCombatEncounter(noDistrictState)
+      const noDistrictEnemy = noDistrictResult.activeCombat?.combatants.find((c) => c.side === 'enemies')
+      expect(enemy?.maxHealth).toBe(noDistrictEnemy?.maxHealth)
+    })
   })
 
   describe('stagger mechanic', () => {
