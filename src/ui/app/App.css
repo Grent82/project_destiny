@@ -475,6 +475,9 @@ strong { color: var(--text-secondary); }
   color: var(--text-primary);
   text-align: left;
   cursor: pointer;
+  overflow: hidden;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .roster-row-active {

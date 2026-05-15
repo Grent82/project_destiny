@@ -145,11 +145,11 @@ function CharacterSection({ detail }: { detail: NpcDetail }) {
           {[detail.sex, detail.ageBand].filter(Boolean).join(' · ')}
         </p>
       )}
-      <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.35rem' }}>
+      <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.35rem', overflowWrap: 'break-word' }}>
         {detail.background}
       </p>
       {traitSentences.length > 0 && (
-        <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.25rem' }}>
+        <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', color: 'var(--text-secondary)', margin: '0 0 0.25rem', overflowWrap: 'break-word' }}>
           {traitSentences.join(' ')}
         </p>
       )}
