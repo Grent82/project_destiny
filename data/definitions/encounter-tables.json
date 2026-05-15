@@ -1,0 +1,101 @@
+[
+  {
+    "districtId": "district-harbor",
+    "enemies": [
+      { "name": "Ring Enforcer", "lore": "The Tallow Ring runs the docks after dark. This one collects debts and breaks bones in equal measure." },
+      { "name": "Dock Thug", "lore": "Hired muscle, no questions asked. The Harbor Ward employs a lot of those." },
+      { "name": "Contraband Runner", "lore": "Runs crates for the Ring. Knows every gap in the Compact's inspection routes." },
+      { "name": "Compact Levy", "lore": "Civic Compact muscle pressed into service. Half-trained and nervous — which makes them dangerous." }
+    ]
+  },
+  {
+    "districtId": "district-gilded-heights",
+    "enemies": [
+      { "name": "House Guard", "lore": "Livery of a creditor house. Well-equipped and trained to intimidate first, escalate if needed." },
+      { "name": "Debt Collector", "lore": "Carries a ledger and a blade. The ledger is more dangerous." },
+      { "name": "Court Warden", "lore": "Gilded Court auxiliary. Everything done by procedure — including violence." },
+      { "name": "Creditor's Agent", "lore": "Sent to recover assets. Flexible definition of assets." }
+    ]
+  },
+  {
+    "districtId": "district-ironworks",
+    "enemies": [
+      { "name": "Strikebreaker", "lore": "Hired by management to discourage labor action. Experienced at controlled brutality." },
+      { "name": "Slag Gang Runner", "lore": "One of the Ironworks gangs that controls raw material flows. Territorial." },
+      { "name": "Guild Enforcer", "lore": "The tradesmen's guilds have their own enforcers. Not all labor disputes favor the worker." },
+      { "name": "Arms Thief", "lore": "The forges produce weapons. Some people decide to take a cut off the top." }
+    ]
+  },
+  {
+    "districtId": "district-the-pale",
+    "enemies": [
+      { "name": "Territory Broker", "lore": "The Pale is contested ground. This one claims a piece of it." },
+      { "name": "Rogue Mercenary", "lore": "Between contracts and out of money. Desperation is its own kind of violence." },
+      { "name": "Pale Scavenger", "lore": "Picks the grey zone for anything valuable. Has learned to fight for what's found." },
+      { "name": "Opportunist", "lore": "No faction, no loyalty. Just watching for the moment the odds shift." }
+    ]
+  },
+  {
+    "districtId": "district-the-warrens",
+    "enemies": [
+      { "name": "Mob Conscript", "lore": "The Warrens are close to boiling. This one got swept up in something bigger than them." },
+      { "name": "Street Enforcer", "lore": "Collects from local residents on behalf of someone further up the chain." },
+      { "name": "Gang Runner", "lore": "Young, reckless, trying to prove something to people who won't remember it." },
+      { "name": "Desperate Thief", "lore": "Hunger and humiliation make people take risks. This one is past the point of caution." }
+    ]
+  },
+  {
+    "districtId": "district-the-hollows",
+    "enemies": [
+      { "name": "Ruin Stalker", "lore": "Adapted to the collapsed city. Patient, territorial, and very used to violence." },
+      { "name": "Hollow Predator", "lore": "The Hollows have things that were human once. This one's not all the way back." },
+      { "name": "Salvage Raider", "lore": "Kills first and strips the corpse second. It's just efficiency out here." },
+      { "name": "Hollows Warlord", "lore": "Controls a block or two of rubble. Defends it with remarkable ferocity." }
+    ]
+  },
+  {
+    "districtId": "district-ash-quay",
+    "enemies": [
+      { "name": "Customs Enforcer", "lore": "House Merrow runs customs here. Their enforcers treat the authority as an income stream." },
+      { "name": "Quay Extortionist", "lore": "Every ship that docks pays. Everyone who walks the quay pays. It's a tradition." },
+      { "name": "Creditor's Collector", "lore": "Ash Quay is creditor country. This one is here to make a collection." },
+      { "name": "Dock Gang Member", "lore": "Works the piers on behalf of a protection syndicate. Prefers not to work too hard for it." }
+    ]
+  },
+  {
+    "districtId": "district-the-mireward",
+    "enemies": [
+      { "name": "Shrine Watcher", "lore": "The sanctuaries here are monitored. Not always by the faithful." },
+      { "name": "Zealot Enforcer", "lore": "Doctrine-first, questions later. The Mireward's cults have very clear ideas about outsiders." },
+      { "name": "Cult Operative", "lore": "Doing the congregation's work in ways the congregation would prefer not to know about." },
+      { "name": "Confession Extractor", "lore": "The birth records and confessionals hold leverage on half the city. This one trades in it." }
+    ]
+  },
+  {
+    "districtId": "district-cinder-row",
+    "enemies": [
+      { "name": "Cartel Runner", "lore": "Cinder Row's information market feeds the cartels. This one is on an errand." },
+      { "name": "Tavern Enforcer", "lore": "The tavern owner hired protection. The protection decided it ran the place." },
+      { "name": "Labor Press-Gang", "lore": "Cinder Row labor gets pressed into hazardous work. They resist, sometimes violently." },
+      { "name": "Information Broker's Guard", "lore": "What's known here is currency. What's known here is worth protecting." }
+    ]
+  },
+  {
+    "districtId": "district-the-northbank",
+    "enemies": [
+      { "name": "Civic Warden", "lore": "Northbank law enforcement. By-the-book until someone pays them to be otherwise." },
+      { "name": "Court Investigator", "lore": "The legal machinery of Valdenmoor starts here. This one is investigating something." },
+      { "name": "Registry Guard", "lore": "The records halls have guards. The records are worth more than most people." },
+      { "name": "Debt Enforcer", "lore": "The Northbank handles legal debt recovery. The legal part is negotiable." }
+    ]
+  },
+  {
+    "districtId": "district-the-below",
+    "enemies": [
+      { "name": "Oath Collector", "lore": "Oaths sworn in the Below are binding. This one enforces them." },
+      { "name": "Night Stalker", "lore": "Moves through the underground without a face or a name. Very few people see them twice." },
+      { "name": "Debt Taker", "lore": "The Below runs on obligation. This one is here to collect what's owed." },
+      { "name": "Shadow Broker", "lore": "No-face-names are currency down here. This one knows too many of them to be unarmed." }
+    ]
+  }
+]

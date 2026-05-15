@@ -1,4 +1,5 @@
 import npcStartingRelationshipsData from '../../../data/definitions/npc-starting-relationships.json'
+import encounterTablesData from '../../../data/definitions/encounter-tables.json'
 import districts from '../../../data/definitions/districts.json'
 import poisData from '../../../data/definitions/pois.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
@@ -45,6 +46,14 @@ const npcStartingRelationshipSchema = z.object({
   }),
 })
 export type NpcStartingRelationship = z.infer<typeof npcStartingRelationshipSchema>
+
+const encounterEntrySchema = z.object({ name: z.string(), lore: z.string() })
+const encounterTableSchema = z.object({
+  districtId: z.string(),
+  enemies: encounterEntrySchema.array().min(1),
+})
+export type EncounterEntry = z.infer<typeof encounterEntrySchema>
+const parsedEncounterTables = encounterTableSchema.array().parse(encounterTablesData)
 
 const poiSchema = z.object({
   id: z.string(),
@@ -95,6 +104,7 @@ export const contentCatalog = {
   npcsById: toMap(parsedNpcs),
   enemyNpcs: parsedEnemyNpcs,
   enemyNpcsById: toMap(parsedEnemyNpcs),
+  encounterTablesByDistrict: new Map(parsedEncounterTables.map((t) => [t.districtId, t.enemies])),
   shops: parsedShops,
   shopsById: toMap(parsedShops),
   events: parsedEvents,

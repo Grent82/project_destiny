@@ -382,4 +382,74 @@ describe('combat commands', () => {
       expect(enemyAfter).toBeDefined()
     })
   })
+
+  describe('district-aware encounter tables', () => {
+    it('enemies in The Hollows have district-appropriate names and lore', () => {
+      const state = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-the-hollows',
+        selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+      }
+      const result = startCombatEncounter(state)
+      const enemies = result.activeCombat?.combatants.filter((c) => c.side === 'enemies') ?? []
+
+      expect(enemies.length).toBeGreaterThan(0)
+      for (const enemy of enemies) {
+        expect(['Ruin Stalker', 'Hollow Predator', 'Salvage Raider', 'Hollows Warlord']).toContain(enemy.name)
+        expect(enemy.lore).toBeTruthy()
+      }
+    })
+
+    it('enemies in Harbor Ward have harbor-appropriate names', () => {
+      const state = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-harbor',
+        selectedSquadNpcIds: ['npc-marion-vale'],
+      }
+      const result = startCombatEncounter(state)
+      const enemies = result.activeCombat?.combatants.filter((c) => c.side === 'enemies') ?? []
+
+      expect(enemies.length).toBeGreaterThan(0)
+      for (const enemy of enemies) {
+        expect(['Ring Enforcer', 'Dock Thug', 'Contraband Runner', 'Compact Levy']).toContain(enemy.name)
+      }
+    })
+
+    it('falls back to generic names when district has no encounter table', () => {
+      const state = {
+        ...initialStateWithIda,
+        currentDistrictId: null,
+        selectedSquadNpcIds: ['npc-marion-vale'],
+      }
+      const result = startCombatEncounter(state)
+      const enemies = result.activeCombat?.combatants.filter((c) => c.side === 'enemies') ?? []
+
+      expect(enemies.length).toBeGreaterThan(0)
+      const fallbackNames = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
+      for (const enemy of enemies) {
+        expect(fallbackNames).toContain(enemy.name)
+        expect(enemy.lore).toBeTruthy()
+      }
+    })
+
+    it('enemies from different districts have different names for the same index', () => {
+      const hollowsState = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-the-hollows',
+        selectedSquadNpcIds: ['npc-marion-vale'],
+      }
+      const mirewardState = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-the-mireward',
+        selectedSquadNpcIds: ['npc-marion-vale'],
+      }
+      const hollowsResult = startCombatEncounter(hollowsState)
+      const mirewardResult = startCombatEncounter(mirewardState)
+
+      const hollowsEnemy = hollowsResult.activeCombat?.combatants.find((c) => c.side === 'enemies')
+      const mirewardEnemy = mirewardResult.activeCombat?.combatants.find((c) => c.side === 'enemies')
+
+      expect(hollowsEnemy?.name).not.toBe(mirewardEnemy?.name)
+    })
+  })
 })

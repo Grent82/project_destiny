@@ -12,7 +12,7 @@ import {
   getHungerCombatPenalty,
 } from '../../domain/npcStateModifiers'
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
-import { contentCatalog } from '../content/contentCatalog'
+import { contentCatalog, type EncounterEntry } from '../content/contentCatalog'
 import { getArmorProfile, getWeaponProfile, UNARMED_PROFILE } from '../content/equipmentCatalog'
 import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
 import { appendActivityLogEntry } from './activityLog'
@@ -24,7 +24,12 @@ import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
 import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
 
-const ENEMY_NAMES = ['Ash Raider', 'Bog Skirmisher', 'Ruin Poacher', 'Fen Cutthroat']
+const FALLBACK_ENCOUNTER_POOL: EncounterEntry[] = [
+  { name: 'Ash Raider', lore: 'A hard-eyed opportunist with nothing left to lose.' },
+  { name: 'Bog Skirmisher', lore: 'Knows the terrain. Uses it.' },
+  { name: 'Ruin Poacher', lore: 'Picks through the city\'s wounds for whatever bleeds.' },
+  { name: 'Fen Cutthroat', lore: 'Has done this before. Will do it again.' },
+]
 
 const PLAYER_DEFAULT_WEAPON_ID = 'weapon-dagger-wasterunner'
 const PLAYER_MAX_HEALTH = 80
@@ -150,7 +155,7 @@ export function getEnemyDangerModifiers(dangerLevel: number) {
   return DANGER_TIER_MODIFIERS[idx]!
 }
 
-function buildEnemyCombatant(index: number, allies: CombatantState[], dangerLevel = 1): CombatantState {
+function buildEnemyCombatant(index: number, allies: CombatantState[], dangerLevel = 1, entry?: EncounterEntry): CombatantState {
   const allyAverageSkill = Math.max(
     35,
     Math.floor(
@@ -171,7 +176,8 @@ function buildEnemyCombatant(index: number, allies: CombatantState[], dangerLeve
   return {
     combatantId: `enemy-${index + 1}`,
     sourceNpcId: null,
-    name: ENEMY_NAMES[index % ENEMY_NAMES.length],
+    name: entry?.name ?? FALLBACK_ENCOUNTER_POOL[index % FALLBACK_ENCOUNTER_POOL.length]!.name,
+    lore: entry?.lore,
     side: 'enemies',
     maxHealth: scaledHealth,
     health: scaledHealth,
@@ -653,7 +659,12 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   const playerCombatant = buildPlayerCombatant(state.playerCharacter)
   const allies = [playerCombatant, ...npcAllies]
   // Enemy count matches NPC squad size only (not counting the player)
-  const enemies = npcAllies.map((_, index) => buildEnemyCombatant(index, npcAllies, districtDangerLevel))
+  const encounterPool =
+    contentCatalog.encounterTablesByDistrict.get(state.currentDistrictId ?? '') ??
+    FALLBACK_ENCOUNTER_POOL
+  const enemies = npcAllies.map((_, index) =>
+    buildEnemyCombatant(index, npcAllies, districtDangerLevel, encounterPool[index % encounterPool.length]),
+  )
   const combatants = [...allies, ...enemies].sort(
     (left, right) => right.speed - left.speed || right.skill - left.skill,
   )
