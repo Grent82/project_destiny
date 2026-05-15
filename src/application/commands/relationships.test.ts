@@ -110,25 +110,116 @@ describe('applyPassiveDrift', () => {
 })
 
 describe('applyProximityGains', () => {
-  it('increases affinity between co-deployed NPCs', () => {
+  it('increases affinity between co-deployed NPCs (base gain 2, both directions)', () => {
     const state = makeMinimalState()
     applyProximityGains(state, ['npc-a', 'npc-b', 'npc-c'])
-    expect(state.relationships['npc-a→npc-b']?.affinity).toBe(1)
-    expect(state.relationships['npc-a→npc-c']?.affinity).toBe(1)
-    expect(state.relationships['npc-b→npc-c']?.affinity).toBe(1)
+    // Base gain = 2 when NPCs have no trait data (unknown NPCs, compatibility score = 0)
+    expect(state.relationships['npc-a→npc-b']?.affinity).toBe(2)
+    expect(state.relationships['npc-b→npc-a']?.affinity).toBe(2)
+    expect(state.relationships['npc-a→npc-c']?.affinity).toBe(2)
+    expect(state.relationships['npc-b→npc-c']?.affinity).toBe(2)
   })
 
   it('increases player respect for each deployed NPC', () => {
     const state = makeMinimalState()
     applyProximityGains(state, ['npc-a', 'npc-b'])
-    expect(state.relationships['player→npc-a']?.respect).toBe(1)
-    expect(state.relationships['player→npc-b']?.respect).toBe(1)
+    expect(state.relationships['player→npc-a']?.respect).toBe(2)
+    expect(state.relationships['player→npc-b']?.respect).toBe(2)
   })
 
   it('does nothing with empty squad', () => {
     const state = makeMinimalState()
     applyProximityGains(state, [])
     expect(Object.keys(state.relationships).length).toBe(0)
+  })
+
+  it('applies compatibility multiplier: high-compat pair accumulates faster', () => {
+    // High compat pair: score ~+20 → multiplier = 1.4 → gain = round(2*1.4) = 3
+    const state = {
+      ...makeMinimalState(),
+      roster: [
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-a',
+          traits: { ...initialStateWithIda.roster[0]!.traits, dominance: 20, empathy: 65 },
+        },
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-b',
+          traits: { ...initialStateWithIda.roster[0]!.traits, dominance: 25, empathy: 70 },
+        },
+      ],
+    }
+    applyProximityGains(state, ['npc-a', 'npc-b'])
+    // R1 both<35: +10; R2 both>60: +12; base=0 -> +22 after warmth -> score=22
+    // gain = max(2, round(2 * (1 + 22/50))) = max(2, round(2*1.44)) = max(2,3) = 3
+    expect(state.relationships['npc-a→npc-b']?.affinity).toBe(3)
+  })
+
+  it('applies compatibility multiplier: low-compat pair floored at base gain 2', () => {
+    // Low compat pair: R1 both>65 dom → score = -10+10 = 0 (actually clamp)
+    // For true penalty: use ambition rivalry pair
+    const state = {
+      ...makeMinimalState(),
+      roster: [
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-a',
+          traits: { ...initialStateWithIda.roster[0]!.traits, ambition: 70, curiosity: 30 },
+        },
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-b',
+          traits: { ...initialStateWithIda.roster[0]!.traits, ambition: 72, curiosity: 30 },
+        },
+      ],
+    }
+    applyProximityGains(state, ['npc-a', 'npc-b'])
+    // R4 both ambition >65: -8; score = -8+10 = 2; gain = max(2, round(2*(1+2/50))) = max(2,2) = 2
+    expect(state.relationships['npc-a→npc-b']?.affinity).toBe(2)
+  })
+
+  it('applies curiosity bonus: either NPC curious >55 gives +1', () => {
+    const state = {
+      ...makeMinimalState(),
+      roster: [
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-a',
+          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 60 },
+        },
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-b',
+          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 30 },
+        },
+      ],
+    }
+    applyProximityGains(state, ['npc-a', 'npc-b'])
+    // compatScore = 10 (warmth only, no rules fire with default traits)
+    // gain = max(2, round(2*(1+10/50))) + 1(either curious) = max(2, round(2.4)) + 1 = 2+1 = 3
+    expect(state.relationships['npc-a→npc-b']?.affinity).toBe(3)
+  })
+
+  it('applies curiosity bonus: both NPCs curious >55 gives +2', () => {
+    const state = {
+      ...makeMinimalState(),
+      roster: [
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-a',
+          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 60 },
+        },
+        {
+          ...initialStateWithIda.roster[0]!,
+          npcId: 'npc-b',
+          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 65 },
+        },
+      ],
+    }
+    applyProximityGains(state, ['npc-a', 'npc-b'])
+    // compatScore = 10; gain = max(2, round(2.4)) + 2 = 2+2 = 4
+    expect(state.relationships['npc-a→npc-b']?.affinity).toBe(4)
   })
 })
 

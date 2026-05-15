@@ -1,6 +1,7 @@
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain'
 import { MAX_NPC_MEMORY_ENTRIES } from '../../domain/npc/contracts'
+import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
 
 type Axis = keyof RelationshipAxes
 
@@ -66,11 +67,40 @@ export function applyPassiveDrift(state: GameState): void {
   })
 }
 
+const BASE_AFFINITY_GAIN = 2
+const BASE_RESPECT_GAIN = 2
+
 export function applyProximityGains(state: GameState, npcIds: string[]): void {
+  const npcTraitsMap = new Map(
+    state.roster
+      .filter((n) => npcIds.includes(n.npcId))
+      .map((n) => [n.npcId, n.traits]),
+  )
+
   for (let i = 0; i < npcIds.length; i++) {
     for (let j = i + 1; j < npcIds.length; j++) {
-      applyRelationshipDelta(state, npcIds[i]!, npcIds[j]!, 'affinity', 1)
+      const idA = npcIds[i]!
+      const idB = npcIds[j]!
+      const traitsA = npcTraitsMap.get(idA)
+      const traitsB = npcTraitsMap.get(idB)
+
+      let compatScore = 0
+      let curiosityBonus = 0
+
+      if (traitsA && traitsB) {
+        compatScore = calculateBaseCompatibility(traitsA, traitsB)
+        const bothCurious = traitsA.curiosity > 55 && traitsB.curiosity > 55
+        const eitherCurious = traitsA.curiosity > 55 || traitsB.curiosity > 55
+        curiosityBonus = bothCurious ? 2 : eitherCurious ? 1 : 0
+      }
+
+      const gainMultiplier = 1.0 + compatScore / 50
+      const gain = Math.max(BASE_AFFINITY_GAIN, Math.round(BASE_AFFINITY_GAIN * gainMultiplier)) + curiosityBonus
+
+      applyRelationshipDelta(state, idA, idB, 'affinity', gain)
+      applyRelationshipDelta(state, idB, idA, 'affinity', gain)
     }
-    applyRelationshipDelta(state, 'player', npcIds[i]!, 'respect', 1)
+
+    applyRelationshipDelta(state, 'player', npcIds[i]!, 'respect', BASE_RESPECT_GAIN)
   }
 }
