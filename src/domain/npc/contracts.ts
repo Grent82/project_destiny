@@ -257,6 +257,49 @@ export type PregnancyState = z.infer<typeof pregnancyStateSchema>
 
 export const MAX_NPC_MEMORY_ENTRIES = 20
 
+export const npcArcDriftEntrySchema = z.object({
+  day: z.number().int().nonnegative(),
+  trait: z.string(),
+  delta: z.number(),
+  source: z.string(),
+})
+
+export const npcArcSchema = z
+  .object({
+    arcId: z.string(),
+    stage: z.string(),
+    stageEnteredDay: z.number().int().nonnegative(),
+    stageFlags: z.record(z.string(), z.boolean()).default({}),
+    driftHistory: z.array(npcArcDriftEntrySchema).default([]),
+  })
+  .nullable()
+  .default(null)
+
+// ── Arc definition schemas (for data/definitions/npc-arcs.json) ──────────────
+
+const arcTransitionConditionsSchema = z
+  .object({
+    minDaysInStage: z.number().int().nonnegative().optional(),
+    anyTraitAbove: z.object({ trait: z.string(), threshold: z.number() }).optional(),
+    allTraitsAbove: z.object({ threshold: z.number() }).optional(),
+  })
+  .nullable()
+
+const arcStageDefinitionSchema = z.object({
+  id: z.string(),
+  transitionConditions: arcTransitionConditionsSchema.default(null),
+  transitionEventId: z.string().optional(),
+})
+
+export const npcArcDefinitionSchema = z.object({
+  arcId: z.string(),
+  stages: z.array(arcStageDefinitionSchema),
+})
+
+export type NpcArc = z.infer<typeof npcArcSchema>
+export type NpcArcDriftEntry = z.infer<typeof npcArcDriftEntrySchema>
+export type NpcArcDefinition = z.infer<typeof npcArcDefinitionSchema>
+
 export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
@@ -275,6 +318,7 @@ export const npcRuntimeStateSchema = z
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
     captivityState: captivityStateSchema.optional(),
     pregnancyState: pregnancyStateSchema.optional(),
+    npcArc: npcArcSchema,
   })
   .strict()
 

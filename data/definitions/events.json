@@ -3259,7 +3259,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "contracts"],
+    "tags": [
+      "rivals",
+      "contracts"
+    ],
     "sourceDistrictId": "district-ironworks",
     "sourceNpcId": null,
     "presentationFlavour": "The note is grease-marked and folded into a foundry tally sheet."
@@ -3294,7 +3297,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "contracts"],
+    "tags": [
+      "rivals",
+      "contracts"
+    ],
     "sourceDistrictId": "district-the-pale",
     "sourceNpcId": null,
     "presentationFlavour": "The warning comes in the margin of a chapel supply receipt."
@@ -3329,7 +3335,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "contracts"],
+    "tags": [
+      "rivals",
+      "contracts"
+    ],
     "sourceDistrictId": "district-gilded-heights",
     "sourceNpcId": null,
     "presentationFlavour": "The paper smells faintly of sealing wax and expensive tobacco."
@@ -3364,7 +3373,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "contracts"],
+    "tags": [
+      "rivals",
+      "contracts"
+    ],
     "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
     "presentationFlavour": "The report arrives second-hand, which is how Forn prefers his tracks."
@@ -3389,7 +3401,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "warning"],
+    "tags": [
+      "rivals",
+      "warning"
+    ],
     "sourceDistrictId": "district-ironworks",
     "sourceNpcId": null,
     "presentationFlavour": "The warning is written on the back of a scrap freight docket."
@@ -3414,7 +3429,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "warning"],
+    "tags": [
+      "rivals",
+      "warning"
+    ],
     "sourceDistrictId": "district-the-pale",
     "sourceNpcId": null,
     "presentationFlavour": "The message is delivered with no signature and perfect handwriting."
@@ -3439,7 +3457,10 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "warning"],
+    "tags": [
+      "rivals",
+      "warning"
+    ],
     "sourceDistrictId": "district-gilded-heights",
     "sourceNpcId": null,
     "presentationFlavour": "The report arrives folded into a host's invitation."
@@ -3464,9 +3485,363 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["rivals", "warning"],
+    "tags": [
+      "rivals",
+      "warning"
+    ],
     "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
     "presentationFlavour": "The warning comes from someone who does not want their name written anywhere near it."
+  },
+  {
+    "id": "lissel-first-shape",
+    "title": "Something Is Settling",
+    "description": "Lissel finds you at a quiet moment. She has been watching herself in situations lately \u2014 the way she reacted to something, the space she took up or didn't. She is not sure what she is noticing. She is sure she is noticing it.",
+    "triggerConditions": {
+      "dayMin": 999999,
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge",
+        "label": "Acknowledge what she's seen in herself",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "trust",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel nods. She didn't need you to explain it \u2014 just to not dismiss it."
+          }
+        ]
+      },
+      {
+        "id": "choice-redirect",
+        "label": "Tell her to focus on what's useful",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "loyalty",
+            "delta": 3
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel writes something in her notebook. She doesn't argue. She rarely does."
+          }
+        ]
+      },
+      {
+        "id": "choice-ask",
+        "label": "Ask what she wants to become",
+        "outcomes": [
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "affinity",
+            "delta": 4
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "trust",
+            "delta": 2
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "She is quiet for a long moment. 'I don't know yet,' she says. 'But I think I'm starting to.'"
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc-arc",
+      "lissel",
+      "arc-becoming"
+    ],
+    "sourceNpcId": "npc-lissel-crane",
+    "sourceDistrictId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "lissel-crystallized-disciplined",
+    "title": "She Has Found Her Bearing",
+    "description": "Something has set in Lissel. You notice it before she names it \u2014 the way she organizes things without being asked, the way she doesn't leave tasks half-finished. She has found the framework she was missing. She requests more systematic responsibility.",
+    "triggerConditions": {
+      "dayMin": 999999,
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-give-responsibility",
+        "label": "Give her a formal role in house logistics",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel takes the role without ceremony. She was already doing half of it."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "loyalty",
+            "delta": 6
+          }
+        ]
+      },
+      {
+        "id": "choice-acknowledge-growth",
+        "label": "Tell her you've seen the change",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "She doesn't say much. She writes something down. You think it might be about you."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "affinity",
+            "delta": 5
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc-arc",
+      "lissel",
+      "arc-becoming",
+      "crystallization"
+    ],
+    "sourceNpcId": "npc-lissel-crane",
+    "sourceDistrictId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "lissel-crystallized-empathic",
+    "title": "She Sees What Others Miss",
+    "description": "Lissel has become a reader of people. She began doing it for survival; now she does it because she can't stop. She is beginning to use it intentionally \u2014 she tells you something about a house member you hadn't noticed yourself.",
+    "triggerConditions": {
+      "dayMin": 999999,
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-use-her-insight",
+        "label": "Ask her to watch people more carefully and report",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel's notebook gets a new section. She looks more alive than she has in months."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "loyalty",
+            "delta": 5
+          }
+        ]
+      },
+      {
+        "id": "choice-acknowledge-empathy",
+        "label": "Tell her this is a rare thing, and valuable",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "She looks at you for a moment longer than usual. 'I know,' she says. She has always known."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "trust",
+            "delta": 6
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc-arc",
+      "lissel",
+      "arc-becoming",
+      "crystallization"
+    ],
+    "sourceNpcId": "npc-lissel-crane",
+    "sourceDistrictId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "lissel-crystallized-ruthless",
+    "title": "The Softness Has Gone Out of Her",
+    "description": "You notice it gradually, then all at once. Lissel doesn't flinch at things that used to slow her down. The house showed her certain things and she adjusted. She is not cruel \u2014 that is not what this is. But something that was uncertain in her has resolved into something harder.",
+    "triggerConditions": {
+      "dayMin": 999999,
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-accept",
+        "label": "This is who the house made her",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel meets your eyes. She knows you know. She is not asking for forgiveness."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "respect",
+            "delta": 4
+          }
+        ]
+      },
+      {
+        "id": "choice-question",
+        "label": "Ask if this is what she wanted to become",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "'Wanting didn't come into it,' Lissel says. She writes something down. She doesn't show you."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "trust",
+            "delta": 3
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc-arc",
+      "lissel",
+      "arc-becoming",
+      "crystallization"
+    ],
+    "sourceNpcId": "npc-lissel-crane",
+    "sourceDistrictId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "lissel-crystallized-curious",
+    "title": "She Has Found Her Question",
+    "description": "Lissel has become an investigator. Not in any official sense \u2014 she doesn't have the standing for that yet. But she has found the thing that makes her stay up late and wake up early: the need to understand. She brings you a thread she's been pulling on for weeks. It leads somewhere you hadn't looked.",
+    "triggerConditions": {
+      "dayMin": 999999,
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-follow-the-thread",
+        "label": "Follow the thread with her",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel's notebook opens to a new page. She has been waiting for this."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "loyalty",
+            "delta": 7
+          }
+        ]
+      },
+      {
+        "id": "choice-give-access",
+        "label": "Give her access to the rumor network",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel goes very still for a moment. Then she starts writing. She doesn't stop for a long time."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "affinity",
+            "delta": 5
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "trust",
+            "delta": 4
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc-arc",
+      "lissel",
+      "arc-becoming",
+      "crystallization"
+    ],
+    "sourceNpcId": "npc-lissel-crane",
+    "sourceDistrictId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "lissel-settled",
+    "title": "She Is Who She Became",
+    "description": "Lissel finds you at the end of a day that wasn't remarkable in any particular way. She says: she's been thinking about the time since she joined. Not everything. Some things she doesn't put in the notebook. But she wanted you to know that she stayed on purpose. That it was a choice, even when it didn't feel like one.",
+    "triggerConditions": {
+      "dayMin": 999999,
+      "probability": 0
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-journey",
+        "label": "Tell her you're glad she stayed",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel nods once. She writes something in her notebook that she tilts away from you. Then she puts it away and goes back to work."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "affinity",
+            "delta": 6
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "trust",
+            "delta": 4
+          }
+        ]
+      },
+      {
+        "id": "choice-quiet-acknowledgment",
+        "label": "Say nothing. Let the silence hold it.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Lissel seems to appreciate that. Some things don't need to be said."
+          },
+          {
+            "type": "adjustNpcRelationship",
+            "npcId": "npc-lissel-crane",
+            "axis": "respect",
+            "delta": 5
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "npc-arc",
+      "lissel",
+      "arc-becoming",
+      "settled"
+    ],
+    "sourceNpcId": "npc-lissel-crane",
+    "sourceDistrictId": null,
+    "presentationFlavour": null
   }
 ]

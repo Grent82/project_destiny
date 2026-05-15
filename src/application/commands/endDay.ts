@@ -14,6 +14,8 @@ import { applyTitleEffects } from "./applyTitleEffects"
 import { applyNpcConsequences } from "./applyNpcConsequences"
 import { applyPolitics } from "./applyPolitics"
 import { applyNpcAgency } from "./applyNpcAgency"
+import { applyNpcTraitDrift } from "./applyNpcTraitDrift"
+import { checkNpcArcTransitions } from "./checkNpcArcTransitions"
 import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
 import { applyRumorSpread } from "./applyRumorSpread"
 import { tickWardStages } from "./houseWard"
@@ -185,6 +187,10 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyNpcAgency(afterEvents, rng)
   afterEvents = applyFactionActivity(afterEvents)
   afterEvents = applyRumorSpread(afterEvents, rng)
+
+  // Steps 9b-9c: Experiential trait drift and arc stage transitions
+  afterEvents = applyNpcTraitDrift(afterEvents, rng)
+  afterEvents = checkNpcArcTransitions(afterEvents, rng)
 
   // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)

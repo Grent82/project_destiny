@@ -392,6 +392,7 @@ describe('applyRumorSpread', () => {
         states: { health: 100, morale: 80, stress: 20, fatigue: 10, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 80 },
         loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
         npcMemory: [],
+        npcArc: null,
       }
     }
 

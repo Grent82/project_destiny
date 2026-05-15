@@ -158,7 +158,8 @@
         ]
       },
       "trainingFocus": null,
-      "npcMemory": []
+      "npcMemory": [],
+      "npcArc": null
     }
   ],
   "inventory": [

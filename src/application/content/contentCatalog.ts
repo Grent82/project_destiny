@@ -1,3 +1,4 @@
+import npcStartingRelationshipsData from '../../../data/definitions/npc-starting-relationships.json'
 import districts from '../../../data/definitions/districts.json'
 import poisData from '../../../data/definitions/pois.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
@@ -32,6 +33,19 @@ import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
 import { rumorTemplateSchema, eventRumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
 
+const npcStartingRelationshipSchema = z.object({
+  fromNpcId: z.string(),
+  toNpcId: z.string(),
+  axes: z.object({
+    affinity: z.number(),
+    trust: z.number(),
+    respect: z.number(),
+    fear: z.number(),
+    loyalty: z.number(),
+  }),
+})
+export type NpcStartingRelationship = z.infer<typeof npcStartingRelationshipSchema>
+
 const poiSchema = z.object({
   id: z.string(),
   districtId: z.string(),
@@ -60,6 +74,7 @@ const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionD
 const parsedRumorTemplates = rumorTemplateSchema.array().parse(rumorsData)
 const parsedEventRumorTemplates = eventRumorTemplateSchema.array().parse(eventRumorTemplatesData)
 const parsedEnemyNpcs = enemyNpcDefinitionSchema.array().parse(enemyNpcsData)
+const parsedNpcStartingRelationships = npcStartingRelationshipSchema.array().parse(npcStartingRelationshipsData)
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -102,6 +117,13 @@ export const contentCatalog = {
   rumorsById: toMap(parsedRumorTemplates),
   eventRumorTemplates: parsedEventRumorTemplates,
   districtNameToId: new Map(parsedDistricts.map((d) => [d.name, d.id])),
+  npcStartingRelationships: parsedNpcStartingRelationships,
+  npcStartingRelationshipsByNpcId: new Map(
+    Array.from(new Set(parsedNpcStartingRelationships.map((r) => r.fromNpcId))).map((npcId) => [
+      npcId,
+      parsedNpcStartingRelationships.filter((r) => r.fromNpcId === npcId),
+    ])
+  ),
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {

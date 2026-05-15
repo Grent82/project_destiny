@@ -1,0 +1,77 @@
+[
+  {
+    "arcId": "arc-becoming",
+    "stages": [
+      {
+        "id": "forming",
+        "transitionConditions": {
+          "minDaysInStage": 30,
+          "anyTraitAbove": { "trait": "any", "threshold": 55 }
+        },
+        "transitionEventId": "lissel-first-shape"
+      },
+      {
+        "id": "crystallizing",
+        "transitionConditions": {
+          "minDaysInStage": 60,
+          "allTraitsAbove": { "threshold": 45 }
+        },
+        "transitionEventId": "lissel-crystallized"
+      },
+      {
+        "id": "set",
+        "transitionConditions": null
+      }
+    ]
+  },
+  {
+    "arcId": "arc-fractured",
+    "stages": [
+      {
+        "id": "broken",
+        "transitionConditions": {
+          "minDaysInStage": 45,
+          "anyTraitAbove": { "trait": "loyalty", "threshold": 60 }
+        },
+        "transitionEventId": "bren-mending-event"
+      },
+      {
+        "id": "mending",
+        "transitionConditions": {
+          "minDaysInStage": 90,
+          "anyTraitAbove": { "trait": "empathy", "threshold": 50 }
+        },
+        "transitionEventId": "bren-whole-event"
+      },
+      {
+        "id": "whole",
+        "transitionConditions": null
+      }
+    ]
+  },
+  {
+    "arcId": "arc-initiator",
+    "stages": [
+      {
+        "id": "establishing",
+        "transitionConditions": {
+          "minDaysInStage": 21,
+          "anyTraitAbove": { "trait": "ambition", "threshold": 65 }
+        },
+        "transitionEventId": "nessa-pursuing-event"
+      },
+      {
+        "id": "pursuing",
+        "transitionConditions": {
+          "minDaysInStage": 60,
+          "anyTraitAbove": { "trait": "ambition", "threshold": 75 }
+        },
+        "transitionEventId": "nessa-arrived-event"
+      },
+      {
+        "id": "arrived",
+        "transitionConditions": null
+      }
+    ]
+  }
+]

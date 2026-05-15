@@ -3,6 +3,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import { writeLossMemories } from './grief'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 
 export function recruitNpc(state: GameState, npcId: string): GameState {
   const offer = state.availableForHire.find((o) => o.npcId === npcId)
@@ -58,8 +59,8 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
       accessoryIds: [],
       consumableIds: [],
     },
-    relationships: {},
     npcMemory: [],
+    npcArc: null,
   }
 
   let next: GameState = {
@@ -67,6 +68,19 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     money: state.money - offer.signingBonus,
     roster: [...state.roster, newRosterEntry],
     availableForHire: state.availableForHire.filter((o) => o.npcId !== npcId),
+  }
+
+  // Seed authored NPC-to-NPC relationships defined in npc-starting-relationships.json
+  const startingRels = contentCatalog.npcStartingRelationshipsByNpcId.get(npcId)
+  if (startingRels) {
+    const seedRelationships = { ...next.relationships }
+    for (const rel of startingRels) {
+      const key = buildRelationshipKey(rel.fromNpcId, rel.toNpcId)
+      if (seedRelationships[key] === undefined) {
+        seedRelationships[key] = rel.axes
+      }
+    }
+    next = { ...next, relationships: seedRelationships }
   }
 
   const bonusNote =

@@ -3,7 +3,7 @@
     "id": "npc-marion-vale",
     "name": "Marion Vale",
     "origin": "Harbor Ward",
-    "background": "'Before the docks' means she survived the taking of the old harbor. Her family handled illicit cargo for a noble house and she knows which house shipped people — not goods — out of Valdenmoor during the first panic. The dock work is legitimate cover for a network built on that original contract. Her supply chain runs partly through a noble hand she will not name.",
+    "background": "'Before the docks' means she survived the taking of the old harbor. Her family handled illicit cargo for a noble house and she knows which house shipped people \u2014 not goods \u2014 out of Valdenmoor during the first panic. The dock work is legitimate cover for a network built on that original contract. Her supply chain runs partly through a noble hand she will not name.",
     "rarity": "uncommon",
     "status": "retainer",
     "factionAffinityId": "faction-civic-compact",
@@ -85,7 +85,7 @@
     ],
     "motivation": {
       "publicGoal": "To manage the house efficiently and keep the finances clean.",
-      "privateNeed": "To never be the person who made that cargo run again — and to never admit she still could."
+      "privateNeed": "To never be the person who made that cargo run again \u2014 and to never admit she still could."
     },
     "bonds": [
       {
@@ -192,7 +192,7 @@
     "id": "npc-verek-holst",
     "name": "Verek Holst",
     "origin": "Civic Quarter",
-    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce — which makes him reliable and irritating in equal measure.",
+    "background": "Fifteen years in Compact enforcement before a bribery scandal that was mostly other people's fault. Left before he was pushed. Now sells the same skills to whoever pays more, and his instinct is still to enforce \u2014 which makes him reliable and irritating in equal measure.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-civic-compact",
@@ -271,7 +271,7 @@
         ]
       },
       {
-        "text": "has memorised the exact statute number for every fine he has ever paid — and every one he has avoided",
+        "text": "has memorised the exact statute number for every fine he has ever paid \u2014 and every one he has avoided",
         "tags": [
           "meticulous",
           "principled"
@@ -307,7 +307,7 @@
     "id": "npc-sable-wrent",
     "name": "Sable Wrent",
     "origin": "Ironworks",
-    "background": "Lost two fingers on a wall-repair crew eight years ago — League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
+    "background": "Lost two fingers on a wall-repair crew eight years ago \u2014 League policy sent her to the archives instead of the infirmary bonus she was owed. She knows every load-bearing structure in the city and every clause the League uses to avoid paying compensation.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -358,7 +358,7 @@
     ],
     "quirks": [
       {
-        "text": "keeps a tally of every favour given and owed — never writes it down",
+        "text": "keeps a tally of every favour given and owed \u2014 never writes it down",
         "tags": [
           "compulsive",
           "vengeful"
@@ -400,7 +400,7 @@
     "id": "npc-aldric-vane",
     "name": "Aldric Vane",
     "origin": "Gilded Heights",
-    "background": "Second son of a minor Court house that no longer exists — lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
+    "background": "Second son of a minor Court house that no longer exists \u2014 lost in a debt collapse four years ago. He has manners, diction, and no money, and he is acutely aware of how little those first two things are worth without the third.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": null,
@@ -772,7 +772,7 @@
     "id": "npc-tav",
     "name": "Tav",
     "origin": "The Warrens",
-    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract — limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
+    "background": "Bought out of a Bond-Holder contract three years ago with money he still does not fully explain. Has a walking contract \u2014 limited movement rights, no family formation rights, mandatory quarterly register check. Fights like someone who learned by surviving, which is different from someone who was taught.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": "faction-restored",
@@ -942,7 +942,7 @@
     ],
     "motivation": {
       "publicGoal": "To establish herself as a reliable independent archivist.",
-      "privateNeed": "To understand what the ledger means before using it — and who she would become if she did."
+      "privateNeed": "To understand what the ledger means before using it \u2014 and who she would become if she did."
     },
     "bonds": [
       {
@@ -956,7 +956,7 @@
     "id": "npc-rutha-kael",
     "name": "Rutha Kael",
     "origin": "Thornwall Approach",
-    "background": "Survived the Thornwall Incident — the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
+    "background": "Survived the Thornwall Incident \u2014 the mercenary company she served dissolved after the job went wrong and three factions claimed credit for the wreckage. She does not discuss the Incident. She has opinions about employers who change the terms after deployment.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": null,
@@ -1050,7 +1050,7 @@
     "id": "npc-lirien-ashcroft",
     "name": "Lirien Ashcroft",
     "origin": "Gilded Heights",
-    "background": "Lira's daughter, born outside sanctioned marriage. The wrist-marking is a survival tally — dates of deaths in her family, debt notices, and names she is not supposed to remember. Refuses family discussion in groups because she knows the real scandal is not the name but the blood. Understands more than her mother thinks she does.",
+    "background": "Lira's daughter, born outside sanctioned marriage. The wrist-marking is a survival tally \u2014 dates of deaths in her family, debt notices, and names she is not supposed to remember. Refuses family discussion in groups because she knows the real scandal is not the name but the blood. Understands more than her mother thinks she does.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -1126,13 +1126,13 @@
     ],
     "motivation": {
       "publicGoal": "To apprentice somewhere that will not ask too many questions about her name.",
-      "privateNeed": "To find out whether she is heiress or evidence — and whether it matters either way."
+      "privateNeed": "To find out whether she is heiress or evidence \u2014 and whether it matters either way."
     },
     "bonds": [
       {
         "type": "parent",
         "targetId": "npc-lira-ashcroft",
-        "note": "Knows the name is not the real scandal — the blood is. May be heiress or evidence."
+        "note": "Knows the name is not the real scandal \u2014 the blood is. May be heiress or evidence."
       }
     ]
   },
@@ -1141,7 +1141,7 @@
     "name": "Mira",
     "npcType": "story",
     "origin": "House Valdris",
-    "background": "The player's younger sister. Last seen three months before the Breach in The Pale District, cross-referencing chapel birth records with legal succession grants from the Compact Registry. She had located a maternity ledger that she believed proved Valdris heirship passed through the maternal line — a line deliberately erased from the public record. Her disappearance is the reason the player fights to rebuild House Valdris. She was close to the ledger when she vanished.",
+    "background": "The player's younger sister. Last seen three months before the Breach in The Pale District, cross-referencing chapel birth records with legal succession grants from the Compact Registry. She had located a maternity ledger that she believed proved Valdris heirship passed through the maternal line \u2014 a line deliberately erased from the public record. Her disappearance is the reason the player fights to rebuild House Valdris. She was close to the ledger when she vanished.",
     "rarity": "rare",
     "status": "family",
     "factionAffinityId": null,
@@ -1201,7 +1201,7 @@
         ]
       },
       {
-        "text": "recounts the number of days since she last saw open sky — aloud, if no one stops her",
+        "text": "recounts the number of days since she last saw open sky \u2014 aloud, if no one stops her",
         "tags": [
           "compulsive",
           "grief-prone"
@@ -1217,8 +1217,8 @@
     ],
     "motivation": {
       "publicGoal": "Unknown.",
-      "privateNeed": "She was tracking a maternity ledger — a chapel birth registry from The Pale, cross-referenced with Compact Registry succession grants — that proves the Valdris maternal line was erased, not extinguished. The final link in the chain is a woman named Cessa Rill.",
-      "immediatePressure": "Captivity, or something that looks like it. She has been altered by it. She guards something — or no longer speaks from the same self."
+      "privateNeed": "She was tracking a maternity ledger \u2014 a chapel birth registry from The Pale, cross-referenced with Compact Registry succession grants \u2014 that proves the Valdris maternal line was erased, not extinguished. The final link in the chain is a woman named Cessa Rill.",
+      "immediatePressure": "Captivity, or something that looks like it. She has been altered by it. She guards something \u2014 or no longer speaks from the same self."
     },
     "bonds": [
       {
@@ -1309,7 +1309,7 @@
         ]
       },
       {
-        "text": "gives everyone who enters a nickname based on their order — never uses their real name until they pay twice",
+        "text": "gives everyone who enters a nickname based on their order \u2014 never uses their real name until they pay twice",
         "tags": [
           "compulsive",
           "nostalgic"
@@ -1347,7 +1347,7 @@
     "districtId": "district-the-pale",
     "description": "A healer who trades in information as readily as remedies.",
     "origin": "The Pale",
-    "background": "Her foreknowledge comes from reading confessions, not visions. Has a dead sister erased from temple records after the Breach — smuggled out under plague blankets by a patron whose name she has been hunting ever since. Her information network is built entirely on confessions she was never meant to keep. The shrine is as much an archive as a place of worship.",
+    "background": "Her foreknowledge comes from reading confessions, not visions. Has a dead sister erased from temple records after the Breach \u2014 smuggled out under plague blankets by a patron whose name she has been hunting ever since. Her information network is built entirely on confessions she was never meant to keep. The shrine is as much an archive as a place of worship.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -1420,7 +1420,7 @@
         ]
       },
       {
-        "text": "lights a second candle when she lies — she has never explained this to anyone",
+        "text": "lights a second candle when she lies \u2014 she has never explained this to anyone",
         "tags": [
           "superstitious",
           "secretive"
@@ -1442,7 +1442,7 @@
       {
         "type": "dead-spouse",
         "targetId": "npc-ghost-dead-sister-vael",
-        "note": "Sister erased from temple records after the Breach — smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
+        "note": "Sister erased from temple records after the Breach \u2014 smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
       }
     ],
     "schedule": {
@@ -1456,9 +1456,9 @@
     "name": "Torvald Messe",
     "npcType": "world",
     "districtId": "district-harbor",
-    "description": "Guild registrar. Officious by nature, he can unlock contract access — for a price.",
+    "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
     "origin": "Harbor Ward",
-    "background": "Son of a municipal notary who copied all noble grants before the Breach. Three copies of every document exist because his family lost everything to forged records. Knows which legal form erased House Valdris the first time — and has kept a copy of that form. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
+    "background": "Son of a municipal notary who copied all noble grants before the Breach. Three copies of every document exist because his family lost everything to forged records. Knows which legal form erased House Valdris the first time \u2014 and has kept a copy of that form. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -1532,7 +1532,7 @@
         ]
       },
       {
-        "text": "makes three copies of every document he touches — habit inherited from a father who lost everything to a single forged paper",
+        "text": "makes three copies of every document he touches \u2014 habit inherited from a father who lost everything to a single forged paper",
         "tags": [
           "meticulous",
           "paranoid"
@@ -1570,7 +1570,7 @@
     "districtId": "district-harbor",
     "description": "Black market fence operating from behind a legitimate spice stall.",
     "origin": "Harbor Ward",
-    "background": "Had Lirien outside a sanctioned marriage. The Ashcroft name was kept through a debt-forgiveness bargain with a surviving noble patron whose identity she will not name. Left the old district to protect Lirien from whatever the family owes. Knows why the Ashcrofts were allowed to keep their name when others were stripped — and has never told Lirien.",
+    "background": "Had Lirien outside a sanctioned marriage. The Ashcroft name was kept through a debt-forgiveness bargain with a surviving noble patron whose identity she will not name. Left the old district to protect Lirien from whatever the family owes. Knows why the Ashcrofts were allowed to keep their name when others were stripped \u2014 and has never told Lirien.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": null,
@@ -1850,7 +1850,7 @@
     "districtId": "district-the-warrens",
     "description": "Nameless information broker. Deals only in secrets.",
     "origin": "Unknown",
-    "background": "No one knows The Wren’s real name, face, or history. Only that they know yours.",
+    "background": "No one knows The Wren\u2019s real name, face, or history. Only that they know yours.",
     "rarity": "rare",
     "status": "criminal",
     "factionAffinityId": null,
@@ -2208,7 +2208,7 @@
         ]
       },
       {
-        "text": "knows the weight of a grain sack by the sound it makes when set down — and has been wrong exactly once in forty years",
+        "text": "knows the weight of a grain sack by the sound it makes when set down \u2014 and has been wrong exactly once in forty years",
         "tags": [
           "meticulous",
           "nostalgic"
@@ -2224,7 +2224,7 @@
     ],
     "motivation": {
       "publicGoal": "To keep her stall running and her creditors satisfied.",
-      "privateNeed": "To give her granddaughter the ledger before she dies — without admitting she knows she has it."
+      "privateNeed": "To give her granddaughter the ledger before she dies \u2014 without admitting she knows she has it."
     },
     "bonds": [
       {
@@ -2249,7 +2249,7 @@
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress — making his entire legal claim void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests — not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
+    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests \u2014 not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -2345,7 +2345,7 @@
     "name": "The Dockmaster",
     "npcType": "enemy",
     "origin": "Harbor Ward",
-    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut — in coin, in silence, or in favors owed. He considers this fair market rate.",
+    "background": "Real name unknown. Runs the Iron Docks work boards with methods the Compact prefers not to document. Every laborer on the morning queue pays a cut \u2014 in coin, in silence, or in favors owed. He considers this fair market rate.",
     "rarity": "uncommon",
     "status": "criminal",
     "factionAffinityId": "faction-civic-compact",
@@ -2436,7 +2436,7 @@
     "name": "Lady Sorn",
     "npcType": "enemy",
     "origin": "Gilded Heights",
-    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest — quietly, continuously, and with compound returns. No one who has met her knows what she actually wants. She and House Merrow compete for the same legitimacy space in the Northbank registry. They cooperate only when House Valdris is the common target — and even then, they watch each other.",
+    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants. She and House Merrow compete for the same legitimacy space in the Northbank registry. They cooperate only when House Valdris is the common target \u2014 and even then, they watch each other.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -2720,7 +2720,7 @@
     "npcType": "story",
     "districtId": "district-the-pale",
     "origin": "The Pale",
-    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly — but not entirely freely.",
+    "background": "Believed dead after the collapse of House Valdric. Alive in The Pale under the alias Wren, working as an informant. Knows that Mira left willingly \u2014 but not entirely freely.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-tallow-ring",
@@ -3089,7 +3089,7 @@
     "npcType": "world",
     "districtId": "district-the-northbank",
     "origin": "Former noble quarter, now the Northbank margins",
-    "background": "Her house once served as a cadet ally to House Valdris. Sold Valdris property under coercion during the Breach. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale — the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
+    "background": "Her house once served as a cadet ally to House Valdris. Sold Valdris property under coercion during the Breach. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale \u2014 the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -3286,7 +3286,7 @@
     "npcType": "enemy",
     "districtId": "district-the-northbank",
     "origin": "Credit-house district, Northbank",
-    "background": "A debt enforcer from a family ruined by House Valdris in pre-Breach power games. Hates the return of Valdris as historical revenge, not ideology. Polite always. Never loud. His father forged the paper trail that destroyed the old house — which means if anyone finds that paper, Malk's grievance becomes an embarrassment and his methods a crime.",
+    "background": "A debt enforcer from a family ruined by House Valdris in pre-Breach power games. Hates the return of Valdris as historical revenge, not ideology. Polite always. Never loud. His father forged the paper trail that destroyed the old house \u2014 which means if anyone finds that paper, Malk's grievance becomes an embarrassment and his methods a crime.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": "faction-house-merrow",
@@ -3349,7 +3349,7 @@
         ]
       },
       {
-        "text": "never repeats a threat — once is sufficient",
+        "text": "never repeats a threat \u2014 once is sufficient",
         "tags": [
           "principled",
           "paranoid"
@@ -3387,7 +3387,7 @@
     "npcType": "world",
     "districtId": "district-the-pale",
     "origin": "Pale archive chapel",
-    "background": "Quiet keeper of baptisms, adoptions, and death names in the Pale archive chapel. Can prove or erase a maternal lineage. She altered one noble birth entry years ago to save a child from inheritance law — a decision she has lived with since. Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain.",
+    "background": "Quiet keeper of baptisms, adoptions, and death names in the Pale archive chapel. Can prove or erase a maternal lineage. She altered one noble birth entry years ago to save a child from inheritance law \u2014 a decision she has lived with since. Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": null,
@@ -3474,6 +3474,574 @@
         "type": "witness",
         "targetId": "npc-mira",
         "note": "Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain."
+      }
+    ]
+  },
+  {
+    "id": "npc-lissel-crane",
+    "name": "Lissel Crane",
+    "origin": "The Warrens",
+    "background": "Came out of the Warrens food network periphery \u2014 not as an organizer, not as someone with a plan, but as someone who was useful when people needed a quick pair of hands and learned by watching. She is perceptive in the way that people who have never been sure of their safety become perceptive: she reads rooms before she enters them, remembers conversations she wasn't supposed to be part of, and says less than she knows. She does not yet know what to do with any of this. She is nineteen. She has good instincts and no framework for them yet.",
+    "rarity": "uncommon",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 36,
+      "agility": 58,
+      "endurance": 48,
+      "intellect": 54,
+      "perception": 72,
+      "presence": 44,
+      "resolve": 42
+    },
+    "startingSkills": {
+      "melee": 14,
+      "ranged": 12,
+      "medicine": 16,
+      "administration": 18,
+      "engineering": 9,
+      "negotiation": 22,
+      "survival": 32,
+      "security": 34,
+      "crafting": 8,
+      "performance": 12,
+      "academics": 20,
+      "intrigue": 38
+    },
+    "startingTraits": {
+      "discipline": 32,
+      "ambition": 44,
+      "empathy": 52,
+      "ruthlessness": 28,
+      "prudence": 38,
+      "curiosity": 68,
+      "dominance": 18,
+      "loyalty": 48,
+      "vanity": 12,
+      "zeal": 24
+    },
+    "allowedTitleIds": [
+      "title-quartermaster"
+    ],
+    "ageBand": "young",
+    "sex": "woman",
+    "appearanceTags": [
+      "always near the edge of the room",
+      "small notebook filled with other people's words",
+      "looks older than nineteen when focused"
+    ],
+    "quirks": [
+      {
+        "text": "writes down what people say in meetings she attends, then reads it back to herself later",
+        "tags": [
+          "meticulous",
+          "cautious",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "decision",
+          "meeting",
+          "plan"
+        ]
+      },
+      {
+        "text": "identifies the person in any group who is most afraid and watches them",
+        "tags": [
+          "paranoid",
+          "protective",
+          "cautious"
+        ],
+        "triggerKeywords": [
+          "threat",
+          "tension",
+          "crowd"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To be useful enough to stay.",
+      "privateNeed": "To understand why people like Petra or Oswin choose to keep doing what costs them everything.",
+      "immediatePressure": "Not to make a mistake that proves she wasn't ready."
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-oswin-farr",
+        "note": "On the periphery of his Warrens distribution network from age fifteen. He gave her tasks when she showed up without formally recruiting her. Four years of loose affiliation."
+      }
+    ]
+  },
+  {
+    "id": "npc-petra-sunn",
+    "name": "Petra Sunn",
+    "origin": "The Warrens",
+    "background": "Spent six years in assessed bond service after a Compact Register audit found her household without a permit. She did not fight it \u2014 she did not know you could. After six years she ran. She has been running ever since, but not from fear. She runs toward: toward safehouses, toward the people who need what she built when she needed it, toward a version of this city where six years of her life cannot happen to someone else without a fight. The Compact has an active file on her. She knows the number. She found it.",
+    "rarity": "rare",
+    "status": "criminal",
+    "factionAffinityId": "faction-restored",
+    "baseAttributes": {
+      "might": 38,
+      "agility": 61,
+      "endurance": 58,
+      "intellect": 54,
+      "perception": 67,
+      "presence": 62,
+      "resolve": 74
+    },
+    "startingSkills": {
+      "melee": 34,
+      "ranged": 24,
+      "medicine": 22,
+      "administration": 28,
+      "engineering": 14,
+      "negotiation": 48,
+      "survival": 66,
+      "security": 72,
+      "crafting": 8,
+      "performance": 18,
+      "academics": 20,
+      "intrigue": 54
+    },
+    "startingTraits": {
+      "discipline": 62,
+      "ambition": 58,
+      "empathy": 76,
+      "ruthlessness": 22,
+      "prudence": 68,
+      "curiosity": 55,
+      "dominance": 38,
+      "loyalty": 82,
+      "vanity": 14,
+      "zeal": 62
+    },
+    "allowedTitleIds": [
+      "title-quartermaster"
+    ],
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "changes her hair and route every thirty days",
+      "worn cord bracelet never explained",
+      "watches people from outside a room before entering"
+    ],
+    "quirks": [
+      {
+        "text": "maps every building she enters by sound and shadow before using its exits",
+        "tags": [
+          "cautious",
+          "paranoid",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "location",
+          "enter",
+          "building",
+          "safe"
+        ]
+      },
+      {
+        "text": "knows the name and current situation of every person she has helped out of bond service",
+        "tags": [
+          "protective",
+          "loyal",
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "bonded",
+          "captivity",
+          "held",
+          "escaping"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To make it harder for the Register to take people the way it took her.",
+      "privateNeed": "To trust someone enough to stay in one place.",
+      "immediatePressure": "A base of operations that cannot be found in the usual ways."
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-oswin-farr",
+        "note": "Worked the same Warrens food distribution network. He went legitimate when the Compact closed it; she went underground when the Compact took her. 15+ years of mutual respect and a fundamental disagreement about what survival requires."
+      }
+    ]
+  },
+  {
+    "id": "npc-halvard-senn",
+    "name": "Halvard Senn",
+    "origin": "Thornwall Approach",
+    "background": "Twenty-two years in the city garrison. Not a scandal, not a disgrace \u2014 he was simply no longer useful to the people who restructured things, and accepted his severance before they found a reason to make it something worse. He bought a partial stake in a Pale brokerage. Found that civilian life has softer rules but harder politics. He is comfortable in both; he is not comfortable with people who cannot tell the difference between them. He knows how to command, how to be commanded, and the exact weight of both.",
+    "rarity": "uncommon",
+    "status": "mercenary",
+    "factionAffinityId": "faction-civic-compact",
+    "baseAttributes": {
+      "might": 64,
+      "agility": 48,
+      "endurance": 72,
+      "intellect": 52,
+      "perception": 62,
+      "presence": 58,
+      "resolve": 76
+    },
+    "startingSkills": {
+      "melee": 72,
+      "ranged": 58,
+      "medicine": 14,
+      "administration": 48,
+      "engineering": 22,
+      "negotiation": 34,
+      "survival": 66,
+      "security": 55,
+      "crafting": 10,
+      "performance": 12,
+      "academics": 24,
+      "intrigue": 38
+    },
+    "startingTraits": {
+      "discipline": 86,
+      "ambition": 44,
+      "empathy": 22,
+      "ruthlessness": 68,
+      "prudence": 72,
+      "curiosity": 28,
+      "dominance": 78,
+      "loyalty": 54,
+      "vanity": 16,
+      "zeal": 38
+    },
+    "allowedTitleIds": [
+      "title-trainer",
+      "title-quartermaster"
+    ],
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "garrison posture never fully left",
+      "right hand closes before a formal greeting",
+      "deliberate pause before addressing anyone by name"
+    ],
+    "quirks": [
+      {
+        "text": "recites unit protocols aloud when observing a new operation",
+        "tags": [
+          "meticulous",
+          "principled",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "mission",
+          "plan",
+          "deploy"
+        ]
+      },
+      {
+        "text": "notes exits and choke points before anything else about a space",
+        "tags": [
+          "cautious",
+          "paranoid",
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "building",
+          "street",
+          "location"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To run a clean operation and not have to explain himself to people who have not run one.",
+      "privateNeed": "To believe the years he gave were worth what they cost.",
+      "immediatePressure": "Work with a clear command structure and a clear objective."
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-verek-holst",
+        "note": "Overlapping garrison service for seven years. Not friends. Professional respect built under pressure. Halvard thinks Holst left a year too early; Holst thinks Halvard stayed a year too long. Neither is wrong."
+      }
+    ]
+  },
+  {
+    "id": "npc-dael-morw",
+    "name": "Dael Morw",
+    "origin": "Civic Quarter",
+    "background": "Twelve years as a Register compliance assessor for the Civic Compact. He personally processed hundreds of Register audits, bond assessments, and permit applications. He knows the form numbers, the loopholes, the assessors who can be persuaded, and the ones who cannot. He left after a senior assessor directed him to falsify a noble family's birth records. He complied. He kept copies. He then submitted a quiet resignation and walked out carrying documentation that multiple powerful people would prefer did not exist. He is not a hero. He is not a villain. He is a man who made one wrong choice and then made one correct choice, and cannot fully decide which one he is living with.",
+    "rarity": "rare",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 27,
+      "agility": 38,
+      "endurance": 44,
+      "intellect": 71,
+      "perception": 64,
+      "presence": 46,
+      "resolve": 58
+    },
+    "startingSkills": {
+      "melee": 14,
+      "ranged": 11,
+      "medicine": 12,
+      "administration": 82,
+      "engineering": 8,
+      "negotiation": 44,
+      "survival": 22,
+      "security": 38,
+      "crafting": 6,
+      "performance": 18,
+      "academics": 34,
+      "intrigue": 71
+    },
+    "startingTraits": {
+      "discipline": 68,
+      "ambition": 28,
+      "empathy": 52,
+      "ruthlessness": 24,
+      "prudence": 84,
+      "curiosity": 66,
+      "dominance": 22,
+      "loyalty": 44,
+      "vanity": 12,
+      "zeal": 18
+    },
+    "allowedTitleIds": [
+      "title-steward",
+      "title-quartermaster"
+    ],
+    "ageBand": "adult",
+    "sex": "man",
+    "appearanceTags": [
+      "ink-stained cuffs he has stopped trying to bleach",
+      "leather folio never put down in public",
+      "quiet eyes that count things"
+    ],
+    "quirks": [
+      {
+        "text": "reads every document he receives twice before acknowledging it",
+        "tags": [
+          "meticulous",
+          "cautious",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "document",
+          "record",
+          "file",
+          "register"
+        ]
+      },
+      {
+        "text": "remembers the form number of every filing he has ever processed",
+        "tags": [
+          "meticulous",
+          "nostalgic",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "permit",
+          "assessment",
+          "audit"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To use what he knows to help people the Register has harmed.",
+      "privateNeed": "To believe that what he kept is enough to matter, when it matters.",
+      "immediatePressure": "Distance from the building he worked in for twelve years and the person he was there."
+    },
+    "bonds": [
+      {
+        "type": "witness",
+        "targetId": "npc-verek-holst",
+        "note": "Knows which Register records were altered during Holst's bribery scandal. Didn't alter them but signed the review approving them. Both carry this."
+      }
+    ]
+  },
+  {
+    "id": "npc-evar-koss",
+    "name": "Evar Koss",
+    "origin": "Harbor Ward",
+    "background": "Ran cargo ledgers for three different noble houses over twenty years before all three collapsed, turned on him, or quietly replaced him with someone cheaper. He was not fired \u2014 he was simply not rehired. He knows the difference. He now operates as a neutral broker: moving goods, information, and occasionally people between parties who cannot be seen dealing directly. He takes no sides. He takes percentages. He is the kind of man whose name appears in four different people's private accounts and none of their official ones.",
+    "rarity": "uncommon",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 32,
+      "agility": 44,
+      "endurance": 41,
+      "intellect": 62,
+      "perception": 66,
+      "presence": 58,
+      "resolve": 54
+    },
+    "startingSkills": {
+      "melee": 21,
+      "ranged": 15,
+      "medicine": 9,
+      "administration": 68,
+      "engineering": 12,
+      "negotiation": 74,
+      "survival": 28,
+      "security": 61,
+      "crafting": 18,
+      "performance": 22,
+      "academics": 44,
+      "intrigue": 55
+    },
+    "startingTraits": {
+      "discipline": 55,
+      "ambition": 48,
+      "empathy": 36,
+      "ruthlessness": 52,
+      "prudence": 82,
+      "curiosity": 71,
+      "dominance": 38,
+      "loyalty": 22,
+      "vanity": 24,
+      "zeal": 18
+    },
+    "allowedTitleIds": [
+      "title-quartermaster",
+      "title-steward"
+    ],
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "tobacco-stained fingers",
+      "unremarkable coat chosen deliberately",
+      "watches hands when people talk"
+    ],
+    "quirks": [
+      {
+        "text": "stores information by who told him, not by what it was",
+        "tags": [
+          "meticulous",
+          "secretive",
+          "cautious"
+        ],
+        "triggerKeywords": [
+          "exchange",
+          "deal",
+          "information"
+        ]
+      },
+      {
+        "text": "never carries anything he cannot explain if searched",
+        "tags": [
+          "cautious",
+          "principled",
+          "compulsive"
+        ],
+        "triggerKeywords": [
+          "risk",
+          "carry",
+          "contraband"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To remain useful to enough parties that none of them can afford to remove him.",
+      "privateNeed": "To believe there is still a version of this where he got out clean."
+    },
+    "bonds": [
+      {
+        "type": "handler",
+        "targetId": "npc-dara-slink",
+        "note": "Her first handler at age eleven \u2014 set her rates, taught her the courier's code. She got better than him at the work. He knows it. 15+ years."
+      }
+    ]
+  },
+  {
+    "id": "npc-irenne-brek",
+    "name": "Irenne Brek",
+    "origin": "Harbor Ward",
+    "background": "Third-generation harbor herbalist. Her grandmother grew medicinals in the soil pockets along the harbor wall; her mother sold them from a cart; she runs a shop that is not quite a shop \u2014 no permit, no Compact license, never will be. She treats wounds, manages fevers, and provides things people cannot afford to name at a Compact clinic. She asks no questions about how injuries happened. She is built into the ward the way a support beam is \u2014 unremarkable until the moment it matters.",
+    "rarity": "rare",
+    "status": "citizen",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 34,
+      "agility": 41,
+      "endurance": 56,
+      "intellect": 54,
+      "perception": 62,
+      "presence": 61,
+      "resolve": 58
+    },
+    "startingSkills": {
+      "melee": 8,
+      "ranged": 6,
+      "medicine": 68,
+      "administration": 22,
+      "engineering": 14,
+      "negotiation": 38,
+      "survival": 44,
+      "security": 29,
+      "crafting": 18,
+      "performance": 16,
+      "academics": 24,
+      "intrigue": 31
+    },
+    "startingTraits": {
+      "discipline": 52,
+      "ambition": 22,
+      "empathy": 81,
+      "ruthlessness": 14,
+      "prudence": 61,
+      "curiosity": 58,
+      "dominance": 18,
+      "loyalty": 78,
+      "vanity": 12,
+      "zeal": 35
+    },
+    "allowedTitleIds": [
+      "title-medic"
+    ],
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "hands that smell of comfrey and pine resin",
+      "worn apron over everything",
+      "never seems surprised by what walks through her door"
+    ],
+    "quirks": [
+      {
+        "text": "diagnoses by listening, not looking \u2014 watches breathing and posture before anything else",
+        "tags": [
+          "meticulous",
+          "cautious",
+          "protective"
+        ],
+        "triggerKeywords": [
+          "injury",
+          "sick",
+          "treatment"
+        ]
+      },
+      {
+        "text": "keeps a running count of every person she has treated and their outcome",
+        "tags": [
+          "meticulous",
+          "grief-prone",
+          "principled"
+        ],
+        "triggerKeywords": [
+          "death",
+          "recover",
+          "record"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To keep the ward's people alive and as healthy as they can afford to be.",
+      "privateNeed": "To believe that proximity to suffering has not made her numb to it."
+    },
+    "bonds": [
+      {
+        "type": "parent",
+        "targetId": "npc-dara-slink",
+        "note": "Has been patching Dara since she was eleven. Maternal proximity without either naming it. Dara comes here when injured before she goes anywhere else. 15+ years."
       }
     ]
   }

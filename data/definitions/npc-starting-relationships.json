@@ -1,0 +1,552 @@
+[
+  {
+    "fromNpcId": "npc-lissel-crane",
+    "toNpcId": "npc-oswin-farr",
+    "axes": {
+      "affinity": 28,
+      "trust": 22,
+      "respect": 20,
+      "fear": 0,
+      "loyalty": 20
+    }
+  },
+  {
+    "fromNpcId": "npc-oswin-farr",
+    "toNpcId": "npc-lissel-crane",
+    "axes": {
+      "affinity": 32,
+      "trust": 26,
+      "respect": 22,
+      "fear": 0,
+      "loyalty": 24
+    }
+  },
+  {
+    "fromNpcId": "npc-lissel-crane",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 36,
+      "trust": 30,
+      "respect": 28,
+      "fear": 0,
+      "loyalty": 26
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-lissel-crane",
+    "axes": {
+      "affinity": 34,
+      "trust": 28,
+      "respect": 26,
+      "fear": 0,
+      "loyalty": 24
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-oswin-farr",
+    "axes": {
+      "affinity": 48,
+      "trust": 38,
+      "respect": 44,
+      "fear": 0,
+      "loyalty": 36
+    }
+  },
+  {
+    "fromNpcId": "npc-oswin-farr",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 44,
+      "trust": 34,
+      "respect": 42,
+      "fear": 0,
+      "loyalty": 32
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-sister-vael",
+    "axes": {
+      "affinity": 42,
+      "trust": 36,
+      "respect": 48,
+      "fear": 0,
+      "loyalty": 30
+    }
+  },
+  {
+    "fromNpcId": "npc-sister-vael",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 46,
+      "trust": 40,
+      "respect": 50,
+      "fear": 0,
+      "loyalty": 34
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-garet-doyle",
+    "axes": {
+      "affinity": 32,
+      "trust": 24,
+      "respect": 18,
+      "fear": 0,
+      "loyalty": 10
+    }
+  },
+  {
+    "fromNpcId": "npc-garet-doyle",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 28,
+      "trust": 22,
+      "respect": 24,
+      "fear": 8,
+      "loyalty": 14
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-rutha-kael",
+    "axes": {
+      "affinity": 56,
+      "trust": 48,
+      "respect": 52,
+      "fear": 0,
+      "loyalty": 44
+    }
+  },
+  {
+    "fromNpcId": "npc-rutha-kael",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 50,
+      "trust": 42,
+      "respect": 46,
+      "fear": 0,
+      "loyalty": 38
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-irenne-brek",
+    "axes": {
+      "affinity": 44,
+      "trust": 40,
+      "respect": 36,
+      "fear": 0,
+      "loyalty": 32
+    }
+  },
+  {
+    "fromNpcId": "npc-irenne-brek",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 48,
+      "trust": 44,
+      "respect": 40,
+      "fear": 0,
+      "loyalty": 36
+    }
+  },
+  {
+    "fromNpcId": "npc-petra-sunn",
+    "toNpcId": "npc-dael-morw",
+    "axes": {
+      "affinity": 0,
+      "trust": -15,
+      "respect": -8,
+      "fear": 0,
+      "loyalty": 0
+    }
+  },
+  {
+    "fromNpcId": "npc-dael-morw",
+    "toNpcId": "npc-petra-sunn",
+    "axes": {
+      "affinity": 12,
+      "trust": 8,
+      "respect": 14,
+      "fear": 4,
+      "loyalty": 6
+    }
+  },
+  {
+    "fromNpcId": "npc-halvard-senn",
+    "toNpcId": "npc-verek-holst",
+    "axes": {
+      "affinity": 38,
+      "trust": 30,
+      "respect": 48,
+      "fear": 0,
+      "loyalty": 22
+    }
+  },
+  {
+    "fromNpcId": "npc-verek-holst",
+    "toNpcId": "npc-halvard-senn",
+    "axes": {
+      "affinity": 34,
+      "trust": 26,
+      "respect": 44,
+      "fear": 0,
+      "loyalty": 20
+    }
+  },
+  {
+    "fromNpcId": "npc-halvard-senn",
+    "toNpcId": "npc-rutha-kael",
+    "axes": {
+      "affinity": 42,
+      "trust": 35,
+      "respect": 52,
+      "fear": 0,
+      "loyalty": 28
+    }
+  },
+  {
+    "fromNpcId": "npc-rutha-kael",
+    "toNpcId": "npc-halvard-senn",
+    "axes": {
+      "affinity": 36,
+      "trust": 28,
+      "respect": 54,
+      "fear": 10,
+      "loyalty": 26
+    }
+  },
+  {
+    "fromNpcId": "npc-halvard-senn",
+    "toNpcId": "npc-garet-doyle",
+    "axes": {
+      "affinity": 18,
+      "trust": 12,
+      "respect": 14,
+      "fear": 0,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-garet-doyle",
+    "toNpcId": "npc-halvard-senn",
+    "axes": {
+      "affinity": 14,
+      "trust": 8,
+      "respect": 16,
+      "fear": 12,
+      "loyalty": 6
+    }
+  },
+  {
+    "fromNpcId": "npc-dael-morw",
+    "toNpcId": "npc-marion-vale",
+    "axes": {
+      "affinity": 26,
+      "trust": 18,
+      "respect": 32,
+      "fear": 0,
+      "loyalty": 10
+    }
+  },
+  {
+    "fromNpcId": "npc-marion-vale",
+    "toNpcId": "npc-dael-morw",
+    "axes": {
+      "affinity": 22,
+      "trust": 14,
+      "respect": 28,
+      "fear": 0,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-dael-morw",
+    "toNpcId": "npc-verek-holst",
+    "axes": {
+      "affinity": 14,
+      "trust": 8,
+      "respect": 10,
+      "fear": 6,
+      "loyalty": 4
+    }
+  },
+  {
+    "fromNpcId": "npc-verek-holst",
+    "toNpcId": "npc-dael-morw",
+    "axes": {
+      "affinity": 12,
+      "trust": 6,
+      "respect": 12,
+      "fear": 8,
+      "loyalty": 4
+    }
+  },
+  {
+    "fromNpcId": "npc-dael-morw",
+    "toNpcId": "npc-maret-sunne",
+    "axes": {
+      "affinity": 24,
+      "trust": 16,
+      "respect": 26,
+      "fear": 0,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-maret-sunne",
+    "toNpcId": "npc-dael-morw",
+    "axes": {
+      "affinity": 20,
+      "trust": 12,
+      "respect": 22,
+      "fear": 0,
+      "loyalty": 6
+    }
+  },
+  {
+    "fromNpcId": "npc-dael-morw",
+    "toNpcId": "npc-oswin-farr",
+    "axes": {
+      "affinity": 8,
+      "trust": 4,
+      "respect": 14,
+      "fear": 0,
+      "loyalty": 2
+    }
+  },
+  {
+    "fromNpcId": "npc-oswin-farr",
+    "toNpcId": "npc-dael-morw",
+    "axes": {
+      "affinity": 6,
+      "trust": -8,
+      "respect": 8,
+      "fear": 0,
+      "loyalty": -4
+    }
+  },
+  {
+    "fromNpcId": "npc-evar-koss",
+    "toNpcId": "npc-marion-vale",
+    "axes": {
+      "affinity": 28,
+      "trust": 18,
+      "respect": 28,
+      "fear": 0,
+      "loyalty": 12
+    }
+  },
+  {
+    "fromNpcId": "npc-marion-vale",
+    "toNpcId": "npc-evar-koss",
+    "axes": {
+      "affinity": 22,
+      "trust": 8,
+      "respect": 22,
+      "fear": 4,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-evar-koss",
+    "toNpcId": "npc-dara-slink",
+    "axes": {
+      "affinity": 38,
+      "trust": 24,
+      "respect": 36,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-dara-slink",
+    "toNpcId": "npc-evar-koss",
+    "axes": {
+      "affinity": 42,
+      "trust": 30,
+      "respect": 32,
+      "fear": 0,
+      "loyalty": 14
+    }
+  },
+  {
+    "fromNpcId": "npc-evar-koss",
+    "toNpcId": "npc-the-wren",
+    "axes": {
+      "affinity": 24,
+      "trust": 20,
+      "respect": 24,
+      "fear": 4,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-the-wren",
+    "toNpcId": "npc-evar-koss",
+    "axes": {
+      "affinity": 22,
+      "trust": 18,
+      "respect": 22,
+      "fear": 2,
+      "loyalty": 6
+    }
+  },
+  {
+    "fromNpcId": "npc-evar-koss",
+    "toNpcId": "npc-aldric-vane",
+    "axes": {
+      "affinity": 20,
+      "trust": 12,
+      "respect": 14,
+      "fear": 0,
+      "loyalty": 4
+    }
+  },
+  {
+    "fromNpcId": "npc-aldric-vane",
+    "toNpcId": "npc-evar-koss",
+    "axes": {
+      "affinity": 14,
+      "trust": 6,
+      "respect": 10,
+      "fear": 12,
+      "loyalty": 4
+    }
+  },
+  {
+    "fromNpcId": "npc-evar-koss",
+    "toNpcId": "npc-torvald-messe",
+    "axes": {
+      "affinity": 30,
+      "trust": 25,
+      "respect": 28,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-torvald-messe",
+    "toNpcId": "npc-evar-koss",
+    "axes": {
+      "affinity": 28,
+      "trust": 20,
+      "respect": 26,
+      "fear": 0,
+      "loyalty": 16
+    }
+  },
+  {
+    "fromNpcId": "npc-irenne-brek",
+    "toNpcId": "npc-dara-slink",
+    "axes": {
+      "affinity": 52,
+      "trust": 44,
+      "respect": 42,
+      "fear": 0,
+      "loyalty": 44
+    }
+  },
+  {
+    "fromNpcId": "npc-dara-slink",
+    "toNpcId": "npc-irenne-brek",
+    "axes": {
+      "affinity": 48,
+      "trust": 36,
+      "respect": 40,
+      "fear": 0,
+      "loyalty": 40
+    }
+  },
+  {
+    "fromNpcId": "npc-irenne-brek",
+    "toNpcId": "npc-marion-vale",
+    "axes": {
+      "affinity": 38,
+      "trust": 30,
+      "respect": 32,
+      "fear": 0,
+      "loyalty": 22
+    }
+  },
+  {
+    "fromNpcId": "npc-marion-vale",
+    "toNpcId": "npc-irenne-brek",
+    "axes": {
+      "affinity": 34,
+      "trust": 26,
+      "respect": 30,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-irenne-brek",
+    "toNpcId": "npc-torvald-messe",
+    "axes": {
+      "affinity": 40,
+      "trust": 38,
+      "respect": 36,
+      "fear": 0,
+      "loyalty": 30
+    }
+  },
+  {
+    "fromNpcId": "npc-torvald-messe",
+    "toNpcId": "npc-irenne-brek",
+    "axes": {
+      "affinity": 36,
+      "trust": 34,
+      "respect": 38,
+      "fear": 0,
+      "loyalty": 28
+    }
+  },
+  {
+    "fromNpcId": "npc-irenne-brek",
+    "toNpcId": "npc-cress-aldmoor",
+    "axes": {
+      "affinity": 32,
+      "trust": 28,
+      "respect": 36,
+      "fear": 0,
+      "loyalty": 16
+    }
+  },
+  {
+    "fromNpcId": "npc-cress-aldmoor",
+    "toNpcId": "npc-irenne-brek",
+    "axes": {
+      "affinity": 36,
+      "trust": 30,
+      "respect": 38,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-irenne-brek",
+    "toNpcId": "npc-evar-koss",
+    "axes": {
+      "affinity": 28,
+      "trust": 22,
+      "respect": 24,
+      "fear": 0,
+      "loyalty": 16
+    }
+  },
+  {
+    "fromNpcId": "npc-evar-koss",
+    "toNpcId": "npc-irenne-brek",
+    "axes": {
+      "affinity": 24,
+      "trust": 18,
+      "respect": 22,
+      "fear": 0,
+      "loyalty": 12
+    }
+  }
+]
