@@ -14,7 +14,6 @@ import {
   selectProtagonistName,
   selectRecommendedQuestAction,
 } from '../../application'
-import { contentCatalog } from '../../application/content/contentCatalog'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
 import { ResourceStatusPanel } from '../components/ResourceStatusPanel'
@@ -41,7 +40,6 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const protagonistName = useAppSelector(selectProtagonistName)
   const playerCharacter = useAppSelector(selectPlayerCharacter)
   const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
-  const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
   const debt = useAppSelector(selectDebtStatus)
   const lastEncounterSummary = useAppSelector(selectLastEncounterSummary)
   const mainQuest = useAppSelector(selectMainQuest)
@@ -53,9 +51,6 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('Overview')
 
   const displayName = playerCharacter.name || protagonistName || 'Valdris'
-  const currentDistrictName = currentDistrictId
-    ? contentCatalog.districtsById.get(currentDistrictId)?.name ?? currentDistrictId
-    : null
 
   return (
     <section className="screen-panel">
@@ -206,28 +201,6 @@ export function DashboardScreen(props: DashboardScreenProps) {
             {mainQuest.stage === 'epilogue' && (
               <span className="badge badge-warning">◆ New chapter</span>
             )}
-          </article>
-          <article className="detail-panel">
-            <h2>Quick Routes</h2>
-            <p className="summary">
-              Routine management should be within reach. Use the shortcuts below instead of walking the full district loop for every ledger check or market browse.
-            </p>
-            <div className="badge-row" style={{ marginTop: '0.75rem' }}>
-              {currentDistrictName ? (
-                <a href="/shops" className="directive-link">
-                  → Visit local shops in {currentDistrictName}
-                </a>
-              ) : (
-                <a href="/district-map" className="directive-link">
-                  → Travel to a district market
-                </a>
-              )}
-            </div>
-            <div className="badge-row" style={{ marginTop: '0.5rem' }}>
-              <a href="/ledger" className="directive-link">
-                → Open the ledger
-              </a>
-            </div>
           </article>
           <div className="stats-grid">
             <article>

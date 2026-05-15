@@ -108,21 +108,17 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('Session restored from local snapshot.')).toBeInTheDocument()
   })
 
-  it('shows local market and ledger shortcuts in overview', () => {
-    const store = createGameStore({
-      ...initialGameStateSnapshot,
-      currentDistrictId: 'district-the-pale',
-    })
-
+  it('does not show non-diegetic management shortcuts in overview', () => {
     render(
-      <AppProviders store={store}>
+      <AppProviders store={createGameStore(initialGameStateSnapshot)}>
         <MemoryRouter>
           <DashboardScreen saveStore={createMemorySaveStore()} />
         </MemoryRouter>
       </AppProviders>,
     )
 
-    expect(screen.getByRole('link', { name: /Visit local shops/i })).toHaveAttribute('href', '/shops')
-    expect(screen.getByRole('link', { name: /Open the ledger/i })).toHaveAttribute('href', '/ledger')
+    expect(screen.queryByRole('heading', { name: 'Quick Routes' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Visit local shops/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Open the ledger/i })).not.toBeInTheDocument()
   })
 })
