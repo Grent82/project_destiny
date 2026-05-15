@@ -92,7 +92,7 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
           )}
           {discovery.followUp && (
             <p className="house-room__effect" style={{ marginTop: '0.45rem', fontStyle: 'normal' }}>
-              Next: {discovery.followUp}
+              — {discovery.followUp}
             </p>
           )}
         </div>
