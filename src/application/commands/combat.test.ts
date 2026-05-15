@@ -135,6 +135,72 @@ describe('combat commands', () => {
     expect(nextState.lastEncounterSummary?.day).toBe(nextState.day)
   })
 
+  it('applies NPC-to-NPC survival bonds on victory (affinity +8, respect +5)', () => {
+    const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'] }
+    const started = startCombatEncounter(state)
+    const resolved = {
+      ...started,
+      activeCombat: {
+        ...started.activeCombat!,
+        outcome: 'victory' as const,
+        activeCombatantId: null,
+        combatants: started.activeCombat!.combatants.map((c) =>
+          c.side === 'allies' ? { ...c, health: Math.max(1, c.health) } : { ...c, health: 0 }
+        ),
+      },
+    }
+    const result = concludeCombatEncounter(resolved)
+    const marionToIda = result.relationships['npc-marion-vale→npc-ida-rhys']
+    const idaToMarion = result.relationships['npc-ida-rhys→npc-marion-vale']
+    expect(marionToIda?.affinity).toBeGreaterThanOrEqual(8)
+    expect(marionToIda?.respect).toBeGreaterThanOrEqual(5)
+    expect(idaToMarion?.affinity).toBeGreaterThanOrEqual(8)
+    expect(idaToMarion?.respect).toBeGreaterThanOrEqual(5)
+    expect(result.activityLog.some((e) => /came through it together/i.test(e.message))).toBe(true)
+  })
+
+  it('applies NPC-to-NPC adversity bonds on defeat-survived (affinity +4, trust +5)', () => {
+    const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'] }
+    const started = startCombatEncounter(state)
+    const resolved = {
+      ...started,
+      activeCombat: {
+        ...started.activeCombat!,
+        outcome: 'defeat' as const,
+        activeCombatantId: null,
+        combatants: started.activeCombat!.combatants.map((c) =>
+          c.side === 'allies' && c.sourceNpcId ? { ...c, health: Math.max(1, c.health) } : c
+        ),
+      },
+    }
+    const result = concludeCombatEncounter(resolved)
+    const marionToIda = result.relationships['npc-marion-vale→npc-ida-rhys']
+    expect(marionToIda?.affinity).toBeGreaterThanOrEqual(4)
+    expect(marionToIda?.trust).toBeGreaterThanOrEqual(5)
+    expect(result.activityLog.some((e) => /counts for something/i.test(e.message))).toBe(true)
+  })
+
+  it('excludes KO-d NPC from survival bonds', () => {
+    const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'] }
+    const started = startCombatEncounter(state)
+    const resolved = {
+      ...started,
+      activeCombat: {
+        ...started.activeCombat!,
+        outcome: 'victory' as const,
+        activeCombatantId: null,
+        combatants: started.activeCombat!.combatants.map((c) => {
+          if (c.sourceNpcId === 'npc-ida-rhys') return { ...c, health: 0 }
+          if (c.side === 'enemies') return { ...c, health: 0 }
+          return { ...c, health: Math.max(1, c.health) }
+        }),
+      },
+    }
+    const result = concludeCombatEncounter(resolved)
+    expect(result.relationships['npc-marion-vale→npc-ida-rhys']).toBeUndefined()
+    expect(result.relationships['npc-ida-rhys→npc-marion-vale']).toBeUndefined()
+  })
+
   it('fails a combat-linked quest by default when the squad is defeated', () => {
     const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
     if (!harborwatch) {

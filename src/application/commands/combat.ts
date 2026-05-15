@@ -1094,6 +1094,31 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
   }
 
+  // NPC-to-NPC survival bonds: co-deployed NPCs who survived together grow closer
+  const survivingNpcAllies = allyCombatants.filter((c) => c.health > 0 && c.sourceNpcId)
+  for (let i = 0; i < survivingNpcAllies.length; i++) {
+    for (let j = i + 1; j < survivingNpcAllies.length; j++) {
+      const idA = survivingNpcAllies[i]!.sourceNpcId!
+      const idB = survivingNpcAllies[j]!.sourceNpcId!
+      const nameA = survivingNpcAllies[i]!.name
+      const nameB = survivingNpcAllies[j]!.name
+
+      if (isVictory) {
+        applyRelationshipDelta(nextState, idA, idB, 'affinity', 8)
+        applyRelationshipDelta(nextState, idA, idB, 'respect', 5)
+        applyRelationshipDelta(nextState, idB, idA, 'affinity', 8)
+        applyRelationshipDelta(nextState, idB, idA, 'respect', 5)
+        nextState = appendActivityLogEntry(nextState, 'combat', `${nameA} and ${nameB} came through it together.`)
+      } else {
+        applyRelationshipDelta(nextState, idA, idB, 'affinity', 4)
+        applyRelationshipDelta(nextState, idA, idB, 'trust', 5)
+        applyRelationshipDelta(nextState, idB, idA, 'affinity', 4)
+        applyRelationshipDelta(nextState, idB, idA, 'trust', 5)
+        nextState = appendActivityLogEntry(nextState, 'combat', `${nameA} knows what ${nameB} did out there. That counts for something.`)
+      }
+    }
+  }
+
   nextState = {
     ...nextState,
     roster: nextState.roster.map((npc) => {
