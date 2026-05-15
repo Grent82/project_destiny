@@ -20,6 +20,7 @@ import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActi
 import { applyRumorSpread } from "./applyRumorSpread"
 import { tickWardStages } from "./houseWard"
 import { applyPersonalityFriction } from './applyPersonalityFriction'
+import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -199,6 +200,10 @@ export function endDay(state: GameState): GameState {
   if (nextDay % 2 === 0) {
     afterEvents = applyPersonalityFriction(afterEvents, rng)
   }
+
+  // Step 9e: Legacy intent chance and pregnancy tick
+  afterEvents = tickLegacyIntent(afterEvents, rng)
+  afterEvents = tickPregnancyProgress(afterEvents)
 
   // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)

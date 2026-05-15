@@ -9,6 +9,7 @@ function hasIntactRoom(state: GameState, fn: RoomFunction): boolean {
 
 /** Modifiers per ageBand: stress/fatigue accumulation rate and recovery rate. */
 const AGE_BAND_MODIFIERS = {
+  child:  { accum: 0.50, recovery: 1.20 }, // wards decay slowly, recover fast
   young:  { accum: 1.05, recovery: 1.08 },
   adult:  { accum: 1.00, recovery: 1.00 },
   middle: { accum: 1.00, recovery: 1.00 },

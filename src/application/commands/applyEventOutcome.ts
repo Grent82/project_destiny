@@ -1,6 +1,6 @@
 import type { GameState } from '../../domain'
 import type { EventOutcome } from '../../domain/events/contracts'
-import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { addQuestLeadIfNew } from './questLifecycle'
 import { contentCatalog } from '../content/contentCatalog'
@@ -77,8 +77,8 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         if (outcome.npcId && outcome.axis && outcome.delta !== undefined) {
           const key = buildRelationshipKey('player', outcome.npcId)
           const existing = next.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
-          const axis = outcome.axis as keyof RelationshipAxes
-          const newValue = Math.max(-100, Math.min(100, (existing[axis] ?? 0) + outcome.delta))
+          const axis = outcome.axis as 'affinity' | 'respect' | 'fear' | 'trust' | 'loyalty'
+          const newValue = Math.max(-100, Math.min(100, ((existing[axis] as number) ?? 0) + outcome.delta))
           next = {
             ...next,
             relationships: {

@@ -1,11 +1,17 @@
 import { z } from 'zod'
 
+export const intimacyStageSchema = z.enum(['none', 'affinity', 'attachment', 'committed'])
+export type IntimacyStage = z.infer<typeof intimacyStageSchema>
+
 export const relationshipAxesSchema = z.object({
   affinity: z.number().min(-100).max(100).default(0),
   respect: z.number().min(-100).max(100).default(0),
   fear: z.number().min(-100).max(100).default(0),
   trust: z.number().min(-100).max(100).default(0),
   loyalty: z.number().min(-100).max(100).default(0),
+  intimacyStage: intimacyStageSchema.optional(),
+  bondType: z.string().optional(),
+  legacyIntentActive: z.boolean().optional(),
 })
 
 export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>

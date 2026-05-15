@@ -96,12 +96,17 @@ export type HouseExteriorTier = z.infer<typeof houseExteriorTierSchema>
 export const heirStageSchema = z.enum(['child', 'ward', 'apprentice', 'adult'])
 export type HeirStage = z.infer<typeof heirStageSchema>
 
+export const heirOriginSchema = z.enum(['fostered', 'biological', 'ward'])
+export type HeirOrigin = z.infer<typeof heirOriginSchema>
+
 export const heirSchema = z.object({
   id: z.string(),
   name: z.string(),
   originStory: z.string(),
   stage: heirStageSchema.default('child'),
   arrivalDay: z.number().int(),
+  origin: heirOriginSchema.optional(),
+  parentRefs: z.array(z.string()).optional(),
 })
 export type Heir = z.infer<typeof heirSchema>
 

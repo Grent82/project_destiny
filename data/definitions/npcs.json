@@ -93,7 +93,8 @@
         "targetId": "npc-ghost-valdris-cargo-patron",
         "note": "Family handled illicit cargo for a noble house. Knows which house shipped people out of Valdenmoor during the first panic."
       }
-    ]
+    ],
+    "romanceEligible": true
   },
   {
     "id": "npc-ida-rhys",
@@ -186,7 +187,8 @@
         "targetId": "npc-verek-holst",
         "note": "Both came through the same labor disputes. Holst keeps a tally; Ida keeps moving forward. Uncomfortable trust."
       }
-    ]
+    ],
+    "romanceEligible": true
   },
   {
     "id": "npc-verek-holst",
@@ -4049,7 +4051,7 @@
     "id": "npc-tessaly-wode",
     "name": "Tessaly Wode",
     "origin": "Ironworks",
-    "background": "Master glassworker who spent thirty years running the Ironworks' precision instrument trade. Knows how to read a room the way she reads a lens — cracks, distortions, what light reveals that the surface hides. Has trained a dozen engineers who no longer credit her. Does not hold it against them personally; holds it against the institution.",
+    "background": "Master glassworker who spent thirty years running the Ironworks' precision instrument trade. Knows how to read a room the way she reads a lens \u2014 cracks, distortions, what light reveals that the surface hides. Has trained a dozen engineers who no longer credit her. Does not hold it against them personally; holds it against the institution.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": "faction-foundry-league",
@@ -4135,7 +4137,7 @@
       {
         "type": "rival",
         "targetId": "npc-sable-wrent",
-        "note": "Sable cut corners on a filtration job Tessaly had spec'd. People got sick. Tessaly reported it; Sable was fined, not dismissed. The grudge runs one direction only — Sable sees an obstacle, Tessaly sees a lesson no one learned."
+        "note": "Sable cut corners on a filtration job Tessaly had spec'd. People got sick. Tessaly reported it; Sable was fined, not dismissed. The grudge runs one direction only \u2014 Sable sees an obstacle, Tessaly sees a lesson no one learned."
       }
     ]
   },
@@ -4143,7 +4145,7 @@
     "id": "npc-elyn",
     "name": "Elyn",
     "origin": "The Warrens",
-    "background": "Seven years old. Brought to the house by Petra Sunn. Her situation was not safe where it was. Petra does not give many details. Elyn does not talk much yet. She watches. She has her mother's hands — Petra does not say whose mother.",
+    "background": "Seven years old. Brought to the house by Petra Sunn. Her situation was not safe where it was. Petra does not give many details. Elyn does not talk much yet. She watches. She has her mother's hands \u2014 Petra does not say whose mother.",
     "rarity": "rare",
     "status": "ward",
     "factionAffinityId": null,
@@ -4186,7 +4188,7 @@
     "ageBand": "child",
     "sex": "girl",
     "appearanceTags": [
-      "always has something in her hands — a pebble, a piece of cord, someone else's forgotten button",
+      "always has something in her hands \u2014 a pebble, a piece of cord, someone else's forgotten button",
       "takes up much less space than she has opinions",
       "watches before she moves"
     ],
@@ -4234,7 +4236,7 @@
     "id": "npc-bren-aldoth",
     "name": "Bren Aldoth",
     "origin": "Harbor Ward",
-    "background": "Fourteen years in a specialized Compact enforcement unit — the kind called in when public enforcement has already tried and failed. Good at it. Very good. The last operation ended badly in a way that was not his fault, not exactly, and that he cannot fully account for and will not try to. Three of his unit did not come back. He filed the report. He accepted the severance. He has not spoken to anyone from the unit since.",
+    "background": "Fourteen years in a specialized Compact enforcement unit \u2014 the kind called in when public enforcement has already tried and failed. Good at it. Very good. The last operation ended badly in a way that was not his fault, not exactly, and that he cannot fully account for and will not try to. Three of his unit did not come back. He filed the report. He accepted the severance. He has not spoken to anyone from the unit since.",
     "rarity": "rare",
     "status": "mercenary",
     "factionAffinityId": null,
@@ -4320,7 +4322,7 @@
       {
         "type": "old-comrade",
         "targetId": "npc-verek-holst",
-        "note": "Both came out of Compact enforcement in different units. They know each other's names and reputation. Not friends — professional acknowledgment. Holst is one of the few people from that world Bren does not actively avoid."
+        "note": "Both came out of Compact enforcement in different units. They know each other's names and reputation. Not friends \u2014 professional acknowledgment. Holst is one of the few people from that world Bren does not actively avoid."
       }
     ]
   },
@@ -4328,7 +4330,7 @@
     "id": "npc-nessa-vain",
     "name": "Nessa Vain",
     "origin": "Civic Quarter",
-    "background": "Spent eight years as a district resource coordinator for the Compact — the person who managed which water distribution points got funding, which wall sections got inspected, which rebuild contracts went to which crews. She learned, in those eight years, exactly how the city's physical layer and its power layer interact. She left the Compact when she understood that the Compact's interest in this knowledge was narrower than her own. She does not announce her plans. She makes moves.",
+    "background": "Spent eight years as a district resource coordinator for the Compact \u2014 the person who managed which water distribution points got funding, which wall sections got inspected, which rebuild contracts went to which crews. She learned, in those eight years, exactly how the city's physical layer and its power layer interact. She left the Compact when she understood that the Compact's interest in this knowledge was narrower than her own. She does not announce her plans. She makes moves.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": null,
@@ -4394,7 +4396,7 @@
         ]
       },
       {
-        "text": "does not ask for permission for small actions — reports their outcomes instead",
+        "text": "does not ask for permission for small actions \u2014 reports their outcomes instead",
         "tags": [
           "principled",
           "ambitious"
@@ -4415,7 +4417,7 @@
       {
         "type": "old-comrade",
         "targetId": "npc-marion-vale",
-        "note": "Both moved in Compact administrative channels. Marion filed; Nessa coordinated. Professional wariness — Marion recognizes someone who operates the way she herself does, and finds it uncomfortable."
+        "note": "Both moved in Compact administrative channels. Marion filed; Nessa coordinated. Professional wariness \u2014 Marion recognizes someone who operates the way she herself does, and finds it uncomfortable."
       }
     ]
   }

@@ -157,6 +157,7 @@ export const bondTypeSchema = z.enum([
   'child',
   'bastard-kin',
   'witness',
+  'romantic',
 ])
 
 export const npcBondSchema = z.object({
@@ -189,6 +190,7 @@ export const npcDefinitionSchema = z
     bonds: z.array(npcBondSchema).default([]),
     dialogueId: entityIdSchema.optional(),
     defaultArcId: z.string().optional(),
+    romanceEligible: z.boolean().optional(),
     schedule: z.object({
       morning: z.string().optional(),
       afternoon: z.string().optional(),

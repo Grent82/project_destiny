@@ -3,7 +3,7 @@ import type { GameState } from '../../domain'
 import { MAX_NPC_MEMORY_ENTRIES } from '../../domain/npc/contracts'
 import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
 
-type Axis = keyof RelationshipAxes
+type Axis = 'affinity' | 'respect' | 'fear' | 'trust' | 'loyalty'
 
 const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
 
