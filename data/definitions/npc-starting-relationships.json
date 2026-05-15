@@ -548,5 +548,137 @@
       "fear": 0,
       "loyalty": 12
     }
+  },
+  {
+    "fromNpcId": "npc-ida-rhys",
+    "toNpcId": "npc-verek-holst",
+    "axes": {
+      "affinity": 45,
+      "trust": 30,
+      "respect": 52,
+      "fear": 0,
+      "loyalty": 20
+    }
+  },
+  {
+    "fromNpcId": "npc-verek-holst",
+    "toNpcId": "npc-ida-rhys",
+    "axes": {
+      "affinity": 42,
+      "trust": 28,
+      "respect": 48,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-verek-holst",
+    "toNpcId": "npc-garet-doyle",
+    "axes": {
+      "affinity": 25,
+      "trust": 15,
+      "respect": 20,
+      "fear": 4,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-garet-doyle",
+    "toNpcId": "npc-verek-holst",
+    "axes": {
+      "affinity": 22,
+      "trust": 38,
+      "respect": 28,
+      "fear": 0,
+      "loyalty": 12
+    }
+  },
+  {
+    "fromNpcId": "npc-tav",
+    "toNpcId": "npc-bog",
+    "axes": {
+      "affinity": 55,
+      "trust": 45,
+      "respect": 42,
+      "fear": 0,
+      "loyalty": 38
+    }
+  },
+  {
+    "fromNpcId": "npc-bog",
+    "toNpcId": "npc-tav",
+    "axes": {
+      "affinity": 52,
+      "trust": 48,
+      "respect": 40,
+      "fear": 0,
+      "loyalty": 36
+    }
+  },
+  {
+    "fromNpcId": "npc-maret-sunne",
+    "toNpcId": "npc-old-maret",
+    "axes": {
+      "affinity": 18,
+      "trust": 8,
+      "respect": 14,
+      "fear": 2,
+      "loyalty": 6
+    }
+  },
+  {
+    "fromNpcId": "npc-old-maret",
+    "toNpcId": "npc-maret-sunne",
+    "axes": {
+      "affinity": 14,
+      "trust": 6,
+      "respect": 12,
+      "fear": 2,
+      "loyalty": 4
+    }
+  },
+  {
+    "fromNpcId": "npc-lirien-ashcroft",
+    "toNpcId": "npc-lira-ashcroft",
+    "axes": {
+      "affinity": 28,
+      "trust": 22,
+      "respect": 20,
+      "fear": 0,
+      "loyalty": 18
+    }
+  },
+  {
+    "fromNpcId": "npc-lira-ashcroft",
+    "toNpcId": "npc-lirien-ashcroft",
+    "axes": {
+      "affinity": 32,
+      "trust": 18,
+      "respect": 16,
+      "fear": 0,
+      "loyalty": 14
+    }
+  },
+  {
+    "fromNpcId": "npc-mira",
+    "toNpcId": "npc-cessa-rill",
+    "axes": {
+      "affinity": 6,
+      "trust": -8,
+      "respect": 10,
+      "fear": 0,
+      "loyalty": 2
+    }
+  },
+  {
+    "fromNpcId": "npc-cessa-rill",
+    "toNpcId": "npc-mira",
+    "axes": {
+      "affinity": 10,
+      "trust": 5,
+      "respect": 8,
+      "fear": 6,
+      "loyalty": 0
+    }
   }
 ]

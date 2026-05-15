@@ -124,6 +124,9 @@ export const contentCatalog = {
       parsedNpcStartingRelationships.filter((r) => r.fromNpcId === npcId),
     ])
   ),
+  npcStartingRelationshipsByKey: new Map(
+    parsedNpcStartingRelationships.map((r) => [`${r.fromNpcId}→${r.toNpcId}`, r])
+  ),
 }
 
 export function getTitleDefinitions(): TitleDefinition[] {
