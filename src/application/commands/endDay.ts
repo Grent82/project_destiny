@@ -22,6 +22,7 @@ import { tickWardStages } from "./houseWard"
 import { applyPersonalityFriction } from './applyPersonalityFriction'
 import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
 import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
+import { applyBondServiceEffects } from './bondService'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -200,12 +201,13 @@ export function endDay(state: GameState): GameState {
 
   // Step 9d: personality friction and bonding events (every 2 days)
   if (nextDay % 2 === 0) {
-    afterEvents = applyPersonalityFriction(afterEvents, rng)
+  afterEvents = applyPersonalityFriction(afterEvents, rng)
   }
 
   // Step 9e: Legacy intent chance and pregnancy tick
   afterEvents = tickLegacyIntent(afterEvents, rng)
   afterEvents = tickPregnancyProgress(afterEvents)
+  afterEvents = applyBondServiceEffects(afterEvents)
 
   // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)

@@ -111,6 +111,85 @@ describe('npcRuntimeStateSchema', () => {
 
     expect(result.success).toBe(false)
   })
+
+  it('accepts a bound-service runtime payload with a null-safe bondStatus', () => {
+    const result = npcRuntimeStateSchema.safeParse({
+      npcId: 'npc-bonded-1',
+      name: 'Sera Flint',
+      status: 'servant',
+      assignment: 'working',
+      assignedDistrictId: null,
+      activeTitle: null,
+      wagesOwedDays: 0,
+      trainingFocus: null,
+      attributes: {
+        might: 40,
+        agility: 55,
+        endurance: 48,
+        intellect: 62,
+        perception: 50,
+        presence: 44,
+        resolve: 60,
+      },
+      skills: {
+        melee: 25,
+        ranged: 30,
+        medicine: 18,
+        administration: 10,
+        engineering: 12,
+        negotiation: 24,
+        survival: 20,
+        security: 22,
+        crafting: 14,
+        performance: 9,
+        academics: 16,
+        intrigue: 28,
+      },
+      traits: {
+        discipline: 70,
+        ambition: 52,
+        empathy: 31,
+        ruthlessness: 44,
+        prudence: 66,
+        curiosity: 48,
+        dominance: 39,
+        loyalty: 59,
+        vanity: 27,
+        zeal: 36,
+      },
+      states: {
+        health: 90,
+        fatigue: 12,
+        stress: 20,
+        morale: 64,
+        fear: 10,
+        anger: 8,
+        hunger: 22,
+        injury: 0,
+        intoxication: 0,
+        hygiene: 76,
+      },
+      loadout: {
+        primaryWeaponId: null,
+        secondaryWeaponId: null,
+        armorId: null,
+        accessoryIds: [],
+        consumableIds: [],
+      },
+      npcMemory: [],
+      npcArc: null,
+      bondStatus: {
+        holderId: 'player',
+        contractValue: 120,
+        termDays: 30,
+        entryReason: 'debt-settlement',
+        alongsideFreeAssignmentDays: 5,
+        lastEqualityNoticeDay: null,
+      },
+    })
+
+    expect(result.success).toBe(true)
+  })
 })
 
 describe('gameStateSchema', () => {
@@ -215,6 +294,55 @@ describe('gameStateSchema', () => {
     expect(runtime.progress.requiredSteps).toBe(1)
     expect(runtime.context.retryBehavior).toBe('fail')
     expect(runtime.journalEntries).toEqual([])
+  })
+
+  it('accepts tracked wards with bond service state', () => {
+    const result = gameStateSchema.safeParse({
+      day: 1,
+      timeSlot: 'morning',
+      money: 250,
+      protagonistName: 'Valdris',
+      hasSeenOpening: false,
+      factionStates: [],
+      districts: [],
+      roster: [],
+      inventory: [],
+      cityResources: {
+        foodSecurity: 62,
+        waterAccess: 70,
+        materialStock: 50,
+        corridorStatus: 'open',
+      },
+      factionStandings: {},
+      cityDials: {
+        control: 45,
+        prosperity: 35,
+        unrest: 55,
+        corruption: 60,
+      },
+      activityLog: [],
+      selectedSquadNpcIds: [],
+      activeCombat: null,
+      pendingEvents: [],
+      wards: [
+        {
+          wardId: 'ward-ash',
+          name: 'Ash',
+          parentNpcId: 'npc-marion-vale',
+          freedOnDay: null,
+          bondStatus: {
+            holderId: 'compact',
+            contractValue: 900,
+            termDays: null,
+            entryReason: 'compact-assessment',
+            alongsideFreeAssignmentDays: 0,
+            lastEqualityNoticeDay: null,
+          },
+        },
+      ],
+    })
+
+    expect(result.success).toBe(true)
   })
 })
 

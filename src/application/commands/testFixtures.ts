@@ -70,6 +70,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
     consumableIds: [],
   },
   npcMemory: [],
+  bondStatus: null,
   npcArc: null,
 }
 

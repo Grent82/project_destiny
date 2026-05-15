@@ -252,12 +252,31 @@ export const pregnancyStateSchema = z.object({
   questTag: z.string().nullable().default(null),
 })
 
+export const bondEntryReasonSchema = z.enum([
+  'compact-assessment',
+  'debt-settlement',
+  'voluntary',
+  'combat-capture',
+  'inherited',
+])
+
+export const bondStatusSchema = z.object({
+  holderId: z.string().min(1),
+  contractValue: z.number().int().nonnegative(),
+  termDays: z.number().int().positive().nullable(),
+  entryReason: bondEntryReasonSchema,
+  alongsideFreeAssignmentDays: z.number().int().nonnegative().default(0),
+  lastEqualityNoticeDay: z.number().int().nonnegative().nullable().default(null),
+})
+
 export type CaptivityStatus = z.infer<typeof captivityStatusSchema>
 export type CaptivityCondition = z.infer<typeof captivityConditionSchema>
 export type CaptivityCompliance = z.infer<typeof captivityComplianceSchema>
 export type CaptivityBondType = z.infer<typeof captivityBondTypeSchema>
 export type CaptivityState = z.infer<typeof captivityStateSchema>
 export type PregnancyState = z.infer<typeof pregnancyStateSchema>
+export type BondEntryReason = z.infer<typeof bondEntryReasonSchema>
+export type BondStatus = z.infer<typeof bondStatusSchema>
 
 export const MAX_NPC_MEMORY_ENTRIES = 20
 
@@ -322,6 +341,7 @@ export const npcRuntimeStateSchema = z
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
     captivityState: captivityStateSchema.optional(),
     pregnancyState: pregnancyStateSchema.optional(),
+    bondStatus: bondStatusSchema.nullable().default(null),
     npcArc: npcArcSchema,
   })
   .strict()

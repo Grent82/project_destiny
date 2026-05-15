@@ -347,7 +347,9 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       'security', 'crafting', 'academics',
     ]
     const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
-    const income = Math.floor(Math.max(3, Math.min(15, Math.floor(bestSkill / 7))) * prosperityMult)
+    const baseIncome = Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
+    const bondMultiplier = runtimeNpc.bondStatus?.holderId === 'player' ? 1.2 : 1
+    const income = Math.floor(baseIncome * prosperityMult * bondMultiplier)
     next = { ...next, money: next.money + income }
 
     if (income >= 10) {

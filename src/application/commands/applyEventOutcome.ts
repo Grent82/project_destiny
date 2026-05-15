@@ -167,6 +167,7 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
                 states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 70 },
                 loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
                 npcMemory: [],
+                bondStatus: null,
                 npcArc,
               }
               next = { ...next, roster: [...next.roster, newEntry] }

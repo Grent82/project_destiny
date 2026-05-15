@@ -38,6 +38,7 @@ export function applyWages(state: GameState): GameState {
   // Step 1: Wage deduction
   next = { ...next, relationships: { ...next.relationships } }
   for (const rosterEntry of state.roster) {
+    if (rosterEntry.bondStatus?.holderId === 'player') continue
     const wage = wageForStatus(rosterEntry.status)
     if (wage === 0) continue
     const effectiveWage = Math.max(0, wage - kitchenDiscount)

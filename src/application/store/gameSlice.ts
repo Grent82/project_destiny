@@ -33,6 +33,7 @@ import { installModule as installModuleCommand } from '../commands/installModule
 import { useItem as useItemCommand } from '../commands/useItem'
 import { sellItem as sellItemCommand } from '../commands/sellItem'
 import { giftItemToNpc as giftItemToNpcCommand } from '../commands/giftItem'
+import { freeNpc as freeNpcCommand } from '../commands/bondService'
 import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
 import {
   addQuestLeadIfNew,
@@ -158,6 +159,9 @@ const gameSlice = createSlice({
     },
     dismissNpc(state, action: PayloadAction<{ npcId: string }>) {
       return dismissNpcCommand(state, action.payload.npcId)
+    },
+    freeNpc(state, action: PayloadAction<{ npcId: string }>) {
+      return freeNpcCommand(state, action.payload.npcId)
     },
     expireHireOffers(state) {
       return expireHireOffersCommand(state)

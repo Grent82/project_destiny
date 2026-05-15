@@ -66,6 +66,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
       consumableIds: [],
     },
     npcMemory: [],
+    bondStatus: null,
     npcArc: npcDef.defaultArcId
       ? (() => {
           const arcDef = npcArcDefsById.get(npcDef.defaultArcId!)

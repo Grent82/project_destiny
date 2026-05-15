@@ -4944,5 +4944,109 @@
     "sourceDistrictId": null,
     "sourceNpcId": "npc-nessa-vain",
     "presentationFlavour": null
+  },
+  {
+    "id": "event-bound-npc-notices-difference",
+    "title": "Equal Work, Unequal Terms",
+    "description": "A bonded worker has spent long enough beside free hands to understand the exact shape of the difference. The house cannot pretend the comparison was never made.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-mark-the-time",
+        "label": "Acknowledge it and promise the days will count.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You acknowledged the difference instead of hiding behind custom. The promise costs nothing yet, but it will be remembered."
+          }
+        ]
+      },
+      {
+        "id": "choice-dismiss-it",
+        "label": "Tell them the contract is the contract.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You made the legal answer do the work of a moral one. The room heard the distinction."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bond-service", "household", "moral-friction"],
+    "repeatable": true,
+    "cooldownDays": 14,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "A quiet comparison has become impossible to ignore."
+  },
+  {
+    "id": "event-npc-freed",
+    "title": "Contract Burned Through",
+    "description": "The paper is settled. Whatever bound them to this house no longer does. Everyone nearby understands what kind of cost that required.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-let-it-stand",
+        "label": "Let the act speak for itself.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The release is noted without spectacle. The house still feels the shift."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bond-service", "release", "household"],
+    "repeatable": true,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "The room goes still around a freedom people can price."
+  },
+  {
+    "id": "event-title-npc-bond-objection",
+    "title": "A Refusal in Office",
+    "description": "An empathic officer of the house has decided they will not keep legitimising bonded labor with their title. The objection is formal enough to hurt.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-hear-them",
+        "label": "Hear the objection and leave the chair empty.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You accepted the refusal. The vacant office says enough on its own."
+          }
+        ]
+      },
+      {
+        "id": "choice-replace-them",
+        "label": "Accept the refusal and look for harder hands.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The role is now open, but the reason it opened will linger."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bond-service", "title", "household"],
+    "repeatable": true,
+    "cooldownDays": 28,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "The objection is not loud. It lands anyway."
   }
 ]

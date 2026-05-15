@@ -16,7 +16,7 @@ import {
   ownedItemSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
-import { attributesSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
+import { attributesSchema, bondStatusSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
@@ -110,6 +110,15 @@ export const heirSchema = z.object({
 })
 export type Heir = z.infer<typeof heirSchema>
 
+export const wardSchema = z.object({
+  wardId: z.string(),
+  name: z.string(),
+  parentNpcId: z.string().nullable().default(null),
+  bondStatus: bondStatusSchema.nullable().default(null),
+  freedOnDay: z.number().int().nonnegative().nullable().default(null),
+})
+export type Ward = z.infer<typeof wardSchema>
+
 export const houseStateSchema = z
   .object({
     rooms: z.array(houseRoomSchema),
@@ -169,6 +178,7 @@ export const gameStateSchema = z
     availableQuestLeads: z.array(questLeadRuntimeSchema).default([]),
     activeQuests: z.array(questRuntimeSchema).default([]),
     completedQuestIds: z.array(z.string()).default([]),
+    wards: z.array(wardSchema).default([]),
     councilSeats: councilSeatCountSchema.default({}),
     institutionalStanding: z.record(z.string(), institutionalTierSchema).default({}),
     activeCouncilVotes: z.array(councilVoteEventSchema).default([]),
