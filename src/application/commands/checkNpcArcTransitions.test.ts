@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { checkNpcArcTransitions } from './checkNpcArcTransitions'
+import { checkNpcArcTransitions, checkFracturedArcBranching } from './checkNpcArcTransitions'
 import { initialStateWithIda } from './testFixtures'
-import type { NpcRuntimeState } from '../../domain'
+import type { GameState, NpcRuntimeState } from '../../domain'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 
 function makeArcNpc(
   base: NpcRuntimeState,
@@ -207,5 +208,82 @@ describe('checkNpcArcTransitions', () => {
     const result = checkNpcArcTransitions(state)
     const hasLog = result.activityLog.some((entry) => entry.message.includes(npc.name))
     expect(hasLog).toBe(true)
+  })
+})
+
+describe('checkFracturedArcBranching', () => {
+  function makeBrenNpc(stageEnteredDay: number, stage = 'cracking', flags: Record<string, boolean> = {}): NpcRuntimeState {
+    return {
+      ...initialStateWithIda.roster[0]!,
+      npcId: 'npc-bren-aldoth',
+      name: 'Bren Aldoth',
+      npcArc: { arcId: 'arc-fractured', stage, stageEnteredDay, stageFlags: flags, driftHistory: [] },
+      traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 68, empathy: 38, discipline: 81 },
+    }
+  }
+
+  function makeAnchorNpc(): NpcRuntimeState {
+    return {
+      ...initialStateWithIda.roster[0]!,
+      npcId: 'npc-anchor-test',
+      name: 'Anchor Person',
+      traits: { ...initialStateWithIda.roster[0]!.traits, empathy: 65 },
+      npcArc: null,
+    }
+  }
+
+  it('does nothing if Bren has less than 30 days in cracking stage', () => {
+    const bren = makeBrenNpc(initialStateWithIda.day - 10)
+    const state = { ...initialStateWithIda, roster: [bren] }
+    const result = checkFracturedArcBranching(state)
+    expect(result.roster[0]!.npcArc!.stage).toBe('cracking')
+  })
+
+  it('advances to broken when no anchor NPC after 30 days', () => {
+    const bren = makeBrenNpc(initialStateWithIda.day - 35)
+    const state = { ...initialStateWithIda, roster: [bren] }
+    const result = checkFracturedArcBranching(state)
+    expect(result.roster[0]!.npcArc!.stage).toBe('broken')
+  })
+
+  it('advances to healing when anchor NPC has empathy>60 and trust≥40', () => {
+    const bren = makeBrenNpc(initialStateWithIda.day - 35)
+    const anchor = makeAnchorNpc()
+    const relKey = buildRelationshipKey(anchor.npcId, bren.npcId)
+    const state: GameState = {
+      ...initialStateWithIda,
+      roster: [anchor, bren],
+      relationships: { [relKey]: { affinity: 50, trust: 45, respect: 40, fear: 0, loyalty: 30 } },
+    }
+    const result = checkFracturedArcBranching(state)
+    const brenAfter = result.roster.find((n) => n.npcId === bren.npcId)!
+    expect(brenAfter.npcArc!.stage).toBe('healing')
+    expect(brenAfter.npcArc!.stageFlags['anchorNpcId']).toBe(true)
+  })
+
+  it('queues leaving-warning event when advancing to broken', () => {
+    const bren = makeBrenNpc(initialStateWithIda.day - 35)
+    const state = { ...initialStateWithIda, roster: [bren] }
+    const result = checkFracturedArcBranching(state)
+    expect(result.pendingEvents.some((e) => e.eventId === 'event-bren-leaving-warning')).toBe(true)
+  })
+
+  it('queues bren-left event after 10 days in broken stage', () => {
+    const bren = makeBrenNpc(initialStateWithIda.day - 15, 'broken')
+    const state = { ...initialStateWithIda, roster: [bren] }
+    const result = checkFracturedArcBranching(state)
+    expect(result.pendingEvents.some((e) => e.eventId === 'event-bren-left')).toBe(true)
+  })
+
+  it('does not duplicate leaving-warning if already pending', () => {
+    const bren = makeBrenNpc(initialStateWithIda.day - 35)
+    const state = {
+      ...initialStateWithIda,
+      roster: [bren],
+      pendingEvents: [{ eventId: 'event-bren-leaving-warning', firedOnDay: initialStateWithIda.day - 1 }],
+    }
+    const result = checkFracturedArcBranching(state)
+    const count = result.pendingEvents.filter((e) => e.eventId === 'event-bren-leaving-warning').length
+    expect(count).toBe(1)
   })
 })

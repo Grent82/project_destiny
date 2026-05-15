@@ -4620,5 +4620,195 @@
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
     "presentationFlavour": null
+  },
+  {
+    "id": "event-bren-fracture-visible",
+    "title": "Something in Bren",
+    "description": "It was not a breakdown. It was a pause. Someone asked him a routine question and he went still for a moment — not long, not long enough for most people to notice — and then answered correctly and moved on. But you noticed. There is something in him that is not visible yet but is there.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-bren-aldoth",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-say-nothing",
+        "label": "Say nothing. Watch.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You saw something in Bren today. You said nothing. You will watch."
+          }
+        ]
+      },
+      {
+        "id": "choice-check-in",
+        "label": "Check in with him later.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You checked in with Bren. He said he was fine. He was looking at the door when he said it."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bren", "arc-fractured", "milestone"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-bren-aldoth",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-bren-anchor-found",
+    "title": "Someone Reached Him",
+    "description": "You do not know exactly when it happened, but someone on the roster has been reaching Bren. Not with words — with proximity. With consistency. He is different around them: quieter in a better way. Something is holding.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-bren-aldoth",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-support-it",
+        "label": "Support whatever is working.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Something between Bren and someone on the roster is working. You will not interfere with it."
+          }
+        ]
+      },
+      {
+        "id": "choice-acknowledge",
+        "label": "Acknowledge it to Bren directly.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You told Bren you noticed. He looked uncomfortable. He nodded. He did not say anything."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bren", "arc-fractured", "milestone"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-bren-aldoth",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-bren-returning",
+    "title": "Bren, Coming Back",
+    "description": "You see it in something small. He did not count the exits. He asked someone on the roster how they were doing without waiting for the question to come back to him. He stayed in the room after the briefing ended. The thing that was broken is still there — but he is making choices around it now.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-bren-aldoth",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-note-it",
+        "label": "Note it. Nothing more.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Bren is coming back. You notice it. You say nothing. This is the right call."
+          }
+        ]
+      },
+      {
+        "id": "choice-acknowledge-progress",
+        "label": "Tell him you see it.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You told Bren you see him coming back. He looked at the floor. He said: I didn't know I was."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bren", "arc-fractured", "milestone"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-bren-aldoth",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-bren-leaving-warning",
+    "title": "What Bren Said",
+    "description": "Bren said something indirect that was a direct warning. You had to hear it twice to catch it. He talked about a case from his old unit where someone stayed too long in a role that was wrong for them. He said the man ended up doing something no one forgave. He was not looking at you when he said it.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-bren-aldoth",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-reassign",
+        "label": "Pull him from current assignment immediately.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You pulled Bren from his current assignment. He accepted the change without comment. This may be enough."
+          }
+        ]
+      },
+      {
+        "id": "choice-talk",
+        "label": "Ask him directly what he needs.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You asked Bren directly what he needed. He went quiet. Then he said: I don't know yet."
+          }
+        ]
+      },
+      {
+        "id": "choice-ignore",
+        "label": "Note it and do nothing.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You noted what Bren said. You did not act. Ten days from now, this will matter."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bren", "arc-fractured", "departure-risk"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-bren-aldoth",
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-bren-left",
+    "title": "Bren Is Gone",
+    "description": "Bren is not here. He left during the night — no note, nothing missing except him and what he came with. You will find a small tool he borrowed on the workbench, cleaned and returned. That is the whole message.",
+    "triggerConditions": {
+      "requiredRosterNpcId": "npc-bren-aldoth",
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-accept",
+        "label": "Accept it.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Bren Aldoth is gone. The house did not hold him. This is the kind of failure that does not announce itself."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["bren", "arc-fractured", "departure"],
+    "repeatable": false,
+    "cooldownDays": 7,
+    "sourceDistrictId": null,
+    "sourceNpcId": "npc-bren-aldoth",
+    "presentationFlavour": null
   }
 ]

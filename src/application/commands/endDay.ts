@@ -15,7 +15,7 @@ import { applyNpcConsequences } from "./applyNpcConsequences"
 import { applyPolitics } from "./applyPolitics"
 import { applyNpcAgency } from "./applyNpcAgency"
 import { applyNpcTraitDrift } from "./applyNpcTraitDrift"
-import { checkNpcArcTransitions } from "./checkNpcArcTransitions"
+import { checkNpcArcTransitions, checkFracturedArcBranching } from "./checkNpcArcTransitions"
 import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
 import { applyRumorSpread } from "./applyRumorSpread"
 import { tickWardStages } from "./houseWard"
@@ -192,6 +192,7 @@ export function endDay(state: GameState): GameState {
   // Steps 9b-9c: Experiential trait drift and arc stage transitions
   afterEvents = applyNpcTraitDrift(afterEvents, rng)
   afterEvents = checkNpcArcTransitions(afterEvents, rng)
+  afterEvents = checkFracturedArcBranching(afterEvents)
 
   // Step 9d: personality friction and bonding events (every 2 days)
   if (nextDay % 2 === 0) {

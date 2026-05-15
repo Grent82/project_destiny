@@ -4,6 +4,7 @@ import type { Traits } from '../../domain/npc/contracts'
 import type { Rng } from './seededRng'
 import npcArcsData from '../../../data/definitions/npc-arcs.json'
 import { appendActivityLogEntry } from './activityLog'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 
 const npcArcDefinitions = npcArcDefinitionSchema.array().parse(npcArcsData)
 const npcArcsById = new Map(npcArcDefinitions.map((a) => [a.arcId, a]))
@@ -154,6 +155,93 @@ export function checkNpcArcTransitions(state: GameState, _rng: Rng = Math.random
       'system',
       `${npc.name} has changed. Something has settled in them.`,
     )
+  }
+
+  return next
+}
+
+/** arc-fractured Path A/B branching: called from endDay after normal arc check. */
+export function checkFracturedArcBranching(state: GameState): GameState {
+  const fracturedNpcs = state.roster.filter(
+    (npc) => npc.npcArc?.arcId === 'arc-fractured' && (npc.npcArc.stage === 'cracking' || npc.npcArc.stage === 'broken'),
+  )
+  if (fracturedNpcs.length === 0) return state
+
+  let next = state
+
+  for (const npc of fracturedNpcs) {
+    const arc = npc.npcArc!
+
+    if (arc.stage === 'cracking') {
+      const daysInStage = state.day - arc.stageEnteredDay
+      if (daysInStage < 30) continue
+
+      // Detect anchor NPC: first roster NPC with empathy > 60 and trust ≥ 40 toward fractured NPC
+      let updatedFlags = { ...arc.stageFlags }
+      if (!updatedFlags['anchorNpcId']) {
+        const anchor = state.roster.find((candidate) => {
+          if (candidate.npcId === npc.npcId) return false
+          if (candidate.traits.empathy <= 60) return false
+          const key = buildRelationshipKey(candidate.npcId, npc.npcId)
+          const rel = state.relationships[key]
+          return rel !== undefined && rel.trust >= 40
+        })
+        if (anchor) {
+          updatedFlags = { ...updatedFlags, anchorNpcId: true, [`anchor-${anchor.npcId}`]: true }
+        }
+      }
+
+      const hasAnchor = Boolean(updatedFlags['anchorNpcId'])
+
+      if (hasAnchor) {
+        // Path A: advance to healing
+        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'event-bren-anchor-found')
+        const updatedNpc = {
+          ...npc,
+          npcArc: { ...arc, stage: 'healing', stageEnteredDay: state.day, stageFlags: updatedFlags },
+        }
+        next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
+        if (!alreadyPending) {
+          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: 'event-bren-anchor-found', firedOnDay: state.day }] }
+        }
+        next = appendActivityLogEntry(next, 'system', `${npc.name} is finding a way back. Something — someone — is holding.`)
+      } else {
+        // Path B: advance to broken
+        const updatedNpc = {
+          ...npc,
+          npcArc: { ...arc, stage: 'broken', stageEnteredDay: state.day, stageFlags: updatedFlags },
+        }
+        next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
+        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'event-bren-leaving-warning')
+        if (!alreadyPending) {
+          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: 'event-bren-leaving-warning', firedOnDay: state.day }] }
+        }
+        next = appendActivityLogEntry(next, 'system', `${npc.name} is slipping. The fracture has gone deeper.`)
+      }
+    }
+  }
+
+  // Departure risk in broken stage: escalate departure threshold
+  const brokenNpcs = next.roster.filter(
+    (npc) => npc.npcArc?.arcId === 'arc-fractured' && npc.npcArc.stage === 'broken',
+  )
+  for (const npc of brokenNpcs) {
+    const arc = npc.npcArc!
+    const daysInBroken = state.day - arc.stageEnteredDay
+    if (daysInBroken >= 10) {
+      const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'event-bren-left')
+      if (!alreadyPending && !arc.stageFlags['departureQueued']) {
+        const updatedNpc = {
+          ...npc,
+          npcArc: { ...arc, stageFlags: { ...arc.stageFlags, departureQueued: true } },
+        }
+        next = {
+          ...next,
+          roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
+          pendingEvents: [...next.pendingEvents, { eventId: 'event-bren-left', firedOnDay: state.day }],
+        }
+      }
+    }
   }
 
   return next

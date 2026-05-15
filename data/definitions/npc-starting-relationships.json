@@ -812,5 +812,49 @@
       "fear": 0,
       "loyalty": 28
     }
+  },
+  {
+    "fromNpcId": "npc-bren-aldoth",
+    "toNpcId": "npc-verek-holst",
+    "axes": {
+      "affinity": 22,
+      "trust": 18,
+      "respect": 36,
+      "fear": 0,
+      "loyalty": 12
+    }
+  },
+  {
+    "fromNpcId": "npc-verek-holst",
+    "toNpcId": "npc-bren-aldoth",
+    "axes": {
+      "affinity": 20,
+      "trust": 14,
+      "respect": 32,
+      "fear": 0,
+      "loyalty": 10
+    }
+  },
+  {
+    "fromNpcId": "npc-bren-aldoth",
+    "toNpcId": "npc-halvard-senn",
+    "axes": {
+      "affinity": 14,
+      "trust": 10,
+      "respect": 28,
+      "fear": 0,
+      "loyalty": 8
+    }
+  },
+  {
+    "fromNpcId": "npc-halvard-senn",
+    "toNpcId": "npc-bren-aldoth",
+    "axes": {
+      "affinity": 18,
+      "trust": 12,
+      "respect": 30,
+      "fear": 0,
+      "loyalty": 8
+    }
   }
 ]

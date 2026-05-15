@@ -4229,5 +4229,99 @@
         "note": "Petra moved her. Elyn does not know the word for what Petra is to her. She knows Petra came when it mattered."
       }
     ]
+  },
+  {
+    "id": "npc-bren-aldoth",
+    "name": "Bren Aldoth",
+    "origin": "Harbor Ward",
+    "background": "Fourteen years in a specialized Compact enforcement unit — the kind called in when public enforcement has already tried and failed. Good at it. Very good. The last operation ended badly in a way that was not his fault, not exactly, and that he cannot fully account for and will not try to. Three of his unit did not come back. He filed the report. He accepted the severance. He has not spoken to anyone from the unit since.",
+    "rarity": "rare",
+    "status": "mercenary",
+    "factionAffinityId": null,
+    "baseAttributes": {
+      "might": 68,
+      "agility": 62,
+      "endurance": 71,
+      "intellect": 52,
+      "perception": 66,
+      "presence": 46,
+      "resolve": 56
+    },
+    "startingSkills": {
+      "melee": 74,
+      "ranged": 66,
+      "medicine": 26,
+      "administration": 24,
+      "engineering": 14,
+      "negotiation": 18,
+      "survival": 62,
+      "security": 58,
+      "crafting": 10,
+      "performance": 8,
+      "academics": 16,
+      "intrigue": 52
+    },
+    "startingTraits": {
+      "discipline": 81,
+      "ambition": 28,
+      "empathy": 38,
+      "ruthlessness": 62,
+      "prudence": 44,
+      "curiosity": 32,
+      "dominance": 58,
+      "loyalty": 68,
+      "zeal": 42,
+      "vanity": 12
+    },
+    "allowedTitleIds": [
+      "title-trainer",
+      "title-quartermaster"
+    ],
+    "ageBand": "middle",
+    "sex": "man",
+    "appearanceTags": [
+      "fills doorways without meaning to",
+      "makes eye contact slightly too long then breaks it",
+      "carries nothing that is not necessary"
+    ],
+    "quirks": [
+      {
+        "text": "counts exits and headcounts in any new location before relaxing",
+        "tags": [
+          "paranoid",
+          "cautious"
+        ],
+        "triggerKeywords": [
+          "building",
+          "location",
+          "enter",
+          "room"
+        ]
+      },
+      {
+        "text": "asks the names of people who died in operations he was not part of",
+        "tags": [
+          "loyal",
+          "grief-prone"
+        ],
+        "triggerKeywords": [
+          "death",
+          "loss",
+          "mission",
+          "fail"
+        ]
+      }
+    ],
+    "motivation": {
+      "publicGoal": "To be useful in a way that does not require him to think about why.",
+      "privateNeed": "To find out if he is still someone worth trusting."
+    },
+    "bonds": [
+      {
+        "type": "old-comrade",
+        "targetId": "npc-verek-holst",
+        "note": "Both came out of Compact enforcement in different units. They know each other's names and reputation. Not friends — professional acknowledgment. Holst is one of the few people from that world Bren does not actively avoid."
+      }
+    ]
   }
 ]

@@ -28,23 +28,29 @@
     "arcId": "arc-fractured",
     "stages": [
       {
+        "id": "intact",
+        "transitionConditions": {
+          "minDaysInStage": 45
+        },
+        "transitionEventId": "event-bren-fracture-visible"
+      },
+      {
+        "id": "cracking",
+        "transitionConditions": null
+      },
+      {
+        "id": "healing",
+        "transitionConditions": {
+          "minDaysInStage": 60
+        },
+        "transitionEventId": "event-bren-returning"
+      },
+      {
+        "id": "returned",
+        "transitionConditions": null
+      },
+      {
         "id": "broken",
-        "transitionConditions": {
-          "minDaysInStage": 45,
-          "anyTraitAbove": { "trait": "loyalty", "threshold": 60 }
-        },
-        "transitionEventId": "bren-mending-event"
-      },
-      {
-        "id": "mending",
-        "transitionConditions": {
-          "minDaysInStage": 90,
-          "anyTraitAbove": { "trait": "empathy", "threshold": 50 }
-        },
-        "transitionEventId": "bren-whole-event"
-      },
-      {
-        "id": "whole",
         "transitionConditions": null
       }
     ]
