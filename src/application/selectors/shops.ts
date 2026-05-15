@@ -11,6 +11,14 @@ export function computeFactionPriceMod(standing: number): number {
   return 1.0
 }
 
+/** Returns a price multiplier based on the district's current market pressure (0–100). */
+export function computeMarketPressureMod(pressure: number): number {
+  if (pressure >= 70) return 1.15
+  if (pressure >= 50) return 1.05
+  if (pressure <= 30) return 0.92
+  return 1.0
+}
+
 const selectMoney = (state: RootState) => state.game.money
 const selectOwnedItems = (state: RootState) => state.game.ownedItems
 const selectDistrictStates = (state: RootState) => state.game.districts
@@ -93,7 +101,9 @@ export const selectShopOverview = createSelector(
           ? (factionStandings[districtControlFactionId] ?? 0)
           : 0
         const factionMod = computeFactionPriceMod(controlStanding)
-        const priceModifier = basePriceMod * factionMod
+        const marketPressureValue = districtState?.marketPressure ?? 50
+        const marketPressureMod = computeMarketPressureMod(marketPressureValue)
+        const priceModifier = basePriceMod * factionMod * marketPressureMod
 
         return {
           id: shop.id,
@@ -105,6 +115,7 @@ export const selectShopOverview = createSelector(
           controllingFactionName: controllingFaction?.name ?? null,
           controllingFactionId: districtControlFactionId,
           factionPriceModifier: factionMod,
+          marketPressureMod,
           danger: districtState?.danger ?? null,
           marketPressure: districtState?.marketPressure ?? null,
           accessDenied: accessDenied || institutionalBlock,

@@ -118,9 +118,14 @@ export function ShopsScreen() {
                       Danger {shop.danger}
                     </span>
                   )}
-                  {shop.marketPressure !== null && shop.marketPressure > 40 && (
-                    <span className="badge badge-warning">
-                      Market pressure {shop.marketPressure}
+                  {'marketPressureMod' in shop && typeof shop.marketPressureMod === 'number' && shop.marketPressureMod !== 1.0 && (
+                    <span
+                      className={shop.marketPressureMod < 1.0 ? 'badge badge-success' : 'badge badge-warning'}
+                      title={`Market pressure ${shop.marketPressure ?? '—'}/100`}
+                    >
+                      {shop.marketPressureMod < 1.0
+                        ? `${Math.round((1 - shop.marketPressureMod) * 100)}% low-demand discount`
+                        : `+${Math.round((shop.marketPressureMod - 1) * 100)}% high-demand surcharge`}
                     </span>
                   )}
                   {'factionPriceModifier' in shop && typeof shop.factionPriceModifier === 'number' && shop.factionPriceModifier !== 1.0 && (

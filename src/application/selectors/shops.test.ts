@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
-import { selectShopsInCurrentDistrict, selectShopOverview, computeFactionPriceMod } from './shops'
+import { selectShopsInCurrentDistrict, selectShopOverview, computeFactionPriceMod, computeMarketPressureMod } from './shops'
 import type { GameState } from '../../domain'
 
 function makeRootState(game: GameState) {
@@ -127,5 +127,74 @@ describe('selectShopOverview faction price modifier', () => {
     const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
     const hasPermit = harborShop?.offers.some((o) => o.itemId === 'item-compact-permit-official')
     expect(hasPermit).toBe(true)
+  })
+})
+
+describe('computeMarketPressureMod', () => {
+  it('returns 1.15 at pressure >= 70 (high demand)', () => {
+    expect(computeMarketPressureMod(70)).toBe(1.15)
+    expect(computeMarketPressureMod(100)).toBe(1.15)
+  })
+
+  it('returns 1.05 at pressure >= 50 and < 70', () => {
+    expect(computeMarketPressureMod(50)).toBe(1.05)
+    expect(computeMarketPressureMod(69)).toBe(1.05)
+  })
+
+  it('returns 1.0 at moderate pressure', () => {
+    expect(computeMarketPressureMod(31)).toBe(1.0)
+    expect(computeMarketPressureMod(49)).toBe(1.0)
+  })
+
+  it('returns 0.92 at pressure <= 30 (low demand)', () => {
+    expect(computeMarketPressureMod(30)).toBe(0.92)
+    expect(computeMarketPressureMod(0)).toBe(0.92)
+  })
+})
+
+describe('selectShopOverview market pressure wiring', () => {
+  it('prices are higher in a high-pressure district than a low-pressure one', () => {
+    const highPressureState = makeRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      districts: initialGameStateSnapshot.districts.map((d) =>
+        d.districtId === 'district-harbor' ? { ...d, marketPressure: 85 } : d,
+      ),
+    })
+    const lowPressureState = makeRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      districts: initialGameStateSnapshot.districts.map((d) =>
+        d.districtId === 'district-harbor' ? { ...d, marketPressure: 20 } : d,
+      ),
+    })
+
+    const highResult = selectShopOverview(highPressureState)
+    const lowResult = selectShopOverview(lowPressureState)
+
+    const highShop = highResult.shops.find((s) => s.districtId === 'district-harbor')
+    const lowShop = lowResult.shops.find((s) => s.districtId === 'district-harbor')
+
+    expect(highShop).toBeDefined()
+    expect(lowShop).toBeDefined()
+
+    const highPrice = highShop?.offers[0]?.price ?? 0
+    const lowPrice = lowShop?.offers[0]?.price ?? 0
+
+    expect(highPrice).toBeGreaterThan(lowPrice)
+  })
+
+  it('marketPressureMod is exposed on shop view model', () => {
+    const state = makeRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      districts: initialGameStateSnapshot.districts.map((d) =>
+        d.districtId === 'district-harbor' ? { ...d, marketPressure: 80 } : d,
+      ),
+    })
+    const result = selectShopOverview(state)
+    const shop = result.shops.find((s) => s.districtId === 'district-harbor')
+
+    expect(shop?.marketPressureMod).toBe(1.15)
   })
 })
