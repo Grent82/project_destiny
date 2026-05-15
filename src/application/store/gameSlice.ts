@@ -32,6 +32,7 @@ import { acceptWard as acceptWardCommand, formalizeAdultWard as formalizeAdultWa
 import { installModule as installModuleCommand } from '../commands/installModule'
 import { useItem as useItemCommand } from '../commands/useItem'
 import { sellItem as sellItemCommand } from '../commands/sellItem'
+import { giftItemToNpc as giftItemToNpcCommand } from '../commands/giftItem'
 import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
 import {
   addQuestLeadIfNew,
@@ -1330,8 +1331,8 @@ const gameSlice = createSlice({
 
     /** Give an item from ownedItems to an NPC (removes from player inventory) */
     giveItemToNpc(state, action: PayloadAction<{ instanceId: string; npcId: string }>) {
-      const { instanceId } = action.payload
-      state.ownedItems = state.ownedItems.filter((o) => o.instanceId !== instanceId)
+      const snapshot = current(state) as GameState
+      return giftItemToNpcCommand(snapshot, action.payload)
     },
 
     /** Sell a trade good or material from inventory at the current district market price */

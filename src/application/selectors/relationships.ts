@@ -30,6 +30,22 @@ export const selectKnownAssociates =
     return results
   }
 
+export const selectGiftHistoryWithPlayer =
+  (npcId: string) =>
+  (state: RootState): { itemId: string; itemName: string; message: string; day: number }[] =>
+    state.game.activityLog
+      .filter((entry) => entry.id.startsWith(`gift::${npcId}::`))
+      .map((entry) => {
+        const [, , itemId = 'unknown-item'] = entry.id.split('::')
+        const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
+        return {
+          itemId,
+          itemName,
+          message: entry.message,
+          day: entry.day,
+        }
+      })
+
 /**
  * Average loyalty across selected squad members' relationships.
  * Used to show squad cohesion in MissionPrepScreen.

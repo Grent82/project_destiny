@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -368,12 +368,34 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Attributes')
   const [equipSlot, setEquipSlot] = useState<'primaryWeaponId' | 'secondaryWeaponId' | 'armorId' | null>(null)
   const [showAssociates, setShowAssociates] = useState(false)
+  const [showGiftList, setShowGiftList] = useState(false)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
   const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
+  const giftHistory = useAppSelector(selectGiftHistoryWithPlayer(detail.npcId))
+  const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
+  const houseDistrictId = useAppSelector((state) => state.game.houseDistrictId)
+  const giftItems = useAppSelector((state) =>
+    state.game.ownedItems
+      .filter((owned) => owned.location === 'inventory')
+      .flatMap((owned) => {
+        const definition = contentCatalog.itemsById.get(owned.itemId)
+        if (!definition || definition.category !== 'gift') return []
+        return [{ instanceId: owned.instanceId, itemName: definition.name }]
+      }),
+  )
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
+  const canOfferGift =
+    currentDistrictId === houseDistrictId &&
+    detail.assignment !== 'deployed'
+  const giftUnavailableReason =
+    !canOfferGift
+      ? 'Gifts can currently only be offered while you are at the house with the recipient close at hand.'
+      : giftItems.length === 0
+        ? 'Carry a gift item in inventory to offer one here.'
+        : null
 
   function handleTalk() {
     if (!dialogueTree) return
@@ -503,6 +525,21 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               <RelationshipBar label="Fear" value={relationship.fear} />
               <RelationshipBar label="Trust" value={relationship.trust} />
               <RelationshipBar label="Loyalty" value={relationship.loyalty} />
+              {giftHistory.length > 0 && (
+                <div style={{ marginTop: '1rem' }}>
+                  <h4 style={{ marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Received Gifts</h4>
+                  <div className="associates-list">
+                    {giftHistory.slice(0, 3).map((entry) => (
+                      <div key={`${entry.itemId}-${entry.day}`} className="associate-entry">
+                        <strong className="associate-name">Received: {entry.itemName}</strong>
+                        <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                          Day {entry.day} · {entry.message}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               {knownAssociates.length > 0 && (
                 <div style={{ marginTop: '1rem' }}>
                   <button
@@ -573,6 +610,37 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             <button className="action-button" type="button" onClick={handleTalk}>
               Talk
             </button>
+          )}
+          <button
+            className="action-button"
+            type="button"
+            onClick={() => setShowGiftList((value) => !value)}
+            disabled={!canOfferGift || giftItems.length === 0}
+            title={giftUnavailableReason ?? 'Offer a gift from inventory'}
+          >
+            {showGiftList ? 'Hide Gifts' : 'Offer Gift'}
+          </button>
+          {showGiftList && canOfferGift && (
+            <div className="title-list">
+              {giftItems.length === 0 ? (
+                <p className="text-muted">No gift items in inventory.</p>
+              ) : (
+                giftItems.map((gift) => (
+                  <button
+                    key={gift.instanceId}
+                    className="title-option"
+                    type="button"
+                    onClick={() => {
+                      dispatch(gameActions.giveItemToNpc({ instanceId: gift.instanceId, npcId: detail.npcId }))
+                      setShowGiftList(false)
+                    }}
+                  >
+                    <strong>{gift.itemName}</strong>
+                    <span className="text-muted"> — Offer to {detail.name}</span>
+                  </button>
+                ))
+              )}
+            </div>
           )}
           <div className="equip-actions">
             <button
