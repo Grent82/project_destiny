@@ -46,6 +46,12 @@ The findings, files, screens, or user reports that justify the task.
 
 Exact checks required before handoff.
 
+For player-facing work, include:
+
+- how player comprehension is checked
+- how route clarity is checked
+- how post-action readability is checked
+
 ### Architecture Constraints
 
 Dependency rules or layering constraints that must not be broken.

@@ -20,6 +20,8 @@ bd close <id>         # mark done when finished
 Use `bd` for ALL task tracking. Do not use markdown TODO lists or other tools.
 
 When creating or materially refining a Bead, follow `docs/workflows/bead-creation.md`.
+Use `docs/workflows/design-review.md` for player-facing design review and UX critique.
+Use `docs/workflows/dialogue-review.md` for dialogue-tree work.
 At minimum, include:
 
 - `why`
@@ -32,6 +34,7 @@ At minimum, include:
 - finding coverage
 
 For narrative-heavy Beads, also include a `fiction contract`.
+For player-facing work, verify comprehension, route clarity, and visible consequence — not only passing state tests.
 
 ## Build, Test & Lint
 

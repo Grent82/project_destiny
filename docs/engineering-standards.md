@@ -55,6 +55,9 @@ Code review should prioritize:
 - test coverage quality
 - dependency direction
 - clarity of intent
+- player comprehension for player-facing changes
+- visible consequence after interaction
+- layer-appropriate information hierarchy in UI surfaces
 
 Style issues matter less than structural violations.
 

@@ -24,6 +24,7 @@ This document is process source of truth for agent collaboration.
 - Use Beads as the only backlog and dependency tracker.
 - Minimize overlapping file ownership between agents.
 - Integrate often. Do not let long-lived divergent work accumulate.
+- For player-facing work, distinguish `state correctness` from `player comprehension`; both must be reviewed.
 
 ## Operating Structure
 
@@ -123,6 +124,7 @@ If a task depends on another task’s output, encode that dependency in Beads. D
 - Audit-derived Beads must record `finding coverage`.
 - Narrative-heavy Beads must record a `fiction contract`.
 - Prefer capability Beads before content-expansion Beads.
+- Player-facing Beads should include acceptance for route clarity, post-action readability, and layer-appropriate information hierarchy where relevant.
 
 ## Task Lifecycle
 

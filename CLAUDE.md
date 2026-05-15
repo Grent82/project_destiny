@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Follow `docs/engineering-standards.md` for architecture and code quality rules.
 - Use `docs/task-contract.md` when creating or refining tasks.
 - Use `docs/workflows/bead-creation.md` when creating or materially refining Beads.
+- Use `docs/workflows/design-review.md` for player-facing design review and UX critique.
+- Use `docs/workflows/dialogue-review.md` for dialogue-tree work.
 - Treat Beads as the only backlog and dependency tracker.
 
 ## Architecture and Quality Priorities
@@ -19,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - No business rules hidden in UI components
 - Beads must record `why`, `what`, `why now`, `player impact`, `system impact`, explicit non-goals, acceptance, and finding coverage
 - Narrative-heavy Beads must also record a `fiction contract`
+- Player-facing work must be reviewed for comprehension, route clarity, and visible consequence, not only for passing tests
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
