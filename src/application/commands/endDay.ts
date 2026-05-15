@@ -193,8 +193,8 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyNpcTraitDrift(afterEvents, rng)
   afterEvents = checkNpcArcTransitions(afterEvents, rng)
 
-  // Step 9d: personality friction and bonding events (every 2 days)
-  if (nextDay % 2 === 0) {
+  // Step 9d: personality friction and bonding events (every 28 days)
+  if (nextDay % 28 === 0) {
     afterEvents = applyPersonalityFriction(afterEvents, rng)
   }
 
