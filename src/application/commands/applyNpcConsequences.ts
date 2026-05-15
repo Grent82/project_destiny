@@ -4,6 +4,7 @@ import { applyPassiveDrift, applyProximityGains } from './adjustRelationship'
 import { evaluateNpcDeparture } from './npcDeparture'
 import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 import type { Rng } from './seededRng'
+import { ensureCaptivityPregnancyDiscovery } from './captivityPregnancyDiscovery'
 
 interface RelationshipMilestone {
   readonly npcId: string
@@ -84,7 +85,7 @@ function checkRelationshipMilestones(state: GameState): GameState {
       `Relationship milestone reached with ${milestone.npcId}.`,
     )
   }
-  return next
+  return ensureCaptivityPregnancyDiscovery(next)
 }
 
 /** Steps 5b–5d: relationship drift, ambition frustration, NPC departure/betrayal, durability warnings.

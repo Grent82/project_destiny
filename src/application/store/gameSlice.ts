@@ -34,6 +34,11 @@ import { useItem as useItemCommand } from '../commands/useItem'
 import { sellItem as sellItemCommand } from '../commands/sellItem'
 import { giftItemToNpc as giftItemToNpcCommand } from '../commands/giftItem'
 import { freeNpc as freeNpcCommand } from '../commands/bondService'
+import {
+  buildCaptivityPregnancyDiscoveryPresentationText,
+  CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
+  captivityPregnancyDiscoveryKey,
+} from '../commands/captivityPregnancyDiscovery'
 import { sleepBrief, sleepToMorning, advanceTimeSlotInState } from '../commands/timeAdvance'
 import {
   addQuestLeadIfNew,
@@ -291,7 +296,29 @@ const gameSlice = createSlice({
       const choice = template.choices.find((c) => c.id === choiceId)
       if (!choice) return
 
-      const next = { ...state, pendingEvents: state.pendingEvents.filter((e) => e.eventId !== eventId) }
+      const pendingIndex = state.pendingEvents.findIndex((event) => event.eventId === eventId)
+      const pendingEvents =
+        pendingIndex === -1
+          ? state.pendingEvents
+          : state.pendingEvents.filter((_, index) => index !== pendingIndex)
+      const matchingInstance = state.eventInstances.find(
+        (instance) => instance.eventId === eventId && instance.resolvedOnDay === null,
+      )
+      const next = {
+        ...state,
+        pendingEvents,
+        eventInstances: matchingInstance
+          ? state.eventInstances.map((instance) =>
+              instance.instanceId === matchingInstance.instanceId
+                ? {
+                    ...instance,
+                    resolvedOnDay: state.day,
+                    chosenOptionId: choiceId,
+                  }
+                : instance,
+            )
+          : state.eventInstances,
+      }
       return applyOutcomes(next, choice.outcomes)
     },
     travelToDistrict(state, action: PayloadAction<string>) {
@@ -1324,6 +1351,29 @@ const gameSlice = createSlice({
         message: `${npc.name} has been rescued. Condition at rescue: ${cap.condition}.`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      if (npc.pregnancyState?.context === 'unknown') {
+        const key = captivityPregnancyDiscoveryKey(npcId)
+        if (state.lastFiredDay[key] === undefined) {
+          state.pendingEvents.push({
+            eventId: CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
+            firedOnDay: state.day,
+          })
+          state.eventInstances.push({
+            instanceId: `${key}-${state.day}`,
+            eventId: CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
+            firedOnDay: state.day,
+            resolvedOnDay: null,
+            chosenOptionId: null,
+            sourceDistrictId: state.currentDistrictId,
+            sourceNpcId: npcId,
+            presentationText: buildCaptivityPregnancyDiscoveryPresentationText(
+              current(state) as GameState,
+              current(npc) as typeof npc,
+            ),
+          })
+          state.lastFiredDay[key] = state.day
+        }
+      }
     },
 
     /** Move an owned item to a different location (inventory, house_storage, mission_pack, etc.) */

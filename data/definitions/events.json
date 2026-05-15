@@ -5048,5 +5048,63 @@
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": "The objection is not loud. It lands anyway."
+  },
+  {
+    "id": "event-captivity-pregnancy-discovery",
+    "title": "A Quiet Report",
+    "description": "The truth reaches the house through a human voice before it reaches any ledger. Whatever happened before is not what this moment is for. What matters is what is true now and what must be chosen around it.",
+    "triggerConditions": {
+      "dayMin": 1,
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-protect",
+        "label": "Protect her first.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You made immediate safety the first answer. Nothing else is allowed to move faster than that."
+          }
+        ]
+      },
+      {
+        "id": "choice-investigate",
+        "label": "Investigate what can still be proven.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You begin collecting what can be known without turning her into evidence."
+          }
+        ]
+      },
+      {
+        "id": "choice-conceal",
+        "label": "Conceal the truth until the house is ready.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You chose secrecy for now. It buys time, not peace."
+          }
+        ]
+      },
+      {
+        "id": "choice-confront-captor",
+        "label": "Confront the captor's side of it.",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You turn toward accountability. Whatever answer comes back will not undo the fact itself."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["captivity", "pregnancy", "authored", "consequence"],
+    "repeatable": true,
+    "cooldownDays": 365,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "The moment is quiet because spectacle would be a failure."
   }
 ]
