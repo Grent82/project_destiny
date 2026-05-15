@@ -31,9 +31,8 @@ describe('checkRelationshipMilestones (via applyNpcConsequences)', () => {
     expect(result.pendingEvents.some((e) => e.eventId === 'event-marion-milestone-motivation')).toBe(true)
   })
 
-  it('does not fire Marion milestone when trust is below 65 after drift', () => {
-    const state = stateWithRelationship('npc-marion-vale', 65, 0)
-    // After drift: trust drops to 64, below threshold
+  it('does not fire Marion milestone when trust is below 65', () => {
+    const state = stateWithRelationship('npc-marion-vale', 64, 0)
     const result = applyNpcConsequences(state, state.relationships, noop)
     expect(result.pendingEvents.some((e) => e.eventId === 'event-marion-milestone-motivation')).toBe(false)
   })

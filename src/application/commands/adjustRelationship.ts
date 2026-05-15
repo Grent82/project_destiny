@@ -56,14 +56,50 @@ export function applyRelationshipDelta(
   return { key, oldValue, newValue, significant: crossedThreshold }
 }
 
+const DEFAULT_LOYALTY = 50
+
 export function applyPassiveDrift(state: GameState): void {
+  const rosterTraitsMap = new Map(state.roster.map((n) => [n.npcId, n.traits]))
+
   Object.keys(state.relationships).forEach((key) => {
     const rel = state.relationships[key]!
-    state.relationships[key] = {
-      ...rel,
-      affinity: rel.affinity > 0 ? Math.max(0, rel.affinity - 1) : rel.affinity,
-      trust: rel.trust > 0 ? Math.max(0, rel.trust - 1) : rel.trust,
+
+    // Only trust drifts passively; affinity persists until friction events reduce it
+    const trust = rel.trust
+    if (trust <= 40) return // relationship still forming — no decay yet
+
+    // Base drift interval from trust band
+    const baseInterval = trust > 80 ? 1 : trust > 60 ? 2 : 3
+
+    // Parse NPC IDs from key (format: '{fromId}→{toId}')
+    const arrowIdx = key.indexOf('→')
+    if (arrowIdx === -1) return
+    const fromId = key.slice(0, arrowIdx)
+    const toId = key.slice(arrowIdx + '→'.length)
+
+    // Loyalty for both parties — player and unknown NPCs default to 50
+    const fromLoyalty = fromId === 'player' ? DEFAULT_LOYALTY : (rosterTraitsMap.get(fromId)?.loyalty ?? DEFAULT_LOYALTY)
+    const toLoyalty = toId === 'player' ? DEFAULT_LOYALTY : (rosterTraitsMap.get(toId)?.loyalty ?? DEFAULT_LOYALTY)
+    const avgLoyalty = (fromLoyalty + toLoyalty) / 2
+
+    // Loyalty modifier: high loyalty → slower drift; low loyalty → faster drift
+    const loyaltyFactor = avgLoyalty > 60 ? 0.75 : avgLoyalty < 35 ? 1.25 : 1.0
+
+    // Compatibility modifier: natural chemistry slows drift; friction accelerates it
+    const fromTraits = fromId !== 'player' ? rosterTraitsMap.get(fromId) : undefined
+    const toTraits = toId !== 'player' ? rosterTraitsMap.get(toId) : undefined
+    let compatFactor = 1.0
+    if (fromTraits && toTraits) {
+      const score = calculateBaseCompatibility(fromTraits, toTraits)
+      compatFactor = score >= 15 ? 0.5 : score <= -10 ? 1.5 : 1.0
     }
+
+    // Effective interval: higher rate factors → smaller interval (more frequent drift)
+    const effectiveInterval = Math.max(1, Math.round(baseInterval / (loyaltyFactor * compatFactor)))
+
+    if (state.day % effectiveInterval !== 0) return
+
+    state.relationships[key] = { ...rel, trust: Math.max(0, trust - 1) }
   })
 }
 
