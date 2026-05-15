@@ -30,6 +30,11 @@ export const screenCatalog = [
     summary: 'What has been logged: economy shifts, encounters, and the state of things.',
   },
   {
+    path: '/ledger',
+    title: 'Ledger',
+    summary: 'Debt, wages, contract registry, and the standing obligations of House Valdris.',
+  },
+  {
     path: '/house',
     title: 'The House',
     summary: 'The Valdris family seat in The Pale. Damaged, stripped, but still standing.',

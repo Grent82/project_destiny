@@ -93,7 +93,7 @@ export function ShopsScreen() {
           <button
             className="action-button"
             type="button"
-            onClick={() => navigate('/city')}
+            onClick={() => navigate('/district-map')}
           >
             ← Browse District Map
           </button>

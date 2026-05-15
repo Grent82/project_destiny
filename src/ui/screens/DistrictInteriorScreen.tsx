@@ -59,7 +59,7 @@ export function DistrictInteriorScreen() {
       <section className="screen-panel">
         <p className="eyebrow">District</p>
         <h1>Unknown district</h1>
-        <button className="action-button" type="button" onClick={() => navigate('/city')}>
+        <button className="action-button" type="button" onClick={() => navigate('/district-map')}>
           ← City Map
         </button>
       </section>
@@ -90,7 +90,7 @@ export function DistrictInteriorScreen() {
           className="nav-link"
           type="button"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-          onClick={() => navigate('/city')}
+          onClick={() => navigate('/district-map')}
         >
           ← City Map
         </button>

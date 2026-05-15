@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
 import {
   createGameStore,
@@ -105,5 +106,23 @@ describe('DashboardScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Load session' }))
 
     expect(screen.getByText('Session restored from local snapshot.')).toBeInTheDocument()
+  })
+
+  it('shows local market and ledger shortcuts in overview', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-pale',
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('link', { name: /Visit local shops/i })).toHaveAttribute('href', '/shops')
+    expect(screen.getByRole('link', { name: /Open the ledger/i })).toHaveAttribute('href', '/ledger')
   })
 })
