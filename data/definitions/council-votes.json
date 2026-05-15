@@ -28,5 +28,105 @@
     "effect": "Tallow Ring standing decreases by 10. Hollows access temporarily restricted.",
     "playerInfluenceThreshold": 25,
     "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-merrow-customs-seal",
+    "title": "Merrow Customs Seal Authority",
+    "description": "House Merrow petitions for exclusive customs-seal authority over all cargo entering Ash Quay. The Compact contests jurisdiction.",
+    "proposingFactionId": "faction-house-merrow",
+    "targetFactionId": "faction-civic-compact",
+    "effect": "If passed: House Merrow standing +8, Civic Compact standing -5. Ash Quay trade fees increase by 10%.",
+    "playerInfluenceThreshold": 35,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-compact-customs-jurisdiction",
+    "title": "Compact Jurisdiction Over Transit Tolls",
+    "description": "The Compact moves to reassert transit authority over Ash Quay, invalidating Merrow customs agreements with southern traders.",
+    "proposingFactionId": "faction-civic-compact",
+    "targetFactionId": "faction-house-merrow",
+    "effect": "If passed: Civic Compact standing +6, House Merrow standing -8. Harbor Ward tension decreases by 15.",
+    "playerInfluenceThreshold": 30,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-league-safety-inspections",
+    "title": "Mandatory Ironworks Safety Inspections",
+    "description": "The League proposes quarterly safety inspections of all Ring-supplied raw material channels running through the Ironworks.",
+    "proposingFactionId": "faction-foundry-league",
+    "targetFactionId": "faction-tallow-ring",
+    "effect": "If passed: Foundry League standing +6, Tallow Ring standing -6. Ironworks market pressure decreases by 10.",
+    "playerInfluenceThreshold": 25,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-ring-supply-exemption",
+    "title": "Ring Supply Chain Exemption",
+    "description": "The Tallow Ring moves to exempt their existing Ironworks supply contracts from League safety oversight, citing operational continuity.",
+    "proposingFactionId": "faction-tallow-ring",
+    "targetFactionId": "faction-foundry-league",
+    "effect": "If passed: Tallow Ring standing +5, Foundry League standing -4. City corruption increases by 5.",
+    "playerInfluenceThreshold": 20,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-pale-welfare-allocation",
+    "title": "Pale District Welfare Allocation",
+    "description": "The Restored proposes allocating city funds to support displaced residents in The Pale. The Court objects to the budget impact.",
+    "proposingFactionId": "faction-restored",
+    "targetFactionId": "faction-gilded-court",
+    "effect": "If passed: Restored standing +8, Gilded Court standing -5. City unrest decreases by 8. City prosperity decreases by 3.",
+    "playerInfluenceThreshold": 20,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-court-fiscal-austerity",
+    "title": "Fiscal Austerity Directive",
+    "description": "The Court proposes cutting welfare disbursements to The Pale and Warrens by 30%, citing budget overruns from reconstruction costs.",
+    "proposingFactionId": "faction-gilded-court",
+    "targetFactionId": "faction-restored",
+    "effect": "If passed: Gilded Court standing +5, Restored standing -7. City unrest increases by 10. City prosperity increases by 4.",
+    "playerInfluenceThreshold": 30,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-hollows-security-contract",
+    "title": "Hollows Security Contract",
+    "description": "The Compact proposes awarding a district security contract for The Hollows to a licensed enforcement company, displacing Ring-operated protection rackets.",
+    "proposingFactionId": "faction-civic-compact",
+    "targetFactionId": "faction-tallow-ring",
+    "effect": "If passed: Civic Compact standing +7, Tallow Ring standing -8. Hollows danger level decreases by 1 for 10 days.",
+    "playerInfluenceThreshold": 25,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-warrens-self-governance",
+    "title": "Warrens Self-Governance Petition",
+    "description": "The Restored petitions for a provisional self-governance charter in the Warrens, reducing Compact enforcement presence in exchange for community accountability.",
+    "proposingFactionId": "faction-restored",
+    "targetFactionId": "faction-civic-compact",
+    "effect": "If passed: Restored standing +6, Civic Compact standing -4. Warrens unrest decreases by 12.",
+    "playerInfluenceThreshold": 20,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-harbor-access-fee-hike",
+    "title": "Harbor Access Fee Revision",
+    "description": "The Compact proposes increasing Harbor Ward access fees for non-credentialed traders, citing maintenance costs for dock infrastructure.",
+    "proposingFactionId": "faction-civic-compact",
+    "targetFactionId": "faction-house-merrow",
+    "effect": "If passed: Civic Compact standing +5, Harbor Ward market pressure increases by 10 for 7 days.",
+    "playerInfluenceThreshold": 25,
+    "expiresOnDay": -1
+  },
+  {
+    "id": "cvote-merrow-free-transit-clause",
+    "title": "Merrow Free Transit Clause",
+    "description": "House Merrow moves to establish a free-transit clause for pre-approved cargo moving between Ash Quay and the Harbor, bypassing Compact inspection fees.",
+    "proposingFactionId": "faction-house-merrow",
+    "targetFactionId": "faction-civic-compact",
+    "effect": "If passed: House Merrow standing +7, Civic Compact standing -5. Harbor Ward market pressure decreases by 8.",
+    "playerInfluenceThreshold": 30,
+    "expiresOnDay": -1
   }
 ]
