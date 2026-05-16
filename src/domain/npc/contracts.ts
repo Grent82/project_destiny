@@ -164,6 +164,7 @@ export const npcBondSchema = z.object({
   type: bondTypeSchema,
   targetId: z.string().min(1),
   note: z.string().optional(),
+  visibility: z.enum(['hidden', 'rumored', 'known']).optional(),
 })
 
 export const npcDefinitionSchema = z

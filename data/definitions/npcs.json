@@ -92,6 +92,18 @@
         "type": "handler",
         "targetId": "npc-ghost-valdris-cargo-patron",
         "note": "Family handled illicit cargo for a noble house. Knows which house shipped people out of Valdenmoor during the first panic."
+      },
+      {
+        "type": "old-comrade",
+        "targetId": "npc-ida-rhys",
+        "note": "Ida learned dock-reading, household discipline, and exit-cataloguing from Marion before either of them joined this house. Marion will not explain how that came to be.",
+        "visibility": "hidden"
+      },
+      {
+        "type": "handler",
+        "targetId": "npc-ghost-sorn-steward",
+        "note": "Marion's supply chain runs partly through a noble hand she will not name. The arrangement predates her dock work and keeps certain goods moving without questions.",
+        "visibility": "hidden"
       }
     ],
     "romanceEligible": true
@@ -186,6 +198,12 @@
         "type": "old-comrade",
         "targetId": "npc-verek-holst",
         "note": "Both came through the same labor disputes. Holst keeps a tally; Ida keeps moving forward. Uncomfortable trust."
+      },
+      {
+        "type": "old-comrade",
+        "targetId": "npc-marion-vale",
+        "note": "Learned everything about not trusting a structure until you have tapped it from Marion. Will not say this directly.",
+        "visibility": "hidden"
       }
     ],
     "romanceEligible": true
@@ -301,7 +319,8 @@
       {
         "type": "debtor",
         "targetId": "npc-garet-doyle",
-        "note": "Owes Doyle something from before the Breach. Doyle has not called it in. Yet."
+        "note": "Owes Doyle silence and a favor from the Breach winter — Doyle sheltered him when a creditor was looking. Statutes he recites under his breath include one about shelter debts.",
+        "visibility": "hidden"
       }
     ]
   },
@@ -1334,6 +1353,12 @@
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
         "note": "Father ran inn serving Valdris retainers. Locked box contains service tokens and unpaid writs from the old house."
+      },
+      {
+        "type": "old-comrade",
+        "targetId": "npc-verek-holst",
+        "note": "Sheltered Verek from a creditor during the Breach winter. Verek has never fully repaid it. Garet has not asked.",
+        "visibility": "rumored"
       }
     ],
     "schedule": {
@@ -1445,6 +1470,12 @@
         "type": "dead-spouse",
         "targetId": "npc-ghost-dead-sister-vael",
         "note": "Sister erased from temple records after the Breach \u2014 smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
+      },
+      {
+        "type": "witness",
+        "targetId": "npc-old-maret",
+        "note": "Both present at the same Breach event. Vael does not acknowledge this publicly. She confesses it when Maret is threatened.",
+        "visibility": "hidden"
       }
     ],
     "schedule": {
@@ -2238,6 +2269,12 @@
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
         "note": "Was lower household accounts keeper. Falsified grain ledgers during pre-Breach winter riot. Last living witness to the servants hall."
+      },
+      {
+        "type": "witness",
+        "targetId": "npc-sister-vael",
+        "note": "Knows what Vael saw at the Breach. Has kept silence for years. Calls it a debt she has not collected.",
+        "visibility": "hidden"
       }
     ],
     "schedule": {
@@ -2528,6 +2565,12 @@
         "type": "rival",
         "targetId": "faction-house-merrow",
         "note": "Competes for the same legitimacy space. Cooperates with Merrow only when Valdris is the common target."
+      },
+      {
+        "type": "rival",
+        "targetId": "npc-ghost-merrow-runner",
+        "note": "Sorn and Merrow cooperate only when Valdris is the shared target. Beneath that, their harbor-access rivalry runs through their respective functionaries.",
+        "visibility": "rumored"
       }
     ]
   },
