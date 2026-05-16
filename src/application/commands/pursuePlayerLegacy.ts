@@ -131,6 +131,8 @@ export function tickPregnancyProgress(state: GameState): GameState {
               arrivalDay: next.day,
               origin: 'biological' as const,
               parentRefs,
+              legitimacyStatus: 'unknown' as const,
+              birthContext: `Born Day ${next.day}, mother: ${npc.name}`,
             },
           ],
         },

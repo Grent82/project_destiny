@@ -5108,6 +5108,48 @@
     "presentationFlavour": "The moment is quiet because spectacle would be a failure."
   },
   {
+    "id": "event-heir-announcement",
+    "title": "The City Learns",
+    "description": "On the morning the city learns House Valdris has an heir, four things happen before noon. A Merrow functionary files a legitimacy challenge at the Compact Registry. A debt collector from Voss arrives with updated terms. Lady Sorn sends a note that says only: we should speak. And in the Hollows, Old Maret lights a candle she has kept unlit for years.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-heir-announcement-acknowledge",
+        "label": "Let the city draw its own conclusions",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-house-merrow",
+            "delta": -20
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": -10
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-restored",
+            "delta": 10
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The heir is known. House Merrow has filed a legitimacy challenge. Voss has updated the debt terms. Sorn wants to meet. The Hollows noticed something no one else did."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["heir", "legitimacy", "authored", "milestone"],
+    "repeatable": false,
+    "cooldownDays": 9999,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "Recognizing an heir is not a warm family moment. It is a declaration."
+  },
+  {
     "id": "event-npc-pairing-noticed",
     "title": "Something Between Them",
     "description": "You've noticed it yourself — or someone in the house has. Two of your crew have moved past the ordinary rhythms of shared work. They are not making a show of it, but the house has eyes. What happens under this roof is your concern.",

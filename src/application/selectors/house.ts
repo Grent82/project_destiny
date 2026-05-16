@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store/gameStore'
-import type { HouseExteriorTier } from '../../domain/game/contracts'
+import type { HouseExteriorTier, HeirLegitimacy } from '../../domain/game/contracts'
 
 const selectGame = (state: RootState) => state.game
 
@@ -230,4 +230,19 @@ export const selectHouseStorageInfo = createSelector([selectGame], (game) => {
     available: Math.max(0, game.houseStorageCapacity - usedSlots),
     installedModules: game.installedHouseModules,
   }
+})
+
+const LEGITIMACY_WEIGHT: Record<HeirLegitimacy, number> = {
+  recognized: 3,
+  contested: 1,
+  hidden: 0,
+  unknown: 0,
+}
+
+/** Political weight modifier granted by the house's recognized heirs. */
+export const selectHeirLegitimacyWeight = createSelector([selectGame], (game): number => {
+  return game.house.houseHeirs.reduce((sum, heir) => {
+    const status = heir.legitimacyStatus ?? 'unknown'
+    return sum + (LEGITIMACY_WEIGHT[status] ?? 0)
+  }, 0)
 })

@@ -68,6 +68,8 @@ export function acceptWard(
     originStory: origin.originStory,
     stage: origin.initialStage,
     arrivalDay: state.day,
+    legitimacyStatus: 'unknown' as const,
+    birthContext: null,
   }
 
   const next: GameState = {

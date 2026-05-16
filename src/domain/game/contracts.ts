@@ -99,6 +99,9 @@ export type HeirStage = z.infer<typeof heirStageSchema>
 export const heirOriginSchema = z.enum(['fostered', 'biological', 'ward'])
 export type HeirOrigin = z.infer<typeof heirOriginSchema>
 
+export const heirLegitimacySchema = z.enum(['recognized', 'contested', 'hidden', 'unknown'])
+export type HeirLegitimacy = z.infer<typeof heirLegitimacySchema>
+
 export const heirSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -107,6 +110,8 @@ export const heirSchema = z.object({
   arrivalDay: z.number().int(),
   origin: heirOriginSchema.optional(),
   parentRefs: z.array(z.string()).optional(),
+  legitimacyStatus: heirLegitimacySchema.default('unknown'),
+  birthContext: z.string().nullable().default(null),
 })
 export type Heir = z.infer<typeof heirSchema>
 
