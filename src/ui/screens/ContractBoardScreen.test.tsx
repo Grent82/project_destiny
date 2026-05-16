@@ -70,12 +70,12 @@ describe('ContractBoardScreen', () => {
     )
 
     expect(screen.getByRole('button', { name: /Travel to incident site/i })).toBeInTheDocument()
+    // Next step is surfaced within the active contract card itself — no separate panel needed
     expect(screen.getByText(/Next step:/i)).toBeInTheDocument()
     expect(screen.getAllByText('Travel to The Warrens').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Blocked').length).toBeGreaterThan(0)
-    expect(
-      screen.getByRole('heading', { name: 'Recommended Next Step' }),
-    ).toBeInTheDocument()
+    // "Recommended Next Step" panel removed — next step info lives in the active contract row
+    expect(screen.queryByRole('heading', { name: 'Recommended Next Step' })).toBeNull()
   })
 
   it('routes delivery contracts into an on-site execution step instead of instant completion', () => {

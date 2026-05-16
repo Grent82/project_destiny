@@ -6,7 +6,6 @@ import {
   selectActiveQuests,
   selectCompletedQuestIds,
   selectCurrentDistrictId,
-  selectRecommendedQuestAction,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -39,11 +38,6 @@ function FactionBadge({ factionId }: { factionId: string | null }) {
   )
 }
 
-function formatStageLabel(stageId: string) {
-  return stageId
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (match) => match.toUpperCase())
-}
 
 function formatLeadFreshnessLabel(freshness: 'fresh' | 'aging' | 'stale') {
   switch (freshness) {
@@ -65,7 +59,6 @@ export function ContractBoardScreen() {
   const navigate = useNavigate()
   const availableQuestLeads = useAppSelector(selectAvailableQuestLeads)
   const activeQuests = useAppSelector(selectActiveQuests)
-  const recommendedQuestAction = useAppSelector(selectRecommendedQuestAction)
   const completedQuestIds = useAppSelector(selectCompletedQuestIds)
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
   const activeCombat = useAppSelector((state) => state.game.activeCombat)
@@ -76,104 +69,15 @@ export function ContractBoardScreen() {
       <p className="eyebrow">House Valdris</p>
       <h1>Work Board</h1>
       <p className="summary">
-        Contracts the house has taken on. Obligations, briefings, and what is owed if you fail.
+        Active contracts first — what the house has already taken on. Below that, leads that have not yet been accepted.
       </p>
       <VenueContextBanner />
-      {recommendedQuestAction ? (
-        <article className="detail-panel">
-          <h2>Recommended Next Step</h2>
-          <div className="mission-row-header">
-            <strong>{recommendedQuestAction.title}</strong>
-            {recommendedQuestAction.isStory ? (
-              <span className="badge badge-story">◆ Story-critical</span>
-            ) : null}
-            {recommendedQuestAction.blocked ? (
-              <span className="badge badge-warning">Blocked</span>
-            ) : (
-              <span className="badge badge-positive">Ready now</span>
-            )}
-            {recommendedQuestAction.urgencyRank >= 2 ? (
-              <span className="badge badge-warning">Time-sensitive</span>
-            ) : null}
-          </div>
-          <p className="quest-briefing">
-            <strong>{recommendedQuestAction.headline}</strong>
-          </p>
-          <p className="summary">{recommendedQuestAction.detail}</p>
-          <a href={recommendedQuestAction.route} className="directive-link">
-            → {recommendedQuestAction.headline}
-          </a>
-        </article>
-      ) : null}
 
       <div className="overview-grid">
         <article className="detail-panel">
-          <h2>Available Leads</h2>
-          <p className="summary" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-            These are the contracts and obligations currently on the board. Read who sent them, where they came from, and why they matter before taking one into the house ledger.
-          </p>
-          {availableQuestLeads.length === 0 ? (
-            <p className="summary">No fresh leads at the moment. Work is either already in hand or not yet surfaced.</p>
-          ) : (
-            <div className="mission-list">
-              {availableQuestLeads.map(({ lead, template, presentation }) => {
-                const discoveryDistrictName = lead.discoveryDistrictId
-                  ? contentCatalog.districtsById.get(lead.discoveryDistrictId)?.name ?? lead.discoveryDistrictId
-                  : null
-
-                return (
-                <div key={lead.leadId} className="mission-row">
-                  <div className="mission-row-header">
-                    <strong>{template.title}</strong>
-                    {template.questType === 'story' && (
-                      <span className="badge badge-story">◆ House Obligation</span>
-                    )}
-                    <span className="badge">{presentation.categoryLabel}</span>
-                    <span className={`badge ${lead.freshness === 'stale' ? 'badge-warning' : lead.freshness === 'aging' ? 'badge-warning' : 'badge-positive'}`}>
-                      {formatLeadFreshnessLabel(lead.freshness)}
-                    </span>
-                    {template.timeLimitDays != null && template.timeLimitDays <= 2 && (
-                      <span className="badge badge-warning">Urgent</span>
-                    )}
-                    {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
-                  </div>
-                  <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
-                  <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
-                  <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
-                  <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
-                  <div className="quest-meta">
-                    {template.rewardMarks > 0 && <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>}
-                    {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
-                    <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
-                    {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}
-                    {discoveryDistrictName && <span>Found in: <strong>{discoveryDistrictName}</strong></span>}
-                    {template.districtId && (
-                      <span>
-                        District: {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    className="action-button action-button--primary"
-                    onClick={() => dispatch(gameActions.acceptQuest({ questId: template.id }))}
-                    type="button"
-                  >
-                    Accept contract
-                  </button>
-                </div>
-                )
-              })}
-            </div>
-          )}
-        </article>
-
-        <article className="detail-panel">
           <h2>Active Contracts</h2>
-          <p className="summary" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-            Contracts are found in the field — at guild halls, taverns, courts, and through contacts in each district.
-          </p>
           {activeQuests.length === 0 ? (
-            <p className="summary">No contracts currently in progress. Explore the districts to find work.</p>
+            <p className="summary">No contracts in hand. Accept a lead to begin work.</p>
           ) : (
             <div className="mission-list">
               {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId, readiness }) => {
@@ -198,11 +102,10 @@ export function ContractBoardScreen() {
                       {runtime.objectiveMet ? 'Objective met' : 'Active'}
                     </span>
                     <span
-                      className={`badge ${runtime.objectiveMet ? 'badge-positive' : readiness.blocked ? 'badge-warning' : 'badge-positive'}`}
+                      className={`badge ${readiness.blocked ? 'badge-warning' : 'badge-positive'}`}
                     >
                       {readiness.blocked ? 'Blocked' : 'Ready now'}
                     </span>
-                    <span className="badge">{formatStageLabel(runtime.stageId)}</span>
                     {isUrgent && <span className="badge badge-warning">Urgent</span>}
                     {template?.riskLevel && (
                       <span className="badge">{template.riskLevel} risk</span>
@@ -233,8 +136,6 @@ export function ContractBoardScreen() {
                     <>
                       <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
                       <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
-                      <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
-                      <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
                     </>
                   )}
                   {template?.briefing && !isStory && (
@@ -247,13 +148,8 @@ export function ContractBoardScreen() {
                     {template?.rewardMarks != null && template.rewardMarks > 0 && (
                       <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>
                     )}
-                    {template?.timeLimitDays != null && (
-                      <span>Time limit: <strong>{template.timeLimitDays} days</strong> (accepted day {runtime.acceptedOnDay})</span>
-                    )}
                     {daysRemaining != null && (
-                      <span>
-                        Days remaining: <strong>{daysRemaining}</strong>
-                      </span>
+                      <span>Days remaining: <strong>{daysRemaining}</strong></span>
                     )}
                     {incidentDistrictId && (
                       <span>
@@ -264,7 +160,7 @@ export function ContractBoardScreen() {
                   <div className="quest-journal-block">
                     <h3>Quest Journal</h3>
                     {runtime.journalEntries.length === 0 ? (
-                      <p className="summary">No journal entries have been recorded for this contract yet.</p>
+                      <p className="summary">No journal entries recorded yet.</p>
                     ) : (
                       <ol className="quest-journal-list">
                         {runtime.journalEntries.map((entry, index) => (
@@ -278,9 +174,9 @@ export function ContractBoardScreen() {
                     {runtime.aftermath?.narrativeSummary ? (
                       <p className="summary">{runtime.aftermath.narrativeSummary}</p>
                     ) : (
-                      <p className="summary">No lasting consequences are logged yet.</p>
+                      <p className="summary">No lasting consequences logged yet.</p>
                     )}
-                    {factionImpactEntries.length > 0 ? (
+                    {factionImpactEntries.length > 0 && (
                       <ul className="quest-journal-list">
                         {factionImpactEntries.map((impact, index) => {
                           const factionName =
@@ -294,8 +190,8 @@ export function ContractBoardScreen() {
                           )
                         })}
                       </ul>
-                    ) : null}
-                    {worldConsequenceEntries.length > 0 ? (
+                    )}
+                    {worldConsequenceEntries.length > 0 && (
                       <ul className="quest-journal-list">
                         {worldConsequenceEntries.map((impact, index) => (
                           <li key={`${runtime.questId}-world-impact-${index}`}>
@@ -303,7 +199,7 @@ export function ContractBoardScreen() {
                           </li>
                         ))}
                       </ul>
-                    ) : null}
+                    )}
                   </div>
                   {template?.objectiveType === 'investigation' && (
                     <button
@@ -397,6 +293,63 @@ export function ContractBoardScreen() {
                       </button>
                     )
                   })()}
+                </div>
+                )
+              })}
+            </div>
+          )}
+        </article>
+
+        <article className="detail-panel">
+          <h2>Available Leads</h2>
+          {availableQuestLeads.length === 0 ? (
+            <p className="summary">No fresh leads at the moment. Work is either already in hand or not yet surfaced.</p>
+          ) : (
+            <div className="mission-list">
+              {availableQuestLeads.map(({ lead, template, presentation }) => {
+                const discoveryDistrictName = lead.discoveryDistrictId
+                  ? contentCatalog.districtsById.get(lead.discoveryDistrictId)?.name ?? lead.discoveryDistrictId
+                  : null
+
+                return (
+                <div key={lead.leadId} className="mission-row">
+                  <div className="mission-row-header">
+                    <strong>{template.title}</strong>
+                    {template.questType === 'story' && (
+                      <span className="badge badge-story">◆ House Obligation</span>
+                    )}
+                    <span className="badge">{presentation.categoryLabel}</span>
+                    <span className={`badge ${lead.freshness === 'stale' ? 'badge-warning' : lead.freshness === 'aging' ? 'badge-warning' : 'badge-positive'}`}>
+                      {formatLeadFreshnessLabel(lead.freshness)}
+                    </span>
+                    {template.timeLimitDays != null && template.timeLimitDays <= 2 && (
+                      <span className="badge badge-warning">Urgent</span>
+                    )}
+                    {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
+                  </div>
+                  <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
+                  <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
+                  <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
+                  <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
+                  <div className="quest-meta">
+                    {template.rewardMarks > 0 && <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>}
+                    {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
+                    <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
+                    {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}
+                    {discoveryDistrictName && <span>Found in: <strong>{discoveryDistrictName}</strong></span>}
+                    {template.districtId && (
+                      <span>
+                        District: {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    className="action-button action-button--primary"
+                    onClick={() => dispatch(gameActions.acceptQuest({ questId: template.id }))}
+                    type="button"
+                  >
+                    Accept contract
+                  </button>
                 </div>
                 )
               })}

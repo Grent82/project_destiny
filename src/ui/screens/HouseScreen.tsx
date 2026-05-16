@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   gameActions,
   selectDebtStatus,
@@ -11,15 +12,24 @@ import { VenueContextBanner } from './VenueContextBanner'
 import { Link } from 'react-router-dom'
 
 const ROOM_EFFECTS: Record<string, string> = {
-  'room-kitchen': 'When intact: reduces each NPC\'s daily wage by 1 Mk (house provides meals).',
-  'room-study': 'When intact: training NPCs gain +25% more skill per day.',
-  'room-bureau': 'Administrative hub of the house.',
-  'room-master-chamber': 'Your private chamber. Symbol of the house\'s standing.',
-  'room-marion-quarters': 'One of the few rooms Marion kept usable during your absence. Practical habitation, not a sealed preserve.',
-  'room-servant-quarters': 'When repaired: unlocks +1 roster slot.',
-  'room-barracks': 'When repaired: unlocks +1 roster slot.',
-  'room-east-wing': 'When repaired: unlocks +2 roster slots.',
-  'room-garret': 'Upper floor lookout. Good vantage over the street.',
+  'room-kitchen': 'When intact: each NPC\'s daily wage drops by 1 Mk. The house feeds its own.',
+  'room-study': 'When intact: NPCs in training gain +25% skill per day.',
+  'room-bureau': 'When intact: working accounts office. Repair to track debts, income, and house obligations from the Ledger.',
+  'room-master-chamber': 'When intact: the lord\'s chamber receives visitors. Faction contacts begin to treat the house as a going concern.',
+  'room-servant-quarters': 'When intact: +1 roster slot. The house can shelter another.',
+  'room-barracks': 'When intact: +1 roster slot for trained fighters.',
+  'room-east-wing': 'When intact: +2 roster slots. The east wing is habitable again.',
+  'room-garret': 'When intact: overlook the street below. Read district movement before it reaches the door.',
+  'room-marion-quarters': 'Marion kept this room habitable through her own effort. One of the few spaces she maintained for practical use.',
+}
+
+/** For intact rooms with an unclear follow-up loop: surface the next actionable step. */
+const ROOM_INTACT_FOLLOWUP: Record<string, { text: string; to: string; label: string }> = {
+  'room-bureau': {
+    text: 'Accounts are in order.',
+    to: '/ledger',
+    label: 'View House Accounts →',
+  },
 }
 
 const STATE_LABELS: Record<RoomState, string> = {
@@ -40,7 +50,17 @@ const STATE_CLASS: Record<RoomState, string> = {
   collapsed: 'house-room--collapsed',
 }
 
-function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
+function RoomCard({
+  room,
+  marks,
+  justSearched,
+  onSearch,
+}: {
+  room: HouseRoom
+  marks: number
+  justSearched: boolean
+  onSearch: () => void
+}) {
   const dispatch = useAppDispatch()
   const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const canRepair =
@@ -53,6 +73,7 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
     room.state !== 'collapsed' &&
     room.state !== 'destroyed'
   const discovery = room.searched ? getHouseDiscovery(room.roomId, vaultUnlocked) : null
+  const hasUnresolvedLeads = (discovery?.actionableFinds.length ?? 0) > 0
 
   return (
     <article className={`house-room ${STATE_CLASS[room.state]}`}>
@@ -64,17 +85,25 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
       {ROOM_EFFECTS[room.roomId] && (
         <p className="house-room__effect">{ROOM_EFFECTS[room.roomId]}</p>
       )}
+      {room.state === 'intact' && ROOM_INTACT_FOLLOWUP[room.roomId] && (
+        <p className="house-room__effect" style={{ marginTop: '0.35rem' }}>
+          {ROOM_INTACT_FOLLOWUP[room.roomId]!.text}{' '}
+          <Link to={ROOM_INTACT_FOLLOWUP[room.roomId]!.to}>
+            {ROOM_INTACT_FOLLOWUP[room.roomId]!.label}
+          </Link>
+        </p>
+      )}
 
-      {room.searched && <p className="house-room__searched">✓ Searched</p>}
-      {discovery && (
-        <div style={{ marginTop: '0.45rem' }}>
+      {/* Fresh search: show full discovery payload */}
+      {room.searched && justSearched && discovery && (
+        <div className="house-room__discovery house-room__discovery--fresh" style={{ marginTop: '0.45rem' }}>
           <p className="house-room__effect" style={{ fontStyle: 'normal' }}>
             {discovery.message}
           </p>
           {discovery.actionableFinds.length > 0 && (
             <div style={{ marginTop: '0.4rem' }}>
               <p className="house-room__effect" style={{ fontStyle: 'normal', marginBottom: '0.25rem' }}>
-                Actionable discoveries
+                Found
               </p>
               <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
                 {discovery.actionableFinds.map((find) => (
@@ -92,6 +121,25 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
           )}
           {discovery.followUp && (
             <p className="house-room__effect" style={{ marginTop: '0.45rem', fontStyle: 'normal' }}>
+              — {discovery.followUp}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Returning view: compact searched state — only persistent leads and guidance */}
+      {room.searched && !justSearched && (
+        <div className="house-room__discovery house-room__discovery--archived" style={{ marginTop: '0.45rem' }}>
+          <p className="house-room__searched">✓ Searched</p>
+          {hasUnresolvedLeads && discovery && (
+            <ul style={{ margin: '0.3rem 0 0', paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
+              {discovery.actionableFinds.map((find) => (
+                <li key={find.itemId}>{find.label}</li>
+              ))}
+            </ul>
+          )}
+          {discovery?.followUp && (
+            <p className="house-room__effect" style={{ marginTop: '0.35rem', fontStyle: 'normal', fontSize: '0.78rem' }}>
               — {discovery.followUp}
             </p>
           )}
@@ -118,7 +166,10 @@ function RoomCard({ room, marks }: { room: HouseRoom; marks: number }) {
         {canSearch && (
           <button
             className="action-button action-button--secondary"
-            onClick={() => dispatch(gameActions.searchRoom(room.roomId))}
+            onClick={() => {
+              onSearch()
+              dispatch(gameActions.searchRoom(room.roomId))
+            }}
             type="button"
           >
             Search
@@ -139,6 +190,7 @@ export function HouseScreen() {
   const rooms = useAppSelector(selectHouseRooms)
   const summary = useAppSelector(selectHouseRepairSummary)
   const debt = useAppSelector(selectDebtStatus)
+  const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
 
   return (
     <section className="screen-panel district-the-pale">
@@ -169,7 +221,13 @@ export function HouseScreen() {
 
       <div className="house-room-grid">
         {rooms.map((room) => (
-          <RoomCard key={room.roomId} marks={debt.marks} room={room} />
+          <RoomCard
+            key={room.roomId}
+            marks={debt.marks}
+            room={room}
+            justSearched={room.roomId === justSearchedId}
+            onSearch={() => setJustSearchedId(room.roomId)}
+          />
         ))}
       </div>
 
