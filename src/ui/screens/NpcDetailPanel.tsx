@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectNpcHasNewDialogueTopics } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -387,6 +387,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const navigate = useNavigate()
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
+  const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
   const canOfferGift =
     currentDistrictId === houseDistrictId &&
     detail.assignment !== 'deployed'
@@ -448,9 +449,16 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         <p className="text-muted">{detail.origin}</p>
 
         {dialogueTree && (
-          <button className="action-button" type="button" onClick={handleTalk}>
-            Talk
-          </button>
+          <>
+            <button className="action-button" type="button" onClick={handleTalk}>
+              Talk
+            </button>
+            {hasNewTopics && (
+              <p className="npc-new-topic-hint">
+                Something on your mind worth raising.
+              </p>
+            )}
+          </>
         )}
       </div>
 
