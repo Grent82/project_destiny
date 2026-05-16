@@ -121,3 +121,67 @@ describe('HouseScreen — repair outcomes', () => {
     expect(effectText).toMatch(/faction contacts/i)
   })
 })
+
+describe('HouseScreen — ward list', () => {
+  it('shows no household section when wards array is empty', () => {
+    renderHouseScreen()
+    expect(screen.queryByRole('heading', { name: 'Household' })).toBeNull()
+  })
+
+  it('shows ward name, stage, and origin when wards are present', () => {
+    const stateWithWard = {
+      ...initialGameStateSnapshot,
+      wards: [
+        {
+          wardId: 'ward-test-1',
+          name: 'Esa Thule',
+          parentNpcId: null,
+          parentNpcIds: ['player', 'npc-ida-rhys'],
+          origin: 'rescued' as const,
+          birthDay: 5,
+          stage: 'child' as const,
+          bondStatus: null,
+          freedOnDay: null,
+          promotedToNpcId: null,
+        },
+      ],
+    }
+    renderHouseScreen(stateWithWard)
+
+    expect(screen.getByRole('heading', { name: 'Household' })).toBeInTheDocument()
+    expect(screen.getByText('Esa Thule')).toBeInTheDocument()
+    expect(screen.getByText('child')).toBeInTheDocument()
+    expect(screen.getByText('rescued')).toBeInTheDocument()
+  })
+
+  it('shows bond status when a ward is under bond', () => {
+    const stateWithBondedWard = {
+      ...initialGameStateSnapshot,
+      wards: [
+        {
+          wardId: 'ward-test-2',
+          name: 'Renn Holst',
+          parentNpcId: null,
+          parentNpcIds: [],
+          origin: 'adopted' as const,
+          birthDay: null,
+          stage: 'teenager' as const,
+          bondStatus: {
+            holderId: 'faction-civic-compact',
+            contractValue: 60,
+            termDays: 90,
+            entryReason: 'compact-assessment' as const,
+            alongsideFreeAssignmentDays: 0,
+            lastEqualityNoticeDay: null,
+          },
+          freedOnDay: null,
+          promotedToNpcId: null,
+        },
+      ],
+    }
+    renderHouseScreen(stateWithBondedWard)
+
+    expect(screen.getByText(/Bond held/i)).toBeInTheDocument()
+    expect(screen.getByText(/faction-civic-compact/i)).toBeInTheDocument()
+  })
+})

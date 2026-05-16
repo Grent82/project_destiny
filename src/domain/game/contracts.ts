@@ -110,12 +110,23 @@ export const heirSchema = z.object({
 })
 export type Heir = z.infer<typeof heirSchema>
 
+export const wardStageSchema = z.enum(['infant', 'child', 'teenager', 'young_adult'])
+export type WardStage = z.infer<typeof wardStageSchema>
+
+export const wardOriginSchema = z.enum(['biological', 'adopted', 'rescued'])
+export type WardOrigin = z.infer<typeof wardOriginSchema>
+
 export const wardSchema = z.object({
   wardId: z.string(),
   name: z.string(),
   parentNpcId: z.string().nullable().default(null),
+  parentNpcIds: z.array(z.string()).default([]),
+  origin: wardOriginSchema.optional(),
+  birthDay: z.number().int().nonnegative().nullable().default(null),
+  stage: wardStageSchema.default('child'),
   bondStatus: bondStatusSchema.nullable().default(null),
   freedOnDay: z.number().int().nonnegative().nullable().default(null),
+  promotedToNpcId: z.string().nullable().default(null),
 })
 export type Ward = z.infer<typeof wardSchema>
 
