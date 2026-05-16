@@ -152,27 +152,31 @@
     "id": "world-house-sable-cairn",
     "name": "House Sable-Cairn",
     "kind": "household",
-    "ownerNpcId": null,
+    "ownerNpcId": "npc-sable-cairn-head",
     "controllingFactionId": null,
     "districtId": "district-the-northbank",
-    "memberNpcIds": [],
-    "rooms": [
-      { "id": "sable-cairn-reception", "function": "audience", "capacity": 15 },
-      { "id": "sable-cairn-chapel-private", "function": "ritual", "capacity": 8 },
-      { "id": "sable-cairn-staff-wing", "function": "staff", "capacity": 10 },
-      { "id": "sable-cairn-seal-chamber", "function": "legal", "capacity": 3 }
+    "memberNpcIds": [
+      { "npcId": "npc-sable-cairn-head", "role": "head", "status": "active" }
     ],
-    "tags": ["fallen-prestige", "social-bridge", "debt-hidden", "seal-gatekeeping"],
+    "rooms": [
+      { "id": "scr-reception", "function": "reception", "capacity": 8 },
+      { "id": "scr-chapel", "function": "prayer", "capacity": 12 },
+      { "id": "scr-debts", "function": "archive", "capacity": 2 },
+      { "id": "scr-staff", "function": "quarters", "capacity": 6 }
+    ],
+    "tags": ["fallen-prestige", "social-bridge", "debt-hidden", "seal-gatekeeping", "devout-facade"],
     "stability": 35,
     "reputation": 75,
     "security": 40,
     "resources": {
-      "coin": 0,
-      "food": 0,
-      "favors": 0,
-      "secrets": 0
+      "coin": 10,
+      "food": 30,
+      "favors": 55,
+      "secrets": 40
     },
-    "activeConflicts": [],
+    "activeConflicts": [
+      { "targetId": "world-salt-ledger-hall", "type": "debt", "severity": 3 }
+    ],
     "fiction": "Publicly devout, privately indebted. Half-servants, half-prisoners. Everyone in Valdenmoor wants their seal, their silence, or their ruin."
   }
 ]
