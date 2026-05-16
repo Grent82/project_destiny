@@ -1,3 +1,4 @@
+import worldHouseholdsData from '../../../data/definitions/worldHouseholds.json'
 import npcStartingRelationshipsData from '../../../data/definitions/npc-starting-relationships.json'
 import encounterTablesData from '../../../data/definitions/encounter-tables.json'
 import districts from '../../../data/definitions/districts.json'
@@ -33,6 +34,7 @@ import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/gove
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
 import { rumorTemplateSchema, eventRumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
+import { worldHouseholdSchema } from '../../domain/world/contracts'
 
 const npcStartingRelationshipSchema = z.object({
   fromNpcId: z.string(),
@@ -84,6 +86,7 @@ const parsedRumorTemplates = rumorTemplateSchema.array().parse(rumorsData)
 const parsedEventRumorTemplates = eventRumorTemplateSchema.array().parse(eventRumorTemplatesData)
 const parsedEnemyNpcs = enemyNpcDefinitionSchema.array().parse(enemyNpcsData)
 const parsedNpcStartingRelationships = npcStartingRelationshipSchema.array().parse(npcStartingRelationshipsData)
+const parsedWorldHouseholds = worldHouseholdSchema.array().parse(worldHouseholdsData)
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -136,6 +139,14 @@ export const contentCatalog = {
   ),
   npcStartingRelationshipsByKey: new Map(
     parsedNpcStartingRelationships.map((r) => [`${r.fromNpcId}→${r.toNpcId}`, r])
+  ),
+  worldHouseholds: parsedWorldHouseholds,
+  worldHouseholdsById: toMap(parsedWorldHouseholds),
+  worldHouseholdsByDistrictId: new Map(
+    Array.from(new Set(parsedWorldHouseholds.map((h) => h.districtId))).map((districtId) => [
+      districtId,
+      parsedWorldHouseholds.filter((h) => h.districtId === districtId),
+    ]),
   ),
 }
 

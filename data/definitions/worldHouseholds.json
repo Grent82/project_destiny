@@ -1,0 +1,178 @@
+[
+  {
+    "id": "world-house-sorn",
+    "name": "House Sorn",
+    "kind": "household",
+    "ownerNpcId": "npc-enemy-lady-sorn",
+    "controllingFactionId": null,
+    "districtId": "district-the-northbank",
+    "memberNpcIds": [],
+    "rooms": [
+      { "id": "sorn-reception-hall", "function": "audience", "capacity": 20 },
+      { "id": "sorn-archive-wing", "function": "records", "capacity": 4 },
+      { "id": "sorn-servant-quarters", "function": "staff", "capacity": 12 },
+      { "id": "sorn-walled-garden", "function": "reception-private", "capacity": 8 },
+      { "id": "sorn-locked-cellar", "function": null, "capacity": 2 }
+    ],
+    "tags": ["old-money", "legitimacy-gate", "disappearances"],
+    "stability": 70,
+    "reputation": 80,
+    "security": 65,
+    "resources": {
+      "coin": 0,
+      "food": 0,
+      "favors": 0,
+      "secrets": 0
+    },
+    "activeConflicts": [
+      {
+        "targetId": "world-house-merrow",
+        "type": "legitimacy-contest",
+        "severity": 2
+      }
+    ],
+    "fiction": "Publicly elegant, privately a machine for maintaining secrets. Half its staff are there by choice. Half are not."
+  },
+  {
+    "id": "world-house-merrow",
+    "name": "House Merrow, Ash Quay",
+    "kind": "household",
+    "ownerNpcId": null,
+    "controllingFactionId": "faction-gilded-court",
+    "districtId": "district-ash-quay",
+    "memberNpcIds": [],
+    "rooms": [
+      { "id": "merrow-counting-room", "function": "accounting", "capacity": 6 },
+      { "id": "merrow-dock-office", "function": "commerce", "capacity": 8 },
+      { "id": "merrow-staff-quarters", "function": "staff", "capacity": 10 },
+      { "id": "merrow-archive-room", "function": "records", "capacity": 3 }
+    ],
+    "tags": ["rival-lineage", "dock-leverage", "legitimacy-claim"],
+    "stability": 65,
+    "reputation": 55,
+    "security": 50,
+    "resources": {
+      "coin": 0,
+      "food": 0,
+      "favors": 0,
+      "secrets": 0
+    },
+    "activeConflicts": [
+      {
+        "targetId": "world-house-sorn",
+        "type": "legitimacy-contest",
+        "severity": 2
+      }
+    ],
+    "fiction": "Looks like a successful merchant house. Functions as a bureaucratic claim-machine. The dock access is the leverage. Everything else is cover."
+  },
+  {
+    "id": "world-lantern-vale",
+    "name": "The Lantern Vale Inn",
+    "kind": "establishment",
+    "ownerNpcId": "npc-garet-doyle",
+    "controllingFactionId": null,
+    "districtId": "district-cinder-row",
+    "memberNpcIds": [],
+    "rooms": [
+      { "id": "lantern-common-room", "function": "hospitality", "capacity": 30 },
+      { "id": "lantern-private-room-1", "function": "meeting", "capacity": 4 },
+      { "id": "lantern-private-room-2", "function": "meeting", "capacity": 4 },
+      { "id": "lantern-back-office", "function": "records", "capacity": 2 }
+    ],
+    "tags": ["information-hub", "debt-collection", "rumor-market", "safe-house-informal"],
+    "stability": 55,
+    "reputation": 60,
+    "security": 20,
+    "resources": {
+      "coin": 0,
+      "food": 0,
+      "favors": 0,
+      "secrets": 0
+    },
+    "activeConflicts": [],
+    "fiction": "Garet inherited it from his father. Everyone passes through. Nothing said here stays only here."
+  },
+  {
+    "id": "world-chapel-saint-vey",
+    "name": "Chapel of Saint Vey",
+    "kind": "establishment",
+    "ownerNpcId": "npc-sister-vael",
+    "controllingFactionId": null,
+    "districtId": "district-the-pale",
+    "memberNpcIds": [],
+    "rooms": [
+      { "id": "chapel-nave", "function": "sanctuary", "capacity": 40 },
+      { "id": "chapel-infirmary", "function": "medicine", "capacity": 6 },
+      { "id": "chapel-archive-1", "function": "records", "capacity": 2 },
+      { "id": "chapel-archive-2", "function": "records", "capacity": 2 },
+      { "id": "chapel-archive-3", "function": "records", "capacity": 2 }
+    ],
+    "tags": ["records", "sanctuary", "confession-network", "birth-registry-adjacent"],
+    "stability": 75,
+    "reputation": 70,
+    "security": 30,
+    "resources": {
+      "coin": 0,
+      "food": 0,
+      "favors": 0,
+      "secrets": 0
+    },
+    "activeConflicts": [],
+    "fiction": "The only building in the Pale that has not changed hands since before the Breach. Sister Vael's infirmary is one room. Her archive is three."
+  },
+  {
+    "id": "world-salt-ledger-hall",
+    "name": "The Salt Ledger Hall",
+    "kind": "faction_seat",
+    "ownerNpcId": null,
+    "controllingFactionId": "faction-civic-compact",
+    "districtId": "district-the-northbank",
+    "memberNpcIds": [],
+    "rooms": [
+      { "id": "salt-ledger-main-hall", "function": "adjudication", "capacity": 50 },
+      { "id": "salt-ledger-registry", "function": "records", "capacity": 8 },
+      { "id": "salt-ledger-warrant-office", "function": "enforcement", "capacity": 6 },
+      { "id": "salt-ledger-debt-chamber", "function": "debt-resolution", "capacity": 4 }
+    ],
+    "tags": ["contracts", "warrants", "legal-choke-point", "debt-registry"],
+    "stability": 80,
+    "reputation": 65,
+    "security": 60,
+    "resources": {
+      "coin": 0,
+      "food": 0,
+      "favors": 0,
+      "secrets": 0
+    },
+    "activeConflicts": [],
+    "fiction": "If a name appears in this building, it exists legally. If it does not appear, it is dead or hidden."
+  },
+  {
+    "id": "world-house-sable-cairn",
+    "name": "House Sable-Cairn",
+    "kind": "household",
+    "ownerNpcId": null,
+    "controllingFactionId": null,
+    "districtId": "district-the-northbank",
+    "memberNpcIds": [],
+    "rooms": [
+      { "id": "sable-cairn-reception", "function": "audience", "capacity": 15 },
+      { "id": "sable-cairn-chapel-private", "function": "ritual", "capacity": 8 },
+      { "id": "sable-cairn-staff-wing", "function": "staff", "capacity": 10 },
+      { "id": "sable-cairn-seal-chamber", "function": "legal", "capacity": 3 }
+    ],
+    "tags": ["fallen-prestige", "social-bridge", "debt-hidden", "seal-gatekeeping"],
+    "stability": 35,
+    "reputation": 75,
+    "security": 40,
+    "resources": {
+      "coin": 0,
+      "food": 0,
+      "favors": 0,
+      "secrets": 0
+    },
+    "activeConflicts": [],
+    "fiction": "Publicly devout, privately indebted. Half-servants, half-prisoners. Everyone in Valdenmoor wants their seal, their silence, or their ruin."
+  }
+]
