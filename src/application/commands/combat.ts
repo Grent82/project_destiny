@@ -1,615 +1,45 @@
+/** Public combat commands — starts, steps, and concludes encounters; orchestrates all sub-modules. */
+
 import type {
   ActiveCombatState,
   CombatAction,
-  CombatRange,
-  CombatantState,
   GameState,
-  NpcRuntimeState,
 } from '../../domain'
-import {
-  checkFearRefuseAdvance,
-  getFatigueAccuracyPenalty,
-  getHungerCombatPenalty,
-} from '../../domain/npcStateModifiers'
-import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
-import { contentCatalog, type EncounterEntry } from '../content/contentCatalog'
-import { getArmorProfile, getWeaponProfile, UNARMED_PROFILE } from '../content/equipmentCatalog'
-import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
+import { checkFearRefuseAdvance } from '../../domain/npcStateModifiers'
+import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { getRenownLevel } from '../../domain/progression/contracts'
-import { createRng, type Rng } from './seededRng'
+import { createRng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
 import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
-
-const FALLBACK_ENCOUNTER_POOL: EncounterEntry[] = [
-  { name: 'Ash Raider', lore: 'A hard-eyed opportunist with nothing left to lose.' },
-  { name: 'Bog Skirmisher', lore: 'Knows the terrain. Uses it.' },
-  { name: 'Ruin Poacher', lore: 'Picks through the city\'s wounds for whatever bleeds.' },
-  { name: 'Fen Cutthroat', lore: 'Has done this before. Will do it again.' },
-]
-
-const PLAYER_DEFAULT_WEAPON_ID = 'weapon-dagger-wasterunner'
-const PLAYER_MAX_HEALTH = 80
-export const MIN_DEPLOYABLE_HEALTH = 30
-
-function randomIndex(length: number, rng: Rng): number {
-  return Math.floor(rng() * length)
-}
-
-function buildPlayerCombatant(playerCharacter: GameState['playerCharacter']): CombatantState {
-  const { attributes, skills } = playerCharacter
-  const combatState = playerCharacter.combatState
-  return {
-    combatantId: 'player',
-    sourceNpcId: null,
-    name: playerCharacter.name || 'The Heir',
-    side: 'allies',
-    maxHealth: PLAYER_MAX_HEALTH,
-    health: Math.max(0, Math.min(PLAYER_MAX_HEALTH, combatState?.health ?? PLAYER_MAX_HEALTH)),
-    morale: Math.max(
-      30,
-      Math.min(
-        100,
-        combatState?.morale ?? Math.round(attributes.resolve * 0.7 + attributes.presence * 0.3),
-      ),
-    ),
-    skill: Math.min(85, Math.max(skills.melee, skills.ranged)),
-    accuracy: Math.min(90, 50 + Math.floor(attributes.perception * 0.4)),
-    damageMin: Math.max(5, Math.floor(attributes.might / 8) + 5),
-    damageMax: Math.max(8, Math.floor(attributes.might / 5) + 6),
-    effectiveRange: skills.ranged > skills.melee ? 'distant' : 'close',
-    soak: 3,
-    speed: 4,
-    guarding: false,
-    staggered: false,
-    guardCooldown: false,
-    equippedWeaponId: PLAYER_DEFAULT_WEAPON_ID,
-    equippedArmorId: null,
-  }
-}
-
-function isAlive(combatant: CombatantState) {
-  return combatant.health > 0
-}
-
-/**
- * Compute hit chance bonus/penalty from relationships.
- * Called when building ally combatants.
- * Returns a modifier in range [-0.15, +0.15].
- */
-export function getRelationshipCombatModifier(
-  npcId: string,
-  relationships: Record<string, RelationshipAxes>
-): number {
-  const key = buildRelationshipKey('player', npcId)
-  const rel = relationships[key]
-  if (!rel) return 0
-
-  const loyaltyBonus = (rel.loyalty - 50) / 1000  // ±0.05 max
-  const trustBonus = (rel.trust - 50) / 1000       // ±0.05 max
-  const fearPenalty = rel.fear > 70 ? -(rel.fear - 70) / 1000 : 0 // up to -0.03
-
-  return Math.max(-0.15, Math.min(0.15, loyaltyBonus + trustBonus + fearPenalty))
-}
-
-function buildAllyCombatant(
-  npc: NpcRuntimeState,
-  equippedItemDurabilities: GameState['equippedItemDurabilities'],
-  relationships: Record<string, RelationshipAxes> = {},
-): CombatantState {
-  const definition = contentCatalog.npcsById.get(npc.npcId)
-  const skill = Math.max(npc.skills.melee, npc.skills.ranged)
-  const effectiveRange: CombatRange =
-    npc.skills.ranged > npc.skills.melee ? 'distant' : 'close'
-
-  const snap = { hunger: npc.states.hunger, fatigue: npc.states.fatigue }
-  const statePenalty = getHungerCombatPenalty(snap) + getFatigueAccuracyPenalty(snap)
-  const baseAccuracy = Math.min(95, skill + Math.floor(npc.attributes.perception / 3))
-
-  const weaponDurability = equippedItemDurabilities[npc.npcId]?.['weapon'] ?? 100
-  const weaponDurMod = getDurabilityAccuracyModifier(weaponDurability)
-  const armorDurability = equippedItemDurabilities[npc.npcId]?.['armor'] ?? 100
-  const armorDurMod = getDurabilityArmorModifier(armorDurability)
-
-  const relModifier = getRelationshipCombatModifier(npc.npcId, relationships)
-  const skillAccuracy = Math.max(1, Math.floor(Math.max(1, baseAccuracy + statePenalty) * weaponDurMod))
-  const hitChance = Math.max(0.05, Math.min(0.95, skillAccuracy / 100 + relModifier))
-
-  return {
-    combatantId: `ally-${npc.npcId}`,
-    sourceNpcId: npc.npcId,
-    name: definition?.name ?? npc.npcId,
-    side: 'allies',
-    maxHealth: Math.max(1, npc.states.health),
-    health: Math.max(0, npc.states.health),
-    morale: npc.states.morale,
-    skill,
-    accuracy: Math.max(0, Math.min(100, Math.round(hitChance * 100))),
-    damageMin: Math.max(8, Math.floor((npc.attributes.might + skill) / 12)),
-    damageMax: Math.max(12, Math.floor((npc.attributes.might + skill) / 9)),
-    effectiveRange,
-    soak: Math.floor(Math.floor(npc.attributes.endurance / 4) * armorDurMod),
-    speed: Math.max(1, Math.floor((npc.attributes.agility + npc.attributes.resolve) / 18)),
-    guarding: false,
-    staggered: false,
-    guardCooldown: false,
-    equippedWeaponId: npc.loadout.primaryWeaponId,
-    equippedArmorId: npc.loadout.armorId,
-  }
-}
-
-/** Stat multipliers applied per district danger tier (1-5). */
-const DANGER_TIER_MODIFIERS = [
-  { healthMult: 1.00, accuracyBonus: 0,  damageMod: 0 }, // tier 1
-  { healthMult: 1.10, accuracyBonus: 3,  damageMod: 1 }, // tier 2
-  { healthMult: 1.25, accuracyBonus: 6,  damageMod: 2 }, // tier 3
-  { healthMult: 1.40, accuracyBonus: 10, damageMod: 4 }, // tier 4
-  { healthMult: 1.60, accuracyBonus: 15, damageMod: 6 }, // tier 5
-] as const
-
-export function getEnemyDangerModifiers(dangerLevel: number) {
-  const idx = Math.max(0, Math.min(4, (dangerLevel ?? 1) - 1))
-  return DANGER_TIER_MODIFIERS[idx]!
-}
-
-function buildEnemyCombatant(index: number, allies: CombatantState[], dangerLevel = 1, entry?: EncounterEntry): CombatantState {
-  const allyAverageSkill = Math.max(
-    35,
-    Math.floor(
-      allies.reduce((total, ally) => total + ally.skill, 0) / Math.max(allies.length, 1),
-    ) - 4,
-  )
-  const allyAverageHealth = Math.max(
-    38,
-    Math.floor(
-      allies.reduce((total, ally) => total + ally.maxHealth, 0) /
-        Math.max(allies.length, 1),
-    ) - 6,
-  )
-
-  const tier = getEnemyDangerModifiers(dangerLevel)
-  const scaledHealth = Math.round(allyAverageHealth * tier.healthMult)
-
-  return {
-    combatantId: `enemy-${index + 1}`,
-    sourceNpcId: null,
-    name: entry?.name ?? FALLBACK_ENCOUNTER_POOL[index % FALLBACK_ENCOUNTER_POOL.length]!.name,
-    lore: entry?.lore,
-    side: 'enemies',
-    maxHealth: scaledHealth,
-    health: scaledHealth,
-    morale: 58,
-    skill: allyAverageSkill,
-    accuracy: Math.min(90, allyAverageSkill + 12 + tier.accuracyBonus),
-    damageMin: Math.max(7, Math.floor(allyAverageSkill / 7) + tier.damageMod),
-    damageMax: Math.max(11, Math.floor(allyAverageSkill / 5) + tier.damageMod),
-    effectiveRange: index % 2 === 0 ? 'close' : 'distant',
-    soak: 10 + index * 2,
-    speed: 4 + (index % 2),
-    guarding: false,
-    staggered: false,
-    guardCooldown: false,
-    equippedWeaponId: null,
-    equippedArmorId: null,
-  }
-}
-
-function getCombatantById(
-  encounter: ActiveCombatState,
-  combatantId: string | null,
-) {
-  if (!combatantId) {
-    return null
-  }
-
-  return encounter.combatants.find((combatant) => combatant.combatantId === combatantId) ?? null
-}
-
-function getOpponents(encounter: ActiveCombatState, side: CombatantState['side']) {
-  return encounter.combatants.filter(
-    (combatant) => combatant.side !== side && isAlive(combatant),
-  )
-}
-
-function getPreferredTarget(encounter: ActiveCombatState, actor: CombatantState, rng: Rng) {
-  const opponents = getOpponents(encounter, actor.side)
-
-  if (opponents.length === 0) {
-    return null
-  }
-
-  // Enemies use varied targeting strategies for unpredictability
-  if (actor.side === 'enemies') {
-    const roll = rng()
-    // 35%: target lowest HP (focus fire)
-    if (roll < 0.35) {
-      return opponents.slice().sort((a, b) => a.health - b.health)[0] ?? null
-    }
-    // 25%: target lowest morale (exploit fear)
-    if (roll < 0.60) {
-      return opponents.slice().sort((a, b) => a.morale - b.morale)[0] ?? null
-    }
-    // 25%: target highest skill (neutralize the strongest)
-    if (roll < 0.85) {
-      return opponents.slice().sort((a, b) => b.skill - a.skill)[0] ?? null
-    }
-    // 15%: random target
-    return opponents[randomIndex(opponents.length, rng)] ?? null
-  }
-
-  // Allies always focus lowest HP (maximize KO chance)
-  return opponents.slice().sort((left, right) => left.health - right.health)[0] ?? null
-}
-
-function updateCombatant(
-  encounter: ActiveCombatState,
-  combatantId: string,
-  updater: (combatant: CombatantState) => CombatantState,
-) {
-  return {
-    ...encounter,
-    combatants: encounter.combatants.map((combatant) =>
-      combatant.combatantId === combatantId ? updater(combatant) : combatant,
-    ),
-  }
-}
-
-function appendLog(encounter: ActiveCombatState, actorId: string, summary: string) {
-  return {
-    ...encounter,
-    log: [
-      ...encounter.log,
-      {
-        round: encounter.round,
-        actorId,
-        summary,
-      },
-    ],
-  }
-}
-
-function clearGuardingForCombatant(encounter: ActiveCombatState, combatantId: string) {
-  return {
-    ...encounter,
-    combatants: encounter.combatants.map((combatant) =>
-      combatant.combatantId === combatantId ? { ...combatant, guarding: false } : combatant,
-    ),
-  }
-}
-
-function evaluateOutcome(encounter: ActiveCombatState): ActiveCombatState {
-  const alliesAlive = encounter.combatants.some(
-    (combatant) => combatant.side === 'allies' && isAlive(combatant),
-  )
-  const enemiesAlive = encounter.combatants.some(
-    (combatant) => combatant.side === 'enemies' && isAlive(combatant),
-  )
-
-  if (!alliesAlive) {
-    return {
-      ...encounter,
-      outcome: 'defeat',
-      activeCombatantId: null,
-    }
-  }
-
-  if (!enemiesAlive) {
-    return {
-      ...encounter,
-      outcome: 'victory',
-      activeCombatantId: null,
-    }
-  }
-
-  return encounter
-}
-
-function getRangeModifier(weaponId: string | null, range: CombatRange): number {
-  const weapon = getWeaponProfile(weaponId)
-  if (range === 'close') return weapon.rangeModifierClose
-  if (range === 'medium') return weapon.rangeModifierMedium
-  return weapon.rangeModifierDistant
-}
-
-function buildHitMessage(actorName: string, targetName: string, rng: Rng): string {
-  const phrases = ['strikes', 'lands a blow on', 'connects with']
-  return `${actorName} ${phrases[randomIndex(phrases.length, rng)]} ${targetName}`
-}
-
-function buildMissMessage(actorName: string, targetName: string, rng: Rng): string {
-  const phrases = ['misses', 'goes wide of', 'is deflected by']
-  return `${actorName} ${phrases[randomIndex(phrases.length, rng)]} ${targetName}`
-}
-
-function attack(encounter: ActiveCombatState, actorId: string, rng: Rng) {
-  const actor = getCombatantById(encounter, actorId)
-
-  if (!actor || !isAlive(actor)) {
-    return encounter
-  }
-
-  const target = getPreferredTarget(encounter, actor, rng)
-
-  if (!target) {
-    return encounter
-  }
-
-  const weapon = getWeaponProfile(actor.equippedWeaponId)
-  const armor = getArmorProfile(target.equippedArmorId)
-  const rangeOffset = getRangeModifier(actor.equippedWeaponId, encounter.range)
-  const weaponAccuracyModifier = weapon.accuracy - UNARMED_PROFILE.accuracy
-  const effectiveAccuracy = Math.min(
-    99,
-    Math.max(1, actor.accuracy + weaponAccuracyModifier + rangeOffset - armor.evasionPenalty),
-  )
-
-  const hit = rng() * 100 < effectiveAccuracy
-
-  if (!hit) {
-    return appendLog(encounter, actorId, `${buildMissMessage(actor.name, target.name, rng)}.`)
-  }
-
-  const effectiveDamageMin = Math.max(
-    1,
-    actor.damageMin + (weapon.damageMin - UNARMED_PROFILE.damageMin),
-  )
-  const effectiveDamageMax = Math.max(
-    effectiveDamageMin,
-    actor.damageMax + (weapon.damageMax - UNARMED_PROFILE.damageMax),
-  )
-  const rawDamage = Math.round(
-    effectiveDamageMin + rng() * (effectiveDamageMax - effectiveDamageMin),
-  )
-  const effectiveSoak = Math.max(0, armor.soak - weapon.armorPiercing)
-  const guardMitigation = target.guarding ? 0.70 : 1
-  let damage = Math.max(0, Math.round((rawDamage - effectiveSoak) * guardMitigation))
-
-  const isCrit = rng() * 100 < weapon.critChance
-  if (isCrit) damage = damage * 2
-
-  const isStagger = rng() * 100 < weapon.staggerChance
-
-  const parts: string[] = [buildHitMessage(actor.name, target.name, rng)]
-  parts.push(
-    effectiveSoak > 0
-      ? `${damage} damage (${effectiveSoak} soaked by armor)`
-      : `${damage} damage`,
-  )
-  if (isCrit) parts.push('A telling blow!')
-  if (isStagger) parts.push(`${target.name} is knocked off-balance`)
-
-  const nextEncounter = updateCombatant(encounter, target.combatantId, (combatant) => ({
-    ...combatant,
-    health: Math.max(0, combatant.health - damage),
-    morale: Math.max(0, combatant.morale - 6),
-    guarding: false,
-    staggered: isStagger,
-  }))
-
-  return appendLog(nextEncounter, actorId, `${parts.join(' — ')}.`)
-}
-
-function advance(encounter: ActiveCombatState, actorId: string) {
-  if (encounter.range === 'close') {
-    return appendLog(encounter, actorId, 'The squad is already in close range.')
-  }
-
-  const nextRange: CombatRange = encounter.range === 'distant' ? 'medium' : 'close'
-  const message =
-    nextRange === 'medium'
-      ? 'The squad presses forward to medium range.'
-      : 'The squad closes to fighting distance.'
-
-  return appendLog({ ...encounter, range: nextRange }, actorId, message)
-}
-
-function retreat(encounter: ActiveCombatState, actorId: string) {
-  if (encounter.range === 'distant') {
-    return appendLog(encounter, actorId, 'The squad is already fighting at distance.')
-  }
-
-  const nextRange: CombatRange = encounter.range === 'close' ? 'medium' : 'distant'
-  const message =
-    nextRange === 'medium'
-      ? 'The squad pulls back to medium range.'
-      : 'The squad disengages and reopens distance.'
-
-  return appendLog({ ...encounter, range: nextRange }, actorId, message)
-}
-
-function guard(encounter: ActiveCombatState, actorId: string) {
-  return appendLog(
-    updateCombatant(encounter, actorId, (combatant) => ({
-      ...combatant,
-      guarding: true,
-      guardCooldown: true,
-      morale: Math.max(0, combatant.morale - 3),
-    })),
-    actorId,
-    'The combatant braces, trading momentum for protection.',
-  )
-}
-
-function applyAction(
-  encounter: ActiveCombatState,
-  actorId: string,
-  action: CombatAction,
-  rng: Rng,
-) {
-  switch (action) {
-    case 'attack':
-      return attack(encounter, actorId, rng)
-    case 'advance':
-      return advance(encounter, actorId)
-    case 'retreat':
-      return retreat(encounter, actorId)
-    case 'guard':
-      return guard(encounter, actorId)
-  }
-}
-
-function getInitiativeOrder(encounter: ActiveCombatState) {
-  return encounter.combatants
-    .filter(isAlive)
-    .slice()
-    .sort((left, right) => right.speed - left.speed || right.skill - left.skill)
-    .map((combatant) => combatant.combatantId)
-}
-
-function findNextActiveCombatant(
-  encounter: ActiveCombatState,
-  currentCombatantId: string | null,
-) {
-  const initiative = getInitiativeOrder(encounter)
-
-  if (initiative.length === 0) {
-    return { activeCombatantId: null, round: encounter.round }
-  }
-
-  if (!currentCombatantId) {
-    return {
-      activeCombatantId: initiative[0] ?? null,
-      round: encounter.round,
-    }
-  }
-
-  const currentIndex = initiative.indexOf(currentCombatantId)
-
-  if (currentIndex === -1 || currentIndex === initiative.length - 1) {
-    return {
-      activeCombatantId: initiative[0] ?? null,
-      round: encounter.round + 1,
-    }
-  }
-
-  return {
-    activeCombatantId: initiative[currentIndex + 1] ?? null,
-    round: encounter.round,
-  }
-}
-
-function advanceTurn(encounter: ActiveCombatState) {
-  const nextTurn = findNextActiveCombatant(encounter, encounter.activeCombatantId)
-  const roundChanged = nextTurn.round > encounter.round
-
-  return {
-    ...encounter,
-    activeCombatantId: nextTurn.activeCombatantId,
-    round: nextTurn.round,
-    combatants: roundChanged
-      ? encounter.combatants.map((c) => ({ ...c, guardCooldown: false }))
-      : encounter.combatants,
-  }
-}
-
-function resolveEnemyTurns(encounter: ActiveCombatState, rng: Rng) {
-  let nextEncounter = encounter
-
-  while (nextEncounter.outcome === 'ongoing') {
-    const activeCombatant = getCombatantById(
-      nextEncounter,
-      nextEncounter.activeCombatantId,
-    )
-
-    if (!activeCombatant || activeCombatant.side === 'allies') {
-      break
-    }
-
-    // Stagger: skip this enemy's turn and clear the flag
-    if (activeCombatant.staggered) {
-      nextEncounter = updateCombatant(nextEncounter, activeCombatant.combatantId, (c) => ({
-        ...c,
-        staggered: false,
-      }))
-      nextEncounter = appendLog(
-        nextEncounter,
-        activeCombatant.combatantId,
-        `${activeCombatant.name} is still reeling — their action is lost.`,
-      )
-      nextEncounter = advanceTurn(nextEncounter)
-      continue
-    }
-
-    const chosenAction: CombatAction = (() => {
-      // At distance, melee enemies advance
-      if (nextEncounter.range === 'distant' && activeCombatant.effectiveRange === 'close') {
-        return 'advance'
-      }
-      // Low health + not on cooldown: chance to guard (defensive AI)
-      if (activeCombatant.health < 30 && !activeCombatant.guardCooldown && rng() < 0.5) {
-        return 'guard'
-      }
-      // Ranged enemies at close range: retreat to get effective range
-      if (nextEncounter.range === 'close' && activeCombatant.effectiveRange === 'distant' && rng() < 0.4) {
-        return 'retreat'
-      }
-      return 'attack'
-    })()
-
-    nextEncounter = clearGuardingForCombatant(nextEncounter, activeCombatant.combatantId)
-    nextEncounter = applyAction(
-      nextEncounter,
-      activeCombatant.combatantId,
-      chosenAction,
-      rng,
-    )
-    nextEncounter = evaluateOutcome(nextEncounter)
-
-    if (nextEncounter.outcome !== 'ongoing') {
-      break
-    }
-
-    nextEncounter = advanceTurn(nextEncounter)
-  }
-
-  return nextEncounter
-}
-
-function syncRosterFromCombat(state: GameState, encounter: ActiveCombatState): GameState {
-  const allyByNpcId = new Map(
-    encounter.combatants
-      .filter((combatant) => combatant.side === 'allies' && combatant.sourceNpcId)
-      .map((combatant) => [combatant.sourceNpcId as string, combatant]),
-  )
-
-  return {
-    ...state,
-    roster: state.roster.map((npc) => {
-      const combatant = allyByNpcId.get(npc.npcId)
-
-      if (!combatant) {
-        return npc
-      }
-
-      return {
-        ...npc,
-        states: {
-          ...npc.states,
-          health: Math.max(0, Math.min(100, combatant.health)),
-          morale: combatant.morale,
-          injury: Math.min(100, npc.states.injury + Math.max(0, npc.states.health - combatant.health)),
-        },
-      }
-    }),
-  }
-}
-
-function appendCombatActivityEntries(
-  state: GameState,
-  encounter: ActiveCombatState,
-  previousLogLength: number,
-) {
-  return encounter.log
-    .slice(previousLogLength)
-    .reduce(
-      (nextState, entry) =>
-        appendActivityLogEntry(nextState, 'combat', entry.summary),
-      state,
-    )
-}
+import {
+  FALLBACK_ENCOUNTER_POOL,
+  PLAYER_MAX_HEALTH,
+  buildAllyCombatant,
+  buildEnemyCombatant,
+  buildPlayerCombatant,
+  randomIndex,
+} from './combatants'
+export {
+  getRelationshipCombatModifier,
+  getEnemyDangerModifiers,
+} from './combatants'
+export { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
+import { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
+import {
+  advanceTurn,
+  appendLog,
+  applyAction,
+  clearGuardingForCombatant,
+  evaluateOutcome,
+  getCombatantById,
+  updateCombatant,
+} from './combatResolution'
+import { resolveEnemyTurns } from './combatAI'
+import { appendCombatActivityEntries, syncRosterFromCombat } from './combatAftermath'
 
 export function startCombatEncounter(state: GameState, linkedQuestId?: string | null): GameState {
   if (state.activeCombat?.outcome === 'ongoing') {
@@ -663,7 +93,12 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     contentCatalog.encounterTablesByDistrict.get(state.currentDistrictId ?? '') ??
     FALLBACK_ENCOUNTER_POOL
   const enemies = npcAllies.map((_, index) =>
-    buildEnemyCombatant(index, npcAllies, districtDangerLevel, encounterPool[index % encounterPool.length]),
+    buildEnemyCombatant(
+      index,
+      npcAllies,
+      districtDangerLevel,
+      encounterPool[index % encounterPool.length],
+    ),
   )
   const combatants = [...allies, ...enemies].sort(
     (left, right) => right.speed - left.speed || right.skill - left.skill,
@@ -707,7 +142,8 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
           ? {
               ...quest,
               stageId: 'engaged',
-              currentObjectiveLabel: 'The squad is committed. Break the hostile line and survive the clash.',
+              currentObjectiveLabel:
+                'The squad is committed. Break the hostile line and survive the clash.',
               progress: {
                 ...quest.progress,
                 completedSteps: Math.max(quest.progress.completedSteps, 3),
@@ -733,10 +169,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   )
 }
 
-export function performCombatAction(
-  state: GameState,
-  action: CombatAction,
-): GameState {
+export function performCombatAction(state: GameState, action: CombatAction): GameState {
   const encounter = state.activeCombat
 
   if (!encounter || encounter.outcome !== 'ongoing' || !encounter.activeCombatantId) {
@@ -916,7 +349,10 @@ export function concludeCombatEncounter(state: GameState): GameState {
     // Loot from defeated enemies
     const defeatedEnemies = combat.combatants.filter((c) => c.side === 'enemies' && c.health <= 0)
     if (defeatedEnemies.length > 0) {
-      const lootMarks = defeatedEnemies.reduce((sum, e) => sum + Math.max(5, Math.floor(e.maxHealth / 5)), 0)
+      const lootMarks = defeatedEnemies.reduce(
+        (sum, e) => sum + Math.max(5, Math.floor(e.maxHealth / 5)),
+        0,
+      )
       nextState = { ...nextState, money: nextState.money + lootMarks }
       nextState = appendActivityLogEntry(
         nextState,
@@ -942,12 +378,13 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
 
     // Recruitable defeated enemies
-    const recruitableDefs = contentCatalog.enemyNpcs
-      .filter((en) => en.recruitableOnDefeat)
+    const recruitableDefs = contentCatalog.enemyNpcs.filter((en) => en.recruitableOnDefeat)
     if (recruitableDefs.length > 0) {
       const alreadyOffered = new Set(nextState.availableForHire.map((o) => o.npcId))
       const alreadyHired = new Set(nextState.roster.map((r) => r.npcId))
-      const eligible = recruitableDefs.filter((en) => !alreadyOffered.has(en.id) && !alreadyHired.has(en.id))
+      const eligible = recruitableDefs.filter(
+        (en) => !alreadyOffered.has(en.id) && !alreadyHired.has(en.id),
+      )
       if (eligible.length > 0) {
         const pick = eligible[randomIndex(eligible.length, rng)]!
         nextState = {
@@ -1009,7 +446,11 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
       nextState = appendActivityLogEntry(nextState, 'system', 'Victory. +5 Renown.')
       if (newLevel.level > oldLevel.level) {
-        nextState = appendActivityLogEntry(nextState, 'system', `Your name carries further now. Renown rank: ${newLevel.label}.`)
+        nextState = appendActivityLogEntry(
+          nextState,
+          'system',
+          `Your name carries further now. Renown rank: ${newLevel.label}.`,
+        )
       }
     }
   }
@@ -1038,12 +479,15 @@ export function concludeCombatEncounter(state: GameState): GameState {
 
     let handledLinkedQuestFailure = false
     if (combat.linkedQuestId) {
-      const runtime = nextState.activeQuests.find((entry) => entry.questId === combat.linkedQuestId)
+      const runtime = nextState.activeQuests.find(
+        (entry) => entry.questId === combat.linkedQuestId,
+      )
       if (runtime) {
         switch (runtime.context.retryBehavior) {
           case 'retryable':
             runtime.stageId = 'setback'
-            runtime.currentObjectiveLabel = 'The squad was driven back. Regroup before attempting the incident again.'
+            runtime.currentObjectiveLabel =
+              'The squad was driven back. Regroup before attempting the incident again.'
             runtime.progress.lastAdvancedDay = nextState.day
             runtime.journalEntries = [
               ...runtime.journalEntries,
@@ -1057,7 +501,8 @@ export function concludeCombatEncounter(state: GameState): GameState {
             break
           case 'branch':
             runtime.stageId = 'branch-aftermath'
-            runtime.currentObjectiveLabel = 'The defeat changes the shape of the contract. Return to the Work Board for the aftermath.'
+            runtime.currentObjectiveLabel =
+              'The defeat changes the shape of the contract. Return to the Work Board for the aftermath.'
             runtime.progress.lastAdvancedDay = nextState.day
             runtime.journalEntries = [
               ...runtime.journalEntries,
@@ -1074,7 +519,8 @@ export function concludeCombatEncounter(state: GameState): GameState {
             handledLinkedQuestFailure = settleQuestFailure(nextState, combat.linkedQuestId, {
               failureMessage: `The squad was driven back. ${runtime.acceptedTitle} fails unless the house can bargain for another chance.`,
               failureCategory: 'combat',
-              journalEntry: 'The squad was beaten back at the incident site and the contract collapsed.',
+              journalEntry:
+                'The squad was beaten back at the incident site and the contract collapsed.',
               objectiveLabel: 'The incident ended in defeat. The contract is lost.',
             })
             break
@@ -1093,7 +539,11 @@ export function concludeCombatEncounter(state: GameState): GameState {
         },
       }
       const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-      nextState = appendActivityLogEntry(nextState, 'system', `Defeat. Standing with ${factionName} worsens.`)
+      nextState = appendActivityLogEntry(
+        nextState,
+        'system',
+        `Defeat. Standing with ${factionName} worsens.`,
+      )
     }
   }
 
@@ -1136,13 +586,21 @@ export function concludeCombatEncounter(state: GameState): GameState {
         applyRelationshipDelta(nextState, idA, idB, 'respect', 5)
         applyRelationshipDelta(nextState, idB, idA, 'affinity', 8)
         applyRelationshipDelta(nextState, idB, idA, 'respect', 5)
-        nextState = appendActivityLogEntry(nextState, 'combat', `${nameA} and ${nameB} came through it together.`)
+        nextState = appendActivityLogEntry(
+          nextState,
+          'combat',
+          `${nameA} and ${nameB} came through it together.`,
+        )
       } else {
         applyRelationshipDelta(nextState, idA, idB, 'affinity', 4)
         applyRelationshipDelta(nextState, idA, idB, 'trust', 5)
         applyRelationshipDelta(nextState, idB, idA, 'affinity', 4)
         applyRelationshipDelta(nextState, idB, idA, 'trust', 5)
-        nextState = appendActivityLogEntry(nextState, 'combat', `${nameA} knows what ${nameB} did out there. That counts for something.`)
+        nextState = appendActivityLogEntry(
+          nextState,
+          'combat',
+          `${nameA} knows what ${nameB} did out there. That counts for something.`,
+        )
       }
     }
   }
@@ -1193,7 +651,9 @@ export function concludeCombatEncounter(state: GameState): GameState {
     selectedSquadNpcIds: [],
   }
 
-  const playerCombatant = combat.combatants.find((combatant) => combatant.combatantId === 'player')
+  const playerCombatant = combat.combatants.find(
+    (combatant) => combatant.combatantId === 'player',
+  )
   if (playerCombatant) {
     const currentPlayerCombatState = nextState.playerCharacter.combatState ?? {
       health: PLAYER_MAX_HEALTH,
@@ -1241,7 +701,9 @@ export function concludeCombatEncounter(state: GameState): GameState {
     summaryNotes.push(`${koCount} ally${koCount !== 1 ? 's' : ''} knocked out.`)
   }
   if (combat.linkedQuestId) {
-    summaryNotes.push(combat.outcome === 'victory' ? 'Contract obligation settled.' : 'Contract at risk.')
+    summaryNotes.push(
+      combat.outcome === 'victory' ? 'Contract obligation settled.' : 'Contract at risk.',
+    )
   }
 
   nextState = {
@@ -1262,7 +724,8 @@ export function concludeCombatEncounter(state: GameState): GameState {
         { ...nextState, rngSeed: seeded.getSeed() },
         {
           eventType: combat.outcome === 'victory' ? 'combat-victory' : 'combat-defeat',
-          districtId: combat.provenance?.districtId ?? nextState.currentDistrictId ?? 'district-the-pale',
+          districtId:
+            combat.provenance?.districtId ?? nextState.currentDistrictId ?? 'district-the-pale',
           enemyFactionId: combat.provenance?.linkedFactionId ?? combat.factionId ?? null,
         },
       ),
