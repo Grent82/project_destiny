@@ -251,6 +251,7 @@ export const pregnancyStateSchema = z.object({
   context: z.enum(['consensual', 'unknown']),
   daysElapsed: z.number().int().nonnegative().default(0),
   questTag: z.string().nullable().default(null),
+  partnerNpcId: z.string().nullable().optional(),
 })
 
 export const bondEntryReasonSchema = z.enum([

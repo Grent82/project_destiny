@@ -24,6 +24,7 @@ import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
 import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 import { applyBondServiceEffects } from './bondService'
 import { applyWardAgeMilestones } from './applyWardAgeMilestones'
+import { applyNpcPairing } from './applyNpcPairing'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -204,6 +205,9 @@ export function endDay(state: GameState): GameState {
   if (nextDay % 2 === 0) {
   afterEvents = applyPersonalityFriction(afterEvents, rng)
   }
+
+  // Step 9e-roster: NPC-to-NPC pairing (proximity-gated, compatibility-gated)
+  afterEvents = applyNpcPairing(afterEvents, rng)
 
   // Step 9e: Legacy intent chance and pregnancy tick
   afterEvents = tickLegacyIntent(afterEvents, rng)

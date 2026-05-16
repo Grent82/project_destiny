@@ -5108,6 +5108,90 @@
     "presentationFlavour": "The moment is quiet because spectacle would be a failure."
   },
   {
+    "id": "event-npc-pairing-noticed",
+    "title": "Something Between Them",
+    "description": "You've noticed it yourself — or someone in the house has. Two of your crew have moved past the ordinary rhythms of shared work. They are not making a show of it, but the house has eyes. What happens under this roof is your concern.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-npc-pairing-note",
+        "label": "Note it and say nothing",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You observe without comment. The house holds its own counsel."
+          }
+        ]
+      },
+      {
+        "id": "choice-npc-pairing-acknowledge",
+        "label": "Acknowledge it quietly",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You let them know you have seen. That is all that needs saying."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["household", "pairing", "authored"],
+    "repeatable": true,
+    "cooldownDays": 30,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "Not everything under this roof is your business. Some of it is anyway."
+  },
+  {
+    "id": "event-npc-pairing-pregnancy-discovery",
+    "title": "A Child is Expected",
+    "description": "Word reaches you through the house — gently, carefully, as if the teller is not sure how you will receive it. Two of your crew are expecting a child. The timing is not ideal. It rarely is. What matters is what comes next.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-pregnancy-support",
+        "label": "Offer the house's support",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You make clear the child will have a place here. The parents look relieved."
+          }
+        ]
+      },
+      {
+        "id": "choice-pregnancy-prepare",
+        "label": "Begin preparations quietly",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You say nothing grand. You begin making space. That is its own kind of answer."
+          }
+        ]
+      },
+      {
+        "id": "choice-pregnancy-no-response",
+        "label": "Say nothing yet",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You take the news and keep your own counsel for now."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["household", "pairing", "authored", "consequence"],
+    "repeatable": true,
+    "cooldownDays": 365,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": "The house has always needed more than one generation to mean anything."
+  },
+  {
     "id": "event-ward-stage-infant-to-child",
     "title": "The Child Grows",
     "description": "The infant in your household is no longer so small. Marion mentions it in passing — they are walking, watching, beginning to understand the house around them. A child now, in all the ways that matter.",

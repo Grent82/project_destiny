@@ -131,6 +131,9 @@ export const wardSchema = z.object({
 })
 export type Ward = z.infer<typeof wardSchema>
 
+export const npcPairingPolicySchema = z.enum(['open', 'discouraged', 'forbidden'])
+export type NpcPairingPolicy = z.infer<typeof npcPairingPolicySchema>
+
 export const houseStateSchema = z
   .object({
     rooms: z.array(houseRoomSchema),
@@ -139,6 +142,7 @@ export const houseStateSchema = z
     exteriorState: houseExteriorTierSchema.default('ruined'),
     fortificationLevel: z.number().int().min(0).max(5).default(0),
     houseHeirs: z.array(heirSchema).max(2).default([]),
+    npcPairingPolicy: npcPairingPolicySchema.default('open'),
   })
   .strict()
 
@@ -309,6 +313,7 @@ export const gameStateSchema = z
       exteriorState: 'ruined' as const,
       fortificationLevel: 0,
       houseHeirs: [],
+      npcPairingPolicy: 'open' as const,
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),

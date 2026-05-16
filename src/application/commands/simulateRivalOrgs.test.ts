@@ -84,6 +84,7 @@ const baseState: GameState = {
     exteriorState: 'ruined' as const,
     fortificationLevel: 0,
     houseHeirs: [],
+    npcPairingPolicy: 'open' as const,
   },
   saveVersion: 1,
   rngSeed: 42,

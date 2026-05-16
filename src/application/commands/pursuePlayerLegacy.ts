@@ -114,6 +114,9 @@ export function tickPregnancyProgress(state: GameState): GameState {
     // Only create a house heir for consensual / player-origin pregnancies
     if (npc.pregnancyState.context === 'consensual' && next.house.houseHeirs.length < 2) {
       const heirId = `heir-${npc.npcId}-day${state.day}`
+      const otherParent = npc.pregnancyState.partnerNpcId ?? PLAYER_ID
+      const parentRefs = [npc.npcId, otherParent]
+
       next = {
         ...next,
         house: {
@@ -127,7 +130,7 @@ export function tickPregnancyProgress(state: GameState): GameState {
               stage: 'child' as const,
               arrivalDay: next.day,
               origin: 'biological' as const,
-              parentRefs: [PLAYER_ID, npc.npcId],
+              parentRefs,
             },
           ],
         },

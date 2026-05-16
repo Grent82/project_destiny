@@ -480,7 +480,8 @@
     "rosterBonus": 0,
     "exteriorState": "ruined",
     "fortificationLevel": 0,
-    "houseHeirs": []
+    "houseHeirs": [],
+    "npcPairingPolicy": "open"
   },
   "visitedDialogueNodes": {},
   "saveVersion": 2,
