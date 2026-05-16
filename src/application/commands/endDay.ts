@@ -23,6 +23,7 @@ import { applyPersonalityFriction } from './applyPersonalityFriction'
 import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
 import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 import { applyBondServiceEffects } from './bondService'
+import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -213,6 +214,7 @@ export function endDay(state: GameState): GameState {
   afterEvents = resolveRumorEvents(afterEvents, rng)
   afterEvents = applyCaptivityDegradation(afterEvents)
   afterEvents = tickWardStages(afterEvents)
+  afterEvents = applyWardAgeMilestones(afterEvents, rng)
   const finalState = checkMainQuestProgression(afterEvents)
 
   // Store advanced RNG seed for next day's deterministic run

@@ -5106,5 +5106,86 @@
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": "The moment is quiet because spectacle would be a failure."
+  },
+  {
+    "id": "event-ward-stage-infant-to-child",
+    "title": "The Child Grows",
+    "description": "The infant in your household is no longer so small. Marion mentions it in passing — they are walking, watching, beginning to understand the house around them. A child now, in all the ways that matter.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-infant-to-child",
+        "label": "Note the change",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "A ward in your household has grown from infant to child."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "household", "milestone"],
+    "repeatable": true,
+    "cooldownDays": 1,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-ward-stage-child-to-teenager",
+    "title": "The Ward Grows Older",
+    "description": "You notice it gradually, then all at once: the child under your roof has grown into something else entirely. Taller, quieter, more watchful. The house will mean something different to them now.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-child-to-teenager",
+        "label": "Mark the passing years",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "A ward in your household has grown from child to teenager."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "household", "milestone"],
+    "repeatable": true,
+    "cooldownDays": 1,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "event-ward-stage-teenager-to-young-adult",
+    "title": "Coming of Age",
+    "description": "The ward you took in is grown. They have survived what the city has thrown at this house, have watched how you operate, and have formed their own view of it. What they become from here is partly yours to shape — and partly theirs alone.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-acknowledge-teenager-to-young-adult",
+        "label": "Acknowledge the threshold",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "A ward in your household has reached young adulthood."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["ward", "household", "milestone"],
+    "repeatable": true,
+    "cooldownDays": 1,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
   }
 ]

@@ -127,6 +127,7 @@ export const wardSchema = z.object({
   bondStatus: bondStatusSchema.nullable().default(null),
   freedOnDay: z.number().int().nonnegative().nullable().default(null),
   promotedToNpcId: z.string().nullable().default(null),
+  shapingTraits: z.record(z.string(), z.number().int().min(0).max(100)).optional(),
 })
 export type Ward = z.infer<typeof wardSchema>
 
