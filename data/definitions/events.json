@@ -91,7 +91,7 @@
           },
           {
             "type": "createQuestLead",
-            "questId": "quest-gilded-court-favor"
+            "questId": "quest-gilded-auction-guard"
           }
         ]
       },

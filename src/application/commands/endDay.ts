@@ -25,9 +25,18 @@ import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 import { applyBondServiceEffects } from './bondService'
 import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 import { applyNpcPairing } from './applyNpcPairing'
+import { isQuestLeadExpired } from '../../domain/quests/contracts'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
+
+export function pruneExpiredQuestLeads(state: GameState): GameState {
+  const filtered = state.availableQuestLeads.filter(
+    (lead) => !isQuestLeadExpired(lead, state.day),
+  )
+  if (filtered.length === state.availableQuestLeads.length) return state
+  return { ...state, availableQuestLeads: filtered }
+}
 
 export function applyEndOfDayResources(state: GameState): GameState {
   let next = state
@@ -177,7 +186,8 @@ export function endDay(state: GameState): GameState {
   // Step 7: Politics, factions, debt
   next = applyPolitics(next, rng)
 
-  // Step 8: Expire stale hire offers, optionally refresh, then evaluate world events
+  // Step 8: Prune expired quest leads, expire stale hire offers, optionally refresh, then evaluate world events
+  next = pruneExpiredQuestLeads(next)
   const afterExpiry = expireHireOffers(next)
   let afterEvents: GameState
   if (nextDay % 3 === 0 && afterExpiry.currentDistrictId) {

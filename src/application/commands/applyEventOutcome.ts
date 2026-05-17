@@ -7,6 +7,12 @@ import { contentCatalog } from '../content/contentCatalog'
 import { initializeRosterRelationships } from './initializeRosterRelationships'
 import { createRng } from './seededRng'
 
+function warnAndSkip(outcomeType: string, field: string, missingId: string): void {
+  console.warn(
+    `applyEventOutcome: outcome type "${outcomeType}" references ${field} "${missingId}" which does not exist in contentCatalog — outcome skipped`,
+  )
+}
+
 export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameState {
   let next = state
   for (const outcome of outcomes) {
@@ -75,6 +81,10 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         break
       case 'adjustNpcRelationship':
         if (outcome.npcId && outcome.axis && outcome.delta !== undefined) {
+          if (!contentCatalog.npcsById.has(outcome.npcId)) {
+            warnAndSkip(outcome.type, 'npcId', outcome.npcId)
+            break
+          }
           const key = buildRelationshipKey('player', outcome.npcId)
           const existing = next.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
           const axis = outcome.axis as 'affinity' | 'respect' | 'fear' | 'trust' | 'loyalty'
@@ -90,6 +100,10 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         break
       case 'createQuestLead':
         if (outcome.questId) {
+          if (!contentCatalog.questsById.has(outcome.questId)) {
+            warnAndSkip(outcome.type, 'questId', outcome.questId)
+            break
+          }
           const mutable = {
             ...next,
             availableQuestLeads: [...next.availableQuestLeads],
@@ -101,6 +115,10 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         break
       case 'updateQuestStage':
         if (outcome.questId && outcome.stageId) {
+          if (!contentCatalog.questsById.has(outcome.questId)) {
+            warnAndSkip(outcome.type, 'questId', outcome.questId)
+            break
+          }
           next = {
             ...next,
             activeQuests: next.activeQuests.map((q) =>
@@ -120,6 +138,10 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
         break
       case 'unlockNpc': {
         if (outcome.npcId) {
+          if (!contentCatalog.npcsById.has(outcome.npcId)) {
+            warnAndSkip(outcome.type, 'npcId', outcome.npcId)
+            break
+          }
           const alreadyHired = next.roster.some((r) => r.npcId === outcome.npcId)
           const alreadyOffered = next.availableForHire.some((o) => o.npcId === outcome.npcId)
           if (!alreadyHired && !alreadyOffered) {
@@ -145,6 +167,10 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
       }
       case 'addNpcToRoster': {
         if (outcome.npcId) {
+          if (!contentCatalog.npcsById.has(outcome.npcId)) {
+            warnAndSkip(outcome.type, 'npcId', outcome.npcId)
+            break
+          }
           const alreadyOnRoster = next.roster.some((r) => r.npcId === outcome.npcId)
           if (!alreadyOnRoster) {
             const npcDef = contentCatalog.npcsById.get(outcome.npcId)

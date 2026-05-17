@@ -150,6 +150,66 @@ export const contentCatalog = {
   ),
 }
 
+function validateCatalogIntegrity(): void {
+  const errors: string[] = []
+  const { questsById, npcsById, itemsById } = contentCatalog
+
+  // Check event outcome cross-references
+  for (const event of contentCatalog.events) {
+    for (const choice of event.choices) {
+      for (const outcome of choice.outcomes) {
+        if (outcome.npcId != null && !npcsById.has(outcome.npcId)) {
+          errors.push(
+            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcome.type}" references npcId "${outcome.npcId}" which does not exist in npcs catalog`,
+          )
+        }
+        if (outcome.questId != null && !questsById.has(outcome.questId)) {
+          errors.push(
+            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcome.type}" references questId "${outcome.questId}" which does not exist in quests catalog`,
+          )
+        }
+      }
+    }
+  }
+
+  // Check quest cross-references
+  for (const quest of contentCatalog.quests) {
+    if (quest.successorQuestId != null && !questsById.has(quest.successorQuestId)) {
+      errors.push(
+        `quests.json: quest "${quest.id}" successorQuestId "${quest.successorQuestId}" does not exist in quests catalog`,
+      )
+    }
+    if (quest.successorOnFailQuestId != null && !questsById.has(quest.successorOnFailQuestId)) {
+      errors.push(
+        `quests.json: quest "${quest.id}" successorOnFailQuestId "${quest.successorOnFailQuestId}" does not exist in quests catalog`,
+      )
+    }
+    if (quest.enemyNpcId != null && !npcsById.has(quest.enemyNpcId)) {
+      errors.push(
+        `quests.json: quest "${quest.id}" enemyNpcId "${quest.enemyNpcId}" does not exist in npcs catalog`,
+      )
+    }
+    for (const itemId of quest.rewardItemIds) {
+      if (!itemsById.has(itemId)) {
+        errors.push(
+          `quests.json: quest "${quest.id}" rewardItemIds references item "${itemId}" which does not exist in items catalog`,
+        )
+      }
+    }
+  }
+
+  if (errors.length === 0) return
+
+  const message = `contentCatalog: ${errors.length} catalog integrity error(s) found:\n${errors.map((e, i) => `  ${i + 1}. ${e}`).join('\n')}`
+  if (!import.meta.env.PROD) {
+    throw new Error(message)
+  } else {
+    console.error(message)
+  }
+}
+
+validateCatalogIntegrity()
+
 export function getTitleDefinitions(): TitleDefinition[] {
   return contentCatalog.titles
 }
