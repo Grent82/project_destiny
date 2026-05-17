@@ -264,6 +264,7 @@
     "faction-tallow-ring": 0,
     "faction-restored": 0
   },
+  "houseWardSeats": 0,
   "institutionalStanding": {
     "faction-civic-compact": "neutral",
     "faction-gilded-court": "watched",

@@ -201,6 +201,7 @@ export const gameStateSchema = z
     completedQuestIds: z.array(z.string()).default([]),
     wards: z.array(wardSchema).default([]),
     councilSeats: councilSeatCountSchema.default({}),
+    houseWardSeats: z.number().min(0).default(0),
     institutionalStanding: z.record(z.string(), institutionalTierSchema).default({}),
     activeCouncilVotes: z.array(councilVoteEventSchema).default([]),
     relationships: z.record(z.string(), gameRelationshipAxesSchema).default({}),

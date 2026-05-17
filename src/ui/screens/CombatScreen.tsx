@@ -174,7 +174,10 @@ export function CombatScreen() {
             <button
               className="action-button"
               disabled={combat.outcome === 'ongoing'}
-              onClick={() => dispatch(gameActions.concludeCombatEncounter())}
+              onClick={() => {
+                dispatch(gameActions.concludeCombatEncounter())
+                navigate('/dashboard')
+              }}
               type="button"
             >
               Conclude encounter

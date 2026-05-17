@@ -512,10 +512,10 @@ const gameSlice = createSlice({
       if (!vote || vote.outcome !== 'pending') return
 
       // Require either a restored ward seat or enough renown to reach the chamber through sponsors.
-      const totalSeats = Object.values(state.councilSeats).reduce((sum, s) => sum + s, 0)
+      const houseSeats = state.houseWardSeats
       const renownLevel = getRenownLevel(state.playerCharacter.renown)
       const renownSeats = renownLevel.councilSeats
-      if (totalSeats === 0 && renownSeats === 0) return
+      if (houseSeats === 0 && renownSeats === 0) return
 
       vote.playerVote = stance
       state.activityLog.unshift({
@@ -524,7 +524,7 @@ const gameSlice = createSlice({
         timeSlot: state.timeSlot,
         category: 'system',
         message:
-          totalSeats > 0
+          houseSeats > 0
             ? `House Valdric casts a ${stance} ward vote on "${vote.title}".`
             : `House Valdric leans on chamber sponsors to ${stance} "${vote.title}".`,
       })

@@ -17,6 +17,7 @@ function checkConditions(template: EventTemplate, state: GameState, rng: Rng): b
   if (cond.currentDistrict !== undefined && state.currentDistrictId !== cond.currentDistrict) return false
   if (cond.activeQuestId !== undefined && !state.activeQuests.some((q) => q.questId === cond.activeQuestId)) return false
   if (cond.requiredRosterNpcId !== undefined && !state.roster.some((n) => n.npcId === cond.requiredRosterNpcId)) return false
+  if (template.sourceNpcId != null && !state.roster.some((n) => n.npcId === template.sourceNpcId)) return false
   if (cond.maxCredits !== undefined && state.money > cond.maxCredits) return false
   if (cond.minRenown !== undefined && state.playerCharacter.renown < cond.minRenown) return false
   if (cond.debtPaid !== undefined && state.debtPaid !== cond.debtPaid) return false
