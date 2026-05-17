@@ -1,6 +1,7 @@
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
-import { meetsDialogueCondition } from '../commands/dialogue'
+import { meetsDialogueCondition, isDialogueChoiceAvailable } from '../commands/dialogue'
+import type { DialogueChoice } from '../../domain/dialogue/contracts'
 
 /**
  * Returns true when an NPC's dialogue tree has at least one hasItem-conditioned
@@ -22,5 +23,24 @@ export function selectNpcHasNewDialogueTopics(npcId: string) {
       if (resolved.includes(choice.id)) return false
       return meetsDialogueCondition(state.game, tree.id, choice.condition)
     })
+  }
+}
+
+/**
+ * Returns the visible (available) dialogue choices for the currently active
+ * dialogue node. Choices are filtered through isDialogueChoiceAvailable, which
+ * checks any condition attached to each choice against the current game state.
+ *
+ * Returns an empty array when there is no active dialogue or node.
+ */
+export function selectVisibleDialogueChoices(nodeId: string) {
+  return (state: RootState): DialogueChoice[] => {
+    const { activeDialogueId } = state.game
+    if (!activeDialogueId) return []
+    const tree = contentCatalog.dialoguesById.get(activeDialogueId)
+    if (!tree) return []
+    const node = tree.nodes.find((n) => n.id === nodeId)
+    if (!node) return []
+    return node.choices.filter((c) => isDialogueChoiceAvailable(state.game, tree.id, c))
   }
 }

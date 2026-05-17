@@ -58,11 +58,12 @@ export function applyRelationshipDelta(
 
 const DEFAULT_LOYALTY = 50
 
-export function applyPassiveDrift(state: GameState): void {
+export function applyPassiveDrift(state: GameState): GameState {
   const rosterTraitsMap = new Map(state.roster.map((n) => [n.npcId, n.traits]))
+  let relationships = state.relationships
 
-  Object.keys(state.relationships).forEach((key) => {
-    const rel = state.relationships[key]!
+  Object.keys(relationships).forEach((key) => {
+    const rel = relationships[key]!
 
     // Only trust drifts passively; affinity persists until friction events reduce it
     const trust = rel.trust
@@ -99,19 +100,23 @@ export function applyPassiveDrift(state: GameState): void {
 
     if (state.day % effectiveInterval !== 0) return
 
-    state.relationships[key] = { ...rel, trust: Math.max(0, trust - 1) }
+    relationships = { ...relationships, [key]: { ...rel, trust: Math.max(0, trust - 1) } }
   })
+
+  return { ...state, relationships }
 }
 
 const BASE_AFFINITY_GAIN = 2
 const BASE_RESPECT_GAIN = 2
 
-export function applyProximityGains(state: GameState, npcIds: string[]): void {
+export function applyProximityGains(state: GameState, npcIds: string[]): GameState {
   const npcTraitsMap = new Map(
     state.roster
       .filter((n) => npcIds.includes(n.npcId))
       .map((n) => [n.npcId, n.traits]),
   )
+
+  let next = state
 
   for (let i = 0; i < npcIds.length; i++) {
     for (let j = i + 1; j < npcIds.length; j++) {
@@ -133,10 +138,12 @@ export function applyProximityGains(state: GameState, npcIds: string[]): void {
       const gainMultiplier = 1.0 + compatScore / 50
       const gain = Math.max(BASE_AFFINITY_GAIN, Math.round(BASE_AFFINITY_GAIN * gainMultiplier)) + curiosityBonus
 
-      applyRelationshipDelta(state, idA, idB, 'affinity', gain)
-      applyRelationshipDelta(state, idB, idA, 'affinity', gain)
+      applyRelationshipDelta(next, idA, idB, 'affinity', gain)
+      applyRelationshipDelta(next, idB, idA, 'affinity', gain)
     }
 
-    applyRelationshipDelta(state, 'player', npcIds[i]!, 'respect', BASE_RESPECT_GAIN)
+    applyRelationshipDelta(next, 'player', npcIds[i]!, 'respect', BASE_RESPECT_GAIN)
   }
+
+  return next
 }

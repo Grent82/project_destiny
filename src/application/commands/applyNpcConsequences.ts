@@ -3,6 +3,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { applyPassiveDrift, applyProximityGains } from './adjustRelationship'
 import { evaluateNpcDeparture } from './npcDeparture'
 import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
+import { TRAIT_HIGH } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
 import { ensureCaptivityPregnancyDiscovery } from './captivityPregnancyDiscovery'
 
@@ -98,11 +99,10 @@ export function applyNpcConsequences(
   let next = state
 
   // Step 5b: Passive relationship drift and proximity gains
-  next = { ...next, relationships: { ...next.relationships } }
-  applyPassiveDrift(next)
+  next = applyPassiveDrift(next)
   const deployedNpcIds = next.roster.filter((r) => r.assignment === 'deployed').map((r) => r.npcId)
   if (deployedNpcIds.length > 0) {
-    applyProximityGains(next, deployedNpcIds)
+    next = applyProximityGains(next, deployedNpcIds)
   }
 
   // Step 5b-post: Relationship milestone unlock check
@@ -110,7 +110,7 @@ export function applyNpcConsequences(
 
   // Step 5c-pre: Ambition frustration morale drain
   for (const npc of next.roster) {
-    if (npc.traits.ambition > 65 && npc.activeTitle === null && npc.assignment !== 'deployed') {
+    if (npc.traits.ambition > TRAIT_HIGH && npc.activeTitle === null && npc.assignment !== 'deployed') {
       next = {
         ...next,
         roster: next.roster.map((r) =>

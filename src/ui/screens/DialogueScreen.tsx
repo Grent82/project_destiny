@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
-import { isDialogueChoiceAvailable } from '../../application/commands/dialogue'
+import { selectVisibleDialogueChoices } from '../../application/selectors/dialogue'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { DialogueChoice } from '../../domain/dialogue/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
@@ -10,8 +10,7 @@ import { VenueContextBanner } from './VenueContextBanner'
 export function DialogueScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const gameState = useAppSelector((state) => state.game)
-  const { activeDialogueId, activeDialogueNodeId } = gameState
+  const { activeDialogueId, activeDialogueNodeId } = useAppSelector((state) => state.game)
 
   const tree = activeDialogueId ? contentCatalog.dialoguesById.get(activeDialogueId) : null
   const node = tree && activeDialogueNodeId
@@ -19,6 +18,7 @@ export function DialogueScreen() {
     : null
 
   const npcDef = tree ? contentCatalog.npcsById.get(tree.npcId) : null
+  const visibleChoices = useAppSelector(selectVisibleDialogueChoices(activeDialogueNodeId ?? ''))
 
   function handleLeave() {
     dispatch(gameActions.endDialogue())
@@ -45,7 +45,6 @@ export function DialogueScreen() {
   }
 
   const portraitId = tree.npcId.replace('npc-', '')
-  const visibleChoices = node.choices.filter((c) => isDialogueChoiceAvailable(gameState, tree.id, c))
   const isEndNode = visibleChoices.length === 0
 
   return (

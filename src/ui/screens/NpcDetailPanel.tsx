@@ -7,6 +7,7 @@ import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibi
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import { TRAIT_HIGH, TRAIT_NOTABLY_LOW } from '../../domain/npc/traitThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'
@@ -124,11 +125,11 @@ const TRAIT_LOW_LABELS: Record<string, string> = {
 
 function getDominantTraitSentences(traits: Record<string, number>): string[] {
   return Object.entries(traits)
-    .filter(([, val]) => val > 65 || val < 35)
+    .filter(([, val]) => val > TRAIT_HIGH || val < TRAIT_NOTABLY_LOW)
     .sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50))
     .slice(0, 2)
     .map(([key, val]) => {
-      if (val > 65) return `Highly ${TRAIT_LABELS[key] ?? key}.`
+      if (val > TRAIT_HIGH) return `Highly ${TRAIT_LABELS[key] ?? key}.`
       return `Unusually ${TRAIT_LOW_LABELS[key] ?? key}.`
     })
 }
