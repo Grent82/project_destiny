@@ -7,7 +7,8 @@ import {
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { INVESTIGATION_APPROACHES, type InvestigationApproach } from '../../application/commands/investigation'
+import { selectInvestigationApproaches } from '../../application/selectors/investigation'
+import type { InvestigationApproach } from '../../application/commands/investigation'
 import { formatMarks } from '../../domain/game/currency'
 
 export function InvestigationScreen() {
@@ -16,6 +17,7 @@ export function InvestigationScreen() {
   const data = useAppSelector(selectActiveInvestigationQuest)
   const roster = useAppSelector((s) => s.game.roster)
   const currentDistrictId = useAppSelector((s) => s.game.currentDistrictId)
+  const investigationApproaches = selectInvestigationApproaches()
 
   const [selectedNpcIds, setSelectedNpcIds] = useState<string[]>([])
 
@@ -37,7 +39,7 @@ export function InvestigationScreen() {
   const stage = investigation.stage ?? 'approach-selection'
   const chosenApproachId = investigation.chosenApproachId ?? null
   const chosenApproach: InvestigationApproach | undefined = chosenApproachId
-    ? INVESTIGATION_APPROACHES.find((a) => a.id === chosenApproachId)
+    ? investigationApproaches.find((a) => a.id === chosenApproachId)
     : undefined
 
   const idleRoster = roster.filter(
@@ -167,7 +169,7 @@ export function InvestigationScreen() {
         </p>
 
         <div className="overview-grid">
-          {INVESTIGATION_APPROACHES.map((approach) => (
+          {investigationApproaches.map((approach) => (
             <article key={approach.id} className="detail-panel">
               <h3>{approach.label}</h3>
               <p className="summary">{approach.description}</p>

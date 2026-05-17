@@ -7,6 +7,7 @@ import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibi
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import { TRAIT_HIGH, TRAIT_NOTABLY_LOW } from '../../domain/npc/traitThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'

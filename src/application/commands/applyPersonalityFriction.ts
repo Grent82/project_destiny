@@ -3,6 +3,7 @@ import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
+import { TRAIT_HIGH, TRAIT_DOMINANT, TRAIT_MODERATE } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
 
 const MAX_EVENTS_PER_CYCLE = 2
@@ -55,7 +56,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
 
         if (coPresent) {
           // Late conversation: both high curiosity
-          if (npcA.traits.curiosity > 55 && npcB.traits.curiosity > 55) {
+          if (npcA.traits.curiosity > TRAIT_MODERATE && npcB.traits.curiosity > TRAIT_MODERATE) {
             const key = bondingKey(npcA.npcId, npcB.npcId, 'late-conversation')
             if (!isOnCooldown(next, key, BONDING_COOLDOWN)) {
               next = { ...next, relationships: { ...next.relationships } }
@@ -75,7 +76,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
           }
 
           // Quiet respect: both high discipline
-          if (npcA.traits.discipline > 65 && npcB.traits.discipline > 65) {
+          if (npcA.traits.discipline > TRAIT_HIGH && npcB.traits.discipline > TRAIT_HIGH) {
             const key = bondingKey(npcA.npcId, npcB.npcId, 'quiet-respect')
             if (!isOnCooldown(next, key, BONDING_COOLDOWN)) {
               next = { ...next, relationships: { ...next.relationships } }
@@ -97,7 +98,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
       // --- FRICTION EVENTS (rule conditions, independent of global score) ---
 
       // Rule 1: Dominance rivalry — both dominance >65, no title differentiation
-      if (npcA.traits.dominance > 65 && npcB.traits.dominance > 65) {
+      if (npcA.traits.dominance > TRAIT_HIGH && npcB.traits.dominance > TRAIT_HIGH) {
         const sameTitleStatus = (npcA.activeTitle === null) === (npcB.activeTitle === null)
         if (sameTitleStatus) {
           const key = frictionKey(npcA.npcId, npcB.npcId, 'dominance-rivalry')
@@ -118,8 +119,8 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
 
       // Rule 2: Moral methods disagreement — one ruthless >60, one empathic >60
       if (
-        (npcA.traits.ruthlessness > 60 && npcB.traits.empathy > 60) ||
-        (npcB.traits.ruthlessness > 60 && npcA.traits.empathy > 60)
+        (npcA.traits.ruthlessness > TRAIT_DOMINANT && npcB.traits.empathy > TRAIT_DOMINANT) ||
+        (npcB.traits.ruthlessness > TRAIT_DOMINANT && npcA.traits.empathy > TRAIT_DOMINANT)
       ) {
         const key = frictionKey(npcA.npcId, npcB.npcId, 'moral-methods')
         if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
@@ -138,8 +139,8 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
 
       // Rule 3: Ambition rivalry — both ambition >65, neither has a title
       if (
-        npcA.traits.ambition > 65 &&
-        npcB.traits.ambition > 65 &&
+        npcA.traits.ambition > TRAIT_HIGH &&
+        npcB.traits.ambition > TRAIT_HIGH &&
         npcA.activeTitle === null &&
         npcB.activeTitle === null
       ) {
@@ -159,7 +160,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
       }
 
       // Rule 4: Vanity recognition competition — both vanity >60
-      if (npcA.traits.vanity > 60 && npcB.traits.vanity > 60) {
+      if (npcA.traits.vanity > TRAIT_DOMINANT && npcB.traits.vanity > TRAIT_DOMINANT) {
         const key = frictionKey(npcA.npcId, npcB.npcId, 'vanity-recognition')
         if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
           next = {
@@ -176,7 +177,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
       }
 
       // Rule 5: Zeal clash — both zeal >60, opposing faction affiliations
-      if (npcA.traits.zeal > 60 && npcB.traits.zeal > 60) {
+      if (npcA.traits.zeal > TRAIT_DOMINANT && npcB.traits.zeal > TRAIT_DOMINANT) {
         const defA = contentCatalog.npcsById.get(npcA.npcId)
         const defB = contentCatalog.npcsById.get(npcB.npcId)
         if (

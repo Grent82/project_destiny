@@ -6,6 +6,7 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { getJobForNpc } from '../content/jobCatalog'
 import { matchQuirkToContext } from '../../domain/npc/matchQuirkToContext'
+import { TRAIT_DOMINANT, TRAIT_MODERATE, TRAIT_NEUTRAL, TRAIT_LOW } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 
@@ -28,11 +29,11 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
       ?? `district-${district.toLowerCase().replace(/\s+/g, '-')}`
     const npcName = npc.name
 
-    const isReckless = npc.traits.ruthlessness > 60 || npc.traits.prudence < 40
-    const isAmbitious = npc.traits.ambition > 60
-    const isDiplomatic = npc.traits.empathy > 60
-    const isCharming = npc.traits.vanity > 60
-    const isGreedy = npc.traits.ambition > 50 && npc.traits.discipline < 50
+    const isReckless = npc.traits.ruthlessness > TRAIT_DOMINANT || npc.traits.prudence < TRAIT_LOW
+    const isAmbitious = npc.traits.ambition > TRAIT_DOMINANT
+    const isDiplomatic = npc.traits.empathy > TRAIT_DOMINANT
+    const isCharming = npc.traits.vanity > TRAIT_DOMINANT
+    const isGreedy = npc.traits.ambition > TRAIT_NEUTRAL && npc.traits.discipline < TRAIT_NEUTRAL
 
     const pool: AgencyAction[] = ['rumor', 'rumor', 'rumor']
     if (isReckless || isAmbitious) pool.push('incident', 'incident')
@@ -157,8 +158,8 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
 
 function evaluateInitiativeAction(npc: NpcRuntimeState, rng: Rng): InitiativeAction {
   const pool: InitiativeAction[] = ['resource_move', 'npc_approach', 'resource_move']
-  if (npc.traits.ambition > 60) pool.push('district_lever', 'faction_position')
-  if (npc.traits.dominance > 55) pool.push('faction_position', 'district_lever')
+  if (npc.traits.ambition > TRAIT_DOMINANT) pool.push('district_lever', 'faction_position')
+  if (npc.traits.dominance > TRAIT_MODERATE) pool.push('faction_position', 'district_lever')
   return pool[Math.floor(rng() * pool.length)] as InitiativeAction
 }
 

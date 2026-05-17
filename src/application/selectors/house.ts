@@ -2,6 +2,14 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store/gameStore'
 import type { HouseExteriorTier, HeirLegitimacy, Heir } from '../../domain/game/contracts'
+import {
+  PRESTIGE_TIER_MIN_SCORES,
+  EXTERIOR_TIER_SCORES,
+  DEFENSE_FORTIFICATION_WEIGHT,
+  DEFENSE_GUARD_CREW_WEIGHT,
+  DEFENSE_RENOWN_DETERRENCE_PER_LEVEL,
+  DEFENSE_RENOWN_LEVEL_DIVISOR,
+} from '../../domain/game/gameRules'
 
 const selectGame = (state: RootState) => state.game
 
@@ -82,13 +90,13 @@ export const PRESTIGE_TIER_LABELS: Record<HousePrestigeTier, string> = {
   prominent: 'Prominent',
 }
 
-/** Minimum prestige score for each tier. */
+/** Minimum prestige score for each tier (sourced from gameRules). */
 const PRESTIGE_TIER_THRESHOLDS: Array<{ tier: HousePrestigeTier; min: number }> = [
-  { tier: 'prominent',   min: 75 },
-  { tier: 'recognized',  min: 50 },
-  { tier: 'established', min: 25 },
-  { tier: 'occupied',    min: 10 },
-  { tier: 'collapsed',   min: 0 },
+  { tier: 'prominent',   min: PRESTIGE_TIER_MIN_SCORES.prominent },
+  { tier: 'recognized',  min: PRESTIGE_TIER_MIN_SCORES.recognized },
+  { tier: 'established', min: PRESTIGE_TIER_MIN_SCORES.established },
+  { tier: 'occupied',    min: PRESTIGE_TIER_MIN_SCORES.occupied },
+  { tier: 'collapsed',   min: PRESTIGE_TIER_MIN_SCORES.collapsed },
 ]
 
 function computePrestigeTier(score: number): HousePrestigeTier {
@@ -107,10 +115,7 @@ function computePrestigeTier(score: number): HousePrestigeTier {
  * Max theoretical score: ~120+ (clamped to 100)
  */
 export const selectHousePrestige = createSelector([selectGame], (game) => {
-  const tierScore: Record<HouseExteriorTier, number> = {
-    ruined: 0, patched: 10, maintained: 25, restored: 50, grand: 80,
-  }
-  const exteriorScore = tierScore[game.house.exteriorState]
+  const exteriorScore = EXTERIOR_TIER_SCORES[game.house.exteriorState]
   const roomsWithFunction = game.house.rooms.filter(
     (r) => r.state === 'intact' && r.roomFunction !== null
   ).length
@@ -167,11 +172,6 @@ export const selectContentGates = createSelector(selectHousePrestige, (prestige)
   }
 })
 
-// Defense constants
-const FORTIFICATION_WEIGHT = 15
-const GUARD_CREW_WEIGHT = 10
-const RENOWN_DETERRENCE_PER_LEVEL = 5
-
 /**
  * Computes the house defense rating from:
  *  fortificationLevel × hardware weight
@@ -181,19 +181,14 @@ const RENOWN_DETERRENCE_PER_LEVEL = 5
  * Higher defenseRating → more likely to deter or repel a raid.
  */
 export const selectDefenseRating = createSelector([selectGame], (game): number => {
-  const fortScore = game.house.fortificationLevel * FORTIFICATION_WEIGHT
+  const fortScore = game.house.fortificationLevel * DEFENSE_FORTIFICATION_WEIGHT
   const guardCount = game.roster.filter((n) => n.assignment === 'defense').length
-  const crewScore = guardCount * GUARD_CREW_WEIGHT
+  const crewScore = guardCount * DEFENSE_GUARD_CREW_WEIGHT
 
   // Renown level from progression (uses getRenownLevel via prestige)
-  const prestige = (() => {
-    const tierScore: Record<HouseExteriorTier, number> = {
-      ruined: 0, patched: 10, maintained: 25, restored: 50, grand: 80,
-    }
-    return tierScore[game.house.exteriorState]
-  })()
-  const renownLevel = Math.floor(prestige / 20) // 0–4
-  const renownScore = renownLevel * RENOWN_DETERRENCE_PER_LEVEL
+  const prestige = EXTERIOR_TIER_SCORES[game.house.exteriorState]
+  const renownLevel = Math.floor(prestige / DEFENSE_RENOWN_LEVEL_DIVISOR) // 0–4
+  const renownScore = renownLevel * DEFENSE_RENOWN_DETERRENCE_PER_LEVEL
 
   return fortScore + crewScore + renownScore
 })
