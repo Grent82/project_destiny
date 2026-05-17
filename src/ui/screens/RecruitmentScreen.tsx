@@ -8,6 +8,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useVenueContext } from './locationContext'
 import { VenueContextBanner } from './VenueContextBanner'
+import { formatMarks } from '../../domain/game/currency'
 
 export function RecruitmentScreen() {
   const navigate = useNavigate()

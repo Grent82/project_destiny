@@ -4,6 +4,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { formatMarks } from '../../domain/game/currency'
 import { addOwnedItem } from './inventory'
 import type { ExpeditionDiscovery } from '../../domain/expedition/contracts'
+import { formatMarks } from '../../domain/game/currency'
 
 /**
  * Generate a random encounter for a given expedition day.

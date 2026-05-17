@@ -173,7 +173,7 @@ export function ShopsScreen() {
                         </div>
                       </div>
                       <div className="shop-offer-actions">
-                        <span>{offer.price} Mk</span>
+                        <span>{formatMarksAbbrev(offer.price)}</span>
                         <button
                           className="action-button"
                           onClick={() =>

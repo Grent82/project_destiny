@@ -14,6 +14,7 @@ import { createRng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import { formatMarks } from '../../domain/game/currency'
 import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
+import { formatMarks } from '../../domain/game/currency'
 import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
 import {
