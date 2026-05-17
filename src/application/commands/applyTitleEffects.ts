@@ -3,6 +3,7 @@ import { RARITY_SKILL_CAPS, skillGainMultiplier, crossedMilestones } from '../..
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
+import { computeWorkingIncome } from '../selectors/roster'
 
 const SKILL_KEYS: (keyof Skills)[] = [
   'melee',
@@ -342,12 +343,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     if (!npcDef) continue
 
     const skills = runtimeNpc.skills
-    const nonCombatSkills: (keyof Skills)[] = [
-      'administration', 'medicine', 'engineering', 'negotiation',
-      'security', 'crafting', 'academics',
-    ]
-    const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
-    const baseIncome = Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
+    const baseIncome = computeWorkingIncome(skills)
     const bondMultiplier = runtimeNpc.bondStatus?.holderId === 'player' ? 1.2 : 1
     const income = Math.floor(baseIncome * prosperityMult * bondMultiplier)
     next = { ...next, money: next.money + income }

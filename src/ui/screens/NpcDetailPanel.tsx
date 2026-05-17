@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectNpcHasNewDialogueTopics } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -96,46 +96,9 @@ function RelationshipBar({ label, value }: { label: string; value: number }) {
   )
 }
 
-const TRAIT_LABELS: Record<string, string> = {
-  discipline: 'disciplined',
-  ambition: 'ambitious',
-  empathy: 'empathetic',
-  ruthlessness: 'ruthless',
-  prudence: 'prudent',
-  curiosity: 'curious',
-  dominance: 'dominant',
-  loyalty: 'loyal',
-  vanity: 'vain',
-  zeal: 'zealous',
-}
-
-const TRAIT_LOW_LABELS: Record<string, string> = {
-  discipline: 'undisciplined',
-  ambition: 'unambitious',
-  empathy: 'callous',
-  ruthlessness: 'merciful',
-  prudence: 'reckless',
-  curiosity: 'incurious',
-  dominance: 'submissive',
-  loyalty: 'disloyal',
-  vanity: 'humble',
-  zeal: 'indifferent',
-}
-
-function getDominantTraitSentences(traits: Record<string, number>): string[] {
-  return Object.entries(traits)
-    .filter(([, val]) => val > 65 || val < 35)
-    .sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50))
-    .slice(0, 2)
-    .map(([key, val]) => {
-      if (val > 65) return `Highly ${TRAIT_LABELS[key] ?? key}.`
-      return `Unusually ${TRAIT_LOW_LABELS[key] ?? key}.`
-    })
-}
-
 function CharacterSection({ detail }: { detail: NpcDetail }) {
   if (!detail.background) return null
-  const traitSentences = getDominantTraitSentences(detail.traits)
+  const traitSentences = useAppSelector(selectNpcCharacterDescription(detail.npcId))
   const motivationLine = detail.motivation?.publicGoal ?? detail.motivation?.privateNeed
 
   return (
@@ -202,6 +165,7 @@ const ASSIGNMENT_LABELS: Record<string, string> = {
 function AssignmentSelector({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
   const isSystemControlled = detail.assignment === 'deployed' || detail.assignment === 'assigned_title'
+  const income = useAppSelector(selectEstimatedNpcIncome(detail.npcId))
 
   if (isSystemControlled) {
     return (
@@ -237,10 +201,6 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
       )}
       {detail.assignment === 'working' && (() => {
         const job = getJobForNpc(detail.skills)
-        const income = Math.max(3, Math.min(15, Math.floor(
-          Math.max(...(['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics'] as const)
-            .map((s) => detail.skills[s] ?? 0)) / 7
-        )))
         return (
           <div style={{ marginTop: '0.5rem', fontFamily: 'var(--font-body)', fontSize: 'var(--size-sm)', color: 'var(--text-muted)' }}>
             <div>Job: {job.name}</div>
