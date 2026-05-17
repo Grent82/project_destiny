@@ -5,6 +5,7 @@ import {
   calculateInheritedAttributes,
   buildInheritedSkills,
 } from '../../domain/npc/traitInheritance'
+import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng } from './seededRng'
 import { appendActivityLogEntry } from './activityLog'
 
@@ -20,6 +21,16 @@ export function formalizeHeir(
 ): GameState {
   const heir = state.house.houseHeirs.find((h) => h.id === heirId)
   if (!heir || heir.stage !== 'adult') return state
+
+  const renownSlots = getRenownLevel(state.playerCharacter.renown).rosterSlots
+  const rosterCapacity = renownSlots + (state.house.rosterBonus ?? 0)
+  if (state.roster.length >= rosterCapacity) {
+    return appendActivityLogEntry(
+      state,
+      'system',
+      `${heir.name} cannot join the household — there is no room.`,
+    )
+  }
 
   const { rng, getSeed } = createRng(state.rngSeed)
 
@@ -83,6 +94,6 @@ export function formalizeHeir(
   return appendActivityLogEntry(
     next,
     'system',
-    `${heir.name} joins the household as an adult member of House Valdris.`,
+    `${heir.name} joins the household as an adult member of House Valdric.`,
   )
 }

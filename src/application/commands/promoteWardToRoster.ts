@@ -5,6 +5,7 @@ import {
   calculateInheritedAttributes,
   buildInheritedSkills,
 } from '../../domain/npc/traitInheritance'
+import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng } from './seededRng'
 import { appendActivityLogEntry } from './activityLog'
 
@@ -19,6 +20,16 @@ export function promoteWardToRoster(
 ): GameState {
   const ward = state.wards.find((w) => w.wardId === wardId)
   if (!ward || ward.stage !== 'young_adult') return state
+
+  const renownSlots = getRenownLevel(state.playerCharacter.renown).rosterSlots
+  const rosterCapacity = renownSlots + (state.house.rosterBonus ?? 0)
+  if (state.roster.length >= rosterCapacity) {
+    return appendActivityLogEntry(
+      state,
+      'system',
+      `${wardName} cannot join the household — there is no room.`,
+    )
+  }
 
   const { rng, getSeed } = createRng(state.rngSeed)
 

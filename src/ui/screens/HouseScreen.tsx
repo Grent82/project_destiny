@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   gameActions,
   selectDebtStatus,
+  selectHouseHeirs,
   selectHouseRepairSummary,
   selectHouseRooms,
   selectWards,
@@ -192,6 +193,7 @@ export function HouseScreen() {
   const summary = useAppSelector(selectHouseRepairSummary)
   const debt = useAppSelector(selectDebtStatus)
   const wards = useAppSelector(selectWards)
+  const heirs = useAppSelector(selectHouseHeirs)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
 
   return (
@@ -256,6 +258,32 @@ export function HouseScreen() {
           </div>
         </section>
       )}
+
+      <section className="house-wards-section">
+        <h2>Succession</h2>
+        <p className="summary">Heirs recognized by the house — by blood, fostering, or formal arrangement.</p>
+        {heirs.length === 0 ? (
+          <p className="quest-briefing">No succession heirs are established.</p>
+        ) : (
+          <div className="mission-list">
+            {heirs.map((heir) => (
+              <div key={heir.id} className="mission-row">
+                <div className="mission-row-header">
+                  <strong>{heir.name}</strong>
+                  <span className="badge">{heir.stage}</span>
+                  <span className="badge">{heir.legitimacyStatus}</span>
+                  {heir.origin && <span className="badge">{heir.origin}</span>}
+                </div>
+                {heir.originStory && (
+                  <p className="quest-briefing" style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                    {heir.originStory}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       <p className="house-ledger-link">
         <Link to="/ledger">View House Accounts →</Link>

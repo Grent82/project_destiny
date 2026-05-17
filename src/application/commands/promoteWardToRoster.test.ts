@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { promoteWardToRoster } from './promoteWardToRoster'
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { idaRhysRosterEntry } from './testFixtures'
 import type { GameState, Ward } from '../../domain/game/contracts'
+import type { NpcRuntimeState } from '../../domain/npc/contracts'
 
 function wardBase(overrides: Partial<Ward>): Ward {
   return {
@@ -104,5 +106,36 @@ describe('promoteWardToRoster', () => {
     const state = stateWithWard(wardBase({}))
     const result = promoteWardToRoster(state, 'ward-test', 'Lys', null)
     expect(result.rngSeed).not.toBe(state.rngSeed)
+  })
+
+  it('logs capacity block and does not promote when roster is full', () => {
+    // Renown=0 → 4 slots, rosterBonus=0 → capacity 4
+    // Fill with 4 NPCs (1 starting + 3 fillers)
+    const fillerNpc = (id: string): NpcRuntimeState => ({
+      ...idaRhysRosterEntry,
+      npcId: id,
+      name: `Filler-${id}`,
+    })
+    const fullRoster: NpcRuntimeState[] = [
+      ...initialGameStateSnapshot.roster,
+      fillerNpc('filler-1'),
+      fillerNpc('filler-2'),
+      fillerNpc('filler-3'),
+    ]
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      day: 2000,
+      wards: [wardBase({})],
+      roster: fullRoster,
+    }
+    const result = promoteWardToRoster(state, 'ward-test', 'Lys', null)
+    // Ward should NOT be added to the roster
+    expect(result.roster.length).toBe(4)
+    // Ward should remain in wards
+    expect(result.wards).toHaveLength(1)
+    // Activity log should explain the block
+    const entry = result.activityLog.find((e) => e.message.includes('no room'))
+    expect(entry).toBeDefined()
+    expect(entry?.message).toContain('Lys')
   })
 })
