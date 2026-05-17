@@ -332,13 +332,13 @@
     "cityDayAtDeparture": 0
   },
   "householdLore": {
-    "houseName": "House Valdris",
-    "founderName": "Aldren Valdris",
+    "houseName": "House Valdric",
+    "founderName": "Aldren Valdric",
     "founderGeneration": 2,
     "antagonistFactionId": "faction-gilded-court",
     "missingRelatives": [
       {
-        "name": "Mira Valdris",
+        "name": "Mira Valdric",
         "relation": "sister",
         "lastKnownLocation": "district-gilded-heights"
       }

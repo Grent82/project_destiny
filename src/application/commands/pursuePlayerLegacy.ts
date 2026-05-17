@@ -126,7 +126,7 @@ export function tickPregnancyProgress(state: GameState): GameState {
             {
               id: heirId,
               name: `Child of ${npc.name}`,
-              originStory: `Born to ${npc.name} within House Valdris.`,
+              originStory: `Born to ${npc.name} within House Valdric.`,
               stage: 'child' as const,
               arrivalDay: next.day,
               origin: 'biological' as const,

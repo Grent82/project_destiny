@@ -114,7 +114,7 @@
     "kind": "planted",
     "districtId": "district-gilded-heights",
     "originNpcId": "npc-enemy-lady-sorn",
-    "text": "Someone in House Valdris still has loyal eyes watching from inside the city.",
+    "text": "Someone in House Valdric still has loyal eyes watching from inside the city.",
     "subjectNpcIds": [
       "npc-enemy-lady-sorn"
     ],
@@ -530,7 +530,7 @@
     "kind": "ambient",
     "districtId": "district-harbor",
     "originNpcId": null,
-    "text": "House Valdris has been to the harbor twice now on business that does not appear in the register. Whatever they want there is no longer speculation.",
+    "text": "House Valdric has been to the harbor twice now on business that does not appear in the register. Whatever they want there is no longer speculation.",
     "subjectNpcIds": ["npc-verek-holst"],
     "truth": "true",
     "credibility": 60,

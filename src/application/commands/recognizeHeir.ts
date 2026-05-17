@@ -27,6 +27,6 @@ export function recognizeHeir(state: GameState, heirId: string): GameState {
   return appendActivityLogEntry(
     withEvent,
     'system',
-    `${heir.name} is recognized as the Valdris heir. The city will know before nightfall.`,
+    `${heir.name} is recognized as the Valdric heir. The city will know before nightfall.`,
   )
 }

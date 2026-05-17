@@ -198,7 +198,7 @@ describe('gameStateSchema', () => {
       day: 1,
       timeSlot: 'morning',
       money: 250,
-      protagonistName: 'Valdris',
+      protagonistName: 'Valdric',
       hasSeenOpening: false,
       factionStates: [
         {
@@ -249,7 +249,7 @@ describe('gameStateSchema', () => {
       day: 3,
       timeSlot: 'afternoon',
       money: 120,
-      protagonistName: 'Valdris',
+      protagonistName: 'Valdric',
       hasSeenOpening: true,
       factionStates: [],
       districts: [],
@@ -301,7 +301,7 @@ describe('gameStateSchema', () => {
       day: 1,
       timeSlot: 'morning',
       money: 250,
-      protagonistName: 'Valdris',
+      protagonistName: 'Valdric',
       hasSeenOpening: false,
       factionStates: [],
       districts: [],

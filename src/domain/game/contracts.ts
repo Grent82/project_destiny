@@ -243,8 +243,8 @@ export const gameStateSchema = z
       cityDayAtDeparture: 0,
     })),
     householdLore: z.object({
-      houseName: z.string().default('House Valdris'),
-      founderName: z.string().default('Edric Valdris'),
+      houseName: z.string().default('House Valdric'),
+      founderName: z.string().default('Edric Valdric'),
       founderGeneration: z.number().default(2),
       antagonistFactionId: z.string().default('faction-gilded-court'),
       missingRelatives: z.array(z.object({
@@ -253,8 +253,8 @@ export const gameStateSchema = z
         lastKnownLocation: z.string().optional(),
       })).default([]),
     }).default(() => ({
-      houseName: 'House Valdris',
-      founderName: 'Edric Valdris',
+      houseName: 'House Valdric',
+      founderName: 'Edric Valdric',
       founderGeneration: 2,
       antagonistFactionId: 'faction-gilded-court',
       missingRelatives: [],

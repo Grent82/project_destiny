@@ -22,7 +22,7 @@ export const screenCatalog = [
   {
     path: '/factions',
     title: 'Factions',
-    summary: 'Where House Valdris stands with each faction in Valdenmoor.',
+    summary: 'Where House Valdric stands with each faction in Valdenmoor.',
   },
   {
     path: '/event-log',
@@ -32,11 +32,11 @@ export const screenCatalog = [
   {
     path: '/ledger',
     title: 'Ledger',
-    summary: 'Debt, wages, contract registry, and the standing obligations of House Valdris.',
+    summary: 'Debt, wages, contract registry, and the standing obligations of House Valdric.',
   },
   {
     path: '/house',
     title: 'The House',
-    summary: 'The Valdris family seat in The Pale. Damaged, stripped, but still standing.',
+    summary: 'The Valdric family seat in The Pale. Damaged, stripped, but still standing.',
   },
 ] as const

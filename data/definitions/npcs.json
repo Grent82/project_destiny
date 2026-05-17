@@ -886,7 +886,7 @@
     "id": "npc-maret-sunne",
     "name": "Maret Sunne",
     "origin": "Civic Quarter",
-    "background": "Bastard granddaughter of Old Maret, raised under a different surname to hide paternity. Became a clerk and archivist because she inherited Old Maret's memory for prices, names, and omissions. Holds a ledger that proves who profited from the fall of House Valdris. Does not know Old Maret knows she has it. Treats the ledger as an inheritance she has not yet understood.",
+    "background": "Bastard granddaughter of Old Maret, raised under a different surname to hide paternity. Became a clerk and archivist because she inherited Old Maret's memory for prices, names, and omissions. Holds a ledger that proves who profited from the fall of House Valdric. Does not know Old Maret knows she has it. Treats the ledger as an inheritance she has not yet understood.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -969,7 +969,7 @@
       {
         "type": "bastard-kin",
         "targetId": "npc-old-maret",
-        "note": "Does not know Old Maret knows. Carries a ledger proving who profited from the fall of House Valdris."
+        "note": "Does not know Old Maret knows. Carries a ledger proving who profited from the fall of House Valdric."
       }
     ]
   },
@@ -1161,8 +1161,8 @@
     "id": "npc-mira",
     "name": "Mira",
     "npcType": "story",
-    "origin": "House Valdris",
-    "background": "The player's younger sister. Last seen three months before the Breach in The Pale District, cross-referencing chapel birth records with legal succession grants from the Compact Registry. She had located a maternity ledger that she believed proved Valdris heirship passed through the maternal line \u2014 a line deliberately erased from the public record. Her disappearance is the reason the player fights to rebuild House Valdris. She was close to the ledger when she vanished.",
+    "origin": "House Valdric",
+    "background": "The player's younger sister. Last seen three months before the Breach in The Pale District, cross-referencing chapel birth records with legal succession grants from the Compact Registry. She had located a maternity ledger that she believed proved Valdric heirship passed through the maternal line \u2014 a line deliberately erased from the public record. Her disappearance is the reason the player fights to rebuild House Valdric. She was close to the ledger when she vanished.",
     "rarity": "rare",
     "status": "family",
     "factionAffinityId": null,
@@ -1238,7 +1238,7 @@
     ],
     "motivation": {
       "publicGoal": "Unknown.",
-      "privateNeed": "She was tracking a maternity ledger \u2014 a chapel birth registry from The Pale, cross-referenced with Compact Registry succession grants \u2014 that proves the Valdris maternal line was erased, not extinguished. The final link in the chain is a woman named Cessa Rill.",
+      "privateNeed": "She was tracking a maternity ledger \u2014 a chapel birth registry from The Pale, cross-referenced with Compact Registry succession grants \u2014 that proves the Valdric maternal line was erased, not extinguished. The final link in the chain is a woman named Cessa Rill.",
       "immediatePressure": "Captivity, or something that looks like it. She has been altered by it. She guards something \u2014 or no longer speaks from the same self."
     },
     "bonds": [
@@ -1256,7 +1256,7 @@
     "districtId": "district-the-pale",
     "description": "Innkeeper of The Ashen Cup. Knows everyone who passes through, and owes a few debts to The Collectors.",
     "origin": "The Pale",
-    "background": "Son of an innkeeper whose establishment served Valdris retainers before the Breach. The locked box behind the bar contains service tokens, ring fragments, and unpaid writs from the old house. Memorises orders because his father memorised noble table habits for a Valdris patron who later vanished. Has been waiting for someone to ask about the box for years.",
+    "background": "Son of an innkeeper whose establishment served Valdric retainers before the Breach. The locked box behind the bar contains service tokens, ring fragments, and unpaid writs from the old house. Memorises orders because his father memorised noble table habits for a Valdric patron who later vanished. Has been waiting for someone to ask about the box for years.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -1352,7 +1352,7 @@
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Father ran inn serving Valdris retainers. Locked box contains service tokens and unpaid writs from the old house."
+        "note": "Father ran inn serving Valdric retainers. Locked box contains service tokens and unpaid writs from the old house."
       },
       {
         "type": "old-comrade",
@@ -1491,7 +1491,7 @@
     "districtId": "district-harbor",
     "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
     "origin": "Harbor Ward",
-    "background": "Son of a municipal notary who copied all noble grants before the Breach. Three copies of every document exist because his family lost everything to forged records. Knows which legal form erased House Valdris the first time \u2014 and has kept a copy of that form. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
+    "background": "Son of a municipal notary who copied all noble grants before the Breach. Three copies of every document exist because his family lost everything to forged records. Knows which legal form erased House Valdric the first time \u2014 and has kept a copy of that form. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -1587,7 +1587,7 @@
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Father copied all noble grants before the Breach. Holds copy of the legal form that erased Valdris the first time."
+        "note": "Father copied all noble grants before the Breach. Holds copy of the legal form that erased Valdric the first time."
       }
     ],
     "schedule": {
@@ -2168,7 +2168,7 @@
     "districtId": "district-the-hollows",
     "description": "Remembers the city before the Breach. Not all of her memories are safe.",
     "origin": "The Hollows",
-    "background": "Lower household accounts keeper for House Valdris before the Breach. Survived by knowing who was starving before they admitted it. Falsified grain ledgers during a pre-Breach winter riot to keep the house fed. Last living witness to the Valdris servants hall. Has not spoken the house name aloud in years, but refers to the old rooms by name as if she still works there.",
+    "background": "Lower household accounts keeper for House Valdric before the Breach. Survived by knowing who was starving before they admitted it. Falsified grain ledgers during a pre-Breach winter riot to keep the house fed. Last living witness to the Valdric servants hall. Has not spoken the house name aloud in years, but refers to the old rooms by name as if she still works there.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -2263,7 +2263,7 @@
       {
         "type": "bastard-kin",
         "targetId": "npc-maret-sunne",
-        "note": "Granddaughter raised under a different surname to hide paternity. Old Maret knows she holds the Valdris ledger."
+        "note": "Granddaughter raised under a different surname to hide paternity. Old Maret knows she holds the Valdric ledger."
       },
       {
         "type": "witness",
@@ -2288,7 +2288,7 @@
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests \u2014 not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
+    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdric arrears at collapse price. He is the descendant of the man who purchased the Valdric default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests \u2014 not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -2362,7 +2362,7 @@
       }
     ],
     "motivation": {
-      "publicGoal": "To complete the foreclosure against House Valdris and recover what is owed.",
+      "publicGoal": "To complete the foreclosure against House Valdric and recover what is owed.",
       "privateNeed": "To complete the foreclosure before anyone finds the coercion papers.",
       "immediatePressure": "A Merrow intermediary has indicated that time is running out. Complete the foreclosure or lose Merrow's backing."
     },
@@ -2370,7 +2370,7 @@
       {
         "type": "creditor",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Grandfather purchased Valdris arrears after the Breach. Wealth began with a coerced default. Claim is legally void if duress can be proven."
+        "note": "Grandfather purchased Valdric arrears after the Breach. Wealth began with a coerced default. Claim is legally void if duress can be proven."
       },
       {
         "type": "handler",
@@ -2475,7 +2475,7 @@
     "name": "Lady Sorn",
     "npcType": "enemy",
     "origin": "Gilded Heights",
-    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants. She and House Merrow compete for the same legitimacy space in the Northbank registry. They cooperate only when House Valdris is the common target \u2014 and even then, they watch each other.",
+    "background": "A Pale Court operative who moves through every district without appearing to move at all. She gathers intelligence the way a counting house gathers interest \u2014 quietly, continuously, and with compound returns. No one who has met her knows what she actually wants. She and House Merrow compete for the same legitimacy space in the Northbank registry. They cooperate only when House Valdric is the common target \u2014 and even then, they watch each other.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -2559,17 +2559,17 @@
       {
         "type": "rival",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "House stood by while Valdris was stripped. Legitimacy structurally depends on Valdris staying fallen. Keeps the list of who was taken."
+        "note": "House stood by while Valdric was stripped. Legitimacy structurally depends on Valdric staying fallen. Keeps the list of who was taken."
       },
       {
         "type": "rival",
         "targetId": "faction-house-merrow",
-        "note": "Competes for the same legitimacy space. Cooperates with Merrow only when Valdris is the common target."
+        "note": "Competes for the same legitimacy space. Cooperates with Merrow only when Valdric is the common target."
       },
       {
         "type": "rival",
         "targetId": "npc-ghost-merrow-runner",
-        "note": "Sorn and Merrow cooperate only when Valdris is the shared target. Beneath that, their harbor-access rivalry runs through their respective functionaries.",
+        "note": "Sorn and Merrow cooperate only when Valdric is the shared target. Beneath that, their harbor-access rivalry runs through their respective functionaries.",
         "visibility": "rumored"
       }
     ]
@@ -3038,7 +3038,7 @@
     "npcType": "world",
     "districtId": "district-the-northbank",
     "origin": "Municipal archive quarter, Northbank",
-    "background": "A bent record-keeper who can recite old property lines and burial permissions from memory. Survived the Breach by being too useful to remove. Kept the one unburned ledger naming which house benefited from the Valdris erasure. Has been waiting for someone to ask the right question.",
+    "background": "A bent record-keeper who can recite old property lines and burial permissions from memory. Survived the Breach by being too useful to remove. Kept the one unburned ledger naming which house benefited from the Valdric erasure. Has been waiting for someone to ask the right question.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -3124,7 +3124,7 @@
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Kept the one unburned ledger naming which house benefited from the Valdris erasure."
+        "note": "Kept the one unburned ledger naming which house benefited from the Valdric erasure."
       }
     ]
   },
@@ -3134,7 +3134,7 @@
     "npcType": "world",
     "districtId": "district-the-northbank",
     "origin": "Former noble quarter, now the Northbank margins",
-    "background": "Her house once served as a cadet ally to House Valdris. Sold Valdris property under coercion during the Breach. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale \u2014 the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
+    "background": "Her house once served as a cadet ally to House Valdric. Sold Valdric property under coercion during the Breach. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale \u2014 the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -3220,7 +3220,7 @@
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Sold Valdris property under coercion. Holds the original transfer documents."
+        "note": "Sold Valdric property under coercion. Holds the original transfer documents."
       },
       {
         "type": "rival",
@@ -3235,7 +3235,7 @@
     "npcType": "world",
     "districtId": "district-the-warrens",
     "origin": "Old household quarter, now the Warrens",
-    "background": "Former steward's assistant at House Valdris. Now works as a repairman who recognises silver by touch and timber by smell. The only living person who served in the Valdris halls and remained in Valdenmoor. Knows where family seals and heir artifacts were hidden before the fall. Swore an oath to deliver them to the returning heir.",
+    "background": "Former steward's assistant at House Valdric. Now works as a repairman who recognises silver by touch and timber by smell. The only living person who served in the Valdric halls and remained in Valdenmoor. Knows where family seals and heir artifacts were hidden before the fall. Swore an oath to deliver them to the returning heir.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": null,
@@ -3321,7 +3321,7 @@
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Served in Valdris halls before the fall. Knows where family seals and heir artifacts were hidden."
+        "note": "Served in Valdric halls before the fall. Knows where family seals and heir artifacts were hidden."
       }
     ]
   },
@@ -3331,7 +3331,7 @@
     "npcType": "enemy",
     "districtId": "district-the-northbank",
     "origin": "Credit-house district, Northbank",
-    "background": "A debt enforcer from a family ruined by House Valdris in pre-Breach power games. Hates the return of Valdris as historical revenge, not ideology. Polite always. Never loud. His father forged the paper trail that destroyed the old house \u2014 which means if anyone finds that paper, Malk's grievance becomes an embarrassment and his methods a crime.",
+    "background": "A debt enforcer from a family ruined by House Valdric in pre-Breach power games. Hates the return of Valdric as historical revenge, not ideology. Polite always. Never loud. His father forged the paper trail that destroyed the old house \u2014 which means if anyone finds that paper, Malk's grievance becomes an embarrassment and his methods a crime.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": "faction-house-merrow",
@@ -3410,14 +3410,14 @@
     ],
     "motivation": {
       "publicGoal": "Collection of legitimate outstanding accounts.",
-      "privateNeed": "To see House Valdris fail again, quietly, with paperwork.",
+      "privateNeed": "To see House Valdric fail again, quietly, with paperwork.",
       "lineTheyWontCross": "Allowing anyone to find the forged paper trail his father left."
     },
     "bonds": [
       {
         "type": "rival",
         "targetId": "npc-ghost-valdris-fall",
-        "note": "Family ruined by Valdris in pre-Breach dealings. Father forged the paper trail that destroyed the house."
+        "note": "Family ruined by Valdric in pre-Breach dealings. Father forged the paper trail that destroyed the house."
       },
       {
         "type": "handler",

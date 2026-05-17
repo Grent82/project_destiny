@@ -98,11 +98,10 @@ export function applyNpcConsequences(
   let next = state
 
   // Step 5b: Passive relationship drift and proximity gains
-  next = { ...next, relationships: { ...next.relationships } }
-  applyPassiveDrift(next)
+  next = applyPassiveDrift(next)
   const deployedNpcIds = next.roster.filter((r) => r.assignment === 'deployed').map((r) => r.npcId)
   if (deployedNpcIds.length > 0) {
-    applyProximityGains(next, deployedNpcIds)
+    next = applyProximityGains(next, deployedNpcIds)
   }
 
   // Step 5b-post: Relationship milestone unlock check
