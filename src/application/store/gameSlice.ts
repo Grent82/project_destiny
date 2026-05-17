@@ -19,6 +19,8 @@ import { MAX_ACTIVITY_ENTRIES } from '../commands/activityLog'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
+import { computeRepairCost } from '../commands/durability'
+import { formatMarks } from '../../domain/game/currency'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 import { initialGameStateSnapshot } from './initialGameState'
@@ -541,8 +543,7 @@ const gameSlice = createSlice({
         : getArmorRepairCost(itemId)
 
       const hasQuartermaster = state.roster.some((r) => r.activeTitle === 'title-quartermaster')
-      const repairDiscount = hasQuartermaster ? 0.8 : 1.0
-      const finalRepairCost = Math.floor(baseRepairCost * repairDiscount)
+      const finalRepairCost = computeRepairCost(baseRepairCost, hasQuartermaster)
 
       if (state.money < finalRepairCost) return
 
@@ -563,7 +564,7 @@ const gameSlice = createSlice({
         day: state.day,
         timeSlot: state.timeSlot,
         category: 'economy',
-        message: `Equipment repaired. Cost: ${finalRepairCost} Marks.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
+        message: `Equipment repaired. Cost: ${formatMarks(finalRepairCost)}.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },

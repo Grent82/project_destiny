@@ -34,3 +34,10 @@ export function getDurabilityArmorModifier(durability: number): number {
 export function degradeDurability(current: number, amount: number): number {
   return Math.max(0, current - amount)
 }
+
+/** Computes the final repair cost for a piece of equipment.
+ * A quartermaster title holder grants a 20% discount.
+ */
+export function computeRepairCost(baseCost: number, hasQuartermaster: boolean): number {
+  return Math.floor(baseCost * (hasQuartermaster ? 0.8 : 1.0))
+}

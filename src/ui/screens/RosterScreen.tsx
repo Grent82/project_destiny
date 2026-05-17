@@ -6,6 +6,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { getJobForNpc } from '../../application/content/jobCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
+import { CURRENCY_UNIT } from '../../domain/game/currency'
 const ROSTER_GROUPS = [
   { key: 'deployed', label: 'Deployed' },
   { key: 'assigned_title', label: 'On Duty' },
@@ -84,7 +85,7 @@ export function RosterScreen() {
                         const job = getJobForNpc(entry.skills)
                         return (
                           <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
-                            {' — '}{job.name} — ~{entry.workingIncome} Marks/day
+                            {' — '}{job.name} — ~{entry.workingIncome} {CURRENCY_UNIT}/day
                           </span>
                         )
                       })()}

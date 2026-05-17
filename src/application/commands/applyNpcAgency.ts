@@ -1,5 +1,6 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
+import { formatMarks } from '../../domain/game/currency'
 import { applyRelationshipDelta, writeNpcMemory } from './adjustRelationship'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
@@ -221,7 +222,7 @@ export function applyInitiativeActions(state: GameState, rng: Rng = Math.random)
     } else if (action === 'resource_move') {
       const amount = 15 + Math.floor(rng() * 26)
       next = { ...next, money: next.money + amount }
-      next = appendActivityLogEntry(next, 'economy', `${npc.name} located an underused asset and redirected it. ${amount} Marks added.`)
+      next = appendActivityLogEntry(next, 'economy', `${npc.name} located an underused asset and redirected it. ${formatMarks(amount)} added.`)
     }
 
     const updatedNpc = { ...npc, npcArc: { ...arc, stageFlags: updatedFlags } }

@@ -7,6 +7,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useVenueContext } from './locationContext'
 import { VenueContextBanner } from './VenueContextBanner'
+import { formatMarks } from '../../domain/game/currency'
 
 export function RecruitmentScreen() {
   const navigate = useNavigate()
@@ -190,7 +191,7 @@ export function RecruitmentScreen() {
                       isFull
                         ? `Roster full (${rosterSize}/${totalSlots}). Repair house rooms or gain renown to unlock more slots.`
                         : !canAfford
-                          ? `Not enough Marks. Signing cost is ${offer.signingBonus} Marks.`
+                          ? `Not enough Marks. Signing cost is ${formatMarks(offer.signingBonus)}.`
                           : undefined
                     }
                     onClick={() => {
@@ -203,7 +204,7 @@ export function RecruitmentScreen() {
                   </button>
                   {!canAfford && !isFull && (
                     <span className="text-muted" style={{ marginLeft: '0.75rem', fontSize: '0.875rem' }}>
-                      Insufficient funds ({offer.signingBonus} Marks required)
+                      Insufficient funds ({formatMarks(offer.signingBonus)} required)
                     </span>
                   )}
                 </div>

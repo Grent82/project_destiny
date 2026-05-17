@@ -3,6 +3,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { addOwnedItem } from './inventory'
 import type { ExpeditionDiscovery } from '../../domain/expedition/contracts'
+import { formatMarks } from '../../domain/game/currency'
 
 /**
  * Generate a random encounter for a given expedition day.
@@ -73,7 +74,7 @@ export function applyExpeditionDiscoveries(
       next = appendActivityLogEntry(
         next,
         'economy',
-        `Expedition return: +${discovery.amount} Marks recovered.`,
+        `Expedition return: +${formatMarks(discovery.amount)} recovered.`,
       )
     } else if (discovery.type === 'item' && discovery.itemId) {
       next = addOwnedItem(next, discovery.itemId)

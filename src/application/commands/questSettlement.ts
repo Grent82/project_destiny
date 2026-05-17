@@ -1,5 +1,6 @@
 import type { ActivityCategory, GameState } from '../../domain'
 import { getRenownLevel } from '../../domain/progression/contracts'
+import { formatMarks } from '../../domain/game/currency'
 import type { QuestTemplate } from '../../domain/quests/contracts'
 import { contentCatalog, getNpcDefinitions, getQuestTemplates } from '../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
@@ -225,6 +226,14 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   if (rewardMarks > 0) {
     state.money += rewardMarks
   }
+  if (corruption >= 70 && scaledBaseReward > rewardMarks) {
+    pushActivityLog(
+      state,
+      'economy',
+      `Corruption in the city shaved ${formatMarks(scaledBaseReward - rewardMarks)} from the payout.`,
+      `corruption-skim-${questId}`,
+    )
+  }
 
   if (applyStanding && template.rewardStandingFactionId && template.rewardStandingDelta !== 0) {
     state.factionStandings[template.rewardStandingFactionId] = Math.min(
@@ -266,7 +275,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
     pushActivityLog(
       state,
       'economy',
-      `House debt reduced by ${template.rewardDebtReduction} Marks — obligations clarified by ${questTitle}.`,
+      `House debt reduced by ${formatMarks(template.rewardDebtReduction)} — obligations clarified by ${questTitle}.`,
       `debt-${questId}`,
     )
   }
@@ -326,7 +335,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
     state,
     completionCategory,
     options.completionMessage ??
-      `Contract complete: ${questTitle}. ${rewardMarks} Marks received.${corruptionNote}`,
+      `Contract complete: ${questTitle}. ${formatMarks(rewardMarks)} received.${corruptionNote}`,
     `complete-${questId}`,
   )
 
@@ -459,7 +468,7 @@ export function settleQuestPartialSuccess(state: GameState, questId: string, opt
   pushActivityLog(
     state,
     options.completionCategory ?? 'system',
-    options.completionMessage ?? `${questTitle} — partial resolution. ${halfReward} Marks recovered. The cost was higher than expected.`,
+    options.completionMessage ?? `${questTitle} — partial resolution. ${formatMarks(halfReward)} recovered. The cost was higher than expected.`,
     `partial-${questId}`,
   )
 

@@ -5,6 +5,7 @@ import {
   selectExpeditionState,
 } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { formatMarks } from '../../domain/game/currency'
 
 export function ExpeditionReturnScreen() {
   const dispatch = useAppDispatch()
@@ -43,7 +44,7 @@ export function ExpeditionReturnScreen() {
               {expState.discoveries.map((d, i) => (
                 <div key={i} className="mission-row">
                   <span className="badge badge-positive">{d.type}</span>
-                  <span>{d.label ?? d.itemId ?? `${d.amount} Marks`}</span>
+                  <span>{d.label ?? d.itemId ?? (d.amount != null ? formatMarks(d.amount) : '')}</span>
                 </div>
               ))}
             </div>

@@ -10,6 +10,7 @@ import {
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { VenueContextBanner } from './VenueContextBanner'
+import { formatMarks } from '../../domain/game/currency'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-civic-compact': 'Compact',
@@ -146,7 +147,7 @@ export function ContractBoardScreen() {
                   )}
                   <div className="quest-meta">
                     {template?.rewardMarks != null && template.rewardMarks > 0 && (
-                      <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>
+                      <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>
                     )}
                     {daysRemaining != null && (
                       <span>Days remaining: <strong>{daysRemaining}</strong></span>
@@ -332,7 +333,7 @@ export function ContractBoardScreen() {
                   <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
                   <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
                   <div className="quest-meta">
-                    {template.rewardMarks > 0 && <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>}
+                    {template.rewardMarks > 0 && <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>}
                     {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
                     <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
                     {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}

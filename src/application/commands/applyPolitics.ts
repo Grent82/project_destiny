@@ -1,5 +1,6 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
+import { formatMarks } from '../../domain/game/currency'
 import { getCouncilVoteTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
@@ -131,7 +132,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     next = appendActivityLogEntry(
       next,
       'system',
-      `Interest accrues on the outstanding debt. The house now owes ${next.debtAmount} Marks.`,
+      `Interest accrues on the outstanding debt. The house now owes ${formatMarks(next.debtAmount)}.`,
     )
   }
 

@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import rawArmor from '../../../data/definitions/armor.json'
 import rawWeapons from '../../../data/definitions/weapons.json'
 import { gameActions, selectShopOverview } from '../../application'
-import { getDurabilityTier } from '../../application/commands/durability'
+import { getDurabilityTier, computeRepairCost } from '../../application/commands/durability'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
 import { selectStash } from '../../application/selectors/stash'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { VenueContextBanner } from './VenueContextBanner'
+import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 
 function DurabilityBar({ current, max }: { current: number; max: number }) {
   const pct = max > 0 ? (current / max) * 100 : 0
@@ -77,7 +78,7 @@ export function ShopsScreen() {
         District vendors. What they carry depends on who controls the ward and how much pressure the market is under.
       </p>
       <VenueContextBanner />
-      <p className="summary">Available funds: {overview.money} Marks</p>
+      <p className="summary">Available funds: {formatMarks(overview.money)}</p>
       {priceNote ? (
         <p className="badge badge-warning">{priceNote}</p>
       ) : null}
@@ -172,7 +173,7 @@ export function ShopsScreen() {
                         </div>
                       </div>
                       <div className="shop-offer-actions">
-                        <span>{offer.price} Mk</span>
+                        <span>{formatMarksAbbrev(offer.price)}</span>
                         <button
                           className="action-button"
                           onClick={() =>
@@ -184,7 +185,7 @@ export function ShopsScreen() {
                                 }),
                               )
                               setLastPurchaseMessage(
-                                `Purchased ${offer.itemName} from ${shop.name} for ${offer.price} Marks.`,
+                                `Purchased ${offer.itemName} from ${shop.name} for ${formatMarks(offer.price)}.`,
                               )
                             }
                           }
@@ -248,10 +249,10 @@ export function ShopsScreen() {
                           className="action-button action-button-sm"
                           type="button"
                           disabled={!canAfford}
-                          title={!canAfford ? `Not enough Marks. You need ${w.shopPrice - money} more.` : undefined}
+                          title={!canAfford ? `Not enough Marks. You need ${formatMarks(w.shopPrice - money)} more.` : undefined}
                           onClick={() => dispatch(gameActions.addToStash({ type: 'weapon', id: w.id, price: w.shopPrice }))}
                         >
-                          {w.shopPrice} Mk
+                          {formatMarksAbbrev(w.shopPrice)}
                         </button>
                       )
                     }
@@ -291,10 +292,10 @@ export function ShopsScreen() {
                           className="action-button action-button-sm"
                           type="button"
                           disabled={!canAfford}
-                          title={!canAfford ? `Not enough Marks. You need ${a.shopPrice - money} more.` : undefined}
+                          title={!canAfford ? `Not enough Marks. You need ${formatMarks(a.shopPrice - money)} more.` : undefined}
                           onClick={() => dispatch(gameActions.addToStash({ type: 'armor', id: a.id, price: a.shopPrice }))}
                         >
-                          {a.shopPrice} Mk
+                          {formatMarksAbbrev(a.shopPrice)}
                         </button>
                       )
                     }
@@ -319,8 +320,8 @@ export function ShopsScreen() {
           const armorDurability = durabilities[npc.npcId]?.['armor'] ?? 100
           const weaponMax = getWeaponDurabilityMax(weaponId)
           const armorMax = getArmorDurabilityMax(armorId)
-          const weaponRepairCost = Math.floor(getWeaponRepairCost(weaponId) * (hasQuartermaster ? 0.8 : 1.0))
-          const armorRepairCost = Math.floor(getArmorRepairCost(armorId) * (hasQuartermaster ? 0.8 : 1.0))
+          const weaponRepairCost = computeRepairCost(getWeaponRepairCost(weaponId), hasQuartermaster)
+          const armorRepairCost = computeRepairCost(getArmorRepairCost(armorId), hasQuartermaster)
 
           return (
             <div key={npc.npcId} className="repair-npc-row">
@@ -337,13 +338,13 @@ export function ShopsScreen() {
                       weaponDurability >= weaponMax
                         ? 'Weapon is fully repaired.'
                         : money < weaponRepairCost
-                          ? `Not enough Marks. Repair costs ${weaponRepairCost} Mk.`
+                          ? `Not enough Marks. Repair costs ${formatMarksAbbrev(weaponRepairCost)}.`
                           : undefined
                     }
                     onClick={() => dispatch(gameActions.repairItem({ npcId: npc.npcId, slot: 'weapon' }))}
                     type="button"
                   >
-                    Repair ({weaponRepairCost} Mk)
+                    Repair ({formatMarksAbbrev(weaponRepairCost)})
                   </button>
                 </div>
               )}
@@ -359,13 +360,13 @@ export function ShopsScreen() {
                       armorDurability >= armorMax
                         ? 'Armor is fully repaired.'
                         : money < armorRepairCost
-                          ? `Not enough Marks. Repair costs ${armorRepairCost} Mk.`
+                          ? `Not enough Marks. Repair costs ${formatMarksAbbrev(armorRepairCost)}.`
                           : undefined
                     }
                     onClick={() => dispatch(gameActions.repairItem({ npcId: npc.npcId, slot: 'armor' }))}
                     type="button"
                   >
-                    Repair ({armorRepairCost} Mk)
+                    Repair ({formatMarksAbbrev(armorRepairCost)})
                   </button>
                 </div>
               )}

@@ -3,6 +3,7 @@ import { createQuestLeadRuntime, createQuestRuntime } from '../../domain/quests/
 import { getQuestTemplates } from '../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
+import { formatMarks } from '../../domain/game/currency'
 
 type QuestLeadOverrides = Parameters<typeof createQuestLeadRuntime>[2]
 
@@ -92,7 +93,7 @@ export function resolveSimpleContractObjective(state: GameState, questId: string
   settleQuestSuccess(state, questId, {
     objectiveLabel: 'The on-site work is done. Return and settle accounts.',
     journalEntry: 'The contract was completed on-site.',
-    completionMessage: `${label}: "${template.title}". ${template.rewardMarks} Marks received.`,
+    completionMessage: `${label}: "${template.title}". ${formatMarks(template.rewardMarks)} received.`,
   })
   return true
 }
@@ -158,7 +159,7 @@ export function resolveWithComplicationCheck(
   settleQuestSuccess(state, questId, {
     objectiveLabel: 'The on-site work is done. Return and settle accounts.',
     journalEntry: 'The contract was completed on-site.',
-    completionMessage: `${label}: "${template.title}". ${template.rewardMarks} Marks received.`,
+    completionMessage: `${label}: "${template.title}". ${formatMarks(template.rewardMarks)} received.`,
   })
   return 'success'
 }
