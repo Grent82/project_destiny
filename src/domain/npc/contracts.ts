@@ -334,6 +334,7 @@ export const npcRuntimeStateSchema = z
     assignedDistrictId: z.string().nullable().default(null),
     activeTitle: entityIdSchema.nullable(),
     wagesOwedDays: nonNegativeIntegerSchema,
+    contractWagePerDay: z.number().optional(),
     trainingFocus: z.string().nullable().default(null),
     attributes: attributesSchema,
     skills: skillsSchema,

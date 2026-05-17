@@ -1,6 +1,7 @@
 import type { GameState, NpcStatus } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
+import { formatMarks } from '../../domain/game/currency'
 
 export function wageForStatus(status: NpcStatus): number {
   switch (status) {
@@ -39,7 +40,7 @@ export function applyWages(state: GameState): GameState {
   next = { ...next, relationships: { ...next.relationships } }
   for (const rosterEntry of state.roster) {
     if (rosterEntry.bondStatus?.holderId === 'player') continue
-    const wage = wageForStatus(rosterEntry.status)
+    const wage = rosterEntry.contractWagePerDay ?? wageForStatus(rosterEntry.status)
     if (wage === 0) continue
     const effectiveWage = Math.max(0, wage - kitchenDiscount)
 
@@ -94,7 +95,33 @@ export function applyWages(state: GameState): GameState {
     }
   }
 
-  // Step 1c: Unrest effect on loyalty — high city unrest unsettles all roster NPCs
+  // Step 1c: Wage arrears warnings and departure
+  for (const npc of next.roster) {
+    if (npc.bondStatus?.holderId === 'player') continue
+    const wage = npc.contractWagePerDay ?? wageForStatus(npc.status)
+    if (wage === 0) continue
+
+    if (npc.wagesOwedDays >= 14) {
+      next = {
+        ...next,
+        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name} has gone unpaid for two weeks. They leave the house without a word.`,
+      )
+    } else if (npc.wagesOwedDays === 7) {
+      const owed = formatMarks(npc.wagesOwedDays * wage)
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name} has not been paid in a week. The house owes them ${owed}. Their patience will not last.`,
+      )
+    }
+  }
+
+  // Step 1e: Unrest effect on loyalty — high city unrest unsettles all roster NPCs
   if (next.cityDials.unrest >= 70) {
     next = {
       ...next,

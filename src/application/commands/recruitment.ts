@@ -43,6 +43,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     assignedDistrictId: null,
     activeTitle: null,
     wagesOwedDays: 0,
+    contractWagePerDay: offer.wagePerDay,
     trainingFocus: null,
     attributes: { ...npcDef.baseAttributes },
     skills: { ...npcDef.startingSkills },
