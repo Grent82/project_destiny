@@ -19,6 +19,8 @@ import { MAX_ACTIVITY_ENTRIES } from '../commands/activityLog'
 import { applyOutcomes } from '../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../commands/districtTravel'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../content/equipmentCatalog'
+import { computeRepairCost } from '../commands/durability'
+import { formatMarks } from '../../domain/game/currency'
 import { contentCatalog, getQuestTemplates, getNpcDefinitions } from '../content/contentCatalog'
 import { matchesQuestDiscoveryAtPoi } from '../content/questDiscovery'
 import { initialGameStateSnapshot } from './initialGameState'
@@ -54,6 +56,7 @@ import {
   applyExpeditionDiscoveries,
 } from '../commands/expedition'
 import { buildEventRumorEntry } from '../commands/spawnEventRumor'
+import { computeExteriorTier } from '../commands/commitExteriorTier'
 
 const gameSlice = createSlice({
   name: 'game',
@@ -103,7 +106,7 @@ const gameSlice = createSlice({
           day: afterDay.day,
           timeSlot: afterDay.timeSlot,
           category: 'system',
-          message: 'The debt-claim against House Valdris has come due. The creditors have moved. The house is seized.',
+          message: 'The debt-claim against House Valdric has come due. The creditors have moved. The house is seized.',
         })
         if (afterDay.activityLog.length >= MAX_ACTIVITY_ENTRIES) afterDay.activityLog.pop()
       }
@@ -130,7 +133,7 @@ const gameSlice = createSlice({
             day: afterDay.day,
             timeSlot: afterDay.timeSlot,
             category: 'system',
-            message: 'The debt-claim against House Valdris has come due. The creditors have moved. The house is seized.',
+            message: 'The debt-claim against House Valdric has come due. The creditors have moved. The house is seized.',
           })
         }
         return afterDay
@@ -459,7 +462,7 @@ const gameSlice = createSlice({
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'system',
-          message: `House Valdris has been blacklisted by ${factionId}. Enforcement will follow.`,
+          message: `House Valdric has been blacklisted by ${factionId}. Enforcement will follow.`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       } else if (tier === 'hostile') {
@@ -522,8 +525,8 @@ const gameSlice = createSlice({
         category: 'system',
         message:
           totalSeats > 0
-            ? `House Valdris casts a ${stance} ward vote on "${vote.title}".`
-            : `House Valdris leans on chamber sponsors to ${stance} "${vote.title}".`,
+            ? `House Valdric casts a ${stance} ward vote on "${vote.title}".`
+            : `House Valdric leans on chamber sponsors to ${stance} "${vote.title}".`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
@@ -541,8 +544,7 @@ const gameSlice = createSlice({
         : getArmorRepairCost(itemId)
 
       const hasQuartermaster = state.roster.some((r) => r.activeTitle === 'title-quartermaster')
-      const repairDiscount = hasQuartermaster ? 0.8 : 1.0
-      const finalRepairCost = Math.floor(baseRepairCost * repairDiscount)
+      const finalRepairCost = computeRepairCost(baseRepairCost, hasQuartermaster)
 
       if (state.money < finalRepairCost) return
 
@@ -563,7 +565,7 @@ const gameSlice = createSlice({
         day: state.day,
         timeSlot: state.timeSlot,
         category: 'economy',
-        message: `Equipment repaired. Cost: ${finalRepairCost} Marks.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
+        message: `Equipment repaired. Cost: ${formatMarks(finalRepairCost)}.${hasQuartermaster ? ' (Quartermaster discount applied)' : ''}`,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     },
@@ -1052,6 +1054,12 @@ const gameSlice = createSlice({
         category: 'economy',
         message: REPAIR_MESSAGES[room.roomId] ?? `${room.name} repaired. The house reclaims another room.`,
       })
+
+      // Commit exterior tier if room repairs pushed it over a threshold
+      const newTier = computeExteriorTier(current(state) as GameState)
+      if (newTier !== state.house.exteriorState) {
+        state.house.exteriorState = newTier
+      }
     },
 
     searchRoom(state, action: PayloadAction<string>) {

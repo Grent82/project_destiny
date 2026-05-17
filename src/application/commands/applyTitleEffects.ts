@@ -3,6 +3,8 @@ import { RARITY_SKILL_CAPS, skillGainMultiplier, crossedMilestones } from '../..
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
+import { computeWorkingIncome } from '../selectors/roster'
+import { formatMarks } from '../../domain/game/currency'
 
 const SKILL_KEYS: (keyof Skills)[] = [
   'melee',
@@ -70,7 +72,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         next = appendActivityLogEntry(
           next,
           'economy',
-          `${npcName} managed the accounts. +${stewardIncome} Marks, +5 food and water.`,
+          `${npcName} managed the accounts. +${formatMarks(stewardIncome)}, +5 food and water.`,
         )
         break
       }
@@ -127,7 +129,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         next = appendActivityLogEntry(
           next,
           'economy',
-          `${npcName} optimised supply routes. +${qmIncome} Marks.`,
+          `${npcName} optimised supply routes. +${formatMarks(qmIncome)}.`,
         )
         break
       }
@@ -163,7 +165,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         next = appendActivityLogEntry(
           next,
           'economy',
-          `${npcName} sourced off-register goods. +${fenceIncome} Marks.`,
+          `${npcName} sourced off-register goods. +${formatMarks(fenceIncome)}.`,
         )
         break
       }
@@ -232,7 +234,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
           next = appendActivityLogEntry(
             next,
             'economy',
-            `${npcName} renegotiated terms. House debt reduced by ${debtReduction} Marks.`,
+            `${npcName} renegotiated terms. House debt reduced by ${formatMarks(debtReduction)}.`,
           )
         }
         break
@@ -342,12 +344,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     if (!npcDef) continue
 
     const skills = runtimeNpc.skills
-    const nonCombatSkills: (keyof Skills)[] = [
-      'administration', 'medicine', 'engineering', 'negotiation',
-      'security', 'crafting', 'academics',
-    ]
-    const bestSkill = Math.max(...nonCombatSkills.map((s) => skills[s] ?? 0))
-    const baseIncome = Math.max(3, Math.min(15, Math.floor(bestSkill / 7)))
+    const baseIncome = computeWorkingIncome(skills)
     const bondMultiplier = runtimeNpc.bondStatus?.holderId === 'player' ? 1.2 : 1
     const income = Math.floor(baseIncome * prosperityMult * bondMultiplier)
     next = { ...next, money: next.money + income }
@@ -356,14 +353,14 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       next = appendActivityLogEntry(
         next,
         'economy',
-        `${npcDef.name} brings in ${income} Marks from day work.`,
+        `${npcDef.name} brings in ${formatMarks(income)} from day work.`,
       )
     }
   }
 
   // Step 4d: House baseline income
   next = { ...next, money: next.money + 5 }
-  next = appendActivityLogEntry(next, 'economy', 'The house generates its daily yield. +5 Marks.')
+  next = appendActivityLogEntry(next, 'economy', `The house generates its daily yield. +${formatMarks(5)}.`)
 
   // Background perk: Blade gets +1 combat NPC morale daily; Schemer gets +5 Marks/day; Voice gets +2 renown every 5 days
   const backgroundId = next.playerCharacter.backgroundId
@@ -391,7 +388,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       const grant = standing >= 75 ? 6 : 3
       next = { ...next, money: next.money + grant }
       const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId
-      next = appendActivityLogEntry(next, 'economy', `Faction support from ${factionName}. +${grant} Marks.`)
+      next = appendActivityLogEntry(next, 'economy', `Faction support from ${factionName}. +${formatMarks(grant)}.`)
     }
   }
 

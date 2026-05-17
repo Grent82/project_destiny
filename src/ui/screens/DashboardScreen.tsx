@@ -17,6 +17,7 @@ import {
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
 import { ResourceStatusPanel } from '../components/ResourceStatusPanel'
+import { formatMarks } from '../../domain/game/currency'
 
 const CITY_DIAL_TOOLTIPS: Record<string, string> = {
   control: 'Control — degree of civic order. High control reduces crime and faction conflict. Low control enables unrest and criminal activity.',
@@ -156,7 +157,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
               <>
                 <h2>Debt Claim — <span className="debt-status debt-status--active">Active</span></h2>
                 <p>
-                  {debt.debtAmount} Marks owed · Due: Day {debt.debtDueDay} · {debt.daysRemaining} day{debt.daysRemaining !== 1 ? 's' : ''} remaining
+                  {formatMarks(debt.debtAmount)} owed · Due: Day {debt.debtDueDay} · {debt.daysRemaining} day{debt.daysRemaining !== 1 ? 's' : ''} remaining
                 </p>
                 <button
                   className="action-button action-button--secondary"
@@ -166,7 +167,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
                   }
                   type="button"
                 >
-                  Pay {Math.min(debt.marks, debt.debtAmount)} Marks
+                  Pay {formatMarks(Math.min(debt.marks, debt.debtAmount))}
                 </button>
               </>
             )}

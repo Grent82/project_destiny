@@ -8,6 +8,7 @@ import {
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { INVESTIGATION_APPROACHES, type InvestigationApproach } from '../../application/commands/investigation'
+import { formatMarks } from '../../domain/game/currency'
 
 export function InvestigationScreen() {
   const dispatch = useAppDispatch()
@@ -90,7 +91,7 @@ export function InvestigationScreen() {
             <h2>What Was Found</h2>
             {lastClue && <p className="summary">{lastClue}</p>}
             {lastJournalEntry && <p className="summary" style={{ opacity: 0.85 }}>{lastJournalEntry}</p>}
-            <p>Reward received: <strong>{successReward} Marks</strong>
+            <p>Reward received: <strong>{formatMarks(successReward)}</strong>
               {bonusType === 'extra_marks' && <span className="badge badge--bonus"> +25% network bonus</span>}
             </p>
           </div>
@@ -102,7 +103,7 @@ export function InvestigationScreen() {
               Something was recovered — enough to act on, but not the full picture.
               {lastJournalEntry && ` ${lastJournalEntry}`}
             </p>
-            <p>Partial reward received: <strong>{Math.floor((template?.rewardMarks ?? 0) / 2)} Marks</strong>.</p>
+            <p>Partial reward received: <strong>{formatMarks(Math.floor((template?.rewardMarks ?? 0) / 2))}</strong>.</p>
           </div>
         )}
         {rollResult === 'failure' && (
@@ -276,7 +277,7 @@ export function InvestigationScreen() {
 
         <article className="detail-panel">
           <h2>Stakes</h2>
-          <p>Reward: <strong>{template?.rewardMarks ?? 0} Marks</strong>
+          <p>Reward: <strong>{formatMarks(template?.rewardMarks ?? 0)}</strong>
             {chosenApproach?.bonusType === 'extra_marks' && (
               <span className="badge badge--bonus"> +25% on success</span>
             )}

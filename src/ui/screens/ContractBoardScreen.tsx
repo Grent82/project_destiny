@@ -8,8 +8,10 @@ import {
   selectCurrentDistrictId,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
+import { getQuestDaysRemaining } from '../../application/commands/questUtils'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { VenueContextBanner } from './VenueContextBanner'
+import { formatMarks } from '../../domain/game/currency'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-civic-compact': 'Compact',
@@ -83,8 +85,8 @@ export function ContractBoardScreen() {
               {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId, readiness }) => {
                 const isStory = template?.questType === 'story'
                 const isUrgent = (template?.timeLimitDays ?? 99) <= 2
-                const daysRemaining = template?.timeLimitDays != null
-                  ? Math.max(runtime.acceptedOnDay + template.timeLimitDays - currentDay, 0)
+                const daysRemaining = template != null
+                  ? getQuestDaysRemaining(runtime, template, currentDay)
                   : null
                 const factionImpactEntries = runtime.aftermath?.factionImpacts ?? []
                 const worldConsequenceEntries = [
@@ -146,7 +148,7 @@ export function ContractBoardScreen() {
                   )}
                   <div className="quest-meta">
                     {template?.rewardMarks != null && template.rewardMarks > 0 && (
-                      <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>
+                      <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>
                     )}
                     {daysRemaining != null && (
                       <span>Days remaining: <strong>{daysRemaining}</strong></span>
@@ -332,7 +334,7 @@ export function ContractBoardScreen() {
                   <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
                   <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
                   <div className="quest-meta">
-                    {template.rewardMarks > 0 && <span>Reward: <strong>{template.rewardMarks} Marks</strong></span>}
+                    {template.rewardMarks > 0 && <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>}
                     {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
                     <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
                     {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}

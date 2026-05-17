@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { formatMarks } from '../../domain/game/currency'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import { writeLossMemories } from './grief'
 import { initializeRosterRelationships } from './initializeRosterRelationships'
@@ -88,7 +89,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
   next = initializeRosterRelationships(next, rng)
 
   const bonusNote =
-    offer.signingBonus > 0 ? ` Signing cost: ${offer.signingBonus} Marks.` : ''
+    offer.signingBonus > 0 ? ` Signing cost: ${formatMarks(offer.signingBonus)}.` : ''
   next = appendActivityLogEntry(
     next,
     'economy',

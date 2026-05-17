@@ -12,6 +12,7 @@ import { applyRelationshipDelta } from './adjustRelationship'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import { createRng } from './seededRng'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
+import { formatMarks } from '../../domain/game/currency'
 import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
 import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
@@ -357,7 +358,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
       nextState = appendActivityLogEntry(
         nextState,
         'economy',
-        `Searched the fallen. Found ${lootMarks} Marks in coin and valuables.`,
+        `Searched the fallen. Found ${formatMarks(lootMarks)} in coin and valuables.`,
       )
     }
 

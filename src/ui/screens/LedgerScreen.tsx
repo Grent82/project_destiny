@@ -1,5 +1,6 @@
-import { gameActions, selectFactionSummaries, selectLedgerSummary } from '../../application'
+import { gameActions, selectFactionSummaries, selectLedgerSummary, selectDailyIncomeBreakdown } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { formatMarks } from '../../domain/game/currency'
 
 const QUEST_STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -31,6 +32,7 @@ function standingClass(standing: number): string {
 
 export function LedgerScreen() {
   const ledger = useAppSelector(selectLedgerSummary)
+  const income = useAppSelector(selectDailyIncomeBreakdown)
   const factions = useAppSelector(selectFactionSummaries)
   const dispatch = useAppDispatch()
 
@@ -78,7 +80,7 @@ export function LedgerScreen() {
             </p>
             <button
               className="action-button action-button--primary"
-              disabled={ledger.marks < ledger.debtAmount} title={ledger.marks < ledger.debtAmount ? `Not enough Marks. You need ${ledger.debtAmount - ledger.marks} more to pay the debt.` : undefined}
+              disabled={ledger.marks < ledger.debtAmount} title={ledger.marks < ledger.debtAmount ? `Not enough Marks. You need ${formatMarks(ledger.debtAmount - ledger.marks)} more to pay the debt.` : undefined}
               onClick={() => dispatch(gameActions.payDebt({ amount: ledger.debtAmount }))}
               type="button"
             >
@@ -94,12 +96,22 @@ export function LedgerScreen() {
         <table className="ledger-table">
           <tbody>
             <tr>
-              <td>Roster wages</td>
-              <td className="ledger-table__value text-danger">−{ledger.rosterWages} Mk/day</td>
+              <td>Working income</td>
+              <td className="ledger-table__value text-success">+{formatMarks(income.workingNpcIncome)}/day</td>
             </tr>
             <tr>
-              <td>Total daily outgoings</td>
-              <td className="ledger-table__value text-danger">−{ledger.dailyExpenses} Mk/day</td>
+              <td>Title income</td>
+              <td className="ledger-table__value text-success">+{formatMarks(income.titleIncome)}/day</td>
+            </tr>
+            <tr>
+              <td>Wages</td>
+              <td className="ledger-table__value text-danger">−{formatMarks(income.wages)}/day</td>
+            </tr>
+            <tr className="ledger-table__row--total">
+              <td>Net</td>
+              <td className={`ledger-table__value ${income.net >= 0 ? 'text-success' : 'text-danger'}`}>
+                {income.net >= 0 ? '+' : ''}{formatMarks(income.net)}/day
+              </td>
             </tr>
             <tr className="ledger-table__row--total">
               <td>Marks on hand</td>
@@ -107,7 +119,7 @@ export function LedgerScreen() {
             </tr>
             {!ledger.debtPaid && (
               <tr>
-                <td title="Projected marks after paying wages until debt due day">
+                <td title="Projected marks after accounting for net daily income until debt due day">
                   Projected at debt day
                 </td>
                 <td
@@ -120,8 +132,8 @@ export function LedgerScreen() {
             )}
             {ledger.dailyExpenses > 0 && (
               <tr>
-                <td title="Days until marks run out at current daily wage burn (excluding quest income)">
-                  Runway (wages only)
+                <td title="Days until marks run out at current net daily burn rate">
+                  Runway
                 </td>
                 <td
                   className={`ledger-table__value ${ledger.daysOfRunwayAtCurrentRate < 10 ? 'text-danger' : ''}`}

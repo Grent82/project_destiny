@@ -1,5 +1,6 @@
 import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+import { formatMarks } from '../../domain/game/currency'
 
 /**
  * Computes the sell price for an owned item at the current district.
@@ -42,7 +43,7 @@ export function sellItem(state: GameState, instanceId: string): GameState {
         day: state.day,
         timeSlot: state.timeSlot,
         category: 'economy' as const,
-        message: `Sold ${def.name} for ${sellPrice} Marks.`,
+        message: `Sold ${def.name} for ${formatMarks(sellPrice)}.`,
       },
       ...state.activityLog,
     ].slice(0, 50),
