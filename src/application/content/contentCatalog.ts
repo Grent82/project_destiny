@@ -1,3 +1,4 @@
+import bondBuyersData from '../../../data/definitions/bond-buyers.json'
 import worldHouseholdsData from '../../../data/definitions/worldHouseholds.json'
 import npcStartingRelationshipsData from '../../../data/definitions/npc-starting-relationships.json'
 import encounterTablesData from '../../../data/definitions/encounter-tables.json'
@@ -88,6 +89,16 @@ const parsedEnemyNpcs = enemyNpcDefinitionSchema.array().parse(enemyNpcsData)
 const parsedNpcStartingRelationships = npcStartingRelationshipSchema.array().parse(npcStartingRelationshipsData)
 const parsedWorldHouseholds = worldHouseholdSchema.array().parse(worldHouseholdsData)
 
+const bondBuyerSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  factionId: z.string().nullable(),
+  specialization: z.enum(['assessed', 'specialist', 'security', 'labor']),
+  offerModifier: z.number().positive(),
+})
+export type BondBuyerDefinition = z.infer<typeof bondBuyerSchema>
+const parsedBondBuyers = bondBuyerSchema.array().parse(bondBuyersData)
+
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
 }
@@ -140,6 +151,8 @@ export const contentCatalog = {
   npcStartingRelationshipsByKey: new Map(
     parsedNpcStartingRelationships.map((r) => [`${r.fromNpcId}→${r.toNpcId}`, r])
   ),
+  bondBuyers: parsedBondBuyers,
+  bondBuyersById: toMap(parsedBondBuyers),
   worldHouseholds: parsedWorldHouseholds,
   worldHouseholdsById: toMap(parsedWorldHouseholds),
   worldHouseholdsByDistrictId: new Map(

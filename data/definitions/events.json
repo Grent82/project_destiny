@@ -4337,7 +4337,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "petra", "elyn", "household"],
+    "tags": [
+      "ward",
+      "petra",
+      "elyn",
+      "household"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4372,7 +4377,12 @@
       }
     ],
     "isAutoResolved": true,
-    "tags": ["ward", "petra", "elyn", "household"],
+    "tags": [
+      "ward",
+      "petra",
+      "elyn",
+      "household"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4382,7 +4392,7 @@
   {
     "id": "event-elyn-first-word",
     "title": "Elyn Speaks",
-    "description": "It has been some time since Elyn arrived. She has been watching. Today she said something — unprompted, to no one in particular. Something small. About the quality of the light, or the smell from the kitchen, or what a tool was called. It was not much. It was something.",
+    "description": "It has been some time since Elyn arrived. She has been watching. Today she said something \u2014 unprompted, to no one in particular. Something small. About the quality of the light, or the smell from the kitchen, or what a tool was called. It was not much. It was something.",
     "triggerConditions": {
       "dayMin": 150,
       "dayMax": 250,
@@ -4412,7 +4422,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "elyn", "milestone"],
+    "tags": [
+      "ward",
+      "elyn",
+      "milestone"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4422,7 +4436,7 @@
   {
     "id": "event-elyn-enters-childhood",
     "title": "Elyn, Older",
-    "description": "Elyn has been in the house long enough to have opinions. She has preferences about food. She has people she goes to when something is wrong. She is not a problem the house solved — she is a person the house grew. You notice it one day in something small: she corrected someone. Gently. But correctly.",
+    "description": "Elyn has been in the house long enough to have opinions. She has preferences about food. She has people she goes to when something is wrong. She is not a problem the house solved \u2014 she is a person the house grew. You notice it one day in something small: she corrected someone. Gently. But correctly.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4440,7 +4454,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "elyn", "arc-transition"],
+    "tags": [
+      "ward",
+      "elyn",
+      "arc-transition"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4450,7 +4468,7 @@
   {
     "id": "event-elyn-asks-to-help",
     "title": "Elyn Wants to Be Useful",
-    "description": "Elyn comes to you directly, which she has never done before. She asks if there is something real she can do. Not errands. Something that matters. She uses that word — matters. She is watching your face when she says it.",
+    "description": "Elyn comes to you directly, which she has never done before. She asks if there is something real she can do. Not errands. Something that matters. She uses that word \u2014 matters. She is watching your face when she says it.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4488,7 +4506,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "elyn", "arc-transition", "milestone"],
+    "tags": [
+      "ward",
+      "elyn",
+      "arc-transition",
+      "milestone"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4498,7 +4521,7 @@
   {
     "id": "event-elyn-knows-something",
     "title": "Elyn Has Observed",
-    "description": "Elyn comes to you with something she has seen. She is careful about how she describes it — she got that from living here. She does not know if it is important. She thought you should know. It might be nothing. It might not be.",
+    "description": "Elyn comes to you with something she has seen. She is careful about how she describes it \u2014 she got that from living here. She does not know if it is important. She thought you should know. It might be nothing. It might not be.",
     "triggerConditions": {
       "dayMin": 700,
       "dayMax": 1000,
@@ -4528,7 +4551,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "elyn", "milestone", "intelligence"],
+    "tags": [
+      "ward",
+      "elyn",
+      "milestone",
+      "intelligence"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4538,7 +4566,7 @@
   {
     "id": "event-elyn-asks-about-mother",
     "title": "The Question",
-    "description": "Elyn asks about her mother. Not dramatically — she asks the way she asks everything: carefully, after watching, at a time when no one else is around. She says she knows you might not know. She says she is asking anyway. She has been waiting to ask for a long time.",
+    "description": "Elyn asks about her mother. Not dramatically \u2014 she asks the way she asks everything: carefully, after watching, at a time when no one else is around. She says she knows you might not know. She says she is asking anyway. She has been waiting to ask for a long time.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4556,7 +4584,7 @@
       },
       {
         "id": "choice-honest-ignorance",
-        "label": "Tell her you do not know — honestly.",
+        "label": "Tell her you do not know \u2014 honestly.",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4576,7 +4604,13 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "elyn", "arc-transition", "milestone", "narrative"],
+    "tags": [
+      "ward",
+      "elyn",
+      "arc-transition",
+      "milestone",
+      "narrative"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4586,7 +4620,7 @@
   {
     "id": "event-elyn-chooses",
     "title": "What Elyn Wants",
-    "description": "Elyn tells you what she wants to do with her life. She has thought about it for a long time — you can tell by how specific she is, how calm. She is not asking for permission. She is telling you, the way someone tells you something important when they trust you to hear it.",
+    "description": "Elyn tells you what she wants to do with her life. She has thought about it for a long time \u2014 you can tell by how specific she is, how calm. She is not asking for permission. She is telling you, the way someone tells you something important when they trust you to hear it.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4614,7 +4648,13 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "elyn", "arc-transition", "milestone", "narrative"],
+    "tags": [
+      "ward",
+      "elyn",
+      "arc-transition",
+      "milestone",
+      "narrative"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4624,7 +4664,7 @@
   {
     "id": "event-bren-fracture-visible",
     "title": "Something in Bren",
-    "description": "It was not a breakdown. It was a pause. Someone asked him a routine question and he went still for a moment — not long, not long enough for most people to notice — and then answered correctly and moved on. But you noticed. There is something in him that is not visible yet but is there.",
+    "description": "It was not a breakdown. It was a pause. Someone asked him a routine question and he went still for a moment \u2014 not long, not long enough for most people to notice \u2014 and then answered correctly and moved on. But you noticed. There is something in him that is not visible yet but is there.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4652,7 +4692,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bren", "arc-fractured", "milestone"],
+    "tags": [
+      "bren",
+      "arc-fractured",
+      "milestone"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4662,7 +4706,7 @@
   {
     "id": "event-bren-anchor-found",
     "title": "Someone Reached Him",
-    "description": "You do not know exactly when it happened, but someone on the roster has been reaching Bren. Not with words — with proximity. With consistency. He is different around them: quieter in a better way. Something is holding.",
+    "description": "You do not know exactly when it happened, but someone on the roster has been reaching Bren. Not with words \u2014 with proximity. With consistency. He is different around them: quieter in a better way. Something is holding.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4690,7 +4734,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bren", "arc-fractured", "milestone"],
+    "tags": [
+      "bren",
+      "arc-fractured",
+      "milestone"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4700,7 +4748,7 @@
   {
     "id": "event-bren-returning",
     "title": "Bren, Coming Back",
-    "description": "You see it in something small. He did not count the exits. He asked someone on the roster how they were doing without waiting for the question to come back to him. He stayed in the room after the briefing ended. The thing that was broken is still there — but he is making choices around it now.",
+    "description": "You see it in something small. He did not count the exits. He asked someone on the roster how they were doing without waiting for the question to come back to him. He stayed in the room after the briefing ended. The thing that was broken is still there \u2014 but he is making choices around it now.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4728,7 +4776,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bren", "arc-fractured", "milestone"],
+    "tags": [
+      "bren",
+      "arc-fractured",
+      "milestone"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4776,7 +4828,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bren", "arc-fractured", "departure-risk"],
+    "tags": [
+      "bren",
+      "arc-fractured",
+      "departure-risk"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4786,7 +4842,7 @@
   {
     "id": "event-bren-left",
     "title": "Bren Is Gone",
-    "description": "Bren is not here. He left during the night — no note, nothing missing except him and what he came with. You will find a small tool he borrowed on the workbench, cleaned and returned. That is the whole message.",
+    "description": "Bren is not here. He left during the night \u2014 no note, nothing missing except him and what he came with. You will find a small tool he borrowed on the workbench, cleaned and returned. That is the whole message.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4804,7 +4860,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bren", "arc-fractured", "departure"],
+    "tags": [
+      "bren",
+      "arc-fractured",
+      "departure"
+    ],
     "repeatable": false,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -4814,7 +4874,7 @@
   {
     "id": "event-nessa-partner-district-node",
     "title": "Nessa Has Been Working",
-    "description": "Nessa brings you something she has been building for three weeks. A district resource node — specifically, a water distribution relay point in the outer quarter — that she has quietly converted from a liability into a revenue stream. She is telling you because she needs your formal authorization to close the last step. Not your permission. Your signature.",
+    "description": "Nessa brings you something she has been building for three weeks. A district resource node \u2014 specifically, a water distribution relay point in the outer quarter \u2014 that she has quietly converted from a liability into a revenue stream. She is telling you because she needs your formal authorization to close the last step. Not your permission. Your signature.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-nessa-vain",
       "dayMin": 150,
@@ -4851,7 +4911,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["nessa", "arc-initiator", "partner", "resource"],
+    "tags": [
+      "nessa",
+      "arc-initiator",
+      "partner",
+      "resource"
+    ],
     "repeatable": false,
     "cooldownDays": 30,
     "sourceDistrictId": null,
@@ -4904,7 +4969,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["nessa", "arc-initiator", "partner", "faction"],
+    "tags": [
+      "nessa",
+      "arc-initiator",
+      "partner",
+      "faction"
+    ],
     "repeatable": false,
     "cooldownDays": 30,
     "sourceDistrictId": null,
@@ -4938,7 +5008,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["nessa", "arc-initiator", "partner", "intelligence"],
+    "tags": [
+      "nessa",
+      "arc-initiator",
+      "partner",
+      "intelligence"
+    ],
     "repeatable": false,
     "cooldownDays": 30,
     "sourceDistrictId": null,
@@ -4976,7 +5051,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bond-service", "household", "moral-friction"],
+    "tags": [
+      "bond-service",
+      "household",
+      "moral-friction"
+    ],
     "repeatable": true,
     "cooldownDays": 14,
     "sourceDistrictId": null,
@@ -5004,7 +5083,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bond-service", "release", "household"],
+    "tags": [
+      "bond-service",
+      "release",
+      "household"
+    ],
     "repeatable": true,
     "cooldownDays": 7,
     "sourceDistrictId": null,
@@ -5042,7 +5125,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["bond-service", "title", "household"],
+    "tags": [
+      "bond-service",
+      "title",
+      "household"
+    ],
     "repeatable": true,
     "cooldownDays": 28,
     "sourceDistrictId": null,
@@ -5100,7 +5187,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["captivity", "pregnancy", "authored", "consequence"],
+    "tags": [
+      "captivity",
+      "pregnancy",
+      "authored",
+      "consequence"
+    ],
     "repeatable": true,
     "cooldownDays": 365,
     "sourceDistrictId": null,
@@ -5142,7 +5234,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["heir", "legitimacy", "authored", "milestone"],
+    "tags": [
+      "heir",
+      "legitimacy",
+      "authored",
+      "milestone"
+    ],
     "repeatable": false,
     "cooldownDays": 9999,
     "sourceDistrictId": null,
@@ -5152,7 +5249,7 @@
   {
     "id": "event-npc-pairing-noticed",
     "title": "Something Between Them",
-    "description": "You've noticed it yourself — or someone in the house has. Two of your crew have moved past the ordinary rhythms of shared work. They are not making a show of it, but the house has eyes. What happens under this roof is your concern.",
+    "description": "You've noticed it yourself \u2014 or someone in the house has. Two of your crew have moved past the ordinary rhythms of shared work. They are not making a show of it, but the house has eyes. What happens under this roof is your concern.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5179,7 +5276,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["household", "pairing", "authored"],
+    "tags": [
+      "household",
+      "pairing",
+      "authored"
+    ],
     "repeatable": true,
     "cooldownDays": 30,
     "sourceDistrictId": null,
@@ -5189,7 +5290,7 @@
   {
     "id": "event-npc-pairing-pregnancy-discovery",
     "title": "A Child is Expected",
-    "description": "Word reaches you through the house — gently, carefully, as if the teller is not sure how you will receive it. Two of your crew are expecting a child. The timing is not ideal. It rarely is. What matters is what comes next.",
+    "description": "Word reaches you through the house \u2014 gently, carefully, as if the teller is not sure how you will receive it. Two of your crew are expecting a child. The timing is not ideal. It rarely is. What matters is what comes next.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5226,7 +5327,12 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["household", "pairing", "authored", "consequence"],
+    "tags": [
+      "household",
+      "pairing",
+      "authored",
+      "consequence"
+    ],
     "repeatable": true,
     "cooldownDays": 365,
     "sourceDistrictId": null,
@@ -5236,7 +5342,7 @@
   {
     "id": "event-ward-stage-infant-to-child",
     "title": "The Child Grows",
-    "description": "The infant in your household is no longer so small. Marion mentions it in passing — they are walking, watching, beginning to understand the house around them. A child now, in all the ways that matter.",
+    "description": "The infant in your household is no longer so small. Marion mentions it in passing \u2014 they are walking, watching, beginning to understand the house around them. A child now, in all the ways that matter.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5253,7 +5359,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "household", "milestone"],
+    "tags": [
+      "ward",
+      "household",
+      "milestone"
+    ],
     "repeatable": true,
     "cooldownDays": 1,
     "sourceDistrictId": null,
@@ -5280,7 +5390,11 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "household", "milestone"],
+    "tags": [
+      "ward",
+      "household",
+      "milestone"
+    ],
     "repeatable": true,
     "cooldownDays": 1,
     "sourceDistrictId": null,
@@ -5290,7 +5404,7 @@
   {
     "id": "event-ward-stage-teenager-to-young-adult",
     "title": "Coming of Age",
-    "description": "The ward you took in is grown. They have survived what the city has thrown at this house, have watched how you operate, and have formed their own view of it. What they become from here is partly yours to shape — and partly theirs alone.",
+    "description": "The ward you took in is grown. They have survived what the city has thrown at this house, have watched how you operate, and have formed their own view of it. What they become from here is partly yours to shape \u2014 and partly theirs alone.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5307,7 +5421,61 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["ward", "household", "milestone"],
+    "tags": [
+      "ward",
+      "household",
+      "milestone"
+    ],
+    "repeatable": true,
+    "cooldownDays": 1,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "bond-acquisition-offer",
+    "title": "An Acquisition Offer",
+    "description": "A buyer has made an offer to acquire one of your bonded persons. The offer has been delivered through formal channels.",
+    "triggerConditions": {
+      "probability": 0,
+      "dayMin": 1
+    },
+    "choices": [
+      {
+        "id": "choice-bond-accept",
+        "label": "Accept the offer",
+        "outcomes": [
+          {
+            "type": "transferBondedNpc"
+          }
+        ]
+      },
+      {
+        "id": "choice-bond-counter",
+        "label": "Counter the offer",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You sent a counter-offer. The buyer withdrew \u2014 they will not negotiate."
+          }
+        ]
+      },
+      {
+        "id": "choice-bond-decline",
+        "label": "Decline",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "You declined the offer. The buyer may return."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "economy",
+      "bond-service"
+    ],
     "repeatable": true,
     "cooldownDays": 1,
     "sourceDistrictId": null,

@@ -30,6 +30,11 @@ function withBoundNpc(
       entryReason: 'debt-settlement' as const,
       alongsideFreeAssignmentDays: 0,
       lastEqualityNoticeDay: null,
+      forSale: false,
+      lastOfferDay: null,
+      marketValue: 0,
+      ownerType: 'player' as const,
+      bondStartDay: 0,
     },
     ...npcOverrides,
   }
@@ -74,9 +79,14 @@ describe('applyBondServiceEffects', () => {
         holderId: 'player',
         contractValue: 40,
         termDays: 30,
-        entryReason: 'debt-settlement',
+        entryReason: 'debt-settlement' as const,
         alongsideFreeAssignmentDays: 13,
         lastEqualityNoticeDay: null,
+        forSale: false,
+        lastOfferDay: null,
+        marketValue: 0,
+        ownerType: 'player' as const,
+        bondStartDay: 0,
       },
     })
     state.day = 28

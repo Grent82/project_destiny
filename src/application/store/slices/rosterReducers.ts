@@ -7,6 +7,11 @@ import { selectNpcCoercionRisk } from '../../selectors/npcs'
 import { applyRelationshipDelta } from '../../commands/adjustRelationship'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../../commands/recruitment'
 import { freeNpc as freeNpcCommand } from '../../commands/bondService'
+import {
+  rescueBondedNpcLegal,
+  rescueBondedNpcExtraction,
+  rescueBondedNpcForce,
+} from '../../commands/bondTransfer'
 import { addNpcToSelectedSquad, removeNpcFromSelectedSquad } from '../../commands/squad'
 import {
   buildCaptivityPregnancyDiscoveryPresentationText,
@@ -177,10 +182,37 @@ export const rosterReducers = {
             current(state) as GameState,
             current(npc) as typeof npc,
           ),
+          contextId: null,
         })
         state.lastFiredDay[key] = state.day
       }
     }
+  },
+
+  markNpcForSale(
+    state: GameState,
+    action: PayloadAction<{ npcId: string; marketValue: number; forSale: boolean }>,
+  ) {
+    const { npcId, marketValue, forSale } = action.payload
+    const npc = state.roster.find((r) => r.npcId === npcId)
+    if (!npc || !npc.bondStatus) return
+    npc.bondStatus.forSale = forSale
+    npc.bondStatus.marketValue = Math.max(0, marketValue)
+    if (forSale) {
+      npc.bondStatus.bondStartDay = npc.bondStatus.bondStartDay || state.day
+    }
+  },
+
+  rescueBondedNpcLegal(state: GameState, action: PayloadAction<{ npcId: string }>) {
+    return rescueBondedNpcLegal(state, action.payload.npcId)
+  },
+
+  rescueBondedNpcExtraction(state: GameState, action: PayloadAction<{ npcId: string }>) {
+    return rescueBondedNpcExtraction(state, action.payload.npcId)
+  },
+
+  rescueBondedNpcForce(state: GameState, action: PayloadAction<{ npcId: string }>) {
+    return rescueBondedNpcForce(state, action.payload.npcId)
   },
 
   updateWorldNpcState(

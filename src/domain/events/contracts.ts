@@ -13,6 +13,7 @@ export const eventOutcomeTypeSchema = z.enum([
   'updateQuestStage',
   'unlockNpc',
   'addNpcToRoster',
+  'transferBondedNpc',
 ])
 
 export const eventOutcomeSchema = z
@@ -28,6 +29,7 @@ export const eventOutcomeSchema = z
     stageId: z.string().optional(),
     objectiveLabel: z.string().optional(),
     arcId: z.string().optional(),
+    buyerId: z.string().optional(),
   })
   .strict()
 
@@ -109,6 +111,7 @@ export const eventInstanceSchema = z
     sourceDistrictId: z.string().nullable().default(null),
     sourceNpcId: z.string().nullable().default(null),
     presentationText: z.string().nullable().default(null),
+    contextId: z.string().nullable().default(null),
   })
   .strict()
 

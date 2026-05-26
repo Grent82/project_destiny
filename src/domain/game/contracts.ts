@@ -326,6 +326,7 @@ export const gameStateSchema = z
     rumors: z.array(rumorSchema).default([]),
     bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),
     worldNpcStates: z.array(worldNpcRuntimeStateSchema).default([]),
+    bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
   })
   .strict()
 

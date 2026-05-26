@@ -23,6 +23,7 @@ import { applyPersonalityFriction } from './applyPersonalityFriction'
 import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
 import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 import { applyBondServiceEffects } from './bondService'
+import { checkBondAcquisitionOffers, applyNpcHeldConditionDecay } from './bondTransfer'
 import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 import { applyNpcPairing } from './applyNpcPairing'
 import { isQuestLeadExpired } from '../../domain/quests/contracts'
@@ -223,6 +224,8 @@ export function endDay(state: GameState): GameState {
   afterEvents = tickLegacyIntent(afterEvents, rng)
   afterEvents = tickPregnancyProgress(afterEvents)
   afterEvents = applyBondServiceEffects(afterEvents)
+  afterEvents = checkBondAcquisitionOffers(afterEvents, rng)
+  afterEvents = applyNpcHeldConditionDecay(afterEvents)
 
   // Steps 10-12: Rumor events + captivity degradation + main quest progression
   afterEvents = resolveRumorEvents(afterEvents, rng)

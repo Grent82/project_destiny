@@ -1,0 +1,30 @@
+[
+  {
+    "id": "buyer-compact-registrar",
+    "name": "Compact Registrar",
+    "factionId": "faction-civic-compact",
+    "specialization": "assessed",
+    "offerModifier": 0.85
+  },
+  {
+    "id": "buyer-noble-house-agent",
+    "name": "Noble House Agent",
+    "factionId": "faction-gilded-court",
+    "specialization": "specialist",
+    "offerModifier": 1.05
+  },
+  {
+    "id": "buyer-tallow-broker",
+    "name": "Tallow Ring Broker",
+    "factionId": "faction-tallow-ring",
+    "specialization": "security",
+    "offerModifier": 0.9
+  },
+  {
+    "id": "buyer-merchant-factor",
+    "name": "Merchant Factor",
+    "factionId": null,
+    "specialization": "labor",
+    "offerModifier": 0.95
+  }
+]

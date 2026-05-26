@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { CouncilVoteEvent, GameState } from '../../../domain'
 import type { InstitutionalTier } from '../../../domain/governance/contracts'
 import { getRenownLevel } from '../../../domain/progression/contracts'
-import { applyOutcomes } from '../../commands/applyEventOutcome'
+import { applyOutcomes, type OutcomeContext } from '../../commands/applyEventOutcome'
 import { travelToDistrict as travelToDistrictCommand } from '../../commands/districtTravel'
 import { applyRelationshipDelta } from '../../commands/adjustRelationship'
 import { buildEventRumorEntry } from '../../commands/spawnEventRumor'
@@ -38,7 +38,11 @@ export const worldReducers = {
           )
         : state.eventInstances,
     }
-    return applyOutcomes(next, choice.outcomes)
+    const context: OutcomeContext = {
+      npcId: matchingInstance?.sourceNpcId ?? null,
+      contextId: matchingInstance?.contextId ?? null,
+    }
+    return applyOutcomes(next, choice.outcomes, context)
   },
 
   travelToDistrict(state: GameState, action: PayloadAction<string>) {

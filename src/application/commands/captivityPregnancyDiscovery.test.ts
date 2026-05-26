@@ -109,6 +109,7 @@ describe('contextual event resolution', () => {
           sourceDistrictId: null,
           sourceNpcId: 'npc-marion-vale',
           presentationText: 'First instance',
+          contextId: null,
         },
         {
           instanceId: 'inst-2',
@@ -119,6 +120,7 @@ describe('contextual event resolution', () => {
           sourceDistrictId: null,
           sourceNpcId: 'npc-ida-rhys',
           presentationText: 'Second instance',
+          contextId: null,
         },
       ],
     }

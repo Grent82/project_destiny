@@ -98,6 +98,7 @@ function queueInstance(state: GameState, npc: NpcRuntimeState): GameState {
         sourceDistrictId: state.currentDistrictId,
         sourceNpcId: npc.npcId,
         presentationText: buildCaptivityPregnancyDiscoveryPresentationText(state, npc),
+        contextId: null,
       },
     ],
     lastFiredDay: {

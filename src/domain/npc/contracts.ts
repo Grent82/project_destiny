@@ -30,6 +30,7 @@ export const npcAssignmentSchema = z.enum([
   'deployed',
   'recovering',
   'defense',
+  'transferred',
 ])
 
 export const attributesSchema = z
@@ -269,6 +270,11 @@ export const bondStatusSchema = z.object({
   entryReason: bondEntryReasonSchema,
   alongsideFreeAssignmentDays: z.number().int().nonnegative().default(0),
   lastEqualityNoticeDay: z.number().int().nonnegative().nullable().default(null),
+  forSale: z.boolean().default(false),
+  lastOfferDay: z.number().int().nonnegative().nullable().default(null),
+  marketValue: z.number().int().nonnegative().default(0),
+  ownerType: z.enum(['player', 'npc']).default('player'),
+  bondStartDay: z.number().int().nonnegative().default(0),
 })
 
 export type CaptivityStatus = z.infer<typeof captivityStatusSchema>

@@ -6,6 +6,9 @@ import { addQuestLeadIfNew } from './questLifecycle'
 import { contentCatalog } from '../content/contentCatalog'
 import { initializeRosterRelationships } from './initializeRosterRelationships'
 import { createRng } from './seededRng'
+import { transferBondedNpc } from './bondTransfer'
+
+export type OutcomeContext = { npcId?: string | null; contextId?: string | null }
 
 function warnAndSkip(outcomeType: string, field: string, missingId: string): void {
   console.warn(
@@ -13,7 +16,7 @@ function warnAndSkip(outcomeType: string, field: string, missingId: string): voi
   )
 }
 
-export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameState {
+export function applyOutcomes(state: GameState, outcomes: EventOutcome[], context?: OutcomeContext): GameState {
   let next = state
   for (const outcome of outcomes) {
     switch (outcome.type) {
@@ -202,6 +205,14 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[]): GameS
               next = appendActivityLogEntry(next, 'system', `${npcDef.name} has come to stay in the house.`)
             }
           }
+        }
+        break
+      }
+      case 'transferBondedNpc': {
+        const npcId = context?.npcId
+        const buyerId = context?.contextId
+        if (npcId && buyerId) {
+          next = transferBondedNpc(next, npcId, buyerId)
         }
         break
       }
