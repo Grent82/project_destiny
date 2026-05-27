@@ -276,6 +276,23 @@ describe('resolveEvent reducer', () => {
   })
 })
 
+describe('event budget — day-1 burst guardrail', () => {
+  it('fresh-save day-1 evaluateEvents adds at most 5 regular events', () => {
+    const state = makeState({ day: 1, isFirstRun: false, roster: [], lastFiredDay: {} })
+    const next = evaluateEvents(state, alwaysFire)
+    const regularEvents = next.pendingEvents.filter(
+      (e) => !e.eventId.startsWith('event-tutorial-'),
+    )
+    expect(regularEvents.length).toBeLessThanOrEqual(5)
+  })
+
+  it('fresh-save day-1 total pending events stays bounded', () => {
+    const state = makeState({ day: 1, isFirstRun: false, roster: [], lastFiredDay: {} })
+    const next = evaluateEvents(state, alwaysFire)
+    expect(next.pendingEvents.length).toBeLessThanOrEqual(10)
+  })
+})
+
 describe('isFirstRun tutorial events', () => {
   it('fires tutorial events on the first endDay (isFirstRun=true, day=2)', () => {
     const state = makeState({ day: 2, isFirstRun: true })

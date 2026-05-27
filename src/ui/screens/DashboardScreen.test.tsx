@@ -1,6 +1,6 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 
 import {
   createGameStore,
@@ -46,7 +46,9 @@ describe('DashboardScreen', () => {
 
     render(
       <AppProviders store={store}>
-        <DashboardScreen saveStore={createMemorySaveStore()} />
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
       </AppProviders>,
     )
 
@@ -62,7 +64,9 @@ describe('DashboardScreen', () => {
 
     render(
       <AppProviders store={store}>
-        <DashboardScreen saveStore={saveStore} />
+        <MemoryRouter>
+          <DashboardScreen saveStore={saveStore} />
+        </MemoryRouter>
       </AppProviders>,
     )
 
@@ -81,7 +85,9 @@ describe('DashboardScreen', () => {
 
     render(
       <AppProviders store={store}>
-        <DashboardScreen saveStore={saveStore} />
+        <MemoryRouter>
+          <DashboardScreen saveStore={saveStore} />
+        </MemoryRouter>
       </AppProviders>,
     )
 
@@ -120,5 +126,29 @@ describe('DashboardScreen', () => {
     expect(screen.queryByRole('heading', { name: 'Quick Routes' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /Visit local shops/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /Open the ledger/i })).not.toBeInTheDocument()
+  })
+
+  it('Work Board CTA uses router navigation without hard-reloading', async () => {
+    const user = userEvent.setup()
+
+    function LocationProbe() {
+      const loc = useLocation()
+      return <div data-testid="route">{loc.pathname}</div>
+    }
+
+    render(
+      <AppProviders store={createGameStore({ ...initialGameStateSnapshot, isFirstRun: true })}>
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <Routes>
+            <Route path="/dashboard" element={<DashboardScreen saveStore={createMemorySaveStore()} />} />
+            <Route path="/contracts" element={<LocationProbe />} />
+          </Routes>
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    await user.click(screen.getByRole('button', { name: '→ Check the Work Board' }))
+
+    expect(screen.getByTestId('route')).toHaveTextContent('/contracts')
   })
 })

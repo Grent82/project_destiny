@@ -93,7 +93,9 @@ describe('Browser smoke — golden-path dashboard', () => {
 
     render(
       <AppProviders store={store}>
-        <DashboardScreen saveStore={memorySaveStore()} />
+        <MemoryRouter>
+          <DashboardScreen saveStore={memorySaveStore()} />
+        </MemoryRouter>
       </AppProviders>,
     )
 

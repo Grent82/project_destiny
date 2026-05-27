@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import {
   gameActions,
@@ -37,6 +38,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
   const { saveStore = createBrowserSaveSnapshotStore() } = props
   const store = useAppStore()
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const summary = useAppSelector(selectDashboardSummary)
   const protagonistName = useAppSelector(selectProtagonistName)
   const playerCharacter = useAppSelector(selectPlayerCharacter)
@@ -131,15 +133,18 @@ export function DashboardScreen(props: DashboardScreenProps) {
                 <strong>{recommendedQuestAction.headline}</strong> —{' '}
                 {recommendedQuestAction.detail}
               </p>
-              <a href={recommendedQuestAction.route} className="directive-link">
+              <button
+                className="directive-link"
+                onClick={() => navigate(recommendedQuestAction.route)}
+              >
                 → {recommendedQuestAction.headline}
-              </a>
+              </button>
             </article>
           ) : null}
           {isFirstRun && (
             <div className="first-run-directive">
               <p>The first house leads are posted on the board in the Pale.</p>
-              <a href="/contracts" className="directive-link">→ Check the Work Board</a>
+              <button className="directive-link" onClick={() => navigate('/contracts')}>→ Check the Work Board</button>
             </div>
           )}
           <article className={`detail-panel debt-claim-panel${debt.debtCrisisTriggered ? ' debt-claim-panel--crisis' : debt.debtPaid ? ' debt-claim-panel--settled' : ''}`}>
