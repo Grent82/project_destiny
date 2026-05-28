@@ -66,7 +66,8 @@ describe('applyWardAgeMilestones', () => {
     const ward = makeWard({ birthDay: 1, stage: 'teenager' })
     const state = stateWithWard(ward, 1602) // age = 1601d
     const result = applyWardAgeMilestones(state, noopRng)
-    expect(result.wards[0]!.stage).toBe('young_adult')
+    expect(result.wards).toHaveLength(0)
+    expect(result.roster.some((npc) => npc.name === 'Test Ward')).toBe(true)
     expect(result.pendingEvents.some((pe) => pe.eventId === 'event-ward-stage-teenager-to-young-adult')).toBe(true)
   })
 
@@ -123,6 +124,48 @@ describe('applyWardAgeMilestones', () => {
     const ward = makeWard({ birthDay: 1, stage: 'teenager' })
     const state = stateWithWard(ward, 1602)
     const result = applyWardAgeMilestones(state, noopRng)
-    expect(result.wards[0]!.promotedToNpcId).toBeTruthy()
+    expect(result.roster.some((npc) => npc.npcId === 'npc-ward-grown-ward-test')).toBe(true)
+  })
+
+  it('retries promotion for an existing young_adult ward and moves them onto the roster', () => {
+    const ward = makeWard({
+      birthDay: 1,
+      stage: 'young_adult',
+      promotedToNpcId: 'npc-ward-grown-ward-test',
+    })
+    const state = stateWithWard(ward, 1603)
+    const result = applyWardAgeMilestones(state, noopRng)
+
+    expect(result.wards).toHaveLength(0)
+    expect(result.roster.some((npc) => npc.npcId === 'npc-ward-grown-ward-test')).toBe(true)
+  })
+
+  it('keeps a young_adult ward in place and logs a reason when the roster is full', () => {
+    const ward = makeWard({
+      birthDay: 1,
+      stage: 'young_adult',
+      promotedToNpcId: 'npc-ward-grown-ward-test',
+    })
+    const state = {
+      ...stateWithWard(ward, 1603),
+      house: {
+        ...stateWithWard(ward, 1603).house,
+        rosterBonus: 0,
+      },
+      playerCharacter: {
+        ...stateWithWard(ward, 1603).playerCharacter,
+        renown: 0,
+      },
+      roster: Array.from({ length: 4 }, (_, index) => ({
+        ...initialGameStateSnapshot.roster[0]!,
+        npcId: `npc-filled-${index}`,
+        name: `Filled ${index}`,
+      })),
+    }
+
+    const result = applyWardAgeMilestones(state, noopRng)
+
+    expect(result.wards).toHaveLength(1)
+    expect(result.activityLog.some((entry) => entry.message.includes('cannot join the household'))).toBe(true)
   })
 })

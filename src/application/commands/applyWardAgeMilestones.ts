@@ -1,5 +1,6 @@
 import type { GameState, Ward, WardStage } from '../../domain/game/contracts'
 import type { Traits } from '../../domain/npc/contracts'
+import { promoteWardToRoster } from './promoteWardToRoster'
 import type { Rng } from './seededRng'
 
 // Compressed time: 100 in-game days ≈ 1 year
@@ -106,5 +107,11 @@ export function applyWardAgeMilestones(state: GameState, rng: Rng): GameState {
       next = applyMilestone(next, next.wards.find((w) => w.wardId === ward.wardId)!, nextStage, rng)
     }
   }
+
+  for (const ward of [...next.wards]) {
+    if (ward.stage !== 'young_adult') continue
+    next = promoteWardToRoster(next, ward.wardId, ward.name, null)
+  }
+
   return next
 }
