@@ -96,6 +96,8 @@ const baseState: GameState = {
   eventInstances: [],
   worldNpcStates: [],
   pendingConsumableDecision: null,
+  houseWardSeats: 0,
+  bondedPersonsRegistry: {},
 }
 
 describe('simulateRivalOrgs', () => {

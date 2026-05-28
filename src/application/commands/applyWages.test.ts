@@ -76,7 +76,7 @@ describe('applyWages', () => {
         money: 0,
         roster: initialStateWithIda.roster.map((r) =>
           r.npcId === 'npc-ida-rhys'
-            ? { ...r, wagesOwedDays: 14, bondStatus: { holderId: 'player', bondType: 'labor' as const, contractedUntilDay: 999 } }
+            ? { ...r, wagesOwedDays: 14, bondStatus: { holderId: 'player', contractValue: 0, termDays: null, entryReason: 'voluntary' as const, alongsideFreeAssignmentDays: 0, lastEqualityNoticeDay: null, forSale: false, lastOfferDay: null, marketValue: 0, ownerType: 'player' as const, bondStartDay: 0 } }
             : r,
         ),
       }
