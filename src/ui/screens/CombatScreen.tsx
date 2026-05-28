@@ -45,6 +45,8 @@ export function CombatScreen() {
   const navigate = useNavigate()
   const combat = useAppSelector(selectCombatScreenState)
   const lastEncounterSummary = useAppSelector(selectLastEncounterSummary)
+  const inactiveReturnRoute = lastEncounterSummary?.linkedQuestId ? '/contracts' : '/dashboard'
+  const inactiveReturnLabel = lastEncounterSummary?.linkedQuestId ? 'Return to Work Board' : 'Return to Dashboard'
   const commandStatusMessage = !combat.hasActiveCombat
     ? 'No combat commands are available until an encounter begins.'
     : combat.outcome !== 'ongoing'
@@ -86,8 +88,8 @@ export function CombatScreen() {
               )}
             </article>
           )}
-          <button className="action-button" onClick={() => navigate('/contracts')} type="button">
-            Return to contracts
+          <button className="action-button" onClick={() => navigate(inactiveReturnRoute)} type="button">
+            {inactiveReturnLabel}
           </button>
         </div>
       ) : (
@@ -171,17 +173,6 @@ export function CombatScreen() {
                 {action.label}
               </button>
             ))}
-            <button
-              className="action-button"
-              disabled={combat.outcome === 'ongoing'}
-              onClick={() => {
-                dispatch(gameActions.concludeCombatEncounter())
-                navigate('/dashboard')
-              }}
-              type="button"
-            >
-              Conclude encounter
-            </button>
           </div>
           <p className="summary">{commandStatusMessage}</p>
           <div className="stats-grid">
@@ -300,16 +291,24 @@ export function CombatScreen() {
                 </span>
               </h2>
               <p className="summary">Resolve the encounter to lock in aftermath and return to operations.</p>
+              {combat.resolutionSummary ? (
+                <div className="mission-list" style={{ marginBottom: '1rem' }}>
+                  <p><strong>{combat.resolutionSummary.rewardsLabel}</strong></p>
+                  <p>{combat.resolutionSummary.partyConditionLabel}</p>
+                  <p>{combat.resolutionSummary.contractLabel}</p>
+                  <p>Return destination: {combat.resolutionSummary.returnLabel}</p>
+                </div>
+              ) : null}
               <div className="combat-action-row">
                 <button
                   className="action-button action-button--primary"
                   onClick={() => {
                     dispatch(gameActions.concludeCombatEncounter())
-                    navigate('/dashboard')
+                    navigate(combat.resolutionSummary?.returnRoute ?? '/dashboard')
                   }}
                   type="button"
                 >
-                  Conclude and Return
+                  {combat.resolutionSummary?.actionLabel ?? 'Conclude and Return'}
                 </button>
                 <button
                   className="action-button"
