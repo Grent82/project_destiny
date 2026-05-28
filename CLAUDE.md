@@ -82,6 +82,14 @@ pnpm typecheck
 pnpm build
 ```
 
+If the Codex desktop runtime hits the `rolldown` native-binding / codesign failure, use the project-local wrappers that force a compatible system Node:
+
+```bash
+./scripts/codex-test.sh
+./scripts/codex-typecheck.sh
+./scripts/codex-build.sh
+```
+
 **Run a single test file:**
 ```bash
 pnpm exec vitest run src/application/commands/combat.test.ts

@@ -5,6 +5,9 @@
   "type": "module",
   "packageManager": "pnpm@10.19.0",
   "scripts": {
+    "codex:build": "./scripts/codex-build.sh",
+    "codex:test": "./scripts/codex-test.sh",
+    "codex:typecheck": "./scripts/codex-typecheck.sh",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "format": "prettier --write .",

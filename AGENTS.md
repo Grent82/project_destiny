@@ -79,6 +79,14 @@ pnpm typecheck     # zero errors
 pnpm build         # clean build before committing
 ```
 
+If the Codex desktop environment resolves `node` to the bundled app runtime and Vite/Vitest fail to load `rolldown` native bindings, use the project-local fallback wrappers instead:
+
+```bash
+./scripts/codex-test.sh
+./scripts/codex-typecheck.sh
+./scripts/codex-build.sh
+```
+
 ## Schema Change Checklist
 
 Whenever `gameStateSchema` in `src/domain/game/contracts.ts` changes:
