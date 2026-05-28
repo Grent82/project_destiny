@@ -45,4 +45,18 @@ describe('FactionsScreen', () => {
     renderFactions()
     expect(screen.getByRole('heading', { name: 'City Dials' })).toBeInTheDocument()
   })
+
+  it('tells the day-one political truth about House Valdric footing', () => {
+    renderFactions()
+
+    expect(screen.getByRole('heading', { name: 'House Political Footing' })).toBeInTheDocument()
+    expect(screen.getByText('Restored ward seats')).toBeInTheDocument()
+    expect(screen.getByText('Sponsor channels')).toBeInTheDocument()
+    expect(
+      screen.getByText(/currently holds no restored ward seat and no sponsor channel into the chamber/i),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/once held three ward seats before the debt proceedings stripped them/i),
+    ).toBeInTheDocument()
+  })
 })

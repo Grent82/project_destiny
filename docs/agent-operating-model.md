@@ -94,6 +94,7 @@ Do not use:
 - `bd update <id> --claim` when starting a task
 - `bd note <id>` for assumptions, blockers, or handoff details
 - `bd close <id>` only after validation is complete
+- For loop-affecting player-facing work, apply [docs/workflows/loop-level-verification.md](docs/workflows/loop-level-verification.md) before closure.
 
 ### Backend mode note
 

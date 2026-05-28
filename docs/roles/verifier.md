@@ -10,6 +10,7 @@ Audit changes for correctness, regression risk, architectural integrity, and tes
 - look for bugs and behavioral regressions
 - verify architecture boundaries are respected
 - verify TDD or equivalent test coverage expectations were met
+- apply [docs/workflows/loop-level-verification.md](docs/workflows/loop-level-verification.md) when a change touches a player-facing loop
 - identify follow-up risks and missing cases
 
 ## Review Priorities

@@ -31,8 +31,17 @@ Use this checklist when reviewing a completed Bead.
 - Were the required quality gates run for the type of change?
 - If code changed, were `typecheck`, `lint`, and `test:run` addressed?
 - If UI integration changed, was `build` also addressed?
+- If the change touched a player-facing loop, was [docs/workflows/loop-level-verification.md](docs/workflows/loop-level-verification.md) applied?
 
-## 6. Scope Discipline
+## 6. Product Truth
+
+- Does the affected screen or loop answer the main player question for that moment?
+- If navigation changed, is route continuity explicitly verified?
+- If day-one or opening-fiction copy changed, is fresh-save truth explicitly verified?
+- If events or bulk simulation changed, is pacing/budget explicitly verified?
+- If aftermath changed, are outcome, consequence, and next destination readable?
+
+## 7. Scope Discipline
 
 - Does the diff stay within the Bead’s intended scope?
 - Are unrelated edits absent?

@@ -222,6 +222,20 @@ describe('endDay', () => {
     expect(next.mainQuest.stage).toBe('rescued')
   })
 
+  it('keeps a fresh-save endDay event burst within the day-one budget', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 1,
+      isFirstRun: false,
+      pendingEvents: [],
+      lastFiredDay: {},
+    }
+
+    const next = endDay(state)
+
+    expect(next.pendingEvents.length).toBeLessThanOrEqual(10)
+  })
+
   it('city dial: high unrest (>=70) decays all NPC loyalty by 1 and logs a message', () => {
     const state = {
       ...initialStateWithIda,
