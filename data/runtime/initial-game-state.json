@@ -510,6 +510,7 @@
   ],
   "eventInstances": [],
   "worldNpcStates": [],
+  "npcSitePresences": [],
   "houseStorageCapacity": 40,
   "installedHouseModules": [],
   "bondedPersonsRegistry": {}

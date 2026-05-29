@@ -95,6 +95,7 @@ const baseState: GameState = {
   installedHouseModules: [],
   eventInstances: [],
   worldNpcStates: [],
+  npcSitePresences: [],
   pendingConsumableDecision: null,
   houseWardSeats: 0,
   bondedPersonsRegistry: {},

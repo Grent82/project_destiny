@@ -20,6 +20,7 @@ import { attributesSchema, bondStatusSchema, npcDefinitionSchema, npcRuntimeStat
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
+import { npcSitePresenceSchema } from '../world/runtime'
 
 export const districtRuntimeStateSchema = z
   .object({
@@ -326,6 +327,7 @@ export const gameStateSchema = z
     rumors: z.array(rumorSchema).default([]),
     bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),
     worldNpcStates: z.array(worldNpcRuntimeStateSchema).default([]),
+    npcSitePresences: z.array(npcSitePresenceSchema).default([]),
     bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
   })
   .strict()

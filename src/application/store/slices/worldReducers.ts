@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type { CouncilVoteEvent, GameState } from '../../../domain'
+import type { NpcSitePresence } from '../../../domain/world/runtime'
 import type { InstitutionalTier } from '../../../domain/governance/contracts'
 import { getRenownLevel } from '../../../domain/progression/contracts'
 import { applyOutcomes, type OutcomeContext } from '../../commands/applyEventOutcome'
@@ -11,6 +12,25 @@ import { contentCatalog, getNpcDefinitions } from '../../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
 export const worldReducers = {
+  upsertNpcSitePresence(state: GameState, action: PayloadAction<NpcSitePresence>) {
+    const next = action.payload
+    const index = state.npcSitePresences.findIndex((presence) => presence.occupancyId === next.occupancyId)
+    if (index === -1) {
+      state.npcSitePresences.push(next)
+      return
+    }
+    state.npcSitePresences[index] = next
+  },
+
+  clearNpcSitePresence(state: GameState, action: PayloadAction<{ occupancyId?: string; npcId?: string }>) {
+    const { occupancyId, npcId } = action.payload
+    state.npcSitePresences = state.npcSitePresences.filter((presence) => {
+      if (occupancyId && presence.occupancyId === occupancyId) return false
+      if (npcId && presence.npcId === npcId) return false
+      return true
+    })
+  },
+
   resolveEvent(state: GameState, action: PayloadAction<{ eventId: string; choiceId: string }>) {
     const { eventId, choiceId } = action.payload
     const template = contentCatalog.eventsById.get(eventId)
