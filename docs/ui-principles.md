@@ -182,6 +182,27 @@ District screens should help answer:
 - where are prices or risks shifting
 - which faction currently owns the local tempo
 
+### Visibility rule
+
+District overview is a pressure and direction layer, not a room-intelligence layer.
+
+District surfaces may show:
+
+- site identity when public or already clued
+- broad function
+- controller
+- danger
+- rumor pressure
+- access posture
+
+District surfaces must not show:
+
+- full room lists
+- exact captive placement
+- exhaustive occupant rosters for still-abstract sites
+
+Use the [Site Visibility and Reveal Contract](./site-visibility-and-reveal-contract.md) for certainty wording and information boundaries.
+
 ## Factions Standards
 
 ### Purpose

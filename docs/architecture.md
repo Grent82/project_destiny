@@ -12,7 +12,7 @@ The architecture is optimized for:
 - incremental delivery
 - TDD-first domain work
 
-This document intentionally defines boundaries before concrete framework wiring. The initial stack and quality-gate choice is recorded in [ADR 0001](./decisions/0001-initial-stack-and-quality-gates.md). The hybrid world-site contract for abstract and concrete locations is recorded in [ADR 0002](./decisions/0002-hybrid-location-simulation-contract.md).
+This document intentionally defines boundaries before concrete framework wiring. The initial stack and quality-gate choice is recorded in [ADR 0001](./decisions/0001-initial-stack-and-quality-gates.md). The hybrid world-site contract for abstract and concrete locations is recorded in [ADR 0002](./decisions/0002-hybrid-location-simulation-contract.md). The player-facing information hierarchy for those locations is recorded in [Site Visibility and Reveal Contract](./site-visibility-and-reveal-contract.md).
 
 ## Architectural Goals
 
