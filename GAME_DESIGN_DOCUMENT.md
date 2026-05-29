@@ -795,6 +795,30 @@ Recommended technical rule:
 
 - keep base content definitions separate from mutable save-state instances
 
+### Hybrid site simulation rule
+
+Project Destiny should use a hybrid world-site model:
+
+- important or entered places become `concrete`
+- distant or low-salience places may remain `abstract`
+- abstract places must still preserve deep consequences
+
+In practice this means:
+
+- districts remain the coarse navigation layer
+- POIs and households become the site layer
+- rooms appear when a site becomes concrete
+- captivity, visits, witnesses, hidden assets, and household pressure must still exist meaningfully even when a site is abstract
+
+Concrete sites may later return to abstract simulation, but they must retain:
+
+- controller / owner
+- known occupants
+- captivity assignments
+- discovered evidence
+- meaningful room or access changes
+- recent consequential developments
+
 ## 7. MVP Scope
 
 The first playable version should be intentionally narrow.
@@ -825,6 +849,7 @@ The first playable version should be intentionally narrow.
 - passive daily resolution
 - faction standing
 - political dials
+- hybrid site play for room-capable locations when relevant
 - basic combat missions
 - relationship progression
 - lineage and inheritance hooks

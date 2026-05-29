@@ -72,7 +72,7 @@ Gregor's son. Born into the post-Breach world — the Register, the binding syst
 
 **The sister — Mira Valdric:**
 
-Eldest child. Sharp, politically capable, the one the father was grooming as heir. Witnesses describe armed men in unmarked livery taking her the same night Edric died. Her current location is unknown. She is probably alive — if she were dead, the Court would have no leverage in her and leverage is always the point.
+Eldest child. Sharp, politically capable, the one the father was grooming as heir. Witnesses describe armed men in unmarked livery taking her the same night Edric died. At game start her location is unknown to the protagonist. Later investigation can narrow that uncertainty to a specific Gilded Court holding site in the Pale. She is probably alive — if she were dead, the Court would have no leverage in her and leverage is always the point.
 
 **The eldest brother — Cael Valdric:**
 

@@ -12,7 +12,7 @@ The architecture is optimized for:
 - incremental delivery
 - TDD-first domain work
 
-This document intentionally defines boundaries before concrete framework wiring. The initial stack and quality-gate choice is recorded in [ADR 0001](./decisions/0001-initial-stack-and-quality-gates.md).
+This document intentionally defines boundaries before concrete framework wiring. The initial stack and quality-gate choice is recorded in [ADR 0001](./decisions/0001-initial-stack-and-quality-gates.md). The hybrid world-site contract for abstract and concrete locations is recorded in [ADR 0002](./decisions/0002-hybrid-location-simulation-contract.md).
 
 ## Architectural Goals
 
@@ -217,6 +217,17 @@ Examples:
 Combat calculations should live with combat modules. Relationship transitions should live with relationship modules. Avoid giant cross-domain utility files.
 
 ### Rule 4: domain APIs should be deterministic when inputs are fixed
+
+### Rule 5: locations must share one runtime substrate
+
+Player-house rooms, world households, room-capable POIs, occupancy, and captivity must not evolve as separate architectural species.
+
+The project adopts a hybrid location model:
+
+- abstract site runtime for offscreen simulation
+- concrete site runtime for entered or currently relevant places
+
+See [ADR 0002](./decisions/0002-hybrid-location-simulation-contract.md).
 
 Randomness should be injected through a port or passed as an explicit dependency so domain behavior remains testable.
 

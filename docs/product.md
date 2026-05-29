@@ -124,6 +124,7 @@ The MVP must include:
 - NPC attributes, skills, traits, states, and relationships
 - equipment and durability
 - district travel
+- hybrid site play where room-capable locations can become concrete when relevant
 - shops with inventory differences
 - title or assignment management
 - passive daily resolution
@@ -227,6 +228,20 @@ Must support:
 Acceptance signal:
 
 - the world changes even when the player is not directly in combat
+
+### Location and custody system
+
+Must support:
+
+- districts as the coarse world layer
+- sites as the actionable world-place layer
+- rooms when a site becomes concrete and relevant
+- abstract offscreen site simulation that still preserves meaningful social, political, and captivity consequences
+- location-bound occupancy and location-bound captivity
+
+Acceptance signal:
+
+- the player can know that a person or opportunity is tied to a place before entering it, and entering that place reveals a deeper but consistent layer of world truth
 
 ## Milestones
 
