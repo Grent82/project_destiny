@@ -12,8 +12,10 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import type { CaptivityState, NpcRuntimeState, PregnancyState } from '../../domain/npc/contracts'
+import { getAllNpcCaptivityStates, getNpcCaptivityState } from '../commands/captivityRegistry'
 
 export const selectRoster = (state: RootState) => state.game.roster
+export const selectNpcCaptivityRegistry = (state: RootState) => state.game.npcCaptivityStates
 
 /** All roster NPCs who are currently missing or captive. */
 export const selectCaptiveNpcs = createSelector(selectRoster, (roster) =>
@@ -28,8 +30,16 @@ export function selectNpcCaptivityState(
   state: RootState,
   npcId: string,
 ): CaptivityState | undefined {
-  return state.game.roster.find((n) => n.npcId === npcId)?.captivityState
+  return getNpcCaptivityState(state.game, npcId)
 }
+
+export const selectKnownCaptivityNpcIds = createSelector(
+  [selectNpcCaptivityRegistry, selectRoster],
+  (registry, roster) =>
+    Object.entries(getAllNpcCaptivityStates({ npcCaptivityStates: registry, roster }))
+      .filter(([, captivity]) => captivity.status === 'missing' || captivity.status === 'captive')
+      .map(([npcId]) => npcId),
+)
 
 /** The pregnancy state for a specific NPC, or undefined if not set. */
 export function selectNpcPregnancyState(

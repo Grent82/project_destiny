@@ -231,14 +231,19 @@ export const captivityConditionSchema = z.enum(['healthy', 'hurt', 'broken', 'al
 export const captivityComplianceSchema = z.enum(['resistant', 'conflicted', 'compliant'])
 
 export const captivityBondTypeSchema = z.enum(['none', 'fear', 'dependency', 'affection', 'coercion'])
+export const captivityRegimeSchema = z.enum(['unknown', 'hidden', 'guarded', 'penal', 'commercial', 'protective', 'medical'])
 
 export const captivityStateSchema = z.object({
   status: captivityStatusSchema,
   holderId: z.string().nullable().default(null),
+  siteId: z.string().nullable().default(null),
+  roomId: z.string().nullable().default(null),
+  regime: captivityRegimeSchema.default('unknown'),
   condition: captivityConditionSchema.default('healthy'),
   compliance: captivityComplianceSchema.default('resistant'),
   bondType: captivityBondTypeSchema.default('none'),
   timeHeldDays: z.number().int().nonnegative().default(0),
+  lastTransferDay: z.number().int().nonnegative().nullable().default(null),
   questTag: z.string().nullable().default(null),
 })
 
@@ -281,6 +286,7 @@ export type CaptivityStatus = z.infer<typeof captivityStatusSchema>
 export type CaptivityCondition = z.infer<typeof captivityConditionSchema>
 export type CaptivityCompliance = z.infer<typeof captivityComplianceSchema>
 export type CaptivityBondType = z.infer<typeof captivityBondTypeSchema>
+export type CaptivityRegime = z.infer<typeof captivityRegimeSchema>
 export type CaptivityState = z.infer<typeof captivityStateSchema>
 export type PregnancyState = z.infer<typeof pregnancyStateSchema>
 export type BondEntryReason = z.infer<typeof bondEntryReasonSchema>

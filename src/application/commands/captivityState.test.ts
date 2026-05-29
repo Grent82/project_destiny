@@ -17,6 +17,22 @@ const SQUAD_NPC = 'npc-marion-vale'
 function makeStateWithCaptive(captivityOverride?: object): GameState {
   return {
     ...initialGameStateSnapshot,
+    npcCaptivityStates: {
+      [SQUAD_NPC]: {
+        status: 'captive' as const,
+        holderId: 'faction-syndicate',
+        siteId: 'site-old-tannery',
+        roomId: 'room-holding-floor',
+        regime: 'guarded' as const,
+        condition: 'healthy' as const,
+        compliance: 'resistant' as const,
+        bondType: 'none' as const,
+        timeHeldDays: 0,
+        lastTransferDay: null,
+        questTag: null,
+        ...captivityOverride,
+      },
+    },
     roster: initialGameStateSnapshot.roster.map((npc) =>
       npc.npcId === SQUAD_NPC
         ? {
@@ -24,10 +40,14 @@ function makeStateWithCaptive(captivityOverride?: object): GameState {
             captivityState: {
               status: 'captive' as const,
               holderId: 'faction-syndicate',
+              siteId: 'site-old-tannery',
+              roomId: 'room-holding-floor',
+              regime: 'guarded' as const,
               condition: 'healthy' as const,
               compliance: 'resistant' as const,
               bondType: 'none' as const,
               timeHeldDays: 0,
+              lastTransferDay: null,
               questTag: null,
               ...captivityOverride,
             },
@@ -46,6 +66,10 @@ describe('captivityStateSchema', () => {
       compliance: 'resistant',
       bondType: 'none',
       timeHeldDays: 0,
+      siteId: 'site-old-tannery',
+      roomId: 'room-holding-floor',
+      regime: 'guarded',
+      lastTransferDay: null,
       questTag: null,
     })
     expect(result.success).toBe(true)
@@ -60,6 +84,10 @@ describe('captivityStateSchema', () => {
       expect(result.data.bondType).toBe('none')
       expect(result.data.timeHeldDays).toBe(0)
       expect(result.data.holderId).toBeNull()
+      expect(result.data.siteId).toBeNull()
+      expect(result.data.roomId).toBeNull()
+      expect(result.data.regime).toBe('unknown')
+      expect(result.data.lastTransferDay).toBeNull()
       expect(result.data.questTag).toBeNull()
     }
   })
@@ -107,16 +135,21 @@ describe('setCaptivityState action', () => {
         captivityState: {
           status: 'missing',
           holderId: null,
+          siteId: 'site-old-tannery',
+          roomId: null,
+          regime: 'hidden',
           condition: 'healthy',
           compliance: 'resistant',
           bondType: 'none',
           timeHeldDays: 0,
+          lastTransferDay: null,
           questTag: null,
         },
       }),
     )
     const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.status).toBe('missing')
+    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.siteId).toBe('site-old-tannery')
   })
 
   it('clears captivityState when null is passed', () => {
@@ -124,6 +157,31 @@ describe('setCaptivityState action', () => {
     store.dispatch(gameActions.setCaptivityState({ npcId: SQUAD_NPC, captivityState: null }))
     const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState).toBeUndefined()
+    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]).toBeUndefined()
+  })
+
+  it('stores captivity for a non-roster NPC in the canonical registry', () => {
+    const store = createGameStore()
+    store.dispatch(
+      gameActions.setCaptivityState({
+        npcId: 'npc-mira',
+        captivityState: {
+          status: 'captive',
+          holderId: 'faction-gilded-court',
+          siteId: 'site-old-tannery',
+          roomId: 'room-inner-ring',
+          regime: 'guarded',
+          condition: 'hurt',
+          compliance: 'resistant',
+          bondType: 'fear',
+          timeHeldDays: 4,
+          lastTransferDay: 1,
+          questTag: 'quest-mira-rescue',
+        },
+      }),
+    )
+
+    expect(store.getState().game.npcCaptivityStates['npc-mira']?.roomId).toBe('room-inner-ring')
   })
 })
 
@@ -198,6 +256,7 @@ describe('captivity degradation in endDay', () => {
     store.dispatch(gameActions.endDay())
     const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.timeHeldDays).toBe(4)
+    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.timeHeldDays).toBe(4)
   })
 
   it('degrades condition from healthy→hurt at 7 days', () => {
@@ -221,5 +280,29 @@ describe('captivity degradation in endDay', () => {
     expect(store.getState().game.day).toBe(dayBefore + 1)
     const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState).toBeUndefined()
+  })
+
+  it('increments captivity time for non-roster captives in the registry', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      npcCaptivityStates: {
+        'npc-mira': {
+          status: 'captive',
+          holderId: 'faction-gilded-court',
+          siteId: 'site-old-tannery',
+          roomId: null,
+          regime: 'hidden',
+          condition: 'healthy',
+          compliance: 'resistant',
+          bondType: 'none',
+          timeHeldDays: 2,
+          lastTransferDay: 1,
+          questTag: 'quest-mira-rescue',
+        },
+      },
+    })
+
+    store.dispatch(gameActions.endDay())
+    expect(store.getState().game.npcCaptivityStates['npc-mira']?.timeHeldDays).toBe(3)
   })
 })

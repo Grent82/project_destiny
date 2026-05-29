@@ -16,7 +16,7 @@ import {
   ownedItemSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
-import { attributesSchema, bondStatusSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
+import { attributesSchema, bondStatusSchema, captivityStateSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
@@ -327,6 +327,7 @@ export const gameStateSchema = z
     rumors: z.array(rumorSchema).default([]),
     bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),
     worldNpcStates: z.array(worldNpcRuntimeStateSchema).default([]),
+    npcCaptivityStates: z.record(z.string(), captivityStateSchema).default({}),
     npcSitePresences: z.array(npcSitePresenceSchema).default([]),
     bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
   })

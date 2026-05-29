@@ -18,6 +18,7 @@ import {
   CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
   captivityPregnancyDiscoveryKey,
 } from '../../commands/captivityPregnancyDiscovery'
+import { getNpcCaptivityState, setNpcCaptivityState } from '../../commands/captivityRegistry'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
 export const rosterReducers = {
@@ -115,20 +116,14 @@ export const rosterReducers = {
     action: PayloadAction<{ npcId: string; captivityState: CaptivityState | null }>,
   ) {
     const { npcId, captivityState } = action.payload
-    const npc = state.roster.find((n) => n.npcId === npcId)
-    if (!npc) return
-    if (captivityState === null) {
-      delete npc.captivityState
-    } else {
-      npc.captivityState = captivityState
-    }
+    setNpcCaptivityState(state, npcId, captivityState)
   },
 
   rescueNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {
     const { npcId } = action.payload
     const npc = state.roster.find((n) => n.npcId === npcId)
-    if (!npc || !npc.captivityState) return
-    const cap = npc.captivityState
+    const cap = getNpcCaptivityState(state, npcId)
+    if (!npc || !cap) return
 
     const risk = selectNpcCoercionRisk(npc)
     const riskMultiplier = 1 + risk
@@ -144,7 +139,7 @@ export const rosterReducers = {
       npc.states.morale = Math.max(0, npc.states.morale - penalty)
     }
 
-    npc.captivityState = { ...cap, status: 'rescued' }
+    setNpcCaptivityState(state, npcId, { ...cap, status: 'rescued' })
     npc.assignment = 'recovering'
 
     if (cap.condition === 'broken' || cap.condition === 'altered') {

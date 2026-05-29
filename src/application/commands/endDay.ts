@@ -27,6 +27,7 @@ import { checkBondAcquisitionOffers, applyNpcHeldConditionDecay } from './bondTr
 import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 import { applyNpcPairing } from './applyNpcPairing'
 import { isQuestLeadExpired } from '../../domain/quests/contracts'
+import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -111,34 +112,32 @@ const CAPTIVITY_DEGRADATION_DAYS = 7
 const CONDITION_PROGRESSION: CaptivityCondition[] = ['healthy', 'hurt', 'broken', 'altered']
 
 function applyCaptivityDegradation(state: GameState): GameState {
-  const hasCaptives = state.roster.some(
-    (n) =>
-      n.captivityState?.status === 'missing' || n.captivityState?.status === 'captive',
+  const activeEntries = Object.entries(getAllNpcCaptivityStates(state)).filter(
+    ([, cap]) => cap.status === 'missing' || cap.status === 'captive',
   )
-  if (!hasCaptives) return state
+  if (activeEntries.length === 0) return state
 
-  return {
+  const next: GameState = {
     ...state,
-    roster: state.roster.map((npc) => {
-      const cap = npc.captivityState
-      if (!cap || (cap.status !== 'missing' && cap.status !== 'captive')) return npc
-      const newDays = cap.timeHeldDays + 1
-      // High coercionRisk NPCs degrade at double speed (halved threshold)
-      const risk = selectNpcCoercionRisk(npc)
-      const threshold = risk > 0.6 ? Math.max(1, Math.floor(CAPTIVITY_DEGRADATION_DAYS / 2)) : CAPTIVITY_DEGRADATION_DAYS
-      const shouldDegrade =
-        newDays > 0 && newDays % threshold === 0
-      const currentIdx = CONDITION_PROGRESSION.indexOf(cap.condition)
-      const newCondition: CaptivityCondition =
-        shouldDegrade && currentIdx < CONDITION_PROGRESSION.length - 1
-          ? CONDITION_PROGRESSION[currentIdx + 1]!
-          : cap.condition
-      return {
-        ...npc,
-        captivityState: { ...cap, timeHeldDays: newDays, condition: newCondition },
-      }
-    }),
+    roster: state.roster.map((npc) => ({ ...npc })),
+    npcCaptivityStates: { ...state.npcCaptivityStates },
   }
+
+  for (const [npcId, cap] of activeEntries) {
+    const rosterNpc = next.roster.find((npc) => npc.npcId === npcId)
+    const newDays = cap.timeHeldDays + 1
+    const risk = rosterNpc ? selectNpcCoercionRisk(rosterNpc) : 0
+    const threshold = risk > 0.6 ? Math.max(1, Math.floor(CAPTIVITY_DEGRADATION_DAYS / 2)) : CAPTIVITY_DEGRADATION_DAYS
+    const shouldDegrade = newDays > 0 && newDays % threshold === 0
+    const currentIdx = CONDITION_PROGRESSION.indexOf(cap.condition)
+    const newCondition: CaptivityCondition =
+      shouldDegrade && currentIdx < CONDITION_PROGRESSION.length - 1
+        ? CONDITION_PROGRESSION[currentIdx + 1]!
+        : cap.condition
+    setNpcCaptivityState(next, npcId, { ...cap, timeHeldDays: newDays, condition: newCondition })
+  }
+
+  return next
 }
 
 function checkMainQuestProgression(state: GameState): GameState {

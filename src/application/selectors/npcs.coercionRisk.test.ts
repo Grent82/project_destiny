@@ -87,10 +87,14 @@ describe('captivity degradation uses coercionRisk', () => {
               captivityState: {
                 status: 'captive' as const,
                 holderId: null,
+                siteId: null,
+                roomId: null,
+                regime: 'unknown' as const,
                 timeHeldDays: 0,
                 condition: 'healthy' as const,
                 compliance: 'resistant' as const,
                 bondType: 'none' as const,
+                lastTransferDay: null,
                 questTag: null,
               },
             }
@@ -132,10 +136,14 @@ describe('rescueNpc uses coercionRisk', () => {
               captivityState: {
                 status: 'captive' as const,
                 holderId: null,
+                siteId: null,
+                roomId: null,
+                regime: 'unknown' as const,
                 timeHeldDays: 14,
                 condition: 'broken' as const,
                 compliance: 'resistant' as const,
                 bondType: 'fear' as const,
+                lastTransferDay: null,
                 questTag: null,
               },
             }
@@ -166,10 +174,14 @@ describe('rescueNpc uses coercionRisk', () => {
               captivityState: {
                 status: 'captive' as const,
                 holderId: null,
+                siteId: null,
+                roomId: null,
+                regime: 'unknown' as const,
                 timeHeldDays: 3,
                 condition: 'healthy' as const,
                 compliance: 'resistant' as const,
                 bondType: 'none' as const,
+                lastTransferDay: null,
                 questTag: null,
               },
             }
