@@ -12,12 +12,12 @@
 import type { PlaythroughScenario } from '../contracts'
 import { dispatchStep, assertStep, checkpointStep, advanceDaysStep, assertion } from '../contracts'
 import { gameActions } from '../../store/gameSlice'
-import { initialGameStateSnapshot } from '../../store/initialGameState'
+import { initialStateWithIda } from '../../commands/testFixtures'
 
-const SQUAD_NPC = 'npc-marion-vale'
+const SQUAD_NPC = 'npc-ida-rhys'
 
 const startingState = {
-  ...initialGameStateSnapshot,
+  ...initialStateWithIda,
   money: 500,
   selectedSquadNpcIds: [],
   expeditionState: {

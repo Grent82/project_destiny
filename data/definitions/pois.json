@@ -326,6 +326,16 @@
     "actions": []
   },
   {
+    "id": "poi-pale-old-tannery",
+    "districtId": "district-the-pale",
+    "name": "Old Tannery",
+    "type": "residence",
+    "description": "A disused tannery on the Pale's eastern edge. Court men use it when they want a body held somewhere deniable.",
+    "factionId": "faction-gilded-court",
+    "actions": [],
+    "siteTags": ["industrial", "holding-site"]
+  },
+  {
     "id": "poi-pale-wren-safe-house",
     "districtId": "district-the-pale",
     "name": "Wren Safe House",
@@ -333,7 +343,8 @@
     "description": "A Tallow Ring safe house where Tessaly Ash hides under borrowed names and keeps one eye on the Pale.",
     "factionId": "faction-tallow-ring",
     "actions": [],
-    "npcId": "npc-tessaly-ash"
+    "npcId": "npc-tessaly-ash",
+    "siteTags": ["safehouse"]
   },
   {
     "id": "poi-pale-the-pale-court",
@@ -426,7 +437,8 @@
     "actions": [
       "contracts",
       "hire"
-    ]
+    ],
+    "siteTags": ["sanctuary", "safehouse"]
   },
   {
     "id": "poi-warrens-back-alley-smith",
@@ -504,7 +516,8 @@
     "type": "court",
     "description": "Where Compact holds persons of interest. Orren Wex is believed to be inside.",
     "factionId": "faction-civic-compact",
-    "actions": []
+    "actions": [],
+    "siteTags": ["holding-site"]
   },
   {
     "id": "poi-hollows-the-sink",

@@ -1,6 +1,7 @@
 import type { GameState, HouseRoom, NpcSitePresence, SiteAccessState, SiteRuntime, SiteRoomInstance } from '../../domain'
 import type { WorldHousehold } from '../../domain/world/contracts'
 import type { PoiDefinition } from './contentCatalog'
+import { getPoiRoomBlueprints } from './poiRoomBlueprints'
 
 export const PLAYER_HOUSE_SITE_ID = 'site-house-valdric'
 
@@ -47,6 +48,10 @@ function toRoomInstance(room: HouseRoom): SiteRoomInstance {
 }
 
 function mapPoiTypeToKind(poi: PoiDefinition): SiteRuntime['kind'] {
+  if (poi.siteTags.includes('sanctuary')) return 'sanctuary'
+  if (poi.siteTags.includes('safehouse')) return 'safehouse'
+  if (poi.siteTags.includes('holding-site')) return 'holding-site'
+  if (poi.siteTags.includes('industrial')) return 'industrial'
   switch (poi.type) {
     case 'tavern':
       return 'tavern'
@@ -139,6 +144,7 @@ export function buildWorldHouseholdSiteRuntime(household: WorldHousehold): SiteR
 }
 
 export function buildPoiSiteRuntime(poi: PoiDefinition): SiteRuntime {
+  const roomInstances = getPoiRoomBlueprints(poi)
   return {
     siteId: `site-${poi.id}`,
     sourceKind: 'poi',
@@ -150,11 +156,11 @@ export function buildPoiSiteRuntime(poi: PoiDefinition): SiteRuntime {
     ownerNpcId: poi.npcId ?? null,
     controllingFactionId: poi.factionId ?? null,
     securityScore: poi.factionId ? 35 : 15,
-    roomInstances: [],
+    roomInstances,
     knownRoomIds: [],
     lastConcretizedDay: null,
     lastCollapsedDay: null,
-    tags: [poi.type],
+    tags: [poi.type, ...poi.siteTags],
   }
 }
 

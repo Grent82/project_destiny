@@ -32,14 +32,24 @@ describe('siteRuntime adapters', () => {
     expect(runtime.securityScore).toBe(household!.security)
   })
 
-  it('builds an abstract POI runtime with no pre-expanded rooms', () => {
+  it('builds an abstract POI runtime with authored room blueprints', () => {
     const poi = contentCatalog.poisById.get('poi-harbor-the-berth')
     expect(poi).toBeDefined()
 
     const runtime = buildPoiSiteRuntime(poi!)
     expect(runtime.mode).toBe('abstract')
     expect(runtime.sourceKind).toBe('poi')
-    expect(runtime.roomInstances).toEqual([])
+    expect(runtime.roomInstances.length).toBeGreaterThan(0)
     expect(runtime.kind).toBe('tavern')
+  })
+
+  it('maps the old tannery to a holding-site blueprint with authored rooms', () => {
+    const poi = contentCatalog.poisById.get('poi-pale-old-tannery')
+    expect(poi).toBeDefined()
+
+    const runtime = buildPoiSiteRuntime(poi!)
+    expect(runtime.kind).toBe('holding-site')
+    expect(runtime.roomInstances.some((room) => room.roomId === 'tannery-holding-floor')).toBe(true)
+    expect(runtime.roomInstances.some((room) => room.tags.includes('mira-arc'))).toBe(true)
   })
 })

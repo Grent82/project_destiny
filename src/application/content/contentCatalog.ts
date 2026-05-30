@@ -67,6 +67,7 @@ const poiSchema = z.object({
   factionId: z.string().nullable(),
   actions: z.array(z.enum(['contracts', 'hire', 'shop'])),
   npcId: z.string().optional(),
+  siteTags: z.array(z.string()).default([]),
   availableSlots: z.array(timeSlotSchema).default(['morning', 'afternoon', 'evening', 'night']),
 })
 export type PoiDefinition = z.infer<typeof poiSchema>

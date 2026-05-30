@@ -13,6 +13,8 @@ import { relationshipFirstScenario } from './relationshipFirst'
 import { failurePathScenario } from './failurePath'
 
 describe('Economy-first branch playthrough', () => {
+  const ECON_SQUAD_NPC = 'npc-ida-rhys'
+
   it('runs end-to-end with no failures', async () => {
     const result = await runScenario(economyFirstScenario)
     expect(result.failures, `Failures:\n${result.failures.map((f) => f.description).join('\n')}`).toHaveLength(0)
@@ -27,7 +29,7 @@ describe('Economy-first branch playthrough', () => {
   it('NPC returns to idle after expedition', async () => {
     const result = await runScenario(economyFirstScenario)
     const post = result.checkpoints['cp-econ-post-expedition']
-    expect(post?.roster.find((n) => n.npcId === 'npc-marion-vale')?.assignment).toBe('idle')
+    expect(post?.roster.find((n) => n.npcId === ECON_SQUAD_NPC)?.assignment).toBe('idle')
   })
 })
 

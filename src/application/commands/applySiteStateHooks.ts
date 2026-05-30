@@ -10,6 +10,7 @@ export const SITE_PRESSURE_EVENT_ID = 'event-site-pressure-warning'
 
 const SITE_PRESSURE_COOLDOWN_DAYS = 5
 const CAPTIVITY_RUMOR_MIN_DAYS = 2
+const MAX_PENDING_EVENTS = 10
 
 function allRelevantSiteIds(state: GameState): string[] {
   const ids = new Set<string>()
@@ -161,6 +162,7 @@ function queueSitePressureEvent(next: GameState, site: SiteRuntime, pressureScor
   const lastDay = next.lastFiredDay[key]
   if (lastDay !== undefined && next.day - lastDay < SITE_PRESSURE_COOLDOWN_DAYS) return next
   if (pendingPressureForSite(next, site.siteId)) return next
+  if (next.pendingEvents.length >= MAX_PENDING_EVENTS) return next
 
   const districtName = contentCatalog.districtsById.get(site.districtId)?.name ?? site.districtId
   const pressureText = captiveCount > 0
