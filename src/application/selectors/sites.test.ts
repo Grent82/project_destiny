@@ -7,6 +7,7 @@ import {
   selectNpcSitePresences,
   selectPlayerHouseRoomOccupancy,
   selectPlayerHouseSiteRuntime,
+  selectSiteRuntimeById,
   selectPoiSiteRuntimeById,
   selectWorldHouseholdSiteRuntimeById,
 } from './sites'
@@ -16,6 +17,8 @@ describe('site selectors', () => {
     const store = createGameStore()
     const runtime = selectPlayerHouseSiteRuntime(store.getState())
 
+    expect(runtime).not.toBeNull()
+    if (!runtime) throw new Error('expected player house runtime')
     expect(runtime.siteId).toBe(PLAYER_HOUSE_SITE_ID)
     expect(runtime.mode).toBe('concrete')
     expect(runtime.roomInstances.some((room) => room.roomId === 'room-bureau')).toBe(true)
@@ -55,5 +58,14 @@ describe('site selectors', () => {
     expect(poi?.sourceKind).toBe('poi')
     expect(poi?.mode).toBe('abstract')
     expect(Array.isArray(poi?.roomInstances)).toBe(true)
+  })
+
+  it('resolves explicitly concretized sites from runtime state', () => {
+    const store = createGameStore()
+    store.dispatch(gameActions.concretizeSite({ siteId: 'site-world-house-sorn' }))
+
+    const runtime = selectSiteRuntimeById('site-world-house-sorn')(store.getState())
+    expect(runtime?.mode).toBe('concrete')
+    expect(runtime?.knownRoomIds.length).toBeGreaterThan(0)
   })
 })

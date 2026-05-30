@@ -1,21 +1,18 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store/gameStore'
-import { contentCatalog } from '../content/contentCatalog'
 import {
   PLAYER_HOUSE_SITE_ID,
-  buildPlayerHouseSiteRuntime,
-  buildPoiSiteRuntime,
-  buildWorldHouseholdSiteRuntime,
   selectSitePresences,
 } from '../content/siteRuntime'
+import { resolveSiteRuntime } from '../commands/siteLifecycle'
 
 const selectGame = (state: RootState) => state.game
 
 export const selectNpcSitePresences = createSelector([selectGame], (game) => game.npcSitePresences)
 
 export const selectPlayerHouseSiteRuntime = createSelector([selectGame], (game) =>
-  buildPlayerHouseSiteRuntime(game),
+  resolveSiteRuntime(game, PLAYER_HOUSE_SITE_ID),
 )
 
 export const selectPlayerHouseRoomOccupancy = createSelector(
@@ -24,11 +21,12 @@ export const selectPlayerHouseRoomOccupancy = createSelector(
 )
 
 export const selectWorldHouseholdSiteRuntimeById = (householdId: string) => (_state: RootState) => {
-  const household = contentCatalog.worldHouseholdsById.get(householdId)
-  return household ? buildWorldHouseholdSiteRuntime(household) : null
+  return resolveSiteRuntime(_state.game, `site-${householdId}`)
 }
 
 export const selectPoiSiteRuntimeById = (poiId: string) => (_state: RootState) => {
-  const poi = contentCatalog.poisById.get(poiId)
-  return poi ? buildPoiSiteRuntime(poi) : null
+  return resolveSiteRuntime(_state.game, `site-${poiId}`)
 }
+
+export const selectSiteRuntimeById = (siteId: string) => (state: RootState) =>
+  resolveSiteRuntime(state.game, siteId)

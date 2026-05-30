@@ -5,6 +5,7 @@ import type { NpcSitePresence } from '../../../domain/world/runtime'
 import type { InstitutionalTier } from '../../../domain/governance/contracts'
 import { getRenownLevel } from '../../../domain/progression/contracts'
 import { applyOutcomes, type OutcomeContext } from '../../commands/applyEventOutcome'
+import { concretizeSite as concretizeSiteCommand, collapseSite as collapseSiteCommand } from '../../commands/siteLifecycle'
 import { travelToDistrict as travelToDistrictCommand } from '../../commands/districtTravel'
 import { applyRelationshipDelta } from '../../commands/adjustRelationship'
 import { buildEventRumorEntry } from '../../commands/spawnEventRumor'
@@ -12,6 +13,14 @@ import { contentCatalog, getNpcDefinitions } from '../../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
 export const worldReducers = {
+  concretizeSite(state: GameState, action: PayloadAction<{ siteId: string }>) {
+    return concretizeSiteCommand(state, action.payload.siteId)
+  },
+
+  collapseSite(state: GameState, action: PayloadAction<{ siteId: string }>) {
+    return collapseSiteCommand(state, action.payload.siteId)
+  },
+
   upsertNpcSitePresence(state: GameState, action: PayloadAction<NpcSitePresence>) {
     const next = action.payload
     const index = state.npcSitePresences.findIndex((presence) => presence.occupancyId === next.occupancyId)

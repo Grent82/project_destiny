@@ -97,6 +97,7 @@ function roomInstancesFromWorldHousehold(household: WorldHousehold): SiteRoomIns
 }
 
 export function buildPlayerHouseSiteRuntime(state: Pick<GameState, 'house' | 'houseDistrictId' | 'householdLore'>): SiteRuntime {
+  const roomInstances = state.house.rooms.map(toRoomInstance)
   return {
     siteId: PLAYER_HOUSE_SITE_ID,
     sourceKind: 'player-house',
@@ -108,12 +109,16 @@ export function buildPlayerHouseSiteRuntime(state: Pick<GameState, 'house' | 'ho
     ownerNpcId: null,
     controllingFactionId: null,
     securityScore: Math.min(100, state.house.fortificationLevel * 20),
-    roomInstances: state.house.rooms.map(toRoomInstance),
+    roomInstances,
+    knownRoomIds: roomInstances.map((room) => room.roomId),
+    lastConcretizedDay: null,
+    lastCollapsedDay: null,
     tags: ['player-controlled', state.house.exteriorState],
   }
 }
 
 export function buildWorldHouseholdSiteRuntime(household: WorldHousehold): SiteRuntime {
+  const roomInstances = roomInstancesFromWorldHousehold(household)
   return {
     siteId: `site-${household.id}`,
     sourceKind: 'world-household',
@@ -125,7 +130,10 @@ export function buildWorldHouseholdSiteRuntime(household: WorldHousehold): SiteR
     ownerNpcId: household.ownerNpcId,
     controllingFactionId: household.controllingFactionId,
     securityScore: household.security,
-    roomInstances: roomInstancesFromWorldHousehold(household),
+    roomInstances,
+    knownRoomIds: [],
+    lastConcretizedDay: null,
+    lastCollapsedDay: null,
     tags: household.tags,
   }
 }
@@ -143,6 +151,9 @@ export function buildPoiSiteRuntime(poi: PoiDefinition): SiteRuntime {
     controllingFactionId: poi.factionId ?? null,
     securityScore: poi.factionId ? 35 : 15,
     roomInstances: [],
+    knownRoomIds: [],
+    lastConcretizedDay: null,
+    lastCollapsedDay: null,
     tags: [poi.type],
   }
 }

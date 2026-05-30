@@ -63,6 +63,9 @@ export const siteRuntimeSchema = z
     controllingFactionId: entityIdSchema.nullable().default(null),
     securityScore: z.number().int().min(0).max(100).default(0),
     roomInstances: z.array(siteRoomInstanceSchema).default([]),
+    knownRoomIds: z.array(entityIdSchema).default([]),
+    lastConcretizedDay: nonNegativeIntegerSchema.nullable().default(null),
+    lastCollapsedDay: nonNegativeIntegerSchema.nullable().default(null),
     tags: z.array(z.string()).default([]),
   })
   .strict()
