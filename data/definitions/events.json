@@ -5433,6 +5433,38 @@
     "presentationFlavour": null
   },
   {
+    "id": "event-site-pressure-warning",
+    "title": "Pressure on a Quiet Site",
+    "description": "A location tied to shelter, custody, or discreet traffic is beginning to attract the wrong kind of notice.",
+    "triggerConditions": {
+      "probability": 0,
+      "dayMin": 1
+    },
+    "choices": [
+      {
+        "id": "choice-note-site-pressure",
+        "label": "Note the pressure and move carefully",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The house marks the site as pressured and starts moving more carefully around it."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "site-runtime",
+      "custody",
+      "sanctuary"
+    ],
+    "repeatable": true,
+    "cooldownDays": 1,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
     "id": "bond-acquisition-offer",
     "title": "An Acquisition Offer",
     "description": "A buyer has made an offer to acquire one of your bonded persons. The offer has been delivered through formal channels.",

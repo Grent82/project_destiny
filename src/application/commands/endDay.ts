@@ -28,6 +28,7 @@ import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 import { applyNpcPairing } from './applyNpcPairing'
 import { isQuestLeadExpired } from '../../domain/quests/contracts'
 import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
+import { applySiteStateHooks } from './applySiteStateHooks'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -197,6 +198,8 @@ export function endDay(state: GameState): GameState {
   } else {
     afterEvents = evaluateEvents(afterExpiry, rng)
   }
+
+  afterEvents = applySiteStateHooks(afterEvents)
 
   // Step 9: Faction quest bonus, NPC agency, faction agenda, district tension
   afterEvents = applyFactionQuestBonus(afterEvents)
