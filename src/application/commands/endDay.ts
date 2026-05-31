@@ -31,6 +31,7 @@ import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegis
 import { applySiteStateHooks } from './applySiteStateHooks'
 import { applyNpcRoomInteractions } from './applyNpcRoomInteractions'
 import { applyWorldHouseholdGrowth } from './applyWorldHouseholdGrowth'
+import { applyAbstractCustodySimulation } from './applyAbstractCustodySimulation'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -202,6 +203,7 @@ export function endDay(state: GameState): GameState {
   }
 
   afterEvents = applyWorldHouseholdGrowth(afterEvents, rng)
+  afterEvents = applyAbstractCustodySimulation(afterEvents, rng)
   afterEvents = applyNpcRoomInteractions(afterEvents, rng)
   afterEvents = applySiteStateHooks(afterEvents)
 

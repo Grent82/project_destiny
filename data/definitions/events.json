@@ -5513,5 +5513,37 @@
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": null
+  },
+  {
+    "id": "event-abstract-custody-alert",
+    "title": "Custody Deteriorates Offscreen",
+    "description": "A person being held out of sight is deteriorating, and the consequences are starting to press outward even before the room itself is exposed.",
+    "triggerConditions": {
+      "probability": 0,
+      "dayMin": 1
+    },
+    "choices": [
+      {
+        "id": "choice-note-abstract-custody-alert",
+        "label": "Mark the site and pull on the thread later",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The house marks the site as a worsening custody problem. Delay is now a choice with sharper cost."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "custody",
+      "offscreen",
+      "site-runtime"
+    ],
+    "repeatable": true,
+    "cooldownDays": 3,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
   }
 ]
