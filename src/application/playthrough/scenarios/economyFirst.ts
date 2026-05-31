@@ -14,7 +14,7 @@ import { dispatchStep, assertStep, checkpointStep, advanceDaysStep, assertion } 
 import { gameActions } from '../../store/gameSlice'
 import { initialStateWithIda } from '../../commands/testFixtures'
 
-const SQUAD_NPC = 'npc-ida-rhys'
+const SQUAD_NPC = 'npc-marion-vale'
 
 const startingState = {
   ...initialStateWithIda,

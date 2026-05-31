@@ -30,6 +30,7 @@ import { isQuestLeadExpired } from '../../domain/quests/contracts'
 import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
 import { applySiteStateHooks } from './applySiteStateHooks'
 import { applyNpcRoomInteractions } from './applyNpcRoomInteractions'
+import { applyWorldHouseholdGrowth } from './applyWorldHouseholdGrowth'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -200,6 +201,7 @@ export function endDay(state: GameState): GameState {
     afterEvents = evaluateEvents(afterExpiry, rng)
   }
 
+  afterEvents = applyWorldHouseholdGrowth(afterEvents, rng)
   afterEvents = applyNpcRoomInteractions(afterEvents, rng)
   afterEvents = applySiteStateHooks(afterEvents)
 

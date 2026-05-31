@@ -13,7 +13,7 @@ import { relationshipFirstScenario } from './relationshipFirst'
 import { failurePathScenario } from './failurePath'
 
 describe('Economy-first branch playthrough', () => {
-  const ECON_SQUAD_NPC = 'npc-ida-rhys'
+  const ECON_SQUAD_NPC = 'npc-marion-vale'
 
   it('runs end-to-end with no failures', async () => {
     const result = await runScenario(economyFirstScenario)

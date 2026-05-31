@@ -19,10 +19,10 @@
     "reputation": 80,
     "security": 65,
     "resources": {
-      "coin": 0,
-      "food": 0,
-      "favors": 0,
-      "secrets": 0
+      "coin": 48,
+      "food": 18,
+      "favors": 22,
+      "secrets": 31
     },
     "activeConflicts": [
       {
@@ -52,10 +52,10 @@
     "reputation": 55,
     "security": 50,
     "resources": {
-      "coin": 0,
-      "food": 0,
-      "favors": 0,
-      "secrets": 0
+      "coin": 32,
+      "food": 16,
+      "favors": 19,
+      "secrets": 11
     },
     "activeConflicts": [
       {
@@ -85,10 +85,10 @@
     "reputation": 60,
     "security": 20,
     "resources": {
-      "coin": 0,
-      "food": 0,
-      "favors": 0,
-      "secrets": 0
+      "coin": 24,
+      "food": 28,
+      "favors": 14,
+      "secrets": 9
     },
     "activeConflicts": [],
     "fiction": "Garet inherited it from his father. Everyone passes through. Nothing said here stays only here."
@@ -113,10 +113,10 @@
     "reputation": 70,
     "security": 30,
     "resources": {
-      "coin": 0,
-      "food": 0,
-      "favors": 0,
-      "secrets": 0
+      "coin": 14,
+      "food": 34,
+      "favors": 18,
+      "secrets": 12
     },
     "activeConflicts": [],
     "fiction": "The only building in the Pale that has not changed hands since before the Breach. Sister Vael's infirmary is one room. Her archive is three."
@@ -140,10 +140,10 @@
     "reputation": 65,
     "security": 60,
     "resources": {
-      "coin": 0,
-      "food": 0,
-      "favors": 0,
-      "secrets": 0
+      "coin": 56,
+      "food": 22,
+      "favors": 34,
+      "secrets": 18
     },
     "activeConflicts": [],
     "fiction": "If a name appears in this building, it exists legally. If it does not appear, it is dead or hidden."
