@@ -1,6 +1,7 @@
 import type { GameState, NpcRuntimeState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
+import { adjustCityDial } from './economicConsequences'
 
 const TALLOW_RING_ID = 'faction-tallow-ring'
 const TITLE_OBJECTION_DAY_INTERVAL = 28
@@ -131,6 +132,10 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
     ),
   }
 
+  next = adjustCityDial(next, 'corruption', 2)
+  next = adjustCityDial(next, 'prosperity', -1)
+  next = adjustCityDial(next, 'unrest', 1)
+
   const objectionNpc = next.roster.find(
     (npc) =>
       npc.traits.empathy > 55 &&
@@ -157,7 +162,7 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
   return appendActivityLogEntry(
     next,
     'system',
-    'The cost of running bonded labor settles into the house. Empathic eyes do not look away.',
+    'The cost of running bonded labor settles into the house. Empathic eyes do not look away, and the wider city grows meaner around it.',
   )
 }
 

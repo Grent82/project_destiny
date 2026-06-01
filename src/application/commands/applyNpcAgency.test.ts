@@ -99,6 +99,8 @@ describe('applyInitiativeActions', () => {
     // rng=0: first call selects pool[0] = 'resource_move', subsequent calls fill in amount
     const result = applyInitiativeActions(state, () => 0)
     expect(result.money).toBeGreaterThan(100)
+    expect(result.cityResources.materialStock).toBeGreaterThan(state.cityResources.materialStock)
+    expect(result.cityDials.prosperity).toBeGreaterThan(state.cityDials.prosperity)
   })
 
   it('does nothing for NPCs without arc-initiator', () => {

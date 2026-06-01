@@ -9,6 +9,7 @@ import { matchQuirkToContext } from '../../domain/npc/matchQuirkToContext'
 import { TRAIT_DOMINANT, TRAIT_MODERATE, TRAIT_NEUTRAL, TRAIT_LOW } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
+import { adjustCityDial, adjustCityResource, adjustDistrictTension } from './economicConsequences'
 
 type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks'
 type InitiativeAction = 'district_lever' | 'npc_approach' | 'faction_position' | 'resource_move'
@@ -98,10 +99,12 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
         }
       }
     } else if (action === 'contact') {
+      afterEvents = adjustCityDial(afterEvents, 'prosperity', 1)
+      afterEvents = adjustDistrictTension(afterEvents, districtId, -1)
       afterEvents = appendActivityLogEntry(
         afterEvents,
         'system',
-        `${npcName} made a useful contact in ${district}. A new opportunity may follow.`,
+        `${npcName} made a useful contact in ${district}. Local trade friction eases and new business may follow.`,
       )
       writeNpcMemory(afterEvents, npc.npcId, `Made a contact in ${district}`)
     } else if (action === 'faction_favor') {
@@ -143,10 +146,11 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
       const cost = 5 + Math.floor(rng() * 10)
       if (afterEvents.money >= cost) {
         afterEvents = { ...afterEvents, money: afterEvents.money - cost }
+        afterEvents = adjustCityDial(afterEvents, 'prosperity', 1)
         afterEvents = appendActivityLogEntry(
           afterEvents,
           'economy',
-          `${npcName} spent ${cost} marks on personal business while working in ${district}. Deducted from house funds.`,
+          `${npcName} spent ${cost} marks on personal business while working in ${district}. Deducted from house funds, but the local market benefits.`,
         )
         applyRelationshipDelta(afterEvents, 'player', npc.npcId, 'loyalty', 1)
       }
@@ -223,6 +227,8 @@ export function applyInitiativeActions(state: GameState, rng: Rng = Math.random)
     } else if (action === 'resource_move') {
       const amount = 15 + Math.floor(rng() * 26)
       next = { ...next, money: next.money + amount }
+      next = adjustCityResource(next, 'materialStock', 2)
+      next = adjustCityDial(next, 'prosperity', 1)
       next = appendActivityLogEntry(next, 'economy', `${npc.name} located an underused asset and redirected it. ${formatMarks(amount)} added.`)
     }
 

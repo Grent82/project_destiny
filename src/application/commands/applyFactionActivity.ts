@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
+import { adjustCityDial, adjustCityResource, adjustDistrictTension } from './economicConsequences'
 
 const TENSION_DECAY_TARGET = 30
 const TENSION_DRIFT = 2
@@ -56,6 +57,28 @@ export function applyFactionActivity(state: GameState): GameState {
   if (todayFaction) {
     const agendaMsg = todayFaction.dailyAgendaHook ?? `${todayFaction.name} acted today.`
     next = appendActivityLogEntry(next, 'system', agendaMsg)
+
+    if (todayFaction.tags.includes('trade')) {
+      next = adjustCityDial(next, 'prosperity', 1)
+      next = adjustCityResource(next, 'foodSecurity', next.cityResources.corridorStatus === 'open' ? 1 : 0)
+    }
+
+    if (todayFaction.tags.includes('industry') || todayFaction.tags.includes('production')) {
+      next = adjustCityResource(next, 'materialStock', 1)
+      next = adjustCityDial(next, 'prosperity', 1)
+    }
+
+    if (todayFaction.tags.includes('black-market') || todayFaction.tags.includes('smuggling')) {
+      next = adjustCityDial(next, 'corruption', 1)
+      for (const districtId of todayFaction.territory) {
+        next = adjustDistrictTension(next, districtId, 4)
+      }
+    }
+
+    if (todayFaction.tags.includes('community')) {
+      next = adjustCityResource(next, 'foodSecurity', 1)
+      next = adjustCityDial(next, 'unrest', -1)
+    }
   }
 
   // Step 9c: District tension update

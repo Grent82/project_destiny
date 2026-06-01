@@ -104,6 +104,8 @@ describe('applyBondServiceEffects', () => {
     expect(ida.states.morale).toBe(56)
     expect(marion.states.morale).toBe(64)
     expect(next.factionStandings['faction-tallow-ring']).toBe(9)
+    expect(next.cityDials.corruption).toBeGreaterThan(state.cityDials.corruption)
+    expect(next.cityDials.prosperity).toBeLessThan(state.cityDials.prosperity)
     expect(next.pendingEvents.some((event) => event.eventId === 'event-bound-npc-notices-difference')).toBe(true)
   })
 
