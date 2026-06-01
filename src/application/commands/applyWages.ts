@@ -2,6 +2,7 @@ import type { GameState, NpcStatus } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { formatMarks } from '../../domain/game/currency'
+import { calculateMercenaryContractWage } from './wageRates'
 
 export function wageForStatus(status: NpcStatus): number {
   switch (status) {
@@ -28,6 +29,12 @@ export function wageForStatus(status: NpcStatus): number {
   }
 }
 
+function resolveRosterWagePerDay(status: NpcStatus, contractWagePerDay: number | undefined, skills: GameState['roster'][number]['skills']): number {
+  if (contractWagePerDay !== undefined) return contractWagePerDay
+  if (status === 'mercenary') return calculateMercenaryContractWage(skills)
+  return wageForStatus(status)
+}
+
 /** Steps 1, 1b, 1c: wage deduction, loyalty decay, unrest effect on loyalty. */
 export function applyWages(state: GameState): GameState {
   let next = state
@@ -40,7 +47,11 @@ export function applyWages(state: GameState): GameState {
   next = { ...next, relationships: { ...next.relationships } }
   for (const rosterEntry of state.roster) {
     if (rosterEntry.bondStatus?.holderId === 'player') continue
-    const wage = rosterEntry.contractWagePerDay ?? wageForStatus(rosterEntry.status)
+    const wage = resolveRosterWagePerDay(
+      rosterEntry.status,
+      rosterEntry.contractWagePerDay,
+      rosterEntry.skills,
+    )
     if (wage === 0) continue
     const effectiveWage = Math.max(0, wage - kitchenDiscount)
 
@@ -98,7 +109,7 @@ export function applyWages(state: GameState): GameState {
   // Step 1c: Wage arrears warnings and departure
   for (const npc of next.roster) {
     if (npc.bondStatus?.holderId === 'player') continue
-    const wage = npc.contractWagePerDay ?? wageForStatus(npc.status)
+    const wage = resolveRosterWagePerDay(npc.status, npc.contractWagePerDay, npc.skills)
     if (wage === 0) continue
 
     if (npc.wagesOwedDays >= 5 && (npc.assignment === 'working' || npc.assignment === 'assigned_title')) {

@@ -4,6 +4,18 @@ import { initialStateWithIda } from './testFixtures'
 
 describe('applyWages', () => {
   describe('contractWagePerDay', () => {
+    it('keeps an already hired mercenary on the market-derived contract rate', () => {
+      const state = {
+        ...initialStateWithIda,
+        money: 1000,
+      }
+      const result = applyWages(state)
+      const marionEntry = state.roster.find((r) => r.npcId !== 'npc-ida-rhys')!
+      const marionWage = marionEntry.contractWagePerDay ?? wageForStatus(marionEntry.status)
+
+      expect(result.money).toBe(1000 - 12 - marionWage)
+    })
+
     it('uses contractWagePerDay over status-based wage when set', () => {
       const state = {
         ...initialStateWithIda,
@@ -24,7 +36,7 @@ describe('applyWages', () => {
       expect(result.money).toBe(1000 - 15 - marionWage)
     })
 
-    it('falls back to status-based wage when contractWagePerDay is absent', () => {
+    it('derives the market contract rate for legacy mercenary entries when contractWagePerDay is absent', () => {
       const state = {
         ...initialStateWithIda,
         money: 1000,
@@ -37,7 +49,7 @@ describe('applyWages', () => {
       const result = applyWages(state)
       const marionEntry = state.roster.find((r) => r.npcId !== 'npc-ida-rhys')!
       const marionWage = marionEntry.contractWagePerDay ?? wageForStatus(marionEntry.status)
-      expect(result.money).toBe(1000 - wageForStatus('mercenary') - marionWage)
+      expect(result.money).toBe(1000 - 12 - marionWage)
     })
   })
 

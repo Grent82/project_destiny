@@ -1,14 +1,7 @@
 import type { GameState, HireOffer } from '../../domain/game/contracts'
-import type { NpcDefinition } from '../../domain/npc/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
-
-function calculatePrimarySkillAvg(npcDef: NpcDefinition): number {
-  const values = Object.values(npcDef.startingSkills) as number[]
-  if (values.length === 0) return 30
-  const top3 = [...values].sort((a, b) => b - a).slice(0, 3)
-  return top3.reduce((sum, v) => sum + v, 0) / top3.length
-}
+import { calculateMercenaryContractWage } from './wageRates'
 
 function computeReputationScore(state: GameState): number {
   const standingScore = Object.values(state.factionStandings).reduce(
@@ -62,8 +55,7 @@ export function generateDistrictHireOffers(
     // At high reputation, filter out low-loyalty candidates
     if ((npcDef.startingTraits?.loyalty ?? 50) < minLoyalty) continue
 
-    const primarySkillAvg = calculatePrimarySkillAvg(npcDef)
-    const wagePerDay = Math.max(3, Math.min(20, Math.floor(primarySkillAvg / 5)))
+    const wagePerDay = calculateMercenaryContractWage(npcDef.startingSkills)
     const signingBonus = wagePerDay * 3
 
     const offer: HireOffer = {

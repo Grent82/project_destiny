@@ -162,6 +162,6 @@ describe('bond service end-of-day integration', () => {
     const boundNext = endDay(boundState)
 
     expect(boundNext.money).toBeGreaterThan(freeNext.money)
-    expect(boundNext.money - freeNext.money).toBe(10)
+    expect(boundNext.money - freeNext.money).toBe(14)
   })
 })

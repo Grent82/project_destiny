@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { generateDistrictHireOffers } from './generateHireOffers'
 import type { GameState } from '../../domain/game/contracts'
+import { calculateMercenaryContractWage } from './wageRates'
 
 function makeState(overrides: Partial<GameState> = {}): GameState {
   return {
@@ -22,6 +23,25 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
 
 describe('generateDistrictHireOffers', () => {
   describe('faction-aligned NPCs in district', () => {
+    it('prices Ida Rhys from the same top-3 skill contract formula used by the market', () => {
+      expect(
+        calculateMercenaryContractWage({
+          melee: 39,
+          ranged: 33,
+          medicine: 12,
+          administration: 18,
+          engineering: 73,
+          negotiation: 16,
+          survival: 28,
+          security: 31,
+          crafting: 69,
+          performance: 6,
+          academics: 22,
+          intrigue: 11,
+        }),
+      ).toBe(12)
+    })
+
     it('adds NPCs whose factionAffinityId matches the district controlling faction', () => {
       // district-harbor is controlled by faction-civic-compact
       // npc-marion-vale and npc-verek-holst have factionAffinityId: faction-civic-compact

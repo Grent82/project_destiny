@@ -19,8 +19,8 @@ describe('wageForStatus', () => {
 })
 
 describe('endDay', () => {
-  // Marion Vale: retainer (4 Marks), Ida Rhys: mercenary (8 Marks)
-  // Total daily wage: 12 Marks — uses initialStateWithIda (Ida hired)
+  // Marion Vale: retainer (4 Marks), Ida Rhys: hired mercenary contract (12 Marks)
+  // Total daily wage: 16 Marks — uses initialStateWithIda (Ida hired)
   // House baseline income: +5 Marks/day (Step 4d)
   it('wage deduction reduces credits by the combined daily wage', () => {
     const stateNoWorking = {
@@ -28,7 +28,7 @@ describe('endDay', () => {
       roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
     }
     const next = endDay(stateNoWorking)
-    expect(next.money).toBe(stateNoWorking.money - 12 + 5)
+    expect(next.money).toBe(stateNoWorking.money - 16 + 5)
   })
 
   it('hunger rises by 8 each day for non-deployed NPCs', () => {
@@ -68,8 +68,8 @@ describe('endDay', () => {
     }
     const next = endDay(stateWithSteward)
     // Marion's administration is 61, so steward income = 15 + floor((61-45)/10)*2 = 17
-    // money - 12 wages + 17 steward + 5 house baseline income
-    expect(next.money).toBe(stateWithSteward.money - 12 + 17 + 5)
+    // money - 16 wages + 17 steward + 5 house baseline income
+    expect(next.money).toBe(stateWithSteward.money - 16 + 17 + 5)
   })
 
   it('day counter increments by 1', () => {
@@ -271,7 +271,7 @@ describe('endDay', () => {
     }
     const next = endDay(workingState)
     // Ida's best skill drives income; with prosperity >=60 the base income gets *1.1
-    expect(next.money).toBeGreaterThan(workingState.money - 12 + 5) // wages out, base income in, plus boosted working income
+    expect(next.money).toBeGreaterThan(workingState.money - 16 + 5) // wages out, base income in, plus boosted working income
   })
 
   it('city dial: low prosperity (<=30) reduces working NPC income by 10%', () => {

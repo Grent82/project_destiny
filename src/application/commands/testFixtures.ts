@@ -4,6 +4,7 @@
  */
 import { type GameState, type NpcRuntimeState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { calculateMercenaryContractWage } from './wageRates'
 
 /** Ida Rhys roster entry — represents her after the player hires her (she starts in the hire pool) */
 export const idaRhysRosterEntry: NpcRuntimeState = {
@@ -14,6 +15,20 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   assignedDistrictId: null,
   activeTitle: null,
   wagesOwedDays: 0,
+  contractWagePerDay: calculateMercenaryContractWage({
+    melee: 39,
+    ranged: 33,
+    medicine: 12,
+    administration: 18,
+    engineering: 73,
+    negotiation: 16,
+    survival: 28,
+    security: 31,
+    crafting: 69,
+    performance: 6,
+    academics: 22,
+    intrigue: 11,
+  }),
   trainingFocus: null,
   attributes: {
     might: 54,
