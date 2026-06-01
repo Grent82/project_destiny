@@ -34,4 +34,38 @@ describe('ShopsScreen', () => {
     expect(screen.getByText(/Purchased Field Medkit from Harbor Provisions for \d+ Marks/i)).toBeInTheDocument()
     expect(screen.getAllByText('Best price').length).toBeGreaterThan(0)
   })
+
+  it('shows a price breakdown section for visible shop offers', () => {
+    const pricedState = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'blocked' },
+      factionStandings: {
+        ...initialGameStateSnapshot.factionStandings,
+        'faction-civic-compact': 75,
+      },
+      districtTension: {
+        ...initialGameStateSnapshot.districtTension,
+        'district-harbor': 50,
+      },
+      districts: initialGameStateSnapshot.districts.map((district) =>
+        district.districtId === 'district-harbor'
+          ? { ...district, marketPressure: 80 }
+          : district,
+      ),
+    })
+    const store = createGameStore(pricedState)
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ShopsScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getAllByText('Price factors').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Base price:/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Final price:/i).length).toBeGreaterThan(0)
+  })
 })

@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
-import { selectShopsInCurrentDistrict, selectShopOverview, computeFactionPriceMod, computeMarketPressureMod } from './shops'
+import {
+  selectShopsInCurrentDistrict,
+  selectShopOverview,
+  selectShopPricingBreakdown,
+  computeFactionPriceMod,
+  computeMarketPressureMod,
+} from './shops'
 import type { GameState } from '../../domain'
 
 function makeRootState(game: GameState) {
@@ -196,5 +202,77 @@ describe('selectShopOverview market pressure wiring', () => {
     const shop = result.shops.find((s) => s.districtId === 'district-harbor')
 
     expect(shop?.marketPressureMod).toBe(1.15)
+  })
+})
+
+describe('selectShopPricingBreakdown', () => {
+  it('returns the component price modifiers for a visible shop offer', () => {
+    const state = makeRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'disrupted' },
+      factionStandings: {
+        ...initialGameStateSnapshot.factionStandings,
+        'faction-civic-compact': 75,
+      },
+      districtTension: {
+        ...initialGameStateSnapshot.districtTension,
+        'district-harbor': 50,
+      },
+      districts: initialGameStateSnapshot.districts.map((district) =>
+        district.districtId === 'district-harbor'
+          ? { ...district, marketPressure: 80 }
+          : district,
+      ),
+    })
+
+    const breakdown = selectShopPricingBreakdown(
+      state as Parameters<typeof selectShopPricingBreakdown>[0],
+      'shop-harbor-provisions',
+      'item-medkit-field',
+    )
+
+    expect(breakdown).toMatchObject({
+      basePrice: 95,
+      corridorMod: 1.15,
+      factionMod: 0.85,
+      marketMod: 1.15,
+      tensionMod: 1.1,
+    })
+    expect(breakdown?.finalPrice).toBe(Math.ceil(95 * 1.15 * 0.85 * 1.15 * 1.1))
+  })
+
+  it('matches the final price shown in the shop overview', () => {
+    const state = makeRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'blocked' },
+      factionStandings: {
+        ...initialGameStateSnapshot.factionStandings,
+        'faction-civic-compact': 50,
+      },
+      districtTension: {
+        ...initialGameStateSnapshot.districtTension,
+        'district-harbor': 20,
+      },
+      districts: initialGameStateSnapshot.districts.map((district) =>
+        district.districtId === 'district-harbor'
+          ? { ...district, marketPressure: 25 }
+          : district,
+      ),
+    })
+
+    const overview = selectShopOverview(state as Parameters<typeof selectShopOverview>[0])
+    const overviewOffer = overview.shops
+      .find((shop) => shop.id === 'shop-harbor-provisions')
+      ?.offers.find((offer) => offer.itemId === 'item-medkit-field')
+
+    const breakdown = selectShopPricingBreakdown(
+      state as Parameters<typeof selectShopPricingBreakdown>[0],
+      'shop-harbor-provisions',
+      'item-medkit-field',
+    )
+
+    expect(breakdown?.finalPrice).toBe(overviewOffer?.price)
   })
 })

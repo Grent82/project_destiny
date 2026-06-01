@@ -19,6 +19,58 @@ export function computeMarketPressureMod(pressure: number): number {
   return 1.0
 }
 
+export function computeCorridorPriceMod(corridorStatus: RootState['game']['cityResources']['corridorStatus']): number {
+  return corridorStatus === 'blocked'
+    ? 1.3
+    : corridorStatus === 'disrupted'
+      ? 1.15
+      : 1.0
+}
+
+export function computeDistrictTensionPriceMod(tension: number): number {
+  return 1 + (tension / 100) * 0.2
+}
+
+export type ShopPricingBreakdown = {
+  basePrice: number
+  corridorMod: number
+  tensionMod: number
+  factionMod: number
+  marketMod: number
+  finalPrice: number
+}
+
+export function describeMarketPressureModifier(modifier: number): string | null {
+  if (modifier === 1.0) return null
+  return modifier < 1.0
+    ? `${Math.round((1 - modifier) * 100)}% low-demand discount`
+    : `+${Math.round((modifier - 1) * 100)}% high-demand surcharge`
+}
+
+export function describeFactionPriceModifier(modifier: number): string | null {
+  if (modifier === 1.0) return null
+  return modifier < 1.0
+    ? `${Math.round((1 - modifier) * 100)}% faction discount`
+    : `+${Math.round((modifier - 1) * 100)}% faction surcharge`
+}
+
+function buildShopPricingBreakdown(
+  basePrice: number,
+  corridorMod: number,
+  tensionMod: number,
+  factionMod: number,
+  marketMod: number,
+): ShopPricingBreakdown {
+  return {
+    basePrice,
+    corridorMod,
+    tensionMod,
+    factionMod,
+    marketMod,
+    finalPrice: Math.ceil(basePrice * corridorMod * tensionMod * factionMod * marketMod),
+  }
+}
+
 const selectMoney = (state: RootState) => state.game.money
 const selectOwnedItems = (state: RootState) => state.game.ownedItems
 const selectDistrictStates = (state: RootState) => state.game.districts
@@ -43,14 +95,11 @@ export const selectShopOverview = createSelector(
     const lowestPriceByItem = new Map<string, number>()
     const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
 
-    const corridorMod =
-      corridorStatus === 'blocked' ? 1.3
-      : corridorStatus === 'disrupted' ? 1.15
-      : 1.0
+    const corridorMod = computeCorridorPriceMod(corridorStatus)
 
     // District tension increases local prices (up to +20% at max tension)
     const currentTension = currentDistrictId ? (districtTension[currentDistrictId] ?? 0) : 0
-    const tensionMod = 1 + (currentTension / 100) * 0.2
+    const tensionMod = computeDistrictTensionPriceMod(currentTension)
 
     const basePriceMod = corridorMod * tensionMod
 
@@ -103,7 +152,6 @@ export const selectShopOverview = createSelector(
         const factionMod = computeFactionPriceMod(controlStanding)
         const marketPressureValue = districtState?.marketPressure ?? 50
         const marketPressureMod = computeMarketPressureMod(marketPressureValue)
-        const priceModifier = basePriceMod * factionMod * marketPressureMod
 
         return {
           id: shop.id,
@@ -132,15 +180,22 @@ export const selectShopOverview = createSelector(
                 })
                 .map((offer) => {
                   const item = contentCatalog.itemsById.get(offer.itemId)
-                  const modifiedPrice = Math.ceil(offer.price * priceModifier)
+                  const pricingBreakdown = buildShopPricingBreakdown(
+                    offer.price,
+                    corridorMod,
+                    tensionMod,
+                    factionMod,
+                    marketPressureMod,
+                  )
 
                   return {
                     itemId: offer.itemId,
                     itemName: item?.name ?? offer.itemId,
                     category: item?.category ?? 'unknown',
-                    price: modifiedPrice,
+                    price: pricingBreakdown.finalPrice,
+                    pricingBreakdown,
                     ownedQuantity: quantities.get(offer.itemId) ?? 0,
-                    affordable: money >= modifiedPrice,
+                    affordable: money >= pricingBreakdown.finalPrice,
                     bestPrice: lowestPriceByItem.get(offer.itemId) === offer.price,
                     priceDelta:
                       offer.price - (lowestPriceByItem.get(offer.itemId) ?? offer.price),
@@ -149,5 +204,40 @@ export const selectShopOverview = createSelector(
         }
       }),
     }
+  },
+)
+
+export const selectShopPricingBreakdown = createSelector(
+  [
+    selectDistrictStates,
+    selectCurrentDistrictId,
+    selectFactionStandings,
+    selectCorridorStatus,
+    selectDistrictTension,
+    (_state: RootState, shopId: string) => shopId,
+    (_state: RootState, _shopId: string, itemId: string) => itemId,
+  ],
+  (districtStates, currentDistrictId, factionStandings, corridorStatus, districtTension, shopId, itemId) => {
+    const shop = contentCatalog.shopsById.get(shopId)
+    if (!shop || shop.districtId !== currentDistrictId) return null
+
+    const offer = shop.offers.find((entry) => entry.itemId === itemId)
+    if (!offer) return null
+
+    const districtState = districtStates.find((district) => district.districtId === shop.districtId)
+    const districtControlFactionId = districtState?.controllingFactionId
+      ?? contentCatalog.districtsById.get(shop.districtId)?.controllingFactionId
+      ?? null
+    const controlStanding = districtControlFactionId
+      ? (factionStandings[districtControlFactionId] ?? 0)
+      : 0
+
+    return buildShopPricingBreakdown(
+      offer.price,
+      computeCorridorPriceMod(corridorStatus),
+      computeDistrictTensionPriceMod(districtTension[shop.districtId] ?? 0),
+      computeFactionPriceMod(controlStanding),
+      computeMarketPressureMod(districtState?.marketPressure ?? 50),
+    )
   },
 )

@@ -5,6 +5,7 @@ import rawArmor from '../../../data/definitions/armor.json'
 import rawWeapons from '../../../data/definitions/weapons.json'
 import { gameActions, selectShopOverview } from '../../application'
 import { getDurabilityTier } from '../../application/selectors/durability'
+import { describeFactionPriceModifier, describeMarketPressureModifier } from '../../application/selectors/shops'
 import { computeRepairCost } from '../../application/commands/durability'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
 import { selectStash } from '../../application/selectors/stash'
@@ -125,9 +126,7 @@ export function ShopsScreen() {
                       className={shop.marketPressureMod < 1.0 ? 'badge badge-success' : 'badge badge-warning'}
                       title={`Market pressure ${shop.marketPressure ?? '—'}/100`}
                     >
-                      {shop.marketPressureMod < 1.0
-                        ? `${Math.round((1 - shop.marketPressureMod) * 100)}% low-demand discount`
-                        : `+${Math.round((shop.marketPressureMod - 1) * 100)}% high-demand surcharge`}
+                      {describeMarketPressureModifier(shop.marketPressureMod)}
                     </span>
                   )}
                   {'factionPriceModifier' in shop && typeof shop.factionPriceModifier === 'number' && shop.factionPriceModifier !== 1.0 && (
@@ -135,9 +134,7 @@ export function ShopsScreen() {
                       className={shop.factionPriceModifier < 1.0 ? 'badge badge-success' : 'badge badge-warning'}
                       title={`${shop.controllingFactionName ?? 'Faction'} standing discount applied`}
                     >
-                      {shop.factionPriceModifier < 1.0
-                        ? `${Math.round((1 - shop.factionPriceModifier) * 100)}% faction discount`
-                        : `${Math.round((shop.factionPriceModifier - 1) * 100)}% surcharge`}
+                      {describeFactionPriceModifier(shop.factionPriceModifier)}
                     </span>
                   )}
                 </div>
@@ -172,6 +169,15 @@ export function ShopsScreen() {
                             {offer.affordable ? 'Affordable' : 'Insufficient funds'}
                           </span>
                         </div>
+                        <details className="shop-price-breakdown">
+                          <summary>Price factors</summary>
+                          <p>Base price: {formatMarks(offer.pricingBreakdown.basePrice)}</p>
+                          <p>Corridor: x{offer.pricingBreakdown.corridorMod.toFixed(2)}</p>
+                          <p>District tension: x{offer.pricingBreakdown.tensionMod.toFixed(2)}</p>
+                          <p>Faction standing: x{offer.pricingBreakdown.factionMod.toFixed(2)}</p>
+                          <p>Market pressure: x{offer.pricingBreakdown.marketMod.toFixed(2)}</p>
+                          <p>Final price: {formatMarks(offer.pricingBreakdown.finalPrice)}</p>
+                        </details>
                       </div>
                       <div className="shop-offer-actions">
                         <span>{formatMarksAbbrev(offer.price)}</span>
