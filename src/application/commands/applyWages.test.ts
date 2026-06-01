@@ -42,6 +42,47 @@ describe('applyWages', () => {
   })
 
   describe('wage arrears departure', () => {
+    it('forces unpaid working NPCs to stop working before they finally leave', () => {
+      const state = {
+        ...initialStateWithIda,
+        money: 0,
+        roster: initialStateWithIda.roster.map((r) =>
+          r.npcId === 'npc-ida-rhys'
+            ? { ...r, wagesOwedDays: 4, assignment: 'working' as const }
+            : r,
+        ),
+      }
+
+      const result = applyWages(state)
+      const ida = result.roster.find((r) => r.npcId === 'npc-ida-rhys')
+
+      expect(ida?.assignment).toBe('idle')
+      expect(result.activityLog.some((entry) => entry.message.includes('refuses further work until wages are settled'))).toBe(true)
+    })
+
+    it('strips unpaid title holders of active service before final departure', () => {
+      const state = {
+        ...initialStateWithIda,
+        money: 0,
+        roster: initialStateWithIda.roster.map((r) =>
+          r.npcId === 'npc-marion-vale'
+            ? {
+                ...r,
+                wagesOwedDays: 4,
+                assignment: 'assigned_title' as const,
+                activeTitle: 'title-steward' as const,
+              }
+            : r,
+        ),
+      }
+
+      const result = applyWages(state)
+      const marion = result.roster.find((r) => r.npcId === 'npc-marion-vale')
+
+      expect(marion?.assignment).toBe('idle')
+      expect(marion?.activeTitle).toBeNull()
+    })
+
     it('logs a warning when an NPC reaches 7 days unpaid', () => {
       // wagesOwedDays starts at 6; step 1 increments to 7, triggering the warning
       const state = {

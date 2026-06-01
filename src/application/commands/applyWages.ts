@@ -101,7 +101,25 @@ export function applyWages(state: GameState): GameState {
     const wage = npc.contractWagePerDay ?? wageForStatus(npc.status)
     if (wage === 0) continue
 
-    if (npc.wagesOwedDays >= 14) {
+    if (npc.wagesOwedDays >= 5 && (npc.assignment === 'working' || npc.assignment === 'assigned_title')) {
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId
+            ? {
+                ...r,
+                assignment: 'idle',
+                activeTitle: r.assignment === 'assigned_title' ? null : r.activeTitle,
+              }
+            : r,
+        ),
+      }
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npc.name} refuses further work until wages are settled.`,
+      )
+    } else if (npc.wagesOwedDays >= 14) {
       next = {
         ...next,
         roster: next.roster.filter((r) => r.npcId !== npc.npcId),
