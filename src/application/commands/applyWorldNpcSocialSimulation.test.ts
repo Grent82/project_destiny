@@ -103,4 +103,127 @@ describe('applyWorldNpcSocialSimulation', () => {
     expect(result.relationships[key]?.bondType).toBe('friendship')
     expect(result.relationships[key]?.intimacyStage ?? 'none').toBe('none')
   })
+
+  it('turns strong asymmetrical ties into patronage with persistent world-npc flags and rumors', () => {
+    const key = buildRelationshipKey('npc-orven-pell', 'npc-alis-vey')
+    const reverse = buildRelationshipKey('npc-alis-vey', 'npc-orven-pell')
+    const state = makeState()
+    state.relationships = {
+      [key]: {
+        affinity: 48,
+        respect: 30,
+        fear: 0,
+        trust: 52,
+        loyalty: 22,
+        bondType: 'friendship',
+        softBond: { strength: 72, since: 2, visibility: 'known' },
+      },
+      [reverse]: {
+        affinity: 40,
+        respect: 25,
+        fear: 0,
+        trust: 50,
+        loyalty: 66,
+        bondType: 'friendship',
+        softBond: { strength: 72, since: 2, visibility: 'known' },
+      },
+    }
+
+    const result = applyWorldNpcSocialSimulation(state, () => 0)
+    const patron = result.worldNpcStates.find((entry) => entry.npcId === 'npc-orven-pell')
+    const client = result.worldNpcStates.find((entry) => entry.npcId === 'npc-alis-vey')
+
+    expect(result.relationships[key]?.bondType).toBe('patronage')
+    expect(result.relationships[reverse]?.bondType).toBe('dependency')
+    expect(patron?.flags).toContain('patron-of:npc-alis-vey')
+    expect(client?.flags).toContain('patronized-by:npc-orven-pell')
+    expect(result.rumors.some((rumor) => rumor.eventSource === 'world-npc-patronage:npc-orven-pell:npc-alis-vey')).toBe(true)
+  })
+
+  it('lets protective world NPCs intervene in captivity outcomes for allied non-player actors', () => {
+    const key = buildRelationshipKey('npc-old-maret', 'npc-orren-wex')
+    const reverse = buildRelationshipKey('npc-orren-wex', 'npc-old-maret')
+    const state = makeState()
+    state.relationships = {
+      [key]: {
+        affinity: 44,
+        respect: 18,
+        fear: 0,
+        trust: 58,
+        loyalty: 55,
+        bondType: 'protective',
+        softBond: { strength: 74, since: 3, visibility: 'known' },
+      },
+      [reverse]: {
+        affinity: 36,
+        respect: 22,
+        fear: 0,
+        trust: 54,
+        loyalty: 68,
+        bondType: 'dependency',
+        softBond: { strength: 74, since: 3, visibility: 'known' },
+      },
+    }
+    state.npcCaptivityStates = {
+      'npc-orren-wex': {
+        status: 'captive',
+        condition: 'hurt',
+        compliance: 'resistant',
+        bondType: 'fear',
+        regime: 'penal',
+        holderId: 'faction-civic-compact',
+        siteId: 'site-poi-hollows-detention-house',
+        roomId: null,
+        timeHeldDays: 4,
+        lastTransferDay: 1,
+        questTag: null,
+      },
+    }
+
+    const result = applyWorldNpcSocialSimulation(state, () => 0)
+    const captivity = result.npcCaptivityStates['npc-orren-wex']
+    const protector = result.worldNpcStates.find((entry) => entry.npcId === 'npc-old-maret')
+
+    expect(captivity?.condition).toBe('healthy')
+    expect(captivity?.bondType).toBe('dependency')
+    expect(protector?.flags).toContain('protecting:npc-orren-wex')
+    expect(result.rumors.some((rumor) => rumor.eventSource === 'world-npc-protection:npc-old-maret:npc-orren-wex')).toBe(true)
+  })
+
+  it('escalates entrenched rivalries into feuds that raise district pressure', () => {
+    const key = buildRelationshipKey('npc-torvald-messe', 'npc-lira-ashcroft')
+    const reverse = buildRelationshipKey('npc-lira-ashcroft', 'npc-torvald-messe')
+    const state = makeState()
+    state.relationships = {
+      [key]: {
+        affinity: -10,
+        respect: -6,
+        fear: 12,
+        trust: -8,
+        loyalty: 0,
+        bondType: 'rivalry',
+        softBond: { strength: 78, since: 2, visibility: 'rumored' },
+      },
+      [reverse]: {
+        affinity: -12,
+        respect: -4,
+        fear: 10,
+        trust: -6,
+        loyalty: 0,
+        bondType: 'grudge',
+        softBond: { strength: 78, since: 2, visibility: 'rumored' },
+      },
+    }
+
+    const result = applyWorldNpcSocialSimulation(state, () => 0)
+    const torvald = result.worldNpcStates.find((entry) => entry.npcId === 'npc-torvald-messe')
+    const lira = result.worldNpcStates.find((entry) => entry.npcId === 'npc-lira-ashcroft')
+
+    expect(result.relationships[key]?.bondType).toBe('feud')
+    expect(result.relationships[reverse]?.bondType).toBe('feud')
+    expect(torvald?.flags).toContain('feud-with:npc-lira-ashcroft')
+    expect(lira?.flags).toContain('feud-with:npc-torvald-messe')
+    expect(result.districtTension['district-harbor']).toBeGreaterThan(state.districtTension['district-harbor'])
+    expect(result.rumors.some((rumor) => rumor.eventSource === 'world-npc-feud:npc-torvald-messe:npc-lira-ashcroft')).toBe(true)
+  })
 })

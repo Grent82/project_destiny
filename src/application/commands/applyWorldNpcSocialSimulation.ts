@@ -1,10 +1,11 @@
-import type { GameState } from '../../domain'
+import type { CaptivityState, GameState, NpcDefinition, Rumor } from '../../domain'
 import { calculateBaseCompatibility, getFactionFamiliarityBonus, getOriginProximityBonus } from '../../domain/npc/compatibility'
-import type { NpcDefinition } from '../../domain/npc/contracts'
 import { buildRelationshipKey, type RelationshipAxes, type SoftBondState } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
+import { adjustDistrictTension } from './economicConsequences'
+import { getNpcCaptivityState, setNpcCaptivityState } from './captivityRegistry'
 
 const SOFT_BOND_CAP = 5
 const SOFT_BOND_STRENGTH_FOR_RUMORED = 35
@@ -19,6 +20,13 @@ type WorldSoftBondType =
   | 'shared_secret'
   | 'territorial_conflict'
   | 'romantic'
+
+const HEALTHIER_CONDITION: Record<CaptivityState['condition'], CaptivityState['condition']> = {
+  healthy: 'healthy',
+  hurt: 'healthy',
+  broken: 'hurt',
+  altered: 'broken',
+}
 
 function bondPairId(aId: string, bId: string) {
   return [aId, bId].sort().join('::')
@@ -209,6 +217,170 @@ function promoteRumorVisibility(
   return nextState
 }
 
+function ensureWorldNpcState(state: GameState, npcId: string) {
+  let entry = state.worldNpcStates.find((worldNpcState) => worldNpcState.npcId === npcId)
+  if (entry) return entry
+
+  entry = {
+    npcId,
+    lastContactDay: null,
+    disposition: 'neutral',
+    locationOverride: null,
+    flags: [],
+  }
+  state.worldNpcStates = [...state.worldNpcStates, entry]
+  return entry
+}
+
+function addWorldNpcFlag(state: GameState, npcId: string, flag: string) {
+  const entry = ensureWorldNpcState(state, npcId)
+  if (!entry.flags.includes(flag)) {
+    entry.flags = [...entry.flags, flag]
+  }
+}
+
+function appendGeneratedRumor(
+  state: GameState,
+  args: {
+    eventSource: string
+    districtId: string
+    originNpcId: string
+    text: string
+    subjectNpcIds: string[]
+  },
+) {
+  if (state.rumors.some((rumor) => rumor.eventSource === args.eventSource)) return state
+
+  const rumor: Rumor = {
+    id: `${args.eventSource}-d${state.day}`,
+    kind: 'ambient',
+    source: 'generated',
+    districtId: args.districtId,
+    originNpcId: args.originNpcId,
+    templateId: null,
+    text: args.text,
+    subjectNpcIds: args.subjectNpcIds,
+    truth: 'true',
+    credibility: 58,
+    heat: 36,
+    createdDay: state.day,
+    lastSpreadDay: state.day,
+    eventSource: args.eventSource,
+  }
+
+  return {
+    ...state,
+    rumors: [rumor, ...state.rumors],
+  }
+}
+
+function maybeApplyPatronage(state: GameState, a: NpcDefinition, b: NpcDefinition, forward: RelationshipAxes, reverse: RelationshipAxes): GameState {
+  const strength = forward.softBond?.strength ?? 0
+  if (strength < 65) return state
+  if ((a.startingTraits.dominance - b.startingTraits.dominance) < 5) return state
+  if ((reverse.loyalty ?? 0) < 55 || (forward.trust ?? 0) < 45) return state
+
+  const key = buildRelationshipKey(a.id, b.id)
+  const reverseKey = buildRelationshipKey(b.id, a.id)
+  let nextState: GameState = {
+    ...state,
+    relationships: {
+      ...state.relationships,
+      [key]: { ...forward, bondType: 'patronage' },
+      [reverseKey]: { ...reverse, bondType: 'dependency' },
+    },
+  }
+
+  addWorldNpcFlag(nextState, a.id, `patron-of:${b.id}`)
+  addWorldNpcFlag(nextState, b.id, `patronized-by:${a.id}`)
+  nextState = appendGeneratedRumor(nextState, {
+    eventSource: `world-npc-patronage:${a.id}:${b.id}`,
+    districtId: a.districtId ?? b.districtId ?? 'district-the-pale',
+    originNpcId: a.id,
+    text: `${a.name} has started carrying ${b.name} into rooms that used to stay closed.`,
+    subjectNpcIds: [a.id, b.id],
+  })
+
+  return appendActivityLogEntry(
+    nextState,
+    'system',
+    `${a.name} has begun acting as ${b.name}'s patron. That tie will move doors, favors, and obligations without the player present.`,
+  )
+}
+
+function maybeApplyProtectiveIntervention(state: GameState, a: NpcDefinition, b: NpcDefinition, forward: RelationshipAxes): GameState {
+  if (forward.bondType !== 'protective') return state
+  if ((forward.softBond?.strength ?? 0) < 65) return state
+
+  const captivity = getNpcCaptivityState(state, b.id)
+  if (!captivity || captivity.status !== 'captive') return state
+  if (a.districtId !== b.districtId) return state
+
+  const nextCaptivity: CaptivityState = {
+    ...captivity,
+    condition: HEALTHIER_CONDITION[captivity.condition],
+    bondType: captivity.bondType === 'fear' ? 'dependency' : captivity.bondType,
+  }
+
+  const nextState: GameState = {
+    ...state,
+    npcCaptivityStates: { ...state.npcCaptivityStates },
+  }
+  setNpcCaptivityState(nextState, b.id, nextCaptivity)
+  addWorldNpcFlag(nextState, a.id, `protecting:${b.id}`)
+
+  const rumorState = appendGeneratedRumor(nextState, {
+    eventSource: `world-npc-protection:${a.id}:${b.id}`,
+    districtId: a.districtId ?? b.districtId ?? 'district-the-hollows',
+    originNpcId: a.id,
+    text: `${a.name} is getting small protections through to ${b.name}, even in custody.`,
+    subjectNpcIds: [a.id, b.id],
+  })
+
+  return appendActivityLogEntry(
+    rumorState,
+    'system',
+    `${a.name} quietly intervenes on ${b.name}'s behalf. Someone in the custody chain is no longer fully reliable.`,
+  )
+}
+
+function maybeEscalateFeud(state: GameState, a: NpcDefinition, b: NpcDefinition, forward: RelationshipAxes, reverse: RelationshipAxes): GameState {
+  const forwardType = forward.bondType ?? ''
+  const reverseType = reverse.bondType ?? ''
+  const strength = Math.max(forward.softBond?.strength ?? 0, reverse.softBond?.strength ?? 0)
+  const hasRivalry = ['rivalry', 'grudge', 'territorial_conflict', 'feud'].includes(forwardType)
+    || ['rivalry', 'grudge', 'territorial_conflict', 'feud'].includes(reverseType)
+  if (!hasRivalry || strength < 70) return state
+
+  const key = buildRelationshipKey(a.id, b.id)
+  const reverseKey = buildRelationshipKey(b.id, a.id)
+  let nextState: GameState = {
+    ...state,
+    relationships: {
+      ...state.relationships,
+      [key]: { ...forward, bondType: 'feud' },
+      [reverseKey]: { ...reverse, bondType: 'feud' },
+    },
+  }
+
+  addWorldNpcFlag(nextState, a.id, `feud-with:${b.id}`)
+  addWorldNpcFlag(nextState, b.id, `feud-with:${a.id}`)
+  nextState = adjustDistrictTension(nextState, a.districtId ?? b.districtId ?? 'district-harbor', 3)
+  nextState = appendGeneratedRumor(nextState, {
+    eventSource: `world-npc-feud:${a.id}:${b.id}`,
+    districtId: a.districtId ?? b.districtId ?? 'district-harbor',
+    originNpcId: a.id,
+    text: `${a.name} and ${b.name} have moved past rivalry. People nearby are already choosing sides.`,
+    subjectNpcIds: [a.id, b.id],
+  })
+
+  return appendActivityLogEntry(
+    nextState,
+    'system',
+    `${a.name} and ${b.name} are no longer merely rivals. Their feud is starting to distort the district around them.`,
+  )
+}
+
 function maybePromoteRomance(
   current: RelationshipAxes,
   a: NpcDefinition,
@@ -264,11 +436,17 @@ function decayDormantSoftBonds(state: GameState, eligiblePairs: Set<string>) {
 }
 
 export function applyWorldNpcSocialSimulation(state: GameState, rng: Rng = Math.random): GameState {
-  const worldNpcs = contentCatalog.npcs.filter((npc) => npc.npcType === 'world')
+  const worldNpcs = contentCatalog.npcs.filter((npc) => npc.npcType === 'world' || npc.npcType === 'story')
   if (worldNpcs.length < 2) return state
 
   const eligiblePairs = new Set<string>()
-  let nextState = state
+  let nextState: GameState = {
+    ...state,
+    worldNpcStates: state.worldNpcStates.map((entry) => ({ ...entry, flags: [...entry.flags] })),
+    npcCaptivityStates: { ...state.npcCaptivityStates },
+    rumors: [...state.rumors],
+    districtTension: { ...state.districtTension },
+  }
 
   for (let index = 0; index < worldNpcs.length; index += 1) {
     for (let nested = index + 1; nested < worldNpcs.length; nested += 1) {
@@ -286,7 +464,30 @@ export function applyWorldNpcSocialSimulation(state: GameState, rng: Rng = Math.
       const edgeKey = buildRelationshipKey(a.id, b.id)
       const reverseKey = buildRelationshipKey(b.id, a.id)
       const current = nextState.relationships[edgeKey]
+      const currentReverse = nextState.relationships[reverseKey]
       const currentStrength = current?.softBond?.strength ?? 0
+
+      if (current?.softBond && currentReverse?.softBond) {
+        const specialized = maybeEscalateFeud(
+          maybeApplyProtectiveIntervention(
+            maybeApplyPatronage(nextState, a, b, current, currentReverse),
+            a,
+            b,
+            current,
+          ),
+          a,
+          b,
+          current,
+          currentReverse,
+        )
+
+        if (specialized !== nextState) {
+          nextState = specialized
+          nextState = promoteRumorVisibility(nextState, a, b, current.softBond.visibility)
+          continue
+        }
+      }
+
       const shouldForm = !current?.softBond && compatibility >= 18 && rng() < 0.35
       const shouldConflict = !current?.softBond && compatibility <= 8 && rng() < 0.2
       const shouldStrengthen = Boolean(current?.softBond) && rng() < 0.7
@@ -319,6 +520,16 @@ export function applyWorldNpcSocialSimulation(state: GameState, rng: Rng = Math.
           [reverseKey]: reverse,
         },
       }
+
+      nextState = maybeApplyPatronage(nextState, a, b, forward, reverse)
+      nextState = maybeApplyProtectiveIntervention(nextState, a, b, nextState.relationships[edgeKey] ?? forward)
+      nextState = maybeEscalateFeud(
+        nextState,
+        a,
+        b,
+        nextState.relationships[edgeKey] ?? forward,
+        nextState.relationships[reverseKey] ?? reverse,
+      )
 
       nextState = promoteRumorVisibility(nextState, a, b, forward.softBond?.visibility ?? 'hidden')
       nextState = {
