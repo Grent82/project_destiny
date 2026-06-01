@@ -6,17 +6,20 @@ import { applyWorldHouseholdGrowth } from './applyWorldHouseholdGrowth'
 import { collapseSite, concretizeSite, resolveSiteRuntime } from './siteLifecycle'
 
 describe('applyWorldHouseholdGrowth', () => {
-  it('lets funded world households add new rooms and stronger security over time', () => {
-    const household = contentCatalog.worldHouseholdsById.get('world-house-sable-cairn')
+  it('lets funded world households add new rooms, stronger security, and growth commitments over time', () => {
+    const household = contentCatalog.worldHouseholdsById.get('world-salt-ledger-hall')
     expect(household).toBeDefined()
 
     const grown = applyWorldHouseholdGrowth(initialGameStateSnapshot, () => 0)
-    const runtime = resolveSiteRuntime(grown, 'site-world-house-sable-cairn')
+    const runtime = resolveSiteRuntime(grown, 'site-world-salt-ledger-hall')
 
     expect(runtime).not.toBeNull()
     expect(runtime?.tags).toContain('growth-stage:1')
+    expect(runtime?.tags.some((tag) => tag.startsWith('growth-commitment:'))).toBe(true)
     expect(runtime?.securityScore).toBeGreaterThan(household!.security)
     expect(runtime?.roomInstances.some((room) => room.tags.includes('household-growth'))).toBe(true)
+    expect(grown.cityResources.materialStock).toBeGreaterThan(initialGameStateSnapshot.cityResources.materialStock)
+    expect(grown.cityDials.prosperity).toBeGreaterThan(initialGameStateSnapshot.cityDials.prosperity)
   })
 
   it('can repurpose and later deepen site capacity across multiple growth stages', () => {
@@ -44,12 +47,56 @@ describe('applyWorldHouseholdGrowth', () => {
 
   it('preserves non-player household growth through concretize and collapse-back', () => {
     const grown = applyWorldHouseholdGrowth(initialGameStateSnapshot, () => 0)
-    const concretized = concretizeSite(grown, 'site-world-house-sable-cairn')
-    const collapsed = collapseSite(concretized, 'site-world-house-sable-cairn')
-    const runtime = resolveSiteRuntime(collapsed, 'site-world-house-sable-cairn')
+    const concretized = concretizeSite(grown, 'site-world-salt-ledger-hall')
+    const collapsed = collapseSite(concretized, 'site-world-salt-ledger-hall')
+    const runtime = resolveSiteRuntime(collapsed, 'site-world-salt-ledger-hall')
 
     expect(runtime?.mode).toBe('abstract')
     expect(runtime?.tags).toContain('growth-stage:1')
     expect(runtime?.roomInstances.some((room) => room.tags.includes('household-growth'))).toBe(true)
+  })
+
+  it('treats legitimacy contests as real growth pressure instead of letting rivals expand in parallel', () => {
+    const contestedState = {
+      ...initialGameStateSnapshot,
+      lastFiredDay: {
+        ...initialGameStateSnapshot.lastFiredDay,
+        'site-growth:site-world-house-sable-cairn': initialGameStateSnapshot.day,
+        'site-growth:site-world-salt-ledger-hall': initialGameStateSnapshot.day,
+        'site-growth:site-world-house-sorn': initialGameStateSnapshot.day,
+      },
+    }
+
+    const grown = applyWorldHouseholdGrowth(contestedState, () => 0)
+    const runtime = resolveSiteRuntime(grown, 'site-world-house-merrow')
+
+    expect(runtime).not.toBeNull()
+    expect(runtime?.tags).toContain('growth-pressure:legitimacy-contest')
+    expect(runtime?.tags).not.toContain('growth-stage:1')
+    expect(runtime?.securityScore).toBeGreaterThan(50)
+    expect(grown.districtTension['district-ash-quay']).toBeGreaterThan(0)
+    expect(grown.cityDials.prosperity).toBeLessThan(contestedState.cityDials.prosperity)
+  })
+
+  it('makes committed households less likely to grow again even when their base resources look viable', () => {
+    const runtime = resolveSiteRuntime(initialGameStateSnapshot, 'site-world-lantern-vale')
+    expect(runtime).not.toBeNull()
+
+    const burdenedState = {
+      ...initialGameStateSnapshot,
+      day: initialGameStateSnapshot.day + 6,
+      siteRuntimes: {
+        ...initialGameStateSnapshot.siteRuntimes,
+        'site-world-lantern-vale': {
+          ...runtime!,
+          tags: [...runtime!.tags, 'growth-commitment:40'],
+        },
+      },
+    }
+
+    const grown = applyWorldHouseholdGrowth(burdenedState, () => 0.45)
+    const burdenedRuntime = resolveSiteRuntime(grown, 'site-world-lantern-vale')
+
+    expect(burdenedRuntime?.tags).not.toContain('growth-stage:1')
   })
 })

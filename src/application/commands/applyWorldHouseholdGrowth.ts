@@ -3,12 +3,29 @@ import type { WorldHousehold } from '../../domain/world/contracts'
 
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { adjustCityDial, adjustCityResource, adjustDistrictTension } from './economicConsequences'
 import { resolveSiteRuntime } from './siteLifecycle'
 
 const GROWTH_COOLDOWN_DAYS = 5
 const MAX_GROWTH_STAGE = 2
 const MAX_GROWTHS_PER_DAY = 3
 const MIN_RESOURCE_SCORE = 60
+const GROWTH_COMMITMENT_PER_STAGE = 18
+
+type GrowthPlan =
+  | { kind: 'skip' }
+  | {
+      kind: 'pressure'
+      runtime: SiteRuntime
+      conflictType: string
+      summary: string
+    }
+  | {
+      kind: 'expand'
+      runtime: SiteRuntime
+      stage: number
+      summary: string
+    }
 
 function cloneGrowthState(state: GameState): GameState {
   return {
@@ -30,6 +47,23 @@ function getGrowthStage(runtime: SiteRuntime): number {
 function withGrowthStage(tags: string[], stage: number): string[] {
   const filtered = tags.filter((tag) => !tag.startsWith('growth-stage:'))
   return [...filtered, `growth-stage:${stage}`]
+}
+
+function getGrowthCommitment(runtime: SiteRuntime): number {
+  const commitments = runtime.tags
+    .map((tag) => (tag.startsWith('growth-commitment:') ? Number(tag.slice('growth-commitment:'.length)) : null))
+    .filter((value): value is number => value !== null && Number.isFinite(value))
+
+  return commitments.length === 0 ? 0 : Math.max(...commitments)
+}
+
+function withGrowthCommitment(tags: string[], commitment: number): string[] {
+  const filtered = tags.filter((tag) => !tag.startsWith('growth-commitment:'))
+  return [...filtered, `growth-commitment:${Math.max(0, Math.round(commitment))}`]
+}
+
+function withGrowthPressure(tags: string[], pressure: string): string[] {
+  return tags.includes(`growth-pressure:${pressure}`) ? tags : [...tags, `growth-pressure:${pressure}`]
 }
 
 function investmentScore(household: WorldHousehold): number {
@@ -150,12 +184,60 @@ function deepenExistingCapacity(site: SiteRuntime, stage: number): SiteRuntime {
   }
 }
 
+function effectiveInvestmentScore(household: WorldHousehold, runtime: SiteRuntime): number {
+  return Math.max(0, investmentScore(household) - getGrowthCommitment(runtime))
+}
+
+function resolvedInvestmentScore(state: GameState, household: WorldHousehold): number {
+  const runtime = resolveSiteRuntime(state, `site-${household.id}`)
+  return runtime ? effectiveInvestmentScore(household, runtime) : investmentScore(household)
+}
+
+function findConflictTarget(conflictTargetId: string): WorldHousehold | null {
+  return contentCatalog.worldHouseholdsById.get(conflictTargetId) ?? null
+}
+
+function applyConflictPressure(runtime: SiteRuntime, conflictType: string, severity: number): SiteRuntime {
+  return {
+    ...runtime,
+    securityScore: Math.min(100, runtime.securityScore + 2 + severity * 2),
+    tags: withGrowthPressure(runtime.tags, conflictType),
+  }
+}
+
+function applyHouseholdEconomicEffects(state: GameState, household: WorldHousehold, runtime: SiteRuntime, outcome: 'expand' | 'pressure'): GameState {
+  let next = state
+
+  if (outcome === 'expand') {
+    if (household.kind === 'faction_seat' || runtime.kind === 'industrial') {
+      next = adjustCityResource(next, 'materialStock', 1)
+      next = adjustCityDial(next, 'prosperity', 1)
+    }
+
+    if (runtime.kind === 'sanctuary') {
+      next = adjustCityResource(next, 'foodSecurity', 1)
+      next = adjustCityDial(next, 'unrest', -1)
+    }
+
+    if (household.tags.includes('disappearances') || household.tags.includes('debt-hidden')) {
+      next = adjustCityDial(next, 'corruption', 1)
+    }
+  }
+
+  if (outcome === 'pressure') {
+    next = adjustDistrictTension(next, household.districtId, 2)
+    next = adjustCityDial(next, 'prosperity', -1)
+  }
+
+  return next
+}
+
 function applyGrowthStage(site: SiteRuntime, household: WorldHousehold, stage: number): SiteRuntime {
   const repurposed = stage === 1 ? repurposeExistingRoom(site, stage) : null
   if (repurposed) {
     return {
       ...repurposed,
-      tags: withGrowthStage(repurposed.tags, stage),
+      tags: withGrowthCommitment(withGrowthStage(repurposed.tags, stage), getGrowthCommitment(site) + GROWTH_COMMITMENT_PER_STAGE),
       knownRoomIds:
         repurposed.mode === 'concrete'
           ? Array.from(new Set(repurposed.roomInstances.map((room) => room.roomId)))
@@ -169,7 +251,7 @@ function applyGrowthStage(site: SiteRuntime, household: WorldHousehold, stage: n
       ...site,
       roomInstances: [...site.roomInstances, newRoom],
       securityScore: Math.min(100, site.securityScore + 10),
-      tags: withGrowthStage(site.tags, stage),
+      tags: withGrowthCommitment(withGrowthStage(site.tags, stage), getGrowthCommitment(site) + GROWTH_COMMITMENT_PER_STAGE),
       knownRoomIds:
         site.mode === 'concrete'
           ? Array.from(new Set([...site.knownRoomIds, newRoom.roomId]))
@@ -180,27 +262,54 @@ function applyGrowthStage(site: SiteRuntime, household: WorldHousehold, stage: n
   const deepened = deepenExistingCapacity(site, stage)
   return {
     ...deepened,
-    tags: withGrowthStage(deepened.tags, stage),
+    tags: withGrowthCommitment(withGrowthStage(deepened.tags, stage), getGrowthCommitment(site) + GROWTH_COMMITMENT_PER_STAGE),
   }
 }
 
-function shouldGrowHousehold(
+function planWorldHouseholdGrowth(
   state: GameState,
   household: WorldHousehold,
   runtime: SiteRuntime,
   rng: () => number,
-): boolean {
-  const score = investmentScore(household)
-  if (score < MIN_RESOURCE_SCORE) return false
+): GrowthPlan {
+  const score = effectiveInvestmentScore(household, runtime)
+  if (score < MIN_RESOURCE_SCORE) return { kind: 'skip' }
 
   const stage = getGrowthStage(runtime)
-  if (stage >= MAX_GROWTH_STAGE) return false
+  if (stage >= MAX_GROWTH_STAGE) return { kind: 'skip' }
 
   const lastGrowth = state.lastFiredDay[`site-growth:${runtime.siteId}`]
-  if (lastGrowth !== undefined && state.day - lastGrowth < GROWTH_COOLDOWN_DAYS) return false
+  if (lastGrowth !== undefined && state.day - lastGrowth < GROWTH_COOLDOWN_DAYS) return { kind: 'skip' }
 
-  const chance = Math.min(0.9, 0.2 + score / 200 + household.stability / 250)
-  return rng() <= chance
+  for (const conflict of household.activeConflicts) {
+    const rival = findConflictTarget(conflict.targetId)
+    if (!rival) continue
+
+    if (conflict.type === 'legitimacy-contest') {
+      const rivalScore = investmentScore(rival)
+      const strongerClaim = rival.reputation > household.reputation && rivalScore > score
+      const defensivePivotChance = Math.min(0.95, 0.4 + conflict.severity * 0.2)
+
+      if (strongerClaim && rng() <= defensivePivotChance) {
+        return {
+          kind: 'pressure',
+          runtime: applyConflictPressure(runtime, conflict.type, conflict.severity),
+          conflictType: conflict.type,
+          summary: `${runtime.name} diverts coin and favors into legitimacy defense instead of expanding while a rival presses its claim.`,
+        }
+      }
+    }
+  }
+
+  const chance = Math.min(0.9, Math.max(0.05, 0.2 + score / 220 + household.stability / 300 - getGrowthCommitment(runtime) / 100))
+  if (rng() > chance) return { kind: 'skip' }
+
+  return {
+    kind: 'expand',
+    runtime,
+    stage: stage + 1,
+    summary: `${runtime.name} quietly commits coin, favors, and internal labor to extend its footprint.`,
+  }
 }
 
 export function applyWorldHouseholdGrowth(state: GameState, rng: () => number): GameState {
@@ -208,7 +317,7 @@ export function applyWorldHouseholdGrowth(state: GameState, rng: () => number): 
   let applied = 0
 
   const households = [...contentCatalog.worldHouseholds].sort(
-    (left, right) => investmentScore(right) - investmentScore(left),
+    (left, right) => resolvedInvestmentScore(next, right) - resolvedInvestmentScore(next, left),
   )
 
   for (const household of households) {
@@ -218,18 +327,24 @@ export function applyWorldHouseholdGrowth(state: GameState, rng: () => number): 
     const runtime = resolveSiteRuntime(next, siteId)
     if (!runtime) continue
     if (runtime.sourceKind !== 'world-household') continue
-    if (!shouldGrowHousehold(next, household, runtime, rng)) continue
+    const plan = planWorldHouseholdGrowth(next, household, runtime, rng)
+    if (plan.kind === 'skip') continue
 
-    const nextStage = getGrowthStage(runtime) + 1
-    const grown = applyGrowthStage(runtime, household, nextStage)
+    if (plan.kind === 'pressure') {
+      next.siteRuntimes[siteId] = plan.runtime
+      next.lastFiredDay[`site-growth:${siteId}`] = next.day
+      next = applyHouseholdEconomicEffects(next, household, plan.runtime, 'pressure')
+      next = appendActivityLogEntry(next, 'system', plan.summary)
+      applied += 1
+      continue
+    }
+
+    const grown = applyGrowthStage(runtime, household, plan.stage)
 
     next.siteRuntimes[siteId] = grown
     next.lastFiredDay[`site-growth:${siteId}`] = next.day
-    next = appendActivityLogEntry(
-      next,
-      'system',
-      `${grown.name} quietly invests in its own footprint. New room capacity and tighter internal control begin to show.`,
-    )
+    next = applyHouseholdEconomicEffects(next, household, grown, 'expand')
+    next = appendActivityLogEntry(next, 'system', plan.summary)
     applied += 1
   }
 
