@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import rawArmor from '../../../data/definitions/armor.json'
@@ -32,7 +31,6 @@ export function ShopsScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const overview = useAppSelector(selectShopOverview)
-  const [lastPurchaseMessage, setLastPurchaseMessage] = useState<string | null>(null)
   const gameState = useAppSelector((state) => state.game)
   const stash = useAppSelector(selectStash)
   const roster = gameState.roster
@@ -84,10 +82,6 @@ export function ShopsScreen() {
       {priceNote ? (
         <p className="badge badge-warning">{priceNote}</p>
       ) : null}
-      {lastPurchaseMessage ? (
-        <p className="purchase-feedback">{lastPurchaseMessage}</p>
-      ) : null}
-
       {overview.shops.length === 0 ? (
         <div className="empty-state-message">
           <p className="summary">
@@ -184,17 +178,12 @@ export function ShopsScreen() {
                         <button
                           className="action-button"
                           onClick={() =>
-                            {
-                              dispatch(
-                                gameActions.purchaseItemFromShop({
-                                  shopId: shop.id,
-                                  itemId: offer.itemId,
-                                }),
-                              )
-                              setLastPurchaseMessage(
-                                `Purchased ${offer.itemName} from ${shop.name} for ${formatMarks(offer.price)}.`,
-                              )
-                            }
+                            dispatch(
+                              gameActions.purchaseItemFromShop({
+                                shopId: shop.id,
+                                itemId: offer.itemId,
+                              }),
+                            )
                           }
                           type="button"
                         >

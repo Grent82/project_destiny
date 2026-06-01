@@ -1,74 +1,21 @@
 import { createSelector } from '@reduxjs/toolkit'
 
+import {
+  buildShopPricingBreakdown,
+  computeCorridorPriceMod,
+  computeDistrictTensionPriceMod,
+  computeFactionPriceMod,
+  computeMarketPressureMod,
+  describeFactionPriceModifier,
+  describeMarketPressureModifier,
+} from '../content/shopPricing'
 import { contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
-
-/** Returns a price multiplier based on the player's standing with the faction controlling a shop. */
-export function computeFactionPriceMod(standing: number): number {
-  if (standing >= 75) return 0.85
-  if (standing >= 50) return 0.90
-  if (standing <= -30) return 1.10
-  return 1.0
-}
-
-/** Returns a price multiplier based on the district's current market pressure (0–100). */
-export function computeMarketPressureMod(pressure: number): number {
-  if (pressure >= 70) return 1.15
-  if (pressure >= 50) return 1.05
-  if (pressure <= 30) return 0.92
-  return 1.0
-}
-
-export function computeCorridorPriceMod(corridorStatus: RootState['game']['cityResources']['corridorStatus']): number {
-  return corridorStatus === 'blocked'
-    ? 1.3
-    : corridorStatus === 'disrupted'
-      ? 1.15
-      : 1.0
-}
-
-export function computeDistrictTensionPriceMod(tension: number): number {
-  return 1 + (tension / 100) * 0.2
-}
-
-export type ShopPricingBreakdown = {
-  basePrice: number
-  corridorMod: number
-  tensionMod: number
-  factionMod: number
-  marketMod: number
-  finalPrice: number
-}
-
-export function describeMarketPressureModifier(modifier: number): string | null {
-  if (modifier === 1.0) return null
-  return modifier < 1.0
-    ? `${Math.round((1 - modifier) * 100)}% low-demand discount`
-    : `+${Math.round((modifier - 1) * 100)}% high-demand surcharge`
-}
-
-export function describeFactionPriceModifier(modifier: number): string | null {
-  if (modifier === 1.0) return null
-  return modifier < 1.0
-    ? `${Math.round((1 - modifier) * 100)}% faction discount`
-    : `+${Math.round((modifier - 1) * 100)}% faction surcharge`
-}
-
-function buildShopPricingBreakdown(
-  basePrice: number,
-  corridorMod: number,
-  tensionMod: number,
-  factionMod: number,
-  marketMod: number,
-): ShopPricingBreakdown {
-  return {
-    basePrice,
-    corridorMod,
-    tensionMod,
-    factionMod,
-    marketMod,
-    finalPrice: Math.ceil(basePrice * corridorMod * tensionMod * factionMod * marketMod),
-  }
+export {
+  computeFactionPriceMod,
+  computeMarketPressureMod,
+  describeFactionPriceModifier,
+  describeMarketPressureModifier,
 }
 
 const selectMoney = (state: RootState) => state.game.money

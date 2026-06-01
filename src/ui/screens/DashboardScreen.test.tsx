@@ -80,7 +80,11 @@ describe('DashboardScreen', () => {
 
   it('saves and restores the current session through the UI controls', async () => {
     const user = userEvent.setup()
-    const store = createGameStore()
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      money: 500,
+      currentDistrictId: 'district-harbor',
+    })
     const saveStore = createMemorySaveStore()
 
     render(
@@ -106,7 +110,7 @@ describe('DashboardScreen', () => {
     })
 
     await user.click(screen.getByRole('tab', { name: 'Intelligence' }))
-    expect(screen.getByText(/Purchased item-medkit-field/i)).toBeInTheDocument()
+    expect(screen.getByText(/Purchased Field Medkit from Harbor Provisions for \d+ Marks\./i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('tab', { name: 'Operations' }))
     await user.click(screen.getByRole('button', { name: 'Load session' }))

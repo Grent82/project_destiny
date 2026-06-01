@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
+import { selectShopOverview } from '../../application/selectors/shops'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import { AppProviders } from '../app/AppProviders'
@@ -27,12 +28,16 @@ describe('ShopsScreen', () => {
     expect(screen.getByText('Harbor Provisions')).toBeInTheDocument()
     expect(screen.getByText('Available funds: 500 Marks')).toBeInTheDocument()
 
+    const firstOfferPrice = selectShopOverview({ game: store.getState().game }).shops[0]?.offers[0]?.price ?? 0
+
     await user.click(screen.getAllByRole('button', { name: 'Buy' })[0])
 
-    expect(screen.getByText('Available funds: 405 Marks')).toBeInTheDocument()
+    expect(screen.getByText(`Available funds: ${500 - firstOfferPrice} Marks`)).toBeInTheDocument()
     expect(screen.getAllByText(/Owned 3/).length).toBeGreaterThan(0)
-    expect(screen.getByText(/Purchased Field Medkit from Harbor Provisions for \d+ Marks/i)).toBeInTheDocument()
     expect(screen.getAllByText('Best price').length).toBeGreaterThan(0)
+    expect(store.getState().game.activityLog[0]?.message).toBe(
+      `Purchased Field Medkit from Harbor Provisions for ${firstOfferPrice} Marks.`,
+    )
   })
 
   it('shows a price breakdown section for visible shop offers', () => {
