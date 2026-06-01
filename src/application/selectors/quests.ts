@@ -193,6 +193,12 @@ export const selectActiveQuestById = (state: RootState, questId: string | null) 
 export const selectCompletedQuestIds = (state: RootState) => state.game.completedQuestIds
 
 export const selectActiveInvestigation = (state: RootState) => state.game.activeInvestigation
+export const selectLastInvestigationResult = (state: RootState) => {
+  const result = state.game.lastInvestigationResult
+  if (!result) return null
+  const template = getQuestTemplates().find((q) => q.id === result.questId) ?? null
+  return { result, template }
+}
 
 export const selectActiveInvestigationQuest = (state: RootState) => {
   const inv = state.game.activeInvestigation

@@ -7,6 +7,7 @@ import { initialStateWithIda } from './testFixtures'
 import {
   computeBestInvestigationSkill,
   computeApproachSkillValue,
+  buildInvestigationOperativeResults,
   rollInvestigationOutcome,
   INVESTIGATION_APPROACHES,
 } from './investigation'
@@ -85,6 +86,33 @@ describe('investigation helpers', () => {
     expect(ids).toContain('bribe')
     expect(ids).toContain('surveillance')
     expect(ids).toContain('records')
+  })
+
+  it('builds per-operative breakdown from the shared investigation roll', () => {
+    const results = buildInvestigationOperativeResults(
+      initialStateWithIda,
+      ['npc-marion-vale', 'npc-ida-rhys'],
+      ['negotiation', 'intrigue'],
+      6,
+      0,
+    )
+
+    expect(results).toEqual([
+      expect.objectContaining({
+        npcId: 'npc-marion-vale',
+        skillUsed: 'negotiation',
+        skillValue: 68,
+        rollValue: 6,
+        outcome: 'partial',
+      }),
+      expect.objectContaining({
+        npcId: 'npc-ida-rhys',
+        skillUsed: 'negotiation',
+        skillValue: 16,
+        rollValue: 6,
+        outcome: 'failure',
+      }),
+    ])
   })
 })
 
@@ -186,6 +214,52 @@ describe('chooseInvestigationApproach', () => {
 })
 
 describe('resolveInvestigation', () => {
+  it('does not settle surveillance work before the authored day count has elapsed', () => {
+    const store = makeStore({
+      day: 1,
+      timeSlot: 'evening',
+      rngSeed: 42,
+      activeInvestigation: readyInvestigation('quest-compact-watch', 'district-the-pale', 'surveillance'),
+      activeQuests: [makeActiveQuest('quest-compact-watch')],
+      money: 0,
+    })
+
+    store.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-marion-vale'] }))
+
+    const state = store.getState().game
+    const runtime = state.activeQuests.find((quest) => quest.questId === 'quest-compact-watch')
+    expect(state.activeInvestigation).toBeNull()
+    expect(state.lastInvestigationResult).toBeNull()
+    expect(state.completedQuestIds).not.toContain('quest-compact-watch')
+    expect(state.money).toBe(0)
+    expect(runtime?.currentObjectiveLabel).toContain('1 of 3')
+    expect(runtime?.journalEntries.some((entry) => entry.includes('Surveillance day 1 of 3'))).toBe(true)
+  })
+
+  it('settles surveillance work on the final required day', () => {
+    const store = makeStore({
+      day: 3,
+      timeSlot: 'evening',
+      rngSeed: 42,
+      activeInvestigation: readyInvestigation('quest-compact-watch', 'district-the-pale', 'surveillance'),
+      activeQuests: [makeActiveQuest('quest-compact-watch', {
+        progress: {
+          requiredSteps: 5,
+          completedSteps: 4,
+          lastAdvancedDay: 2,
+        },
+      })],
+      money: 0,
+    })
+
+    store.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-marion-vale'] }))
+
+    const state = store.getState().game
+    expect(state.completedQuestIds).toContain('quest-compact-watch')
+    expect(state.money).toBe(180)
+    expect(state.activeQuests.find((quest) => quest.questId === 'quest-compact-watch')).toBeUndefined()
+  })
+
   it('produces success with high skill and high roll (bribe approach — extra marks)', () => {
     const store = makeStore({
       rngSeed: 42,
@@ -202,6 +276,13 @@ describe('resolveInvestigation', () => {
 
     const state = store.getState().game
     expect(state.activeInvestigation).toBeNull()
+    expect(state.lastInvestigationResult?.operativeResults).toEqual([
+      expect.objectContaining({
+        npcId: 'npc-marion-vale',
+        operativeName: 'Marion Vale',
+        skillUsed: 'negotiation',
+      }),
+    ])
     // bribe gives 1.25x marks: floor(250 * 1.25) = 312
     expect(state.money).toBe(312)
     expect(state.factionStandings['faction-gilded-court']).toBe(30) // 20 + 10

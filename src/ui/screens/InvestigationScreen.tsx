@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   gameActions,
   selectActiveInvestigationQuest,
+  selectLastInvestigationResult,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -15,13 +16,14 @@ export function InvestigationScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const data = useAppSelector(selectActiveInvestigationQuest)
+  const lastResultData = useAppSelector(selectLastInvestigationResult)
   const roster = useAppSelector((s) => s.game.roster)
   const currentDistrictId = useAppSelector((s) => s.game.currentDistrictId)
   const investigationApproaches = selectInvestigationApproaches()
 
   const [selectedNpcIds, setSelectedNpcIds] = useState<string[]>([])
 
-  if (!data) {
+  if (!data && !lastResultData) {
     return (
       <section className="screen-panel">
         <p className="eyebrow">House Valdris</p>
@@ -32,6 +34,90 @@ export function InvestigationScreen() {
         </button>
       </section>
     )
+  }
+
+  if (!data && lastResultData) {
+    const { result, template } = lastResultData
+    const chosenApproach = result.chosenApproachId
+      ? investigationApproaches.find((approach) => approach.id === result.chosenApproachId)
+      : undefined
+    const bonusType = chosenApproach?.bonusType ?? 'none'
+    const successReward = bonusType === 'extra_marks'
+      ? Math.floor((template?.rewardMarks ?? 0) * 1.25)
+      : (template?.rewardMarks ?? 0)
+
+    function handleReturnFromResult() {
+      dispatch(gameActions.clearLastInvestigationResult())
+      navigate('/contracts')
+    }
+
+    return (
+      <section className="screen-panel">
+        <p className="eyebrow">House Valdris</p>
+        <h1>Investigation Complete</h1>
+
+        {result.outcome === 'success' && (
+          <div className="detail-panel">
+            <h2>What Was Found</h2>
+            {result.clueText && <p className="summary">{result.clueText}</p>}
+            <p>Reward received: <strong>{formatMarks(successReward)}</strong>
+              {bonusType === 'extra_marks' && <span className="badge badge--bonus"> +25% network bonus</span>}
+            </p>
+          </div>
+        )}
+        {result.outcome === 'partial' && (
+          <div className="detail-panel">
+            <h2>A Partial Lead</h2>
+            <p className="summary">
+              Something was recovered — enough to act on, but not the full picture.
+            </p>
+            <p>Partial reward received: <strong>{formatMarks(Math.floor((template?.rewardMarks ?? 0) / 2))}</strong>.</p>
+          </div>
+        )}
+        {result.outcome === 'failure' && (
+          <div className="detail-panel">
+            <h2>Nothing Came of It</h2>
+            <p className="summary">
+              The trail went cold. The opportunity is lost.
+              {bonusType === 'reduce_penalty'
+                ? ' The paper trail kept the house deniable — no standing lost.'
+                : template?.rewardStandingFactionId
+                  ? ' Standing penalty applied.'
+                  : ''}
+            </p>
+          </div>
+        )}
+
+        {result.operativeResults.length > 0 && (
+          <div className="detail-panel">
+            <h2>Operative Breakdown</h2>
+            <div className="mission-list">
+              {result.operativeResults.map((operative) => (
+                <div key={operative.npcId} className="mission-row">
+                  <div>
+                    <strong>{operative.operativeName}</strong>
+                    <p className="summary">
+                      {operative.skillUsed} {operative.skillValue} · roll {operative.rollValue} · effective {operative.effectiveRoll}
+                    </p>
+                  </div>
+                  <span className={`badge${operative.outcome === 'success' ? ' badge-positive' : operative.outcome === 'failure' ? ' badge-warning' : ''}`}>
+                    {operative.outcome}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button className="action-button" onClick={handleReturnFromResult} type="button">
+          Return to Contracts
+        </button>
+      </section>
+    )
+  }
+
+  if (!data) {
+    return null
   }
 
   const { investigation, template } = data
@@ -66,6 +152,7 @@ export function InvestigationScreen() {
   }
 
   function handleRun() {
+    dispatch(gameActions.advanceTimeSlot())
     dispatch(gameActions.resolveInvestigation({ npcIds: selectedNpcIds }))
   }
 

@@ -33,6 +33,7 @@ const baseState: GameState = {
   relationships: {},
   equippedItemDurabilities: {},
   activeInvestigation: null,
+  lastInvestigationResult: null,
   lastFiredDay: {},
   rivalOrgActions: [],
   cityStability: 60,

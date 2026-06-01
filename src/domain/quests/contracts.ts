@@ -21,6 +21,8 @@ export const questTemplateSchema = z.object({
   rewardStandingDelta: z.number().default(0),
   penaltyStandingDelta: z.number().default(0),
   timeLimitDays: z.number().nullable().default(null),
+  executionDurationDays: z.number().int().positive().nullable().default(null),
+  executionDurationWatches: z.number().int().positive().nullable().default(null),
   linkedMissionId: z.string().nullable().default(null),
   enemyNpcId: z.string().optional(),
   requiredFactionStanding: z.object({
@@ -93,6 +95,8 @@ export const questRuntimeContextSchema = z.object({
   discoveryDistrictId: z.string().nullable().default(null),
   selectedBranchId: z.string().nullable().default(null),
   retryBehavior: z.enum(['fail', 'retryable', 'branch']).default('fail'),
+  executionDurationDays: z.number().int().positive().nullable().default(null),
+  executionDurationWatches: z.number().int().positive().nullable().default(null),
 }).strict()
 
 export const questLeadRuntimeSchema = z.object({
@@ -130,6 +134,8 @@ export const questRuntimeSchema = z.object({
     discoveryDistrictId: null,
     selectedBranchId: null,
     retryBehavior: 'fail' as const,
+    executionDurationDays: null,
+    executionDurationWatches: null,
   })),
   journalEntries: z.array(z.string()).default([]),
   clues: z.array(questClueSchema).default([]),
@@ -142,6 +148,21 @@ const REQUIRED_STEPS_BY_OBJECTIVE: Record<QuestObjectiveType, number> = {
   delivery: 3,
   investigation: 3,
   survival: 3,
+}
+
+function resolveRequiredSteps(template: QuestTemplate): number {
+  if (template.objectiveType === 'investigation' && template.executionDurationDays != null) {
+    return 2 + template.executionDurationDays
+  }
+
+  if (
+    (template.objectiveType === 'delivery' || template.objectiveType === 'survival') &&
+    template.executionDurationWatches != null
+  ) {
+    return 2 + template.executionDurationWatches
+  }
+
+  return REQUIRED_STEPS_BY_OBJECTIVE[template.objectiveType]
 }
 
 const INITIAL_OBJECTIVE_LABEL_BY_TYPE: Record<QuestObjectiveType, string> = {
@@ -234,7 +255,7 @@ export function createQuestRuntime(
     objectiveMet: false,
     currentObjectiveLabel: INITIAL_OBJECTIVE_LABEL_BY_TYPE[template.objectiveType],
     progress: {
-      requiredSteps: REQUIRED_STEPS_BY_OBJECTIVE[template.objectiveType],
+      requiredSteps: resolveRequiredSteps(template),
       completedSteps: 0,
       lastAdvancedDay: acceptedOnDay,
     },
@@ -246,6 +267,8 @@ export function createQuestRuntime(
       discoveryDistrictId: lead?.discoveryDistrictId ?? template.discoveryDistrictId,
       selectedBranchId: null,
       retryBehavior: 'fail',
+      executionDurationDays: template.executionDurationDays,
+      executionDurationWatches: template.executionDurationWatches,
     },
     journalEntries: initialJournalEntries,
     clues: [],

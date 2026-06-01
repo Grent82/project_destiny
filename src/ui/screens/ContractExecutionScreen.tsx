@@ -32,6 +32,11 @@ function getExecutionCopy(objectiveType: 'delivery' | 'survival') {
   }
 }
 
+function formatRemainingExecutionDuration(watches: number | null) {
+  if (watches == null || watches <= 0) return null
+  return `${watches} ${watches === 1 ? 'watch' : 'watches'} remaining`
+}
+
 export function ContractExecutionScreen() {
   const { questId = null } = useParams<{ questId: string }>()
   const navigate = useNavigate()
@@ -64,6 +69,10 @@ export function ContractExecutionScreen() {
     : 'the job site'
   const isOnSite = Boolean(incidentDistrictId && currentDistrictId === incidentDistrictId)
   const copy = getExecutionCopy(template.objectiveType)
+  const remainingExecutionWatches = runtime.context.executionDurationWatches != null
+    ? Math.max(0, runtime.context.executionDurationWatches - Math.max(0, runtime.progress.completedSteps - 2))
+    : null
+  const remainingExecutionDurationLabel = formatRemainingExecutionDuration(remainingExecutionWatches)
 
   return (
     <section className="screen-panel">
@@ -134,6 +143,11 @@ export function ContractExecutionScreen() {
               <p className="quest-briefing" style={{ opacity: 0.85 }}>
                 <strong>Next:</strong> {runtime.currentObjectiveLabel}
               </p>
+              {remainingExecutionDurationLabel && (
+                <p className="quest-briefing" style={{ opacity: 0.85 }}>
+                  <strong>Duration remaining:</strong> {remainingExecutionDurationLabel}
+                </p>
+              )}
               <button
                 className="action-button action-button--primary action-button--cta"
                 onClick={() => {

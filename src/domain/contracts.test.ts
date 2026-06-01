@@ -293,7 +293,63 @@ describe('gameStateSchema', () => {
     expect(runtime.currentObjectiveLabel).toBeNull()
     expect(runtime.progress.requiredSteps).toBe(1)
     expect(runtime.context.retryBehavior).toBe('fail')
+    expect(runtime.context.executionDurationDays).toBeNull()
+    expect(runtime.context.executionDurationWatches).toBeNull()
     expect(runtime.journalEntries).toEqual([])
+  })
+
+  it('accepts active quests with execution duration distinct from time limit semantics', () => {
+    const result = gameStateSchema.safeParse({
+      day: 3,
+      timeSlot: 'afternoon',
+      money: 120,
+      protagonistName: 'Valdric',
+      hasSeenOpening: true,
+      factionStates: [],
+      districts: [],
+      roster: [],
+      inventory: [],
+      cityResources: {
+        foodSecurity: 62,
+        waterAccess: 70,
+        materialStock: 50,
+        corridorStatus: 'open',
+      },
+      factionStandings: {},
+      cityDials: {
+        control: 45,
+        prosperity: 35,
+        unrest: 55,
+        corruption: 60,
+      },
+      activityLog: [],
+      selectedSquadNpcIds: [],
+      activeCombat: null,
+      pendingEvents: [],
+      availableQuestLeads: [],
+      activeQuests: [
+        {
+          questId: 'quest-compact-watch',
+          acceptedOnDay: 1,
+          status: 'active',
+          objectiveMet: false,
+          acceptedTitle: 'Three Days on Assessor Vorn',
+          context: {
+            retryBehavior: 'fail',
+            executionDurationDays: 3,
+            executionDurationWatches: null,
+          },
+        },
+      ],
+      completedQuestIds: [],
+    })
+
+    expect(result.success).toBe(true)
+    if (!result.success) return
+
+    const runtime = result.data.activeQuests[0]
+    expect(runtime.context.executionDurationDays).toBe(3)
+    expect(runtime.context.executionDurationWatches).toBeNull()
   })
 
   it('accepts tracked wards with bond service state', () => {

@@ -165,6 +165,29 @@ export const hireOfferSchema = z
   })
   .strict()
 
+const investigationOperativeResultSchema = z
+  .object({
+    npcId: z.string(),
+    operativeName: z.string(),
+    skillUsed: z.string(),
+    skillValue: z.number(),
+    rollValue: z.number(),
+    effectiveRoll: z.number(),
+    outcome: z.enum(['success', 'partial', 'failure']),
+  })
+  .strict()
+
+const lastInvestigationResultSchema = z
+  .object({
+    questId: z.string(),
+    districtId: z.string().nullable(),
+    outcome: z.enum(['success', 'partial', 'failure']),
+    chosenApproachId: z.string().nullable().default(null),
+    clueText: z.string().nullable().default(null),
+    operativeResults: z.array(investigationOperativeResultSchema).default([]),
+  })
+  .strict()
+
 export const gameStateSchema = z
   .object({
     day: positiveIntegerSchema,
@@ -218,6 +241,7 @@ export const gameStateSchema = z
       chosenApproachId: z.string().nullable().default(null),
       clueText: z.string().nullable().default(null),
     }).nullable().default(null),
+    lastInvestigationResult: lastInvestigationResultSchema.nullable().default(null),
     pendingConsumableDecision: z.object({
       npcId: z.string(),
       npcName: z.string(),

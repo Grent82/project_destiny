@@ -151,4 +151,32 @@ describe('ContractBoardScreen', () => {
     expect(screen.getByText(/Control -8/i)).toBeInTheDocument()
     expect(screen.getByText(/The house now owes Tessaly an answer about the missing pages/i)).toBeInTheDocument()
   })
+
+  it('shows execution duration separately from time limit for active contracts', () => {
+    const investigationQuest = getQuestTemplates().find((quest) => quest.id === 'quest-compact-watch')
+    if (!investigationQuest) {
+      throw new Error('Expected compact watch quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 1,
+      activeQuests: [createQuestRuntime(investigationQuest, 1)],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText(/Time limit:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Execution duration:/i)).toBeInTheDocument()
+    expect(screen.getByText(/3 days of fieldwork/i)).toBeInTheDocument()
+    expect(screen.getByText(/Days remaining:/i)).toBeInTheDocument()
+  })
 })

@@ -8,6 +8,15 @@ const INVESTIGATION_DIFFICULTY = 55
 export type InvestigationOutcome = 'success' | 'partial' | 'failure'
 export type InvestigationBonusType = 'extra_marks' | 'reduce_penalty' | 'none'
 export type InvestigationExposureRisk = 'none' | 'low' | 'medium' | 'high'
+export interface InvestigationOperativeResult {
+  npcId: string
+  operativeName: string
+  skillUsed: string
+  skillValue: number
+  rollValue: number
+  effectiveRoll: number
+  outcome: InvestigationOutcome
+}
 
 export interface InvestigationApproach {
   id: string
@@ -125,4 +134,43 @@ export function rollInvestigationOutcome(
     effectiveRoll,
     nextSeed: seeded.getSeed(),
   }
+}
+
+export function buildInvestigationOperativeResults(
+  state: GameState,
+  npcIds: string[],
+  primarySkills: readonly string[],
+  rollValue: number,
+  difficultyModifier = 0,
+): InvestigationOperativeResult[] {
+  return npcIds.flatMap((npcId) => {
+    const rosterNpc = state.roster.find((npc) => npc.npcId === npcId)
+    if (!rosterNpc) return []
+
+    const rankedSkills = primarySkills
+      .map((skill) => ({
+        skill,
+        value: rosterNpc.skills[skill as keyof typeof rosterNpc.skills] ?? 0,
+      }))
+      .sort((left, right) => right.value - left.value)
+
+    const best = rankedSkills[0]
+    if (!best) return []
+
+    const effectiveRoll =
+      rollValue + (best.value - INVESTIGATION_DIFFICULTY) + difficultyModifier
+
+    const outcome: InvestigationOutcome =
+      effectiveRoll >= 20 ? 'success' : effectiveRoll >= 0 ? 'partial' : 'failure'
+
+    return [{
+      npcId,
+      operativeName: rosterNpc.name,
+      skillUsed: best.skill,
+      skillValue: best.value,
+      rollValue,
+      effectiveRoll,
+      outcome,
+    }]
+  })
 }

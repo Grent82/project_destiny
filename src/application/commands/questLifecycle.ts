@@ -133,7 +133,7 @@ export function resolveWithComplicationCheck(
   state: GameState,
   questId: string,
   complicationRisk: number,
-): 'success' | 'failed' | 'not_ready' | 'not_applicable' {
+): 'success' | 'failed' | 'in_progress' | 'not_ready' | 'not_applicable' {
   const runtime = state.activeQuests.find((q) => q.questId === questId)
   if (!runtime) return 'not_applicable'
   const template = getQuestTemplates().find((q) => q.id === questId)
@@ -156,6 +156,27 @@ export function resolveWithComplicationCheck(
     }
   }
 
+  const requiredWatches = runtime.context.executionDurationWatches
+  if (requiredWatches != null) {
+    const setupSteps = 2
+    const watchesLogged = Math.max(0, runtime.progress.completedSteps - setupSteps)
+    const nextWatchesLogged = Math.min(requiredWatches, watchesLogged + 1)
+    runtime.progress.completedSteps = Math.max(
+      runtime.progress.completedSteps,
+      setupSteps + nextWatchesLogged,
+    )
+    runtime.progress.lastAdvancedDay = state.day
+
+    if (nextWatchesLogged < requiredWatches) {
+      const remainingWatches = requiredWatches - nextWatchesLogged
+      const watchEntry = `Watch ${nextWatchesLogged} of ${requiredWatches} logged on-site.`
+      runtime.currentObjectiveLabel =
+        `Hold for another watch. ${remainingWatches} ${remainingWatches === 1 ? 'watch' : 'watches'} remaining.`
+      runtime.journalEntries.push(watchEntry)
+      return 'in_progress'
+    }
+  }
+
   const label = template.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
   settleQuestSuccess(state, questId, {
     objectiveLabel: 'The on-site work is done. Return and settle accounts.',
@@ -164,5 +185,4 @@ export function resolveWithComplicationCheck(
   })
   return 'success'
 }
-
 

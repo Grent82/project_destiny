@@ -23,6 +23,8 @@ function makeQuestRuntime(partial: Partial<QuestRuntime> = {}): QuestRuntime {
       discoveryDistrictId: null,
       selectedBranchId: null,
       retryBehavior: 'fail',
+      executionDurationDays: null,
+      executionDurationWatches: null,
     },
     journalEntries: [],
     clues: [],

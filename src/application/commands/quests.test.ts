@@ -122,6 +122,20 @@ describe('acceptQuest', () => {
     expect(store.getState().game.mainQuest.stage).toBe('location-known')
     expect(store.getState().game.mainQuest.lastClue).toContain('old tannery')
   })
+
+  it('keeps authored execution duration separate from time limit when a lead is accepted', () => {
+    const store = makeStore({
+      availableQuestLeads: [makeLead('quest-compact-watch')],
+      activeQuests: [],
+      completedQuestIds: [],
+    })
+
+    store.dispatch(gameActions.acceptQuest({ questId: 'quest-compact-watch' }))
+
+    const runtime = store.getState().game.activeQuests[0]
+    expect(runtime.context.executionDurationDays).toBe(3)
+    expect(runtime.context.executionDurationWatches).toBeNull()
+  })
 })
 
 describe('quest lead discovery', () => {

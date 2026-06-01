@@ -319,6 +319,7 @@
   },
   "equippedItemDurabilities": {},
   "activeInvestigation": null,
+  "lastInvestigationResult": null,
   "rivalOrgActions": [],
   "cityStability": 60,
   "expeditionState": {

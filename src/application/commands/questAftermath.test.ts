@@ -24,6 +24,8 @@ function makeQuestState(overrides: Partial<QuestRuntime> = {}): GameState {
       discoveryDistrictId: null,
       selectedBranchId: null,
       retryBehavior: 'fail',
+      executionDurationDays: null,
+      executionDurationWatches: null,
     },
     journalEntries: [],
     clues: [],

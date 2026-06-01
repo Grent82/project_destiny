@@ -17,7 +17,20 @@ import {
   computeApproachSkillValue,
   getInvestigationApproach,
   rollInvestigationOutcome,
+  buildInvestigationOperativeResults,
 } from '../../commands/investigation'
+import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
+
+function pushQuestLog(state: GameState, message: string) {
+  state.activityLog.unshift({
+    id: `log-${state.day}-${state.timeSlot}-quest-${state.activityLog.length + 1}`,
+    day: state.day,
+    timeSlot: state.timeSlot,
+    category: 'system',
+    message,
+  })
+  if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+}
 
 export const questReducers = {
   updateQuestRuntime(
@@ -141,6 +154,7 @@ export const questReducers = {
       chosenApproachId: null,
       clueText: null,
     }
+    state.lastInvestigationResult = null
     const runtime = state.activeQuests.find((aq) => aq.questId === action.payload.questId)
     if (runtime) {
       runtime.stageId = 'investigating'
@@ -174,6 +188,8 @@ export const questReducers = {
     const { questId, chosenApproachId } = state.activeInvestigation
     const quest = getQuestTemplates().find((q) => q.id === questId)
     if (!quest) return
+    const runtime = state.activeQuests.find((q) => q.questId === questId)
+    if (!runtime) return
 
     const approach = chosenApproachId ? getInvestigationApproach(chosenApproachId) : null
     const bestSkillValue = approach
@@ -181,11 +197,64 @@ export const questReducers = {
       : computeBestInvestigationSkill(state, action.payload.npcIds)
     const difficultyModifier = approach?.difficultyModifier ?? 0
 
-    const { outcome, nextSeed } = rollInvestigationOutcome(state.rngSeed, bestSkillValue, difficultyModifier)
+    const { outcome, roll, nextSeed } = rollInvestigationOutcome(
+      state.rngSeed,
+      bestSkillValue,
+      difficultyModifier,
+    )
+    const operativeResults = buildInvestigationOperativeResults(
+      state,
+      action.payload.npcIds,
+      approach?.primarySkills ?? ['intrigue', 'security', 'administration', 'negotiation'],
+      roll,
+      difficultyModifier,
+    )
     state.activeInvestigation.rollResult = outcome
     state.rngSeed = nextSeed
+    state.lastInvestigationResult = {
+      questId,
+      districtId: state.activeInvestigation.districtId,
+      outcome,
+      chosenApproachId,
+      clueText: state.activeInvestigation.clueText,
+      operativeResults,
+    }
 
     const bonusType = approach?.bonusType ?? 'none'
+    const requiredDays = runtime.context.executionDurationDays
+
+    if (requiredDays != null) {
+      const setupSteps = 2
+      const surveillanceDaysLogged = Math.max(0, runtime.progress.completedSteps - setupSteps)
+      const alreadyWorkedToday =
+        surveillanceDaysLogged > 0 && runtime.progress.lastAdvancedDay === state.day
+      const nextSurveillanceDaysLogged = alreadyWorkedToday
+        ? surveillanceDaysLogged
+        : Math.min(requiredDays, surveillanceDaysLogged + 1)
+
+      runtime.progress.completedSteps = Math.max(
+        runtime.progress.completedSteps,
+        setupSteps + nextSurveillanceDaysLogged,
+      )
+      runtime.progress.lastAdvancedDay = state.day
+
+      if (!alreadyWorkedToday) {
+        const progressEntry = `Surveillance day ${nextSurveillanceDaysLogged} of ${requiredDays} logged.`
+        runtime.journalEntries = [...runtime.journalEntries, progressEntry]
+        pushQuestLog(
+          state,
+          `${quest.title}: surveillance day ${nextSurveillanceDaysLogged} of ${requiredDays} logged.`,
+        )
+      }
+
+      if (nextSurveillanceDaysLogged < requiredDays) {
+        runtime.currentObjectiveLabel =
+          `Continue surveillance tomorrow. ${nextSurveillanceDaysLogged} of ${requiredDays} days logged.`
+        state.lastInvestigationResult = null
+        state.activeInvestigation = null
+        return
+      }
+    }
 
     if (outcome === 'success') {
       const rewardScale = bonusType === 'extra_marks' ? 1.25 : 1.0
@@ -215,5 +284,9 @@ export const questReducers = {
       })
     }
     state.activeInvestigation = null
+  },
+
+  clearLastInvestigationResult(state: GameState) {
+    state.lastInvestigationResult = null
   },
 }

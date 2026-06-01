@@ -50,4 +50,38 @@ describe('ContractExecutionScreen', () => {
     expect(state.completedQuestIds).toContain('quest-nightbloom-extract')
     expect(state.activeQuests.find((quest) => quest.questId === 'quest-nightbloom-extract')).toBeUndefined()
   })
+
+  it('shows remaining duration and requires a second watch for multi-watch survival work', async () => {
+    const user = userEvent.setup()
+    const survivalQuest = getQuestTemplates().find((quest) => quest.id === 'quest-pale-wagon-escort')
+    if (!survivalQuest) {
+      throw new Error('Expected survival quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-pale',
+      timeSlot: 'morning',
+      activeQuests: [createQuestRuntime(survivalQuest, 1)],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter initialEntries={['/contracts/quest-pale-wagon-escort/execute']}>
+          <Routes>
+            <Route path="/contracts/:questId/execute" element={<ContractExecutionScreen />} />
+          </Routes>
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    await user.click(screen.getByRole('button', { name: /Establish position on-site/i }))
+    expect(screen.getByText(/Duration remaining:/i)).toBeInTheDocument()
+    expect(screen.getByText(/2 watches remaining/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Hold through the watch/i }))
+    expect(store.getState().game.completedQuestIds).not.toContain('quest-pale-wagon-escort')
+    expect(store.getState().game.activeQuests.find((quest) => quest.questId === 'quest-pale-wagon-escort')).toBeDefined()
+  })
 })

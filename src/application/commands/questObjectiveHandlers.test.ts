@@ -109,7 +109,16 @@ describe('resolveWithComplicationCheck', () => {
     const state = stateWithActiveQuest('quest-pale-wagon-escort')
     advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
     const result = resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)
-    expect(result).toBe('success')
+    expect(result).toBe('in_progress')
+    expect(state.completedQuestIds).not.toContain('quest-pale-wagon-escort')
+    expect(state.activeQuests.some((q) => q.questId === 'quest-pale-wagon-escort')).toBe(true)
+  })
+
+  it('completes a multi-watch survival quest on the final watch', () => {
+    const state = stateWithActiveQuest('quest-pale-wagon-escort')
+    advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
+    expect(resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)).toBe('in_progress')
+    expect(resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)).toBe('success')
     expect(state.completedQuestIds).toContain('quest-pale-wagon-escort')
   })
 })

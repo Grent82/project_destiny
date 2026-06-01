@@ -56,6 +56,18 @@ function formatSignedDelta(value: number) {
   return value > 0 ? `+${value}` : `${value}`
 }
 
+function formatExecutionDuration(days: number | null | undefined, watches: number | null | undefined) {
+  if (days != null) {
+    return `${days} ${days === 1 ? 'day' : 'days'} of fieldwork`
+  }
+
+  if (watches != null) {
+    return `${watches} ${watches === 1 ? 'watch' : 'watches'} on-site`
+  }
+
+  return null
+}
+
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -88,6 +100,10 @@ export function ContractBoardScreen() {
                 const daysRemaining = template != null
                   ? getQuestDaysRemaining(runtime, template, currentDay)
                   : null
+                const executionDurationLabel = formatExecutionDuration(
+                  runtime.context.executionDurationDays,
+                  runtime.context.executionDurationWatches,
+                )
                 const factionImpactEntries = runtime.aftermath?.factionImpacts ?? []
                 const worldConsequenceEntries = [
                   ...(template?.rewardCityDialId && template.rewardCityDialDelta !== 0
@@ -149,6 +165,12 @@ export function ContractBoardScreen() {
                   <div className="quest-meta">
                     {template?.rewardMarks != null && template.rewardMarks > 0 && (
                       <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>
+                    )}
+                    {template?.timeLimitDays != null && (
+                      <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>
+                    )}
+                    {executionDurationLabel && (
+                      <span>Execution duration: <strong>{executionDurationLabel}</strong></span>
                     )}
                     {daysRemaining != null && (
                       <span>Days remaining: <strong>{daysRemaining}</strong></span>
