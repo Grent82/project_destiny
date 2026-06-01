@@ -6,6 +6,7 @@ import { contentCatalog, getNpcDefinitions, getQuestTemplates } from '../content
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { buildEventRumorEntry } from './spawnEventRumor'
 import type { QuestEventParams } from './spawnEventRumor'
+import { setNpcCaptivityState } from './captivityRegistry'
 
 interface QuestSuccessOptions {
   completionMessage?: string
@@ -87,6 +88,11 @@ function applyMiraRescueResolution(state: GameState, questId: string) {
 
 function applyOrrenRescueResolution(state: GameState, questId: string) {
   if (questId !== 'quest-orren-wex-rescue') return
+
+  setNpcCaptivityState(state, 'npc-orren-wex', null)
+  state.npcSitePresences = state.npcSitePresences.filter(
+    (presence) => !(presence.npcId === 'npc-orren-wex' && presence.role === 'captive'),
+  )
 
   state.mainQuest.stage = 'lead-found'
   state.mainQuest.lastClue =

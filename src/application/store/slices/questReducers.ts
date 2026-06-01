@@ -15,10 +15,18 @@ import { settleQuestFailure, settleQuestSuccess } from '../../commands/questSett
 import {
   computeBestInvestigationSkill,
   computeApproachSkillValue,
-  getInvestigationApproach,
   rollInvestigationOutcome,
   buildInvestigationOperativeResults,
 } from '../../commands/investigation'
+import {
+  applyInvestigationApproachQuestState,
+  applyInvestigationOutcomeQuestState,
+  applyInvestigationQuestSetup,
+  getInvestigationApproachForQuest,
+  getInvestigationOutcomeCopy,
+  getInvestigationOutcomeHandling,
+  getInvestigationStartCopy,
+} from '../../commands/investigationProfiles'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
 function pushQuestLog(state: GameState, message: string) {
@@ -157,17 +165,22 @@ export const questReducers = {
     state.lastInvestigationResult = null
     const runtime = state.activeQuests.find((aq) => aq.questId === action.payload.questId)
     if (runtime) {
+      const startCopy = getInvestigationStartCopy(action.payload.questId)
+      applyInvestigationQuestSetup(runtime, action.payload.questId)
       runtime.stageId = 'investigating'
-      runtime.currentObjectiveLabel = 'Choose how to work this lead — your approach shapes the risk and reward.'
+      runtime.currentObjectiveLabel = startCopy.objectiveLabel
       runtime.progress.completedSteps = Math.max(runtime.progress.completedSteps, 1)
       runtime.progress.lastAdvancedDay = state.day
-      runtime.journalEntries = [...runtime.journalEntries, 'The house has committed operatives to investigate the lead.']
+      runtime.journalEntries = [...runtime.journalEntries, startCopy.journalEntry]
     }
   },
 
   chooseInvestigationApproach(state: GameState, action: PayloadAction<{ approachId: string }>) {
     if (!state.activeInvestigation || state.activeInvestigation.stage !== 'approach-selection') return
-    const approach = getInvestigationApproach(action.payload.approachId)
+    const approach = getInvestigationApproachForQuest(
+      state.activeInvestigation.questId,
+      action.payload.approachId,
+    )
     if (!approach) return
 
     state.activeInvestigation.stage = 'ready-to-resolve'
@@ -176,6 +189,12 @@ export const questReducers = {
 
     const runtime = state.activeQuests.find((q) => q.questId === state.activeInvestigation!.questId)
     if (runtime) {
+      applyInvestigationApproachQuestState(
+        runtime,
+        state.activeInvestigation.questId,
+        approach.id,
+        state.day,
+      )
       runtime.currentObjectiveLabel = `Approach: ${approach.label}. Assign operatives and resolve the investigation.`
       runtime.progress.completedSteps = Math.max(runtime.progress.completedSteps, 2)
       runtime.journalEntries = [...runtime.journalEntries, approach.clueText]
@@ -191,7 +210,9 @@ export const questReducers = {
     const runtime = state.activeQuests.find((q) => q.questId === questId)
     if (!runtime) return
 
-    const approach = chosenApproachId ? getInvestigationApproach(chosenApproachId) : null
+    const approach = chosenApproachId
+      ? getInvestigationApproachForQuest(questId, chosenApproachId)
+      : null
     const bestSkillValue = approach
       ? computeApproachSkillValue(state, action.payload.npcIds, approach.primarySkills)
       : computeBestInvestigationSkill(state, action.payload.npcIds)
@@ -256,13 +277,32 @@ export const questReducers = {
       }
     }
 
+    const successCopy = getInvestigationOutcomeCopy(questId, 'success')
+    const partialCopy = getInvestigationOutcomeCopy(questId, 'partial')
+    const failureCopy = getInvestigationOutcomeCopy(questId, 'failure')
+    const outcomeHandling = getInvestigationOutcomeHandling(questId, outcome)
+
+    applyInvestigationOutcomeQuestState(state, runtime, questId, outcome)
+
+    if (outcomeHandling?.keepQuestActive) {
+      runtime.stageId = outcomeHandling.stageId
+      runtime.currentObjectiveLabel = outcomeHandling.objectiveLabel
+      runtime.progress.lastAdvancedDay = state.day
+      runtime.journalEntries = [...runtime.journalEntries, outcomeHandling.journalEntry]
+      pushQuestLog(state, outcomeHandling.activityLogMessage)
+      state.activeInvestigation = null
+      return
+    }
+
     if (outcome === 'success') {
       const rewardScale = bonusType === 'extra_marks' ? 1.25 : 1.0
       const effectiveReward = Math.floor(quest.rewardMarks * rewardScale)
       settleQuestSuccess(state, questId, {
         rewardScale,
-        journalEntry: 'The lead yielded a decisive result.',
-        completionMessage: `The investigation concludes. ${effectiveReward} Marks received.`,
+        journalEntry: successCopy.journalEntry,
+        completionMessage:
+          successCopy.completionMessage ??
+          `The investigation concludes. ${effectiveReward} Marks received.`,
       })
     } else if (outcome === 'partial') {
       const halfReward = Math.floor(quest.rewardMarks / 2)
@@ -273,14 +313,17 @@ export const questReducers = {
         applyDebtReduction: false,
         applyUnlocksNpc: false,
         renownGainOverride: 2,
-        journalEntry: 'The investigation yielded only part of the truth.',
-        completionMessage: `The investigation yields something, though not everything. ${halfReward} Marks.`,
+        journalEntry: partialCopy.journalEntry,
+        completionMessage:
+          partialCopy.completionMessage ??
+          `The investigation yields something, though not everything. ${halfReward} Marks.`,
       })
     } else {
       settleQuestFailure(state, questId, {
         applyStanding: bonusType !== 'reduce_penalty',
-        failureMessage: 'The investigation goes nowhere. The opportunity is lost.',
-        journalEntry: 'The lead went cold and the opportunity slipped away.',
+        failureMessage:
+          failureCopy.failureMessage ?? 'The investigation goes nowhere. The opportunity is lost.',
+        journalEntry: failureCopy.journalEntry,
       })
     }
     state.activeInvestigation = null

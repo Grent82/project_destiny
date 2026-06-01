@@ -71,6 +71,7 @@ Classify findings into these buckets:
 - missing route-truth, day-1-truth, aftermath, or pacing tests
 - wrong test level
 - no player-comprehension verification
+- no per-outcome verification for `success`, `partial`, and `failure`
 
 ### 4. Product and design comprehension
 - wrong information hierarchy
@@ -88,6 +89,20 @@ Prefer durable fixes in this order:
 4. Update agent instructions.
 5. Only then rely on future memory or reminders in chat.
 
+## Session pattern to watch for
+
+If a session starts from a finding labeled `runtime too shallow`, explicitly check whether the work is drifting into:
+
+- copy polish before state-model clarification
+- clue flavor before outcome semantics
+- UI before settle / setback / branch rules are decided
+
+When that drift appears, the sustainable fix is usually:
+
+1. tighten the Bead acceptance with an outcome matrix
+2. add outcome-specific tests
+3. only then continue content or UI polish
+
 ## Traceability rule
 
 For every substantial finding:
@@ -100,6 +115,7 @@ Do not let retrospectives end as pure prose.
 
 ### Codex
 - Use the `ki-retro` skill when the user explicitly asks for lessons learned, workflow insights, or sustainable improvements.
+- When the session exposed a quest/runtime contract gap, prefer updating `docs/task-contract.md`, `docs/workflows/bead-creation.md`, or the active Bead acceptance over leaving the lesson in chat only.
 
 ### Claude Code
 - Use this workflow doc directly.

@@ -115,6 +115,15 @@ Split acceptance into three lenses where relevant:
 
 Do not rely only on technical wording when the Bead changes the player experience.
 
+For `runtime too shallow` Beads, acceptance must also define an outcome matrix:
+
+- what `success` means
+- what `partial` means
+- what `failure` means
+- whether each outcome settles, retries, branches, or stays unresolved
+
+If this matrix is missing, the Bead is too weak for implementation because the agent will be forced to guess the state machine.
+
 ### Dependencies
 
 List required prior Beads explicitly.
@@ -191,6 +200,12 @@ Weak:
 
 If the title sounds like a direction rather than a contract, the Bead is still too broad.
 
+For runtime-depth work, the preferred thin slice is not "add richer flavor" but:
+
+- define one quest's real outcome contract
+- implement the state transitions for that contract
+- prove the player can see the difference between unresolved progress and true completion
+
 ## Audit traceability
 
 When a list of findings is turned into Beads:
@@ -215,6 +230,12 @@ If it changes story/world logic, it should also identify:
 - the fiction contract
 - the player-facing consequence
 - the follow-through surface where the change becomes visible
+
+If it is a quest- or loop-depth Bead, it should also identify:
+
+- whether `partial` is a valid completion state or not
+- what keeps the task active after a setback
+- which UI/log/journal surface communicates the new state to the player
 
 ## Enforcement
 

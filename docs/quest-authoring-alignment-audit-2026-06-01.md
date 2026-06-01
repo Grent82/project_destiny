@@ -34,10 +34,10 @@ The current runtime is missing behavior that is important enough that the strong
 |---|---|---|---|---|
 | `quest-harborwatch` / `The Harborwatch Dispute` | combat | aligned | “Stop it quietly” maps acceptably to travel -> combat -> aftermath. | existing combat loop |
 | `quest-ledger-recovery` / `The Missing Ledger` | investigation | aligned | The briefing now promises identifying the current holder from a single active lead, which matches the current investigation loop. | closed `destiny-etlp` |
-| `quest-foundry-escort` / `League Escort: The Long Road` | combat | copy too strong | “Three attempts already” and “four people minimum” imply an escort operation, but runtime is just combat. | `destiny-y31l` |
+| `quest-foundry-escort` / `League Escort: The Long Road` | combat | aligned | The briefing now frames the job as breaking the ambush crew before the next move, which matches the combat loop. | closed `destiny-y31l` |
 | `quest-ring-debt` / `A Debt Already Paid` | investigation | aligned | The wording now frames one actionable lead instead of a longer tailing sequence. | closed `destiny-etlp` |
 | `quest-restored-appeal` / `The Restored Ask a Favor` | investigation | runtime too shallow | archive infiltration and document retrieval are central to the fantasy; simple rewording would cheapen it too much. | `destiny-t2x7` |
-| `quest-warrens-extraction` / `Retrieve the Runaway` | combat | copy too strong | “returned” implies capture/extraction, but current runtime is win/lose combat only. | `destiny-y31l` |
+| `quest-warrens-extraction` / `Retrieve the Runaway` | combat | aligned | The job now centers on breaking armed resistance around the runaway instead of promising a capture/extraction mechanic. | closed `destiny-y31l` |
 | `quest-ring-debt-collection` / `A Word with Brennik` | combat | aligned | The wording already allows a short coercive confrontation. | existing combat loop |
 | `quest-nightbloom-extract` / `Nightbloom Required` | delivery | aligned | Contact-driven handoff fiction matches a compact on-site delivery loop. | current delivery loop |
 | `quest-pale-wagon-escort` / `Safe Passage Through the Pale` | survival | aligned | now explicitly multi-watch; wording and runtime match. | closed `destiny-5qcj` |
@@ -61,7 +61,7 @@ The current runtime is missing behavior that is important enough that the strong
 
 ### Aligned
 
-17 quests:
+19 quests:
 
 - `quest-harborwatch`
 - `quest-ledger-recovery`
@@ -83,10 +83,7 @@ The current runtime is missing behavior that is important enough that the strong
 
 ### Copy Too Strong
 
-2 quests:
-
-- `quest-foundry-escort`
-- `quest-warrens-extraction`
+0 quests.
 
 ### Runtime Too Shallow
 
@@ -110,15 +107,14 @@ The current runtime is missing behavior that is important enough that the strong
   - copy retunes: closed `destiny-etlp`
   - deeper handler cases: `destiny-t2x7`
 - F4a: Remaining combat-side fiction drift sits in escort/extraction briefings that outrun the current combat loop.
-  - follow-up `destiny-y31l`
+  - covered by closed `destiny-y31l`
 - F5: Several delivery/survival quests still need authoring retuning after the duration rollout.
   - covered by closed `destiny-tfzm`
 
 ## Recommended Backlog Shape
 
 1. `destiny-t2x7`
-2. `destiny-y31l`
-3. only after that, broader quest-generation / quest-expansion work
+2. only after that, broader quest-generation / quest-expansion work
 
 ## Authoring Rule Update Required
 

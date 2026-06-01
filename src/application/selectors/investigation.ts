@@ -1,4 +1,4 @@
-import { INVESTIGATION_APPROACHES } from '../commands/investigation'
+import { getInvestigationApproachesForQuest } from '../commands/investigationProfiles'
 import type { InvestigationApproach } from '../commands/investigation'
 
 /**
@@ -8,6 +8,8 @@ import type { InvestigationApproach } from '../commands/investigation'
  * selector returns the constant directly. The abstraction keeps UI screens from
  * reaching into application/commands.
  */
-export function selectInvestigationApproaches(): readonly InvestigationApproach[] {
-  return INVESTIGATION_APPROACHES
+export function selectInvestigationApproaches(
+  questId?: string | null,
+): readonly InvestigationApproach[] {
+  return getInvestigationApproachesForQuest(questId)
 }

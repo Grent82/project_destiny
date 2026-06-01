@@ -18,8 +18,12 @@ export function InvestigationScreen() {
   const data = useAppSelector(selectActiveInvestigationQuest)
   const lastResultData = useAppSelector(selectLastInvestigationResult)
   const roster = useAppSelector((s) => s.game.roster)
+  const activeQuestRuntime = useAppSelector((state) =>
+    data ? state.game.activeQuests.find((quest) => quest.questId === data.investigation.questId) ?? null : null,
+  )
   const currentDistrictId = useAppSelector((s) => s.game.currentDistrictId)
-  const investigationApproaches = selectInvestigationApproaches()
+  const investigationQuestId = data?.investigation.questId ?? lastResultData?.result.questId ?? null
+  const investigationApproaches = selectInvestigationApproaches(investigationQuestId)
 
   const [selectedNpcIds, setSelectedNpcIds] = useState<string[]>([])
 
@@ -140,6 +144,8 @@ export function InvestigationScreen() {
     : null
 
   const primarySkills = chosenApproach?.primarySkills ?? ['intrigue', 'security', 'administration', 'negotiation']
+  const discoveredClues =
+    activeQuestRuntime?.clues.filter((clue) => clue.discovered).map((clue) => clue.label) ?? []
 
   function toggleNpc(npcId: string) {
     setSelectedNpcIds((prev) =>
@@ -300,6 +306,17 @@ export function InvestigationScreen() {
           {chosenApproach && (
             <p><strong>Approach:</strong> {chosenApproach.label}</p>
           )}
+        </div>
+      )}
+
+      {discoveredClues.length > 0 && (
+        <div className="detail-panel">
+          <h2>Operational Leads</h2>
+          <ul className="quest-journal-list">
+            {discoveredClues.map((clue) => (
+              <li key={clue}>{clue}</li>
+            ))}
+          </ul>
         </div>
       )}
 

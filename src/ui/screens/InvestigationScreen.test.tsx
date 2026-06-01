@@ -122,4 +122,80 @@ describe('InvestigationScreen', () => {
 
     expect(store.getState().game.timeSlot).toBe('afternoon')
   })
+
+  it('shows quest-specific investigation approaches for Old Ledgers', () => {
+    const oldLedgers = getQuestTemplates().find((quest) => quest.id === 'quest-orren-wex-rescue')
+    if (!oldLedgers) {
+      throw new Error('Expected Old Ledgers quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-hollows',
+      activeQuests: [createQuestRuntime(oldLedgers, 1)],
+      activeInvestigation: {
+        questId: 'quest-orren-wex-rescue',
+        districtId: 'district-the-hollows',
+        rollResult: 'pending',
+        stage: 'approach-selection',
+        chosenApproachId: null,
+        clueText: null,
+      },
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <InvestigationScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Buy the Door' })).toBeInTheDocument()
+    expect(screen.getByText(/Compact-adjacent staff/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Custody Ledger' })).toBeInTheDocument()
+  })
+
+  it('shows discovered operational leads during ready-to-resolve investigations', () => {
+    const restoredAppeal = getQuestTemplates().find((quest) => quest.id === 'quest-restored-appeal')
+    if (!restoredAppeal) {
+      throw new Error('Expected The Restored Ask a Favor quest in fixtures.')
+    }
+
+    const runtime = createQuestRuntime(restoredAppeal, 1)
+    runtime.clues = [
+      {
+        clueId: 'restored-appeal-east-corridor',
+        label: 'The east corridor opens a clean retrieval line during clerk relief.',
+        discovered: true,
+        discoveredOnDay: 1,
+        usedInBranchId: 'surveillance',
+      },
+    ]
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-warrens',
+      activeQuests: [runtime],
+      activeInvestigation: {
+        questId: 'quest-restored-appeal',
+        districtId: null,
+        rollResult: 'pending',
+        stage: 'ready-to-resolve',
+        chosenApproachId: 'surveillance',
+        clueText: 'The sealing clerk always crosses the east corridor alone after the bell.',
+      },
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <InvestigationScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Operational Leads' })).toBeInTheDocument()
+    expect(screen.getByText(/clean retrieval line during clerk relief/i)).toBeInTheDocument()
+  })
 })
