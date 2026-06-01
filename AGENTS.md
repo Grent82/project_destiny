@@ -90,6 +90,10 @@ If the Codex desktop environment resolves `node` to the bundled app runtime and 
 ./scripts/codex-build.sh
 ```
 
+When running repo-wide tests, watch for nested worktrees or generated mirrors under `.claude/worktrees/`.
+They can cause duplicate test discovery, worker timeouts, or false negatives if the runner scans them as part of the project tree.
+If a full run starts picking up test files from those paths, treat that as tooling noise first and fix the discovery scope before debugging product code.
+
 ## Schema Change Checklist
 
 Whenever `gameStateSchema` in `src/domain/game/contracts.ts` changes:

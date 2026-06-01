@@ -40,6 +40,10 @@ Every affected loop should be checked at these layers:
 5. **Playthrough coverage**
    - At least one scenario-level test or scripted funnel covers the loop family.
 
+6. **Parallel-system check**
+   - Verify that the changed feature is not only a parallel precursor with no real downstream reader.
+   - If a system sets state but no later screen, selector, event, route, or command meaningfully consumes it, the loop is still incomplete.
+
 ## Core loop gates
 
 ### 1. Route continuity
@@ -97,6 +101,7 @@ Before closing a loop-affecting bead, answer:
 - Can a fresh-save player misunderstand this screen even if all tests are green?
 - Does the UI say something stronger than the underlying fiction or state?
 - Does the player see the result of their action in the same place they took it?
+- Did I just improve a real loop, or only a parallel subsystem that still lacks a meaningful consumer?
 
 ## Finding coverage
 
@@ -106,3 +111,4 @@ This workflow closes the process gap behind:
 - false day-one political claims
 - first-day event floods
 - unclear combat aftermath and return flow
+- systems that looked present in code but were still too indirect to matter to the player

@@ -92,6 +92,10 @@ If the Codex desktop runtime hits the `rolldown` native-binding / codesign failu
 ./scripts/codex-build.sh
 ```
 
+When running repo-wide tests, watch for nested worktrees or generated mirrors under `.claude/worktrees/`.
+They can cause duplicate test discovery, worker timeouts, or misleading failures if the runner traverses them as part of the repository.
+Treat that as a test-discovery hygiene problem first, not immediately as a product regression.
+
 **Run a single test file:**
 ```bash
 pnpm exec vitest run src/application/commands/combat.test.ts

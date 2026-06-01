@@ -42,6 +42,19 @@ Examples:
 
 When the work spans phases, split it into parent/child Beads.
 
+## Epic rule
+
+An epic is not automatically the next implementation unit.
+
+Before starting work from an epic, extract or identify one thin slice that:
+
+- changes one observable behavior
+- has clear acceptance
+- can be verified on its own
+- does not require silently solving the whole epic at once
+
+If no such slice exists yet, create it first.
+
 ## Required Bead fields
 
 Every new or materially updated Bead should answer these sections.
@@ -159,6 +172,24 @@ Weak:
 - `Make events better`
 
 The strong version says what changes and what the player will notice.
+
+## Thin-slice preference
+
+Prefer Beads that can prove one meaningful claim end to end.
+
+Good:
+
+- `Household rivalry can block a rival expansion and surface the result in state and log`
+- `A room clue unlocks exactly one new Marion dialogue branch`
+- `A faction agenda changes one shared economic dial and one visible downstream surface`
+
+Weak:
+
+- `Make households more dynamic`
+- `Improve NPC world simulation`
+- `Expand quest generation`
+
+If the title sounds like a direction rather than a contract, the Bead is still too broad.
 
 ## Audit traceability
 
