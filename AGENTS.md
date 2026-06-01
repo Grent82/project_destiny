@@ -11,6 +11,7 @@ Project Destiny uses a coordinator-led multi-agent workflow with Beads as the on
 - Use [docs/workflows/design-review.md](docs/workflows/design-review.md) for any player-facing design work or UX critique.
 - Use [docs/workflows/dialogue-review.md](docs/workflows/dialogue-review.md) when designing or reviewing dialogue trees.
 - Use [docs/workflows/loop-level-verification.md](docs/workflows/loop-level-verification.md) for player-facing loop changes, routing changes, event pacing changes, and aftermath surfaces.
+- Use [docs/workflows/ki-retro.md](docs/workflows/ki-retro.md) when the user asks for lessons learned from a session, workflow errors, collaboration failures, or sustainable process improvements.
 - Respect role boundaries in [docs/roles](docs/roles).
 - Use [docs/workflows](docs/workflows) when the task is narrative, UI-heavy, or art-direction-heavy.
 
@@ -46,6 +47,7 @@ The RPG audit answers four questions about whether this session's planned work a
 - Create a new Bead for follow-up work rather than silently expanding scope.
 - For narrative-heavy Beads, record a `fiction contract`.
 - For player-facing Beads, verify not only state correctness but also player comprehension, route clarity, and post-action readability.
+- After regressions, interruptions, or user-reported quality failures, run a `KI Retro` pass before moving on if the user asks for process improvement. Convert important findings into docs, Beads, tests, or instruction updates.
 
 ## Audit → Bead Traceability Rule
 

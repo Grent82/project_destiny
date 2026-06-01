@@ -22,6 +22,7 @@ Use `bd` for ALL task tracking. Do not use markdown TODO lists or other tools.
 When creating or materially refining a Bead, follow `docs/workflows/bead-creation.md`.
 Use `docs/workflows/design-review.md` for player-facing design review and UX critique.
 Use `docs/workflows/dialogue-review.md` for dialogue-tree work.
+Use `docs/workflows/ki-retro.md` when asked for lessons learned, workflow problems, collaboration failures, or sustainable process improvements.
 At minimum, include:
 
 - `why`
@@ -35,6 +36,7 @@ At minimum, include:
 
 For narrative-heavy Beads, also include a `fiction contract`.
 For player-facing work, verify comprehension, route clarity, and visible consequence — not only passing state tests.
+After regressions or user-reported quality failures, prefer a `KI Retro` pass that converts findings into Beads, docs, tests, or instruction updates.
 
 ## Build, Test & Lint
 
