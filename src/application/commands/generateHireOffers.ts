@@ -2,6 +2,7 @@ import type { GameState, HireOffer } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
 import { calculateMercenaryContractWage } from './wageRates'
+import { hasIntactHouseRoomFunction } from './houseRoomFunctions'
 
 function computeReputationScore(state: GameState): number {
   const standingScore = Object.values(state.factionStandings).reduce(
@@ -25,9 +26,10 @@ export function generateDistrictHireOffers(
   const district = contentCatalog.districtsById.get(districtId)
   const controllingFactionId = district?.controllingFactionId ?? null
   const dangerLevel = district?.dangerLevel ?? 3
+  const hasReception = hasIntactHouseRoomFunction(state, 'reception')
 
   // Pool size scales with reputation: 2 base, up to 6 at score 160+
-  const poolSize = 2 + Math.floor(reputationScore / 40)
+  const poolSize = 2 + Math.floor(reputationScore / 40) + (hasReception ? 1 : 0)
   // Higher reputation unlocks NPCs with higher base loyalty trait
   const minLoyalty = reputationScore >= 100 ? 60 : 0
 
@@ -65,7 +67,7 @@ export function generateDistrictHireOffers(
       signingBonus,
       requiredFactionId: npcDef.factionAffinityId ?? null,
       requiredFactionStanding: npcDef.factionAffinityId ? -20 : 0,
-      turnsAvailable: 4,
+      turnsAvailable: hasReception ? 6 : 4,
     }
 
     state.availableForHire.push(offer)

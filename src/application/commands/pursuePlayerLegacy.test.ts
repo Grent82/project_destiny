@@ -156,6 +156,16 @@ describe('tickPregnancyProgress', () => {
   it('creates biological heir after gestation completes', () => {
     const state: GameState = {
       ...initialStateWithIda,
+      relationships: {
+        [buildRelationshipKey(PLAYER_ID, NPC_ID)]: {
+          affinity: 72,
+          trust: 68,
+          respect: 44,
+          fear: 0,
+          loyalty: 51,
+          intimacyStage: 'committed',
+        },
+      },
       roster: initialStateWithIda.roster.map((n) =>
         n.npcId === NPC_ID
           ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null } }
@@ -168,6 +178,9 @@ describe('tickPregnancyProgress', () => {
     expect(heir!.origin).toBe('biological')
     expect(heir!.parentRefs).toContain(NPC_ID)
     expect(heir!.parentRefs).toContain(PLAYER_ID)
+    expect(heir!.originStory).not.toBe(`Born to Ida Rhys within House Valdric.`)
+    expect(heir!.originStory).toMatch(/private|register|house/i)
+    expect(heir!.legitimacyStatus).toBe('recognized')
   })
 
   it('clears pregnancyState after birth', () => {
@@ -195,5 +208,41 @@ describe('tickPregnancyProgress', () => {
     }
     const result = tickPregnancyProgress(state)
     expect(result.house.houseHeirs.length).toBe(0)
+  })
+
+  it('marks ward-born heirs as hidden and gives them a distinct origin story', () => {
+    const state: GameState = {
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((n) =>
+        n.npcId === NPC_ID
+          ? {
+              ...n,
+              status: 'ward',
+              pregnancyState: {
+                context: 'consensual',
+                daysElapsed: 269,
+                questTag: null,
+                partnerNpcId: PLAYER_ID,
+              },
+            }
+          : n,
+      ),
+      relationships: {
+        [buildRelationshipKey(PLAYER_ID, NPC_ID)]: {
+          affinity: 70,
+          trust: 66,
+          respect: 40,
+          fear: 0,
+          loyalty: 48,
+          intimacyStage: 'committed',
+        },
+      },
+    }
+
+    const result = tickPregnancyProgress(state)
+    const heir = result.house.houseHeirs[0]
+    expect(heir).toBeDefined()
+    expect(heir!.legitimacyStatus).toBe('hidden')
+    expect(heir!.originStory).toMatch(/ward|protection|register/i)
   })
 })

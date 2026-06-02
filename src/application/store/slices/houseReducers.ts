@@ -2,12 +2,13 @@ import { current } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../../domain'
-import type { HouseExteriorTier } from '../../../domain/game/contracts'
+import type { HouseExteriorTier, NpcPairingPolicy } from '../../../domain/game/contracts'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../content/equipmentCatalog'
 import { computeRepairCost } from '../../commands/durability'
 import { formatMarks } from '../../../domain/game/currency'
-import { computeExteriorTier } from '../../commands/commitExteriorTier'
 import { acceptWard as acceptWardCommand, formalizeAdultWard as formalizeAdultWardCommand, type WardOriginId } from '../../commands/houseWard'
+import { setNpcPairingPolicy as setNpcPairingPolicyCommand } from '../../commands/setHousePolicy'
+import { getRoomRepairDays } from '../../commands/houseRepairs'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
 export const houseReducers = {
@@ -45,43 +46,20 @@ export const houseReducers = {
     const room = state.house.rooms.find((r) => r.roomId === action.payload)
     if (!room) return
     if (!['damaged', 'stripped', 'collapsed', 'destroyed'].includes(room.state)) return
+    if (room.repairDaysRemaining > 0) return
     if (state.money < room.repairCost) return
+    const repairDays = getRoomRepairDays(room)
+    if (repairDays <= 0) return
     state.money -= room.repairCost
-    room.state = 'intact'
-    room.repairCost = 0
-
-    const ROSTER_BONUS_BY_ROOM: Record<string, number> = {
-      'room-servant-quarters': 1,
-      'room-barracks': 1,
-      'room-east-wing': 2,
-    }
-    const bonus = ROSTER_BONUS_BY_ROOM[room.roomId] ?? 0
-    if (bonus > 0) {
-      state.house.rosterBonus = (state.house.rosterBonus ?? 0) + bonus
-    }
-
-    const REPAIR_MESSAGES: Record<string, string> = {
-      'room-bureau': `${room.name} restored. The house has a place for its accounts again.`,
-      'room-kitchen': `${room.name} repaired. The smell of proper cooking returns to the house.`,
-      'room-study': `${room.name} cleared and shelved. A quiet place for thought and learning.`,
-      'room-master-chamber': `${room.name} restored. The lord's chamber is fit to receive again.`,
-      'room-servant-quarters': `${room.name} cleared and re-fitted. The house can house ${bonus} more soul${bonus > 1 ? 's' : ''} in service.`,
-      'room-barracks': `${room.name} rebuilt. Bunks and gear racks — room for ${bonus} more fighter${bonus > 1 ? 's' : ''}.`,
-      'room-garret': `${room.name} shored up. The top floor breathes again.`,
-      'room-east-wing': `${room.name} reclaimed at great cost. The house is whole again. ${bonus} more roster slots unlocked.`,
-    }
+    room.repairDaysRemaining = repairDays
     state.activityLog.unshift({
-      id: `log-${state.day}-${state.timeSlot}-repair-${room.roomId}`,
+      id: `log-${state.day}-${state.timeSlot}-repair-start-${room.roomId}`,
       day: state.day,
       timeSlot: state.timeSlot,
       category: 'economy',
-      message: REPAIR_MESSAGES[room.roomId] ?? `${room.name} repaired. The house reclaims another room.`,
+      message: `${room.name} repair crews are engaged. ${repairDays} day${repairDays !== 1 ? 's' : ''} of work remain.`,
     })
-
-    const newTier = computeExteriorTier(current(state) as GameState)
-    if (newTier !== state.house.exteriorState) {
-      state.house.exteriorState = newTier
-    }
+    if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
   },
 
   unlockVault(state: GameState) {
@@ -197,7 +175,10 @@ export const houseReducers = {
     action: PayloadAction<{ wardId: string } & Parameters<typeof formalizeAdultWardCommand>[2]>,
   ) {
     const { wardId, ...baseNpc } = action.payload
-    const snapshot = current(state) as GameState
-    return formalizeAdultWardCommand(snapshot, wardId, baseNpc)
+    return formalizeAdultWardCommand(current(state) as GameState, wardId, baseNpc)
+  },
+
+  setNpcPairingPolicy(state: GameState, action: PayloadAction<NpcPairingPolicy>) {
+    return setNpcPairingPolicyCommand(current(state) as GameState, action.payload)
   },
 }

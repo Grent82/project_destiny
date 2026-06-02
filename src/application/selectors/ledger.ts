@@ -80,6 +80,9 @@ export const selectLedgerSummary = createSelector([selectGame], (game) => {
     houseName: game.householdLore.houseName,
     day: game.day,
     debtAmount: game.debtAmount,
+    debtCreditorFactionId: game.debtCreditorFactionId,
+    debtCreditorName:
+      contentCatalog.factionsById.get(game.debtCreditorFactionId)?.name ?? game.debtCreditorFactionId,
     debtDueDay: game.debtDueDay,
     debtPaid: game.debtPaid,
     debtCrisisTriggered: game.debtCrisisTriggered,

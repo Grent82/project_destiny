@@ -20,6 +20,21 @@ export const selectHouseHeirs = createSelector([selectGame], (game): Heir[] => g
 
 export const selectHouseRooms = createSelector([selectGame], (game) => game.house.rooms)
 
+export const selectAssignableHouseRooms = createSelector([selectGame], (game) =>
+  game.house.rooms
+    .filter((room) => room.state === 'intact')
+    .map((room) => ({ roomId: room.roomId, name: room.name })),
+)
+
+export const selectHouseRoomOccupancy = createSelector([selectGame], (game) =>
+  game.house.rooms.map((room) => ({
+    roomId: room.roomId,
+    occupants: game.roster
+      .filter((npc) => npc.roomAssignment === room.roomId)
+      .map((npc) => ({ npcId: npc.npcId, name: npc.name, assignment: npc.assignment })),
+  })),
+)
+
 export const selectHouseRepairSummary = createSelector([selectGame], (game) => {
   const rooms = game.house.rooms
   const totalRepairCost = rooms.reduce((sum, r) => sum + r.repairCost, 0)

@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { selectRosterDetail, selectRosterEntries } from '../../application'
+import { formatNpcAssignmentLabel, formatWorkingIncomePerDay } from '../../application/content/assignmentDisplay'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { getJobForNpc } from '../../application/content/jobCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
-import { CURRENCY_UNIT } from '../../domain/game/currency'
 const ROSTER_GROUPS = [
   { key: 'deployed', label: 'Deployed' },
   { key: 'assigned_title', label: 'On Duty' },
@@ -85,7 +85,7 @@ export function RosterScreen() {
                         const job = getJobForNpc(entry.skills)
                         return (
                           <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
-                            {' — '}{job.name} — ~{entry.workingIncome} {CURRENCY_UNIT}/day
+                            {' — '}{job.name} — ~{formatWorkingIncomePerDay(entry.workingIncome)}
                           </span>
                         )
                       })()}
@@ -97,6 +97,7 @@ export function RosterScreen() {
                     )}
                     <div className="badge-row">
                       <span className="badge">{entry.status}</span>
+                      <span className="badge">{formatNpcAssignmentLabel(entry.assignment)}</span>
                     </div>
                     <div className="roster-mini-stats">
                       <div className="mini-stat">

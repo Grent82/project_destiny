@@ -55,6 +55,18 @@ export const rosterReducers = {
     npc.assignment = action.payload.assignment as typeof npc.assignment
   },
 
+  setNpcRoomAssignment(state: GameState, action: PayloadAction<{ npcId: string; roomId: string | null }>) {
+    const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+    if (!npc) return
+    if (action.payload.roomId === null) {
+      npc.roomAssignment = null
+      return
+    }
+    const room = state.house.rooms.find((entry) => entry.roomId === action.payload.roomId)
+    if (!room || room.state !== 'intact') return
+    npc.roomAssignment = room.roomId
+  },
+
   setNpcTrainingFocus(state: GameState, action: PayloadAction<{ npcId: string; skill: string | null }>) {
     const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
     if (!npc) return

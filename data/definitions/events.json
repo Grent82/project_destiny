@@ -73,7 +73,7 @@
     "choices": [
       {
         "id": "choice-accept-meeting",
-        "label": "Accept the meeting",
+        "label": "Attend the meeting on Court terms",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -949,7 +949,7 @@
   {
     "id": "event-npc-marion-warning",
     "title": "Marion Intercepts You",
-    "description": "Marion catches you before you leave. She does not ask. She tells.",
+    "description": "Marion catches you at the door before a night run. Unrest has the streets wrong and she is not making conversation: if you are going out tonight, you are taking backup.",
     "triggerConditions": {
       "minUnrest": 50,
       "probability": 0.65,
@@ -958,11 +958,11 @@
     "choices": [
       {
         "id": "choice-hear-her-out",
-        "label": "Listen",
+        "label": "Hear the warning and take the escort",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Marion catches you at the door. \"The city is wrong tonight. You are not going alone. Do not argue.\" You do not argue."
+            "message": "Marion catches you at the door. \"The city is wrong tonight. You are not going alone. Do not argue.\" You let her set the escort."
           }
         ]
       }
@@ -974,7 +974,7 @@
       "marion-vale"
     ],
     "sourceDistrictId": null,
-    "sourceNpcId": null,
+    "sourceNpcId": "npc-marion-vale",
     "presentationFlavour": null
   },
   {
@@ -1020,7 +1020,7 @@
     "choices": [
       {
         "id": "choice-take-supplies",
-        "label": "Accept the supplies",
+        "label": "Take the supplies without comment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -1299,7 +1299,7 @@
     "choices": [
       {
         "id": "choice-accept-treatment",
-        "label": "Accept the treatment",
+        "label": "Let Cress finish dressing the wound",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -1922,7 +1922,7 @@
   {
     "id": "event-marion-first-success",
     "title": "Marion Takes Note",
-    "description": "You return from a completed job. Marion is waiting in the entrance hall \u2014 not to greet you, you understand. She was already there for other reasons. But she looks at you differently now.",
+    "description": "You return from a completed job to find Marion in the entrance hall with the house ledgers under her arm. She was not waiting to praise you. She was counting who came back with marks instead of excuses, and tonight your name lands differently.",
     "triggerConditions": {
       "completedQuestCountMin": 1,
       "requiredRosterNpcId": "npc-marion-vale",
@@ -1931,7 +1931,7 @@
     "choices": [
       {
         "id": "choice-marion-success-acknowledge",
-        "label": "Nod in passing.",
+        "label": "Return the nod and keep moving",
         "outcomes": [
           {
             "type": "adjustNpcRelationship",
@@ -1947,7 +1947,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Marion watches you pass. Something shifts in her expression. She has revised her estimate upward."
+            "message": "Marion watches you pass with the ledgers tucked to her side. The nod she gives is brief, but it is the first one that reads as earned."
           }
         ]
       }
@@ -1962,7 +1962,7 @@
     "repeatable": false,
     "cooldownDays": 30,
     "sourceDistrictId": null,
-    "sourceNpcId": null,
+    "sourceNpcId": "npc-marion-vale",
     "presentationFlavour": null
   },
   {
@@ -3056,15 +3056,21 @@
   {
     "id": "event-marion-milestone-motivation",
     "title": "Marion Speaks Plainly",
-    "description": "Marion corners you after the others have gone. She does not make speeches. She tells you what she is actually here for \u2014 not the marks, not the work. Something older and quieter. You listen.",
+    "description": "After the house settles for the night, Marion stops you in the corridor instead of letting the moment pass. This is not about wages or assignments. She is finally telling you why she stayed with the house after everything else broke.",
     "triggerConditions": {
-      "dayMin": 1,
+      "completedQuestCountMin": 1,
+      "requiredRosterNpcId": "npc-marion-vale",
+      "npcRelationshipMin": {
+        "npcId": "npc-marion-vale",
+        "axis": "trust",
+        "min": 65
+      },
       "probability": 1.0
     },
     "choices": [
       {
         "id": "choice-marion-listen",
-        "label": "Listen without interrupting",
+        "label": "Let Marion speak plainly",
         "outcomes": [
           {
             "type": "adjustNpcRelationship",
@@ -3074,17 +3080,17 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Marion told you something she has not told anyone else. That is worth something."
+            "message": "Marion finally says the quiet part aloud: she stayed for the house, and for you. Trust like that changes the room."
           }
         ]
       },
       {
         "id": "choice-marion-deflect",
-        "label": "Keep it professional",
+        "label": "Keep the conversation on house business",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Marion closes up. She does not bring it up again."
+            "message": "You steer the talk back to ledgers and assignments. Marion lets you. Whatever personal truth she meant to offer stays unspoken."
           }
         ]
       }
@@ -3200,7 +3206,7 @@
     "choices": [
       {
         "id": "choice-vael-accept-network",
-        "label": "Accept the arrangement",
+        "label": "Let Vael bring the network to ground",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4201,39 +4207,6 @@
     "presentationFlavour": null
   },
   {
-    "id": "event-tutorial-end-day-rhythm",
-    "title": "The Day Turns",
-    "description": "At day's end, wages pull from your accounts. Your people's health, hunger, stress, and morale all shift based on their assignment and conditions. City events fire. Faction standings drift.\n\nEnd Day from the Dashboard. Don't let days run without a plan \u2014 the debt does not wait.",
-    "triggerConditions": {
-      "isFirstRun": true,
-      "dayMin": 2,
-      "dayMax": 2,
-      "probability": 1
-    },
-    "choices": [
-      {
-        "id": "choice-noted",
-        "label": "Understood.",
-        "outcomes": [
-          {
-            "type": "addActivityLogEntry",
-            "message": "The rhythm of the house: plan, act, end the day, review."
-          }
-        ]
-      }
-    ],
-    "isAutoResolved": false,
-    "tags": [
-      "tutorial",
-      "first-run",
-      "mechanics"
-    ],
-    "repeatable": false,
-    "sourceDistrictId": null,
-    "sourceNpcId": null,
-    "presentationFlavour": null
-  },
-  {
     "id": "event-tutorial-equip-before-combat",
     "title": "Ready Your People",
     "description": "Ida Rhys arrived capable but unequipped. Before any field deployment, visit the Roster screen and assign a weapon and armor through the Loadout tab.\n\nAn unequipped operative fights at a significant disadvantage. The shops carry weapons and armor \u2014 buy before you send anyone into the field.",
@@ -4850,7 +4823,7 @@
     "choices": [
       {
         "id": "choice-accept",
-        "label": "Accept it.",
+        "label": "Let him go and read the silence for what it is.",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4993,7 +4966,7 @@
     "choices": [
       {
         "id": "choice-accept",
-        "label": "Accept the pipeline.",
+        "label": "Fold the pipeline into house business.",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -5115,7 +5088,7 @@
       },
       {
         "id": "choice-replace-them",
-        "label": "Accept the refusal and look for harder hands.",
+        "label": "Leave the refusal behind and recruit harder hands.",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -5475,7 +5448,7 @@
     "choices": [
       {
         "id": "choice-bond-accept",
-        "label": "Accept the offer",
+        "label": "Sell the bond on the offered terms",
         "outcomes": [
           {
             "type": "transferBondedNpc"

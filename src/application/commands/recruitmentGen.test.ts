@@ -83,6 +83,24 @@ describe('generateDistrictHireOffers', () => {
       const offer = state.availableForHire.find((o) => o.npcId === 'npc-marion-vale')
       expect(offer?.turnsAvailable).toBe(4)
     })
+
+    it('extends hire offer visibility when the house has an intact reception room', () => {
+      const state = makeState({
+        house: {
+          ...initialGameStateSnapshot.house,
+          rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+            room.roomId === 'room-entrance-hall'
+              ? { ...room, roomFunction: 'reception' as const }
+              : room,
+          ),
+        },
+      })
+
+      generateDistrictHireOffers(state, 'district-harbor')
+      const offer = state.availableForHire.find((o) => o.npcId === 'npc-marion-vale')
+
+      expect(offer?.turnsAvailable).toBe(6)
+    })
   })
 
   describe('independent NPCs', () => {
@@ -94,6 +112,27 @@ describe('generateDistrictHireOffers', () => {
       generateDistrictHireOffers(state, 'district-harbor', 80)
       const offeredIds = state.availableForHire.map((o) => o.npcId)
       expect(offeredIds).toContain('npc-sable-wrent')
+    })
+  })
+
+  describe('reception room function', () => {
+    it('adds one extra candidate to the district offer pool', () => {
+      const baseState = makeState()
+      const receptionState = makeState({
+        house: {
+          ...initialGameStateSnapshot.house,
+          rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+            room.roomId === 'room-entrance-hall'
+              ? { ...room, roomFunction: 'reception' as const }
+              : room,
+          ),
+        },
+      })
+
+      generateDistrictHireOffers(baseState, 'district-harbor', 80)
+      generateDistrictHireOffers(receptionState, 'district-harbor', 80)
+
+      expect(receptionState.availableForHire.length).toBeGreaterThan(baseState.availableForHire.length)
     })
   })
 

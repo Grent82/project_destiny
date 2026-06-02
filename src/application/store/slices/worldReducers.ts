@@ -12,6 +12,154 @@ import { buildEventRumorEntry } from '../../commands/spawnEventRumor'
 import { contentCatalog, getNpcDefinitions } from '../../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
+const relationshipAxisLabels = {
+  affinity: 'affinity',
+  respect: 'respect',
+  fear: 'fear',
+  trust: 'trust',
+  loyalty: 'loyalty',
+} as const
+
+const cityDialLabels = {
+  control: 'City control',
+  prosperity: 'City prosperity',
+  unrest: 'City unrest',
+  corruption: 'City corruption',
+} as const
+
+const cityResourceLabels = {
+  foodSecurity: 'Food security',
+  waterAccess: 'Water access',
+  materialStock: 'Material stock',
+} as const
+
+function describeDelta(delta: number) {
+  return delta > 0 ? 'rises' : 'falls'
+}
+
+function buildResolvedEventSummary(
+  state: GameState,
+  eventId: string,
+  choiceId: string,
+  sourceNpcId: string | null,
+) {
+  const template = contentCatalog.eventsById.get(eventId)
+  if (!template) return null
+
+  const choice = template.choices.find((entry) => entry.id === choiceId)
+  if (!choice) return null
+
+  const sourceNpcName = sourceNpcId
+    ? (contentCatalog.npcsById.get(sourceNpcId)?.name ?? null)
+    : null
+
+  const playerEffects: string[] = []
+  const npcEffects: string[] = []
+  const worldEffects: string[] = []
+  const narrativeOutcomeLines: string[] = []
+
+  for (const outcome of choice.outcomes) {
+    switch (outcome.type) {
+      case 'addCredits':
+        if (typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          playerEffects.push(
+            outcome.delta > 0
+              ? `You gain ${outcome.delta} marks.`
+              : `You lose ${Math.abs(outcome.delta)} marks.`,
+          )
+        }
+        break
+      case 'adjustNpcRelationship': {
+        const npcId = outcome.npcId ?? outcome.target ?? sourceNpcId
+        const npcName = npcId ? contentCatalog.npcsById.get(npcId)?.name ?? 'The contact' : 'The contact'
+        if (outcome.axis && typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          npcEffects.push(
+            `${npcName}'s ${relationshipAxisLabels[outcome.axis]} ${describeDelta(outcome.delta)}.`,
+          )
+        }
+        break
+      }
+      case 'adjustFactionStanding': {
+        const factionName = outcome.target
+          ? contentCatalog.factionsById.get(outcome.target)?.name ?? 'A faction'
+          : 'A faction'
+        if (typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          worldEffects.push(
+            `${factionName} standing ${outcome.delta > 0 ? 'improves' : 'worsens'}.`,
+          )
+        }
+        break
+      }
+      case 'adjustCityDial':
+        if (outcome.target && typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          const label = cityDialLabels[outcome.target as keyof typeof cityDialLabels] ?? outcome.target
+          worldEffects.push(`${label} ${describeDelta(outcome.delta)}.`)
+        }
+        break
+      case 'adjustCityResource':
+        if (outcome.target && typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          const label = cityResourceLabels[outcome.target as keyof typeof cityResourceLabels] ?? outcome.target
+          worldEffects.push(`${label} ${describeDelta(outcome.delta)}.`)
+        }
+        break
+      case 'setCorridorStatus':
+        if (outcome.value) {
+          worldEffects.push(`Corridor status shifts to ${outcome.value}.`)
+        }
+        break
+      case 'createQuestLead': {
+        const questTitle = outcome.questId
+          ? contentCatalog.questsById.get(outcome.questId)?.title ?? outcome.questId
+          : 'A new lead'
+        playerEffects.push(`New lead added: ${questTitle}.`)
+        break
+      }
+      case 'updateQuestStage':
+        playerEffects.push(
+          outcome.objectiveLabel
+            ? `Active work updates: ${outcome.objectiveLabel}.`
+            : 'An active quest changes stage.',
+        )
+        break
+      case 'unlockNpc': {
+        const npcName = outcome.npcId
+          ? contentCatalog.npcsById.get(outcome.npcId)?.name ?? 'A new contact'
+          : 'A new contact'
+        playerEffects.push(`${npcName} becomes available to the house.`)
+        break
+      }
+      case 'addNpcToRoster': {
+        const npcName = outcome.npcId
+          ? contentCatalog.npcsById.get(outcome.npcId)?.name ?? 'A new retainer'
+          : 'A new retainer'
+        playerEffects.push(`${npcName} joins the house.`)
+        break
+      }
+      case 'transferBondedNpc':
+        worldEffects.push('A bonded transfer is set in motion.')
+        break
+      case 'addActivityLogEntry':
+        if (outcome.message) {
+          narrativeOutcomeLines.push(outcome.message)
+        }
+        break
+    }
+  }
+
+  return {
+    eventId,
+    title: template.title,
+    choiceLabel: choice.label,
+    day: state.day,
+    timeSlot: state.timeSlot,
+    sourceNpcName,
+    narrativeOutcome: narrativeOutcomeLines[0] ?? null,
+    playerEffects,
+    npcEffects,
+    worldEffects,
+  }
+}
+
 export const worldReducers = {
   concretizeSite(state: GameState, action: PayloadAction<{ siteId: string }>) {
     return concretizeSiteCommand(state, action.payload.siteId)
@@ -58,6 +206,12 @@ export const worldReducers = {
     )
     const next = {
       ...state,
+      lastResolvedEventSummary: buildResolvedEventSummary(
+        state,
+        eventId,
+        choiceId,
+        matchingInstance?.sourceNpcId ?? template.sourceNpcId ?? null,
+      ),
       pendingEvents,
       eventInstances: matchingInstance
         ? state.eventInstances.map((instance) =>
@@ -72,6 +226,10 @@ export const worldReducers = {
       contextId: matchingInstance?.contextId ?? null,
     }
     return applyOutcomes(next, choice.outcomes, context)
+  },
+
+  dismissResolvedEventSummary(state: GameState) {
+    state.lastResolvedEventSummary = null
   },
 
   travelToDistrict(state: GameState, action: PayloadAction<string>) {

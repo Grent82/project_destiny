@@ -9,6 +9,7 @@ Project Destiny uses a coordinator-led multi-agent workflow with Beads as the on
 - Use the task structure in [docs/task-contract.md](docs/task-contract.md).
 - Use [docs/workflows/bead-creation.md](docs/workflows/bead-creation.md) when creating or refining Beads.
 - Use [docs/workflows/design-review.md](docs/workflows/design-review.md) for any player-facing design work or UX critique.
+- Use [docs/workflows/event-review.md](docs/workflows/event-review.md) when designing or reviewing authored events, tutorial events, or event aftermath presentation.
 - Use [docs/workflows/dialogue-review.md](docs/workflows/dialogue-review.md) when designing or reviewing dialogue trees.
 - Use [docs/workflows/loop-level-verification.md](docs/workflows/loop-level-verification.md) for player-facing loop changes, routing changes, event pacing changes, and aftermath surfaces.
 - Use [docs/workflows/ki-retro.md](docs/workflows/ki-retro.md) when the user asks for lessons learned from a session, workflow errors, collaboration failures, or sustainable process improvements.

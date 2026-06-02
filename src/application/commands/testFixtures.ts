@@ -30,6 +30,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
     intrigue: 11,
   }),
   trainingFocus: null,
+  roomAssignment: null,
   attributes: {
     might: 54,
     agility: 42,

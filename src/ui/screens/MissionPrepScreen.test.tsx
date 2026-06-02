@@ -39,6 +39,8 @@ describe('MissionPrepScreen', () => {
     await user.click(screen.getAllByRole('button', { name: 'Remove from squad' })[0])
 
     expect(screen.getByRole('button', { name: 'Add to squad' })).toBeInTheDocument()
+    expect(screen.getByText('Available')).toBeInTheDocument()
+    expect(screen.queryByText(/^idle$/i)).toBeNull()
 
     await user.click(screen.getByRole('button', { name: 'Add to squad' }))
 

@@ -121,3 +121,42 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     expect(Object.keys(result.factionStandings).filter((k) => k.startsWith('faction-'))).toHaveLength(0)
   })
 })
+
+describe('applyTitleEffects — workshop room function', () => {
+  it('improves focused engineering training when a workshop is assigned to an intact room', () => {
+    const trainingNpc = {
+      ...initialGameStateSnapshot.roster[0]!,
+      npcId: 'npc-marion-vale',
+      assignment: 'training' as const,
+      trainingFocus: 'engineering' as const,
+      skills: {
+        ...initialGameStateSnapshot.roster[0]!.skills,
+        engineering: 20,
+      },
+    }
+    const baseState = {
+      ...initialGameStateSnapshot,
+      day: 2,
+      roster: [trainingNpc],
+    }
+    const withWorkshop = {
+      ...baseState,
+      house: {
+        ...baseState.house,
+        rooms: baseState.house.rooms.map((room) =>
+          room.roomId === 'room-bureau'
+            ? { ...room, state: 'intact' as const, repairCost: 0, roomFunction: 'workshop' as const }
+            : room,
+        ),
+      },
+    }
+
+    const baseline = applyTitleEffects(baseState, deterministicRng)
+    const boosted = applyTitleEffects(withWorkshop, deterministicRng)
+
+    const baselineEngineering = baseline.roster.find((npc) => npc.npcId === 'npc-marion-vale')!.skills.engineering
+    const boostedEngineering = boosted.roster.find((npc) => npc.npcId === 'npc-marion-vale')!.skills.engineering
+
+    expect(boostedEngineering).toBeGreaterThan(baselineEngineering)
+  })
+})

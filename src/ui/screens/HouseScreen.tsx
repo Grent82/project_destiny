@@ -1,20 +1,24 @@
 import { useState } from 'react'
 import {
   gameActions,
+  selectAssignableHouseRooms,
   selectDebtStatus,
   selectHouseHeirs,
   selectHouseRepairSummary,
+  selectHouseRoomOccupancy,
   selectHouseRooms,
   selectWards,
 } from '../../application'
+import { HOUSE_ROOM_FUNCTION_EFFECT_SUMMARIES } from '../../application/commands/houseRoomFunctions'
 import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import type { HouseRoom, RoomState } from '../../domain/game/contracts'
+import type { HouseRoom, NpcPairingPolicy, RoomState } from '../../domain/game/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
 import { Link } from 'react-router-dom'
+import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 
 const ROOM_EFFECTS: Record<string, string> = {
-  'room-kitchen': 'When intact: each NPC\'s daily wage drops by 1 Mk. The house feeds its own.',
+  'room-kitchen': 'When intact: each NPC\'s daily wage drops by 1 Mark. The house feeds its own.',
   'room-study': 'When intact: NPCs in training gain +25% skill per day.',
   'room-bureau': 'When intact: working accounts office. Repair to track debts, income, and house obligations from the Ledger.',
   'room-master-chamber': 'When intact: the lord\'s chamber receives visitors. Faction contacts begin to treat the house as a going concern.',
@@ -52,12 +56,35 @@ const STATE_CLASS: Record<RoomState, string> = {
   collapsed: 'house-room--collapsed',
 }
 
+const PAIRING_POLICY_COPY: Record<
+  NpcPairingPolicy,
+  { label: string; description: string; buttonLabel: string }
+> = {
+  open: {
+    label: 'Hands Off',
+    description: 'The house does not intervene in personal bonds.',
+    buttonLabel: 'Keep out of private bonds',
+  },
+  discouraged: {
+    label: 'Quiet Boundaries',
+    description: 'Deep bonds are expected to remain private and uncomplicated.',
+    buttonLabel: 'Expect bonds to stay private',
+  },
+  forbidden: {
+    label: 'Professional Distance',
+    description: 'The house requires professional distance between its members.',
+    buttonLabel: 'Require professional distance',
+  },
+}
+
 function RoomCard({
+  occupants,
   room,
   marks,
   justSearched,
   onSearch,
 }: {
+  occupants: Array<{ npcId: string; name: string }>
   room: HouseRoom
   marks: number
   justSearched: boolean
@@ -67,7 +94,8 @@ function RoomCard({
   const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const canRepair =
     room.repairCost > 0 &&
-    (room.state === 'damaged' || room.state === 'stripped' || room.state === 'collapsed') &&
+    room.repairDaysRemaining === 0 &&
+    (room.state === 'damaged' || room.state === 'stripped' || room.state === 'collapsed' || room.state === 'destroyed') &&
     marks >= room.repairCost
   const canSearch =
     !room.searched &&
@@ -86,6 +114,28 @@ function RoomCard({
 
       {ROOM_EFFECTS[room.roomId] && (
         <p className="house-room__effect">{ROOM_EFFECTS[room.roomId]}</p>
+      )}
+      {room.roomFunction && (
+        <p className="house-room__effect">
+          Assigned purpose: <strong>{room.roomFunction}</strong>. {HOUSE_ROOM_FUNCTION_EFFECT_SUMMARIES[room.roomFunction]}
+        </p>
+      )}
+      {occupants.length > 0 && (
+        <div className="house-room__discovery" style={{ marginTop: '0.45rem' }}>
+          <p className="house-room__effect" style={{ fontStyle: 'normal', marginBottom: '0.25rem' }}>
+            Occupants
+          </p>
+          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
+            {occupants.map((occupant) => (
+              <li key={occupant.npcId}>{occupant.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {room.repairDaysRemaining > 0 && (
+        <p className="house-room__effect">
+          Repairs underway: <strong>{room.repairDaysRemaining}</strong> day{room.repairDaysRemaining !== 1 ? 's' : ''} remaining.
+        </p>
       )}
       {room.state === 'intact' && ROOM_INTACT_FOLLOWUP[room.roomId] && (
         <p className="house-room__effect" style={{ marginTop: '0.35rem' }}>
@@ -155,13 +205,13 @@ function RoomCard({
             onClick={() => dispatch(gameActions.repairRoom(room.roomId))}
             type="button"
           >
-            Repair — {room.repairCost} Mk
+            Repair — {formatMarksAbbrev(room.repairCost)}
           </button>
         )}
-        {room.repairCost > 0 && !canRepair && room.state !== 'intact' && (
+        {room.repairCost > 0 && !canRepair && room.state !== 'intact' && room.repairDaysRemaining === 0 && (
           <p className="house-room__cost-note">
             {marks < room.repairCost
-              ? `Needs ${room.repairCost} Mk (short ${room.repairCost - marks} Mk)`
+              ? `Needs ${formatMarksAbbrev(room.repairCost)} (short ${formatMarksAbbrev(room.repairCost - marks)})`
               : STATE_LABELS[room.state]}
           </p>
         )}
@@ -181,7 +231,7 @@ function RoomCard({
           <p className="house-room__cost-note">Sealed. The hidden catch has not been found.</p>
         )}
         {room.state === 'collapsed' && room.repairCost > 0 && marks < room.repairCost && (
-          <p className="house-room__cost-note">Structural collapse. Clear rubble: {room.repairCost} Mk.</p>
+          <p className="house-room__cost-note">Structural collapse. Clear rubble: {formatMarksAbbrev(room.repairCost)}.</p>
         )}
       </footer>
     </article>
@@ -189,11 +239,16 @@ function RoomCard({
 }
 
 export function HouseScreen() {
+  const dispatch = useAppDispatch()
   const rooms = useAppSelector(selectHouseRooms)
   const summary = useAppSelector(selectHouseRepairSummary)
   const debt = useAppSelector(selectDebtStatus)
   const wards = useAppSelector(selectWards)
   const heirs = useAppSelector(selectHouseHeirs)
+  const assignableRooms = useAppSelector(selectAssignableHouseRooms)
+  const roomOccupancy = useAppSelector(selectHouseRoomOccupancy)
+  const roster = useAppSelector((state) => state.game.roster)
+  const pairingPolicy = useAppSelector((state) => state.game.house.npcPairingPolicy)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
 
   return (
@@ -215,11 +270,11 @@ export function HouseScreen() {
         <span>
           Total repairs needed:{' '}
           <strong className={summary.totalRepairCost > debt.marks ? 'text-danger' : ''}>
-            {summary.totalRepairCost} Mk
+            {formatMarks(summary.totalRepairCost)}
           </strong>
         </span>
         <span>
-          On hand: <strong>{debt.marks} Mk</strong>
+          On hand: <strong>{formatMarks(debt.marks)}</strong>
         </span>
       </div>
 
@@ -228,12 +283,90 @@ export function HouseScreen() {
           <RoomCard
             key={room.roomId}
             marks={debt.marks}
+            occupants={roomOccupancy.find((entry) => entry.roomId === room.roomId)?.occupants ?? []}
             room={room}
             justSearched={room.roomId === justSearchedId}
             onSearch={() => setJustSearchedId(room.roomId)}
           />
         ))}
       </div>
+
+      <section className="house-wards-section">
+        <h2>Room Assignments</h2>
+        <p className="summary">
+          Decide who actually lives and works in each restored part of the house. These placements
+          are narrative signals first: they make the house feel occupied, not abstract.
+        </p>
+        {roster.length === 0 ? (
+          <p className="quest-briefing">No one is currently available to house.</p>
+        ) : (
+          <div className="mission-list">
+            {roster.map((npc) => (
+              <div key={npc.npcId} className="mission-row">
+                <div className="mission-row-header">
+                  <strong>{npc.name}</strong>
+                  <span className="badge">{npc.assignment.replace('_', ' ')}</span>
+                </div>
+                <label className="quest-briefing" style={{ display: 'block', marginBottom: '0.35rem' }}>
+                  Assign room
+                  <select
+                    aria-label={`Assign ${npc.name} to room`}
+                    className="title-picker"
+                    onChange={(event) =>
+                      dispatch(
+                        gameActions.setNpcRoomAssignment({
+                          npcId: npc.npcId,
+                          roomId: event.target.value || null,
+                        }),
+                      )
+                    }
+                    style={{ display: 'block', marginTop: '0.3rem', maxWidth: '20rem' }}
+                    value={npc.roomAssignment ?? ''}
+                  >
+                    <option value="">No fixed room</option>
+                    {assignableRooms.map((room) => (
+                      <option key={room.roomId} value={room.roomId}>
+                        {room.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="house-wards-section">
+        <h2>Household Policy</h2>
+        <p className="summary">
+          Marion can keep the house out of private attachments, insist they stay discreet, or
+          require strict professional distance. The rule here shapes what bonds are tolerated under
+          this roof.
+        </p>
+        <div className="mission-row">
+          <div className="mission-row-header">
+            <strong>{PAIRING_POLICY_COPY[pairingPolicy].label}</strong>
+            <span className="badge">Current rule</span>
+          </div>
+          <p className="quest-briefing">{PAIRING_POLICY_COPY[pairingPolicy].description}</p>
+          <div className="quest-offer-actions" style={{ marginTop: '0.75rem' }}>
+            {(Object.entries(PAIRING_POLICY_COPY) as Array<
+              [NpcPairingPolicy, (typeof PAIRING_POLICY_COPY)[NpcPairingPolicy]]
+            >).map(([policy, copy]) => (
+              <button
+                key={policy}
+                className={policy === pairingPolicy ? 'action-button action-button--secondary' : 'action-button action-button--ghost'}
+                disabled={policy === pairingPolicy}
+                onClick={() => dispatch(gameActions.setNpcPairingPolicy(policy))}
+                type="button"
+              >
+                {copy.buttonLabel}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {wards.length > 0 && (
         <section className="house-wards-section">

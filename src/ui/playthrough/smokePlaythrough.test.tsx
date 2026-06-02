@@ -62,6 +62,7 @@ describe('Browser smoke — golden-path dashboard', () => {
 
     // GlobalStatusBar renders "Day 3 · morning" style
     expect(screen.getByText('3')).toBeTruthy()
+    expect(screen.getByText('500 Mk')).toBeTruthy()
   })
 
   it('End Day button in GlobalStatusBar advances the day', async () => {
@@ -82,6 +83,20 @@ describe('Browser smoke — golden-path dashboard', () => {
     })
 
     expect(store.getState().game.day).toBe(2)
+  })
+
+  it('shows end-of-day guidance in the status bar on day 2 instead of a tutorial event', () => {
+    const store = createGameStore({ ...initialGameStateSnapshot, day: 2, isFirstRun: false })
+
+    render(
+      <AppProviders store={store}>
+        <GlobalStatusBar />
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('note', { name: 'End day guidance' })).toHaveTextContent(
+      /The day turns here/i,
+    )
   })
 
   it('shows active quest in the Dashboard Recommended Actions panel', () => {

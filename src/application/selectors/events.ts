@@ -1,8 +1,13 @@
+import { createSelector } from '@reduxjs/toolkit'
+
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 
-export const selectPendingEvents = (state: RootState) =>
-  state.game.pendingEvents.filter((event) => event.firedOnDay <= state.game.day)
+const selectGame = (state: RootState) => state.game
+
+export const selectPendingEvents = createSelector([selectGame], (game) =>
+  game.pendingEvents.filter((event) => event.firedOnDay <= game.day),
+)
 
 export const selectPendingEventsCount = (state: RootState) =>
   selectPendingEvents(state).length
@@ -13,3 +18,6 @@ export const selectFirstPendingEvent = (state: RootState) => {
   const template = contentCatalog.eventsById.get(pending.eventId)
   return template ?? null
 }
+
+export const selectLastResolvedEventSummary = (state: RootState) =>
+  state.game.lastResolvedEventSummary

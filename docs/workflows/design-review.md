@@ -12,6 +12,8 @@ Use this workflow before and after work that changes player-facing game design:
 - onboarding
 - information architecture
 
+For authored event scenes or tutorial-event delivery, also use [docs/workflows/event-review.md](event-review.md).
+
 This workflow exists because `green tests` do not prove `good player experience`.
 
 ## When to run

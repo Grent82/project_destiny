@@ -20,6 +20,7 @@ const baseState: GameState = {
   selectedSquadNpcIds: [],
   activeCombat: null,
   lastEncounterSummary: null,
+  lastResolvedEventSummary: null,
   pendingEvents: [],
   currentDistrictId: null,
   availableForHire: [],
@@ -56,6 +57,7 @@ const baseState: GameState = {
     missingRelatives: [],
   },
   debtAmount: 800,
+  debtCreditorFactionId: 'faction-gilded-court',
   debtDueDay: 30,
   debtPaid: false,
   debtCrisisTriggered: false,
@@ -77,8 +79,8 @@ const baseState: GameState = {
   resolvedDialogueChoices: {},
   house: {
     rooms: [
-      { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false, roomFunction: null },
-      { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false, roomFunction: null },
+      { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
+      { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
     ],
     vaultUnlocked: false,
     rosterBonus: 0,

@@ -6,6 +6,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import { getRelationship } from '../../domain/relationships/contracts'
 import { addQuestLeadIfNew } from './questLifecycle'
 import { applyRelationshipDelta } from './adjustRelationship'
+import { hasIntactHouseRoomFunction } from './houseRoomFunctions'
 
 const CLIMATE_MULTIPLIER: Record<RumorClimate, number> = {
   dry: 0.6,
@@ -234,6 +235,26 @@ function pruneRumors(rumors: Rumor[], currentDay: number): Rumor[] {
   return alive.slice(0, MAX_ACTIVE_CITYWIDE)
 }
 
+function preserveArchiveRumor(state: GameState, rumors: Rumor[]): Rumor[] {
+  if (!hasIntactHouseRoomFunction(state, 'archive')) return rumors
+
+  const target = [...rumors]
+    .filter((rumor) => rumor.heat < 100)
+    .sort((a, b) => {
+      if (b.credibility !== a.credibility) return b.credibility - a.credibility
+      if (b.heat !== a.heat) return b.heat - a.heat
+      return a.id.localeCompare(b.id)
+    })[0]
+
+  if (!target) return rumors
+
+  return rumors.map((rumor) =>
+    rumor.id === target.id
+      ? { ...rumor, heat: clamp(rumor.heat + 5, 0, 100), lastSpreadDay: state.day }
+      : rumor,
+  )
+}
+
 /**
  * Apply relationship effects from a set of rumor templates to the player.
  * Fires only effects matching `trigger` and only when not already applied.
@@ -317,6 +338,7 @@ export function applyRumorSpread(state: GameState, rng: Rng): GameState {
 
   const preSpread = next.rumors
   const { afterSpread, afterDecay } = spreadAndDecay(preSpread, next, rng)
+  const archived = preserveArchiveRumor(next, afterDecay)
 
   // Find rumors that crossed heat ≥ 60 this tick (onVerify trigger)
   const verified = afterSpread.filter((r) => {
@@ -325,7 +347,7 @@ export function applyRumorSpread(state: GameState, rng: Rng): GameState {
   })
 
   const newBondVisibility = updateBondVisibility(next.bondVisibility, afterSpread)
-  const pruned = pruneRumors(afterDecay, next.day)
+  const pruned = pruneRumors(archived, next.day)
 
   // Build the returning state and apply consequence + relationship mutations
   const result: GameState = {

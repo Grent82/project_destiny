@@ -5,6 +5,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
 import { computeWorkingIncome } from '../selectors/roster'
 import { formatMarks } from '../../domain/game/currency'
+import { hasIntactHouseRoomFunction } from './houseRoomFunctions'
 
 const SKILL_KEYS: (keyof Skills)[] = [
   'melee',
@@ -273,6 +274,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     const hasTrainer = next.roster.some(
       (r) => r.activeTitle === 'title-trainer' && r.assignment !== 'deployed',
     )
+    const hasWorkshop = hasIntactHouseRoomFunction(next, 'workshop')
     // Study intact: quiet place for study grants +25% training gain
     const studyIntact = next.house.rooms.some((r) => r.roomId === 'room-study' && r.state === 'intact')
     // Time slot affects training retention: morning is best, night is worst
@@ -305,7 +307,9 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       }
 
       const multiplier = skillGainMultiplier(currentVal)
-      const rawGain = baseGain * (focusedSkill ? 1.5 : 1) * studyMult * timeSlotTrainMult
+      const workshopBonus =
+        hasWorkshop && (skillKey === 'engineering' || skillKey === 'crafting') ? 1 : 0
+      const rawGain = baseGain * (focusedSkill ? 1.5 : 1) * studyMult * timeSlotTrainMult + workshopBonus
       const effectiveGain = Math.max(1, Math.round(rawGain * multiplier))
       const newVal = Math.min(rarityCap, currentVal + effectiveGain)
 

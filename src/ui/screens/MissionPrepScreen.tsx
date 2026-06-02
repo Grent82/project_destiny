@@ -16,6 +16,7 @@ import { selectNpcStateThresholds } from '../../application'
 import { checkLineTheyWontCross } from '../../application/npc/checkLineTheyWontCross'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { contentCatalog } from '../../application/content/contentCatalog'
+import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
 
 export function MissionPrepScreen() {
   const { questId = null } = useParams<{ questId: string }>()
@@ -283,7 +284,7 @@ export function MissionPrepScreen() {
             {summary.selectedSquad.map((entry) => (
               <div key={entry.npcId} className="mission-row">
                 <strong>{entry.name}</strong>
-                <span>{entry.assignment}</span>
+                <span>{formatNpcAssignmentLabel(entry.assignment)}</span>
                 <span>Morale {entry.morale}</span>
                 <span>Stress {entry.stress}</span>
                 <button
@@ -307,7 +308,7 @@ export function MissionPrepScreen() {
               summary.availableRoster.map((entry) => (
                 <div key={entry.npcId} className="mission-row">
                   <strong>{entry.name}</strong>
-                  <span>{entry.assignment}</span>
+                  <span>{formatNpcAssignmentLabel(entry.assignment)}</span>
                   <span>
                     Loyalty {entry.loyalty}
                     {entry.loyalty <= NPC_STATE_THRESHOLDS.LOYALTY_REFUSE_DEPLOY_THRESHOLD && (

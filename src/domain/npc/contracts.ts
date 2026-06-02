@@ -344,6 +344,7 @@ export const npcRuntimeStateSchema = z
     status: npcStatusSchema,
     assignment: npcAssignmentSchema,
     assignedDistrictId: z.string().nullable().default(null),
+    roomAssignment: entityIdSchema.nullable().default(null),
     activeTitle: entityIdSchema.nullable(),
     wagesOwedDays: nonNegativeIntegerSchema,
     contractWagePerDay: z.number().optional(),

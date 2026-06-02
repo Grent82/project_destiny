@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
+import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
 import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
@@ -155,13 +156,6 @@ interface NpcDetailPanelProps {
 
 const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as const
 
-const ASSIGNMENT_LABELS: Record<string, string> = {
-  idle: 'Available for deployment',
-  working: 'Earns Marks, cannot deploy or train',
-  training: 'Gains skill, no income',
-  recovering: 'Recovering from injury',
-}
-
 function AssignmentSelector({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
   const isSystemControlled = detail.assignment === 'deployed' || detail.assignment === 'assigned_title'
@@ -170,7 +164,7 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
   if (isSystemControlled) {
     return (
       <div className="assignment-selector">
-        <span className="text-muted">Assignment: {detail.assignment.replace('_', ' ')} (system)</span>
+        <span className="text-muted">Assignment: {formatNpcAssignmentLabel(detail.assignment)} (system)</span>
         {detail.assignment === 'assigned_title' && (
           <p className="assignment-warning">This NPC is on title duty and cannot be deployed.</p>
         )}
@@ -187,16 +181,16 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
             key={a}
             type="button"
             className={detail.assignment === a ? 'badge badge-positive' : 'badge'}
-            title={ASSIGNMENT_LABELS[a]}
+            title={getNpcAssignmentDetail(a) ?? undefined}
             onClick={() => dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: a }))}
           >
-            {a}
+            {formatNpcAssignmentLabel(a)}
           </button>
         ))}
       </div>
-      {detail.assignment in ASSIGNMENT_LABELS && (
+      {getNpcAssignmentDetail(detail.assignment) && (
         <p className="text-muted" style={{ fontSize: '0.8em', marginTop: '0.25rem' }}>
-          {ASSIGNMENT_LABELS[detail.assignment]}
+          {getNpcAssignmentDetail(detail.assignment)}
         </p>
       )}
       {detail.assignment === 'working' && (() => {
@@ -205,7 +199,7 @@ function AssignmentSelector({ detail }: { detail: NpcDetail }) {
           <div style={{ marginTop: '0.5rem', fontFamily: 'var(--font-body)', fontSize: 'var(--size-sm)', color: 'var(--text-muted)' }}>
             <div>Job: {job.name}</div>
             <div>District: {job.districtHint}</div>
-            <div>Est. daily: ~{income} Mk</div>
+            <div>Est. daily: ~{formatWorkingIncomePerDay(income)}</div>
           </div>
         )
       })()}
@@ -399,7 +393,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
 
         <div className="badge-row">
           <span className="badge">{detail.status}</span>
-          <span className="badge">{detail.assignment.replace('_', ' ')}</span>
+          <span className="badge">{formatNpcAssignmentLabel(detail.assignment)}</span>
         </div>
 
         {detail.factionAffinity && (

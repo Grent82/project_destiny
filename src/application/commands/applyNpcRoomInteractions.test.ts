@@ -13,6 +13,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     status: 'mercenary',
     assignment: 'idle',
     assignedDistrictId: null,
+    roomAssignment: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

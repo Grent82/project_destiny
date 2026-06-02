@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { gameActions, gameSliceReducer } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
 import { endDay, wageForStatus } from './endDay'
@@ -289,5 +290,35 @@ describe('endDay', () => {
     const nextBase = endDay(baseState)
     const nextLow = endDay(lowProsperityState)
     expect(nextLow.money).toBeLessThanOrEqual(nextBase.money)
+  })
+
+  it('repairRoom starts a timed repair instead of restoring the room immediately', () => {
+    const repaired = gameSliceReducer(initialGameStateSnapshot, gameActions.repairRoom('room-bureau'))
+    const bureau = repaired.house.rooms.find((room) => room.roomId === 'room-bureau')!
+
+    expect(bureau.state).toBe('damaged')
+    expect(bureau.repairDaysRemaining).toBe(3)
+    expect(repaired.money).toBe(initialGameStateSnapshot.money - 15)
+  })
+
+  it('endDay decrements room repair timers and restores the room when the timer reaches zero', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      house: {
+        ...initialGameStateSnapshot.house,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-bureau'
+            ? { ...room, repairDaysRemaining: 1 }
+            : room,
+        ),
+      },
+    }
+
+    const next = endDay(state)
+    const bureau = next.house.rooms.find((room) => room.roomId === 'room-bureau')!
+
+    expect(bureau.state).toBe('intact')
+    expect(bureau.repairCost).toBe(0)
+    expect(bureau.repairDaysRemaining).toBe(0)
   })
 })

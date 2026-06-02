@@ -58,6 +58,7 @@ export function promoteWardToRoster(
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,
+    roomAssignment: null,
     attributes,
     skills: skills as NpcRuntimeState['skills'],
     traits,

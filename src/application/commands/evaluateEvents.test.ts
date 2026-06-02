@@ -7,6 +7,7 @@ import { applyOutcomes } from './applyEventOutcome'
 import { contentCatalog } from '../content/contentCatalog'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { selectPendingEvents } from '../selectors/events'
+import { buildRelationshipKey } from '../../domain/relationships/contracts'
 
 /** Deterministic rng that always returns the provided value — for test control. */
 const alwaysFire = () => 0   // rng() > probability is always false → event fires
@@ -264,6 +265,12 @@ describe('resolveEvent reducer', () => {
     expect(next.pendingEvents.find((e) => e.eventId === 'event-unpaid-wages-unrest')).toBeUndefined()
     expect(next.money).toBe(450) // -50 Marks
     expect(next.cityDials.unrest).toBe(62) // -8
+    expect(next.lastResolvedEventSummary).toMatchObject({
+      eventId: 'event-unpaid-wages-unrest',
+      choiceLabel: 'Pay a goodwill bonus (50 Marks)',
+    })
+    expect(next.lastResolvedEventSummary?.playerEffects).toContain('You lose 50 marks.')
+    expect(next.lastResolvedEventSummary?.worldEffects).toContain('City unrest falls.')
   })
 
   it('does nothing for unknown eventId', () => {
@@ -273,6 +280,26 @@ describe('resolveEvent reducer', () => {
       gameActions.resolveEvent({ eventId: 'event-does-not-exist', choiceId: 'choice-foo' }),
     )
     expect(next).toEqual(initialState)
+  })
+
+  it('can dismiss the last resolved event summary', () => {
+    const initialState = makeState({
+      lastResolvedEventSummary: {
+        eventId: 'event-unpaid-wages-unrest',
+        title: 'Pay the House',
+        choiceLabel: 'Pay extra wages',
+        day: 10,
+        timeSlot: 'morning',
+        sourceNpcName: 'Marion Vale',
+        narrativeOutcome: 'The house steadies for one more night.',
+        playerEffects: ['You lose 50 marks.'],
+        npcEffects: [],
+        worldEffects: ['City unrest falls.'],
+      },
+    })
+
+    const next = gameSliceReducer(initialState, gameActions.dismissResolvedEventSummary())
+    expect(next.lastResolvedEventSummary).toBeNull()
   })
 })
 
@@ -300,7 +327,8 @@ describe('isFirstRun tutorial events', () => {
     const tutorialIds = next.pendingEvents
       .map((e) => e.eventId)
       .filter((id) => id.startsWith('event-tutorial-'))
-    expect(tutorialIds.length).toBeGreaterThanOrEqual(4)
+    expect(tutorialIds.length).toBeGreaterThanOrEqual(3)
+    expect(tutorialIds).not.toContain('event-tutorial-end-day-rhythm')
   })
 
   it('does not fire tutorial events after isFirstRun is false', () => {
@@ -319,6 +347,21 @@ describe('isFirstRun tutorial events', () => {
       .map((e) => e.eventId)
       .filter((id) => id.startsWith('event-tutorial-'))
     expect(tutorialIds.length).toBe(0)
+  })
+
+  it('does not generically reschedule the Marion milestone event after it already fired', () => {
+    const marionKey = buildRelationshipKey('player', 'npc-marion-vale')
+    const state = makeState({
+      completedQuestIds: ['quest-1'],
+      relationships: {
+        ...initialGameStateSnapshot.relationships,
+        [marionKey]: { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 },
+      },
+      lastFiredDay: { 'event-marion-milestone-motivation': 9 },
+    })
+
+    const next = evaluateEvents(state, alwaysFire)
+    expect(next.pendingEvents.some((e) => e.eventId === 'event-marion-milestone-motivation')).toBe(false)
   })
 })
 

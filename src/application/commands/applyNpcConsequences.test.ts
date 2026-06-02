@@ -107,4 +107,10 @@ describe('checkRelationshipMilestones (via applyNpcConsequences)', () => {
     const result = applyNpcConsequences(state, state.relationships, noop)
     expect(result.lastFiredDay['rel-milestone-npc-marion-vale-trust-65']).toBe(7)
   })
+
+  it('records the event id in lastFiredDay to prevent generic rescheduling', () => {
+    const state = { ...stateWithRelationship('npc-marion-vale', 67, 0), day: 7 }
+    const result = applyNpcConsequences(state, state.relationships, noop)
+    expect(result.lastFiredDay['event-marion-milestone-motivation']).toBe(7)
+  })
 })

@@ -38,8 +38,14 @@ describe('ContractBoardScreen', () => {
 
     expect(screen.getByRole('heading', { name: 'Available Leads' })).toBeInTheDocument()
     expect(screen.getByText(/Issuer:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Payer:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Stakeholder:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Likely fallout:/i)).toBeInTheDocument()
     expect(screen.getByText(/Civic Compact/i)).toBeInTheDocument()
     expect(screen.getByText(/Posted at Harbor Guild Hall in Harbor Ward/i)).toBeInTheDocument()
+    expect(screen.getByText(/Compact quartermasters release the fee only if the checkpoint is cleaned up quietly/i)).toBeInTheDocument()
+    expect(screen.getByText(/Harbor gate wardens and dockside traffic trapped inside the shakedown/i)).toBeInTheDocument()
+    expect(screen.getByText(/Compact standing \+8; Unrest -5/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Accept contract' }))
 

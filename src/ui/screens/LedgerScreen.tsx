@@ -1,6 +1,6 @@
 import { gameActions, selectFactionSummaries, selectLedgerSummary, selectDailyIncomeBreakdown } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { formatMarks } from '../../domain/game/currency'
+import { formatMarks, formatMarksPerDay } from '../../domain/game/currency'
 
 const QUEST_STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -67,14 +67,17 @@ export function LedgerScreen() {
         ) : (
           <div className="ledger-debt-block__body">
             <p>
-              <strong>{ledger.debtAmount} Mk</strong> owed. Due on day {ledger.debtDueDay}.
+              Creditor: <strong>{ledger.debtCreditorName}</strong>
+            </p>
+            <p>
+              <strong>{formatMarks(ledger.debtAmount)}</strong> owed. Due on day {ledger.debtDueDay}.
             </p>
             <p className="ledger-debt-block__balance">
-              Current marks: <strong>{ledger.marks} Mk</strong>
+              Current marks: <strong>{formatMarks(ledger.marks)}</strong>
               {ledger.marks < ledger.debtAmount && (
                 <span className="text-danger">
                   {' '}
-                  — short {ledger.debtAmount - ledger.marks} Mk
+                  — short {formatMarks(ledger.debtAmount - ledger.marks)}
                 </span>
               )}
             </p>
@@ -84,7 +87,7 @@ export function LedgerScreen() {
               onClick={() => dispatch(gameActions.payDebt({ amount: ledger.debtAmount }))}
               type="button"
             >
-              Pay Debt — {ledger.debtAmount} Mk
+              Pay Debt — {formatMarks(ledger.debtAmount)}
             </button>
           </div>
         )}
@@ -97,25 +100,25 @@ export function LedgerScreen() {
           <tbody>
             <tr>
               <td>Working income</td>
-              <td className="ledger-table__value text-success">+{formatMarks(income.workingNpcIncome)}/day</td>
+              <td className="ledger-table__value text-success">+{formatMarksPerDay(income.workingNpcIncome)}</td>
             </tr>
             <tr>
               <td>Title income</td>
-              <td className="ledger-table__value text-success">+{formatMarks(income.titleIncome)}/day</td>
+              <td className="ledger-table__value text-success">+{formatMarksPerDay(income.titleIncome)}</td>
             </tr>
             <tr>
               <td>Wages</td>
-              <td className="ledger-table__value text-danger">−{formatMarks(income.wages)}/day</td>
+              <td className="ledger-table__value text-danger">−{formatMarksPerDay(income.wages)}</td>
             </tr>
             <tr className="ledger-table__row--total">
               <td>Net</td>
               <td className={`ledger-table__value ${income.net >= 0 ? 'text-success' : 'text-danger'}`}>
-                {income.net >= 0 ? '+' : ''}{formatMarks(income.net)}/day
+                {income.net >= 0 ? '+' : ''}{formatMarksPerDay(income.net)}
               </td>
             </tr>
             <tr className="ledger-table__row--total">
               <td>Marks on hand</td>
-              <td className="ledger-table__value">{ledger.marks} Mk</td>
+              <td className="ledger-table__value">{formatMarks(ledger.marks)}</td>
             </tr>
             {!ledger.debtPaid && (
               <tr>
@@ -125,7 +128,7 @@ export function LedgerScreen() {
                 <td
                   className={`ledger-table__value ${ledger.willMeetDebt ? 'text-success' : 'text-danger'}`}
                 >
-                  {ledger.projectedMarksByDebt} Mk{' '}
+                  {formatMarks(ledger.projectedMarksByDebt)}{' '}
                   {ledger.willMeetDebt ? '✓ on track' : '✗ shortfall'}
                 </td>
               </tr>

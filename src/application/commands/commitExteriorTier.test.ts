@@ -19,6 +19,7 @@ const baseRoom = (id: string, state: HouseRoom['state'], roomFunction: HouseRoom
   name: id,
   state,
   repairCost: 0,
+  repairDaysRemaining: 0,
   searched: false,
   roomFunction,
 })

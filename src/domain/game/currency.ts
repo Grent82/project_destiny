@@ -8,3 +8,11 @@ export function formatMarks(amount: number): string {
 export function formatMarksAbbrev(amount: number): string {
   return `${amount} ${CURRENCY_ABBREV}`
 }
+
+export function formatMarksPerDay(amount: number): string {
+  return `${formatMarks(amount)}/day`
+}
+
+export function formatMarksPerWeek(amount: number): string {
+  return `${formatMarks(amount)}/week`
+}

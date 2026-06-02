@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { gameActions, selectAvailableForHire, selectRosterCapacity, selectRarityDescriptions, selectRaritySkillCaps } from '../../application'
 import { selectLedgerSummary } from '../../application/selectors/ledger'
-import { formatMarks } from '../../domain/game/currency'
+import { formatMarks, formatMarksPerDay, formatMarksPerWeek } from '../../domain/game/currency'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useVenueContext } from './locationContext'
@@ -68,11 +68,11 @@ export function RecruitmentScreen() {
       </button>
 
       <div className="burn-rate-panel">
-        <span className="badge">Daily wages: {ledger.dailyExpenses} Mk/day</span>
+        <span className="badge">Daily wages: {formatMarksPerDay(ledger.dailyExpenses)}</span>
         <span className={`badge ${runwayClass}`}>
           Runway: {ledger.daysOfRunwayAtCurrentRate === 999 ? '∞' : `${ledger.daysOfRunwayAtCurrentRate}d`}
         </span>
-        <span className="badge">Treasury: {marks} Mk</span>
+        <span className="badge">Treasury: {formatMarks(marks)}</span>
         <span className="badge">
           Roster: {rosterSize}/{totalSlots}{houseBonus > 0 ? ` (+${houseBonus} house)` : ''}
         </span>
@@ -162,12 +162,12 @@ export function RecruitmentScreen() {
                   {offer.background}
                 </p>
                 <div className="badge-row">
-                  <span className="badge">{offer.wagePerDay} Mk/day</span>
+                  <span className="badge">{formatMarksPerDay(offer.wagePerDay)}</span>
                   <span className={`badge ${affordabilityClass}`} title="Weekly ongoing wage cost">
-                    {weeklyOngoing} Mk/week ongoing
+                    {formatMarksPerWeek(weeklyOngoing)} ongoing
                   </span>
                   {offer.signingBonus > 0 && (
-                    <span className="badge">Signing: {offer.signingBonus} Mk</span>
+                    <span className="badge">Signing: {formatMarks(offer.signingBonus)}</span>
                   )}
                   <span className="badge">{offer.turnsAvailable} day{offer.turnsAvailable !== 1 ? 's' : ''} remaining</span>
                   {offer.source === 'combat' && (

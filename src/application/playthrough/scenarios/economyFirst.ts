@@ -13,13 +13,26 @@ import type { PlaythroughScenario } from '../contracts'
 import { dispatchStep, assertStep, checkpointStep, advanceDaysStep, assertion } from '../contracts'
 import { gameActions } from '../../store/gameSlice'
 import { initialStateWithIda } from '../../commands/testFixtures'
+import { buildRelationshipKey } from '../../../domain/relationships/contracts'
 
 const SQUAD_NPC = 'npc-marion-vale'
+const MARION_REL_KEY = buildRelationshipKey('player', SQUAD_NPC)
 
 const startingState = {
   ...initialStateWithIda,
+  isFirstRun: false,
   money: 500,
   selectedSquadNpcIds: [],
+  relationships: {
+    ...initialStateWithIda.relationships,
+    [MARION_REL_KEY]: {
+      affinity: 10,
+      respect: 10,
+      fear: 5,
+      trust: 58,
+      loyalty: 40,
+    },
+  },
   expeditionState: {
     status: 'idle' as const,
     destinationId: null,

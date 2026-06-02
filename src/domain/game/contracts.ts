@@ -86,6 +86,7 @@ export const houseRoomSchema = z
     name: z.string(),
     state: roomStateSchema,
     repairCost: z.number().int().nonnegative(),
+    repairDaysRemaining: z.number().int().nonnegative().default(0),
     searched: z.boolean().default(false),
     roomFunction: roomFunctionSchema.nullable().default(null),
   })
@@ -188,6 +189,21 @@ const lastInvestigationResultSchema = z
   })
   .strict()
 
+const lastResolvedEventSummarySchema = z
+  .object({
+    eventId: z.string(),
+    title: z.string(),
+    choiceLabel: z.string(),
+    day: z.number().int().positive(),
+    timeSlot: timeSlotSchema,
+    sourceNpcName: z.string().nullable().default(null),
+    narrativeOutcome: z.string().nullable().default(null),
+    playerEffects: z.array(z.string()).default([]),
+    npcEffects: z.array(z.string()).default([]),
+    worldEffects: z.array(z.string()).default([]),
+  })
+  .strict()
+
 export const gameStateSchema = z
   .object({
     day: positiveIntegerSchema,
@@ -216,6 +232,7 @@ export const gameStateSchema = z
       linkedQuestId: z.string().nullable(),
       noteLines: z.array(z.string()),
     }).nullable().default(null),
+    lastResolvedEventSummary: lastResolvedEventSummarySchema.nullable().default(null),
     pendingEvents: z.array(pendingEventSchema).default([]),
     eventInstances: z.array(eventInstanceSchema).default([]),
     currentDistrictId: z.string().nullable().default(null),
@@ -291,6 +308,7 @@ export const gameStateSchema = z
     }).default(() => ({ weapons: [], armors: [] })),
     isFirstRun: z.boolean().default(true),
     debtAmount: z.number().int().nonnegative().default(800),
+    debtCreditorFactionId: z.string().default('faction-gilded-court'),
     debtDueDay: z.number().int().positive().default(30),
     debtPaid: z.boolean().default(false),
     debtCrisisTriggered: z.boolean().default(false),
@@ -327,17 +345,17 @@ export const gameStateSchema = z
     resolvedDialogueChoices: z.record(z.string(), z.array(z.string())).default({}),
     house: houseStateSchema.default(() => ({
       rooms: [
-        { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, searched: false, roomFunction: null },
-        { roomId: 'room-marion-quarters', name: "Marion's Quarters", state: 'intact' as const, repairCost: 0, searched: false, roomFunction: null },
-        { roomId: 'room-bureau', name: 'Bureau', state: 'damaged' as const, repairCost: 15, searched: false, roomFunction: null },
-        { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, searched: false, roomFunction: null },
-        { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, searched: false, roomFunction: null },
-        { roomId: 'room-master-chamber', name: "Master's Chamber", state: 'stripped' as const, repairCost: 45, searched: false, roomFunction: null },
-        { roomId: 'room-servant-quarters', name: 'Servant Quarters', state: 'collapsed' as const, repairCost: 60, searched: false, roomFunction: null },
-        { roomId: 'room-barracks', name: 'Barracks', state: 'stripped' as const, repairCost: 80, searched: false, roomFunction: null },
-        { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, searched: false, roomFunction: null },
-        { roomId: 'room-garret', name: 'Garret', state: 'collapsed' as const, repairCost: 130, searched: false, roomFunction: null },
-        { roomId: 'room-east-wing', name: 'East Wing', state: 'destroyed' as const, repairCost: 200, searched: false, roomFunction: null },
+        { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-marion-quarters', name: "Marion's Quarters", state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-bureau', name: 'Bureau', state: 'damaged' as const, repairCost: 15, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-master-chamber', name: "Master's Chamber", state: 'stripped' as const, repairCost: 45, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-servant-quarters', name: 'Servant Quarters', state: 'collapsed' as const, repairCost: 60, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-barracks', name: 'Barracks', state: 'stripped' as const, repairCost: 80, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-garret', name: 'Garret', state: 'collapsed' as const, repairCost: 130, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-east-wing', name: 'East Wing', state: 'destroyed' as const, repairCost: 200, repairDaysRemaining: 0, searched: false, roomFunction: null },
       ],
       vaultUnlocked: false,
       rosterBonus: 0,

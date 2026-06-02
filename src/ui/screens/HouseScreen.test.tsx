@@ -1,8 +1,8 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
-import { createGameStore } from '../../application'
+import { createGameStore, gameActions } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
 import { AppProviders } from '../app/AppProviders'
 import { HouseScreen } from './HouseScreen'
@@ -24,7 +24,7 @@ describe('HouseScreen — search result lifecycle', () => {
     const user = userEvent.setup()
     renderHouseScreen()
 
-    const bureauCard = screen.getByText('Bureau').closest('article')!
+    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
     await user.click(within(bureauCard).getByRole('button', { name: 'Search' }))
 
     // Full discovery message visible in fresh state
@@ -96,20 +96,29 @@ describe('HouseScreen — repair outcomes', () => {
     const user = userEvent.setup()
     // Give player enough money to afford bureau repair (15 Mk)
     const richState = { ...initialGameStateSnapshot, money: 100 }
-    renderHouseScreen(richState)
+    const store = renderHouseScreen(richState)
 
     const bureauCard = screen.getByText('Bureau').closest('article')!
     await user.click(within(bureauCard).getByRole('button', { name: /Repair/i }))
 
-    // After repair: post-repair follow-up link visible
-    expect(within(bureauCard).getByText(/Accounts are in order/i)).toBeInTheDocument()
-    expect(within(bureauCard).getByRole('link', { name: /View House Accounts/i })).toBeInTheDocument()
+    expect(within(bureauCard).getByText(/Repairs underway/i)).toBeInTheDocument()
+
+    act(() => {
+      store.dispatch(gameActions.endDay())
+      store.dispatch(gameActions.endDay())
+      store.dispatch(gameActions.endDay())
+    })
+
+    // After the timer completes: post-repair follow-up link visible
+    const repairedBureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
+    expect(within(repairedBureauCard).getByText(/Accounts are in order/i)).toBeInTheDocument()
+    expect(within(repairedBureauCard).getByRole('link', { name: /View House Accounts/i })).toBeInTheDocument()
   })
 
   it('shows explicit payoff for kitchen before repair', () => {
     renderHouseScreen()
     const kitchenCard = screen.getByText('Kitchen').closest('article')!
-    expect(within(kitchenCard).getByText(/daily wage drops by 1 Mk/i)).toBeInTheDocument()
+    expect(within(kitchenCard).getByText(/daily wage drops by 1 Mark/i)).toBeInTheDocument()
   })
 
   it('shows explicit payoff for master chamber before repair', () => {
@@ -119,6 +128,25 @@ describe('HouseScreen — repair outcomes', () => {
     expect(chamberCard).toBeTruthy()
     const effectText = chamberCard!.textContent ?? ''
     expect(effectText).toMatch(/faction contacts/i)
+  })
+
+  it('shows assigned room function effect summaries when a purpose is set', () => {
+    const assignedState = {
+      ...initialGameStateSnapshot,
+      house: {
+        ...initialGameStateSnapshot.house,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-bureau'
+            ? { ...room, state: 'intact' as const, repairCost: 0, roomFunction: 'archive' as const }
+            : room,
+        ),
+      },
+    }
+    renderHouseScreen(assignedState)
+
+    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
+    expect(within(bureauCard).getByText(/Assigned purpose:/i)).toBeInTheDocument()
+    expect(within(bureauCard).getByText(/keeps one active rumor from cooling as quickly/i)).toBeInTheDocument()
   })
 })
 
@@ -188,5 +216,48 @@ describe('HouseScreen — ward list', () => {
 
     expect(screen.getByText(/Bond held/i)).toBeInTheDocument()
     expect(screen.getByText(/faction-civic-compact/i)).toBeInTheDocument()
+  })
+})
+
+describe('HouseScreen — household policy', () => {
+  it('shows current pairing policy and lets the player change it from the house screen', async () => {
+    const user = userEvent.setup()
+    const store = renderHouseScreen()
+
+    expect(screen.getByRole('heading', { name: 'Household Policy' })).toBeInTheDocument()
+    expect(screen.getByText(/The house does not intervene in personal bonds/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Require professional distance' }))
+
+    expect(store.getState().game.house.npcPairingPolicy).toBe('forbidden')
+    expect(screen.getByText(/The house requires professional distance between its members/i)).toBeInTheDocument()
+  })
+})
+
+describe('HouseScreen — room occupancy', () => {
+  it('lets the player assign a roster NPC to a room and shows the occupant on the room card', async () => {
+    const user = userEvent.setup()
+    const readyHouseState = {
+      ...initialGameStateSnapshot,
+      house: {
+        ...initialGameStateSnapshot.house,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-bureau'
+            ? { ...room, state: 'intact' as const, repairCost: 0 }
+            : room,
+        ),
+      },
+    }
+    const store = renderHouseScreen(readyHouseState)
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Assign Marion Vale to room' }),
+      'room-bureau',
+    )
+
+    expect(store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')?.roomAssignment).toBe('room-bureau')
+
+    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
+    expect(within(bureauCard).getByText('Marion Vale')).toBeInTheDocument()
   })
 })

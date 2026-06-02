@@ -1927,15 +1927,46 @@ a:focus-visible,
   font-weight: 600;
   color: var(--color-accent, #c8a96e);
 }
+.event-modal-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #888);
+}
 .event-modal-description {
   font-size: 0.9rem;
   line-height: 1.6;
   color: var(--color-text-secondary, #aaa);
 }
+.event-modal-meta {
+  margin: -0.5rem 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary, #999);
+}
 .event-modal-choices {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+.event-modal-impact-list {
+  display: grid;
+  gap: 0.9rem;
+}
+.event-modal-impact-section h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text, #ddd);
+}
+.event-modal-impact-section ul {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.25rem;
+  color: var(--color-text-secondary, #aaa);
+  font-size: 0.85rem;
 }
 .event-modal-choice-btn {
   text-align: left;
@@ -1956,6 +1987,24 @@ a:focus-visible,
   font-size: 0.75rem;
   color: var(--color-text-secondary, #888);
   text-align: right;
+}
+
+.status-tutorial-hint {
+  margin: 0 1.25rem 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 6px;
+  background:
+    linear-gradient(135deg, rgba(200, 169, 110, 0.12), rgba(69, 88, 110, 0.12)),
+    rgba(14, 11, 9, 0.92);
+  color: var(--color-text-secondary, #c6c0b4);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.status-tutorial-hint strong,
+.status-tutorial-hint span {
+  color: var(--color-text, #f0e6d2);
 }
 
 /* Assignment badges */

@@ -352,9 +352,12 @@ export function ContractBoardScreen() {
                     {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
                   </div>
                   <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
+                  <p className="quest-briefing"><strong>Payer:</strong> {presentation.payerLabel}</p>
                   <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
+                  <p className="quest-briefing"><strong>Stakeholder:</strong> {presentation.stakeholderLabel}</p>
                   <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
                   <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
+                  <p className="quest-briefing"><strong>Likely fallout:</strong> {presentation.likelyConsequence}</p>
                   <div className="quest-meta">
                     {template.rewardMarks > 0 && <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>}
                     {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}

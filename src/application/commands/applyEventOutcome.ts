@@ -190,6 +190,7 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[], contex
                 activeTitle: null,
                 wagesOwedDays: 0,
                 trainingFocus: null,
+                roomAssignment: null,
                 attributes: { ...npcDef.baseAttributes },
                 skills: { ...npcDef.startingSkills },
                 traits: { ...npcDef.startingTraits },

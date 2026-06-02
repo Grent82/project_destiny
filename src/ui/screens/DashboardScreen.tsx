@@ -18,7 +18,7 @@ import {
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
 import { ResourceStatusPanel } from '../components/ResourceStatusPanel'
-import { formatMarks } from '../../domain/game/currency'
+import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 
 const CITY_DIAL_TOOLTIPS: Record<string, string> = {
   control: 'Control — degree of civic order. High control reduces crime and faction conflict. Low control enables unrest and criminal activity.',
@@ -75,9 +75,9 @@ export function DashboardScreen(props: DashboardScreenProps) {
         </button>
       </div>
       <div className="dashboard-critical-strip">
-        <span className="badge">{summary.money} Mk</span>
+        <span className="badge">{formatMarksAbbrev(summary.money)}</span>
         {!debt.debtPaid && !debt.debtCrisisTriggered && (
-          <span className="badge badge-warning">Debt: {debt.debtAmount} Mk · {debt.daysRemaining}d left</span>
+          <span className="badge badge-warning">Debt: {formatMarksAbbrev(debt.debtAmount)} · {debt.daysRemaining}d left</span>
         )}
         {debt.debtCrisisTriggered && (
           <span className="badge badge-warning">DEBT DEFAULTED</span>
@@ -162,6 +162,8 @@ export function DashboardScreen(props: DashboardScreenProps) {
               <>
                 <h2>Debt Claim — <span className="debt-status debt-status--active">Active</span></h2>
                 <p>
+                  Creditor: <strong>{debt.debtCreditorName}</strong>
+                  <br />
                   {formatMarks(debt.debtAmount)} owed · Due: Day {debt.debtDueDay} · {debt.daysRemaining} day{debt.daysRemaining !== 1 ? 's' : ''} remaining
                 </p>
                 <button

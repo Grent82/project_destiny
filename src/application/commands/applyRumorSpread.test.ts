@@ -383,6 +383,7 @@ describe('applyRumorSpread', () => {
         status: 'mercenary',
         assignment: districtId ? 'working' : 'idle',
         assignedDistrictId: districtId,
+        roomAssignment: null,
         activeTitle: null,
         wagesOwedDays: 0,
         trainingFocus: null,
@@ -549,6 +550,40 @@ describe('applyRumorSpread', () => {
       const sornKey = 'player→npc-enemy-lady-sorn'
       // Should not have fired again
       expect(result.relationships[sornKey]?.fear ?? 0).toBe(0)
+    })
+  })
+
+  describe('archive room function', () => {
+    it('preserves one active rumor with extra archive heat each day', () => {
+      const state = makeState({
+        rumors: [
+          makeRumor({ id: 'r-1', credibility: 80, heat: 35 }),
+          makeRumor({ id: 'r-2', credibility: 40, heat: 35, text: 'A second line of inquiry.' }),
+        ],
+        house: {
+          ...makeState().house,
+          rooms: [
+            {
+              roomId: 'room-bureau',
+              name: 'Bureau',
+              state: 'intact',
+              repairCost: 0,
+              repairDaysRemaining: 0,
+              searched: false,
+              roomFunction: 'archive',
+            },
+          ],
+          vaultUnlocked: false,
+          rosterBonus: 0,
+        },
+      })
+
+      const result = applyRumorSpread(state, alwaysFail)
+
+      const primaryRumor = result.rumors.find((rumor) => rumor.id === 'r-1')
+      const secondaryRumor = result.rumors.find((rumor) => rumor.id === 'r-2')
+
+      expect(primaryRumor?.heat).toBeGreaterThan(secondaryRumor?.heat ?? 0)
     })
   })
 })

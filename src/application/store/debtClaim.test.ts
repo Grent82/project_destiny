@@ -37,4 +37,15 @@ describe('payDebt action', () => {
     expect(state.debtAmount).toBe(0)
     expect(state.debtPaid).toBe(true)
   })
+
+  it('improves standing with the named creditor when the debt is fully settled', () => {
+    const store = makeRichStore()
+    const beforeStanding = store.getState().game.factionStandings['faction-gilded-court'] ?? 0
+
+    store.dispatch(gameActions.payDebt({ amount: 500 }))
+
+    const state = store.getState().game
+    expect(state.debtCreditorFactionId).toBe('faction-gilded-court')
+    expect(state.factionStandings['faction-gilded-court']).toBe(beforeStanding + 3)
+  })
 })

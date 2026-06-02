@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store/gameStore'
+import { contentCatalog } from '../content/contentCatalog'
 import {
   getRenownLevel,
   getRenownProgress,
@@ -30,6 +31,9 @@ export const selectDashboardSummary = createSelector([selectGame], (game) => {
 
 export const selectDebtStatus = createSelector([selectGame], (game) => ({
   debtAmount: game.debtAmount,
+  debtCreditorFactionId: game.debtCreditorFactionId,
+  debtCreditorName:
+    contentCatalog.factionsById.get(game.debtCreditorFactionId)?.name ?? game.debtCreditorFactionId,
   debtDueDay: game.debtDueDay,
   debtPaid: game.debtPaid,
   debtCrisisTriggered: game.debtCrisisTriggered,

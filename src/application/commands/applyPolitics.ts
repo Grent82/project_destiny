@@ -5,6 +5,13 @@ import { getCouncilVoteTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
 
+function resolveDebtInterestIncrement(creditorStanding: number): number {
+  if (creditorStanding >= 30) return 5
+  if (creditorStanding >= 0) return 10
+  if (creditorStanding >= -40) return 15
+  return 20
+}
+
 /** Steps 7, 7b, 7c, 7d, 7e, 7f: council votes, faction pressure, rival orgs, city stability, debt. */
 export function applyPolitics(state: GameState, rng: Rng = Math.random): GameState {
   let next = state
@@ -126,13 +133,17 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     }
   }
 
-  // Step 7f: Debt interest — each unpaid day past day 15 adds 10 Marks
+  // Step 7f: Debt interest — creditor pressure is worse when standing is hostile
   if (!next.debtPaid && next.day > 15) {
-    next = { ...next, debtAmount: next.debtAmount + 10 }
+    const creditorFactionId = next.debtCreditorFactionId
+    const creditorName = creditorFactionId.replace('faction-', '').replace(/-/g, ' ')
+    const creditorStanding = next.factionStandings[creditorFactionId] ?? 0
+    const interestIncrement = resolveDebtInterestIncrement(creditorStanding)
+    next = { ...next, debtAmount: next.debtAmount + interestIncrement }
     next = appendActivityLogEntry(
       next,
       'system',
-      `Interest accrues on the outstanding debt. The house now owes ${formatMarks(next.debtAmount)}.`,
+      `Interest accrues on the outstanding debt held by ${creditorName}. The house now owes ${formatMarks(next.debtAmount)}.`,
     )
   }
 

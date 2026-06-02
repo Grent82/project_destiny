@@ -22,5 +22,6 @@ describe('RecruitmentScreen', () => {
     expect(screen.getByText(/They tell you how high an operative can be trained/i)).toBeInTheDocument()
     expect(screen.getAllByText(/Rare hands reach elite ceilings/i).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/Skill cap: 90/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/Treasury: 100 Marks/i)).toBeInTheDocument()
   })
 })

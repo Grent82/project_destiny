@@ -5,6 +5,7 @@ import {
   selectAllExpeditionDestinations,
   selectExpeditionStatus,
 } from '../../application'
+import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -125,7 +126,7 @@ export function ExpeditionPrepScreen() {
         <article className="detail-panel">
           <h2>Squad</h2>
           {availableRoster.length === 0 ? (
-            <p className="summary">No idle operatives available.</p>
+            <p className="summary">No {formatNpcAssignmentLabel('idle').toLowerCase()} operatives available.</p>
           ) : (
             <div className="mission-list">
               {availableRoster.map((npc) => {

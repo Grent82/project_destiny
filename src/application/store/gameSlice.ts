@@ -4,6 +4,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { GameState } from '../../domain'
 import { initialGameStateSnapshot } from './initialGameState'
 import { MAX_ACTIVITY_ENTRIES } from '../commands/activityLog'
+import { contentCatalog } from '../content/contentCatalog'
 
 import { combatReducers } from './slices/combatReducers'
 import { dialogueReducers } from './slices/dialogueReducers'
@@ -34,10 +35,33 @@ const gameSlice = createSlice({
     payDebt(state: GameState, action: PayloadAction<{ amount: number }>) {
       const payment = Math.max(0, action.payload.amount)
       const actualPayment = Math.min(payment, state.money)
+      const debtBefore = state.debtAmount
       state.money = Math.max(0, state.money - actualPayment)
       state.debtAmount = Math.max(0, state.debtAmount - actualPayment)
       if (state.debtAmount === 0) {
         state.debtPaid = true
+        const creditorFactionId = state.debtCreditorFactionId
+        const currentStanding = state.factionStandings[creditorFactionId] ?? 0
+        state.factionStandings[creditorFactionId] = Math.min(100, currentStanding + 3)
+        const creditorName =
+          contentCatalog.factionsById.get(creditorFactionId)?.name ?? creditorFactionId
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-debt-paid`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'system',
+          message: `${creditorName} acknowledges the settlement. The note is cleared, though the favor is not forgotten.`,
+        })
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      } else if (actualPayment > 0 && debtBefore > state.debtAmount) {
+        state.activityLog.unshift({
+          id: `log-${state.day}-${state.timeSlot}-debt-payment-${state.activityLog.length}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'economy',
+          message: `Debt payment recorded: ${actualPayment} Marks transferred against the claim.`,
+        })
+        if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       }
     },
 
