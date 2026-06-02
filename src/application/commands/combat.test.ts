@@ -234,6 +234,38 @@ describe('combat commands', () => {
     expect(nextState.activityLog.some((entry) => /driven back/i.test(entry.message))).toBe(true)
   })
 
+  it('settles a combat-linked quest on victory and clears it from active quests', () => {
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!harborwatch) {
+      throw new Error('Expected harborwatch quest in fixtures.')
+    }
+
+    const state = {
+      ...initialStateWithIda,
+      currentDistrictId: 'district-the-warrens',
+      activeQuests: [createQuestRuntime(harborwatch, 1)],
+      selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+    }
+
+    const startedState = startCombatEncounter(state, 'quest-harborwatch')
+    const resolvedState = {
+      ...startedState,
+      activeCombat: startedState.activeCombat
+        ? {
+            ...startedState.activeCombat,
+            outcome: 'victory' as const,
+            activeCombatantId: null,
+          }
+        : null,
+    }
+
+    const nextState = concludeCombatEncounter(resolvedState)
+
+    expect(nextState.activeQuests.find((quest) => quest.questId === 'quest-harborwatch')).toBeUndefined()
+    expect(nextState.completedQuestIds).toContain('quest-harborwatch')
+    expect(nextState.activityLog.some((entry) => /contract fulfilled/i.test(entry.message))).toBe(true)
+  })
+
   describe('district danger level scaling', () => {
     it('enemies in The Below (danger 5) have more health than Harbor Ward (danger 2)', () => {
       const harborState = {

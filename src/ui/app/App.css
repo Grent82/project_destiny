@@ -657,6 +657,30 @@ strong { color: var(--text-secondary); }
   margin-top: 1.5rem;
 }
 
+.combat-action-briefs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.25rem 1.5rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  font-size: 0.8em;
+  color: var(--text-muted);
+}
+
+.combat-action-brief {
+  display: flex;
+  gap: 0.4em;
+}
+
+.combat-action-brief dt {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.combat-action-brief dt::after {
+  content: ':';
+}
+
 .combat-round-separator {
   margin: 0.5rem 0 0.25rem;
   padding: 0.2rem 0.75rem;

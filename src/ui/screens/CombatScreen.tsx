@@ -174,15 +174,15 @@ export function CombatScreen() {
               </button>
             ))}
           </div>
-          <p className="summary">{commandStatusMessage}</p>
-          <div className="stats-grid">
+          <dl className="combat-action-briefs">
             {ACTION_BRIEFS.map((action) => (
-              <article key={action.id}>
-                <h2>{action.label}</h2>
-                <p>{action.detail}</p>
-              </article>
+              <div key={action.id} className="combat-action-brief">
+                <dt>{action.label}</dt>
+                <dd>{action.detail}</dd>
+              </div>
             ))}
-          </div>
+          </dl>
+          <p className="summary">{commandStatusMessage}</p>
 
           <div className="combat-layout">
             <article className="detail-panel">

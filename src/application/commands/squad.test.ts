@@ -86,6 +86,30 @@ describe('squad commands', () => {
     expect(nextState.selectedSquadNpcIds.filter((id) => id === 'npc-marion-vale')).toHaveLength(1)
   })
 
+  it('does not add a working npc to the selected squad', () => {
+    const state = {
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'working' as const } : npc,
+      ),
+    }
+    const nextState = addNpcToSelectedSquad(state, 'npc-ida-rhys')
+
+    expect(nextState.selectedSquadNpcIds).not.toContain('npc-ida-rhys')
+  })
+
+  it('does not add a training npc to the selected squad', () => {
+    const state = {
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'training' as const } : npc,
+      ),
+    }
+    const nextState = addNpcToSelectedSquad(state, 'npc-ida-rhys')
+
+    expect(nextState.selectedSquadNpcIds).not.toContain('npc-ida-rhys')
+  })
+
   it('is a no-op when removing an npc not in the squad', () => {
     const nextState = removeNpcFromSelectedSquad(initialGameStateSnapshot, 'npc-not-in-squad')
 

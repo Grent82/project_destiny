@@ -19,6 +19,11 @@ export function addNpcToSelectedSquad(
     return state
   }
 
+  // Working and training NPCs are on assignment and cannot be deployed
+  if (npc.assignment === 'working' || npc.assignment === 'training') {
+    return state
+  }
+
   if (npc.states.health < MIN_DEPLOYABLE_HEALTH) {
     return state
   }
