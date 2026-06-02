@@ -11,7 +11,15 @@ export const selectMissionPrepSummary = createSelector(
     const selectedIds = new Set(selectedSquadNpcIds)
 
     const selectedSquad = rosterEntries.filter((entry) => selectedIds.has(entry.npcId))
-    const availableRoster = rosterEntries.filter((entry) => !selectedIds.has(entry.npcId))
+    const availableRoster = rosterEntries.filter(
+      (entry) =>
+        !selectedIds.has(entry.npcId) &&
+        entry.assignment !== 'working' &&
+        entry.assignment !== 'training' &&
+        entry.assignment !== 'assigned_title' &&
+        entry.assignment !== 'transferred' &&
+        entry.assignment !== 'recovering'
+    )
 
     return {
       selectedSquad,

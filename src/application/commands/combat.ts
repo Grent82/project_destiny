@@ -63,7 +63,11 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     (npc) =>
       state.selectedSquadNpcIds.includes(npc.npcId) &&
       npc.states.health >= MIN_DEPLOYABLE_HEALTH &&
-      npc.assignment !== 'recovering',
+      npc.assignment !== 'recovering' &&
+      npc.assignment !== 'working' &&
+      npc.assignment !== 'training' &&
+      npc.assignment !== 'assigned_title' &&
+      npc.assignment !== 'transferred',
   )
 
   if (squad.length === 0) {
