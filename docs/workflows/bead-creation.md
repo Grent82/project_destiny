@@ -115,6 +115,17 @@ Split acceptance into three lenses where relevant:
 
 Do not rely only on technical wording when the Bead changes the player experience.
 
+#### "Cannot X" rule
+
+If the Bead introduces or fixes a player-facing constraint ("cannot deploy", "cannot train", "cannot equip", etc.), acceptance **must** explicitly list every code entry point that enforces the constraint:
+
+- Which selector filters it?
+- Which command guards it?
+- Which UI dispatch path blocks it?
+- Is there a shared `isX()` helper, or are guards duplicated?
+
+A Bead that says "working NPCs cannot deploy" but only fixes one of three entry points is incomplete. The acceptance criteria must name all three and require a test for each.
+
 For `runtime too shallow` Beads, acceptance must also define an outcome matrix:
 
 - what `success` means

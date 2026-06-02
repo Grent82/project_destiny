@@ -39,6 +39,26 @@ These standards define how Project Destiny code should be written so multiple ag
 - Prefer deterministic tests over snapshot-heavy tests.
 - Mock only at external boundaries.
 
+### Outcome-asymmetry rule
+
+When a command or event has multiple outcome paths (`victory`/`defeat`, `success`/`failure`, `found`/`not found`), **every distinct outcome must have its own test**.
+
+A passing defeat test does not imply the victory path is correct. A passing success test does not imply the failure branch is correct.
+
+Apply this rule especially to:
+- combat resolution (`concludeCombatEncounter` with `victory`, `defeat`)
+- quest settlement (`settleQuestSuccess`, `settleQuestFailure`)
+- investigation outcomes
+- any command that branches on a boolean flag or enum
+
+When writing a test for one outcome, immediately write the sibling test for the opposite outcome in the same commit.
+
+### Entry-point completeness rule
+
+When a feature has a constraint described to the player (e.g. "cannot deploy", "cannot train", "cannot equip"), **every code entry point that could bypass that constraint must be guarded and tested**.
+
+Do not treat one guard in one location as sufficient. Audit: selector, command, UI dispatch path. All three must enforce the same rule. Shared helpers (e.g. `isDeployable()`) are preferred over ad-hoc per-location guards.
+
 ## Extensibility Rules
 
 - Add new capabilities through stable interfaces where possible.
