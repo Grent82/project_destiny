@@ -116,6 +116,24 @@ When touching `combat.ts`, `endDay.ts`, or `gameSlice.ts`: every flag or field *
 
 Domain functions that need randomness accept an RNG function as an explicit parameter (not `Math.random()` directly). `src/application/commands/seededRng.ts` provides a deterministic RNG for tests.
 
+## UI Work — Playwright MCP
+
+A Playwright MCP server is configured in `.mcp.json` (project root). For any UI/layout/screen work, use it to take screenshots and verify results before committing:
+
+```bash
+pnpm dev   # start dev server first (port 5173)
+# then use playwright MCP tools: playwright_screenshot, playwright_navigate, playwright_click
+```
+
+**UI/UX and Art Direction beads must be labeled:**
+
+```bash
+bd label <id> ui-ux        # interaction, layout, component work
+bd label <id> art-direction # icons, images, visual identity
+```
+
+A UI bead without a label is a gap. This rule applies to all agents (Copilot, Claude Code, Codex).
+
 ## Session Completion
 
 Work is NOT complete until `git push` succeeds:

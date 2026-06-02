@@ -73,6 +73,24 @@ rm -rf directory
 cp -rf source dest
 ```
 
+## UI Work — Playwright MCP
+
+A Playwright MCP server is configured in `.mcp.json`. For any UI/layout/screen work, use it to take screenshots and verify the result visually before committing:
+
+```bash
+pnpm dev   # start dev server first (port 5173)
+# then use playwright MCP tools: playwright_screenshot, playwright_navigate, playwright_click
+```
+
+**UI/UX and Art Direction beads must be labeled.** When creating or updating a bead that touches screens, components, layout, or visual identity:
+
+```bash
+bd label <id> ui-ux        # for interaction and layout work
+bd label <id> art-direction # for visual identity, icons, images
+```
+
+This rule applies to all agents. A UI bead without a label is a gap.
+
 ## Code Change Gates
 
 Run these before **and** after any code change:

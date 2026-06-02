@@ -35,3 +35,34 @@ Shape the information architecture and interaction quality of the game so comple
 - UI acceptance criteria
 - component behavior rules
 - UX review notes
+
+## Tooling
+
+A Playwright MCP server is configured in `.mcp.json` (project root). Use it for any UI work:
+
+```
+# Take a screenshot of the running dev server
+playwright_screenshot url="http://localhost:5173"
+
+# Navigate and screenshot
+playwright_navigate url="http://localhost:5173/combat"
+playwright_screenshot
+```
+
+Start the dev server first: `pnpm dev`
+
+Storybook (when installed): `pnpm storybook` — use for isolated component iteration before integrating into screens.
+
+## Bead Tagging Rule
+
+**Every UI/UX or Art Direction bead must include the label `ui-ux` or `art-direction`.**
+
+When creating a bead that touches screens, components, layout, iconography, or visual identity:
+
+```bash
+bd label <id> ui-ux
+# or
+bd label <id> art-direction
+```
+
+This applies to all agents (Claude Code, Codex, Copilot). Do not create a UI-facing bead without the tag.

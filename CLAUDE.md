@@ -25,6 +25,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Player-facing work must be reviewed for comprehension, route clarity, and visible consequence, not only for passing tests
 - When a session exposed regressions, collaboration failures, or escaped quality issues, follow `docs/workflows/ki-retro.md` and turn the findings into durable artifacts rather than leaving them in chat only
 
+## UI Work — Playwright MCP
+
+A Playwright MCP server is configured in `.mcp.json`. For any UI/layout/screen work, use it to take screenshots and verify results visually:
+
+```bash
+pnpm dev   # start dev server first (port 5173)
+# then use playwright MCP tools: playwright_screenshot, playwright_navigate, playwright_click
+```
+
+**UI/UX and Art Direction beads must be labeled:**
+
+```bash
+bd label <id> ui-ux        # interaction, layout, component work
+bd label <id> art-direction # icons, images, visual identity
+```
+
+A UI bead without a label is a gap. This rule applies to all agents.
+
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
 
