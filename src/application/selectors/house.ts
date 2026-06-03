@@ -14,6 +14,10 @@ import {
 const selectGame = (state: RootState) => state.game
 
 export const selectHouseState = createSelector([selectGame], (game) => game.house)
+export const selectLastDomesticRelationshipBeat = createSelector(
+  [selectHouseState],
+  (house) => house.lastDomesticRelationshipBeat,
+)
 
 /** All recognized succession heirs for the house. */
 export const selectHouseHeirs = createSelector([selectGame], (game): Heir[] => game.house.houseHeirs)

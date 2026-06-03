@@ -68,6 +68,20 @@ function formatExecutionDuration(days: number | null | undefined, watches: numbe
   return null
 }
 
+function resolveReadinessBadge(readiness: { state: string; blocked: boolean }) {
+  switch (readiness.state) {
+    case 'combat-aftermath':
+      return { label: 'Combat aftermath', className: 'badge badge-warning' }
+    case 'combat-setback':
+      return { label: 'Regroup required', className: 'badge badge-warning' }
+    default:
+      return {
+        label: readiness.blocked ? 'Blocked' : 'Ready now',
+        className: `badge ${readiness.blocked ? 'badge-warning' : 'badge-positive'}`,
+      }
+  }
+}
+
 export function ContractBoardScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -97,6 +111,7 @@ export function ContractBoardScreen() {
               {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId, readiness }) => {
                 const isStory = template?.questType === 'story'
                 const isUrgent = (template?.timeLimitDays ?? 99) <= 2
+                const readinessBadge = resolveReadinessBadge(readiness)
                 const daysRemaining = template != null
                   ? getQuestDaysRemaining(runtime, template, currentDay)
                   : null
@@ -119,10 +134,8 @@ export function ContractBoardScreen() {
                     <span className={`badge ${runtime.objectiveMet ? 'badge-positive' : 'badge-warning'}`}>
                       {runtime.objectiveMet ? 'Objective met' : 'Active'}
                     </span>
-                    <span
-                      className={`badge ${readiness.blocked ? 'badge-warning' : 'badge-positive'}`}
-                    >
-                      {readiness.blocked ? 'Blocked' : 'Ready now'}
+                    <span className={readinessBadge.className}>
+                      {readinessBadge.label}
                     </span>
                     {isUrgent && <span className="badge badge-warning">Urgent</span>}
                     {template?.riskLevel && (
@@ -253,6 +266,30 @@ export function ContractBoardScreen() {
                             type="button"
                           >
                             Resume on-site encounter →
+                          </button>
+                        )
+                      }
+
+                      if (readiness.state === 'combat-aftermath') {
+                        return (
+                          <button
+                            className="action-button action-button--primary"
+                            onClick={() => navigate(readiness.route)}
+                            type="button"
+                          >
+                            Review combat aftermath →
+                          </button>
+                        )
+                      }
+
+                      if (readiness.state === 'combat-setback') {
+                        return (
+                          <button
+                            className="action-button action-button--primary"
+                            onClick={() => navigate(readiness.route)}
+                            type="button"
+                          >
+                            Regroup and redeploy →
                           </button>
                         )
                       }

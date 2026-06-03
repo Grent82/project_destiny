@@ -39,7 +39,17 @@
             "condition": {
               "type": "hasItem",
               "value": "item-chit-ledger-removal"
-            }
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-chit-ledger-removal"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "marion-choice-ledger-chit"
+              }
+            ]
           },
           {
             "id": "marion-choice-arrangement-below",
@@ -48,7 +58,17 @@
             "condition": {
               "type": "hasItem",
               "value": "item-note-arrangement-below"
-            }
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-note-arrangement-below"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "marion-choice-arrangement-below"
+              }
+            ]
           },
           {
             "id": "marion-choice-debt-talk",

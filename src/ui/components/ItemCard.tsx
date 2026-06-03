@@ -4,6 +4,7 @@ interface ItemCardProps {
   instanceId: string
   name: string
   category: string
+  description?: string
   quantity: number
   primaryAction?: ItemAction
   onAction: (action: ItemAction) => void
@@ -13,6 +14,7 @@ interface ItemCardProps {
 export function ItemCard({
   name,
   category,
+  description,
   quantity,
   primaryAction,
   onAction,
@@ -24,6 +26,7 @@ export function ItemCard({
         <span className="item-card__name">{name}</span>
         <span className="item-card__category">{category}</span>
         {quantity > 1 && <span className="item-card__quantity">×{quantity}</span>}
+        {description && <span className="item-card__description">{description}</span>}
       </div>
       <div className="item-card__actions">
         {primaryAction && (

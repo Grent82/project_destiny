@@ -73,8 +73,15 @@ describe('endDay — ambition frustration', () => {
     expect(marion.activeTitle).toBeNull()
     expect(marion.assignment).not.toBe('deployed')
 
-    const moraleBefore = marion.states.morale
-    const next = endDay(initialGameStateSnapshot)
+    const isolatedState = {
+      ...initialGameStateSnapshot,
+      roster: initialGameStateSnapshot.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, roomAssignment: null } : npc,
+      ),
+    }
+
+    const moraleBefore = isolatedState.roster.find((r) => r.npcId === 'npc-marion-vale')!.states.morale
+    const next = endDay(isolatedState)
     const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
     expect(marionAfter.states.morale).toBe(Math.max(0, moraleBefore - 2))
 

@@ -31,7 +31,7 @@ describe('site selectors', () => {
         occupancyId: 'occ-marion-quarters',
         npcId: 'npc-marion-vale',
         siteId: PLAYER_HOUSE_SITE_ID,
-        roomId: 'room-marion-quarters',
+        roomId: 'room-quarters',
         role: 'resident',
         visibility: 'public',
         status: 'present',
@@ -43,7 +43,7 @@ describe('site selectors', () => {
     const housePresences = selectPlayerHouseRoomOccupancy(store.getState())
     expect(allPresences).toHaveLength(1)
     expect(housePresences).toHaveLength(1)
-    expect(housePresences[0]?.roomId).toBe('room-marion-quarters')
+    expect(housePresences[0]?.roomId).toBe('room-quarters')
   })
 
   it('can represent a world household and a POI through the same site runtime shape', () => {

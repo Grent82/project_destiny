@@ -26,6 +26,7 @@ import { applyBondServiceEffects } from './bondService'
 import { checkBondAcquisitionOffers, applyNpcHeldConditionDecay } from './bondTransfer'
 import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 import { applyNpcPairing } from './applyNpcPairing'
+import { applyHouseholdIntimacy } from './applyHouseholdIntimacy'
 import { isQuestLeadExpired } from '../../domain/quests/contracts'
 import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
 import { applySiteStateHooks } from './applySiteStateHooks'
@@ -229,6 +230,7 @@ export function endDay(state: GameState): GameState {
 
   // Step 9e-roster: NPC-to-NPC pairing (proximity-gated, compatibility-gated)
   afterEvents = applyNpcPairing(afterEvents, rng)
+  afterEvents = applyHouseholdIntimacy(afterEvents)
 
   // Step 9e: Legacy intent chance and pregnancy tick
   afterEvents = tickLegacyIntent(afterEvents, rng)

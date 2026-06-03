@@ -4,6 +4,7 @@ import {
   selectAssignableHouseRooms,
   selectDebtStatus,
   selectHouseHeirs,
+  selectLastDomesticRelationshipBeat,
   selectHouseRepairSummary,
   selectHouseRoomOccupancy,
   selectHouseRooms,
@@ -26,7 +27,7 @@ const ROOM_EFFECTS: Record<string, string> = {
   'room-barracks': 'When intact: +1 roster slot for trained fighters.',
   'room-east-wing': 'When intact: +2 roster slots. The east wing is habitable again.',
   'room-garret': 'When intact: overlook the street below. Read district movement before it reaches the door.',
-  'room-marion-quarters': 'Marion kept this room habitable through her own effort. One of the few spaces she maintained for practical use.',
+  'room-quarters': 'One of the few sleeping rooms still fit for use. Any housed resident can recover here between assignments.',
 }
 
 /** For intact rooms with an unclear follow-up loop: surface the next actionable step. */
@@ -249,6 +250,7 @@ export function HouseScreen() {
   const roomOccupancy = useAppSelector(selectHouseRoomOccupancy)
   const roster = useAppSelector((state) => state.game.roster)
   const pairingPolicy = useAppSelector((state) => state.game.house.npcPairingPolicy)
+  const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
 
   return (
@@ -366,6 +368,31 @@ export function HouseScreen() {
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="house-wards-section">
+        <h2>Domestic Aftermath</h2>
+        {lastDomesticBeat ? (
+          <div className="mission-row">
+            <div className="mission-row-header">
+              <strong>{lastDomesticBeat.npcNames.join(' and ')}</strong>
+              <span className="badge">Day {lastDomesticBeat.day}</span>
+              <span className="badge">{lastDomesticBeat.intimacyStage}</span>
+            </div>
+            <p className="quest-briefing"><strong>Room:</strong> {lastDomesticBeat.roomName}</p>
+            <p className="quest-briefing"><strong>Policy frame:</strong> {PAIRING_POLICY_COPY[lastDomesticBeat.policy].label}</p>
+            <p className="quest-briefing">{lastDomesticBeat.summary}</p>
+            <ul className="quest-journal-list">
+              {lastDomesticBeat.effects.map((effect) => (
+                <li key={effect}>{effect}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="summary">
+            No domestic relationship beat has settled into the house yet. Shared quarters and household rules can make private bonds visibly deepen here.
+          </p>
+        )}
       </section>
 
       {wards.length > 0 && (

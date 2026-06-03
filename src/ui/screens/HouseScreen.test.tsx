@@ -32,7 +32,7 @@ describe('HouseScreen — search result lifecycle', () => {
     // Flavor finds visible in fresh state
     expect(within(bureauCard).getByText(/22 Marks in pre-Breach reserve coin/i)).toBeInTheDocument()
     // Actionable find visible in fresh state
-    expect(within(bureauCard).getByText(/two ledgers removed the night the house fell/i)).toBeInTheDocument()
+    expect(within(bureauCard).getByText(/Removal chit proving two house ledgers were taken during the seizure/i)).toBeInTheDocument()
   })
 
   it('collapses to compact state for a room that was already searched on load', () => {
@@ -59,7 +59,7 @@ describe('HouseScreen — search result lifecycle', () => {
     expect(within(bureauCard).queryByText(/22 Marks in pre-Breach reserve coin/i)).toBeNull()
 
     // Actionable find IS shown (persistent — still needs resolution)
-    expect(within(bureauCard).getByText(/two ledgers removed the night the house fell/i)).toBeInTheDocument()
+    expect(within(bureauCard).getByText(/Removal chit proving two house ledgers were taken during the seizure/i)).toBeInTheDocument()
     // Follow-up guidance IS shown
     expect(within(bureauCard).getByText(/Show the removal chit to Marion/i)).toBeInTheDocument()
   })
@@ -234,7 +234,44 @@ describe('HouseScreen — household policy', () => {
   })
 })
 
+describe('HouseScreen — domestic aftermath', () => {
+  it('shows the latest household relationship beat directly on the house screen', () => {
+    renderHouseScreen({
+      ...initialGameStateSnapshot,
+      house: {
+        ...initialGameStateSnapshot.house,
+        lastDomesticRelationshipBeat: {
+          day: 4,
+          npcIds: ['npc-marion-vale', 'npc-sanna-veld'],
+          npcNames: ['Marion Vale', 'Sanna Veld'],
+          roomId: 'room-quarters',
+          roomName: 'Quarters',
+          policy: 'open',
+          intimacyStage: 'attachment',
+          summary: 'Sharing Quarters gives Marion Vale and Sanna Veld private ground to become more than field partners. The house begins to read them as a pair.',
+          effects: ['Trust +3 each', 'Affinity +2 each', 'Loyalty +1 each'],
+        },
+      },
+    })
+
+    expect(screen.getByRole('heading', { name: 'Domestic Aftermath' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Domestic Aftermath' }).closest('section')).toHaveTextContent('Marion Vale and Sanna Veld')
+    expect(screen.getByText(/Policy frame:/i)).toBeInTheDocument()
+    expect(screen.getByText(/The house does not intervene in personal bonds/i)).toBeInTheDocument()
+    expect(screen.getByText(/Sharing Quarters gives Marion Vale and Sanna Veld private ground/i)).toBeInTheDocument()
+    expect(screen.getByText('Trust +3 each')).toBeInTheDocument()
+  })
+})
+
 describe('HouseScreen — room occupancy', () => {
+  it('starts with Marion assigned to the quarters', () => {
+    renderHouseScreen()
+
+    const marionRoomCard = screen.getByRole('heading', { name: 'Quarters' }).closest('article')!
+    expect(within(marionRoomCard).getByText('Marion Vale')).toBeInTheDocument()
+    expect(within(marionRoomCard).getByText(/Any housed resident can recover here between assignments/i)).toBeInTheDocument()
+  })
+
   it('lets the player assign a roster NPC to a room and shows the occupant on the room card', async () => {
     const user = userEvent.setup()
     const readyHouseState = {

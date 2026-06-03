@@ -8,6 +8,7 @@ import { gameStateSchema } from '../../domain'
 import { dialogueTreeSchema, type DialogueChoice } from '../../domain/dialogue/contracts'
 import { createQuestRuntime } from '../../domain/quests/contracts'
 import { isDialogueChoiceAvailable } from './dialogue'
+import { selectVisibleDialogueChoices } from '../selectors/dialogue'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
@@ -56,6 +57,68 @@ describe('dialogue conditions', () => {
 })
 
 describe('dialogue consequence resolution', () => {
+  it('restarts future conversations at the opening node after leaving a terminal leaf', () => {
+    const store = makeStore()
+
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-fine' }))
+
+    let state = store.getState().game
+    expect(state.activeDialogueNodeId).toBe('marion-node-2')
+
+    store.dispatch(gameActions.endDialogue())
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+
+    state = store.getState().game
+    expect(state.activeDialogueNodeId).toBe('marion-node-1')
+  })
+
+  it('still resumes a non-terminal conversation node with visible choices', () => {
+    const store = makeStore()
+
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-early-game' }))
+
+    let state = store.getState().game
+    expect(state.activeDialogueNodeId).toBe('marion-node-early-intro')
+
+    store.dispatch(gameActions.endDialogue())
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+
+    state = store.getState().game
+    expect(state.activeDialogueNodeId).toBe('marion-node-early-intro')
+  })
+
+  it('consumes Marion one-shot clue topics after the first discussion', () => {
+    const store = makeStore({
+      ownedItems: [
+        { instanceId: 'test-item-chit-ledger-removal', itemId: 'item-chit-ledger-removal', quantity: 1, location: 'inventory' },
+        { instanceId: 'test-item-note-arrangement-below', itemId: 'item-note-arrangement-below', quantity: 1, location: 'inventory' },
+      ],
+    })
+
+    const visibleChoicesAtRoot = () =>
+      selectVisibleDialogueChoices('marion-node-1')(store.getState()).map((choice) => choice.id)
+
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+    expect(visibleChoicesAtRoot()).toEqual(
+      expect.arrayContaining(['marion-choice-ledger-chit', 'marion-choice-arrangement-below']),
+    )
+
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-ledger-chit' }))
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-ledger-chit-keep' }))
+
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+    expect(visibleChoicesAtRoot()).not.toContain('marion-choice-ledger-chit')
+    expect(visibleChoicesAtRoot()).toContain('marion-choice-arrangement-below')
+
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-arrangement-below' }))
+    store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-arrangement-below-understood' }))
+
+    store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
+    expect(visibleChoicesAtRoot()).not.toContain('marion-choice-arrangement-below')
+  })
+
   it('can unlock a story lead from dialogue and records resolved choices', () => {
     const store = makeStore({
       day: 3,

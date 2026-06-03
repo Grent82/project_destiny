@@ -17,7 +17,7 @@ describe('siteRuntime adapters', () => {
     expect(runtime.mode).toBe('concrete')
     expect(runtime.kind).toBe('house')
     expect(runtime.roomInstances).toHaveLength(initialGameStateSnapshot.house.rooms.length)
-    expect(runtime.roomInstances.find((room) => room.roomId === 'room-marion-quarters')?.capacity).toBe(1)
+    expect(runtime.roomInstances.find((room) => room.roomId === 'room-quarters')?.capacity).toBe(1)
     expect(runtime.roomInstances.find((room) => room.roomId === 'room-vault')?.accessState).toBe('sealed')
   })
 

@@ -9,6 +9,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { ItemCard } from './ItemCard'
 import { ItemActionMenu } from './ItemActionMenu'
 import { TargetPickerModal } from './TargetPickerModal'
+import { DocumentPreviewModal } from './DocumentPreviewModal'
 import type { ItemAction } from '../../application/selectors/inventory'
 import { gameActions } from '../../application/store/gameSlice'
 
@@ -22,10 +23,22 @@ export function HouseStoragePanel() {
 
   const [menuForInstance, setMenuForInstance] = useState<string | null>(null)
   const [pendingAction, setPendingAction] = useState<{ action: ItemAction; instanceId: string } | null>(null)
+  const [previewDocument, setPreviewDocument] = useState<{ title: string; description: string } | null>(null)
 
   function handleAction(action: ItemAction, instanceId: string) {
     if (action.requiresTarget) {
       setPendingAction({ action, instanceId })
+      return
+    }
+    if (action.type === 'open') {
+      const owned = store.getState().game.ownedItems.find((entry) => entry.instanceId === instanceId)
+      const def = owned ? contentCatalog.itemsById.get(owned.itemId) : null
+      if (def) {
+        setPreviewDocument({
+          title: def.name,
+          description: def.description ?? 'No readable notes are attached to this document yet.',
+        })
+      }
       return
     }
     dispatchAction(action, instanceId, undefined)
@@ -82,6 +95,7 @@ export function HouseStoragePanel() {
                 instanceId={owned.instanceId}
                 name={def?.name ?? owned.itemId}
                 category={def?.category ?? '—'}
+                description={def?.description}
                 quantity={owned.quantity}
                 primaryAction={primary}
                 onAction={(a) => handleAction(a, owned.instanceId)}
@@ -107,6 +121,14 @@ export function HouseStoragePanel() {
             setPendingAction(null)
           }}
           onClose={() => setPendingAction(null)}
+        />
+      )}
+
+      {previewDocument && (
+        <DocumentPreviewModal
+          title={previewDocument.title}
+          description={previewDocument.description}
+          onClose={() => setPreviewDocument(null)}
         />
       )}
     </section>

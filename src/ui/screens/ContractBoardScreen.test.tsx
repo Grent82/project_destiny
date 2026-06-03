@@ -185,4 +185,82 @@ describe('ContractBoardScreen', () => {
     expect(screen.getByText(/3 days of fieldwork/i)).toBeInTheDocument()
     expect(screen.getByText(/Days remaining:/i)).toBeInTheDocument()
   })
+
+  it('surfaces branch aftermath as a dedicated combat return step on the work board', () => {
+    const combatQuest = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!combatQuest) {
+      throw new Error('Expected harborwatch quest in fixtures.')
+    }
+
+    const runtime = createQuestRuntime(combatQuest, 2)
+    runtime.stageId = 'branch-aftermath'
+    runtime.currentObjectiveLabel =
+      'The defeat changes the shape of the contract. Return to the Work Board for the aftermath.'
+    runtime.progress.completedSteps = 3
+    runtime.progress.lastAdvancedDay = 2
+    runtime.journalEntries = [
+      'The squad commits to the incident site and the fighting begins.',
+      'The defeat changes the shape of the contract. The next move is no longer straightforward.',
+    ]
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: combatQuest.districtId,
+      activeQuests: [runtime],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText('Combat aftermath')).toBeInTheDocument()
+    expect(screen.getByText(/Choose the aftermath on the Work Board before the contract can move again/i)).toBeInTheDocument()
+    expect(screen.getByText(/Next step:/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Review combat aftermath →/i })).toBeInTheDocument()
+  })
+
+  it('surfaces combat setbacks as regroup-required instead of another immediate deployment', () => {
+    const combatQuest = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!combatQuest) {
+      throw new Error('Expected harborwatch quest in fixtures.')
+    }
+
+    const runtime = createQuestRuntime(combatQuest, 2)
+    runtime.stageId = 'setback'
+    runtime.currentObjectiveLabel =
+      'The squad was driven back. Regroup before attempting the incident again.'
+    runtime.progress.completedSteps = 3
+    runtime.progress.lastAdvancedDay = 2
+    runtime.journalEntries = [
+      'The squad commits to the incident site and the fighting begins.',
+      'The squad was driven back. The contract remains open, but the house must regroup.',
+    ]
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: combatQuest.districtId,
+      activeQuests: [runtime],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText('Regroup required')).toBeInTheDocument()
+    expect(screen.getByText(/The squad needs a regroup order before another on-site push/i)).toBeInTheDocument()
+    expect(screen.getByText(/Regroup the squad on the Work Board/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Regroup and redeploy →/i })).toBeInTheDocument()
+  })
 })

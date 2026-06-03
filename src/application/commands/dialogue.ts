@@ -74,7 +74,9 @@ export function isDialogueChoiceAvailable(
   dialogueId: string,
   choice: DialogueChoice,
 ): boolean {
-  return !choice.condition || meetsDialogueCondition(state, dialogueId, choice.condition)
+  const primaryCondition = !choice.condition || meetsDialogueCondition(state, dialogueId, choice.condition)
+  const allConditions = choice.conditionAll?.every((condition) => meetsDialogueCondition(state, dialogueId, condition)) ?? true
+  return primaryCondition && allConditions
 }
 
 function applyMainQuestHint(state: GameState, hint: string): GameState {

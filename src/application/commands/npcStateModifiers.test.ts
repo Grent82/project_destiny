@@ -113,6 +113,7 @@ describe('endDay threshold events', () => {
       ...initialGameStateSnapshot,
       roster: initialGameStateSnapshot.roster.map((npc) => ({
         ...npc,
+        roomAssignment: null,
         states: { ...npc.states, stress: 90, morale: 50 },
       })),
     }

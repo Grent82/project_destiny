@@ -88,6 +88,7 @@ const baseState: GameState = {
     fortificationLevel: 0,
     houseHeirs: [],
     npcPairingPolicy: 'open' as const,
+    lastDomesticRelationshipBeat: null,
   },
   saveVersion: 1,
   rngSeed: 42,

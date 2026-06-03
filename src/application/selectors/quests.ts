@@ -70,6 +70,24 @@ export const selectActiveQuests = createSelector(
           activeCombat?.outcome === 'ongoing' && activeCombat.linkedQuestId === entry.runtime.questId
 
         if (entry.template?.objectiveType === 'combat') {
+          if (entry.runtime.stageId === 'branch-aftermath') {
+            return {
+              state: 'combat-aftermath',
+              label: 'Review combat aftermath',
+              detail: 'Choose the aftermath on the Work Board before the contract can move again.',
+              route: '/contracts',
+              blocked: false,
+            }
+          }
+          if (entry.runtime.stageId === 'setback') {
+            return {
+              state: 'combat-setback',
+              label: 'Regroup the squad on the Work Board',
+              detail: 'The squad needs a regroup order before another on-site push.',
+              route: `/missions/${entry.runtime.questId}`,
+              blocked: false,
+            }
+          }
           if (hasOngoingEncounter) {
             return {
               state: 'resume-encounter',

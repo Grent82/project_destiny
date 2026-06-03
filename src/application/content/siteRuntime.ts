@@ -23,7 +23,7 @@ function mapHouseRoomAccessState(room: HouseRoom): SiteAccessState {
 
 function deriveHouseRoomCapacity(room: HouseRoom): number {
   switch (room.roomId) {
-    case 'room-marion-quarters':
+    case 'room-quarters':
     case 'room-master-chamber':
       return 1
     case 'room-servant-quarters':

@@ -27,6 +27,34 @@
     ]
   },
   {
+    "id": "item-ledger-house-debt",
+    "name": "House Debt Ledger",
+    "category": "document",
+    "tier": 1,
+    "value": 30,
+    "weight": 0.4,
+    "rarity": "common",
+    "tags": [
+      "administration",
+      "house-record",
+      "debt"
+    ],
+    "effects": [
+      {
+        "type": "enableAction",
+        "action": "review-house-accounts"
+      }
+    ],
+    "description": "Your working house ledger: current debts, promised wages, and what still comes in. It keeps House Valdric solvent, but it is not the missing bureau evidence Marion is looking for.",
+    "shopPrice": 0,
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "review-house-accounts"
+      }
+    ]
+  },
+  {
     "id": "item-ledger-bureau",
     "name": "Bureau Ledger",
     "category": "document",
@@ -44,7 +72,7 @@
         "action": "use-as-cover-document"
       }
     ],
-    "description": "A Compact-stamped bound ledger with ward-council formatting printed on every page — useful as evidence, cover, or raw intelligence on whichever bureau's name appears on the cover.",
+    "description": "A surviving Compact bureau ledger recovered from outside your day-to-day house books. It matters as evidence, cover, or raw intelligence because it preserves records someone expected to vanish.",
     "shopPrice": 30,
     "typedEffects": [
       {
@@ -1035,7 +1063,7 @@
         "action": "examine-ledger-chit"
       }
     ],
-    "description": "A narrow inventory slip naming two ledgers removed from the house on the night of the seizure, with a quartermaster's hand-sign and a number Marion immediately recognizes.",
+    "description": "A narrow inventory slip naming the two house ledgers removed on the night of the seizure. It proves the records were selected and taken deliberately, not lost in random looting.",
     "shopPrice": 0,
     "typedEffects": [
       {
@@ -1064,7 +1092,7 @@
         "action": "examine-vault-note"
       }
     ],
-    "description": "A letter fragment in your father's hand referring to an arrangement below the house and a catch that was never to be named in open correspondence.",
+    "description": "A letter fragment in your father's hand referring to a hidden release below the house. On its own it is only a clue; paired with the removal chit, it points toward the sealed vault.",
     "shopPrice": 0,
     "typedEffects": [
       {

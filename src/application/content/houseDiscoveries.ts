@@ -23,15 +23,15 @@ const BASE_DISCOVERIES: Record<string, HouseDiscovery> = {
     actionableFinds: [],
     followUp: null,
   },
-  'room-marion-quarters': {
+  'room-quarters': {
     marks: 0,
-    message: 'The room is plainly kept but not preserved as a shrine. Marion carved a workable sleeping space out of the ruin and left only what she intended to share.',
+    message: 'The room is plainly kept but not preserved as a shrine. A workable sleeping space was carved out of the ruin, with only practical things left in reach.',
     flavorFinds: [
       'Folded work clothes and a sharpened ledger quill',
       'Copied notices from the debt proceedings, neatly tied with twine',
     ],
     actionableFinds: [],
-    followUp: 'The room reads as lived-in, not memorialized. It is worth asking Marion what she kept and what she burned.',
+    followUp: 'The quarters read as practical, not ceremonial. Someone decided what needed to stay close at hand.',
   },
   'room-bureau': {
     marks: 22,
@@ -42,10 +42,10 @@ const BASE_DISCOVERIES: Record<string, HouseDiscovery> = {
     actionableFinds: [
       {
         itemId: 'item-chit-ledger-removal',
-        label: 'An inventory chit naming two ledgers removed the night the house fell',
+        label: 'Removal chit proving two house ledgers were taken during the seizure',
       },
     ],
-    followUp: 'Show the removal chit to Marion. Someone chose which books vanished.',
+    followUp: 'Show the removal chit to Marion. It proves the books were selected before the house was stripped.',
   },
   'room-kitchen': {
     marks: 8,
@@ -66,10 +66,10 @@ const BASE_DISCOVERIES: Record<string, HouseDiscovery> = {
     actionableFinds: [
       {
         itemId: 'item-note-arrangement-below',
-        label: 'A letter fragment hinting at something hidden beneath the house',
+        label: 'A margin note pointing to a hidden release beneath the house',
       },
     ],
-    followUp: 'This note and the bureau chit belong together. Someone knew the vault mattered.',
+    followUp: 'Pair this note with the removal chit. Together they point to a hidden vault release.',
   },
   'room-master-chamber': {
     marks: 30,
@@ -133,10 +133,10 @@ const VAULT_DISCOVERY: HouseDiscovery = {
   actionableFinds: [
     {
       itemId: 'item-ledger-bureau',
-      label: 'A surviving bureau ledger tucked beside Mira\'s hidden letter',
+      label: 'A surviving bureau ledger recovered beside Mira\'s hidden letter',
     },
   ],
-  followUp: 'The letter and ledger together turn the house ruin into a live investigation.',
+  followUp: 'Keep the surviving bureau ledger as evidence. The letter points to Mira; the ledger proves records survived the seizure.',
   mainQuestHint: "A letter from Mira, hidden in the vault. She left willingly — but not freely.",
 }
 

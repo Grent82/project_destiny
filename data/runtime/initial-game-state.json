@@ -158,7 +158,7 @@
         ]
       },
       "trainingFocus": null,
-      "roomAssignment": null,
+      "roomAssignment": "room-quarters",
       "npcMemory": [],
       "bondStatus": null,
       "npcArc": null
@@ -170,7 +170,7 @@
       "quantity": 2
     },
     {
-      "itemId": "item-ledger-bureau",
+      "itemId": "item-ledger-house-debt",
       "quantity": 1
     },
     {
@@ -426,8 +426,8 @@
         "roomFunction": null
       },
       {
-        "roomId": "room-marion-quarters",
-        "name": "Salvaged Room (Marion)",
+        "roomId": "room-quarters",
+        "name": "Quarters",
         "state": "intact",
         "repairCost": 0,
         "repairDaysRemaining": 0,
@@ -494,7 +494,8 @@
     "exteriorState": "ruined",
     "fortificationLevel": 0,
     "houseHeirs": [],
-    "npcPairingPolicy": "open"
+    "npcPairingPolicy": "open",
+    "lastDomesticRelationshipBeat": null
   },
   "visitedDialogueNodes": {},
   "saveVersion": 2,
@@ -508,8 +509,8 @@
       "quantity": 2
     },
     {
-      "instanceId": "inst-item-ledger-bureau-de5c4e28",
-      "itemId": "item-ledger-bureau",
+      "instanceId": "inst-item-ledger-house-debt-de5c4e28",
+      "itemId": "item-ledger-house-debt",
       "location": "inventory",
       "quantity": 1
     },

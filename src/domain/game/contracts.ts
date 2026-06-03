@@ -4,7 +4,7 @@ import { activeCombatStateSchema } from '../combat/contracts'
 import { rumorSchema, bondVisibilitySchema } from '../rumors/contracts'
 import { expeditionStateSchema } from '../expedition/contracts'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
-import { relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
+import { intimacyStageSchema, relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
 import { eventInstanceSchema, pendingEventSchema } from '../events/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
@@ -141,6 +141,21 @@ export type Ward = z.infer<typeof wardSchema>
 export const npcPairingPolicySchema = z.enum(['open', 'discouraged', 'forbidden'])
 export type NpcPairingPolicy = z.infer<typeof npcPairingPolicySchema>
 
+export const domesticRelationshipBeatSchema = z
+  .object({
+    day: positiveIntegerSchema,
+    npcIds: z.array(z.string()).length(2),
+    npcNames: z.array(z.string()).length(2),
+    roomId: z.string(),
+    roomName: z.string(),
+    policy: npcPairingPolicySchema,
+    intimacyStage: intimacyStageSchema,
+    summary: z.string().min(1),
+    effects: z.array(z.string()).default([]),
+  })
+  .strict()
+export type DomesticRelationshipBeat = z.infer<typeof domesticRelationshipBeatSchema>
+
 export const houseStateSchema = z
   .object({
     rooms: z.array(houseRoomSchema),
@@ -150,6 +165,7 @@ export const houseStateSchema = z
     fortificationLevel: z.number().int().min(0).max(5).default(0),
     houseHeirs: z.array(heirSchema).max(2).default([]),
     npcPairingPolicy: npcPairingPolicySchema.default('open'),
+    lastDomesticRelationshipBeat: domesticRelationshipBeatSchema.nullable().default(null),
   })
   .strict()
 
@@ -346,7 +362,7 @@ export const gameStateSchema = z
     house: houseStateSchema.default(() => ({
       rooms: [
         { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-marion-quarters', name: "Marion's Quarters", state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-quarters', name: 'Quarters', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
         { roomId: 'room-bureau', name: 'Bureau', state: 'damaged' as const, repairCost: 15, repairDaysRemaining: 0, searched: false, roomFunction: null },
         { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, repairDaysRemaining: 0, searched: false, roomFunction: null },
         { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, repairDaysRemaining: 0, searched: false, roomFunction: null },
@@ -363,6 +379,7 @@ export const gameStateSchema = z
       fortificationLevel: 0,
       houseHeirs: [],
       npcPairingPolicy: 'open' as const,
+      lastDomesticRelationshipBeat: null,
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),

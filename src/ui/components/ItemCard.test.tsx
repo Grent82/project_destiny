@@ -13,12 +13,14 @@ describe('ItemCard', () => {
         instanceId="inst-01"
         name="Herbal Tonic"
         category="consumable"
+        description="Steadies the hands after a long shift."
         quantity={1}
         onAction={() => {}}
       />
     )
     expect(screen.getByText('Herbal Tonic')).toBeTruthy()
     expect(screen.getByText('consumable')).toBeTruthy()
+    expect(screen.getByText('Steadies the hands after a long shift.')).toBeTruthy()
   })
 
   it('renders quantity when > 1', () => {

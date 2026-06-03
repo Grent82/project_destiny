@@ -6,6 +6,7 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { isDialogueChoiceAvailable } from './dialogue'
+import { getHouseDiscovery } from '../content/houseDiscoveries'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
@@ -65,5 +66,23 @@ describe('house discoveries', () => {
     expect(marionChoice && isDialogueChoiceAvailable(state, 'dialogue-marion-vale', marionChoice)).toBe(true)
     expect(maretChoice && isDialogueChoiceAvailable(state, 'dialogue-old-maret', maretChoice)).toBe(true)
     expect(state.mainQuest.lastClue).toContain('sealed envelope addressed to Mira')
+  })
+
+  it('keeps the house debt ledger, removal chit, and recovered bureau ledger operationally distinct', () => {
+    const houseLedger = contentCatalog.itemsById.get('item-ledger-house-debt')
+    const removalChit = contentCatalog.itemsById.get('item-chit-ledger-removal')
+    const bureauLedger = contentCatalog.itemsById.get('item-ledger-bureau')
+    const bureauDiscovery = getHouseDiscovery('room-bureau', false)
+    const vaultDiscovery = getHouseDiscovery('room-vault', true)
+
+    expect(houseLedger?.name).toBe('House Debt Ledger')
+    expect(houseLedger?.description).toContain('not the missing bureau evidence')
+    expect(removalChit?.description).toContain('selected and taken deliberately')
+    expect(bureauLedger?.description).toContain('surviving Compact bureau ledger')
+
+    expect(bureauDiscovery?.actionableFinds[0]?.label).toContain('Removal chit')
+    expect(bureauDiscovery?.followUp).toContain('Show the removal chit to Marion')
+    expect(vaultDiscovery?.actionableFinds[0]?.label).toContain('surviving bureau ledger')
+    expect(vaultDiscovery?.followUp).toContain('Keep the surviving bureau ledger as evidence')
   })
 })

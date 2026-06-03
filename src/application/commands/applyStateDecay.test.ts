@@ -112,9 +112,17 @@ describe('house room function bonuses', () => {
   describe('barracks', () => {
     it('accelerates fatigue recovery by 2/day for idle NPCs', () => {
       const marionId = 'npc-marion-vale'
-      const withBarracks = withRoom(initialStateWithIda, 'room-garret', 'barracks')
+      const fatiguedState = {
+        ...initialStateWithIda,
+        roster: initialStateWithIda.roster.map((npc) =>
+          npc.npcId === marionId
+            ? { ...npc, states: { ...npc.states, fatigue: 20 } }
+            : npc,
+        ),
+      }
+      const withBarracks = withRoom(fatiguedState, 'room-garret', 'barracks')
 
-      const baseline = applyStateDecay(initialStateWithIda)
+      const baseline = applyStateDecay(fatiguedState)
       const withBonus = applyStateDecay(withBarracks)
 
       const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
@@ -159,6 +167,84 @@ describe('house room function bonuses', () => {
       const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
 
       expect(marionBonus!.states.stress).toBeLessThan(marionBaseline!.states.stress)
+    })
+  })
+
+  describe('quarters', () => {
+    it('reduces fatigue and improves morale for resting NPCs with assigned residential quarters', () => {
+      const marionId = 'npc-marion-vale'
+      const housedState = {
+        ...initialStateWithIda,
+        roster: initialStateWithIda.roster.map((npc) =>
+          npc.npcId === marionId
+            ? {
+                ...npc,
+                roomAssignment: 'room-quarters',
+                states: { ...npc.states, fatigue: 20, morale: 60 },
+              }
+            : npc,
+        ),
+        house: {
+          ...initialStateWithIda.house,
+          rooms: initialStateWithIda.house.rooms.map((room) =>
+            room.roomId === 'room-quarters'
+              ? { ...room, state: 'intact' as const }
+              : room,
+          ),
+        },
+      }
+
+      const baseline = applyStateDecay({
+        ...housedState,
+        roster: housedState.roster.map((npc) =>
+          npc.npcId === marionId ? { ...npc, roomAssignment: null } : npc,
+        ),
+      })
+      const withBonus = applyStateDecay(housedState)
+
+      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
+      const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
+
+      expect(marionBonus!.states.fatigue).toBeLessThan(marionBaseline!.states.fatigue)
+      expect(marionBonus!.states.morale).toBeGreaterThan(marionBaseline!.states.morale)
+    })
+
+    it('does not treat non-residential assignments like bureau as quarters', () => {
+      const marionId = 'npc-marion-vale'
+      const bureauAssignedState = {
+        ...initialStateWithIda,
+        house: {
+          ...initialStateWithIda.house,
+          rooms: initialStateWithIda.house.rooms.map((room) =>
+            room.roomId === 'room-bureau'
+              ? { ...room, state: 'intact' as const }
+              : room,
+          ),
+        },
+        roster: initialStateWithIda.roster.map((npc) =>
+          npc.npcId === marionId
+            ? {
+                ...npc,
+                roomAssignment: 'room-bureau',
+                states: { ...npc.states, fatigue: 20, morale: 60 },
+              }
+            : npc,
+        ),
+      }
+
+      const baseline = applyStateDecay({
+        ...bureauAssignedState,
+        roster: bureauAssignedState.roster.map((npc) =>
+          npc.npcId === marionId ? { ...npc, roomAssignment: null } : npc,
+        ),
+      })
+      const withAssignment = applyStateDecay(bureauAssignedState)
+
+      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
+      const marionAssigned = withAssignment.roster.find((n) => n.npcId === marionId)
+
+      expect(marionAssigned!.states.fatigue).toBe(marionBaseline!.states.fatigue)
+      expect(marionAssigned!.states.morale).toBe(marionBaseline!.states.morale)
     })
   })
 })

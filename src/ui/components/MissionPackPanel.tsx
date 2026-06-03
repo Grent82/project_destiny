@@ -6,6 +6,8 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { ItemCard } from './ItemCard'
 import { CarryLimitBar } from './CarryLimitBar'
 import { TargetPickerModal } from './TargetPickerModal'
+import { ItemActionMenu } from './ItemActionMenu'
+import { DocumentPreviewModal } from './DocumentPreviewModal'
 import type { ItemAction } from '../../application/selectors/inventory'
 import { gameActions } from '../../application/store/gameSlice'
 
@@ -16,10 +18,23 @@ export function MissionPackPanel() {
   const carrySlots = useAppSelector(selectExpeditionCarryLoad)
 
   const [pendingAction, setPendingAction] = useState<{ action: ItemAction; instanceId: string } | null>(null)
+  const [menuForInstance, setMenuForInstance] = useState<string | null>(null)
+  const [previewDocument, setPreviewDocument] = useState<{ title: string; description: string } | null>(null)
 
   function handleAction(action: ItemAction, instanceId: string) {
     if (action.requiresTarget) {
       setPendingAction({ action, instanceId })
+      return
+    }
+    if (action.type === 'open') {
+      const owned = store.getState().game.ownedItems.find((entry) => entry.instanceId === instanceId)
+      const def = owned ? contentCatalog.itemsById.get(owned.itemId) : null
+      if (def) {
+        setPreviewDocument({
+          title: def.name,
+          description: def.description ?? 'No readable notes are attached to this document yet.',
+        })
+      }
       return
     }
     if (action.type === 'unpack') {
@@ -49,18 +64,34 @@ export function MissionPackPanel() {
         {packedItems.map((owned) => {
           const def = contentCatalog.itemsById.get(owned.itemId)
           const actions = selectItemActions(store.getState(), owned.instanceId)
-          const unpackAction = actions.find((a) => a.type === 'unpack')
+          const primary =
+            actions.find((action) => action.type === 'open') ??
+            actions.find((action) => action.type === 'unpack')
+          const secondary = actions.filter((action) => action.type !== primary?.type)
 
           return (
-            <ItemCard
-              key={owned.instanceId}
-              instanceId={owned.instanceId}
-              name={def?.name ?? owned.itemId}
-              category={def?.category ?? '—'}
-              quantity={owned.quantity}
-              primaryAction={unpackAction}
-              onAction={(a) => handleAction(a, owned.instanceId)}
-            />
+            <div key={owned.instanceId}>
+              <ItemCard
+                instanceId={owned.instanceId}
+                name={def?.name ?? owned.itemId}
+                category={def?.category ?? '—'}
+                description={def?.description}
+                quantity={owned.quantity}
+                primaryAction={primary}
+                onAction={(a) => handleAction(a, owned.instanceId)}
+                onOpenMenu={secondary.length > 0 ? () => setMenuForInstance(owned.instanceId) : undefined}
+              />
+              {menuForInstance === owned.instanceId && (
+                <ItemActionMenu
+                  actions={secondary}
+                  onAction={(action) => {
+                    handleAction(action, owned.instanceId)
+                    setMenuForInstance(null)
+                  }}
+                  onClose={() => setMenuForInstance(null)}
+                />
+              )}
+            </div>
           )
         })}
       </div>
@@ -75,6 +106,14 @@ export function MissionPackPanel() {
             setPendingAction(null)
           }}
           onClose={() => setPendingAction(null)}
+        />
+      )}
+
+      {previewDocument && (
+        <DocumentPreviewModal
+          title={previewDocument.title}
+          description={previewDocument.description}
+          onClose={() => setPreviewDocument(null)}
         />
       )}
     </section>

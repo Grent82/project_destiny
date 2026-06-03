@@ -7,6 +7,19 @@ function hasIntactRoom(state: GameState, fn: RoomFunction): boolean {
   return state.house.rooms.some((r) => r.state === 'intact' && r.roomFunction === fn)
 }
 
+const RESIDENTIAL_ROOM_IDS = new Set([
+  'room-quarters',
+  'room-master-chamber',
+  'room-servant-quarters',
+  'room-barracks',
+  'room-east-wing',
+])
+
+function hasResidentQuarters(state: GameState, roomId: string | null): boolean {
+  if (!roomId || !RESIDENTIAL_ROOM_IDS.has(roomId)) return false
+  return state.house.rooms.some((room) => room.roomId === roomId && room.state === 'intact')
+}
+
 /** Modifiers per ageBand: stress/fatigue accumulation rate and recovery rate. */
 const AGE_BAND_MODIFIERS = {
   child:  { accum: 0.50, recovery: 1.20 }, // wards decay slowly, recover fast
@@ -65,17 +78,19 @@ export function applyStateDecay(state: GameState): GameState {
 
       const studyBonus = isResting && npc.assignment === 'idle' && hasStudy ? 1 : 0
       const kitchenBonus = isResting && hasKitchen ? 3 : 0
+      const quartersFatigueBonus = isResting && hasResidentQuarters(state, npc.roomAssignment) ? 2 : 0
+      const quartersMoraleBonus = isResting && hasResidentQuarters(state, npc.roomAssignment) ? 1 : 0
 
       return {
         ...npc,
         states: {
           ...npc.states,
           hunger: Math.max(0, Math.min(100, npc.states.hunger + Math.round(8 * ageMod.accum) - kitchenBonus)),
-          fatigue: Math.max(0, Math.min(100, npc.states.fatigue + fatigueDelta)),
+          fatigue: Math.max(0, Math.min(100, npc.states.fatigue + fatigueDelta - quartersFatigueBonus)),
           stress: isResting
             ? Math.max(0, npc.states.stress - Math.round(3 * ageMod.recovery) - studyBonus)
             : npc.states.stress,
-          morale: Math.max(0, npc.states.morale - moralePenalty),
+          morale: Math.max(0, Math.min(100, npc.states.morale - moralePenalty + quartersMoraleBonus)),
           anger: newAnger,
           hygiene: newHygiene,
           intoxication: newIntox,

@@ -34,6 +34,7 @@ export const dialogueChoiceSchema = z
     nextNodeId: z.string().nullable(),
     outcome: dialogueOutcomeSchema.optional(),
     condition: dialogueConditionSchema.optional(),
+    conditionAll: z.array(dialogueConditionSchema).min(1).optional(),
   })
   .strict()
 

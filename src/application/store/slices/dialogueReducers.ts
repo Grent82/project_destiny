@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../../domain'
 import { contentCatalog } from '../../content/contentCatalog'
-import { resolveDialogueChoice } from '../../commands/dialogue'
+import { isDialogueChoiceAvailable, resolveDialogueChoice } from '../../commands/dialogue'
 
 export const dialogueReducers = {
   startDialogue(state: GameState, action: PayloadAction<{ dialogueId: string; nodeId: string }>) {
@@ -12,8 +12,11 @@ export const dialogueReducers = {
     const lastNode = state.visitedDialogueNodes[dialogueId]
     if (lastNode) {
       const tree = contentCatalog.dialoguesById.get(dialogueId)
-      const nodeExists = tree?.nodes.some((n) => n.id === lastNode) ?? false
-      state.activeDialogueNodeId = nodeExists ? lastNode : nodeId
+      const node = tree?.nodes.find((entry) => entry.id === lastNode)
+      const snapshot = current(state) as GameState
+      const hasVisibleChoices =
+        node?.choices.some((choice) => isDialogueChoiceAvailable(snapshot, dialogueId, choice)) ?? false
+      state.activeDialogueNodeId = node && hasVisibleChoices ? lastNode : nodeId
     } else {
       state.activeDialogueNodeId = nodeId
     }
