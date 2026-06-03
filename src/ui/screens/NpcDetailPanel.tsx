@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -326,6 +326,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
   const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
   const giftHistory = useAppSelector(selectGiftHistoryWithPlayer(detail.npcId))
+  const courtshipHistory = useAppSelector(selectCourtshipHistoryWithPlayer(detail.npcId))
   const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
   const houseDistrictId = useAppSelector((state) => state.game.houseDistrictId)
   const giftItems = useAppSelector((state) =>
@@ -339,6 +340,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   )
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const romanceEligible = contentCatalog.npcsById.get(detail.npcId)?.romanceEligible === true
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
   const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
@@ -508,6 +510,21 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                   </div>
                 </div>
               )}
+              {courtshipHistory.length > 0 && (
+                <div style={{ marginTop: '1rem' }}>
+                  <h4 style={{ marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Courtship History</h4>
+                  <div className="associates-list">
+                    {courtshipHistory.slice(0, 3).map((entry) => (
+                      <div key={`${entry.day}-${entry.message}`} className="associate-entry">
+                        <strong className="associate-name">Day {entry.day}</strong>
+                        <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                          {entry.message}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               {knownAssociates.length > 0 && (
                 <div style={{ marginTop: '1rem' }}>
                   <button
@@ -583,6 +600,17 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           >
             {showGiftList ? 'Hide Gifts' : 'Offer Gift'}
           </button>
+          {romanceEligible && (
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
+              disabled={currentDistrictId !== houseDistrictId || detail.assignment === 'deployed'}
+              title={currentDistrictId !== houseDistrictId ? 'Courtship actions currently require the house as private ground.' : 'Spend time courting this NPC directly.'}
+            >
+              Court
+            </button>
+          )}
           {showGiftList && canOfferGift && (
             <div className="title-list">
               {giftItems.length === 0 ? (

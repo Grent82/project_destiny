@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore, selectRosterDetail } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
+import { initialStateWithIda } from '../../application/commands/testFixtures'
 import { isDialogueChoiceAvailable } from '../../application/commands/dialogue'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { AppProviders } from '../app/AppProviders'
@@ -14,6 +16,20 @@ function renderMarionPanel(ownedItems: typeof initialGameStateSnapshot.ownedItem
   const store = createGameStore({ ...initialGameStateSnapshot, ownedItems })
   const detail = selectRosterDetail(store.getState(), MARION_ID)
   if (!detail) throw new Error('Marion not on roster in initial state')
+  render(
+    <AppProviders store={store}>
+      <MemoryRouter>
+        <NpcDetailPanel detail={detail} />
+      </MemoryRouter>
+    </AppProviders>,
+  )
+  return store
+}
+
+function renderIdaPanel(storeState = initialStateWithIda) {
+  const store = createGameStore(storeState)
+  const detail = selectRosterDetail(store.getState(), 'npc-ida-rhys')
+  if (!detail) throw new Error('Ida not on roster in test state')
   render(
     <AppProviders store={store}>
       <MemoryRouter>
@@ -104,5 +120,44 @@ describe('Marion clue → dialogue choice availability', () => {
       ],
     }
     expect(isDialogueChoiceAvailable(stateWith, tree.id, noteChoice)).toBe(true)
+  })
+})
+
+describe('NpcDetailPanel — courtship loop', () => {
+  it('shows a player-facing courtship action for romance-eligible NPCs at the house', () => {
+    renderIdaPanel()
+
+    expect(screen.getByRole('button', { name: 'Court' })).toBeInTheDocument()
+  })
+
+  it('records visible courtship aftermath after the player courts an NPC', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel({
+      ...initialStateWithIda,
+      relationships: {
+        ...initialStateWithIda.relationships,
+        'player→npc-ida-rhys': {
+          affinity: 18,
+          trust: 28,
+          fear: 10,
+          respect: 0,
+          loyalty: 0,
+        },
+        'npc-ida-rhys→player': {
+          affinity: 0,
+          trust: 0,
+          fear: 0,
+          respect: 0,
+          loyalty: 20,
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Court' }))
+    await user.click(screen.getByRole('tab', { name: 'Relations' }))
+
+    expect(screen.getByText(/Courtship History/i)).toBeInTheDocument()
+    expect(screen.getByText(/You make time to court Ida Rhys/i)).toBeInTheDocument()
+    expect(store.getState().game.relationships['player→npc-ida-rhys']?.intimacyStage).toBe('affinity')
   })
 })

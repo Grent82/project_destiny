@@ -7,6 +7,7 @@ import { selectNpcCoercionRisk } from '../../selectors/npcs'
 import { applyRelationshipDelta } from '../../commands/adjustRelationship'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../../commands/recruitment'
 import { freeNpc as freeNpcCommand } from '../../commands/bondService'
+import { courtNpc as courtNpcCommand } from '../../commands/courtNpc'
 import {
   rescueBondedNpcLegal,
   rescueBondedNpcExtraction,
@@ -42,6 +43,10 @@ export const rosterReducers = {
 
   freeNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {
     return freeNpcCommand(state, action.payload.npcId)
+  },
+
+  courtNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {
+    return courtNpcCommand(state, action.payload.npcId)
   },
 
   expireHireOffers(state: GameState) {

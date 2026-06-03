@@ -46,6 +46,16 @@ export const selectGiftHistoryWithPlayer =
         }
       })
 
+export const selectCourtshipHistoryWithPlayer =
+  (npcId: string) =>
+  (state: RootState): { message: string; day: number }[] =>
+    state.game.activityLog
+      .filter((entry) => entry.id.startsWith(`courtship::${npcId}::`))
+      .map((entry) => ({
+        message: entry.message,
+        day: entry.day,
+      }))
+
 /**
  * Average loyalty across selected squad members' relationships.
  * Used to show squad cohesion in MissionPrepScreen.
