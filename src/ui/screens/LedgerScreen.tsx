@@ -60,14 +60,20 @@ export function LedgerScreen() {
 
         {ledger.debtCrisisTriggered ? (
           <p className="ledger-debt-block__seized">
-            The creditors have acted. The house has been seized.
+            The claim has been enforced. The house has been seized.
           </p>
         ) : ledger.debtPaid ? (
           <p className="ledger-debt-block__cleared">Debt cleared. House Valdris stands free.</p>
         ) : (
           <div className="ledger-debt-block__body">
             <p>
-              Creditor: <strong>{ledger.debtCreditorName}</strong>
+              Claimant: <strong>{ledger.debtClaimantName}</strong>
+            </p>
+            <p>
+              Enforced by: <strong>{ledger.debtEnforcementName}</strong>
+            </p>
+            <p>
+              Beneficiary: <strong>{ledger.debtBeneficiaryName}</strong>
             </p>
             <p>
               <strong>{formatMarks(ledger.debtAmount)}</strong> owed. Due on day {ledger.debtDueDay}.

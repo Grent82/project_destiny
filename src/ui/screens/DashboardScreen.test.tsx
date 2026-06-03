@@ -56,7 +56,10 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('Travel to The Warrens')).toBeInTheDocument()
     expect(screen.getByText('Blocked')).toBeInTheDocument()
     expect(screen.getByText('100 Mk')).toBeInTheDocument()
-    expect(screen.getByText(/Creditor:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Claimant:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Enforced by:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Beneficiary:/i)).toBeInTheDocument()
+    expect(screen.getByText(/Harlen Voss/i)).toBeInTheDocument()
     expect(screen.getByText(/Gilded Court/i)).toBeInTheDocument()
   })
 

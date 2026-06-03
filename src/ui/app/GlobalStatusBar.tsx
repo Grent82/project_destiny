@@ -40,7 +40,7 @@ export function GlobalStatusBar() {
           {!debt.debtPaid && (
             <span
               className={`status-debt${debt.daysRemaining <= 5 ? ' status-debt--urgent' : ''}`}
-              title={`Debt: ${formatMarks(debt.debtAmount)} owed to ${debt.debtCreditorName} due in ${debt.daysRemaining} days`}
+              title={`Debt: ${formatMarks(debt.debtAmount)} claimed by ${debt.debtClaimantName}, enforced by ${debt.debtEnforcementName}, due in ${debt.daysRemaining} days`}
             >
               Debt: <strong>{debt.daysRemaining}d</strong>
             </span>

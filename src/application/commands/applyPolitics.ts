@@ -1,14 +1,14 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { formatMarks } from '../../domain/game/currency'
-import { getCouncilVoteTemplates } from '../content/contentCatalog'
+import { contentCatalog, getCouncilVoteTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
 
-function resolveDebtInterestIncrement(creditorStanding: number): number {
-  if (creditorStanding >= 30) return 5
-  if (creditorStanding >= 0) return 10
-  if (creditorStanding >= -40) return 15
+function resolveDebtInterestIncrement(enforcementStanding: number): number {
+  if (enforcementStanding >= 30) return 5
+  if (enforcementStanding >= 0) return 10
+  if (enforcementStanding >= -40) return 15
   return 20
 }
 
@@ -133,17 +133,21 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     }
   }
 
-  // Step 7f: Debt interest — creditor pressure is worse when standing is hostile
+  // Step 7f: Debt interest — enforcement pressure is worse when standing is hostile
   if (!next.debtPaid && next.day > 15) {
-    const creditorFactionId = next.debtCreditorFactionId
-    const creditorName = creditorFactionId.replace('faction-', '').replace(/-/g, ' ')
-    const creditorStanding = next.factionStandings[creditorFactionId] ?? 0
-    const interestIncrement = resolveDebtInterestIncrement(creditorStanding)
+    const enforcementFactionId = next.debtEnforcementFactionId
+    const enforcementName =
+      contentCatalog.factionsById.get(enforcementFactionId)?.name ??
+      enforcementFactionId.replace('faction-', '').replace(/-/g, ' ')
+    const claimantName =
+      contentCatalog.npcsById.get(next.debtClaimantNpcId)?.name ?? next.debtClaimantNpcId
+    const enforcementStanding = next.factionStandings[enforcementFactionId] ?? 0
+    const interestIncrement = resolveDebtInterestIncrement(enforcementStanding)
     next = { ...next, debtAmount: next.debtAmount + interestIncrement }
     next = appendActivityLogEntry(
       next,
       'system',
-      `Interest accrues on the outstanding debt held by ${creditorName}. The house now owes ${formatMarks(next.debtAmount)}.`,
+      `Interest accrues on the note ${claimantName} holds under ${enforcementName} protection. The house now owes ${formatMarks(next.debtAmount)}.`,
     )
   }
 

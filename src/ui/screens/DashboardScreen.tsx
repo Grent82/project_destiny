@@ -151,18 +151,22 @@ export function DashboardScreen(props: DashboardScreenProps) {
             {debt.debtCrisisTriggered ? (
               <>
                 <h2>Debt Claim — <span className="debt-status debt-status--defaulted">DEFAULTED ✗</span></h2>
-                <p className="debt-crisis-message">The creditors have moved. The house is seized.</p>
+                <p className="debt-crisis-message">The claim has been enforced. The house is seized.</p>
               </>
             ) : debt.debtPaid ? (
               <>
                 <h2>Debt Claim — <span className="debt-status debt-status--settled">Settled ✓</span></h2>
-                <p>House Valdris stands clear. The creditors withdrew.</p>
+                <p>House Valdris stands clear. The Court has withdrawn its seal from the claim.</p>
               </>
             ) : (
               <>
                 <h2>Debt Claim — <span className="debt-status debt-status--active">Active</span></h2>
                 <p>
-                  Creditor: <strong>{debt.debtCreditorName}</strong>
+                  Claimant: <strong>{debt.debtClaimantName}</strong>
+                  <br />
+                  Enforced by: <strong>{debt.debtEnforcementName}</strong>
+                  <br />
+                  Beneficiary: <strong>{debt.debtBeneficiaryName}</strong>
                   <br />
                   {formatMarks(debt.debtAmount)} owed · Due: Day {debt.debtDueDay} · {debt.daysRemaining} day{debt.daysRemaining !== 1 ? 's' : ''} remaining
                 </p>

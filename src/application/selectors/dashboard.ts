@@ -31,9 +31,15 @@ export const selectDashboardSummary = createSelector([selectGame], (game) => {
 
 export const selectDebtStatus = createSelector([selectGame], (game) => ({
   debtAmount: game.debtAmount,
-  debtCreditorFactionId: game.debtCreditorFactionId,
-  debtCreditorName:
-    contentCatalog.factionsById.get(game.debtCreditorFactionId)?.name ?? game.debtCreditorFactionId,
+  debtClaimantNpcId: game.debtClaimantNpcId,
+  debtClaimantName:
+    contentCatalog.npcsById.get(game.debtClaimantNpcId)?.name ?? game.debtClaimantNpcId,
+  debtEnforcementFactionId: game.debtEnforcementFactionId,
+  debtEnforcementName:
+    contentCatalog.factionsById.get(game.debtEnforcementFactionId)?.name ?? game.debtEnforcementFactionId,
+  debtBeneficiaryFactionId: game.debtBeneficiaryFactionId,
+  debtBeneficiaryName:
+    contentCatalog.factionsById.get(game.debtBeneficiaryFactionId)?.name ?? game.debtBeneficiaryFactionId,
   debtDueDay: game.debtDueDay,
   debtPaid: game.debtPaid,
   debtCrisisTriggered: game.debtCrisisTriggered,

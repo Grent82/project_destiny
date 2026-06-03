@@ -38,14 +38,17 @@ describe('payDebt action', () => {
     expect(state.debtPaid).toBe(true)
   })
 
-  it('improves standing with the named creditor when the debt is fully settled', () => {
+  it('keeps claimant, enforcement, and beneficiary distinct when the debt is fully settled', () => {
     const store = makeRichStore()
     const beforeStanding = store.getState().game.factionStandings['faction-gilded-court'] ?? 0
 
     store.dispatch(gameActions.payDebt({ amount: 500 }))
 
     const state = store.getState().game
-    expect(state.debtCreditorFactionId).toBe('faction-gilded-court')
+    expect(state.debtClaimantNpcId).toBe('npc-enemy-harlen-voss')
+    expect(state.debtEnforcementFactionId).toBe('faction-gilded-court')
+    expect(state.debtBeneficiaryFactionId).toBe('faction-house-merrow')
     expect(state.factionStandings['faction-gilded-court']).toBe(beforeStanding + 3)
+    expect(state.activityLog[0]?.message).toMatch(/Harlen Voss records the settlement/i)
   })
 })

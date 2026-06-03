@@ -47,6 +47,22 @@ If two of those collapse to the same actor, that is fine, but the distinction mu
 
 If a presentation model uses typed actor references, classify them explicitly as `npc`, `faction`, `district`, or `offscreen` rather than leaving personhood implied by prose alone.
 
+## Debt Role Rule
+
+For debt-facing runtime, UI, and authored copy, keep three roles distinct unless a design bead explicitly merges them:
+
+- `Claimant`: the named holder of the note or standing legal claim
+- `Enforcement`: the faction or institution whose seal, process, or threat makes the claim bite
+- `Beneficiary`: the actor who profits politically or materially from the house remaining buried, weakened, or foreclosed
+
+Current Project Destiny truth:
+
+- `Claimant`: `Harlen Voss`
+- `Enforcement`: `Gilded Court`
+- `Beneficiary`: `House Merrow`
+
+If a system can only react to one of those roles mechanically, choose deliberately which one it is reacting to and say so in copy. Do not flatten all three into a generic `creditor` label.
+
 ## Output Standard
 
 - concise

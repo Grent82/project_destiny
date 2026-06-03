@@ -4,14 +4,14 @@ import { applyPolitics } from './applyPolitics'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 
-describe('applyPolitics debt creditor interest', () => {
-  it('uses worse creditor standing to increase daily debt interest', () => {
+describe('applyPolitics debt enforcement interest', () => {
+  it('uses worse enforcement standing to increase daily debt interest', () => {
     const favorable = gameStateSchema.parse({
       ...initialGameStateSnapshot,
       day: 16,
       debtAmount: 800,
       debtPaid: false,
-      debtCreditorFactionId: 'faction-gilded-court',
+      debtEnforcementFactionId: 'faction-gilded-court',
       factionStandings: {
         ...initialGameStateSnapshot.factionStandings,
         'faction-gilded-court': 35,
@@ -23,7 +23,7 @@ describe('applyPolitics debt creditor interest', () => {
       day: 16,
       debtAmount: 800,
       debtPaid: false,
-      debtCreditorFactionId: 'faction-gilded-court',
+      debtEnforcementFactionId: 'faction-gilded-court',
       factionStandings: {
         ...initialGameStateSnapshot.factionStandings,
         'faction-gilded-court': -55,

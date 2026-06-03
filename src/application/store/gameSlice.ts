@@ -40,17 +40,19 @@ const gameSlice = createSlice({
       state.debtAmount = Math.max(0, state.debtAmount - actualPayment)
       if (state.debtAmount === 0) {
         state.debtPaid = true
-        const creditorFactionId = state.debtCreditorFactionId
-        const currentStanding = state.factionStandings[creditorFactionId] ?? 0
-        state.factionStandings[creditorFactionId] = Math.min(100, currentStanding + 3)
-        const creditorName =
-          contentCatalog.factionsById.get(creditorFactionId)?.name ?? creditorFactionId
+        const enforcementFactionId = state.debtEnforcementFactionId
+        const currentStanding = state.factionStandings[enforcementFactionId] ?? 0
+        state.factionStandings[enforcementFactionId] = Math.min(100, currentStanding + 3)
+        const enforcementName =
+          contentCatalog.factionsById.get(enforcementFactionId)?.name ?? enforcementFactionId
+        const claimantName =
+          contentCatalog.npcsById.get(state.debtClaimantNpcId)?.name ?? state.debtClaimantNpcId
         state.activityLog.unshift({
           id: `log-${state.day}-${state.timeSlot}-debt-paid`,
           day: state.day,
           timeSlot: state.timeSlot,
           category: 'system',
-          message: `${creditorName} acknowledges the settlement. The note is cleared, though the favor is not forgotten.`,
+          message: `${claimantName} records the settlement under ${enforcementName} seal. The note is cleared, though the arrangement behind it is not forgotten.`,
         })
         if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
       } else if (actualPayment > 0 && debtBefore > state.debtAmount) {
