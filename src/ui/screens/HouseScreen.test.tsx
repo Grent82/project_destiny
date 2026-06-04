@@ -27,6 +27,10 @@ describe('HouseScreen — search result lifecycle', () => {
     const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
     await user.click(within(bureauCard).getByRole('button', { name: 'Search' }))
 
+    // Confirm the search in the confirmation modal
+    const confirmButton = screen.getByRole('button', { name: /Search room/i })
+    await user.click(confirmButton)
+
     // Full discovery message visible in fresh state
     expect(within(bureauCard).getByText(/A forgotten strongbox behind the panelling/i)).toBeInTheDocument()
     // Flavor finds visible in fresh state

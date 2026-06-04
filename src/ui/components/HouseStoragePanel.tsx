@@ -6,12 +6,15 @@ import {
   selectItemActions,
 } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
+import { computeSellPrice } from '../../application/commands/sellItem'
 import { ItemCard } from './ItemCard'
 import { ItemActionMenu } from './ItemActionMenu'
 import { TargetPickerModal } from './TargetPickerModal'
 import { DocumentPreviewModal } from './DocumentPreviewModal'
+import { ConfirmationModal } from './ConfirmationModal'
 import type { ItemAction } from '../../application/selectors/inventory'
 import { gameActions } from '../../application/store/gameSlice'
+import { formatMarksAbbrev } from '../../domain/game/currency'
 
 export function HouseStoragePanel() {
   const store = useAppStore()
@@ -24,6 +27,7 @@ export function HouseStoragePanel() {
   const [menuForInstance, setMenuForInstance] = useState<string | null>(null)
   const [pendingAction, setPendingAction] = useState<{ action: ItemAction; instanceId: string } | null>(null)
   const [previewDocument, setPreviewDocument] = useState<{ title: string; description: string } | null>(null)
+  const [pendingSellConfirm, setPendingSellConfirm] = useState<{ instanceId: string; itemName: string; sellPrice: number } | null>(null)
 
   function handleAction(action: ItemAction, instanceId: string) {
     if (action.requiresTarget) {
@@ -39,6 +43,13 @@ export function HouseStoragePanel() {
           description: def.description ?? 'No readable notes are attached to this document yet.',
         })
       }
+      return
+    }
+    if (action.type === 'sell') {
+      const owned = store.getState().game.ownedItems.find((entry) => entry.instanceId === instanceId)
+      const def = owned ? contentCatalog.itemsById.get(owned.itemId) : null
+      const sellPrice = computeSellPrice(store.getState().game, instanceId)
+      setPendingSellConfirm({ instanceId, itemName: def?.name ?? 'item', sellPrice })
       return
     }
     dispatchAction(action, instanceId, undefined)
@@ -129,6 +140,19 @@ export function HouseStoragePanel() {
           title={previewDocument.title}
           description={previewDocument.description}
           onClose={() => setPreviewDocument(null)}
+        />
+      )}
+
+      {pendingSellConfirm && (
+        <ConfirmationModal
+          heading={`Sell ${pendingSellConfirm.itemName}?`}
+          consequence={`This will permanently sell the item. You will receive ${formatMarksAbbrev(pendingSellConfirm.sellPrice)}.`}
+          confirmLabel="Sell item"
+          onConfirm={() => {
+            dispatch(gameActions.sellItem({ instanceId: pendingSellConfirm.instanceId }))
+            setPendingSellConfirm(null)
+          }}
+          onCancel={() => setPendingSellConfirm(null)}
         />
       )}
     </section>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import rawArmor from '../../../data/definitions/armor.json'
@@ -10,6 +11,7 @@ import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArm
 import { selectStash } from '../../application/selectors/stash'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { VenueContextBanner } from './VenueContextBanner'
+import { ConfirmationModal } from '../components/ConfirmationModal'
 import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 
 function DurabilityBar({ current, max }: { current: number; max: number }) {
@@ -38,6 +40,9 @@ export function ShopsScreen() {
   const money = gameState.money
   const hasQuartermaster = roster.some((r) => r.activeTitle === 'title-quartermaster')
   const currentDistrictId = gameState.currentDistrictId
+
+  type PendingSell = { kind: 'weapon' | 'armor'; id: string; name: string; approxPrice: number }
+  const [pendingSell, setPendingSell] = useState<PendingSell | null>(null)
 
   // Only show weapon/armor stash when in a district with an arms dealer or weapon_dealer shop type
   const districtShopTypes = overview.shops.map((s: { shopType: string }) => s.shopType)
@@ -71,6 +76,7 @@ export function ShopsScreen() {
   }
 
   return (
+    <>
     <section className="screen-panel">
       <p className="eyebrow">House Valdris</p>
       <h1>The Market</h1>
@@ -233,7 +239,12 @@ export function ShopsScreen() {
                           <button
                             className="action-button action-button-sm"
                             type="button"
-                            onClick={() => dispatch(gameActions.sellFromStash({ type: 'weapon', id: w.id }))}
+                            onClick={() => setPendingSell({
+                              kind: 'weapon',
+                              id: w.id,
+                              name: w.name,
+                              approxPrice: Math.floor(getWeaponRepairCost(w.id) * 2.5),
+                            })}
                             title="Sell for ~50% market value"
                           >
                             Sell
@@ -276,7 +287,12 @@ export function ShopsScreen() {
                           <button
                             className="action-button action-button-sm"
                             type="button"
-                            onClick={() => dispatch(gameActions.sellFromStash({ type: 'armor', id: a.id }))}
+                            onClick={() => setPendingSell({
+                              kind: 'armor',
+                              id: a.id,
+                              name: a.name,
+                              approxPrice: Math.floor(getArmorRepairCost(a.id) * 2.5),
+                            })}
                             title="Sell for ~50% market value"
                           >
                             Sell
@@ -371,5 +387,18 @@ export function ShopsScreen() {
         })}
       </section>
     </section>
+    {pendingSell && (
+      <ConfirmationModal
+        heading={`Sell ${pendingSell.name}?`}
+        consequence={`This will sell the item from your stash. You will receive approximately ${formatMarksAbbrev(pendingSell.approxPrice)}.`}
+        confirmLabel="Sell item"
+        onConfirm={() => {
+          dispatch(gameActions.sellFromStash({ type: pendingSell.kind, id: pendingSell.id }))
+          setPendingSell(null)
+        }}
+        onCancel={() => setPendingSell(null)}
+      />
+    )}
+    </>
   )
 }

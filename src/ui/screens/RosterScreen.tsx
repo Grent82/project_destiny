@@ -165,10 +165,10 @@ export function RosterScreen() {
                           />
                         </div>
                       </div>
-                      {(entry.stress >= 70 || entry.hunger >= 70 || entry.fatigue >= 70 || entry.health <= 30) && (
-                        <span className="roster-state-warning" title="NPC in danger zone — check their states">⚠</span>
-                      )}
                     </div>
+                    {(entry.stress >= 70 || entry.hunger >= 70 || entry.fatigue >= 70 || entry.health <= 30) && (
+                      <span className="roster-state-warning" title="NPC in danger zone — check their states">⚠ critical state</span>
+                    )}
                   </button>
                 ))}
               </div>

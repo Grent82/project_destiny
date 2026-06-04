@@ -10,6 +10,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
+import { ConfirmationModal } from '../components/ConfirmationModal'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
@@ -254,6 +255,7 @@ function DurabilityPanel({ npcId }: { npcId: string }) {
 
 function TitlePanel({ detail }: { detail: NpcDetail }) {
   const [showList, setShowList] = useState(false)
+  const [confirmRevoke, setConfirmRevoke] = useState(false)
   const dispatch = useAppDispatch()
   const eligibility = useAppSelector(selectTitleEligibilityForNpc(detail.npcId))
   const activeTitleDef = detail.activeTitle
@@ -270,7 +272,7 @@ function TitlePanel({ detail }: { detail: NpcDetail }) {
           <button
             className="action-button action-button-sm"
             type="button"
-            onClick={() => dispatch(gameActions.revokeTitle({ npcId: detail.npcId }))}
+            onClick={() => setConfirmRevoke(true)}
           >
             Revoke
           </button>
@@ -313,6 +315,18 @@ function TitlePanel({ detail }: { detail: NpcDetail }) {
             </div>
           ))}
         </div>
+      )}
+      {confirmRevoke && activeTitleDef && (
+        <ConfirmationModal
+          heading={`Revoke ${activeTitleDef.name}?`}
+          consequence={`${detail.name} will lose the title and its daily effect: ${activeTitleDef.dailyEffect}. This cannot be undone without reassigning the title.`}
+          confirmLabel="Revoke title"
+          onConfirm={() => {
+            dispatch(gameActions.revokeTitle({ npcId: detail.npcId }))
+            setConfirmRevoke(false)
+          }}
+          onCancel={() => setConfirmRevoke(false)}
+        />
       )}
     </div>
   )

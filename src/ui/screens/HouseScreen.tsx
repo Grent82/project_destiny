@@ -15,6 +15,7 @@ import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import type { HouseRoom, NpcPairingPolicy, RoomState } from '../../domain/game/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
+import { ConfirmationModal } from '../components/ConfirmationModal'
 import { Link } from 'react-router-dom'
 import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 
@@ -93,6 +94,7 @@ function RoomCard({
 }) {
   const dispatch = useAppDispatch()
   const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
+  const [confirmSearch, setConfirmSearch] = useState(false)
   const canRepair =
     room.repairCost > 0 &&
     room.repairDaysRemaining === 0 &&
@@ -107,6 +109,7 @@ function RoomCard({
   const hasUnresolvedLeads = (discovery?.actionableFinds.length ?? 0) > 0
 
   return (
+    <>
     <article className={`house-room ${STATE_CLASS[room.state]}`}>
       <header className="house-room__header">
         <h3 className="house-room__name">{room.name}</h3>
@@ -219,10 +222,7 @@ function RoomCard({
         {canSearch && (
           <button
             className="action-button action-button--secondary"
-            onClick={() => {
-              onSearch()
-              dispatch(gameActions.searchRoom(room.roomId))
-            }}
+            onClick={() => setConfirmSearch(true)}
             type="button"
           >
             Search
@@ -236,6 +236,20 @@ function RoomCard({
         )}
       </footer>
     </article>
+    {confirmSearch && (
+      <ConfirmationModal
+        heading={`Search ${room.name}?`}
+        consequence="Searching the room will consume the search opportunity. Any findings will be revealed."
+        confirmLabel="Search room"
+        onConfirm={() => {
+          onSearch()
+          dispatch(gameActions.searchRoom(room.roomId))
+          setConfirmSearch(false)
+        }}
+        onCancel={() => setConfirmSearch(false)}
+      />
+    )}
+    </>
   )
 }
 
