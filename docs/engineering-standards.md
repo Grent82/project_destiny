@@ -91,3 +91,23 @@ Refactor only when one of these is true:
 - domain concepts are leaking across layers
 
 Do not perform broad opportunistic refactors inside unrelated tasks.
+
+## Quality Gates
+
+### Pre-commit hook
+
+`simple-git-hooks` runs `pnpm typecheck` before every commit. A commit with TypeScript errors is blocked.
+
+Set up after cloning:
+```bash
+pnpm install   # runs prepare automatically, which installs the hook
+```
+
+If the hook is missing after a fresh clone, run:
+```bash
+pnpm prepare
+```
+
+### CI (GitHub Actions)
+
+`.github/workflows/ci.yml` runs `pnpm typecheck` and `pnpm test:run` on every push to `main` and on every pull request targeting `main`.

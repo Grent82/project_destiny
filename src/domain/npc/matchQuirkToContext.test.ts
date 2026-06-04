@@ -21,7 +21,7 @@ const baseNpc: NpcDefinition = {
     ambition: 50, prudence: 50, vanity: 50, dominance: 50, curiosity: 50, zeal: 50,
   },
   allowedTitleIds: [],
-  bonds: [],
+  loyalties: [],
   schedule: {},
   quirks: [
     {

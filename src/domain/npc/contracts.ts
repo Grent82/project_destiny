@@ -141,7 +141,7 @@ export const npcMotivationSchema = z.object({
   lineTheyWontCross: z.string().optional(),
 })
 
-export const bondTypeSchema = z.enum([
+export const npcLoyaltyTypeSchema = z.enum([
   'sibling',
   'ex-lover',
   'creditor',
@@ -161,8 +161,8 @@ export const bondTypeSchema = z.enum([
   'romantic',
 ])
 
-export const npcBondSchema = z.object({
-  type: bondTypeSchema,
+export const npcLoyaltySchema = z.object({
+  type: npcLoyaltyTypeSchema,
   targetId: z.string().min(1),
   note: z.string().optional(),
   visibility: z.enum(['hidden', 'rumored', 'known']).optional(),
@@ -189,7 +189,7 @@ export const npcDefinitionSchema = z
     sex: z.string().optional(),
     appearanceTags: z.array(z.string()).optional(),
     quirks: z.array(npcQuirkSchema).default([]),
-    bonds: z.array(npcBondSchema).default([]),
+    loyalties: z.array(npcLoyaltySchema).default([]),
     dialogueId: entityIdSchema.optional(),
     defaultArcId: z.string().optional(),
     romanceEligible: z.boolean().optional(),
@@ -365,8 +365,8 @@ export const npcRuntimeStateSchema = z
 export type Attributes = z.infer<typeof attributesSchema>
 export type NpcAgeBand = z.infer<typeof npcAgeBandSchema>
 export type NpcAssignment = z.infer<typeof npcAssignmentSchema>
-export type NpcBond = z.infer<typeof npcBondSchema>
-export type BondType = z.infer<typeof bondTypeSchema>
+export type NpcLoyalty = z.infer<typeof npcLoyaltySchema>
+export type LoyaltyType = z.infer<typeof npcLoyaltyTypeSchema>
 export type NpcDefinition = z.infer<typeof npcDefinitionSchema>
 export type NpcMemoryEntry = z.infer<typeof npcMemoryEntrySchema>
 export type NpcMotivation = z.infer<typeof npcMotivationSchema>

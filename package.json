@@ -21,7 +21,8 @@
     "test:playthrough:funnel": "vitest run src/application/commands/questFunnelPlaythrough.test.ts",
     "test:playthrough:browser": "vitest run src/ui/playthrough",
     "test:playthrough:all": "vitest run src/application/playthrough src/application/commands/questFunnelPlaythrough.test.ts src/ui/playthrough",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "prepare": "simple-git-hooks"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.0",
@@ -47,9 +48,13 @@
     "globals": "^17.5.0",
     "jsdom": "^27.1.0",
     "prettier": "^3.6.2",
+    "simple-git-hooks": "^2.13.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.10",
     "vitest": "^4.0.8"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm typecheck"
   }
 }

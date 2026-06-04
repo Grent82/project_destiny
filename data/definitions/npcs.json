@@ -87,7 +87,7 @@
       "publicGoal": "To manage the house efficiently and keep the finances clean.",
       "privateNeed": "To never be the person who made that cargo run again \u2014 and to never admit she still could."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "handler",
         "targetId": "npc-ghost-valdris-cargo-patron",
@@ -193,7 +193,7 @@
       "publicGoal": "Enough coin to leave on her own terms.",
       "privateNeed": "To know what she actually wants."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-verek-holst",
@@ -310,7 +310,7 @@
       "privateNeed": "To believe he is still on the right side of something.",
       "immediatePressure": "His old precinct is quietly purging former officers."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ida-rhys",
@@ -409,7 +409,7 @@
       "privateNeed": "Reparation in a form she can live with.",
       "immediatePressure": "Someone is still looking for what she took when she left."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "hated-foreman",
         "targetId": "npc-ghost-league-overseer",
@@ -502,7 +502,7 @@
       "privateNeed": "To stop being the man who let it fall.",
       "lineTheyWontCross": "Selling the family crest or serving those who destroyed it."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
@@ -597,7 +597,7 @@
       "publicGoal": "Safe passage and an ongoing commission.",
       "privateNeed": "To never be trapped in one place long enough to be found."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ghost-past-crew",
@@ -689,7 +689,7 @@
       "privateNeed": "To believe collective effort can still accomplish something.",
       "immediatePressure": "Someone is undercutting his supply arrangements."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ghost-past-garrison",
@@ -781,7 +781,7 @@
       "privateNeed": "To believe she has not become what drove her out.",
       "lineTheyWontCross": "Treating a patient she knows will be sent back to die."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "dead-spouse",
         "targetId": "npc-ghost-aldmoor-patient",
@@ -874,7 +874,7 @@
       "privateNeed": "A reason to stay once he has it.",
       "lineTheyWontCross": "Any arrangement that resembles ownership."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-bog",
@@ -965,7 +965,7 @@
       "publicGoal": "To establish herself as a reliable independent archivist.",
       "privateNeed": "To understand what the ledger means before using it \u2014 and who she would become if she did."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "bastard-kin",
         "targetId": "npc-old-maret",
@@ -1059,7 +1059,7 @@
       "publicGoal": "A contract that does not cost more than it pays.",
       "privateNeed": "To know she will not make the same mistake twice."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ghost-rutha-crew",
@@ -1149,7 +1149,7 @@
       "publicGoal": "To apprentice somewhere that will not ask too many questions about her name.",
       "privateNeed": "To find out whether she is heiress or evidence \u2014 and whether it matters either way."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "parent",
         "targetId": "npc-lira-ashcroft",
@@ -1241,7 +1241,7 @@
       "privateNeed": "She was tracking a maternity ledger \u2014 a chapel birth registry from The Pale, cross-referenced with Compact Registry succession grants \u2014 that proves the Valdric maternal line was erased, not extinguished. The final link in the chain is a woman named Cessa Rill.",
       "immediatePressure": "Captivity, or something that looks like it. She has been altered by it. She guards something \u2014 or no longer speaks from the same self."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-cessa-rill",
@@ -1348,7 +1348,7 @@
       "publicGoal": "To keep the Lantern Vale running and out of debt.",
       "privateNeed": "To return the box to someone who will know what to do with it without making him responsible for what happens next."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
@@ -1465,7 +1465,7 @@
       "publicGoal": "To maintain the chapel as sanctuary for the displaced.",
       "privateNeed": "To find the name of the patron who arranged her sister's erasure before she runs out of time to matter."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "dead-spouse",
         "targetId": "npc-ghost-dead-sister-vael",
@@ -1583,7 +1583,7 @@
       "publicGoal": "To maintain his position as a reliable municipal clerk.",
       "privateNeed": "To hand the copy to someone who can use it before his nerve fails."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
@@ -1680,7 +1680,7 @@
       "publicGoal": "To keep the stall profitable and Lirien out of trouble.",
       "privateNeed": "To die before Lirien finds out what name they were almost given instead."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "parent",
         "targetId": "npc-lirien-ashcroft",
@@ -1772,7 +1772,7 @@
       "privateNeed": "To be acknowledged as someone who makes things move.",
       "lineTheyWontCross": "Allowing work to be cut from workers without contest."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-tav",
@@ -1868,7 +1868,7 @@
       "publicGoal": "Open trade routes with minimal scrutiny.",
       "privateNeed": "His client list is longer than his official business suggests."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "hated-foreman",
         "targetId": "npc-ghost-pale-creditor",
@@ -1960,7 +1960,7 @@
       "publicGoal": "Unknown. The ambiguity is functional.",
       "privateNeed": "Unknown. Even to themselves, perhaps."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "missing-child",
         "targetId": "npc-ghost-wren-child",
@@ -2058,7 +2058,7 @@
       "privateNeed": "To know whether what she saw was exceptional or typical.",
       "lineTheyWontCross": "Returning to the Court's direct service."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "rival",
         "targetId": "npc-ghost-pale-court",
@@ -2149,7 +2149,7 @@
       "publicGoal": "Something worth the cost of his past.",
       "privateNeed": "To stop accumulating regrets before the cost gets higher."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ghost-cutter-crew",
@@ -2259,7 +2259,7 @@
       "publicGoal": "To keep her stall running and her creditors satisfied.",
       "privateNeed": "To give her granddaughter the ledger before she dies \u2014 without admitting she knows she has it."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "bastard-kin",
         "targetId": "npc-maret-sunne",
@@ -2366,7 +2366,7 @@
       "privateNeed": "To complete the foreclosure before anyone finds the coercion papers.",
       "immediatePressure": "A Merrow intermediary has indicated that time is running out. Complete the foreclosure or lose Merrow's backing."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "creditor",
         "targetId": "npc-ghost-valdris-fall",
@@ -2462,7 +2462,7 @@
       "publicGoal": "Control of the dock work assignments.",
       "privateNeed": "His cut stays untouched."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "handler",
         "targetId": "faction-house-merrow",
@@ -2555,7 +2555,7 @@
       "lineTheyWontCross": "Losing information she once possessed.",
       "immediatePressure": "House Merrow has filed a duplicate claim on the same document trail she is tracking. She needs it resolved first."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "rival",
         "targetId": "npc-ghost-valdris-fall",
@@ -2657,7 +2657,7 @@
       "publicGoal": "Maintaining his arrangement.",
       "privateNeed": "To decide whether he is the villain of his own story."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "debtor",
         "targetId": "npc-ghost-morke-creditor",
@@ -2750,7 +2750,7 @@
       "publicGoal": "Ledger balance. The habit of accounting.",
       "privateNeed": "Something to justify the precision."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ghost-wex-handler",
@@ -2841,7 +2841,7 @@
       "privateNeed": "To know whether the cause is still worth the concealment.",
       "lineTheyWontCross": "Being found before she is ready."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "rival",
         "targetId": "npc-ghost-tessaly-hunter",
@@ -2933,7 +2933,7 @@
       "privateNeed": "Forgiveness, starting with her own.",
       "lineTheyWontCross": "Abandoning someone who cannot leave."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "fosterling",
         "targetId": "npc-ghost-sanna-ward",
@@ -3024,7 +3024,7 @@
       "publicGoal": "A reason. Any reason.",
       "privateNeed": "Permission to stop waiting."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-ghost-brand-crew",
@@ -3120,7 +3120,7 @@
       "privateNeed": "To give the ledger to someone who will use it before he dies.",
       "lineTheyWontCross": "Destroying a record he has sworn to preserve."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
@@ -3216,7 +3216,7 @@
       "privateNeed": "Restitution before confession. She must give something back before she can speak.",
       "lineTheyWontCross": "Surrendering the transfer documents to anyone who would use them to harm, not restore."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
@@ -3317,7 +3317,7 @@
       "privateNeed": "To deliver the artifacts before he dies. He swore an oath.",
       "lineTheyWontCross": "Surrendering the heir artifacts to anyone he has not confirmed as the legitimate heir."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-ghost-valdris-fall",
@@ -3413,7 +3413,7 @@
       "privateNeed": "To see House Valdric fail again, quietly, with paperwork.",
       "lineTheyWontCross": "Allowing anyone to find the forged paper trail his father left."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "rival",
         "targetId": "npc-ghost-valdris-fall",
@@ -3514,7 +3514,7 @@
       "privateNeed": "To know whether the alteration she made saved or condemned.",
       "lineTheyWontCross": "Destroying a birth record, regardless of the political consequence of keeping it."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-mira",
@@ -3608,7 +3608,7 @@
       "privateNeed": "To understand why people like Petra or Oswin choose to keep doing what costs them everything.",
       "immediatePressure": "Not to make a mistake that proves she wasn't ready."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-oswin-farr",
@@ -3704,7 +3704,7 @@
       "privateNeed": "To trust someone enough to stay in one place.",
       "immediatePressure": "A base of operations that cannot be found in the usual ways."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-oswin-farr",
@@ -3799,7 +3799,7 @@
       "privateNeed": "To believe the years he gave were worth what they cost.",
       "immediatePressure": "Work with a clear command structure and a clear objective."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-verek-holst",
@@ -3895,7 +3895,7 @@
       "privateNeed": "To believe that what he kept is enough to matter, when it matters.",
       "immediatePressure": "Distance from the building he worked in for twelve years and the person he was there."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "witness",
         "targetId": "npc-verek-holst",
@@ -3989,7 +3989,7 @@
       "publicGoal": "To remain useful to enough parties that none of them can afford to remove him.",
       "privateNeed": "To believe there is still a version of this where he got out clean."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "handler",
         "targetId": "npc-dara-slink",
@@ -4082,7 +4082,7 @@
       "publicGoal": "To keep the ward's people alive and as healthy as they can afford to be.",
       "privateNeed": "To believe that proximity to suffering has not made her numb to it."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "parent",
         "targetId": "npc-dara-slink",
@@ -4176,7 +4176,7 @@
       "publicGoal": "To pass on the craft before the Ironworks forgets what precision means.",
       "privateNeed": "To be seen as someone who built things, not merely someone who was used to build them."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "rival",
         "targetId": "npc-sable-wrent",
@@ -4267,7 +4267,7 @@
       "publicGoal": "To understand why things are the way they are.",
       "privateNeed": "To know if this place is somewhere she is allowed to stay."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "handler",
         "targetId": "npc-petra-sunn",
@@ -4361,7 +4361,7 @@
       "publicGoal": "To be useful in a way that does not require him to think about why.",
       "privateNeed": "To find out if he is still someone worth trusting."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-verek-holst",
@@ -4456,7 +4456,7 @@
       "publicGoal": "To make the house a durable presence in the city, not a temporary one.",
       "privateNeed": "To build something that will still be standing after she is not relevant to it."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "old-comrade",
         "targetId": "npc-marion-vale",
@@ -4535,7 +4535,7 @@
       "privateNeed": "Maintain the seal's value long enough to pass something to his heirs.",
       "immediatePressure": "A Compact audit of the Salt Ledger Hall will surface his household's debt within three seasons."
     },
-    "bonds": [
+    "loyalties": [
       {
         "type": "rival",
         "targetId": "npc-enemy-lady-sorn",
