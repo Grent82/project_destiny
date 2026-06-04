@@ -1,6 +1,6 @@
 import type { GameState } from '../../domain'
 import { getLoyaltyDeployStatus } from '../../domain/npcStateModifiers'
-import { MIN_DEPLOYABLE_HEALTH } from './combat'
+import { isDeployable } from './isDeployable'
 
 const MAX_SQUAD_SIZE = 6
 
@@ -14,22 +14,7 @@ export function addNpcToSelectedSquad(
     return state
   }
 
-  // Cannot deploy recovering NPCs
-  if (npc.assignment === 'recovering') {
-    return state
-  }
-
-  // Working and training NPCs are on assignment and cannot be deployed
-  if (npc.assignment === 'working' || npc.assignment === 'training') {
-    return state
-  }
-
-  if (npc.states.health < MIN_DEPLOYABLE_HEALTH) {
-    return state
-  }
-
-  // Title-holders are on duty and cannot be deployed
-  if (npc.assignment === 'assigned_title') {
+  if (!isDeployable(npc)) {
     return state
   }
 

@@ -7,6 +7,7 @@ import {
 } from '../../application'
 import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
 import { contentCatalog } from '../../application/content/contentCatalog'
+import { isDeployable } from '../../application/commands/isDeployable'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function ExpeditionPrepScreen() {
@@ -57,7 +58,7 @@ export function ExpeditionPrepScreen() {
     )
   }
 
-  const availableRoster = roster.filter((npc) => npc.assignment === 'idle')
+  const availableRoster = roster.filter((npc) => npc.assignment === 'idle' && isDeployable(npc))
 
   function toggleNpc(npcId: string) {
     setSquadIds((prev) =>

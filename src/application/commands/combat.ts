@@ -29,7 +29,7 @@ export {
   getEnemyDangerModifiers,
 } from './combatants'
 export { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
-import { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
+import { isDeployable } from './isDeployable'
 import {
   advanceTurn,
   appendLog,
@@ -60,14 +60,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
   }
 
   const squad = state.roster.filter(
-    (npc) =>
-      state.selectedSquadNpcIds.includes(npc.npcId) &&
-      npc.states.health >= MIN_DEPLOYABLE_HEALTH &&
-      npc.assignment !== 'recovering' &&
-      npc.assignment !== 'working' &&
-      npc.assignment !== 'training' &&
-      npc.assignment !== 'assigned_title' &&
-      npc.assignment !== 'transferred',
+    (npc) => state.selectedSquadNpcIds.includes(npc.npcId) && isDeployable(npc),
   )
 
   if (squad.length === 0) {
