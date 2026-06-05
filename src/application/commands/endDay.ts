@@ -24,7 +24,6 @@ import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
 import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 import { applyBondServiceEffects } from './bondService'
 import { checkBondAcquisitionOffers, applyNpcHeldConditionDecay } from './bondTransfer'
-import { applyWardAgeMilestones } from './applyWardAgeMilestones'
 import { applyNpcPairing } from './applyNpcPairing'
 import { applyHouseholdIntimacy } from './applyHouseholdIntimacy'
 import { isQuestLeadExpired } from '../../domain/quests/contracts'
@@ -243,7 +242,6 @@ export function endDay(state: GameState): GameState {
   afterEvents = resolveRumorEvents(afterEvents, rng)
   afterEvents = applyCaptivityDegradation(afterEvents)
   afterEvents = tickWardStages(afterEvents)
-  afterEvents = applyWardAgeMilestones(afterEvents, rng)
   const finalState = checkMainQuestProgression(afterEvents)
 
   // Store advanced RNG seed for next day's deterministic run

@@ -351,55 +351,6 @@ describe('gameStateSchema', () => {
     expect(runtime.context.executionDurationDays).toBe(3)
     expect(runtime.context.executionDurationWatches).toBeNull()
   })
-
-  it('accepts tracked wards with bond service state', () => {
-    const result = gameStateSchema.safeParse({
-      day: 1,
-      timeSlot: 'morning',
-      money: 250,
-      protagonistName: 'Valdric',
-      hasSeenOpening: false,
-      factionStates: [],
-      districts: [],
-      roster: [],
-      inventory: [],
-      cityResources: {
-        foodSecurity: 62,
-        waterAccess: 70,
-        materialStock: 50,
-        corridorStatus: 'open',
-      },
-      factionStandings: {},
-      cityDials: {
-        control: 45,
-        prosperity: 35,
-        unrest: 55,
-        corruption: 60,
-      },
-      activityLog: [],
-      selectedSquadNpcIds: [],
-      activeCombat: null,
-      pendingEvents: [],
-      wards: [
-        {
-          wardId: 'ward-ash',
-          name: 'Ash',
-          parentNpcId: 'npc-marion-vale',
-          freedOnDay: null,
-          bondStatus: {
-            holderId: 'compact',
-            contractValue: 900,
-            termDays: null,
-            entryReason: 'compact-assessment',
-            alongsideFreeAssignmentDays: 0,
-            lastEqualityNoticeDay: null,
-          },
-        },
-      ],
-    })
-
-    expect(result.success).toBe(true)
-  })
 })
 
 describe('activeCombatStateSchema', () => {

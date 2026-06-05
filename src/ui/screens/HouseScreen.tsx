@@ -8,7 +8,6 @@ import {
   selectHouseRepairSummary,
   selectHouseRoomOccupancy,
   selectHouseRooms,
-  selectWards,
 } from '../../application'
 import { HOUSE_ROOM_FUNCTION_EFFECT_SUMMARIES } from '../../application/commands/houseRoomFunctions'
 import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
@@ -258,7 +257,6 @@ export function HouseScreen() {
   const rooms = useAppSelector(selectHouseRooms)
   const summary = useAppSelector(selectHouseRepairSummary)
   const debt = useAppSelector(selectDebtStatus)
-  const wards = useAppSelector(selectWards)
   const heirs = useAppSelector(selectHouseHeirs)
   const assignableRooms = useAppSelector(selectAssignableHouseRooms)
   const roomOccupancy = useAppSelector(selectHouseRoomOccupancy)
@@ -408,30 +406,6 @@ export function HouseScreen() {
           </p>
         )}
       </section>
-
-      {wards.length > 0 && (
-        <section className="house-wards-section">
-          <h2>Household</h2>
-          <p className="summary">Named members under house protection — wards, rescued children, dependents.</p>
-          <div className="mission-list">
-            {wards.map((ward) => (
-              <div key={ward.wardId} className="mission-row">
-                <div className="mission-row-header">
-                  <strong>{ward.name}</strong>
-                  <span className="badge">{ward.stage.replace('_', ' ')}</span>
-                  {ward.origin && <span className="badge">{ward.origin}</span>}
-                  {ward.bondStatus && <span className="badge badge-warning">Bond held — {ward.bondStatus.holderId}</span>}
-                </div>
-                {(ward.parentNpcIds.length > 0 || ward.parentNpcId) && (
-                  <p className="quest-briefing" style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                    Parent refs: {ward.parentNpcIds.length > 0 ? ward.parentNpcIds.join(', ') : ward.parentNpcId}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       <section className="house-wards-section">
         <h2>Succession</h2>
