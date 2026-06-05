@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { EmptyState } from '../components/EmptyState'
 
 import {
   selectAvailableQuestLeads,
@@ -105,7 +106,7 @@ export function ContractBoardScreen() {
         <article className="detail-panel">
           <h2>Active Contracts</h2>
           {activeQuests.length === 0 ? (
-            <p className="summary">No contracts in hand. Accept a lead to begin work.</p>
+            <EmptyState message="No contracts in hand. Accept a lead to begin work." icon="📋" />
           ) : (
             <div className="mission-list">
               {activeQuests.map(({ runtime, template, presentation, displayTitle, objectiveLabel, incidentDistrictId, readiness }) => {
@@ -364,7 +365,7 @@ export function ContractBoardScreen() {
         <article className="detail-panel">
           <h2>Available Leads</h2>
           {availableQuestLeads.length === 0 ? (
-            <p className="summary">No fresh leads at the moment. Work is either already in hand or not yet surfaced.</p>
+            <EmptyState message="No fresh leads at the moment. Work is either already in hand or not yet surfaced." icon="🔍" />
           ) : (
             <div className="mission-list">
               {availableQuestLeads.map(({ lead, template, presentation }) => {

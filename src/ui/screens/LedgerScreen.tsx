@@ -1,6 +1,7 @@
 import { gameActions, selectFactionSummaries, selectLedgerSummary, selectDailyIncomeBreakdown } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { formatMarks, formatMarksPerDay } from '../../domain/game/currency'
+import { EmptyState } from '../components/EmptyState'
 
 const QUEST_STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -179,7 +180,7 @@ export function LedgerScreen() {
       <div className="ledger-section">
         <h2>Contract Registry</h2>
         {ledger.activeContracts.length === 0 ? (
-          <p className="ledger-empty">No contracts on record. The house has taken no work.</p>
+          <EmptyState message="No contracts on record. The house has taken no work." icon="📜" />
         ) : (
           <table className="ledger-table">
             <thead>

@@ -1,4 +1,5 @@
 import type React from 'react'
+import { EmptyState } from '../components/EmptyState'
 
 import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions } from '../../application'
 import type { InstitutionalTier } from '../../domain'
@@ -191,7 +192,7 @@ export function FactionsScreen() {
           {voteAccessSummary}
         </p>
         {activeCouncilVotes.length === 0 ? (
-          <p style={{ fontSize: '0.85em', color: 'var(--color-text-secondary, #999)' }}>No votes pending. The council is quiet.</p>
+          <EmptyState message="No votes pending. The council is quiet." icon="⚖️" />
         ) : (
           activeCouncilVotes.map((vote) => (
             <div key={vote.id} style={{ marginBottom: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.75rem' }}>

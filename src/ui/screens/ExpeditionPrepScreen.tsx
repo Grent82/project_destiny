@@ -8,6 +8,7 @@ import {
 import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { isDeployable } from '../../application/commands/isDeployable'
+import { EmptyState } from '../components/EmptyState'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 export function ExpeditionPrepScreen() {
@@ -127,7 +128,7 @@ export function ExpeditionPrepScreen() {
         <article className="detail-panel">
           <h2>Squad</h2>
           {availableRoster.length === 0 ? (
-            <p className="summary">No {formatNpcAssignmentLabel('idle').toLowerCase()} operatives available.</p>
+            <EmptyState message={`No ${formatNpcAssignmentLabel('idle').toLowerCase()} operatives available.`} icon="👤" />
           ) : (
             <div className="mission-list">
               {availableRoster.map((npc) => {

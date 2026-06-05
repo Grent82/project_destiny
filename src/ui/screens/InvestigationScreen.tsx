@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { EmptyState } from '../components/EmptyState'
 
 import {
   gameActions,
@@ -32,7 +33,7 @@ export function InvestigationScreen() {
       <section className="screen-panel">
         <p className="eyebrow">House Valdris</p>
         <h1>Investigation</h1>
-        <p className="summary">No investigation is currently active.</p>
+        <EmptyState message="No investigation is currently active." icon="🔎" cta={{ label: 'View Contracts', to: '/contracts' }} />
         <button className="action-button" onClick={() => navigate('/contracts')} type="button">
           Return to Contracts
         </button>
@@ -349,7 +350,7 @@ export function InvestigationScreen() {
           </p>
 
           {idleRoster.length === 0 ? (
-            <p className="summary">No idle personnel available.</p>
+            <EmptyState message="No idle personnel available." icon="👤" />
           ) : (
             <div className="mission-list">
               {idleRoster.map((npc) => {
