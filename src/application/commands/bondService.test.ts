@@ -263,3 +263,123 @@ describe('applyBondHolderPowerDynamics (via applyBondServiceEffects)', () => {
     expect(volFear).toBeLessThan(ccFear)
   })
 })
+
+describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
+  function makeBondedRosterEntry(
+    overrides: Partial<NpcRuntimeState> = {},
+    bondOverrides: Record<string, unknown> = {},
+  ): NpcRuntimeState {
+    return {
+      ...idaRhysRosterEntry,
+      ...overrides,
+      bondStatus: {
+        holderId: 'player',
+        contractValue: 80,
+        termDays: 30,
+        entryReason: 'debt-settlement' as const,
+        alongsideFreeAssignmentDays: 0,
+        lastEqualityNoticeDay: null,
+        forSale: false,
+        lastOfferDay: null,
+        marketValue: 80,
+        ownerType: 'player' as const,
+        bondStartDay: 1,
+        ...bondOverrides,
+      },
+    }
+  }
+
+  it('does not change state when no player-held bonds exist', () => {
+    const result = applyBondServiceEffects(initialGameStateSnapshot)
+    expect(result.playerCharacter.traits.ruthlessness).toBe(
+      initialGameStateSnapshot.playerCharacter.traits.ruthlessness,
+    )
+    expect(result.playerCharacter.traits.dominance).toBe(
+      initialGameStateSnapshot.playerCharacter.traits.dominance,
+    )
+  })
+
+  it('applies ruthlessness drift when a coercive bond is held', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [makeBondedRosterEntry({}, { entryReason: 'combat-capture' })],
+    }
+    const before = state.playerCharacter.traits.ruthlessness
+    const result = applyBondServiceEffects(state)
+    expect(result.playerCharacter.traits.ruthlessness).toBe(before + 1)
+  })
+
+  it('does NOT apply ruthlessness drift for voluntary bonds', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [makeBondedRosterEntry({}, { entryReason: 'voluntary' })],
+    }
+    const before = state.playerCharacter.traits.ruthlessness
+    const result = applyBondServiceEffects(state)
+    expect(result.playerCharacter.traits.ruthlessness).toBe(before)
+  })
+
+  it('applies dominance drift when any player-held bond exists', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [makeBondedRosterEntry({}, { entryReason: 'inherited' })],
+    }
+    const before = state.playerCharacter.traits.dominance
+    const result = applyBondServiceEffects(state)
+    expect(result.playerCharacter.traits.dominance).toBe(before + 1)
+  })
+
+  it('appends charged log entry on HOLDER_LOG_INTERVAL days', () => {
+    // day 7 should trigger the log (7 % 7 === 0)
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      day: 7,
+      roster: [makeBondedRosterEntry()],
+    }
+    const before = state.activityLog.length
+    const result = applyBondServiceEffects(state)
+    const newEntries = result.activityLog.slice(before)
+    const chargedEntry = newEntries.find((e) => e.message.includes('ledger'))
+    expect(chargedEntry).toBeDefined()
+  })
+
+  it('does NOT append charged log entry on non-interval days', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      day: 4,
+      roster: [makeBondedRosterEntry()],
+    }
+    const before = state.activityLog.length
+    const result = applyBondServiceEffects(state)
+    const newEntries = result.activityLog.slice(before)
+    const chargedEntry = newEntries.find((e) => e.message.includes('ledger'))
+    expect(chargedEntry).toBeUndefined()
+  })
+
+  it('raises unrest and reduces Gilded Court standing when 3+ bonds held', () => {
+    const bond1 = makeBondedRosterEntry({ npcId: 'npc-1', name: 'One' })
+    const bond2 = makeBondedRosterEntry({ npcId: 'npc-2', name: 'Two' })
+    const bond3 = makeBondedRosterEntry({ npcId: 'npc-3', name: 'Three' })
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [bond1, bond2, bond3],
+    }
+    const beforeUnrest = state.cityDials.unrest
+    const beforeGilded = state.factionStandings['faction-gilded-court'] ?? 0
+    const result = applyBondServiceEffects(state)
+    expect(result.cityDials.unrest).toBeGreaterThan(beforeUnrest)
+    expect(result.factionStandings['faction-gilded-court'] ?? 0).toBeLessThan(beforeGilded)
+  })
+
+  it('does NOT affect city or Gilded Court when fewer than 3 bonds held', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [makeBondedRosterEntry()],
+      factionStandings: { 'faction-gilded-court': 10 },
+    }
+    const beforeUnrest = state.cityDials.unrest
+    const result = applyBondServiceEffects(state)
+    expect(result.cityDials.unrest).toBe(beforeUnrest)
+    expect(result.factionStandings['faction-gilded-court']).toBe(10)
+  })
+})

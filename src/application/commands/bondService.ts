@@ -5,8 +5,12 @@ import { adjustCityDial } from './economicConsequences'
 import { EVENT_IDS, FACTION_IDS, TITLE_IDS } from '../content/ids'
 
 const TALLOW_RING_ID = FACTION_IDS.TALLOW_RING
+const GILDED_COURT_ID = FACTION_IDS.GILDED_COURT
 const TITLE_OBJECTION_DAY_INTERVAL = 28
 const EQUALITY_NOTICE_THRESHOLD_DAYS = 14
+const HOLDER_LOG_INTERVAL = 7
+const HOLDER_MORAL_THRESHOLD_COUNT = 3
+const COERCIVE_ENTRY_REASONS = new Set(['compact-assessment', 'combat-capture', 'debt-settlement'])
 
 function isPlayerHeldBound(npc: NpcRuntimeState): boolean {
   return npc.bondStatus?.holderId === 'player'
@@ -209,6 +213,73 @@ function applyBondHolderPowerDynamics(state: GameState): void {
   }
 }
 
+/**
+ * Applies holder-side consequences for the player actively holding bond contracts.
+ * Runs once per day. Effects:
+ * - Trait drift: ruthlessness + dominance creep from coercive/sustained holding
+ * - Roster friction: free empathic NPCs (empathy > 60) cool toward the player
+ * - Charged log entry: every HOLDER_LOG_INTERVAL days names a bonded person
+ * - Moral-weather pressure: Gilded Court standing and unrest if holding exceeds threshold
+ *
+ * Pure function — takes state, returns new state with no side effects.
+ */
+export function applyBondHolderConsequences(state: GameState): GameState {
+  const playerBonds = state.roster.filter(
+    (npc) => npc.bondStatus?.holderId === 'player' && npc.bondStatus?.ownerType === 'player',
+  )
+  if (playerBonds.length === 0) return state
+
+  const hasCoerciveBond = playerBonds.some((npc) =>
+    COERCIVE_ENTRY_REASONS.has(npc.bondStatus!.entryReason),
+  )
+
+  // Trait drift: holding power shapes the holder
+  const ruthlessnessDrift = hasCoerciveBond ? 1 : 0
+  const dominanceDrift = playerBonds.length > 0 ? 1 : 0
+  let next: GameState = {
+    ...state,
+    relationships: { ...state.relationships },
+    playerCharacter: {
+      ...state.playerCharacter,
+      traits: {
+        ...state.playerCharacter.traits,
+        ruthlessness: Math.min(100, state.playerCharacter.traits.ruthlessness + ruthlessnessDrift),
+        dominance: Math.min(100, state.playerCharacter.traits.dominance + dominanceDrift),
+      },
+    },
+  }
+
+  // Roster friction: free NPCs with high empathy register the arrangement
+  for (const npc of next.roster) {
+    if (npc.bondStatus || npc.traits.empathy <= 60) continue
+    applyRelationshipDelta(next, npc.npcId, 'player', 'affinity', -1)
+  }
+
+  // Charged log: every HOLDER_LOG_INTERVAL days, surface the weight of a specific bond
+  if (state.day % HOLDER_LOG_INTERVAL === 0) {
+    const featured = playerBonds[0]!
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `The ledger of ${featured.name}'s remaining term lies open on the table tonight. The house feels smaller for it.`,
+    )
+  }
+
+  // Moral-weather pressure: if holding too many, the city and Gilded Court notice
+  if (playerBonds.length >= HOLDER_MORAL_THRESHOLD_COUNT) {
+    next = adjustCityDial(next, 'unrest', 1)
+    next = {
+      ...next,
+      factionStandings: {
+        ...next.factionStandings,
+        [GILDED_COURT_ID]: Math.max(-100, (next.factionStandings[GILDED_COURT_ID] ?? 0) - 1),
+      },
+    }
+  }
+
+  return next
+}
+
 export function applyBondServiceEffects(state: GameState): GameState {
   const freeWorkers = state.roster.filter(
     (npc) => npc.assignment === 'working' && !isPlayerHeldBound(npc),
@@ -248,5 +319,6 @@ export function applyBondServiceEffects(state: GameState): GameState {
 
   next = applyMonthlyBondOperationCosts(next)
   applyBondHolderPowerDynamics(next)
+  next = applyBondHolderConsequences(next)
   return next
 }
