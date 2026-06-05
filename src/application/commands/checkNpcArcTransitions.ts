@@ -5,6 +5,7 @@ import type { Rng } from './seededRng'
 import npcArcsData from '../../../data/definitions/npc-arcs.json'
 import { appendActivityLogEntry } from './activityLog'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { EVENT_IDS } from '../content/ids'
 
 const npcArcDefinitions = npcArcDefinitionSchema.array().parse(npcArcsData)
 const npcArcsById = new Map(npcArcDefinitions.map((a) => [a.arcId, a]))
@@ -195,14 +196,14 @@ export function checkFracturedArcBranching(state: GameState): GameState {
 
       if (hasAnchor) {
         // Path A: advance to healing
-        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'event-bren-anchor-found')
+        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === EVENT_IDS.BREN_ANCHOR_FOUND)
         const updatedNpc = {
           ...npc,
           npcArc: { ...arc, stage: 'healing', stageEnteredDay: state.day, stageFlags: updatedFlags },
         }
         next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
         if (!alreadyPending) {
-          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: 'event-bren-anchor-found', firedOnDay: state.day }] }
+          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: EVENT_IDS.BREN_ANCHOR_FOUND, firedOnDay: state.day }] }
         }
         next = appendActivityLogEntry(next, 'system', `${npc.name} is finding a way back. Something — someone — is holding.`)
       } else {
@@ -212,9 +213,9 @@ export function checkFracturedArcBranching(state: GameState): GameState {
           npcArc: { ...arc, stage: 'broken', stageEnteredDay: state.day, stageFlags: updatedFlags },
         }
         next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
-        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'event-bren-leaving-warning')
+        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === EVENT_IDS.BREN_LEAVING_WARNING)
         if (!alreadyPending) {
-          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: 'event-bren-leaving-warning', firedOnDay: state.day }] }
+          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: EVENT_IDS.BREN_LEAVING_WARNING, firedOnDay: state.day }] }
         }
         next = appendActivityLogEntry(next, 'system', `${npc.name} is slipping. The fracture has gone deeper.`)
       }
@@ -229,7 +230,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
     const arc = npc.npcArc!
     const daysInBroken = state.day - arc.stageEnteredDay
     if (daysInBroken >= 10) {
-      const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'event-bren-left')
+      const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === EVENT_IDS.BREN_LEFT)
       if (!alreadyPending && !arc.stageFlags['departureQueued']) {
         const updatedNpc = {
           ...npc,
@@ -238,7 +239,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
         next = {
           ...next,
           roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
-          pendingEvents: [...next.pendingEvents, { eventId: 'event-bren-left', firedOnDay: state.day }],
+          pendingEvents: [...next.pendingEvents, { eventId: EVENT_IDS.BREN_LEFT, firedOnDay: state.day }],
         }
       }
     }

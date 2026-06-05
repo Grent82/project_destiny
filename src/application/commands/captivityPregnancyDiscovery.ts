@@ -1,7 +1,8 @@
 import type { GameState } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
+import { EVENT_IDS } from '../content/ids'
 
-export const CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID = 'event-captivity-pregnancy-discovery'
+export const CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID = EVENT_IDS.CAPTIVITY_PREGNANCY_DISCOVERY
 
 export function captivityPregnancyDiscoveryKey(npcId: string): string {
   return `captivity-pregnancy-discovery-${npcId}`

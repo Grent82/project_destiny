@@ -2,6 +2,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { computeExteriorTier } from './commitExteriorTier'
 import type { GameState } from '../../domain'
 import type { HouseRoom } from '../../domain/game/contracts'
+import { ROOM_IDS } from '../content/ids'
 
 const REPAIR_DAYS_BY_STATE: Partial<Record<HouseRoom['state'], number>> = {
   damaged: 3,
@@ -11,20 +12,20 @@ const REPAIR_DAYS_BY_STATE: Partial<Record<HouseRoom['state'], number>> = {
 }
 
 const ROSTER_BONUS_BY_ROOM: Record<string, number> = {
-  'room-servant-quarters': 1,
-  'room-barracks': 1,
-  'room-east-wing': 2,
+  [ROOM_IDS.SERVANT_QUARTERS]: 1,
+  [ROOM_IDS.BARRACKS]: 1,
+  [ROOM_IDS.EAST_WING]: 2,
 }
 
 const COMPLETION_MESSAGES: Record<string, string> = {
-  'room-bureau': 'Bureau restored. The house has a place for its accounts again.',
-  'room-kitchen': 'Kitchen repaired. The smell of proper cooking returns to the house.',
-  'room-study': 'Study cleared and shelved. A quiet place for thought and learning.',
-  'room-master-chamber': "Master's Chamber restored. The lord's chamber is fit to receive again.",
-  'room-servant-quarters': 'Servant Quarters cleared and re-fitted. The house can shelter another soul in service.',
-  'room-barracks': 'Barracks rebuilt. Bunks and gear racks are usable again.',
-  'room-garret': 'Garret shored up. The top floor breathes again.',
-  'room-east-wing': 'East Wing reclaimed at great cost. The house is whole again.',
+  [ROOM_IDS.BUREAU]: 'Bureau restored. The house has a place for its accounts again.',
+  [ROOM_IDS.KITCHEN]: 'Kitchen repaired. The smell of proper cooking returns to the house.',
+  [ROOM_IDS.STUDY]: 'Study cleared and shelved. A quiet place for thought and learning.',
+  [ROOM_IDS.MASTER_CHAMBER]: "Master's Chamber restored. The lord's chamber is fit to receive again.",
+  [ROOM_IDS.SERVANT_QUARTERS]: 'Servant Quarters cleared and re-fitted. The house can shelter another soul in service.',
+  [ROOM_IDS.BARRACKS]: 'Barracks rebuilt. Bunks and gear racks are usable again.',
+  [ROOM_IDS.GARRET]: 'Garret shored up. The top floor breathes again.',
+  [ROOM_IDS.EAST_WING]: 'East Wing reclaimed at great cost. The house is whole again.',
 }
 
 export function getRoomRepairDays(room: HouseRoom): number {

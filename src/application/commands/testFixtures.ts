@@ -5,10 +5,11 @@
 import { type GameState, type NpcRuntimeState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { calculateMercenaryContractWage } from './wageRates'
+import { NPC_IDS } from '../content/ids'
 
 /** Ida Rhys roster entry — represents her after the player hires her (she starts in the hire pool) */
 export const idaRhysRosterEntry: NpcRuntimeState = {
-  npcId: 'npc-ida-rhys',
+  npcId: NPC_IDS.IDA_RHYS,
   name: 'Ida Rhys',
   status: 'mercenary',
   assignment: 'idle',

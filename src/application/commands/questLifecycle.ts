@@ -5,6 +5,7 @@ import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import { isQuestExpired } from './questUtils'
 import { formatMarks } from '../../domain/game/currency'
+import { QUEST_IDS } from '../content/ids'
 
 type QuestLeadOverrides = Parameters<typeof createQuestLeadRuntime>[2]
 
@@ -55,7 +56,7 @@ export function acceptQuestFromLead(state: GameState, questId: string): boolean 
   state.activeQuests.push(createQuestRuntime(template, state.day, lead))
   pushSystemLog(state, `Contract accepted: ${template.title}.`)
 
-  if (questId === 'quest-mira-rescue' && state.mainQuest.stage === 'lead-found') {
+  if (questId === QUEST_IDS.MIRA_RESCUE && state.mainQuest.stage === 'lead-found') {
     state.mainQuest.stage = 'location-known'
     state.mainQuest.lastClue =
       "Tessaly Ash confirms it: Mira is in the old tannery on the Pale's eastern edge. You know where she is. Now you need a way in."

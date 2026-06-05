@@ -4,6 +4,7 @@ import { formatMarks } from '../../domain/game/currency'
 import { contentCatalog, getCouncilVoteTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
+import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
 
 function resolveDebtInterestIncrement(enforcementStanding: number): number {
   if (enforcementStanding >= 30) return 5
@@ -109,7 +110,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
 
   // Step 7d: City stability crisis event
   if ((next.cityStability ?? 60) < 30) {
-    const crisisEventId = 'event-city-crisis'
+    const crisisEventId = EVENT_IDS.CITY_CRISIS
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === crisisEventId)
     const alreadyFired = next.lastFiredDay[crisisEventId] !== undefined
     if (!alreadyPending && !alreadyFired) {
@@ -122,8 +123,8 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
   }
 
   // Step 7e: Household antagonist faction notice — fires every 10 days if standing > 30
-  if ((next.factionStandings['faction-gilded-court'] ?? -20) > 30 && currentDay % 10 === 0) {
-    const noticeEventId = 'event-gilded-notice'
+  if ((next.factionStandings[FACTION_IDS.GILDED_COURT] ?? -20) > 30 && currentDay % 10 === 0) {
+    const noticeEventId = EVENT_IDS.GILDED_NOTICE
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === noticeEventId)
     if (!alreadyPending) {
       next = {
@@ -153,7 +154,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
 
   // Step 7f-ii: Rival faction warning at day 20 if debt > 400 Marks remaining
   if (!next.debtPaid && next.day === 20 && next.debtAmount > 400) {
-    const warningEventId = 'event-debt-faction-warning'
+    const warningEventId = EVENT_IDS.DEBT_FACTION_WARNING
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === warningEventId)
     if (!alreadyPending) {
       next = {
@@ -174,7 +175,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     next = {
       ...next,
       factionStates: next.factionStates.map((fs) =>
-        fs.factionId === 'faction-gilded-court'
+        fs.factionId === FACTION_IDS.GILDED_COURT
           ? { ...fs, activePressure: Math.min(100, fs.activePressure + 10) }
           : fs,
       ),
@@ -201,11 +202,11 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
 
   // Step 7g: Main quest pressure after Orren's clue has surfaced
   if (next.mainQuest.stage === 'lead-found' && next.day >= 12) {
-    const alreadyFired = 'event-mira-location' in next.lastFiredDay
+    const alreadyFired = EVENT_IDS.MIRA_LOCATION in next.lastFiredDay
     if (!alreadyFired) {
       next = {
         ...next,
-        lastFiredDay: { ...next.lastFiredDay, 'event-mira-location': next.day },
+        lastFiredDay: { ...next.lastFiredDay, [EVENT_IDS.MIRA_LOCATION]: next.day },
       }
       next = appendActivityLogEntry(
         next,
@@ -215,12 +216,12 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     }
   }
 
-  if (next.mainQuest.stage === 'location-known' && next.day >= 20 && !next.completedQuestIds.includes('quest-mira-rescue')) {
-    const alreadyFired = 'event-mira-pressure' in next.lastFiredDay
+  if (next.mainQuest.stage === 'location-known' && next.day >= 20 && !next.completedQuestIds.includes(QUEST_IDS.MIRA_RESCUE)) {
+    const alreadyFired = EVENT_IDS.MIRA_PRESSURE in next.lastFiredDay
     if (!alreadyFired) {
       next = {
         ...next,
-        lastFiredDay: { ...next.lastFiredDay, 'event-mira-pressure': next.day },
+        lastFiredDay: { ...next.lastFiredDay, [EVENT_IDS.MIRA_PRESSURE]: next.day },
       }
       next = appendActivityLogEntry(
         next,

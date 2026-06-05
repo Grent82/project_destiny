@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog, getQuestTemplates } from '../content/contentCatalog'
 import { adjustCityDial, adjustCityResource, adjustDistrictTension } from './economicConsequences'
+import { DISTRICT_IDS } from '../content/ids'
 
 const TENSION_DECAY_TARGET = 30
 const TENSION_DRIFT = 2
@@ -102,7 +103,7 @@ export function applyFactionActivity(state: GameState): GameState {
       t = Math.min(TENSION_DECAY_TARGET, t + TENSION_DRIFT)
     }
     if (failedDistrictIds.has(districtId)) t = Math.min(100, t + 5)
-    if (next.debtCrisisTriggered && districtId === 'district-the-pale') t = Math.min(100, t + 10)
+    if (next.debtCrisisTriggered && districtId === DISTRICT_IDS.THE_PALE) t = Math.min(100, t + 10)
     updatedTension[districtId] = Math.max(0, Math.min(100, t))
   }
 

@@ -6,6 +6,7 @@ import { buildRelationshipKey, getRelationship } from '../../domain/relationship
 import { TRAIT_HIGH } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
 import { ensureCaptivityPregnancyDiscovery } from './captivityPregnancyDiscovery'
+import { DISTRICT_IDS, EVENT_IDS, NPC_IDS } from '../content/ids'
 
 interface RelationshipMilestone {
   readonly npcId: string
@@ -17,19 +18,19 @@ interface RelationshipMilestone {
 
 const RELATIONSHIP_MILESTONES: readonly RelationshipMilestone[] = [
   {
-    npcId: 'npc-marion-vale',
+    npcId: NPC_IDS.MARION_VALE,
     axis: 'trust',
     threshold: 65,
-    eventId: 'event-marion-milestone-motivation',
+    eventId: EVENT_IDS.MARION_MILESTONE_MOTIVATION,
   },
   {
-    npcId: 'npc-ida-rhys',
+    npcId: NPC_IDS.IDA_RHYS,
     axis: 'loyalty',
     threshold: 70,
-    eventId: 'event-ida-milestone-contact',
+    eventId: EVENT_IDS.IDA_MILESTONE_CONTACT,
     hireOffer: {
-      npcId: 'npc-dara-slink',
-      discoveredInDistrictId: 'district-the-below',
+      npcId: NPC_IDS.DARA_SLINK,
+      discoveredInDistrictId: DISTRICT_IDS.THE_BELOW,
       wagePerDay: 10,
       signingBonus: 0,
       requiredFactionId: null,
@@ -39,16 +40,16 @@ const RELATIONSHIP_MILESTONES: readonly RelationshipMilestone[] = [
     },
   },
   {
-    npcId: 'npc-garet-doyle',
+    npcId: NPC_IDS.GARET_DOYLE,
     axis: 'trust',
     threshold: 60,
-    eventId: 'event-doyle-milestone-holst',
+    eventId: EVENT_IDS.DOYLE_MILESTONE_HOLST,
   },
   {
-    npcId: 'npc-sister-vael',
+    npcId: NPC_IDS.SISTER_VAEL,
     axis: 'trust',
     threshold: 55,
-    eventId: 'event-vael-milestone-network',
+    eventId: EVENT_IDS.VAEL_MILESTONE_NETWORK,
   },
 ]
 
@@ -177,7 +178,7 @@ export function applyNpcConsequences(
         ...next,
         pendingEvents: [
           ...next.pendingEvents,
-          { eventId: 'event-npc-betrayal', firedOnDay: next.day },
+          { eventId: EVENT_IDS.NPC_BETRAYAL, firedOnDay: next.day },
         ],
       }
     }

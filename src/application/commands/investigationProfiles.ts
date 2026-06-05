@@ -11,6 +11,7 @@ import type {
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
+import { FACTION_IDS, NPC_IDS, QUEST_IDS } from '../content/ids'
 
 type InvestigationApproachOverrides = Partial<
   Pick<InvestigationApproach, 'label' | 'description' | 'clueText'>
@@ -72,7 +73,7 @@ const DEFAULT_OUTCOME_COPY: Record<InvestigationOutcome, InvestigationOutcomeCop
 }
 
 const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = {
-  'quest-restored-appeal': {
+  [QUEST_IDS.RESTORED_APPEAL]: {
     startObjectiveLabel:
       'Map the archive routine, identify the sealing chain, and take the record without tripping the Court.',
     startJournalEntry:
@@ -138,7 +139,7 @@ const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = 
       success: {
         aftermath: {
           worldConsequenceIds: ['restored-appeal-record-secured'],
-          factionImpacts: [{ factionId: 'faction-gilded-court', delta: -4 }],
+          factionImpacts: [{ factionId: FACTION_IDS.GILDED_COURT, delta: -4 }],
           unlockNpcIds: [],
           narrativeSummary:
             'The Restored now hold a Court record that was meant to disappear behind seal wax and procedure.',
@@ -186,7 +187,7 @@ const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = 
       },
     },
   },
-  'quest-hollows-ledger': {
+  [QUEST_IDS.HOLLOWS_LEDGER]: {
     startObjectiveLabel:
       'Read Soot Lane, reconstruct what happened to the last crew, and find a safe way to the ledger.',
     startJournalEntry:
@@ -301,7 +302,7 @@ const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = 
       },
     },
   },
-  'quest-slaver-house-dispute': {
+  [QUEST_IDS.SLAVER_HOUSE_DISPUTE]: {
     startObjectiveLabel:
       'Read both houses, find the pressure point in the shared contract, and force a settlement before the table breaks.',
     startJournalEntry:
@@ -393,7 +394,7 @@ const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = 
       },
     },
   },
-  'quest-orren-wex-rescue': {
+  [QUEST_IDS.ORREN_WEX_RESCUE]: {
     startObjectiveLabel:
       "Confirm Orren's custody, study the holding room, and prepare a clean breakout.",
     startJournalEntry:
@@ -455,12 +456,12 @@ const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = 
         branchId: 'records',
       },
     ],
-    participants: [{ npcId: 'npc-orren-wex', role: 'target', status: 'captured' }],
+    participants: [{ npcId: NPC_IDS.ORREN_WEX, role: 'target', status: 'captured' }],
     outcomeEffects: {
       success: {
         aftermath: {
           worldConsequenceIds: ['orren-wex-freed'],
-          factionImpacts: [{ factionId: 'faction-civic-compact', delta: -3 }],
+          factionImpacts: [{ factionId: FACTION_IDS.CIVIC_COMPACT, delta: -3 }],
           unlockNpcIds: [],
           narrativeSummary:
             'Orren leaves custody carrying both his own life and the house debt story back into the open.',
@@ -499,7 +500,7 @@ const INVESTIGATION_QUEST_PROFILES: Record<string, InvestigationQuestProfile> = 
       },
     },
   },
-  'quest-ledger-burned': {
+  [QUEST_IDS.LEDGER_BURNED]: {
     startObjectiveLabel:
       'Work the ash trail, identify who ordered the burn, and return with a name the Court can use.',
     startJournalEntry:

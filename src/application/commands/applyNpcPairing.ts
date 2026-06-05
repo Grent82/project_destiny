@@ -4,6 +4,7 @@ import type { IntimacyStage } from '../../domain/relationships/contracts'
 import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
 import type { Rng } from './seededRng'
+import { EVENT_IDS } from '../content/ids'
 
 const COMPATIBILITY_THRESHOLD = -10
 const DOMINANCE_IMBALANCE_LIMIT = 40
@@ -122,7 +123,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
 
           // Fire noticed event at attachment stage
           if (targetStage === 'attachment') {
-            const eventKey = 'event-npc-pairing-noticed'
+            const eventKey = EVENT_IDS.NPC_PAIRING_NOTICED
             const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === eventKey)
             if (!alreadyPending) {
               next = {
@@ -167,7 +168,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
           }
 
           // Fire pregnancy discovery event
-          const discoveryKey = 'event-npc-pairing-pregnancy-discovery'
+          const discoveryKey = EVENT_IDS.NPC_PAIRING_PREGNANCY_DISCOVERY
           if (!next.pendingEvents.some((pe) => pe.eventId === discoveryKey)) {
             next = {
               ...next,

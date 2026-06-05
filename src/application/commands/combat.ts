@@ -41,6 +41,7 @@ import {
 } from './combatResolution'
 import { resolveEnemyTurns } from './combatAI'
 import { appendCombatActivityEntries, syncRosterFromCombat } from './combatAftermath'
+import { DISTRICT_IDS, FACTION_IDS } from '../content/ids'
 
 export function startCombatEncounter(state: GameState, linkedQuestId?: string | null): GameState {
   if (state.activeCombat?.outcome === 'ongoing') {
@@ -75,7 +76,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     : 0
 
   const currentDistrict = contentCatalog.districtsById.get(state.currentDistrictId ?? '')
-  const districtFactionId = currentDistrict?.controllingFactionId ?? 'faction-civic-compact'
+  const districtFactionId = currentDistrict?.controllingFactionId ?? FACTION_IDS.CIVIC_COMPACT
   const districtDangerLevel = currentDistrict?.dangerLevel ?? 1
 
   const npcAllies = squad.map((npc) => {
@@ -723,7 +724,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
         {
           eventType: combat.outcome === 'victory' ? 'combat-victory' : 'combat-defeat',
           districtId:
-            combat.provenance?.districtId ?? nextState.currentDistrictId ?? 'district-the-pale',
+            combat.provenance?.districtId ?? nextState.currentDistrictId ?? DISTRICT_IDS.THE_PALE,
           enemyFactionId: combat.provenance?.linkedFactionId ?? combat.factionId ?? null,
         },
       ),

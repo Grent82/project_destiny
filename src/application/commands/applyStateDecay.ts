@@ -2,17 +2,18 @@ import type { GameState, RoomFunction } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { deriveGriefState, deriveGriefMoraleModifier } from './grief'
+import { ROOM_IDS, TITLE_IDS } from '../content/ids'
 
 function hasIntactRoom(state: GameState, fn: RoomFunction): boolean {
   return state.house.rooms.some((r) => r.state === 'intact' && r.roomFunction === fn)
 }
 
-const RESIDENTIAL_ROOM_IDS = new Set([
-  'room-quarters',
-  'room-master-chamber',
-  'room-servant-quarters',
-  'room-barracks',
-  'room-east-wing',
+const RESIDENTIAL_ROOM_IDS = new Set<string>([
+  ROOM_IDS.QUARTERS,
+  ROOM_IDS.MASTER_CHAMBER,
+  ROOM_IDS.SERVANT_QUARTERS,
+  ROOM_IDS.BARRACKS,
+  ROOM_IDS.EAST_WING,
 ])
 
 function hasResidentQuarters(state: GameState, roomId: string | null): boolean {
@@ -112,7 +113,7 @@ export function applyStateDecay(state: GameState): GameState {
 
   // Step 2b: Recovering NPCs regain health each day
   const hasMedic = next.roster.some(
-    (r) => r.activeTitle === 'title-medic' && r.assignment !== 'deployed',
+    (r) => r.activeTitle === TITLE_IDS.MEDIC && r.assignment !== 'deployed',
   )
   const hasInfirmary = hasIntactRoom(state, 'infirmary')
   const baseRecovery = 15

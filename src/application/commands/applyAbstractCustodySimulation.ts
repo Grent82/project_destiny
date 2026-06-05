@@ -4,8 +4,9 @@ import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
 import { resolveSiteRuntime } from './siteLifecycle'
+import { EVENT_IDS } from '../content/ids'
 
-export const ABSTRACT_CUSTODY_ALERT_EVENT_ID = 'event-abstract-custody-alert'
+export const ABSTRACT_CUSTODY_ALERT_EVENT_ID = EVENT_IDS.ABSTRACT_CUSTODY_ALERT
 
 const ALERT_COOLDOWN_DAYS = 5
 const MAX_PENDING_EVENTS = 10

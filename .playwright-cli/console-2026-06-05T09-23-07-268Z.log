@@ -1,0 +1,3 @@
+[     502ms] [WARNING] The 'ariaLabel' prop on 'Button' will become mandatory in Storybook 11. Buttons with text content should set 'ariaLabel={false}' to indicate that they are accessible as-is. Buttons without text content must provide a meaningful 'ariaLabel' for accessibility. The button content is: Share. @ http://localhost:6006/sb-manager/globals-runtime.js:5810
+[    1333ms] [WARNING] The 'ariaLabel' prop on 'PopoverProvider' will become mandatory in Storybook 11. Provide a concise, accessible label describing the popover's purpose. @ http://localhost:6006/sb-manager/globals-runtime.js:5810
+[   93017ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:6006/@vite/client:968

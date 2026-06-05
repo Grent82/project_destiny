@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import type { EventRumorTemplate, Rumor } from '../../domain/rumors/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+import { DISTRICT_IDS } from '../content/ids'
 
 export type CombatEventParams = {
   eventType: 'combat-victory' | 'combat-defeat'
@@ -134,7 +135,7 @@ export function spawnEventRumor(state: GameState, params: EventRumorParams): Gam
   const rumor = buildEventRumorEntry(
     contentCatalog.eventRumorTemplates,
     params,
-    state.currentDistrictId ?? 'district-the-pale',
+    state.currentDistrictId ?? DISTRICT_IDS.THE_PALE,
     state.day,
   )
   if (!rumor) return state

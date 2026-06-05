@@ -3,6 +3,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { formatMarks } from '../../domain/game/currency'
 import { calculateMercenaryContractWage } from './wageRates'
+import { ROOM_IDS } from '../content/ids'
 
 export function wageForStatus(status: NpcStatus): number {
   switch (status) {
@@ -40,7 +41,7 @@ export function applyWages(state: GameState): GameState {
   let next = state
 
   // Kitchen intact: house feeds its staff → 1 Mk reduction per NPC wage
-  const kitchenIntact = next.house.rooms.some((r) => r.roomId === 'room-kitchen' && r.state === 'intact')
+  const kitchenIntact = next.house.rooms.some((r) => r.roomId === ROOM_IDS.KITCHEN && r.state === 'intact')
   const kitchenDiscount = kitchenIntact ? 1 : 0
 
   // Step 1: Wage deduction

@@ -2,13 +2,14 @@ import type { GameState, NpcPairingPolicy, NpcRuntimeState } from '../../domain'
 import type { IntimacyStage, RelationshipAxes } from '../../domain/relationships/contracts'
 import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
+import { ROOM_IDS } from '../content/ids'
 
-const RESIDENTIAL_ROOM_IDS = new Set([
-  'room-quarters',
-  'room-master-chamber',
-  'room-servant-quarters',
-  'room-barracks',
-  'room-east-wing',
+const RESIDENTIAL_ROOM_IDS = new Set<string>([
+  ROOM_IDS.QUARTERS,
+  ROOM_IDS.MASTER_CHAMBER,
+  ROOM_IDS.SERVANT_QUARTERS,
+  ROOM_IDS.BARRACKS,
+  ROOM_IDS.EAST_WING,
 ])
 
 const STAGE_ORDER: IntimacyStage[] = ['none', 'affinity', 'attachment', 'committed']

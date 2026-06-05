@@ -6,6 +6,7 @@ import type { Rng } from './seededRng'
 import { computeWorkingIncome } from '../selectors/roster'
 import { formatMarks } from '../../domain/game/currency'
 import { hasIntactHouseRoomFunction } from './houseRoomFunctions'
+import { ROOM_IDS, TITLE_IDS } from '../content/ids'
 
 const SKILL_KEYS: (keyof Skills)[] = [
   'melee',
@@ -33,7 +34,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     const npcName = npc.name
 
     switch (npc.activeTitle) {
-      case 'title-medic': {
+      case TITLE_IDS.MEDIC: {
         const medicineSkill = npc.skills['medicine'] ?? 45
         const healAmount = 8 + Math.floor(Math.max(0, medicineSkill - 45) / 15)
         const injured = next.roster
@@ -58,7 +59,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-steward': {
+      case TITLE_IDS.STEWARD: {
         const adminSkill = npc.skills['administration'] ?? 45
         const stewardIncome = Math.min(25, 15 + Math.floor(Math.max(0, adminSkill - 45) / 10) * 2)
         next = { ...next, money: next.money + stewardIncome }
@@ -78,7 +79,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-trainer': {
+      case TITLE_IDS.TRAINER: {
         const meleeSkill = npc.skills['melee'] ?? 45
         const trainCount = meleeSkill >= 70 ? 2 : 1
         const idleNpcs = next.roster.filter(
@@ -105,7 +106,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-chief-engineer': {
+      case TITLE_IDS.CHIEF_ENGINEER: {
         const engineeringSkill = npc.skills['engineering'] ?? 50
         const materialGain = 5 + Math.floor(Math.max(0, engineeringSkill - 50) / 10)
         next = {
@@ -123,7 +124,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-quartermaster': {
+      case TITLE_IDS.QUARTERMASTER: {
         const qmAdminSkill = npc.skills['administration'] ?? 40
         const qmIncome = 3 + Math.floor(Math.max(0, qmAdminSkill - 40) / 15)
         next = { ...next, money: next.money + qmIncome }
@@ -135,7 +136,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-scout': {
+      case TITLE_IDS.SCOUT: {
         const survivalSkill = npc.skills['survival'] ?? 40
         const tensionReduction = survivalSkill > 55 ? 5 : 3
         const districtId = next.currentDistrictId
@@ -159,7 +160,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-fence': {
+      case TITLE_IDS.FENCE: {
         const intrigueSkill = npc.skills['intrigue'] ?? 40
         const fenceIncome = intrigueSkill > 55 ? 10 : 5
         next = { ...next, money: next.money + fenceIncome }
@@ -171,7 +172,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-archivist': {
+      case TITLE_IDS.ARCHIVIST: {
         const academicsSkill = npc.skills['academics'] ?? 45
         const boostCount = academicsSkill > 60 ? 2 : 1
         const activeRumors = next.rumors.filter((r) => r.heat < 100)
@@ -194,7 +195,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-warden': {
+      case TITLE_IDS.WARDEN: {
         const securitySkill = npc.skills['security'] ?? 45
         const recoveryInterval = securitySkill > 60 ? 3 : 5
         const CONDITION_RECOVER: { [k: string]: string } = {
@@ -227,7 +228,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
         break
       }
 
-      case 'title-negotiator': {
+      case TITLE_IDS.NEGOTIATOR: {
         const negotiationSkill = npc.skills['negotiation'] ?? 45
         const debtReduction = negotiationSkill > 60 ? 5 : 2
         if (next.debtAmount > 0) {
@@ -272,11 +273,11 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   // Step 4b: Training NPCs gain skills each day
   {
     const hasTrainer = next.roster.some(
-      (r) => r.activeTitle === 'title-trainer' && r.assignment !== 'deployed',
+      (r) => r.activeTitle === TITLE_IDS.TRAINER && r.assignment !== 'deployed',
     )
     const hasWorkshop = hasIntactHouseRoomFunction(next, 'workshop')
     // Study intact: quiet place for study grants +25% training gain
-    const studyIntact = next.house.rooms.some((r) => r.roomId === 'room-study' && r.state === 'intact')
+    const studyIntact = next.house.rooms.some((r) => r.roomId === ROOM_IDS.STUDY && r.state === 'intact')
     // Time slot affects training retention: morning is best, night is worst
     const timeSlotTrainMult =
       next.timeSlot === 'morning' ? 1.1

@@ -6,6 +6,7 @@ import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
 import { adjustDistrictTension } from './economicConsequences'
 import { getNpcCaptivityState, setNpcCaptivityState } from './captivityRegistry'
+import { DISTRICT_IDS } from '../content/ids'
 
 const SOFT_BOND_CAP = 5
 const SOFT_BOND_STRENGTH_FOR_RUMORED = 35
@@ -295,7 +296,7 @@ function maybeApplyPatronage(state: GameState, a: NpcDefinition, b: NpcDefinitio
   addWorldNpcFlag(nextState, b.id, `patronized-by:${a.id}`)
   nextState = appendGeneratedRumor(nextState, {
     eventSource: `world-npc-patronage:${a.id}:${b.id}`,
-    districtId: a.districtId ?? b.districtId ?? 'district-the-pale',
+    districtId: a.districtId ?? b.districtId ?? DISTRICT_IDS.THE_PALE,
     originNpcId: a.id,
     text: `${a.name} has started carrying ${b.name} into rooms that used to stay closed.`,
     subjectNpcIds: [a.id, b.id],
@@ -331,7 +332,7 @@ function maybeApplyProtectiveIntervention(state: GameState, a: NpcDefinition, b:
 
   const rumorState = appendGeneratedRumor(nextState, {
     eventSource: `world-npc-protection:${a.id}:${b.id}`,
-    districtId: a.districtId ?? b.districtId ?? 'district-the-hollows',
+    districtId: a.districtId ?? b.districtId ?? DISTRICT_IDS.THE_HOLLOWS,
     originNpcId: a.id,
     text: `${a.name} is getting small protections through to ${b.name}, even in custody.`,
     subjectNpcIds: [a.id, b.id],
@@ -365,10 +366,10 @@ function maybeEscalateFeud(state: GameState, a: NpcDefinition, b: NpcDefinition,
 
   addWorldNpcFlag(nextState, a.id, `feud-with:${b.id}`)
   addWorldNpcFlag(nextState, b.id, `feud-with:${a.id}`)
-  nextState = adjustDistrictTension(nextState, a.districtId ?? b.districtId ?? 'district-harbor', 3)
+  nextState = adjustDistrictTension(nextState, a.districtId ?? b.districtId ?? DISTRICT_IDS.HARBOR, 3)
   nextState = appendGeneratedRumor(nextState, {
     eventSource: `world-npc-feud:${a.id}:${b.id}`,
-    districtId: a.districtId ?? b.districtId ?? 'district-harbor',
+    districtId: a.districtId ?? b.districtId ?? DISTRICT_IDS.HARBOR,
     originNpcId: a.id,
     text: `${a.name} and ${b.name} have moved past rivalry. People nearby are already choosing sides.`,
     subjectNpcIds: [a.id, b.id],

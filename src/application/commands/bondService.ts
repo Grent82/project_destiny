@@ -2,8 +2,9 @@ import type { GameState, NpcRuntimeState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta, writeNpcMemory } from './adjustRelationship'
 import { adjustCityDial } from './economicConsequences'
+import { EVENT_IDS, FACTION_IDS, TITLE_IDS } from '../content/ids'
 
-const TALLOW_RING_ID = 'faction-tallow-ring'
+const TALLOW_RING_ID = FACTION_IDS.TALLOW_RING
 const TITLE_OBJECTION_DAY_INTERVAL = 28
 const EQUALITY_NOTICE_THRESHOLD_DAYS = 14
 
@@ -61,7 +62,7 @@ export function freeNpc(state: GameState, npcId: string): GameState {
   applyRelationshipDelta(next, 'player', npcId, 'trust', 20)
   applyRelationshipDelta(next, 'player', npcId, 'respect', 10)
 
-  next = queueEvent(next, 'event-npc-freed')
+  next = queueEvent(next, EVENT_IDS.NPC_FREED)
   next = appendActivityLogEntry(
     next,
     'system',
@@ -94,7 +95,7 @@ function applyEqualityNotice(state: GameState, npc: NpcRuntimeState): GameState 
     ),
   }
 
-  next = queueEvent(next, 'event-bound-npc-notices-difference')
+  next = queueEvent(next, EVENT_IDS.BOUND_NPC_NOTICES_DIFFERENCE)
   return appendActivityLogEntry(
     next,
     'system',
@@ -139,7 +140,7 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
   const objectionNpc = next.roster.find(
     (npc) =>
       npc.traits.empathy > 55 &&
-      (npc.activeTitle === 'title-steward' || npc.activeTitle === 'title-archivist'),
+      (npc.activeTitle === TITLE_IDS.STEWARD || npc.activeTitle === TITLE_IDS.ARCHIVIST),
   )
 
   if (objectionNpc) {
@@ -151,7 +152,7 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
           : npc,
       ),
     }
-    next = queueEvent(next, 'event-title-npc-bond-objection')
+    next = queueEvent(next, EVENT_IDS.TITLE_NPC_BOND_OBJECTION)
     next = appendActivityLogEntry(
       next,
       'system',

@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain/game/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
+import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
 
 export type RivalAction = {
   orgId: string
@@ -17,24 +18,24 @@ const RIVAL_ORG_IDS = [
 ] as const
 
 const RIVAL_COUNTER_QUEST_IDS: Record<string, string> = {
-  'rival-org-gilded-hand': 'quest-rival-gilded-hand-counter',
-  'rival-org-ashen-compact': 'quest-rival-ashen-compact-counter',
-  'org-iron-covenant': 'quest-rival-iron-covenant-counter',
-  'org-pale-sisters': 'quest-rival-pale-sisters-counter',
+  'rival-org-gilded-hand': QUEST_IDS.RIVAL_GILDED_HAND_COUNTER,
+  'rival-org-ashen-compact': QUEST_IDS.RIVAL_ASHEN_COMPACT_COUNTER,
+  'org-iron-covenant': QUEST_IDS.RIVAL_IRON_COVENANT_COUNTER,
+  'org-pale-sisters': QUEST_IDS.RIVAL_PALE_SISTERS_COUNTER,
 }
 
 const RIVAL_COUNTER_EVENT_IDS: Record<string, string> = {
-  'rival-org-gilded-hand': 'event-rival-gilded-hand-counter-lead',
-  'rival-org-ashen-compact': 'event-rival-ashen-compact-counter-lead',
-  'org-iron-covenant': 'event-rival-iron-covenant-counter-lead',
-  'org-pale-sisters': 'event-rival-pale-sisters-counter-lead',
+  'rival-org-gilded-hand': EVENT_IDS.RIVAL_GILDED_HAND_COUNTER_LEAD,
+  'rival-org-ashen-compact': EVENT_IDS.RIVAL_ASHEN_COMPACT_COUNTER_LEAD,
+  'org-iron-covenant': EVENT_IDS.RIVAL_IRON_COVENANT_COUNTER_LEAD,
+  'org-pale-sisters': EVENT_IDS.RIVAL_PALE_SISTERS_COUNTER_LEAD,
 }
 
 const RIVAL_BRIBE_EVENT_IDS: Record<string, string> = {
-  'rival-org-gilded-hand': 'event-rival-gilded-hand-bribe-warning',
-  'rival-org-ashen-compact': 'event-rival-ashen-compact-bribe-warning',
-  'org-iron-covenant': 'event-rival-iron-covenant-bribe-warning',
-  'org-pale-sisters': 'event-rival-pale-sisters-bribe-warning',
+  'rival-org-gilded-hand': EVENT_IDS.RIVAL_GILDED_HAND_BRIBE_WARNING,
+  'rival-org-ashen-compact': EVENT_IDS.RIVAL_ASHEN_COMPACT_BRIBE_WARNING,
+  'org-iron-covenant': EVENT_IDS.RIVAL_IRON_COVENANT_BRIBE_WARNING,
+  'org-pale-sisters': EVENT_IDS.RIVAL_PALE_SISTERS_BRIBE_WARNING,
 }
 
 /**
@@ -165,7 +166,7 @@ export function applyRivalActions(state: GameState, actions: RivalAction[]): Gam
       next = scheduleCounterLeadEvent(next, action)
     } else if (action.actionType === 'bribe') {
       // Rival org bribes a faction contact — standing with a faction drops
-      const targetFaction = action.targetFactionId ?? 'faction-tallow-ring'
+      const targetFaction = action.targetFactionId ?? FACTION_IDS.TALLOW_RING
       const current = next.factionStandings[targetFaction] ?? 0
       next = {
         ...next,

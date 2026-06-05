@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { addOwnedItem } from './inventory'
 import { getHouseDiscovery } from '../content/houseDiscoveries'
+import { ROOM_IDS } from '../content/ids'
 
 const VAULT_CLUE_ITEM_IDS = ['item-chit-ledger-removal', 'item-note-arrangement-below'] as const
 
@@ -34,7 +35,7 @@ function unlockVaultFromClues(state: GameState): GameState {
       ...state.house,
       vaultUnlocked: true,
       rooms: state.house.rooms.map((room) =>
-        room.roomId === 'room-vault'
+        room.roomId === ROOM_IDS.VAULT
           ? { ...room, state: 'intact' as const }
           : room,
       ),
@@ -88,7 +89,7 @@ export function searchHouseRoom(
     }
   }
 
-  if (nextRoom.roomId === 'room-vault' && afterSearch.house.vaultUnlocked) {
+  if (nextRoom.roomId === ROOM_IDS.VAULT && afterSearch.house.vaultUnlocked) {
     afterSearch = {
       ...afterSearch,
       mainQuest: {

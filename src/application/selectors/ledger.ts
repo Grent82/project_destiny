@@ -4,6 +4,7 @@ import { wageForStatus } from '../commands/endDay'
 import { contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
 import { computeWorkingIncome } from './roster'
+import { TITLE_IDS } from '../content/ids'
 
 const selectGame = (state: RootState) => state.game
 
@@ -11,15 +12,15 @@ const selectGame = (state: RootState) => state.game
 function estimateTitleIncome(npc: { activeTitle: string | null; skills: Record<string, number> }): number {
   if (!npc.activeTitle) return 0
   switch (npc.activeTitle) {
-    case 'title-steward': {
+    case TITLE_IDS.STEWARD: {
       const admin = npc.skills['administration'] ?? 45
       return Math.min(25, 15 + Math.floor(Math.max(0, admin - 45) / 10) * 2)
     }
-    case 'title-quartermaster': {
+    case TITLE_IDS.QUARTERMASTER: {
       const admin = npc.skills['administration'] ?? 40
       return 3 + Math.floor(Math.max(0, admin - 40) / 15)
     }
-    case 'title-fence': {
+    case TITLE_IDS.FENCE: {
       const intrigue = npc.skills['intrigue'] ?? 40
       return intrigue > 55 ? 10 : 5
     }

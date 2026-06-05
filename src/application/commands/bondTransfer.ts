@@ -2,8 +2,9 @@ import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
+import { FACTION_IDS } from '../content/ids'
 
-const TALLOW_RING_FACTION = 'faction-tallow-ring'
+const TALLOW_RING_FACTION = FACTION_IDS.TALLOW_RING
 
 /** Condition health delta per day for NPC-held bonded persons by buyer specialization. */
 const HELD_DECAY_BY_SPECIALIZATION: Record<string, number> = {

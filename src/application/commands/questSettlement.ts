@@ -68,7 +68,7 @@ function getCanonicalRenownGain(template: QuestTemplate) {
 }
 
 function applyMiraRescueResolution(state: GameState, questId: string) {
-  if (questId !== 'quest-mira-rescue') return
+  if (questId !== QUEST_IDS.MIRA_RESCUE) return
   if (state.mainQuest.stage === 'rescued' || state.mainQuest.stage === 'epilogue') return
 
   state.mainQuest.stage = 'rescued'
@@ -87,11 +87,11 @@ function applyMiraRescueResolution(state: GameState, questId: string) {
 }
 
 function applyOrrenRescueResolution(state: GameState, questId: string) {
-  if (questId !== 'quest-orren-wex-rescue') return
+  if (questId !== QUEST_IDS.ORREN_WEX_RESCUE) return
 
-  setNpcCaptivityState(state, 'npc-orren-wex', null)
+  setNpcCaptivityState(state, NPC_IDS.ORREN_WEX, null)
   state.npcSitePresences = state.npcSitePresences.filter(
-    (presence) => !(presence.npcId === 'npc-orren-wex' && presence.role === 'captive'),
+    (presence) => !(presence.npcId === NPC_IDS.ORREN_WEX && presence.role === 'captive'),
   )
 
   state.mainQuest.stage = 'lead-found'
@@ -108,6 +108,7 @@ function applyOrrenRescueResolution(state: GameState, questId: string) {
 
 import type { QuestAftermath } from '../../domain/quests/contracts'
 import { createQuestLeadRuntime } from '../../domain/quests/contracts'
+import { DISTRICT_IDS, NPC_IDS, QUEST_IDS } from '../content/ids'
 
 function applyQuestAftermath(state: GameState, aftermath: QuestAftermath | null, questTitle: string): void {
   if (!aftermath) return
@@ -415,7 +416,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   const eventRumor = buildEventRumorEntry(
     contentCatalog.eventRumorTemplates,
     { eventType: 'quest-complete', questOutcomeType: outcomeType, districtId: template?.districtId ?? null } satisfies QuestEventParams,
-    state.currentDistrictId ?? 'district-the-pale',
+    state.currentDistrictId ?? DISTRICT_IDS.THE_PALE,
     state.day,
   )
   if (eventRumor) {

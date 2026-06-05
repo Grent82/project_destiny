@@ -5,8 +5,9 @@ import { appendActivityLogEntry } from './activityLog'
 import { getAllNpcCaptivityStates } from './captivityRegistry'
 import { addQuestLeadIfNew } from './questLifecycle'
 import { resolveSiteRuntime } from './siteLifecycle'
+import { EVENT_IDS } from '../content/ids'
 
-export const SITE_PRESSURE_EVENT_ID = 'event-site-pressure-warning'
+export const SITE_PRESSURE_EVENT_ID = EVENT_IDS.SITE_PRESSURE_WARNING
 
 const SITE_PRESSURE_COOLDOWN_DAYS = 5
 const CAPTIVITY_RUMOR_MIN_DAYS = 2

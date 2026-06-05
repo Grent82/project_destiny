@@ -5,6 +5,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { TRAIT_HIGH, TRAIT_DOMINANT, TRAIT_MODERATE } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
+import { EVENT_IDS } from '../content/ids'
 
 const MAX_EVENTS_PER_CYCLE = 2
 const FRICTION_COOLDOWN = 14
@@ -108,7 +109,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
               lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
               pendingEvents: [
                 ...next.pendingEvents,
-                { eventId: 'event-npc-dominance-tension', firedOnDay: next.day },
+                { eventId: EVENT_IDS.NPC_DOMINANCE_TENSION, firedOnDay: next.day },
               ],
             }
             generated++
@@ -129,7 +130,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
             lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
             pendingEvents: [
               ...next.pendingEvents,
-              { eventId: 'event-npc-methods-disagreement', firedOnDay: next.day },
+              { eventId: EVENT_IDS.NPC_METHODS_DISAGREEMENT, firedOnDay: next.day },
             ],
           }
           generated++
@@ -151,7 +152,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
             lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
             pendingEvents: [
               ...next.pendingEvents,
-              { eventId: 'event-npc-ambition-comparison', firedOnDay: next.day },
+              { eventId: EVENT_IDS.NPC_AMBITION_COMPARISON, firedOnDay: next.day },
             ],
           }
           generated++
@@ -168,7 +169,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
             lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
             pendingEvents: [
               ...next.pendingEvents,
-              { eventId: 'event-npc-recognition-rivalry', firedOnDay: next.day },
+              { eventId: EVENT_IDS.NPC_RECOGNITION_RIVALRY, firedOnDay: next.day },
             ],
           }
           generated++
@@ -192,7 +193,7 @@ export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState
               lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
               pendingEvents: [
                 ...next.pendingEvents,
-                { eventId: 'event-npc-ideological-friction', firedOnDay: next.day },
+                { eventId: EVENT_IDS.NPC_IDEOLOGICAL_FRICTION, firedOnDay: next.day },
               ],
             }
             generated++
