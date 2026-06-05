@@ -165,3 +165,101 @@ describe('bond service end-of-day integration', () => {
     expect(boundNext.money - freeNext.money).toBe(14)
   })
 })
+
+describe('applyBondHolderPowerDynamics (via applyBondServiceEffects)', () => {
+  function makeBondedNpc(
+    npcOverrides: Partial<NpcRuntimeState> = {},
+    bondOverrides: Partial<NpcRuntimeState['bondStatus']> = {},
+  ): NpcRuntimeState {
+    return {
+      ...idaRhysRosterEntry,
+      assignment: 'idle' as const,
+      bondStatus: {
+        holderId: 'player',
+        contractValue: 40,
+        termDays: 30,
+        entryReason: 'debt-settlement' as const,
+        alongsideFreeAssignmentDays: 0,
+        lastEqualityNoticeDay: null,
+        forSale: false,
+        lastOfferDay: null,
+        marketValue: 0,
+        ownerType: 'player' as const,
+        bondStartDay: 0,
+        ...bondOverrides,
+      },
+      ...npcOverrides,
+    }
+  }
+
+  it('combat-capture bond produces larger fear delta than voluntary bond', () => {
+    const highDominancePlayer = {
+      ...initialGameStateSnapshot.playerCharacter,
+      traits: { ...initialGameStateSnapshot.playerCharacter.traits, dominance: 80 },
+    }
+
+    const combatCapture = applyBondServiceEffects({
+      ...initialGameStateSnapshot,
+      playerCharacter: highDominancePlayer,
+      roster: [makeBondedNpc({}, { entryReason: 'combat-capture' as const })],
+    })
+    const voluntary = applyBondServiceEffects({
+      ...initialGameStateSnapshot,
+      playerCharacter: highDominancePlayer,
+      roster: [makeBondedNpc({}, { entryReason: 'voluntary' as const })],
+    })
+
+    const npcId = idaRhysRosterEntry.npcId
+    const ccFear = combatCapture.relationships[buildRelationshipKey(npcId, 'player')]?.fear ?? 0
+    const volFear = voluntary.relationships[buildRelationshipKey(npcId, 'player')]?.fear ?? 0
+    expect(ccFear).toBeGreaterThan(volFear)
+  })
+
+  it('bonded NPC with empathy > 60 produces negative affinity drift on player→npc edge', () => {
+    const highEmpathyNpc = makeBondedNpc({ traits: { ...idaRhysRosterEntry.traits, empathy: 70 } })
+
+    const result = applyBondServiceEffects({
+      ...initialGameStateSnapshot,
+      roster: [highEmpathyNpc],
+    })
+
+    const npcId = idaRhysRosterEntry.npcId
+    const affinity = result.relationships[buildRelationshipKey('player', npcId)]?.affinity ?? 0
+    expect(affinity).toBeLessThan(0)
+  })
+
+  it('memory write occurs on both directed sides when |fear delta| > 5', () => {
+    const highDominancePlayer = {
+      ...initialGameStateSnapshot.playerCharacter,
+      traits: { ...initialGameStateSnapshot.playerCharacter.traits, dominance: 80 },
+    }
+
+    const result = applyBondServiceEffects({
+      ...initialGameStateSnapshot,
+      playerCharacter: highDominancePlayer,
+      roster: [makeBondedNpc({}, { entryReason: 'combat-capture' as const })],
+    })
+
+    const npcId = idaRhysRosterEntry.npcId
+    const npcMemory = result.roster.find((n) => n.npcId === npcId)?.npcMemory ?? []
+    // Combat-capture with high dominance → fearDelta >> 5, triggers writeNpcMemory auto + explicit
+    const hasContractMemory = npcMemory.some((m) => m.event.includes('contract') || m.event.includes('chain'))
+    expect(hasContractMemory).toBe(true)
+  })
+
+  it('voluntary long-term bond produces smaller fear than fresh combat-capture', () => {
+    const voluntaryLongTerm = applyBondServiceEffects({
+      ...initialGameStateSnapshot,
+      roster: [makeBondedNpc({}, { entryReason: 'voluntary' as const, alongsideFreeAssignmentDays: 28 })],
+    })
+    const combatCaptureFresh = applyBondServiceEffects({
+      ...initialGameStateSnapshot,
+      roster: [makeBondedNpc({}, { entryReason: 'combat-capture' as const, alongsideFreeAssignmentDays: 0 })],
+    })
+
+    const npcId = idaRhysRosterEntry.npcId
+    const volFear = voluntaryLongTerm.relationships[buildRelationshipKey(npcId, 'player')]?.fear ?? 0
+    const ccFear = combatCaptureFresh.relationships[buildRelationshipKey(npcId, 'player')]?.fear ?? 0
+    expect(volFear).toBeLessThan(ccFear)
+  })
+})

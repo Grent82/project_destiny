@@ -1,6 +1,6 @@
 import type { GameState, NpcRuntimeState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
-import { applyRelationshipDelta } from './adjustRelationship'
+import { applyRelationshipDelta, writeNpcMemory } from './adjustRelationship'
 import { adjustCityDial } from './economicConsequences'
 
 const TALLOW_RING_ID = 'faction-tallow-ring'
@@ -166,6 +166,48 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
   )
 }
 
+/**
+ * Applies power-asymmetric relationship deltas for every NPC held under player bond.
+ * Fear toward the player accumulates from coercive entry reasons and dominance differential.
+ * Empathic NPCs cool affinity toward the player. Loyalty drifts by dominance imbalance.
+ * All deltas are pure (no randomness) and delegate writes to applyRelationshipDelta / writeNpcMemory.
+ */
+function applyBondHolderPowerDynamics(state: GameState): void {
+  const player = state.playerCharacter
+
+  for (const npc of state.roster) {
+    if (!npc.bondStatus || npc.bondStatus.holderId !== 'player' || npc.bondStatus.ownerType !== 'player') continue
+
+    const bond = npc.bondStatus
+    const dominanceDiff = player.traits.dominance - npc.traits.empathy
+
+    // Fear delta: NPC's felt weight of ownership
+    let fearDelta = 4 + Math.max(0, Math.min(8, dominanceDiff / 20))
+    if (bond.entryReason === 'combat-capture') fearDelta += 8
+    fearDelta -= bond.alongsideFreeAssignmentDays / 7
+    const roundedFear = Math.max(0, Math.round(fearDelta))
+
+    if (roundedFear > 0) {
+      applyRelationshipDelta(state, npc.npcId, 'player', 'fear', roundedFear)
+      // Fiction-contract memory: power imbalance felt before it is ever strategic
+      const memoryLine =
+        bond.entryReason === 'combat-capture'
+          ? 'The contract is a chain. I feel it every morning.'
+          : 'The weight of the contract sits between us.'
+      writeNpcMemory(state, npc.npcId, memoryLine, ['player'])
+    }
+
+    // Affinity tension: player grows cooler toward conscience-burdened NPCs or when ruthless
+    if (npc.traits.empathy > 55 || player.traits.ruthlessness > 60) {
+      applyRelationshipDelta(state, 'player', npc.npcId, 'affinity', -2)
+    }
+
+    // Loyalty modulation: dominance advantage sustains control; deficit breeds friction
+    const loyaltyDelta = dominanceDiff > 0 ? 2 : -1
+    applyRelationshipDelta(state, npc.npcId, 'player', 'loyalty', loyaltyDelta)
+  }
+}
+
 export function applyBondServiceEffects(state: GameState): GameState {
   const freeWorkers = state.roster.filter(
     (npc) => npc.assignment === 'working' && !isPlayerHeldBound(npc),
@@ -173,6 +215,7 @@ export function applyBondServiceEffects(state: GameState): GameState {
 
   let next: GameState = {
     ...state,
+    relationships: { ...state.relationships },
     roster: state.roster.map((npc) => {
       if (!isPlayerHeldBound(npc) || !npc.bondStatus) return npc
 
@@ -203,5 +246,6 @@ export function applyBondServiceEffects(state: GameState): GameState {
   }
 
   next = applyMonthlyBondOperationCosts(next)
+  applyBondHolderPowerDynamics(next)
   return next
 }
