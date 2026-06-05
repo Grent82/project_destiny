@@ -1,4 +1,6 @@
 /** Canonical IDs for factions in data/definitions/factions.json. */
+export type { FactionId } from '../../../domain/ids'
+
 export const FACTION_IDS = {
   CIVIC_COMPACT: 'faction-civic-compact',
   FOUNDRY_LEAGUE: 'faction-foundry-league',
@@ -9,4 +11,3 @@ export const FACTION_IDS = {
   THE_RESTORED: 'faction-the-restored',
 } as const
 
-export type FactionId = typeof FACTION_IDS[keyof typeof FACTION_IDS]

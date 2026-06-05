@@ -1,4 +1,6 @@
 /** Canonical IDs for world NPCs in data/definitions/npcs.json. */
+export type { NpcId } from '../../../domain/ids'
+
 export const NPC_IDS = {
   ALDRIC_VANE: 'npc-aldric-vane',
   ALIS_VEY: 'npc-alis-vey',
@@ -23,4 +25,3 @@ export const NPC_IDS = {
   VEREK_HOLST: 'npc-verek-holst',
 } as const
 
-export type NpcId = typeof NPC_IDS[keyof typeof NPC_IDS]

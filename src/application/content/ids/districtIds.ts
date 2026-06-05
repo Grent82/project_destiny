@@ -1,4 +1,6 @@
 /** Canonical IDs for city districts in data/definitions/districts.json. */
+export type { DistrictId } from '../../../domain/ids'
+
 export const DISTRICT_IDS = {
   ASH_QUAY: 'district-ash-quay',
   CINDER_ROW: 'district-cinder-row',
@@ -13,4 +15,3 @@ export const DISTRICT_IDS = {
   THE_WARRENS: 'district-the-warrens',
 } as const
 
-export type DistrictId = typeof DISTRICT_IDS[keyof typeof DISTRICT_IDS]

@@ -1,4 +1,6 @@
 /** Canonical IDs for NPC titles in data/definitions/titles.json. */
+export type { TitleId } from '../../../domain/ids'
+
 export const TITLE_IDS = {
   ARCHIVIST: 'title-archivist',
   CHIEF_ENGINEER: 'title-chief-engineer',
@@ -13,4 +15,3 @@ export const TITLE_IDS = {
   WARDEN: 'title-warden',
 } as const
 
-export type TitleId = typeof TITLE_IDS[keyof typeof TITLE_IDS]

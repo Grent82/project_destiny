@@ -1,4 +1,6 @@
 /** Canonical IDs for authored events in data/definitions/events.json. */
+export type { EventId } from '../../../domain/ids'
+
 export const EVENT_IDS = {
   ABSTRACT_CUSTODY_ALERT: 'event-abstract-custody-alert',
   BOUND_NPC_NOTICES_DIFFERENCE: 'event-bound-npc-notices-difference',
@@ -41,4 +43,3 @@ export const EVENT_IDS = {
   VAEL_MILESTONE_NETWORK: 'event-vael-milestone-network',
 } as const
 
-export type EventId = typeof EVENT_IDS[keyof typeof EVENT_IDS]

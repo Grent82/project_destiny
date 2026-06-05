@@ -1,4 +1,6 @@
 /** Canonical IDs for house rooms in data/definitions/houseRooms.json. */
+export type { RoomId } from '../../../domain/ids'
+
 export const ROOM_IDS = {
   BARRACKS: 'room-barracks',
   BUREAU: 'room-bureau',
@@ -15,4 +17,3 @@ export const ROOM_IDS = {
   VAULT: 'room-vault',
 } as const
 
-export type RoomId = typeof ROOM_IDS[keyof typeof ROOM_IDS]

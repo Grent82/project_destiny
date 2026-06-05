@@ -1,4 +1,6 @@
 /** Canonical IDs for authored quests in data/definitions/quests.json. */
+export type { QuestId } from '../../../domain/ids'
+
 export const QUEST_IDS = {
   COMPACT_WATCH: 'quest-compact-watch',
   FOUNDRY_ESCORT: 'quest-foundry-escort',
@@ -20,4 +22,3 @@ export const QUEST_IDS = {
   SLAVER_HOUSE_DISPUTE: 'quest-slaver-house-dispute',
 } as const
 
-export type QuestId = typeof QUEST_IDS[keyof typeof QUEST_IDS]
