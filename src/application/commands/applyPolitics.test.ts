@@ -16,6 +16,7 @@ function makeVote(overrides: Partial<CouncilVoteEvent> = {}): CouncilVoteEvent {
     targetFactionId: null,
     effect: 'Test effect text.',
     mechanicalEffects: [],
+    tags: [],
     playerInfluenceThreshold: 30,
     expiresOnDay: 5,
     outcome: 'pending',

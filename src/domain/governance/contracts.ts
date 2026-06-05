@@ -54,6 +54,7 @@ export const councilVoteEventSchema = z.object({
   targetFactionId: z.string().nullable(),
   effect: z.string(),
   mechanicalEffects: z.array(voteEffectSchema).default([]),
+  tags: z.array(z.string()).default([]),
   playerInfluenceThreshold: z.number(),
   expiresOnDay: z.number(),
   outcome: z.enum(['pending', 'passed', 'failed']).default('pending'),

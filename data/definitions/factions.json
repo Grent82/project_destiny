@@ -12,7 +12,22 @@
       "law",
       "trade",
       "stability"
-    ]
+    ],
+    "agendaAxes": {
+      "values": [
+        "order",
+        "suppression",
+        "trade",
+        "patrol"
+      ],
+      "proposesWhen": {
+        "cityUnrestAbove": 40,
+        "factionPressureAbove": 30
+      },
+      "blocksWhen": {
+        "cityUnrestAbove": 60
+      }
+    }
   },
   {
     "id": "faction-gilded-court",
@@ -27,7 +42,22 @@
       "nobility",
       "wealth",
       "influence"
-    ]
+    ],
+    "agendaAxes": {
+      "values": [
+        "prestige",
+        "debt",
+        "elite-access",
+        "licensing"
+      ],
+      "proposesWhen": {
+        "prosperityBelow": 50,
+        "factionPressureAbove": 25
+      },
+      "blocksWhen": {
+        "standingWithPlayerBelow": -20
+      }
+    }
   },
   {
     "id": "faction-foundry-league",
@@ -42,7 +72,19 @@
       "industry",
       "labor",
       "production"
-    ]
+    ],
+    "agendaAxes": {
+      "values": [
+        "labor",
+        "industrial",
+        "safety",
+        "leverage"
+      ],
+      "proposesWhen": {
+        "factionPressureAbove": 35
+      },
+      "blocksWhen": {}
+    }
   },
   {
     "id": "faction-tallow-ring",
@@ -59,7 +101,22 @@
       "underground",
       "black-market",
       "escape-network"
-    ]
+    ],
+    "agendaAxes": {
+      "values": [
+        "contraband",
+        "exemption",
+        "profit",
+        "opacity"
+      ],
+      "proposesWhen": {
+        "factionPressureAbove": 45,
+        "standingWithPlayerBelow": 0
+      },
+      "blocksWhen": {
+        "cityUnrestAbove": 70
+      }
+    }
   },
   {
     "id": "faction-restored",
@@ -92,6 +149,20 @@
       "rival-house",
       "legitimacy"
     ],
-    "dailyAgendaHook": "Merrow seals appear on a new batch of succession notices in the Northbank registry."
+    "dailyAgendaHook": "Merrow seals appear on a new batch of succession notices in the Northbank registry.",
+    "agendaAxes": {
+      "values": [
+        "customs",
+        "tolls",
+        "succession",
+        "harbor"
+      ],
+      "proposesWhen": {
+        "factionPressureAbove": 20
+      },
+      "blocksWhen": {
+        "standingWithPlayerBelow": -30
+      }
+    }
   }
 ]

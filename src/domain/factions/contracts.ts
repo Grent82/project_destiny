@@ -15,6 +15,32 @@ export const politicalDialsSchema = z
   })
   .strict()
 
+/**
+ * Machine-readable proposal conditions used by agenda-driven vote selection.
+ * All thresholds are optional; absent thresholds are always satisfied.
+ */
+export const agendaProposesWhenSchema = z
+  .object({
+    cityUnrestAbove: z.number().min(0).max(100).optional(),
+    factionPressureAbove: z.number().min(0).max(100).optional(),
+    standingWithPlayerBelow: z.number().min(-100).max(100).optional(),
+    prosperityBelow: z.number().min(0).max(100).optional(),
+  })
+  .strict()
+
+export const agendaAxesSchema = z
+  .object({
+    /** Policy tags matching tags on council vote templates. */
+    values: z.array(z.string().min(1)),
+    /** Conditions under which this faction tends to propose a vote. */
+    proposesWhen: agendaProposesWhenSchema,
+    /** Conditions under which this faction tends to oppose/block a vote. */
+    blocksWhen: agendaProposesWhenSchema.optional(),
+  })
+  .strict()
+
+export type AgendaAxes = z.infer<typeof agendaAxesSchema>
+
 export const factionDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -25,6 +51,7 @@ export const factionDefinitionSchema = z
     territory: z.array(entityIdSchema),
     tags: z.array(z.string().min(1)).default([]),
     dailyAgendaHook: z.string().optional(),
+    agendaAxes: agendaAxesSchema.optional(),
   })
   .strict()
 
