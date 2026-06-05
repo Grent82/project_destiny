@@ -7,6 +7,7 @@ import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
 import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
 import { adjustCityDial, adjustDistrictTension } from './economicConsequences'
+import { getRelationshipPoliticalCapital } from './politicalLeverage'
 
 /**
  * Score a faction's propensity to propose a vote on this day.
@@ -160,6 +161,9 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     const templates = getCouncilVoteTemplates()
     const template = selectAgendaVote(next, templates, rng)
     if (template) {
+      // Relationship leverage is available for future agenda/intrigue consumers.
+      // No mechanical effect yet — proof that the data is reachable from here.
+      void getRelationshipPoliticalCapital(next, template.proposingFactionId)
       next = {
         ...next,
         activeCouncilVotes: [
