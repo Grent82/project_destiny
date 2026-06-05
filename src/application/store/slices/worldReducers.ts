@@ -1,3 +1,4 @@
+import { current } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type { CouncilVoteEvent, GameState } from '../../../domain'
@@ -11,6 +12,7 @@ import { applyRelationshipDelta } from '../../commands/adjustRelationship'
 import { buildEventRumorEntry } from '../../commands/spawnEventRumor'
 import { contentCatalog, getNpcDefinitions } from '../../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
+import { applyVoteEffects } from '../../commands/applyPolitics'
 
 const relationshipAxisLabels = {
   affinity: 'affinity',
@@ -338,21 +340,29 @@ export const worldReducers = {
     action: PayloadAction<{ voteId: string; playerInfluenced: boolean; passes: boolean }>,
   ) {
     const { voteId, passes } = action.payload
-    const vote = state.activeCouncilVotes.find((v) => v.id === voteId)
+    const snap = current(state) as GameState
+    const vote = snap.activeCouncilVotes.find((v) => v.id === voteId)
     if (!vote) return
 
-    vote.outcome = passes ? 'passed' : 'failed'
-
-    state.activityLog.unshift({
-      id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
-      day: state.day,
-      timeSlot: state.timeSlot,
-      category: 'system',
-      message: `Council vote: "${vote.title}" — ${passes ? 'passed' : 'failed'}.${passes ? ` ${vote.effect}` : ''}`,
-    })
-    if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-
-    state.activeCouncilVotes = state.activeCouncilVotes.filter((v) => v.id !== voteId)
+    const logMessage = `Council vote: "${vote.title}" — ${passes ? 'passed' : 'failed'}.${passes ? ` ${vote.effect}` : ''}`
+    let next: GameState = {
+      ...snap,
+      activeCouncilVotes: snap.activeCouncilVotes.filter((v) => v.id !== voteId),
+      activityLog: [
+        {
+          id: `log-${snap.day}-${snap.timeSlot}-${snap.activityLog.length + 1}`,
+          day: snap.day,
+          timeSlot: snap.timeSlot,
+          category: 'system' as const,
+          message: logMessage,
+        },
+        ...snap.activityLog.slice(0, MAX_ACTIVITY_ENTRIES - 1),
+      ],
+    }
+    if (passes) {
+      next = applyVoteEffects(next, vote)
+    }
+    return next
   },
 
   influenceCouncilVote(

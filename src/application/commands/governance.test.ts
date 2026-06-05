@@ -67,6 +67,7 @@ describe('resolveCouncilVote', () => {
     proposingFactionId: 'faction-gilded-court',
     targetFactionId: null,
     effect: 'Nothing changes. The Register notes it.',
+    mechanicalEffects: [],
     playerInfluenceThreshold: 30,
     expiresOnDay: 10,
     outcome: 'pending',

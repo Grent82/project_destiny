@@ -1,10 +1,66 @@
 import type { GameState } from '../../domain'
+import type { CouncilVoteEvent } from '../../domain/governance/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { formatMarks } from '../../domain/game/currency'
 import { contentCatalog, getCouncilVoteTemplates } from '../content/contentCatalog'
 import { simulateRivalOrgs, applyRivalActions } from './simulateRivalOrgs'
 import type { Rng } from './seededRng'
 import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
+import { adjustCityDial, adjustDistrictTension } from './economicConsequences'
+
+/**
+ * Apply all structured mechanical effects of a council vote.
+ * Called only when the vote passes.
+ */
+export function applyVoteEffects(state: GameState, vote: CouncilVoteEvent): GameState {
+  let next = state
+  for (const effect of vote.mechanicalEffects) {
+    switch (effect.type) {
+      case 'factionStanding': {
+        const curr = next.factionStandings[effect.factionId] ?? 0
+        next = {
+          ...next,
+          factionStandings: {
+            ...next.factionStandings,
+            [effect.factionId]: Math.max(-100, Math.min(100, curr + effect.delta)),
+          },
+        }
+        break
+      }
+      case 'cityDial': {
+        next = adjustCityDial(next, effect.dial, effect.delta)
+        break
+      }
+      case 'districtTension': {
+        next = adjustDistrictTension(next, effect.districtId, effect.delta)
+        break
+      }
+      case 'districtMarketPressure': {
+        next = {
+          ...next,
+          districts: next.districts.map((d) =>
+            d.districtId === effect.districtId
+              ? { ...d, marketPressure: Math.max(0, Math.min(100, d.marketPressure + effect.delta)) }
+              : d,
+          ),
+        }
+        break
+      }
+      case 'districtDanger': {
+        next = {
+          ...next,
+          districts: next.districts.map((d) =>
+            d.districtId === effect.districtId
+              ? { ...d, danger: Math.max(0, Math.min(100, d.danger + effect.delta)) }
+              : d,
+          ),
+        }
+        break
+      }
+    }
+  }
+  return next
+}
 
 function resolveDebtInterestIncrement(enforcementStanding: number): number {
   if (enforcementStanding >= 30) return 5
@@ -58,6 +114,9 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
       'system',
       `The council vote "${vote.title}" has concluded — ${passes ? 'passed' : 'failed'}. ${passes ? vote.effect : `${factionName}'s proposal was blocked.`}`,
     )
+    if (passes) {
+      next = applyVoteEffects(next, vote)
+    }
     // Standing consequence for having influenced the vote
     if (vote.playerVote) {
       const standingDelta = passes ? 5 : -3

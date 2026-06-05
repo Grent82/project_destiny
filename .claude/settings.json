@@ -5,6 +5,7 @@
     "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1",
     "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1"
   },
+  "model": "qwen-3.5-122b-sovereign",
   "hooks": {
     "PreCompact": [
       {

@@ -7,7 +7,8 @@
     "targetFactionId": null,
     "effect": "All shop prices increase by 5% for 7 days.",
     "playerInfluenceThreshold": 30,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": []
   },
   {
     "id": "cvote-expanded-field-licenses",
@@ -17,7 +18,8 @@
     "targetFactionId": null,
     "effect": "High-danger district access restrictions reduced for 5 days.",
     "playerInfluenceThreshold": 20,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": []
   },
   {
     "id": "cvote-compact-patrol-expansion",
@@ -27,7 +29,14 @@
     "targetFactionId": null,
     "effect": "Tallow Ring standing decreases by 10. Hollows access temporarily restricted.",
     "playerInfluenceThreshold": 25,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-tallow-ring",
+        "delta": -10
+      }
+    ]
   },
   {
     "id": "cvote-merrow-customs-seal",
@@ -37,7 +46,24 @@
     "targetFactionId": "faction-civic-compact",
     "effect": "If passed: House Merrow standing +8, Civic Compact standing -5. Ash Quay trade fees increase by 10%.",
     "playerInfluenceThreshold": 35,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-house-merrow",
+        "delta": 8
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-civic-compact",
+        "delta": -5
+      },
+      {
+        "type": "districtMarketPressure",
+        "districtId": "district-ash-quay",
+        "delta": 10
+      }
+    ]
   },
   {
     "id": "cvote-compact-customs-jurisdiction",
@@ -47,7 +73,24 @@
     "targetFactionId": "faction-house-merrow",
     "effect": "If passed: Civic Compact standing +6, House Merrow standing -8. Harbor Ward tension decreases by 15.",
     "playerInfluenceThreshold": 30,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-civic-compact",
+        "delta": 6
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-house-merrow",
+        "delta": -8
+      },
+      {
+        "type": "districtTension",
+        "districtId": "district-harbor",
+        "delta": -15
+      }
+    ]
   },
   {
     "id": "cvote-league-safety-inspections",
@@ -57,7 +100,24 @@
     "targetFactionId": "faction-tallow-ring",
     "effect": "If passed: Foundry League standing +6, Tallow Ring standing -6. Ironworks market pressure decreases by 10.",
     "playerInfluenceThreshold": 25,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-foundry-league",
+        "delta": 6
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-tallow-ring",
+        "delta": -6
+      },
+      {
+        "type": "districtMarketPressure",
+        "districtId": "district-ironworks",
+        "delta": -10
+      }
+    ]
   },
   {
     "id": "cvote-ring-supply-exemption",
@@ -67,7 +127,24 @@
     "targetFactionId": "faction-foundry-league",
     "effect": "If passed: Tallow Ring standing +5, Foundry League standing -4. City corruption increases by 5.",
     "playerInfluenceThreshold": 20,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-tallow-ring",
+        "delta": 5
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-foundry-league",
+        "delta": -4
+      },
+      {
+        "type": "cityDial",
+        "dial": "corruption",
+        "delta": 5
+      }
+    ]
   },
   {
     "id": "cvote-pale-welfare-allocation",
@@ -77,7 +154,29 @@
     "targetFactionId": "faction-gilded-court",
     "effect": "If passed: Restored standing +8, Gilded Court standing -5. City unrest decreases by 8. City prosperity decreases by 3.",
     "playerInfluenceThreshold": 20,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-the-restored",
+        "delta": 8
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-gilded-court",
+        "delta": -5
+      },
+      {
+        "type": "cityDial",
+        "dial": "unrest",
+        "delta": -8
+      },
+      {
+        "type": "cityDial",
+        "dial": "prosperity",
+        "delta": -3
+      }
+    ]
   },
   {
     "id": "cvote-court-fiscal-austerity",
@@ -87,7 +186,29 @@
     "targetFactionId": "faction-restored",
     "effect": "If passed: Gilded Court standing +5, Restored standing -7. City unrest increases by 10. City prosperity increases by 4.",
     "playerInfluenceThreshold": 30,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-gilded-court",
+        "delta": 5
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-the-restored",
+        "delta": -7
+      },
+      {
+        "type": "cityDial",
+        "dial": "unrest",
+        "delta": 10
+      },
+      {
+        "type": "cityDial",
+        "dial": "prosperity",
+        "delta": 4
+      }
+    ]
   },
   {
     "id": "cvote-hollows-security-contract",
@@ -97,7 +218,24 @@
     "targetFactionId": "faction-tallow-ring",
     "effect": "If passed: Civic Compact standing +7, Tallow Ring standing -8. Hollows danger level decreases by 1 for 10 days.",
     "playerInfluenceThreshold": 25,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-civic-compact",
+        "delta": 7
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-tallow-ring",
+        "delta": -8
+      },
+      {
+        "type": "districtDanger",
+        "districtId": "district-the-hollows",
+        "delta": -10
+      }
+    ]
   },
   {
     "id": "cvote-warrens-self-governance",
@@ -107,7 +245,24 @@
     "targetFactionId": "faction-civic-compact",
     "effect": "If passed: Restored standing +6, Civic Compact standing -4. Warrens unrest decreases by 12.",
     "playerInfluenceThreshold": 20,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-the-restored",
+        "delta": 6
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-civic-compact",
+        "delta": -4
+      },
+      {
+        "type": "districtTension",
+        "districtId": "district-the-warrens",
+        "delta": -12
+      }
+    ]
   },
   {
     "id": "cvote-harbor-access-fee-hike",
@@ -117,7 +272,19 @@
     "targetFactionId": "faction-house-merrow",
     "effect": "If passed: Civic Compact standing +5, Harbor Ward market pressure increases by 10 for 7 days.",
     "playerInfluenceThreshold": 25,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-civic-compact",
+        "delta": 5
+      },
+      {
+        "type": "districtMarketPressure",
+        "districtId": "district-harbor",
+        "delta": 10
+      }
+    ]
   },
   {
     "id": "cvote-merrow-free-transit-clause",
@@ -127,6 +294,23 @@
     "targetFactionId": "faction-civic-compact",
     "effect": "If passed: House Merrow standing +7, Civic Compact standing -5. Harbor Ward market pressure decreases by 8.",
     "playerInfluenceThreshold": 30,
-    "expiresOnDay": -1
+    "expiresOnDay": -1,
+    "mechanicalEffects": [
+      {
+        "type": "factionStanding",
+        "factionId": "faction-house-merrow",
+        "delta": 7
+      },
+      {
+        "type": "factionStanding",
+        "factionId": "faction-civic-compact",
+        "delta": -5
+      },
+      {
+        "type": "districtMarketPressure",
+        "districtId": "district-harbor",
+        "delta": -8
+      }
+    ]
   }
 ]
