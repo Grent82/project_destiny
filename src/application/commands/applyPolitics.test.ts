@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { applyPolitics, applyVoteEffects } from './applyPolitics'
+import { applyPolitics, applyVoteEffects, selectAgendaVote } from './applyPolitics'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import type { CouncilVoteEvent } from '../../domain/governance/contracts'
@@ -158,6 +158,129 @@ describe('applyPolitics vote auto-resolution', () => {
     // rng always returns 1 → fails (1 < 0.5 = false)
     const after = applyPolitics(state, () => 1)
     expect(after.factionStandings['faction-tallow-ring']).toBe(20)
+  })
+})
+
+// ── selectAgendaVote tests ────────────────────────────────────────────────────
+
+describe('selectAgendaVote', () => {
+  function makeTemplate(
+    id: string,
+    proposingFactionId: string,
+    tags: string[] = [],
+  ): CouncilVoteEvent {
+    return makeVote({ id, proposingFactionId, tags })
+  }
+
+  it('returns null when no templates provided', () => {
+    const state = gameStateSchema.parse({ ...initialGameStateSnapshot })
+    expect(selectAgendaVote(state, [], () => 0.5)).toBeNull()
+  })
+
+  it('picks the faction with highest activePressure when no world conditions met', () => {
+    const templates = [
+      makeTemplate('vote-compact', 'faction-civic-compact', ['order']),
+      makeTemplate('vote-tallow', 'faction-tallow-ring', ['contraband']),
+    ]
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) => ({
+        ...fs,
+        activePressure:
+          fs.factionId === 'faction-civic-compact' ? 80
+          : fs.factionId === 'faction-tallow-ring' ? 20
+          : fs.activePressure,
+      })),
+    })
+    // Use deterministic rng (0 for no tie-break noise)
+    const selected = selectAgendaVote(state, templates, () => 0)
+    expect(selected?.proposingFactionId).toBe('faction-civic-compact')
+  })
+
+  it('high-pressure Compact with high unrest reliably proposes an order/patrol vote', () => {
+    const templates = [
+      makeTemplate('compact-patrol', 'faction-civic-compact', ['order', 'patrol']),
+      makeTemplate('gilded-fee', 'faction-gilded-court', ['licensing']),
+      makeTemplate('tallow-exempt', 'faction-tallow-ring', ['contraband']),
+    ]
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      cityDials: { ...initialGameStateSnapshot.cityDials, unrest: 75 },
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) => ({
+        ...fs,
+        activePressure:
+          fs.factionId === 'faction-civic-compact' ? 80 : 10,
+      })),
+    })
+    const selected = selectAgendaVote(state, templates, () => 0)
+    expect(selected?.proposingFactionId).toBe('faction-civic-compact')
+    expect(selected?.tags).toContain('order')
+  })
+
+  it('no faction proposes a vote with tags that contradict their agenda values', () => {
+    // Tallow Ring only has contraband/exemption/profit values
+    // A 'welfare' tag vote should not be picked for Tallow Ring
+    const templates = [
+      makeTemplate('tallow-exempt', 'faction-tallow-ring', ['exemption', 'profit']),
+      makeTemplate('tallow-welfare', 'faction-tallow-ring', ['welfare']),  // tag mismatch
+    ]
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) => ({
+        ...fs,
+        activePressure: fs.factionId === 'faction-tallow-ring' ? 90 : 10,
+      })),
+    })
+    // Run many times to ensure 'tallow-welfare' (wrong tags) is never picked
+    const picks = Array.from({ length: 20 }, (_, i) => {
+      const r = selectAgendaVote(state, templates, () => i / 20)
+      return r?.id
+    })
+    expect(picks.every((p) => p === 'tallow-exempt')).toBe(true)
+  })
+
+  it('different world states produce different proposing factions', () => {
+    const templates = [
+      makeTemplate('compact-vote', 'faction-civic-compact', ['order']),
+      makeTemplate('gilded-vote', 'faction-gilded-court', ['licensing']),
+      makeTemplate('tallow-vote', 'faction-tallow-ring', ['contraband']),
+    ]
+
+    const highUnrestState = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      cityDials: { ...initialGameStateSnapshot.cityDials, unrest: 75 },
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) => ({
+        ...fs,
+        activePressure: fs.factionId === 'faction-civic-compact' ? 70 : 15,
+      })),
+    })
+
+    const highPressureTallowState = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      cityDials: { ...initialGameStateSnapshot.cityDials, unrest: 20 },
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) => ({
+        ...fs,
+        activePressure: fs.factionId === 'faction-tallow-ring' ? 90 : 5,
+      })),
+    })
+
+    const lowProsperityState = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      cityDials: { ...initialGameStateSnapshot.cityDials, prosperity: 25, unrest: 30 },
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) => ({
+        ...fs,
+        activePressure: fs.factionId === 'faction-gilded-court' ? 80 : 5,
+      })),
+    })
+
+    const r1 = selectAgendaVote(highUnrestState, templates, () => 0)
+    const r2 = selectAgendaVote(highPressureTallowState, templates, () => 0)
+    const r3 = selectAgendaVote(lowProsperityState, templates, () => 0)
+
+    // Each state should select a different faction
+    expect(r1?.proposingFactionId).toBe('faction-civic-compact')
+    expect(r2?.proposingFactionId).toBe('faction-tallow-ring')
+    expect(r3?.proposingFactionId).toBe('faction-gilded-court')
   })
 })
 

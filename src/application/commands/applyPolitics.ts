@@ -9,6 +9,87 @@ import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
 import { adjustCityDial, adjustDistrictTension } from './economicConsequences'
 
 /**
+ * Score a faction's propensity to propose a vote on this day.
+ * Returns 0 if the faction has no agendaAxes or no vote templates.
+ * Higher score → more likely to propose.
+ */
+function scoreFactionForProposal(
+  factionId: string,
+  state: GameState,
+  hasTemplates: boolean,
+): number {
+  if (!hasTemplates) return 0
+  const def = contentCatalog.factions.find((f) => f.id === factionId)
+  if (!def?.agendaAxes) return 0
+
+  const factionState = state.factionStates.find((fs) => fs.factionId === factionId)
+  const pressure = factionState?.activePressure ?? 0
+  const { proposesWhen } = def.agendaAxes
+  const unrest = state.cityDials.unrest
+  const prosperity = state.cityDials.prosperity
+  const standing = state.factionStandings[factionId] ?? 0
+
+  // Base score from pressure (0–100)
+  let score = pressure
+
+  // Bonuses when conditions are met
+  if (proposesWhen.cityUnrestAbove !== undefined && unrest > proposesWhen.cityUnrestAbove) score += 20
+  if (proposesWhen.factionPressureAbove !== undefined && pressure > proposesWhen.factionPressureAbove) score += 15
+  if (proposesWhen.standingWithPlayerBelow !== undefined && standing < proposesWhen.standingWithPlayerBelow) score += 10
+  if (proposesWhen.prosperityBelow !== undefined && prosperity < proposesWhen.prosperityBelow) score += 15
+
+  return score
+}
+
+/**
+ * Select a council vote template using faction agenda scoring.
+ * Factions with high pressure and matching world conditions get priority.
+ * Returns null if no suitable faction/template combination is found.
+ */
+export function selectAgendaVote(
+  state: GameState,
+  templates: CouncilVoteEvent[],
+  rng: Rng,
+): CouncilVoteEvent | null {
+  if (templates.length === 0) return null
+
+  // Group templates by proposing faction
+  const byFaction = new Map<string, CouncilVoteEvent[]>()
+  for (const t of templates) {
+    const list = byFaction.get(t.proposingFactionId) ?? []
+    list.push(t)
+    byFaction.set(t.proposingFactionId, list)
+  }
+
+  // Score each faction
+  const scoredFactions = [...byFaction.keys()].map((factionId) => ({
+    factionId,
+    score: scoreFactionForProposal(factionId, state, (byFaction.get(factionId)?.length ?? 0) > 0),
+  }))
+
+  // Sort by score descending; add small rng tie-break for variety
+  scoredFactions.sort((a, b) => b.score - a.score + (rng() - 0.5) * 5)
+
+  // Minimum threshold: at least one faction must be above 0
+  const topFaction = scoredFactions.find((f) => f.score > 0) ?? scoredFactions[0]
+  if (!topFaction) return null
+
+  const factionTemplates = byFaction.get(topFaction.factionId) ?? []
+  const def = contentCatalog.factions.find((f) => f.id === topFaction.factionId)
+
+  // Filter by agenda values tag match if available
+  let candidates = factionTemplates
+  if (def?.agendaAxes?.values.length) {
+    const tagMatched = factionTemplates.filter((t) =>
+      t.tags.some((tag) => def.agendaAxes!.values.includes(tag)),
+    )
+    if (tagMatched.length > 0) candidates = tagMatched
+  }
+
+  return candidates[Math.floor(rng() * candidates.length)]!
+}
+
+/**
  * Apply all structured mechanical effects of a council vote.
  * Called only when the vote passes.
  */
@@ -77,8 +158,8 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
   // Step 7: Periodic council vote — fire one every 5 days if none active
   if (currentDay % 5 === 0 && next.activeCouncilVotes.length === 0) {
     const templates = getCouncilVoteTemplates()
-    if (templates.length > 0) {
-      const template = templates[Math.floor(rng() * templates.length)]!
+    const template = selectAgendaVote(next, templates, rng)
+    if (template) {
       next = {
         ...next,
         activeCouncilVotes: [
