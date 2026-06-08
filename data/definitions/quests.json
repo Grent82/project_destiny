@@ -81,7 +81,7 @@
   },
   {
     "id": "quest-foundry-escort",
-    "title": "League Escort: The Long Road",
+    "title": "League Clearance: The Long Road",
     "employerFactionId": "faction-foundry-league",
     "enemyFactionId": "faction-tallow-ring",
     "districtId": null,
@@ -186,7 +186,7 @@
       {
         "atStageId": "setback",
         "label": "The shelter occupant ran for help. Someone else now knows the house is here.",
-        "journalEntry": "Noise carries in the Warrens. The sympathizer's call is going to bring attention the extraction plan cannot afford."
+        "journalEntry": "Noise carries in the Warrens. The sympathizer's call is going to bring attention to the safehouse."
       }
     ]
   },
@@ -237,7 +237,7 @@
     "employerFactionId": null,
     "enemyFactionId": null,
     "districtId": "district-the-pale",
-    "briefing": "A merchant's wagon needs to cross the Pale undamaged. Three prior attempts have not gone well. The cargo is not your concern. Getting it through in one piece is.",
+    "briefing": "A merchant's wagon needs to cross the Pale undamaged. Three prior attempts have not gone well. The cargo is not your concern. Protect the convoy from ambush and ensure it reaches its destination intact.",
     "objectiveType": "survival",
     "rewardMarks": 280,
     "rewardStandingFactionId": null,
