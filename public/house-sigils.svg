@@ -1,0 +1,48 @@
+<!--
+  House and Institution Sigils
+  Style: Monochrome seal/stamp aesthetic, worn administrative marks
+  Stroke weight: 1.8px (consistent across all icons)
+  Use: <svg><use href="/house-sigils.svg#icon-house-valdris" /></svg>
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+  <!-- House Valdris: Key (access, property, locked ledgers) -->
+  <symbol id="icon-house-valdris" viewBox="0 0 24 24">
+    <circle cx="7" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M10 7h8M14 7v7M14 10l3 3M14 10l-3 3"/>
+  </symbol>
+
+  <!-- House Sorn: Anchor ring (old lines, legitimacy gate) -->
+  <symbol id="icon-house-sorn" viewBox="0 0 24 24">
+    <circle cx="12" cy="10" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 15v6M8 5V3a4 4 0 0 1 8 0v2"/>
+  </symbol>
+
+  <!-- House Merrow: Chain link (dock leverage, binding ties) -->
+  <symbol id="icon-house-merrow" viewBox="0 0 24 24">
+    <ellipse cx="8" cy="10" rx="3.5" ry="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <ellipse cx="16" cy="14" rx="3.5" ry="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </symbol>
+
+  <!-- Lantern Vale Inn: Oil lamp (information, anonymity) -->
+  <symbol id="icon-venue-lantern-vale" viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6 10h12M8 10v6M16 10v6M6 10l1-5h11l1 5M9 16v2a3 3 0 0 0 6 0v-2"/>
+  </symbol>
+
+  <!-- Chapel of Saint Vey: Open book (registry, confession) -->
+  <symbol id="icon-venue-chapel-st-vey" viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 6c2-1 4-1 6 0v12c-2-1-4-1-6 0V6zM20 6c-2-1-4-1-6 0v12c2-1 4-1 6 0V6zM10 6v12M14 6v12"/>
+  </symbol>
+
+  <!-- Salt Ledger Hall: Scales (contracts, debt, balance) -->
+  <symbol id="icon-institution-salt-ledger" viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v12M6 6l-3 6h6L6 6zM18 6l-3 6h6l-3-6zM3 19h18"/>
+  </symbol>
+
+  <!-- House Sable-Cairn: Broken seal (fallen prestige, fractured house) -->
+  <symbol id="icon-house-sable-cairn" viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 4a7 7 0 0 1 7 7c0 1.5-.5 3-1.5 4M12 4a7 7 0 0 0-7 7c0 1.5.5 3 1.5 4M8 12h8M6 18l2-3M16 18l-2-3"/>
+  </symbol>
+
+</svg>

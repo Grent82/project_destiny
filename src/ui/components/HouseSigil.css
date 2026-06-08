@@ -1,0 +1,10 @@
+.house-sigil {
+  display: inline-block;
+  vertical-align: middle;
+  stroke: currentColor;
+  opacity: 0.85;
+}
+
+.house-sigil:hover {
+  opacity: 1;
+}

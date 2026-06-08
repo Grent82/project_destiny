@@ -1,0 +1,10 @@
+.house-screen-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.house-screen-header .eyebrow {
+  margin: 0;
+}

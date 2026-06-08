@@ -65,29 +65,26 @@ bd close <id>         # Complete work
 
 ## Session Completion
 
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+**When ending a work session**, you MUST complete ALL steps below.
 
 **MANDATORY WORKFLOW:**
 
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
+4. **Run `bd preflight`** - Checks: `bd lint` + `bd stale` + `bd orphans`
+5. **Push code** (if changes made):
    ```bash
-   git pull --rebase
-   bd dolt push
-   git push
-   git status  # MUST show "up to date with origin"
+   git add .
+   git commit -m "feat: ..."  # or appropriate message
    ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
+   **Note:** No git remote configured. Commits are local-only.
 
 **CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
+- Run `bd preflight` before considering work shippable
+- All commits are local-only (no remote configured)
+- Use `bd close <id>` to mark issues complete
+- The `SessionEnd` hook auto-runs `bd preflight` on session exit
 <!-- END BEADS INTEGRATION -->
 
 

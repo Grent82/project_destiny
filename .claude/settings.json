@@ -28,6 +28,17 @@
         ],
         "matcher": ""
       }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "command": "bd preflight",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
     ]
   }
 }

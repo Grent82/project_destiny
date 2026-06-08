@@ -16,7 +16,9 @@ import type { HouseRoom, NpcPairingPolicy, RoomState } from '../../domain/game/c
 import { VenueContextBanner } from './VenueContextBanner'
 import { ConfirmationModal } from '../components/ConfirmationModal'
 import { Link } from 'react-router-dom'
+import './HouseScreen.css'
 import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
+import { HouseSigil } from '../components/HouseSigil'
 
 const ROOM_EFFECTS: Record<string, string> = {
   'room-kitchen': 'When intact: each NPC\'s daily wage drops by 1 Mark. The house feeds its own.',
@@ -267,7 +269,10 @@ export function HouseScreen() {
 
   return (
     <section className="screen-panel district-the-pale">
-      <p className="eyebrow">House Valdris</p>
+      <div className="house-screen-header">
+        <HouseSigil houseId="house-valdris" size={32} />
+        <p className="eyebrow">House Valdris</p>
+      </div>
       <h1>The House</h1>
       <p className="summary">
         The family seat in The Pale. Most of it was stripped or broken during the Breach. Marion
