@@ -41,7 +41,7 @@ export const WARD_ORIGIN_STORIES = [
     id: 'ward-origin-guild-apprentice',
     name: 'Guild Apprentice',
     originStory:
-      'The Underhand Scribes offered an apprentice to learn letters and discretion inside a noble house. Useful to both parties.',
+      'The Notaries Guild placed an apprentice under your house\'s tutelage — a clerk trainee with access to both ledgers and loose tongues.',
     initialStage: 'apprentice' as const,
   },
 ] as const
