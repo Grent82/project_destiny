@@ -11,7 +11,7 @@ import type { Rng } from './seededRng'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { adjustCityDial, adjustCityResource, adjustDistrictTension } from './economicConsequences'
 
-type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks'
+type AgencyAction = 'rumor' | 'incident' | 'contact' | 'faction_favor' | 'npc_bond' | 'spend_marks' | 'district_move'
 type InitiativeAction = 'district_lever' | 'npc_approach' | 'faction_position' | 'resource_move'
 
 /** Step 9a: NPC world agency — working NPCs shape the world through their actions.
@@ -41,6 +41,7 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
     if (isDiplomatic || isCharming) pool.push('contact', 'contact', 'npc_bond')
     if (isAmbitious) pool.push('faction_favor')
     if (isGreedy) pool.push('spend_marks')
+    if (isAmbitious && rng() >= 0.7) pool.push('district_move')
 
     const action = pool[Math.floor(rng() * pool.length)]!
 
@@ -154,6 +155,20 @@ export function applyNpcAgency(state: GameState, rng: Rng = Math.random): GameSt
         )
         applyRelationshipDelta(afterEvents, 'player', npc.npcId, 'loyalty', 1)
       }
+    } else if (action === 'district_move') {
+      const currentDistrictId = contentCatalog.districtNameToId.get(district)
+      if (!currentDistrictId) continue
+      const adjacent = contentCatalog.districtsById.get(currentDistrictId)?.adjacentDistrictIds ?? []
+      if (adjacent.length === 0) continue
+      const newDistrictId = adjacent[Math.floor(rng() * adjacent.length)]!
+      const newDistrictName = contentCatalog.districtsById.get(newDistrictId)?.name ?? newDistrictId
+
+      afterEvents = appendActivityLogEntry(
+        afterEvents,
+        'system',
+        `${npcName} moved from ${district} to ${newDistrictName} for new business opportunities.`,
+      )
+      writeNpcMemory(afterEvents, npc.npcId, `Moved business from ${district} to ${newDistrictName}`, [currentDistrictId, newDistrictId])
     }
   }
 
