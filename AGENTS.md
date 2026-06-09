@@ -93,13 +93,15 @@ This rule applies to all agents. A UI bead without a label is a gap.
 
 ## Code Change Gates
 
-Run these before **and** after any code change:
+Run these **before committing** (typecheck first, then tests, then build):
 
 ```bash
+pnpm typecheck     # zero errors - MUST pass before commit
 pnpm test:run      # must pass, count must not drop below 333
-pnpm typecheck     # zero errors
 pnpm build         # clean build before committing
 ```
+
+Do not rely on post-commit hooks. Typecheck failures block the commit.
 
 If the Codex desktop environment resolves `node` to the bundled app runtime and Vite/Vitest fail to load `rolldown` native bindings, use the project-local fallback wrappers instead:
 
@@ -109,9 +111,26 @@ If the Codex desktop environment resolves `node` to the bundled app runtime and 
 ./scripts/codex-build.sh
 ```
 
+## TDD Practice
+
+Write tests parallel to code, not after. When writing a test:
+- Read the implementation first — do not guess expected values.
+- Verify ranges, deltas, and computed values from the code before writing assertions.
+- If the test fails due to wrong assumptions, fix the test, not the code.
+- For new behavior in domain/application layers, write the failing test before the implementation.
+
 When running repo-wide tests, watch for nested worktrees or generated mirrors under `.claude/worktrees/`.
 They can cause duplicate test discovery, worker timeouts, or false negatives if the runner scans them as part of the project tree.
 If a full run starts picking up test files from those paths, treat that as tooling noise first and fix the discovery scope before debugging product code.
+
+## Pre-Commit Checklist
+
+Before any `git commit`, verify:
+- [ ] `pnpm typecheck` passes with zero errors
+- [ ] `pnpm test:run` passes, test count not dropped
+- [ ] `pnpm build` succeeds
+- [ ] No unintended file changes (check `git status`)
+- [ ] Commit message follows convention (`feat:`, `fix:`, `docs:`, `chore:`)
 
 ## Schema Change Checklist
 
