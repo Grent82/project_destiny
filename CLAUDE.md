@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use `docs/workflows/design-review.md` for player-facing design review and UX critique.
 - Use `docs/workflows/dialogue-review.md` for dialogue-tree work.
 - Use `docs/workflows/ki-retro.md` when asked for lessons learned, workflow issues, or sustainable quality/process improvements.
+- Use `docs/workflows/lower-model-playbook.md` when delegating work to smaller/cheaper models or subagents.
 - Treat Beads as the only backlog and dependency tracker.
 
 ## Architecture and Quality Priorities
