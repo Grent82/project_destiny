@@ -10,7 +10,7 @@ import {
   cityWasteRoads,
   cityWaterFeatures,
 } from './cityGeometry'
-import { CompassRose, FactionStamp, FerryMark, GateMark, ShaftMark, ValdrisKeySigil, WaxSeal } from './mapSymbols'
+import { CompassRose, FactionStamp, FerryMark, GateMark, HouseStampMark, ShaftMark, WaxSeal } from './mapSymbols'
 import './maps.css'
 
 const BORDER_TITLES: Record<string, string> = {
@@ -169,9 +169,9 @@ export function CityMap({ entries, houseDistrictId, travelTimeCost, onSelectDist
               {entry.controllingFactionId && (
                 <FactionStamp
                   factionId={entry.controllingFactionId}
-                  x={shape.label.x - 55}
-                  y={shape.label.y + 13}
-                  size={13}
+                  x={shape.label.x - 58}
+                  y={shape.label.y + 12}
+                  size={22}
                   className="map-faction-stamp"
                 />
               )}
@@ -180,7 +180,7 @@ export function CityMap({ entries, houseDistrictId, travelTimeCost, onSelectDist
                 {entry.accessRestricted ? ' ✕' : ''}
               </text>
               {shape.id === houseDistrictId && (
-                <ValdrisKeySigil x={shape.label.x + 4} y={shape.label.y - 28} size={16} className="map-house-sigil" />
+                <HouseStampMark x={shape.label.x + 6} y={shape.label.y - 28} size={20} className="map-house-sigil" />
               )}
               {entry.isCurrent && (
                 <g className="map-player-marker" aria-hidden>
