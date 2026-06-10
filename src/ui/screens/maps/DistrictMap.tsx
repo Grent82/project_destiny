@@ -1,16 +1,6 @@
 import { DISTRICT_MAP_VIEWBOX, districtMapGeometry } from './districtGeometry'
+import { PoiMark } from './mapSymbols'
 import './maps.css'
-
-const POI_TYPE_ICONS: Record<string, string> = {
-  guild: '⚒',
-  tavern: '⬡',
-  shop: '⊕',
-  court: '⚖',
-  residence: '⌂',
-  market: '⊞',
-  faction_hq: '⚑',
-  black_market: '◈',
-}
 
 export interface DistrictMapPoi {
   id: string
@@ -39,11 +29,26 @@ interface DistrictMapProps {
 function waterStrip(side: 'west' | 'north' | 'south') {
   switch (side) {
     case 'west':
-      return <path d="M0,0 L34,0 Q22,120 34,240 L0,240 Z" className="map-water map-water--sea" />
+      return (
+        <g>
+          <path d="M0,0 L34,0 Q22,120 34,240 L0,240 Z" className="map-water map-water--sea" />
+          <path d="M40,6 Q30,120 40,234" className="map-shore-line" />
+        </g>
+      )
     case 'north':
-      return <path d="M0,0 L360,0 L360,30 Q180,42 0,30 Z" className="map-water map-water--river" />
+      return (
+        <g>
+          <path d="M0,0 L360,0 L360,30 Q180,42 0,30 Z" className="map-water map-water--river" />
+          <path d="M4,36 Q180,48 356,36" className="map-shore-line" />
+        </g>
+      )
     case 'south':
-      return <path d="M0,240 L360,240 L360,210 Q180,198 0,210 Z" className="map-water map-water--river" />
+      return (
+        <g>
+          <path d="M0,240 L360,240 L360,210 Q180,198 0,210 Z" className="map-water map-water--river" />
+          <path d="M4,204 Q180,192 356,204" className="map-shore-line" />
+        </g>
+      )
   }
 }
 
@@ -53,20 +58,24 @@ function plateTexture(texture: string) {
       return (
         <g className="map-texture">
           <path d="M40,70 Q180,56 330,70" />
+          <path d="M44,78 Q180,64 326,78" />
           <path d="M40,130 Q180,116 330,130" />
           <path d="M40,190 Q180,176 330,190" />
+          <path d="M44,198 Q180,184 326,198" />
         </g>
       )
     case 'ruins':
       return (
         <g className="map-texture">
-          <path d="M60,40 l10,10 M70,40 l-10,10 M300,180 l10,10 M310,180 l-10,10 M180,210 l10,10 M190,210 l-10,10 M330,40 l8,8 M338,40 l-8,8" />
+          <path d="M58,42 l8,4 -2,8 -9,-3 z M298,178 l9,3 -1,9 -10,-2 z M178,208 l8,5 -3,7 -8,-4 z M328,38 l7,4 -2,7 -8,-3 z" />
+          <path d="M70,58 l6,6 M306,196 l-6,6 M118,42 l5,5" />
         </g>
       )
     case 'marsh':
       return (
         <g className="map-texture">
           <path d="M50,90 q10,-6 20,0 q10,6 20,0 M210,180 q10,-6 20,0 q10,6 20,0 M120,220 q10,-6 20,0 M280,60 q10,-6 20,0" />
+          <path d="M64,84 v-9 M70,84 v-7 M76,84 v-10 M224,174 v-9 M230,174 v-7 M294,54 v-8 M300,54 v-6" />
         </g>
       )
     case 'yards':
@@ -75,6 +84,7 @@ function plateTexture(texture: string) {
           <rect x="52" y="42" width="34" height="22" />
           <rect x="270" y="160" width="40" height="24" />
           <rect x="140" y="62" width="28" height="18" />
+          <path d="M60,48 h18 M278,168 h24" />
         </g>
       )
     case 'tunnels':
@@ -90,12 +100,13 @@ function plateTexture(texture: string) {
       return (
         <g className="map-texture">
           <path d="M34,80 h26 M34,140 h22 M34,200 h28" />
+          <path d="M38,84 v6 M48,84 v6 M38,144 v6 M46,144 v6 M40,204 v6 M50,204 v6" />
         </g>
       )
     default:
       return (
         <g className="map-texture">
-          <path d="M70,30 L120,210 M210,24 L250,216 M30,120 L330,96" />
+          <path d="M70,30 Q92,120 120,210 M210,24 Q228,120 250,216 M30,120 Q180,104 330,96 M60,166 Q180,154 312,150" />
         </g>
       )
   }
@@ -123,10 +134,39 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
           .map((npc) => npc.name)
           .join(', ')} +${roamingNpcs.length - 3}`
       : roamingNpcs.map((npc) => npc.name).join(', ')
+  const plateHand = geometry.theme.surveyLayer === 'hand'
 
   return (
     <figure className={`district-map district-map--${geometry.theme.texture}`} aria-label={`Map of ${districtName}`}>
       <svg viewBox={DISTRICT_MAP_VIEWBOX} role="group" className="district-map-svg">
+        <defs>
+          <filter id="map-plate-grain" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03 0.04" numOctaves="3" seed="4" result="grain" />
+            <feColorMatrix
+              in="grain"
+              type="matrix"
+              values="0 0 0 0 0.36  0 0 0 0 0.28  0 0 0 0 0.16  0 0 0 0.14 0"
+            />
+            <feComposite in2="SourceGraphic" operator="over" />
+          </filter>
+          <radialGradient id="map-plate-tone" cx="40%" cy="32%" r="100%">
+            <stop offset="0%" stopColor="#dccfa8" />
+            <stop offset="60%" stopColor="#d0c094" />
+            <stop offset="100%" stopColor="#b8a578" />
+          </radialGradient>
+        </defs>
+
+        <g filter="url(#map-plate-grain)">
+          <path
+            className="map-sheet"
+            d="M5,7 Q90,3 180,5 Q270,2 355,6 Q358,80 354,120 Q358,180 355,234 Q270,238 180,235 Q90,239 5,234 Q2,160 5,120 Q2,60 5,7 Z"
+          />
+        </g>
+        <g className="map-stains" aria-hidden>
+          <ellipse cx="318" cy="38" rx="22" ry="14" />
+          <ellipse cx="48" cy="216" rx="16" ry="10" />
+        </g>
+
         {geometry.theme.water && waterStrip(geometry.theme.water)}
         {plateTexture(geometry.theme.texture)}
 
@@ -161,9 +201,7 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
               }}
             >
               <circle cx={node.x} cy={node.y} r="11" className="map-poi-ring" />
-              <text x={node.x} y={node.y + 4.5} className="map-poi-icon">
-                {POI_TYPE_ICONS[poi.type] ?? '○'}
-              </text>
+              <PoiMark type={poi.type} x={node.x} y={node.y} size={13} className="map-poi-icon" />
               <text x={node.x} y={node.y + 24} className="map-poi-name">
                 {poi.name}
               </text>
@@ -195,6 +233,9 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
         )}
         <text x="12" y="232" className="map-margin-note">
           {geometry.theme.marginNote}
+        </text>
+        <text x="348" y="232" textAnchor="end" className="map-plate-caption">
+          {districtName} · {plateHand ? 'the house hand' : 'after the Compact survey'}
         </text>
         {isHere && (
           <g aria-hidden>

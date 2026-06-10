@@ -15,6 +15,8 @@ export interface DistrictPoiNode {
 export interface DistrictMapTheme {
   /** Where open water lies on the plate, if any. */
   water?: 'west' | 'north' | 'south'
+  /** 'hand' = not on the official Compact survey; drawn in the house hand. */
+  surveyLayer: 'official' | 'hand'
   /** Decorative strokes: ruin hatching, terrace lines, tunnel walls. */
   texture: 'streets' | 'terraces' | 'ruins' | 'marsh' | 'yards' | 'tunnels' | 'docks'
   /** One margin note in the surveyor's voice. */
@@ -28,7 +30,7 @@ export interface DistrictMapGeometry {
 
 export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-harbor': {
-    theme: { water: 'west', texture: 'docks', marginNote: 'Tide gates close at dusk.' },
+    theme: { surveyLayer: 'official', water: 'west', texture: 'docks', marginNote: 'Tide gates close at dusk.' },
     pois: [
       { id: 'poi-harbor-the-hold', x: 62, y: 110 },
       { id: 'poi-harbor-pier-seven', x: 70, y: 196 },
@@ -41,7 +43,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-gilded-heights': {
-    theme: { texture: 'terraces', marginNote: 'Clearance checked twice on the upper terrace.' },
+    theme: { surveyLayer: 'official', texture: 'terraces', marginNote: 'Clearance checked twice on the upper terrace.' },
     pois: [
       { id: 'poi-gilded-advocates-row', x: 86, y: 152 },
       { id: 'poi-gilded-exchange', x: 120, y: 98 },
@@ -54,7 +56,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-ironworks': {
-    theme: { water: 'south', texture: 'yards', marginNote: 'Slag canal runs the southern rim.' },
+    theme: { surveyLayer: 'official', water: 'south', texture: 'yards', marginNote: 'Slag canal runs the southern rim.' },
     pois: [
       { id: 'poi-ironworks-underground-cache', x: 48, y: 196 },
       { id: 'poi-ironworks-slag-tavern', x: 92, y: 168 },
@@ -67,7 +69,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-the-pale': {
-    theme: { texture: 'streets', marginNote: 'The vault under the house is still sealed.' },
+    theme: { surveyLayer: 'hand', texture: 'streets', marginNote: 'The vault under the house is still sealed.' },
     pois: [
       { id: 'poi-pale-wren-safe-house', x: 46, y: 168 },
       { id: 'poi-pale-tallow-ring', x: 64, y: 70 },
@@ -81,7 +83,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-the-warrens': {
-    theme: { texture: 'ruins', marginNote: 'Streets unnamed past the second bend.' },
+    theme: { surveyLayer: 'official', texture: 'ruins', marginNote: 'Streets unnamed past the second bend.' },
     pois: [
       { id: 'poi-warrens-ring-den', x: 78, y: 82 },
       { id: 'poi-warrens-the-rubble', x: 100, y: 198 },
@@ -94,7 +96,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-the-hollows': {
-    theme: { texture: 'ruins', marginNote: 'Survey abandoned past the detention house.' },
+    theme: { surveyLayer: 'hand', texture: 'ruins', marginNote: 'Survey abandoned past the detention house.' },
     pois: [
       { id: 'poi-hollows-compact-hall', x: 70, y: 60 },
       { id: 'poi-hollows-the-sink', x: 90, y: 190 },
@@ -107,7 +109,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-ash-quay': {
-    theme: { water: 'south', texture: 'docks', marginNote: "Merrow's seal on every bollard." },
+    theme: { surveyLayer: 'official', water: 'south', texture: 'docks', marginNote: "Merrow's seal on every bollard." },
     pois: [
       { id: 'poi-ash-quay-customs-house', x: 88, y: 142 },
       { id: 'poi-ash-quay-berth-registry', x: 158, y: 96 },
@@ -117,7 +119,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-the-mireward': {
-    theme: { texture: 'marsh', marginNote: 'Paths flood at the spring tide.' },
+    theme: { surveyLayer: 'official', texture: 'marsh', marginNote: 'Paths flood at the spring tide.' },
     pois: [
       { id: 'poi-mireward-apothecary', x: 108, y: 118 },
       { id: 'poi-mireward-pawn-fence', x: 88, y: 190 },
@@ -127,7 +129,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-cinder-row': {
-    theme: { texture: 'yards', marginNote: 'Coal dust settles on everything by noon.' },
+    theme: { surveyLayer: 'official', texture: 'yards', marginNote: 'Coal dust settles on everything by noon.' },
     pois: [
       { id: 'poi-cinder-tenements', x: 80, y: 188 },
       { id: 'poi-cinder-coal-yard', x: 102, y: 88 },
@@ -137,7 +139,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-the-northbank': {
-    theme: { water: 'south', texture: 'streets', marginNote: 'Every door here keeps a ledger.' },
+    theme: { surveyLayer: 'official', water: 'south', texture: 'streets', marginNote: 'Every door here keeps a ledger.' },
     pois: [
       { id: 'poi-northbank-courier-post', x: 90, y: 158 },
       { id: 'poi-northbank-succession-registry', x: 122, y: 80 },
@@ -147,7 +149,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     ],
   },
   'district-the-below': {
-    theme: { texture: 'tunnels', marginNote: 'Not on the official survey. Keep it so.' },
+    theme: { surveyLayer: 'hand', texture: 'tunnels', marginNote: 'Not on the official survey. Keep it so.' },
     pois: [
       { id: 'poi-below-access-tunnel', x: 58, y: 62 },
       { id: 'poi-below-debtors-room', x: 122, y: 92 },

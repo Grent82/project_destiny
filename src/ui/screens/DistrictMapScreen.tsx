@@ -79,8 +79,8 @@ export function DistrictMapScreen() {
       <p className="eyebrow">House Valdris</p>
       <h1>The City</h1>
       <p className="summary">
-        {districts.length} districts on two banks of the river. Each one holds something. Move carefully — the city
-        watches who passes through.
+        The house copy of the Compact survey — {districts.length} districts on two banks of the river. The survey ends
+        at the wall. Move carefully — the city watches who passes through.
       </p>
 
       {currentDistrictId && (
