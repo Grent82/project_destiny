@@ -38,8 +38,8 @@ pnpm dev   # start dev server first (port 5173)
 **UI/UX and Art Direction beads must be labeled:**
 
 ```bash
-bd label <id> ui-ux        # interaction, layout, component work
-bd label <id> art-direction # icons, images, visual identity
+bd label add <id> ui-ux        # interaction, layout, component work
+bd label add <id> art-direction # icons, images, visual identity
 ```
 
 A UI bead without a label is a gap. This rule applies to all agents.
