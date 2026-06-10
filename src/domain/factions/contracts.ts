@@ -63,6 +63,7 @@ export const factionRuntimeStateSchema = z
     security: percentageSchema,
     standingWithPlayer: signedStandingSchema,
     activePressure: percentageSchema,
+    leaderNpcId: z.string().min(1).optional().nullable(),
   })
   .strict()
 

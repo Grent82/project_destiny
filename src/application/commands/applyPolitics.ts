@@ -177,10 +177,14 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
           },
         ],
       }
+      const factionState = next.factionStates.find((f) => f.factionId === template.proposingFactionId)
+      const leaderNpcId = factionState?.leaderNpcId
+      const leaderName = leaderNpcId ? contentCatalog.npcsById.get(leaderNpcId)?.name : null
+      const proposerText = leaderName ? `${leaderName} of the ${contentCatalog.factionsById.get(template.proposingFactionId)?.name ?? 'Council'}` : 'The council'
       next = appendActivityLogEntry(
         next,
         'system',
-        `The council convenes. A vote is called: "${template.title}".`,
+        `${proposerText} calls a vote on "${template.title}".`,
       )
     }
   }

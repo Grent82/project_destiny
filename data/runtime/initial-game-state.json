@@ -12,7 +12,8 @@
       "wealth": 56,
       "security": 72,
       "standingWithPlayer": 5,
-      "activePressure": 18
+      "activePressure": 18,
+      "leaderNpcId": "npc-verek-holst"
     },
     {
       "factionId": "faction-gilded-court",
@@ -20,7 +21,8 @@
       "wealth": 70,
       "security": 44,
       "standingWithPlayer": 0,
-      "activePressure": 26
+      "activePressure": 26,
+      "leaderNpcId": "npc-lirien-ashcroft"
     },
     {
       "factionId": "faction-foundry-league",
@@ -28,7 +30,8 @@
       "wealth": 49,
       "security": 52,
       "standingWithPlayer": 10,
-      "activePressure": 21
+      "activePressure": 21,
+      "leaderNpcId": "npc-sable-wrent"
     },
     {
       "factionId": "faction-tallow-ring",
@@ -36,7 +39,8 @@
       "wealth": 60,
       "security": 50,
       "standingWithPlayer": 0,
-      "activePressure": 5
+      "activePressure": 5,
+      "leaderNpcId": "npc-enemy-harlen-voss"
     },
     {
       "factionId": "faction-house-merrow",
@@ -44,7 +48,8 @@
       "wealth": 65,
       "security": 60,
       "standingWithPlayer": -15,
-      "activePressure": 30
+      "activePressure": 30,
+      "leaderNpcId": "npc-enemy-lady-sorn"
     },
     {
       "factionId": "faction-restored",
@@ -52,7 +57,8 @@
       "wealth": 25,
       "security": 35,
       "standingWithPlayer": 0,
-      "activePressure": 0
+      "activePressure": 0,
+      "leaderNpcId": "npc-oswin-farr"
     }
   ],
   "districts": [

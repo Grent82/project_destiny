@@ -143,7 +143,7 @@ describe('endDay', () => {
     }
     const next = endDay(state)
     expect(next.activeCouncilVotes.length).toBeGreaterThan(0)
-    const logEntry = next.activityLog.find((e) => e.message.includes('vote is called'))
+    const logEntry = next.activityLog.find((e) => e.message.includes('calls a vote'))
     expect(logEntry).toBeDefined()
   })
 
