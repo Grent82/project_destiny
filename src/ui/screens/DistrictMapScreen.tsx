@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { gameActions, selectActionTimeCost, selectCurrentDistrictId, selectDistrictMapEntries, selectHouseDistrictId, selectInstitutionalStanding } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { TimeCostBadge } from '../components/TimeCostBadge'
+import { CityMap } from './maps/CityMap'
 
 const DISTRICT_IMAGE_MAP: Record<string, string> = {
   'district-the-pale': 'the-pale',
@@ -78,7 +79,8 @@ export function DistrictMapScreen() {
       <p className="eyebrow">House Valdris</p>
       <h1>The City</h1>
       <p className="summary">
-        Six districts. Each one holds something. Move carefully — the city watches who passes through.
+        {districts.length} districts on two banks of the river. Each one holds something. Move carefully — the city
+        watches who passes through.
       </p>
 
       {currentDistrictId && (
@@ -86,6 +88,16 @@ export function DistrictMapScreen() {
           Currently in: <strong>{districts.find((d) => d.id === currentDistrictId)?.name ?? currentDistrictId}</strong>
         </p>
       )}
+
+      <CityMap
+        entries={districts}
+        houseDistrictId={houseDistrictId}
+        travelTimeCost={selectActionTimeCost('travel')}
+        onSelectDistrict={handleTravel}
+        onSelectEnvirons={() => navigate('/expedition')}
+      />
+
+      <h2 className="summary" style={{ marginTop: '0.5rem' }}>The districts in detail</h2>
 
       <div className="overview-grid">
         {districts.map((district) => {

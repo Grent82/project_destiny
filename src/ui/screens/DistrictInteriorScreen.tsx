@@ -3,9 +3,13 @@ import {
   gameActions,
   selectCurrentDistrictId,
   selectDistrictPOIs,
+  selectWorldNpcViewsByDistrict,
+  selectWorldNpcsByDistrictAndSlot,
 } from '../../application'
+import type { RootState } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { DistrictMap } from './maps/DistrictMap'
 
 const POI_TYPE_LABELS: Record<string, string> = {
   guild: 'Guild',
@@ -51,6 +55,17 @@ export function DistrictInteriorScreen() {
   const navigate = useNavigate()
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
   const pois = useAppSelector(selectDistrictPOIs(districtId ?? ''))
+  const timeSlot = useAppSelector((state: RootState) => state.game.timeSlot)
+  const anchoredNpcs = useAppSelector((state: RootState) =>
+    districtId ? selectWorldNpcViewsByDistrict(state, districtId, timeSlot) : [],
+  )
+  const districtNpcs = districtId ? selectWorldNpcsByDistrictAndSlot(districtId, timeSlot) : []
+  const npcMarkers = [
+    ...anchoredNpcs.map((view) => ({ npcId: view.npcId, name: view.name, poiId: view.currentLocationId })),
+    ...districtNpcs
+      .filter((npc) => !anchoredNpcs.some((view) => view.npcId === npc.id))
+      .map((npc) => ({ npcId: npc.id, name: npc.name, poiId: null })),
+  ]
 
   const district = districtId ? contentCatalog.districtsById.get(districtId) : null
 
@@ -116,6 +131,15 @@ export function DistrictInteriorScreen() {
           ● You are here
         </span>
       )}
+
+      <DistrictMap
+        districtId={district.id}
+        districtName={district.name}
+        pois={pois}
+        npcMarkers={npcMarkers}
+        isHere={isHere}
+        onSelectPoi={(poiId) => navigate(`/district/${district.id}/poi/${poiId}`)}
+      />
 
       <div className="overview-grid" style={{ marginTop: '1.5rem' }}>
 

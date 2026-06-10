@@ -19,7 +19,7 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes \u2014 goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
+    "narrativeSummary": "The Harbor Ward is where Valdenmoor breathes — goods in, goods out, every transaction moving faster than the law can follow. The Compact holds the docks in daylight; the Ring holds everything else.",
     "narrativeHook": "The trade roads run south. Bandits own them after the third milestone.",
     "hooks": [
       "Dock foremen are hiring. The kind of work that doesn't ask questions.",
@@ -29,13 +29,15 @@
       "district-the-pale",
       "district-ironworks",
       "district-the-hollows",
-      "district-gilded-heights"
+      "district-gilded-heights",
+      "district-ash-quay"
     ],
     "borderTypes": {
       "district-the-pale": "open",
       "district-ironworks": "open",
       "district-the-hollows": "compact_checkpoint",
-      "district-gilded-heights": "restricted_gate"
+      "district-gilded-heights": "restricted_gate",
+      "district-ash-quay": "open"
     },
     "minControlFactionStanding": null,
     "rumorClimate": "saturated",
@@ -44,7 +46,7 @@
     "reputation": 50,
     "faunaPresence": [
       "Bloated harbour rats that move like they know they own the docks.",
-      "Pale eels surfacing at low tide \u2014 a bad sign, locals say.",
+      "Pale eels surfacing at low tide — a bad sign, locals say.",
       "Herring gulls with oil-black wingtips, unnaturally quiet.",
       "Barnacle crabs that cluster at the Breach-wall waterline and won't be shifted."
     ]
@@ -67,7 +69,7 @@
     ],
     "dangerLevel": 1,
     "accessRestricted": true,
-    "narrativeSummary": "Gilded Heights does not have guards at the gate \u2014 it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
+    "narrativeSummary": "Gilded Heights does not have guards at the gate — it has invitation lists, seating arrangements, and social memory. You may enter freely; what you cannot do is belong without the Court's permission.",
     "narrativeHook": "The highland passes are nominally under Civic Compact jurisdiction. Nominally.",
     "hooks": [
       "Guild notices cover the market boards. Three contracts, one suspicious.",
@@ -90,7 +92,7 @@
       "Decorative peacocks that occasionally scream in the night without cause.",
       "Pampered lap-hounds whose owners have not noticed their eyes have gone wrong.",
       "A singular very old tortoise that has lived in the garden maze for at least four families.",
-      "Moth swarms that appear near open books and candlelight \u2014 Breach-drawn, some whisper."
+      "Moth swarms that appear near open books and candlelight — Breach-drawn, some whisper."
     ]
   },
   {
@@ -111,7 +113,7 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here \u2014 on paper; in practice, the terms are set by who can keep the furnaces lit.",
+    "narrativeSummary": "The Ironworks runs day and night, and the smoke above it never fully clears. The Foundry League sets the terms here — on paper; in practice, the terms are set by who can keep the furnaces lit.",
     "narrativeHook": "The mines are three days east. Some still produce. Most are haunted.",
     "hooks": [
       "The League is short on contract workers. The foreman doesn't ask about your history.",
@@ -133,7 +135,7 @@
     "socialDensity": 4,
     "reputation": 40,
     "faunaPresence": [
-      "Furnace beetles \u2014 fireproof, thumb-sized, bred deliberately to detect gas leaks.",
+      "Furnace beetles — fireproof, thumb-sized, bred deliberately to detect gas leaks.",
       "Draft horses with brand scars that have started refusing certain loading bays.",
       "Ash-rats nesting in wall insulation, surviving temperatures that should kill them.",
       "Crows that roost on cooling chimneys and mimic the factory bells."
@@ -142,7 +144,7 @@
   {
     "id": "district-the-pale",
     "name": "The Pale",
-    "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks \u2014 nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
+    "summary": "A dense layered settlement that grew in the gap between the Harbor Ward and the Ironworks — nominally Compact territory, operationally Ring country, with a Restored presence holding what falls through.",
     "controllingFactionId": null,
     "contestedByFactionIds": [
       "faction-civic-compact",
@@ -162,7 +164,7 @@
     ],
     "dangerLevel": 3,
     "accessRestricted": false,
-    "narrativeSummary": "The Pale is where the city's accounting breaks down \u2014 too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
+    "narrativeSummary": "The Pale is where the city's accounting breaks down — too crowded for the Compact to enforce, too useful for the Ring to abandon, too desperate for the Restored to ignore. People fall through the cracks here, and some of them land on their feet.",
     "narrativeHook": "The old garrison road leads to the ruins of the previous city. Nobody comes back unchanged.",
     "hooks": [
       "Crumbling manor walls hide older debts. A letter from the Collectors awaits.",
@@ -172,13 +174,15 @@
       "district-harbor",
       "district-ironworks",
       "district-gilded-heights",
-      "district-the-warrens"
+      "district-the-warrens",
+      "district-the-northbank"
     ],
     "borderTypes": {
       "district-harbor": "open",
       "district-ironworks": "open",
       "district-gilded-heights": "restricted_gate",
-      "district-the-warrens": "condemned_barrier"
+      "district-the-warrens": "condemned_barrier",
+      "district-the-northbank": "compact_checkpoint"
     },
     "minControlFactionStanding": null,
     "rumorClimate": "moderate",
@@ -195,7 +199,7 @@
   {
     "id": "district-the-warrens",
     "name": "The Warrens",
-    "summary": "The oldest residential district \u2014 six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
+    "summary": "The oldest residential district — six stories of timber-and-salvage stacked on foundations not built for it, housing the largest concentration of wage workers, lower-class free citizens, and Bound with limited mobility contracts.",
     "controllingFactionId": "faction-civic-compact",
     "contestedByFactionIds": [
       "faction-restored"
@@ -212,7 +216,7 @@
     ],
     "dangerLevel": 2,
     "accessRestricted": false,
-    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives \u2014 crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
+    "narrativeSummary": "The Warrens is where most of Valdenmoor actually lives — crowded, structurally precarious, and chronically ill from cistern water the Compact never quite fixes. The Restored run the services the Compact promised and forgot to deliver.",
     "narrativeHook": "The sewers connect to the undercroft. Older than the city. Darker too.",
     "hooks": [
       "The Restored have opened a new relief house. The Compact hasn't decided whether to shut it down yet.",
@@ -234,7 +238,7 @@
     "socialDensity": 5,
     "reputation": 25,
     "faunaPresence": [
-      "Feral cats in large numbers \u2014 worshipped quietly by several families as luck.",
+      "Feral cats in large numbers — worshipped quietly by several families as luck.",
       "Sewer centipedes as long as a forearm, venomous, mostly harmless to adults.",
       "A colony of rats that do not flee torchlight and seem to watch.",
       "Starlings that roost inside the tenements and have learned to imitate specific voices."
@@ -258,7 +262,7 @@
     ],
     "dangerLevel": 5,
     "accessRestricted": true,
-    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching \u2014 collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
+    "narrativeSummary": "The Hollows is what Valdenmoor looks like when nobody is watching — collapsed floors, broken walls, plants through the rubble, and everything the city threw away still buried underneath. The Compact issued an evacuation order. Nobody left who didn't have somewhere better to go.",
     "narrativeHook": "The Hollows backs up against the outer wall. There are doors in that wall. Unofficial ones.",
     "hooks": [
       "Something was dug up in the eastern rubble. The people who found it aren't talking.",
@@ -303,12 +307,17 @@
     ],
     "dangerLevel": 3,
     "accessRestricted": false,
-    "narrativeSummary": "The city's wet throat. Imports come through here; so does every debt that touches water. House Merrow's seal is everywhere. A conversation at the dock becomes a rumor in the Northbank within one endDay cycle.",
+    "narrativeSummary": "The city's wet throat, on the north bank of the river mouth. Imports come through here; so does every debt that touches water. House Merrow's seal is everywhere. A conversation at the dock becomes a rumor in the Northbank by nightfall, and the Mouth Ferry carries both across to Harbor Ward.",
     "adjacentDistrictIds": [
       "district-the-northbank",
-      "district-cinder-row"
+      "district-cinder-row",
+      "district-harbor"
     ],
-    "borderTypes": {},
+    "borderTypes": {
+      "district-harbor": "open",
+      "district-the-northbank": "open",
+      "district-cinder-row": "open"
+    },
     "minControlFactionStanding": null,
     "dominantExchangeSystem": "debt",
     "rumorClimate": "saturated",
@@ -316,7 +325,7 @@
     "reputation": 45,
     "narrativeHook": "The dockmaster keeps a second ledger under the floor of her office. She has been waiting for someone to ask about it.",
     "faunaPresence": [
-      "Tide-crawlers \u2014 crustaceans with translucent shells, emerged only after the Breach.",
+      "Tide-crawlers — crustaceans with translucent shells, emerged only after the Breach.",
       "Gulls that refuse to land here despite the fish offal, driven off by something.",
       "Silver eels rising at the black-water channel mouths near the old rendering works.",
       "A singular grey heron seen standing motionless at the same spot each dawn."
@@ -341,12 +350,15 @@
     ],
     "dangerLevel": 1,
     "accessRestricted": false,
-    "narrativeSummary": "Chapels, infirmaries, and the people who maintain them. Favors are the currency here \u2014 not recorded, not forgotten. What is said in the Mireward is usually true, which makes it dangerous.",
+    "narrativeSummary": "Chapels, infirmaries, and the people who maintain them. Favors are the currency here — not recorded, not forgotten. What is said in the Mireward is usually true, which makes it dangerous.",
     "adjacentDistrictIds": [
       "district-cinder-row",
       "district-the-northbank"
     ],
-    "borderTypes": {},
+    "borderTypes": {
+      "district-cinder-row": "open",
+      "district-the-northbank": "open"
+    },
     "minControlFactionStanding": null,
     "dominantExchangeSystem": "favor",
     "rumorClimate": "moderate",
@@ -355,7 +367,7 @@
     "narrativeHook": "Sister Vael lights a candle for every confession she receives. The ash from a particular candle has not been emptied in three years.",
     "faunaPresence": [
       "Biting midges in clouds so thick they can choke a man who breathes wrong.",
-      "Marsh adders \u2014 fat, sluggish, extremely venomous, surprisingly common in cellars.",
+      "Marsh adders — fat, sluggish, extremely venomous, surprisingly common in cellars.",
       "Frogs that sing in tones too low to hear but rattle the teeth.",
       "Something people call the Wading Man, seen at the canal edge, never approached."
     ]
@@ -384,18 +396,22 @@
       "district-the-mireward",
       "district-the-below"
     ],
-    "borderTypes": {},
+    "borderTypes": {
+      "district-ash-quay": "open",
+      "district-the-mireward": "open",
+      "district-the-below": "ring_toll"
+    },
     "minControlFactionStanding": null,
     "dominantExchangeSystem": "coin",
     "rumorClimate": "saturated",
     "socialDensity": 5,
     "reputation": 35,
-    "narrativeHook": "The Lantern Vale has a room on the upper floor that has been booked under the same name \u2014 \"Holst\" \u2014 for eleven years running, though no one matching that description has slept in it.",
+    "narrativeHook": "The Lantern Vale has a room on the upper floor that has been booked under the same name — \"Holst\" — for eleven years running, though no one matching that description has slept in it.",
     "faunaPresence": [
-      "Scorch-pigeons \u2014 urban pigeons whose feathers are permanently discoloured by the old fires.",
+      "Scorch-pigeons — urban pigeons whose feathers are permanently discoloured by the old fires.",
       "Tallow-rats that eat candle-grease from shrines and have become unnaturally fat.",
       "A pair of large brindle dogs with no owner, tolerated by residents, vicious to strangers.",
-      "Ashflies \u2014 small, black-winged, mute, seem drawn to grief."
+      "Ashflies — small, black-winged, mute, seem drawn to grief."
     ]
   },
   {
@@ -416,12 +432,17 @@
     ],
     "dangerLevel": 1,
     "accessRestricted": false,
-    "narrativeSummary": "The city that thinks of itself as the city. Civic seals, contract registries, old money. Nothing said publicly here is accidental. The dry rumor climate is a choice, not a condition.",
+    "narrativeSummary": "The city that thinks of itself as the city. Civic seals, contract registries, old money. Nothing said publicly here is accidental. The dry rumor climate is a choice, not a condition. The Ledger Span crosses the river into the Pale; the Compact counts everyone who walks it.",
     "adjacentDistrictIds": [
       "district-ash-quay",
-      "district-the-mireward"
+      "district-the-mireward",
+      "district-the-pale"
     ],
-    "borderTypes": {},
+    "borderTypes": {
+      "district-the-pale": "compact_checkpoint",
+      "district-ash-quay": "open",
+      "district-the-mireward": "open"
+    },
     "minControlFactionStanding": null,
     "dominantExchangeSystem": "information",
     "rumorClimate": "dry",
@@ -429,7 +450,7 @@
     "reputation": 75,
     "narrativeHook": "The Salt Ledger Register has a gap of six pages dated to the week of the Breach. The pages were not destroyed. They were simply never filed.",
     "faunaPresence": [
-      "Merchant horses of unusual quality \u2014 several have started refusing specific streets.",
+      "Merchant horses of unusual quality — several have started refusing specific streets.",
       "Caged songbirds in almost every window; their song occasionally syncs unnervingly.",
       "Well-fed alley cats with territorial ranges that correspond exactly to guild boundaries.",
       "Pigeons with message-capsule clips still attached, unclaimed."
@@ -458,7 +479,9 @@
     "adjacentDistrictIds": [
       "district-cinder-row"
     ],
-    "borderTypes": {},
+    "borderTypes": {
+      "district-cinder-row": "ring_toll"
+    },
     "minControlFactionStanding": null,
     "dominantExchangeSystem": "violence",
     "rumorClimate": "moderate",
@@ -467,7 +490,7 @@
     "narrativeHook": "There is no agreed-upon entrance. Everyone who uses The Below learned from someone else, and no one admits they taught them.",
     "faunaPresence": [
       "Eyeless fish in the flooded shafts that are still alive and have never seen light.",
-      "Pale millipedes by the thousands in the older tunnels \u2014 harmless, disturbing.",
+      "Pale millipedes by the thousands in the older tunnels — harmless, disturbing.",
       "Something that sounds like mining picks striking stone in rhythms no miner would use.",
       "Thin translucent worms that emerge from the walls when there is a Breach-weather event."
     ]

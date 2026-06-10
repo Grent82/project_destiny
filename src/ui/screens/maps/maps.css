@@ -1,0 +1,302 @@
+/* Surveyor's folio — city and district map plates. */
+
+.city-map,
+.district-map {
+  margin: 1rem 0 1.5rem;
+  border: 1px solid #5a4a32;
+  border-radius: 4px;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(201, 168, 106, 0.05), transparent 60%),
+    #14100c;
+  padding: 0.5rem;
+}
+
+.city-map-svg,
+.district-map-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.district-map {
+  max-width: 720px;
+}
+
+/* Water */
+.map-water--sea {
+  fill: #101820;
+  stroke: #2a3a48;
+  stroke-width: 1.5;
+}
+
+.map-water--river {
+  fill: #0f161d;
+  stroke: #2a3a48;
+  stroke-width: 1;
+}
+
+.map-water-label {
+  fill: #3d5366;
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.2em;
+}
+
+.map-hatch-line {
+  stroke: #4a3b28;
+  stroke-width: 1;
+}
+
+/* Districts */
+.map-district {
+  fill: #1c1610;
+  stroke: #6b5a3e;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 120ms ease;
+}
+
+.map-district:hover,
+.map-district:focus-visible {
+  fill: #2a2014;
+  outline: none;
+}
+
+.map-district--danger-3 { fill: #201610; }
+.map-district--danger-4 { fill: #241410; }
+.map-district--danger-5 { fill: #260f0c; }
+
+.map-district--danger-3:hover { fill: #2e2016; }
+.map-district--danger-4:hover { fill: #321c14; }
+.map-district--danger-5:hover { fill: #361410; }
+
+.map-district--current {
+  stroke: #d4b46a;
+  stroke-width: 3;
+}
+
+.map-district--restricted {
+  cursor: not-allowed;
+  fill: url(#map-hatch);
+  fill-opacity: 0.9;
+}
+
+.map-district--unofficial {
+  fill: #0e0c0a;
+  stroke-dasharray: 6 4;
+  stroke: #4a3b28;
+}
+
+.map-district-name {
+  fill: #d8cdb8;
+  font-size: 19px;
+  text-anchor: middle;
+  font-family: Georgia, 'Times New Roman', serif;
+  pointer-events: none;
+}
+
+.map-district-meta {
+  fill: #9a8158;
+  font-size: 13px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.map-district-note {
+  fill: #6b5a3e;
+  font-size: 11px;
+  font-style: italic;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.map-house-marker {
+  fill: #d4b46a;
+  font-size: 20px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* Player marker */
+.map-player-dot {
+  fill: #e8d49a;
+}
+
+.map-player-pulse {
+  fill: none;
+  stroke: #e8d49a;
+  stroke-width: 1.5;
+  animation: map-player-pulse 2.4s ease-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes map-player-pulse {
+  0% { opacity: 0.9; transform: scale(0.6); }
+  70% { opacity: 0; transform: scale(1.6); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-player-pulse { animation: none; opacity: 0.5; }
+}
+
+/* Crossings */
+.map-crossing-glyph {
+  fill: #b09663;
+  font-size: 15px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.map-crossing--restricted_gate .map-crossing-glyph,
+.map-crossing--condemned_barrier .map-crossing-glyph {
+  fill: #a05a4a;
+}
+
+.map-crossing--compact_checkpoint .map-crossing-glyph,
+.map-crossing--ring_toll .map-crossing-glyph {
+  fill: #c98e4a;
+}
+
+.map-crossing-path {
+  fill: none;
+  stroke: #6b5a3e;
+  stroke-width: 2;
+}
+
+.map-crossing-path--ferry,
+.map-crossing-path--shaft {
+  stroke-dasharray: 5 6;
+  stroke-width: 1.5;
+}
+
+/* Environs */
+.map-environ {
+  cursor: pointer;
+}
+
+.map-environ-diamond {
+  fill: #14100c;
+  stroke: #8a6f42;
+  stroke-width: 1.5;
+}
+
+.map-environ:hover .map-environ-diamond,
+.map-environ:focus-visible .map-environ-diamond {
+  fill: #2a2014;
+}
+
+.map-environ:focus-visible {
+  outline: none;
+}
+
+.map-environ-name {
+  fill: #8a7350;
+  font-size: 12px;
+  font-style: italic;
+  text-anchor: middle;
+}
+
+/* Legend */
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  padding: 0.5rem 0.4rem 0.2rem;
+  color: #8a7350;
+  font-size: 0.75rem;
+}
+
+/* District plates */
+.map-texture path,
+.map-texture rect {
+  fill: none;
+  stroke: #2e2518;
+  stroke-width: 1.2;
+}
+
+.map-texture--tunnels path {
+  stroke: #3a3022;
+}
+
+.district-map--tunnels {
+  background: #0b0908;
+}
+
+.map-presence-note {
+  fill: #9a8158;
+  font-size: 11px;
+  font-style: italic;
+  text-anchor: end;
+}
+
+.map-margin-note {
+  fill: #6b5a3e;
+  font-size: 10px;
+  font-style: italic;
+}
+
+/* POI nodes */
+.map-poi--reachable {
+  cursor: pointer;
+}
+
+.map-poi--distant {
+  opacity: 0.55;
+}
+
+.map-poi-ring {
+  fill: #1c1610;
+  stroke: #8a6f42;
+  stroke-width: 1.5;
+  transition: stroke 120ms ease;
+}
+
+.map-poi--reachable:hover .map-poi-ring,
+.map-poi--reachable:focus-visible .map-poi-ring {
+  stroke: #d4b46a;
+  stroke-width: 2.5;
+}
+
+.map-poi--reachable:focus-visible {
+  outline: none;
+}
+
+.map-poi--house .map-poi-ring {
+  stroke: #d4b46a;
+}
+
+.map-poi-icon {
+  fill: #c9b48a;
+  font-size: 12px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.map-poi-name {
+  fill: #a8987c;
+  font-size: 10.5px;
+  text-anchor: middle;
+  font-family: Georgia, 'Times New Roman', serif;
+  pointer-events: none;
+}
+
+.map-poi-flag--work {
+  fill: #7da05a;
+}
+
+.map-poi-flag--people {
+  fill: #5a82a0;
+}
+
+.map-npc-glyph {
+  fill: #cf9d5c;
+  font-size: 12px;
+}
+
+.map-roaming-note {
+  fill: #9a8158;
+  font-size: 11px;
+  font-style: italic;
+}

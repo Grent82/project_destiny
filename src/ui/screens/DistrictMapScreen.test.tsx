@@ -50,3 +50,23 @@ describe('DistrictMapScreen — information hierarchy', () => {
     expect(screen.getAllByText(/House Valdris/i).length).toBeGreaterThan(0)
   })
 })
+
+describe('DistrictMapScreen — city map', () => {
+  it('renders the spatial city map with district shapes', () => {
+    renderDistrictMap()
+    expect(screen.getByRole('figure', { name: 'Map of the city and its environs' })).toBeInTheDocument()
+    // Every district is clickable on the map (plus its card below)
+    expect(screen.getByRole('button', { name: 'The Warrens' })).toBeInTheDocument()
+  })
+
+  it('marks restricted districts as disabled on the map', () => {
+    renderDistrictMap()
+    const gilded = screen.getByRole('button', { name: /Gilded Heights — access restricted/ })
+    expect(gilded).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  it('shows the near environs as expedition territories', () => {
+    renderDistrictMap()
+    expect(screen.getByRole('button', { name: /The Ashfields — expedition territory/ })).toBeInTheDocument()
+  })
+})
