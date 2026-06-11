@@ -79,7 +79,7 @@ describe('ContractBoardScreen', () => {
     // Next step is surfaced within the active contract card itself — no separate panel needed
     expect(screen.getByText(/Next step:/i)).toBeInTheDocument()
     expect(screen.getAllByText('Travel to The Warrens').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Blocked').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Awaiting conditions').length).toBeGreaterThan(0)
     // "Recommended Next Step" panel removed — next step info lives in the active contract row
     expect(screen.queryByRole('heading', { name: 'Recommended Next Step' })).toBeNull()
   })

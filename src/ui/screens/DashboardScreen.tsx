@@ -118,7 +118,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
                   <span className="badge badge-story">◆ Story-critical</span>
                 ) : null}
                 {recommendedQuestAction.blocked ? (
-                  <span className="badge badge-warning">Blocked</span>
+                  <span className="badge badge-warning">Awaiting conditions</span>
                 ) : (
                   <span className="badge badge-positive">Ready now</span>
                 )}

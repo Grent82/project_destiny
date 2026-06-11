@@ -73,7 +73,7 @@ export function GlobalStatusBar() {
 
       {showEndDayTutorialHint && (
         <div className="status-tutorial-hint" role="note" aria-label="End day guidance">
-          <strong>The day turns here.</strong> Use <span>End Day</span> after you have planned work. It settles wages, condition shifts, city pressure, and pending world fallout in one step.
+          <strong>The day turns here.</strong> When ready, end the day. Wages are settled, conditions shift, pressure mounts, and the world's fallout takes shape.
         </div>
       )}
     </>

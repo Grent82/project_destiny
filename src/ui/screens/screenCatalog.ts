@@ -27,7 +27,7 @@ export const screenCatalog = [
   {
     path: '/event-log',
     title: 'Journal',
-    summary: 'What has been logged: economy shifts, encounters, and the state of things.',
+    summary: 'The ledger of days past: economy shifts, encounters resolved, the state of things.',
   },
   {
     path: '/ledger',

@@ -77,7 +77,7 @@ function resolveReadinessBadge(readiness: { state: string; blocked: boolean }) {
       return { label: 'Regroup required', className: 'badge badge-warning' }
     default:
       return {
-        label: readiness.blocked ? 'Blocked' : 'Ready now',
+        label: readiness.blocked ? 'Awaiting conditions' : 'Ready now',
         className: `badge ${readiness.blocked ? 'badge-warning' : 'badge-positive'}`,
       }
   }

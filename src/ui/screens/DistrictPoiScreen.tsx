@@ -107,7 +107,7 @@ export function DistrictPoiScreen() {
         <article className="detail-panel">
           <h2>What this place offers</h2>
           <p className="summary">
-            Local venues should feel like actual places. This step preserves their identity before you move into house management, market browsing, hiring, or contract review.
+            Venues here carry their own weight — work, contacts, and risks that do not shift with the house's needs.
           </p>
           <div className="mission-list">
             {poi.actions.map((action) => (

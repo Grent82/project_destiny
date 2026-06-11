@@ -9,7 +9,7 @@ export function EventLogScreen() {
       <p className="eyebrow">House Valdris</p>
       <h1>The Record</h1>
       <p className="summary">
-        What has been logged. Economy shifts, encounters, the state of things as the days turn.
+        The ledger of days past. Economy shifts, encounters resolved, the state of things as they turn.
       </p>
 
       <div className="overview-grid">

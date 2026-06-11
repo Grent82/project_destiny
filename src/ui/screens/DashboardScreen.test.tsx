@@ -54,7 +54,7 @@ describe('DashboardScreen', () => {
 
     expect(screen.getByRole('heading', { name: 'What next' })).toBeInTheDocument()
     expect(screen.getByText('Travel to The Warrens')).toBeInTheDocument()
-    expect(screen.getByText('Blocked')).toBeInTheDocument()
+    expect(screen.getByText('Awaiting conditions')).toBeInTheDocument()
     expect(screen.getByText('100 Mk')).toBeInTheDocument()
     expect(screen.getByText(/Claimant:/i)).toBeInTheDocument()
     expect(screen.getByText(/Enforced by:/i)).toBeInTheDocument()

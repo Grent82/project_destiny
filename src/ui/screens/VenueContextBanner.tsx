@@ -20,7 +20,7 @@ export function VenueContextBanner() {
           {context.districtName} / {context.poiName}
         </p>
         <p className="summary" style={{ marginBottom: 0 }}>
-          You are working from a specific place in the district rather than an abstract house menu.
+          Work undertaken here bears the mark of its location.
         </p>
       </div>
       <button
