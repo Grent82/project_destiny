@@ -8,13 +8,14 @@ import { getJobForNpc } from '../../application/content/jobCatalog'
 import { useAppSelector } from '../app/hooks'
 import { NpcDetailPanel } from './NpcDetailPanel'
 import { EmptyState } from '../components/EmptyState'
+import './roster.css'
 
 const ROSTER_GROUPS = [
-  { key: 'deployed', label: 'Deployed' },
-  { key: 'assigned_title', label: 'On Duty' },
-  { key: 'working', label: 'Working' },
-  { key: 'training', label: 'Training' },
-  { key: 'idle', label: 'Available' },
+  { key: 'deployed', label: 'In the field' },
+  { key: 'assigned_title', label: 'On duty' },
+  { key: 'working', label: 'At work' },
+  { key: 'training', label: 'In training' },
+  { key: 'idle', label: 'At liberty' },
   { key: 'recovering', label: 'Recovering' },
 ] as const
 
@@ -86,7 +87,8 @@ export function RosterScreen() {
       <p className="eyebrow">House Valdris</p>
       <h1>The Roster</h1>
       <p className="summary">
-        Personnel in house service. Their condition — health, morale, loyalty — is yours to account for.
+        The muster roll of the house — who serves, in what condition, and at what cost. Every name here
+        eats, bleeds, and remembers how they are treated.
       </p>
       {currentDistrictId ? (
         <button
@@ -103,15 +105,15 @@ export function RosterScreen() {
         </p>
       )}
 
-      <div className="roster-layout">
-        <div className="list-panel" role="list" aria-label="Roster entries">
-          <div className="roster-controls" aria-label="Filter and sort roster">
-            <label className="roster-control">
-              <span className="roster-control__label">Sort</span>
+      <div className="muster-layout">
+        <div className="muster-roll" role="list" aria-label="Roster entries">
+          <div className="muster-controls" aria-label="Filter and sort roster">
+            <label className="muster-control">
+              <span className="muster-control__label">Sort</span>
               <select
                 value={sortBy}
                 onChange={(e) => { setSortBy(e.target.value as SortKey); setSortAsc(true) }}
-                className="roster-control__select"
+                
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -127,12 +129,12 @@ export function RosterScreen() {
             >
               {sortAsc ? '↑' : '↓'}
             </button>
-            <label className="roster-control">
-              <span className="roster-control__label">Show</span>
+            <label className="muster-control">
+              <span className="muster-control__label">Show</span>
               <select
                 value={filterAssignment}
                 onChange={(e) => setFilterAssignment(e.target.value as AssignmentFilter)}
-                className="roster-control__select"
+                
               >
                 <option value="all">All</option>
                 {ROSTER_GROUPS.map((g) => (
@@ -141,15 +143,15 @@ export function RosterScreen() {
               </select>
             </label>
             {(sortBy !== 'name' && sortBy !== 'health' && sortBy !== 'morale' && sortBy !== 'stress') && (
-              <label className="roster-control">
-                <span className="roster-control__label">Min</span>
+              <label className="muster-control">
+                <span className="muster-control__label">Min</span>
                 <input
                   type="number"
                   min={0}
                   max={100}
                   value={filterSkillMin}
                   onChange={(e) => setFilterSkillMin(Number(e.target.value))}
-                  className="roster-control__input"
+                  
                   aria-label={`Minimum ${sortBy} value`}
                 />
               </label>
@@ -167,9 +169,9 @@ export function RosterScreen() {
           {filteredEntries.length === 0 ? (
             <EmptyState message="No operatives match the current filter." icon="👤" cta={{ label: 'Reset filters', onClick: () => { setSortBy('name'); setSortAsc(true); setFilterAssignment('all'); setFilterSkillMin(0) } }} />
           ) : isFiltered ? (
-            <div className="roster-group">
-              <p className="roster-group-label">
-                {filteredEntries.length} operative{filteredEntries.length !== 1 ? 's' : ''} — sorted by {SORT_OPTIONS.find(o => o.value === sortBy)?.label ?? sortBy}
+            <div className="muster-section">
+              <p className="muster-section-label">
+                {filteredEntries.length} name{filteredEntries.length !== 1 ? 's' : ''} — by {SORT_OPTIONS.find(o => o.value === sortBy)?.label ?? sortBy}
               </p>
               {filteredEntries.map((entry) => (
                 <RosterRow key={entry.npcId} entry={entry} selectedNpcId={selectedNpcId} onSelect={setSelectedNpcId} />
@@ -180,8 +182,8 @@ export function RosterScreen() {
               const group = rosterEntries.filter((e) => e.assignment === key)
               if (group.length === 0) return null
               return (
-                <div key={key} className="roster-group">
-                  <p className="roster-group-label">{label}</p>
+                <div key={key} className="muster-section">
+                  <p className="muster-section-label">{label}</p>
                   {group.map((entry) => (
                     <RosterRow key={entry.npcId} entry={entry} selectedNpcId={selectedNpcId} onSelect={setSelectedNpcId} />
                   ))}
@@ -192,12 +194,12 @@ export function RosterScreen() {
         </div>
 
         {detail ? (
-          <article className="detail-panel">
+          <article className="muster-leaf">
             <NpcDetailPanel detail={detail} />
           </article>
         ) : (
-          <article className="detail-panel">
-            <p className="text-muted">Select a name to view their standing.</p>
+          <article className="muster-leaf">
+            <p className="muster-leaf-empty">Point at a name on the roll to open their leaf.</p>
           </article>
         )}
       </div>
@@ -213,75 +215,49 @@ function RosterRow({ entry, selectedNpcId, onSelect }: {
   onSelect: (id: string) => void
 }) {
   const key = entry.assignment
+  function conditionClass(value: number, invert = false): string {
+    const score = invert ? 100 - value : value
+    if (score < 30) return 'muster-condition-fill muster-condition-fill--crit'
+    if (score < 60) return 'muster-condition-fill muster-condition-fill--low'
+    return 'muster-condition-fill'
+  }
+  const roleNote =
+    key === 'assigned_title' && entry.activeTitle
+      ? (contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled')
+      : key === 'working'
+        ? `${getJobForNpc(entry.skills).name} · ~${formatWorkingIncomePerDay(entry.workingIncome)} a day`
+        : formatNpcAssignmentLabel(entry.assignment)
   return (
     <button
-      className={[
-        'roster-row',
-        `roster-row--${key}`,
-        entry.npcId === selectedNpcId ? 'roster-row-active' : '',
-      ].filter(Boolean).join(' ')}
+      className={['muster-entry', entry.npcId === selectedNpcId ? 'muster-entry--active' : ''].filter(Boolean).join(' ')}
       onClick={() => onSelect(entry.npcId)}
       type="button"
     >
-      <span className="roster-row-title">
-        {entry.name}
-        {key === 'assigned_title' && entry.activeTitle && (
-          <span className="roster-row-title-role">
-            {' — '}{contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled'}
-          </span>
-        )}
-        {key === 'working' && (() => {
-          const job = getJobForNpc(entry.skills)
-          return (
-            <span className="roster-row-title-role" style={{ color: 'var(--text-muted)', fontSize: '0.8em' }}>
-              {' — '}{job.name} — ~{formatWorkingIncomePerDay(entry.workingIncome)}
-            </span>
-          )
-        })()}
-      </span>
+      <span className="muster-entry-name">{entry.name}</span>
+      <span className="muster-entry-role">{' — '}{roleNote}</span>
       {entry.firstQuirkText && (
-        <p style={{ margin: '0.1rem 0 0', fontSize: 'var(--size-xs, 0.75rem)', color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'left', lineHeight: 1.3 }}>
+        <p className="muster-entry-note">
           {entry.firstQuirkText.charAt(0).toUpperCase() + entry.firstQuirkText.slice(1)}.
         </p>
       )}
-      <div className="badge-row">
-        <span className="badge">{entry.status}</span>
-        <span className="badge">{formatNpcAssignmentLabel(entry.assignment)}</span>
-      </div>
-      <div className="roster-mini-stats">
-        <div className="mini-stat">
-          <span className="mini-stat-label">HP</span>
-          <div className="mini-bar-track">
-            <div className={['mini-bar-fill', entry.health < 30 ? 'mini-bar-fill--crit' : entry.health < 60 ? 'mini-bar-fill--low' : 'mini-bar-fill--good'].join(' ')} style={{ width: `${entry.health}%` }} />
-          </div>
-        </div>
-        <div className="mini-stat">
-          <span className="mini-stat-label">Mor</span>
-          <div className="mini-bar-track">
-            <div className={['mini-bar-fill', entry.morale < 30 ? 'mini-bar-fill--crit' : entry.morale < 60 ? 'mini-bar-fill--low' : 'mini-bar-fill--good'].join(' ')} style={{ width: `${entry.morale}%` }} />
-          </div>
-        </div>
-        <div className="mini-stat">
-          <span className="mini-stat-label">Str</span>
-          <div className="mini-bar-track">
-            <div className={['mini-bar-fill', entry.stress > 60 ? 'mini-bar-fill--crit' : entry.stress > 30 ? 'mini-bar-fill--low' : 'mini-bar-fill--good'].join(' ')} style={{ width: `${entry.stress}%` }} />
-          </div>
-        </div>
-        <div className="mini-stat">
-          <span className="mini-stat-label">Hng</span>
-          <div className="mini-bar-track">
-            <div className={['mini-bar-fill', entry.hunger > 60 ? 'mini-bar-fill--crit' : entry.hunger > 30 ? 'mini-bar-fill--low' : 'mini-bar-fill--good'].join(' ')} style={{ width: `${entry.hunger}%` }} />
-          </div>
-        </div>
-        <div className="mini-stat">
-          <span className="mini-stat-label">Fat</span>
-          <div className="mini-bar-track">
-            <div className={['mini-bar-fill', entry.fatigue > 60 ? 'mini-bar-fill--crit' : entry.fatigue > 30 ? 'mini-bar-fill--low' : 'mini-bar-fill--good'].join(' ')} style={{ width: `${entry.fatigue}%` }} />
-          </div>
-        </div>
+      <div className="muster-condition">
+        {([
+          ['Health', entry.health, false],
+          ['Morale', entry.morale, false],
+          ['Stress', entry.stress, true],
+          ['Hunger', entry.hunger, true],
+          ['Fatigue', entry.fatigue, true],
+        ] as const).map(([label, value, invert]) => (
+          <span key={label} className="muster-condition-item" title={`${label}: ${value}`}>
+            {label.slice(0, 3)}
+            <span className="muster-condition-track">
+              <span className={conditionClass(value, invert)} style={{ width: `${invert ? value : value}%`, display: 'block' }} />
+            </span>
+          </span>
+        ))}
       </div>
       {(entry.stress >= 70 || entry.hunger >= 70 || entry.fatigue >= 70 || entry.health <= 30) && (
-        <span className="roster-state-warning" title="NPC in danger zone — check their states">⚠ critical state</span>
+        <span className="muster-warning" title="In a bad way — check their states">⚠ in a bad way</span>
       )}
     </button>
   )
