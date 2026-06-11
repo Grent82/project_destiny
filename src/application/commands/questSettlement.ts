@@ -75,7 +75,7 @@ function applyMiraRescueResolution(state: GameState, questId: string) {
   state.mainQuest.lastClue =
     'Mira is back. She walks under her own strength, but whatever held her still clings to the edges of her voice.'
   state.householdLore.missingRelatives = state.householdLore.missingRelatives.filter(
-    (relative) => relative.name !== 'Mira Valdric',
+    (relative) => relative.name !== 'Mira Valdris',
   )
 
   pushActivityLog(

@@ -178,7 +178,7 @@ describe('tickPregnancyProgress', () => {
     expect(heir!.origin).toBe('biological')
     expect(heir!.parentRefs).toContain(NPC_ID)
     expect(heir!.parentRefs).toContain(PLAYER_ID)
-    expect(heir!.originStory).not.toBe(`Born to Ida Rhys within House Valdric.`)
+    expect(heir!.originStory).not.toBe(`Born to Ida Rhys within House Valdris.`)
     expect(heir!.originStory).toMatch(/private|register|house/i)
     expect(heir!.legitimacyStatus).toBe('recognized')
   })

@@ -3,7 +3,7 @@ import type { WorldHousehold } from '../../domain/world/contracts'
 import type { PoiDefinition } from './contentCatalog'
 import { getPoiRoomBlueprints } from './poiRoomBlueprints'
 
-export const PLAYER_HOUSE_SITE_ID = 'site-house-valdric'
+export const PLAYER_HOUSE_SITE_ID = 'site-house-Valdris'
 
 function mapHouseRoomAccessState(room: HouseRoom): SiteAccessState {
   switch (room.state) {
@@ -106,7 +106,7 @@ export function buildPlayerHouseSiteRuntime(state: Pick<GameState, 'house' | 'ho
   return {
     siteId: PLAYER_HOUSE_SITE_ID,
     sourceKind: 'player-house',
-    sourceId: state.householdLore.houseName === 'House Valdric' ? 'house-valdric' : 'player-house',
+    sourceId: state.householdLore.houseName === 'House Valdris' ? 'house-Valdris' : 'player-house',
     districtId: state.houseDistrictId,
     mode: 'concrete',
     kind: 'house',

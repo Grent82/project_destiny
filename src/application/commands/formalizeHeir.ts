@@ -95,6 +95,6 @@ export function formalizeHeir(
   return appendActivityLogEntry(
     next,
     'system',
-    `${heir.name} joins the household as an adult member of House Valdric.`,
+    `${heir.name} joins the household as an adult member of House Valdris.`,
   )
 }

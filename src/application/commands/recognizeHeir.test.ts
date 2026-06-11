@@ -8,7 +8,7 @@ import type { GameState, Heir } from '../../domain/game/contracts'
 function makeHeir(overrides: Partial<Heir> = {}): Heir {
   return {
     id: 'heir-test',
-    name: 'Valdric Child',
+    name: 'Valdris Child',
     originStory: 'Born in the house.',
     stage: 'child',
     arrivalDay: 1,
@@ -69,7 +69,7 @@ describe('recognizeHeir', () => {
   it('adds activity log entry', () => {
     const state = stateWithHeir(makeHeir())
     const result = recognizeHeir(state, 'heir-test')
-    expect(result.activityLog.some((e) => e.message.includes('Valdric heir'))).toBe(true)
+    expect(result.activityLog.some((e) => e.message.includes('Valdris heir'))).toBe(true)
   })
 })
 
@@ -145,6 +145,6 @@ describe('formalizeHeir', () => {
   it('adds activity log entry', () => {
     const state = stateWithHeir(makeHeir({ stage: 'adult' }))
     const result = formalizeHeir(state, 'heir-test')
-    expect(result.activityLog.some((e) => e.message.includes('Valdric Child'))).toBe(true)
+    expect(result.activityLog.some((e) => e.message.includes('Valdris Child'))).toBe(true)
   })
 })

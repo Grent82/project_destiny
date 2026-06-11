@@ -58,23 +58,23 @@ Valdenmoor has no external expansion. It cannot grow outward. Every resource, ev
 
 ---
 
-### 4. The Protagonist — House Valdric
+### 4. The Protagonist — House Valdris
 
 **House history:**
 
-The Valdrics were not old money. They were two-generation wealth, built in the rubble of the post-Breach decade by a grandfather who had been a young man when the First Silence fell. Gregor Valdric came to Valdenmoor with nothing — no property, no family name, no capital — in the years immediately after the Breach, when the city was absorbing refugees and the social order was still being invented by whoever moved fastest. He understood before most that the new city needed labor brokerage as much as it needed food. Gregor founded House Valdric roughly seventy years ago, positioning it as a mid-tier Bond-Holder operation with a reputation for functional conditions: reasonable contracts, honest intake, documented placements. This was both genuine conviction and strategy. A Bound who came willingly worked harder and ran less. Valdric contracts were considered acceptable in the Bound community — not the best available, but honest by the standards of the market.
+The Valdriss were not old money. They were two-generation wealth, built in the rubble of the post-Breach decade by a grandfather who had been a young man when the First Silence fell. Gregor Valdris came to Valdenmoor with nothing — no property, no family name, no capital — in the years immediately after the Breach, when the city was absorbing refugees and the social order was still being invented by whoever moved fastest. He understood before most that the new city needed labor brokerage as much as it needed food. Gregor founded House Valdris roughly seventy years ago, positioning it as a mid-tier Bond-Holder operation with a reputation for functional conditions: reasonable contracts, honest intake, documented placements. This was both genuine conviction and strategy. A Bound who came willingly worked harder and ran less. Valdris contracts were considered acceptable in the Bound community — not the best available, but honest by the standards of the market.
 
 Over two generations, the house accumulated eleven properties, two workshop operations, a share in a mercantile expedition company, and enough political connections to hold three ward-council seats. They were not at the top of Valdenmoor's hierarchy. They were approaching it — and that made them dangerous to those already there.
 
-**The father — Edric Valdric:**
+**The father — Edric Valdris:**
 
 Gregor's son. Born into the post-Breach world — the Register, the binding system, and the Compact's authority were simply the shape of things for him; he never knew the city any other way. Methodical, cautious, better at holding things together than building them. He spent the last years of his life trying to convert the house's labor-brokerage wealth into political legitimacy. He was partway there when the Court moved against him. He is dead. The official cause is heart failure. His body was unavailable for independent examination.
 
-**The sister — Mira Valdric:**
+**The sister — Mira Valdris:**
 
 Eldest child. Sharp, politically capable, the one the father was grooming as heir. Witnesses describe armed men in unmarked livery taking her the same night Edric died. At game start her location is unknown to the protagonist. Later investigation can narrow that uncertainty to a specific Gilded Court holding site in the Pale. She is probably alive — if she were dead, the Court would have no leverage in her and leverage is always the point.
 
-**The eldest brother — Cael Valdric:**
+**The eldest brother — Cael Valdris:**
 
 Killed in the Harbor Ward three days after the father's death. Officially a street robbery. The circumstances fit only if you do not look at them carefully.
 
@@ -84,17 +84,17 @@ Third generation. The Breach is history to them, not lived experience — a foun
 
 **The intrigue that destroyed them:**
 
-The Gilded Court moved against House Valdric eighteen months ago. The proximate cause was commercial: the Valdrics had begun quietly partnering with independent merchants who were undercutting Court-aligned distributors in the market district. The real cause was longer — the Valdrics were accumulating the kind of multi-district leverage that, within a decade, would have made them a political force the Court could not manage through normal social pressure.
+The Gilded Court moved against House Valdris eighteen months ago. The proximate cause was commercial: the Valdriss had begun quietly partnering with independent merchants who were undercutting Court-aligned distributors in the market district. The real cause was longer — the Valdriss were accumulating the kind of multi-district leverage that, within a decade, would have made them a political force the Court could not manage through normal social pressure.
 
-The method was clean. A manufactured debt claim — a forged promissory note backed by enough legitimate-looking documentation to survive initial scrutiny — was presented to the Compact's financial magistrates. Before the Valdrics could mount a legal challenge, the father was dead, Mira was taken, and Cael was killed. The protagonist was the only piece that didn't fit neatly into the Court's plan, because no one thought the youngest was worth planning around.
+The method was clean. A manufactured debt claim — a forged promissory note backed by enough legitimate-looking documentation to survive initial scrutiny — was presented to the Compact's financial magistrates. Before the Valdriss could mount a legal challenge, the father was dead, Mira was taken, and Cael was killed. The protagonist was the only piece that didn't fit neatly into the Court's plan, because no one thought the youngest was worth planning around.
 
 **The one who stayed — Marion Vale:**
 
-Marion ran contract administration for House Valdric for six years. She is not sentimental. She did not stay out of loyalty to an abstract idea of the family name. She stayed because she understood the shape of what happened and concluded that helping rebuild from this specific ruin was a better professional position than competing in an already-crowded city as a former Bond-Holder administrator with no current employer to reference. She is also, through six years of contract work, in possession of more knowledge about the Gilded Court's methods and finances than they know she has. She is keeping that knowledge close until she understands what the protagonist intends to do with it. She will not wait indefinitely.
+Marion ran contract administration for House Valdris for six years. She is not sentimental. She did not stay out of loyalty to an abstract idea of the family name. She stayed because she understood the shape of what happened and concluded that helping rebuild from this specific ruin was a better professional position than competing in an already-crowded city as a former Bond-Holder administrator with no current employer to reference. She is also, through six years of contract work, in possession of more knowledge about the Gilded Court's methods and finances than they know she has. She is keeping that knowledge close until she understands what the protagonist intends to do with it. She will not wait indefinitely.
 
 **The state of the house:**
 
-Two properties tied in litigation by the manufactured debt claim. Two workshop operations seized pending resolution. The family estate is accessible but legally encumbered — the protagonist lives there, but cannot sell, mortgage, or formally transfer it until the claim resolves. Clear title to one secondary building in a working district. Moveable assets that Marion relocated before the seizure inventory was completed. Three active binding contracts: individuals who chose to remain because their Valdric terms were better than the available alternatives. Significant informal debts to people who helped during the crisis and have not mentioned it yet. A ruined reputation in elite circles. A cautious sympathy in working districts — "the house that the Court hit" reads, to many people, as a credential.
+Two properties tied in litigation by the manufactured debt claim. Two workshop operations seized pending resolution. The family estate is accessible but legally encumbered — the protagonist lives there, but cannot sell, mortgage, or formally transfer it until the claim resolves. Clear title to one secondary building in a working district. Moveable assets that Marion relocated before the seizure inventory was completed. Three active binding contracts: individuals who chose to remain because their Valdris terms were better than the available alternatives. Significant informal debts to people who helped during the crisis and have not mentioned it yet. A ruined reputation in elite circles. A cautious sympathy in working districts — "the house that the Court hit" reads, to many people, as a credential.
 
 ---
 
@@ -110,7 +110,7 @@ The game does not ask which path. It watches which one the player walks.
 
 **Revenge:** Target the Gilded Court and the specific individuals responsible for the intrigue. Requires building influence, gathering evidence, and making dangerous allies. Slower to generate resources, faster to generate enemies. The sister's location is available through this path before it is available through others.
 
-**Power:** Position House Valdric as a genuine city-level political force. The longest path. Requires engaging all factions, building institutional leverage, and thinking dynastically. Players who pursue this path long enough will find themselves making decisions indistinguishable from the people who destroyed the family.
+**Power:** Position House Valdris as a genuine city-level political force. The longest path. Requires engaging all factions, building institutional leverage, and thinking dynastically. Players who pursue this path long enough will find themselves making decisions indistinguishable from the people who destroyed the family.
 
 **Adventure:** Look outward — past the walls, toward the Waste. Generates unique resources, lost pre-Breach knowledge, and non-city contacts unavailable through other means. The highest personal risk. The most narratively unpredictable. What is learned outside Valdenmoor sometimes changes what is possible inside it.
 
@@ -213,11 +213,11 @@ People obey what they aspire to, fear losing, or cannot afford to offend. Debt a
 - reputation shaping and character assassination
 - ceremonial legitimacy
 - slave-market control and premium contract brokerage
-- manufactured legal instruments (the Valdric debt claim is not their first)
+- manufactured legal instruments (the Valdris debt claim is not their first)
 
 **Hidden flaw:**
 
-They are strategically patient and morally hollow. Loyalty inside the Court is transactional. The Court did not destroy House Valdric out of cruelty. They did it out of prudence, which is worse — it means they will do it again to the next house that grows inconveniently large.
+They are strategically patient and morally hollow. Loyalty inside the Court is transactional. The Court did not destroy House Valdris out of cruelty. They did it out of prudence, which is worse — it means they will do it again to the next house that grows inconveniently large.
 
 **Conflict posture:**
 
@@ -408,7 +408,7 @@ The city has no ruler. It has a council that emerged from the power vacuum after
 
 The Council governs: wall maintenance and garrison, water distribution rights, Corridor trade agreements, district zoning and licensing, Breeding Register policy. Effectively: whoever can align two of the three major factions passes whatever they want. The Common Ward seat is used for legitimacy theater.
 
-House Valdric held three ward-council seats before the intrigue. Those seats were stripped during the manufactured debt claim proceedings. The protagonist may pursue re-entry into institutional politics — but it requires rebuilding from outside the system that expelled them.
+House Valdris held three ward-council seats before the intrigue. Those seats were stripped during the manufactured debt claim proceedings. The protagonist may pursue re-entry into institutional politics — but it requires rebuilding from outside the system that expelled them.
 
 **What each faction controls institutionally:**
 
@@ -911,15 +911,15 @@ Entering the Hollows is a choice with consequences. The place is not neutral —
 
 **The Gilded Hand** — A private enforcement company funded by Court capital to operate where the Compact declines to go officially. Deniable, professional, and expensive. Their presence in the Pale and Hollows represents the Court's attempt to consolidate post-House power through contractors rather than institutions — which makes them harder to oppose through official channels and easier to oppose through the same grey-zone methods the player uses.
 
-**The Ashen Compact** — A direct rival organization competing for the same contracts, territory, and recruits. Founded by someone who worked for House Valdric and left badly. They know what the house was, which means they know what the player is trying to build — and they have a head start on some of it. The conflict is not ideological. It is structural: the city's grey zone is not large enough for two of them at full strength.
+**The Ashen Compact** — A direct rival organization competing for the same contracts, territory, and recruits. Founded by someone who worked for House Valdris and left badly. They know what the house was, which means they know what the player is trying to build — and they have a head start on some of it. The conflict is not ideological. It is structural: the city's grey zone is not large enough for two of them at full strength.
 
 ### Key Recurring Antagonists
 
-**Cassia Vorne** — The Court interrogator who built the case that destroyed House Valdric. She has no personal grievance against the player — what she did was professional, documented, and entirely legal. That is precisely what makes her dangerous: she is not a villain who can be morally discredited, and she will do it again if the player gives her the same materials to work with. Her recurring presence forces the player to stay clean in ways the game does not always reward.
+**Cassia Vorne** — The Court interrogator who built the case that destroyed House Valdris. She has no personal grievance against the player — what she did was professional, documented, and entirely legal. That is precisely what makes her dangerous: she is not a villain who can be morally discredited, and she will do it again if the player gives her the same materials to work with. Her recurring presence forces the player to stay clean in ways the game does not always reward.
 
 **Commander Oric Fell** — Gilded Hand field commander who approaches the player's operations the way an engineer approaches a structural problem: find the load-bearing elements and remove them. He carries no ideology and no animosity. He has been given a contract. The player is an obstacle in that contract. If the player becomes expensive enough, the contract may be renegotiated — but Fell will not be the one who tells them that.
 
-**Director Mael Forn** — Leader of the Ashen Compact and former House Valdric associate whose departure was, by his account, necessary. He knows enough about the house's methods to understand the player's institutional logic — and enough about its failure to believe he knows what the player is doing wrong. His ambition is not abstract. He wants the same district footholds, the same kind of crew, the same grey-zone legitimacy. The difference is that he started earlier and has fewer constraints. Whether he is an enemy, a rival, or a cautionary mirror depends on how the player plays it.
+**Director Mael Forn** — Leader of the Ashen Compact and former House Valdris associate whose departure was, by his account, necessary. He knows enough about the house's methods to understand the player's institutional logic — and enough about its failure to believe he knows what the player is doing wrong. His ambition is not abstract. He wants the same district footholds, the same kind of crew, the same grey-zone legitimacy. The difference is that he started earlier and has fewer constraints. Whether he is an enemy, a rival, or a cautionary mirror depends on how the player plays it.
 
 ## Voice Guide
 

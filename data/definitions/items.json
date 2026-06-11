@@ -45,7 +45,7 @@
         "action": "review-house-accounts"
       }
     ],
-    "description": "Your working house ledger: current debts, promised wages, and what still comes in. It keeps House Valdric solvent, but it is not the missing bureau evidence Marion is looking for.",
+    "description": "Your working house ledger: current debts, promised wages, and what still comes in. It keeps House Valdris solvent, but it is not the missing bureau evidence Marion is looking for.",
     "shopPrice": 0,
     "typedEffects": [
       {
@@ -1045,7 +1045,7 @@
   },
   {
     "id": "item-chit-ledger-removal",
-    "name": "Ledger Removal Chit (House Valdric Inventory Note)",
+    "name": "Ledger Removal Chit (House Valdris Inventory Note)",
     "category": "document",
     "tier": 1,
     "value": 35,
@@ -1155,7 +1155,7 @@
         "action": "examine-crest-ring"
       }
     ],
-    "description": "A ring bearing a crest not of House Valdric nor any ward-line you readily name. The metal is expensive; the engraving is meant to be noticed.",
+    "description": "A ring bearing a crest not of House Valdris nor any ward-line you readily name. The metal is expensive; the engraving is meant to be noticed.",
     "shopPrice": 0,
     "typedEffects": [
       {

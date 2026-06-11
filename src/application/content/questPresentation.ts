@@ -190,7 +190,7 @@ function fallbackIssuerLabel(template: QuestTemplate) {
     return contentCatalog.factionsById.get(template.employerFactionId)?.name ?? template.employerFactionId
   }
 
-  return template.questType === 'story' ? 'House Valdric' : 'Unnamed patron'
+  return template.questType === 'story' ? 'House Valdris' : 'Unnamed patron'
 }
 
 function fallbackPayerLabel(template: QuestTemplate) {

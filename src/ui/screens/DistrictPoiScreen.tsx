@@ -131,7 +131,7 @@ export function DistrictPoiScreen() {
                 </button>
               </div>
             ))}
-            {poi.id === 'poi-pale-house-valdric' && (
+            {poi.id === 'poi-pale-house-valdris' && (
               <div className="mission-row">
                 <div className="mission-row-header">
                   <strong>Inspect the house interior</strong>
@@ -147,7 +147,7 @@ export function DistrictPoiScreen() {
                 </button>
               </div>
             )}
-            {poi.actions.length === 0 && poi.id !== 'poi-pale-house-valdric' && (
+            {poi.actions.length === 0 && poi.id !== 'poi-pale-house-valdris' && (
               <p className="summary">This venue is known, but it has no local interaction surface yet.</p>
             )}
           </div>

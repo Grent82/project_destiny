@@ -231,7 +231,7 @@ The main spine around:
 
 is still too thin relative to the game’s fantasy.
 
-The project needs a **House Valdric story ladder** that remains visible in the first several hours instead of quickly being drowned out by generic contract work.
+The project needs a **House Valdris story ladder** that remains visible in the first several hours instead of quickly being drowned out by generic contract work.
 
 ### 3. Events
 
@@ -545,7 +545,7 @@ That is the real multiplier.
 11. Item definitions promise far more usability than the current runtime delivers.
 12. Inventory/stash/artifact ownership is fragmented, which weakens quest/dialogue/item coherence.
 13. POI discovery and onboarding are more diegetic than before, but still too mechanical and too compressed for first-session story leadership.
-14. There is visible naming/house-fiction continuity drift (`Valdric` vs `Valdris`, “Breach” framing vs recent seizure/stripping framing).
+14. There is visible naming/house-fiction continuity drift (`Valdris` vs `Valdris`, “Breach” framing vs recent seizure/stripping framing).
 
 ## Finding → Bead Mapping
 
@@ -592,7 +592,7 @@ If the project wants stronger dark-fantasy RPG feel without blowing up scope, th
 2. `destiny-a5px`
    Turn the house into a real clue engine.
 3. `destiny-a7oj`
-   Build the early House Valdric story ladder on top of the house clue work.
+   Build the early House Valdris story ladder on top of the house clue work.
 4. `destiny-a9xk`
    Strengthen quest runtime so deeper authored flows have somewhere to live.
 5. `destiny-lki4`

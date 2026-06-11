@@ -201,7 +201,7 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
           const node = nodeById.get(poi.id)
           if (!node) return null
           const present = npcCountByPoi.get(poi.id) ?? []
-          const isHouse = poi.id === 'poi-pale-house-valdric'
+          const isHouse = poi.id === 'poi-pale-house-valdris'
           return (
             <g
               key={poi.id}

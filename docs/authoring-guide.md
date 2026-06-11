@@ -126,7 +126,7 @@ Quests can be in these states:
 |--------------|---------|
 | "the city" when meaning "the Pale" | Use "the Pale" for district, "Valdenmoor" for city |
 | "money" instead of specific tier | Use "Marks", "Tallies", or "Weighs" |
-| "Valdric" vs "Valdris" | **House Valdris** is the player house |
+| "Valdris" vs "Valdris" | **House Valdris** is the player house |
 
 ### Overpromising Mechanics
 

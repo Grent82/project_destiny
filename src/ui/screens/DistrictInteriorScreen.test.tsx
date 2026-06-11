@@ -37,7 +37,7 @@ describe('DistrictInteriorScreen — district map and place ledger', () => {
   it('renders the district map plate with every POI of the district', () => {
     renderInterior('district-the-pale', 'district-the-pale')
     expect(screen.getByRole('figure', { name: 'Map of The Pale' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^House Valdric/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^House Valdris/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /^Tallow Ring Den/ })).toBeInTheDocument()
   })
 
@@ -66,9 +66,9 @@ describe('DistrictInteriorScreen — district map and place ledger', () => {
     // Before selection, the panel invites pointing at the plate
     expect(within(placeLedger()).getByText(/Point at a place on the plate/i)).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: /^House Valdric/ }))
+    await user.click(screen.getByRole('button', { name: /^House Valdris/ }))
     const panel = placeLedger()
-    expect(within(panel).getByRole('heading', { name: 'House Valdric' })).toBeInTheDocument()
+    expect(within(panel).getByRole('heading', { name: 'House Valdris' })).toBeInTheDocument()
     expect(within(panel).getByText(/Your inherited house/i)).toBeInTheDocument()
 
     await user.click(within(panel).getByRole('button', { name: 'Enter location' }))
@@ -79,9 +79,9 @@ describe('DistrictInteriorScreen — district map and place ledger', () => {
     const user = userEvent.setup()
     renderInterior('district-the-pale', 'district-harbor')
 
-    await user.click(screen.getByRole('button', { name: /^House Valdric/ }))
+    await user.click(screen.getByRole('button', { name: /^House Valdris/ }))
     const panel = placeLedger()
-    expect(within(panel).getByRole('heading', { name: 'House Valdric' })).toBeInTheDocument()
+    expect(within(panel).getByRole('heading', { name: 'House Valdris' })).toBeInTheDocument()
     expect(within(panel).queryByRole('button', { name: 'Enter location' })).toBeNull()
     expect(within(panel).getByText(/Enter the district to approach this place/i)).toBeInTheDocument()
     expect(screen.queryByText('poi probe screen')).toBeNull()

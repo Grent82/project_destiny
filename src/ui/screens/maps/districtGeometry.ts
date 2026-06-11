@@ -187,7 +187,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
       { id: 'poi-pale-pale-market', x: 180, y: 100 },
       { id: 'poi-pale-the-pale-court', x: 222, y: 56 },
       { id: 'poi-pale-black-ledger', x: 256, y: 142 },
-      { id: 'poi-pale-house-valdric', x: 300, y: 188 },
+      { id: 'poi-pale-house-valdris', x: 300, y: 188 },
       { id: 'poi-pale-old-tannery', x: 318, y: 84 },
     ],
   },

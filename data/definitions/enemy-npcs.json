@@ -3,7 +3,7 @@
     "id": "npc-enemy-cassia-vorne",
     "name": "Cassia Vorne",
     "origin": "Gilded Heights",
-    "background": "A Court interrogator who dismantled House Valdric through procedural means — subpoenas, witnessed confessions, and archived testimony. She considers herself a professional. She is entirely correct. The distinction between what she does and what a villain does is, to her, a matter of documentation.",
+    "background": "A Court interrogator who dismantled House Valdris through procedural means — subpoenas, witnessed confessions, and archived testimony. She considers herself a professional. She is entirely correct. The distinction between what she does and what a villain does is, to her, a matter of documentation.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-gilded-court",
@@ -639,7 +639,7 @@
     "id": "npc-enemy-director-forn",
     "name": "Mael Forn",
     "origin": "The Warrens",
-    "background": "Director of the Ashen Compact. He worked for House Valdric once, before — he doesn't specify before what. He knows what the house was. He has complicated feelings about it that express as organizational ambition: build something better, or at least something that survives. He finds the player's existence irritating and instructive in roughly equal measure.",
+    "background": "Director of the Ashen Compact. He worked for House Valdris once, before — he doesn't specify before what. He knows what the house was. He has complicated feelings about it that express as organizational ambition: build something better, or at least something that survives. He finds the player's existence irritating and instructive in roughly equal measure.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": null,
@@ -685,7 +685,7 @@
     "recruitableOnDefeat": false,
     "recruitCondition": null,
     "loyaltyOnRecruit": null,
-    "lore": "Director of the Ashen Compact, and former House Valdric employee. He doesn't specify what changed. He is building something that survives.",
+    "lore": "Director of the Ashen Compact, and former House Valdris employee. He doesn't specify what changed. He is building something that survives.",
     "creatureType": "human"
   },
   {

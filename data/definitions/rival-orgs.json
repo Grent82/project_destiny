@@ -11,7 +11,7 @@
   {
     "id": "rival-org-ashen-compact",
     "name": "The Ashen Compact",
-    "description": "A rival organization occupying the same grey space as the player — competing for the same contracts, the same recruits, and the same territory. They were founded by someone who once worked for House Valdric.",
+    "description": "A rival organization occupying the same grey space as the player — competing for the same contracts, the same recruits, and the same territory. They were founded by someone who once worked for House Valdris.",
     "factionAlignment": null,
     "districtPresence": ["district-the-pale", "district-the-warrens", "district-ironworks"],
     "currentPriority": "Establishing district presence before the player consolidates. Director Forn wants what the player has.",

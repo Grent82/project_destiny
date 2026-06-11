@@ -351,7 +351,7 @@ Project Destiny is an RPG first.
 A strong Bead for this repo usually improves at least one of:
 
 - player character agency
-- the Mira / House Valdric story spine
+- the Mira / House Valdris story spine
 - world NPC interaction
 - meaningful choice and consequence
 

@@ -46,7 +46,7 @@ describe('FactionsScreen', () => {
     expect(screen.getByRole('heading', { name: 'City Dials' })).toBeInTheDocument()
   })
 
-  it('tells the day-one political truth about House Valdric footing', () => {
+  it('tells the day-one political truth about House Valdris footing', () => {
     renderFactions()
 
     expect(screen.getByRole('heading', { name: 'House Political Footing' })).toBeInTheDocument()

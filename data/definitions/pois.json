@@ -173,7 +173,7 @@
     "districtId": "district-gilded-heights",
     "name": "Court Secure Vault",
     "type": "faction_hq",
-    "description": "Gilded Court financial instruments and secured assets. Valdric debt paperwork likely lives here.",
+    "description": "Gilded Court financial instruments and secured assets. Valdris debt paperwork likely lives here.",
     "factionId": "faction-gilded-court",
     "actions": []
   },
@@ -317,9 +317,9 @@
     ]
   },
   {
-    "id": "poi-pale-house-valdric",
+    "id": "poi-pale-house-valdris",
     "districtId": "district-the-pale",
-    "name": "House Valdric",
+    "name": "House Valdris",
     "type": "residence",
     "description": "Your inherited house. Damaged, stripped in places, but standing. The vault is sealed.",
     "factionId": null,

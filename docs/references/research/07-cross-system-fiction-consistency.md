@@ -15,7 +15,7 @@ The game is a grounded, morally complex narrative strategy game set in the city 
 
 ### C1 — House name contradicts the narrative bible
 
-The canonical narrative document (`docs/narrative.md`) establishes the house name as **"House Valdric"** (10 references, including the founding history: "Gregor founded House Valdric roughly seventy years ago"). But data files and code use **"House Valdris"**:
+The canonical narrative document (`docs/narrative.md`) establishes the house name as **"House Valdris"** (10 references, including the founding history: "Gregor founded House Valdris roughly seventy years ago"). But data files and code use **"House Valdris"**:
 
 - `data/definitions/npcs.json` — 12 references ("Holds a ledger that proves who profited from the fall of House Valdris")
 - `data/definitions/events.json` — 1 reference ("On the morning the city learns House Valdris has an heir, four things happen before noon")
@@ -23,7 +23,7 @@ The canonical narrative document (`docs/narrative.md`) establishes the house nam
 
 Two spellings for the player's own house will appear in the same game session.
 
-**Fix:** Standardize to one spelling. The narrative bible is the canonical source — if it says "Valdric," update all data files and code strings to match. Or vice versa if "Valdris" is the intended name — update the narrative bible. Pick one and make it final.
+**Fix:** Standardize to one spelling. The narrative bible is the canonical source — if it says "Valdris," update all data files and code strings to match. Or vice versa if "Valdris" is the intended name — update the narrative bible. Pick one and make it final.
 **Fix** Use `docs/narrative.md` in the agents definition files as context
 
 ---
@@ -138,7 +138,7 @@ Note: Really? Dark system whee low people try to survive?
 
 | Area | Status |
 |------|--------|
-| House name consistency | ✗ "Valdric" vs. "Valdris" across sources |
+| House name consistency | ✗ "Valdris" vs. "Valdris" across sources |
 | District ID accuracy | ✗ Non-existent district-pale-warrens referenced |
 | Faction name consistency | ✓ Established factions used consistently |
 | Currency terminology | ⚠ "Marks" correct in UI/events; vague in system text |
@@ -153,7 +153,7 @@ Note: Really? Dark system whee low people try to survive?
 
 ## Recommended fix order
 
-1. **Critical — Standardize house name** (Valdric or Valdris — pick one, update everywhere).
+1. **Critical — Standardize house name** (Valdris or Valdris — pick one, update everywhere).
 2. **Critical — Fix district-pale-warrens** → `district-the-pale` in events.json.
 3. **Medium — Author 3–5 birth originStory templates** for the heir birth flow.
 4. **Medium — Add currency specificity** to activity log flavor text in commands.

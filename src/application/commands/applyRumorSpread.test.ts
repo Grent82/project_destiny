@@ -50,8 +50,8 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
       cityDayAtDeparture: 0,
     },
     householdLore: {
-      houseName: 'House Valdric',
-      founderName: 'Edric Valdric',
+      houseName: 'House Valdris',
+      founderName: 'Edric Valdris',
       founderGeneration: 2,
       antagonistFactionId: 'faction-gilded-court',
       missingRelatives: [],

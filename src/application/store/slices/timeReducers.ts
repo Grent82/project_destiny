@@ -24,7 +24,7 @@ function runEndOfDay(state: GameState): GameState {
       day: afterDay.day,
       timeSlot: afterDay.timeSlot,
       category: 'system',
-      message: 'The debt-claim against House Valdric has come due. Court-backed enforcers move on the note. The house is seized.',
+      message: 'The debt-claim against House Valdris has come due. Court-backed enforcers move on the note. The house is seized.',
     })
     if (afterDay.activityLog.length >= MAX_ACTIVITY_ENTRIES) afterDay.activityLog.pop()
   }
