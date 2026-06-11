@@ -4548,5 +4548,52 @@
       "afternoon": "district-the-northbank",
       "evening": "district-the-northbank"
     }
+  },
+  {
+    "id": "npc-enemy-tomas-rell",
+    "name": "Tomas Rell",
+    "npcType": "enemy",
+    "origin": "Harbor Ward",
+    "background": "Court enforcer lieutenant running muscle for House Aurevaine's enforcement contracts. Practical, not cruel — cruelty wastes time and leaves witnesses in bad moods.",
+    "rarity": "uncommon",
+    "status": "mercenary",
+    "factionAffinityId": "faction-gilded-court",
+    "baseAttributes": {
+      "might": 64,
+      "agility": 58,
+      "endurance": 62,
+      "intellect": 48,
+      "perception": 55,
+      "presence": 52,
+      "resolve": 66
+    },
+    "startingSkills": {
+      "melee": 65,
+      "ranged": 38,
+      "medicine": 20,
+      "administration": 28,
+      "engineering": 12,
+      "negotiation": 35,
+      "survival": 45,
+      "security": 60,
+      "crafting": 10,
+      "performance": 15,
+      "academics": 18,
+      "intrigue": 30
+    },
+    "startingTraits": {
+      "discipline": 75,
+      "ambition": 45,
+      "empathy": 28,
+      "ruthlessness": 55,
+      "prudence": 60,
+      "curiosity": 30,
+      "dominance": 62,
+      "loyalty": 70,
+      "vanity": 20,
+      "zeal": 15
+    },
+    "allowedTitleIds": [],
+    "loyalties": []
   }
 ]

@@ -393,6 +393,77 @@
     "rewardCityDialDelta": -6
   },
   {
+    "id": "quest-mira-act1-wren-favor",
+    "title": "A Name in the Wren's Ledger",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-the-pale",
+    "briefing": "Tessaly Ash asks a favor before she speaks of Mira. A Court courier is carrying something of hers — proof, she says, that she can be trusted. Recover it without drawing attention. The price for what she knows is silence, not coin.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedMissionId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-tessaly-ash",
+    "riskLevel": "medium",
+    "successorQuestId": "quest-mira-act2-tannery-watch",
+    "rewardRelationshipDeltas": [{"npcId": "npc-tessaly-ash", "trust": 10, "respect": 5}],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The courier's route passes through three Compact checkpoints. He is not using the registered path.",
+        "journalEntry": "Tessaly's courier is avoiding the main roads. Whatever he carries is meant to stay off the Register."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The courier is in a side alley off the Pale's eastern market. He has noticed you.",
+        "journalEntry": "The courier reached for a signal before you had to show yourself. Tessaly's price for information is trust — and she is testing whether you can earn it."
+      }
+    ]
+  },
+  {
+    "id": "quest-mira-act2-tannery-watch",
+    "title": "The Tannery Watch",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-the-pale",
+    "briefing": "Tessaly has given you the tannery's guard pattern. Chart it for three watches without being seen. Mira is moved between two rooms on a schedule — and that schedule is signed. You need to know who signed it before you make your move.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedMissionId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-tessaly-ash",
+    "riskLevel": "high",
+    "prerequisiteQuestId": "quest-mira-act1-wren-favor",
+    "successorQuestId": "quest-mira-rescue",
+    "rewardRelationshipDeltas": [{"npcId": "npc-tessaly-ash", "trust": 10, "respect": 5}],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The watch rotates early on the second day. Someone tightened security after the courier incident.",
+        "journalEntry": "The guard pattern changed — the courier must have been more important than Tessaly said. Or the Court knows something is coming."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The schedule is signed by an assessor from the Northbank. This is not a holding — it is a transfer.",
+        "journalEntry": "Mira is being moved in two days. The signature on the order belongs to someone with access to the Court's internal transport — this is not a routine detention."
+      }
+    ]
+  },
+  {
     "id": "quest-mira-rescue",
     "title": "The Pale Cage",
     "employerFactionId": null,
@@ -415,8 +486,9 @@
     "questType": "story",
     "openingText": "Tessaly sets down the cup before she speaks. 'She is alive. The Gilded Court has her in the old tannery on the Pale's eastern edge. They are not using her yet \u2014 but they will.' She does not elaborate on what *yet* means. She does not need to.",
     "aftermathText": "Mira walks out on her own feet, which tells you something. She does not speak on the way back. When she does, it is only to say: 'I knew you would come. I did not know if that was a good thing.' She has a name for you now, too \u2014 one you have not heard before. House Valdris, she says, as if she is testing the weight of it.",
-    "prerequisiteQuestId": null,
+    "prerequisiteQuestId": "quest-mira-act2-tannery-watch",
     "unlocksNpcId": "npc-mira",
+    "successorQuestId": "quest-mira-act4-court-answer",
     "rewardCityDialId": "control",
     "rewardCityDialDelta": -8,
     "rewardDebtReduction": 0,
@@ -434,6 +506,33 @@
       }
     ],
     "successorRumorIds": ["rumor-mira-freed-pale", "rumor-mira-freed-mireward"]
+  },
+  {
+    "id": "quest-mira-act4-court-answer",
+    "title": "The Court's Answer",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "enemyNpcId": "npc-enemy-tomas-rell",
+    "districtId": "district-the-pale",
+    "briefing": "The Court does not forget loud raids. A seizure writ has been filed against the house — the same assessor who signed Mira's transfer order is now demanding the house's assets as restitution. Hold the door for three watches. The writ fails, but the Court now needs the debt to succeed where the raid did not.",
+    "objectiveType": "survival",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "executionDurationWatches": 3,
+    "linkedMissionId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": null,
+    "discoveryDistrictId": null,
+    "sourceNpcId": null,
+    "riskLevel": "extreme",
+    "prerequisiteQuestId": "quest-mira-rescue",
+    "rewardCityDialId": "control",
+    "rewardCityDialDelta": -5,
+    "aftermathText": "The writ fails but is filed — the Court now needs the debt to succeed where the raid did not. Mira stands in the doorway behind you, silent. She has not spoken since she walked out of the tannery. When she finally does, it is only to say that the Court will not forget this either."
   },
   {
     "id": "quest-orren-wex-rescue",

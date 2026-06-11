@@ -536,5 +536,29 @@
     "credibility": 60,
     "tags": ["valdris", "harbor", "reputation", "sequel"],
     "autoSpawn": false
+  },
+  {
+    "id": "rumor-pale-cage-broken",
+    "kind": "ambient",
+    "districtId": "district-the-pale",
+    "originNpcId": null,
+    "text": "The tannery on the Pale's eastern edge was locked down at first light. No one came out. No one went in. The Court does not lock places like that unless something happened inside.",
+    "subjectNpcIds": ["npc-mira"],
+    "truth": "true",
+    "credibility": 55,
+    "tags": ["mira-arc", "rescue", "pale", "aftermath"],
+    "autoSpawn": false
+  },
+  {
+    "id": "rumor-court-counts-valdris",
+    "kind": "ambient",
+    "districtId": "district-gilded-heights",
+    "originNpcId": null,
+    "text": "The Court filed a writ against House Valdris three days after the Pale tannery incident. The amount matches the debt that was already owed. Someone decided that the raid and the debt were the same problem.",
+    "subjectNpcIds": ["npc-enemy-tomas-rell"],
+    "truth": "true",
+    "credibility": 50,
+    "tags": ["mira-arc", "gilded-court", "valdris", "aftermath", "debt"],
+    "autoSpawn": false
   }
 ]
