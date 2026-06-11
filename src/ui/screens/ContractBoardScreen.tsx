@@ -92,6 +92,7 @@ export function ContractBoardScreen() {
   const currentDistrictId = useAppSelector(selectCurrentDistrictId)
   const activeCombat = useAppSelector((state) => state.game.activeCombat)
   const currentDay = useAppSelector((state) => state.game.day)
+  const isFirstRun = useAppSelector((state) => state.game.isFirstRun)
 
   return (
     <section className="screen-panel">
@@ -365,7 +366,11 @@ export function ContractBoardScreen() {
         <article className="detail-panel">
           <h2>Available Leads</h2>
           {availableQuestLeads.length === 0 ? (
-            <EmptyState message="No fresh leads at the moment. Work is either already in hand or not yet surfaced." icon="🔍" />
+            <EmptyState
+              message="No fresh leads at the moment. Work is either already in hand or not yet surfaced."
+              icon="🔍"
+              hint={isFirstRun ? 'First-time work is available at the Tallow Ring Den in the Pale.' : undefined}
+            />
           ) : (
             <div className="mission-list">
               {availableQuestLeads.map(({ lead, template, presentation }) => {

@@ -143,8 +143,8 @@ export function DashboardScreen(props: DashboardScreenProps) {
           ) : null}
           {isFirstRun && (
             <div className="first-run-directive">
-              <p>The first house leads are posted on the board in the Pale.</p>
-              <button className="directive-link" onClick={() => navigate('/contracts')}>→ Check the Work Board</button>
+              <p>The first house leads are posted at the Tallow Ring Den in the Pale.</p>
+              <button className="directive-link" onClick={() => navigate('/districts/district-the-pale')}>→ Visit the Pale</button>
             </div>
           )}
           <article className={`detail-panel debt-claim-panel${debt.debtCrisisTriggered ? ' debt-claim-panel--crisis' : debt.debtPaid ? ' debt-claim-panel--settled' : ''}`}>

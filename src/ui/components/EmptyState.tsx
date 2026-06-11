@@ -11,9 +11,10 @@ interface EmptyStateProps {
   icon?: string
   cta?: EmptyStateCta
   className?: string
+  hint?: string
 }
 
-export function EmptyState({ message, icon, cta, className }: EmptyStateProps) {
+export function EmptyState({ message, icon, cta, className, hint }: EmptyStateProps) {
   return (
     <div className={`empty-state${className ? ` ${className}` : ''}`} role="status">
       {icon && <span className="empty-state__icon" aria-hidden="true">{icon}</span>}
@@ -27,6 +28,7 @@ export function EmptyState({ message, icon, cta, className }: EmptyStateProps) {
           </button>
         )
       )}
+      {hint && <p className="empty-state__hint">{hint}</p>}
     </div>
   )
 }
