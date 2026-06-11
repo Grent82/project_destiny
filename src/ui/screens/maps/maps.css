@@ -515,6 +515,134 @@
   font-size: 12px;
 }
 
+/* ── Plate I: the family seat ── */
+.house-map {
+  max-width: 720px;
+}
+
+.house-plan-outer-wall {
+  fill: none;
+  stroke: var(--map-ink);
+  stroke-width: 3;
+}
+
+.house-plan-room {
+  cursor: pointer;
+}
+
+.house-plan-room-wall {
+  fill: rgba(58, 44, 26, 0.04);
+  stroke: var(--map-ink);
+  stroke-width: 1.4;
+  transition: fill 120ms ease;
+}
+
+.house-plan-room:hover .house-plan-room-wall,
+.house-plan-room:focus-visible .house-plan-room-wall {
+  fill: rgba(58, 44, 26, 0.14);
+}
+
+.house-plan-room:focus {
+  outline: none;
+}
+
+.house-plan-room:focus-visible .house-plan-room-wall {
+  stroke: var(--map-wax);
+}
+
+.house-plan-room--annotation .house-plan-room-wall {
+  stroke-dasharray: 5 3;
+  stroke-width: 1.1;
+}
+
+.house-plan-room--destroyed .house-plan-room-wall {
+  stroke-dasharray: 7 4;
+}
+
+.house-plan-room--locked .house-plan-room-wall {
+  stroke-width: 2;
+}
+
+.house-plan-rubble {
+  fill: url(#house-rubble);
+  stroke: none;
+  pointer-events: none;
+}
+
+.house-plan-rubble-line {
+  stroke: rgba(58, 44, 26, 0.35);
+  stroke-width: 1.4;
+}
+
+.house-plan-crack,
+.house-plan-void rect,
+.house-plan-bars line,
+.house-plan-scaffold path,
+.house-plan-stair,
+.house-plan-door {
+  fill: none;
+  stroke: var(--map-ink-faded);
+  stroke-width: 1.1;
+  pointer-events: none;
+}
+
+.house-plan-void rect {
+  stroke-dasharray: 2.5 2.5;
+}
+
+.house-plan-bars line {
+  stroke: var(--map-ink);
+  stroke-width: 1.6;
+}
+
+.house-plan-scaffold path {
+  stroke-dasharray: 4 3;
+}
+
+.house-plan-door {
+  stroke: var(--map-parchment);
+  stroke-width: 4;
+}
+
+.house-plan-tick {
+  fill: none;
+  stroke: #4a5c2e;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.house-plan-room-name {
+  fill: var(--map-ink);
+  font-size: 10px;
+  text-anchor: middle;
+  font-family: var(--font-display, Georgia, serif);
+  pointer-events: none;
+}
+
+.house-plan-note {
+  fill: var(--map-ink-faded);
+  font-size: 9px;
+  font-style: italic;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.house-plan-occupants {
+  fill: var(--map-wax-deep);
+  font-size: 9px;
+  font-style: italic;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* card flash when navigated from the plan */
+.house-room--focus {
+  outline: 2px solid var(--map-wax, #7a2020);
+  outline-offset: 2px;
+  transition: outline-color 300ms ease;
+}
+
 /* ── The Below: charcoal on grey paper — not on the official survey ── */
 .district-map--tunnels {
   --map-parchment: #57504a;

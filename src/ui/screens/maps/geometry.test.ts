@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import { contentCatalog } from '../../../application/content/contentCatalog'
+import { initialGameStateSnapshot } from '../../../application/store/initialGameState'
 import { CITY_VIEWBOX, cityDistrictShapes, cityEnvironMarkers, cityTravelEdges } from './cityGeometry'
 import { DISTRICT_MAP_VIEWBOX, districtMapGeometry } from './districtGeometry'
+import { HOUSE_MAP_VIEWBOX, houseRoomShapes } from './houseGeometry'
 
 function viewBoxBounds(viewBox: string) {
   const [minX, minY, width, height] = viewBox.split(' ').map(Number)
@@ -60,6 +62,41 @@ describe('city map geometry', () => {
     for (const dest of contentCatalog.expeditionDestinations) {
       const marker = cityEnvironMarkers.find((e) => e.id === dest.id)
       expect(marker, `missing environ marker for ${dest.id}`).toBeDefined()
+    }
+  })
+})
+
+describe('house plan geometry', () => {
+  it('has a plan shape for every room in the initial house and no unknown rooms', () => {
+    const rooms = initialGameStateSnapshot.house.rooms
+    for (const room of rooms) {
+      const shape = houseRoomShapes.find((s) => s.roomId === room.roomId)
+      expect(shape, `missing house plan shape for ${room.roomId}`).toBeDefined()
+    }
+    for (const shape of houseRoomShapes) {
+      expect(
+        rooms.some((room) => room.roomId === shape.roomId),
+        `house plan shape ${shape.roomId} has no room in the initial state`,
+      ).toBe(true)
+    }
+  })
+
+  it('keeps room shapes inside the plate and non-overlapping', () => {
+    const bounds = viewBoxBounds(HOUSE_MAP_VIEWBOX)
+    for (const shape of houseRoomShapes) {
+      expect(shape.x).toBeGreaterThanOrEqual(bounds.minX)
+      expect(shape.y).toBeGreaterThanOrEqual(bounds.minY)
+      expect(shape.x + shape.width).toBeLessThanOrEqual(bounds.maxX)
+      expect(shape.y + shape.height).toBeLessThanOrEqual(bounds.maxY)
+      for (const other of houseRoomShapes) {
+        if (other.roomId === shape.roomId) continue
+        const overlaps =
+          shape.x < other.x + other.width &&
+          other.x < shape.x + shape.width &&
+          shape.y < other.y + other.height &&
+          other.y < shape.y + shape.height
+        expect(overlaps, `rooms ${shape.roomId} and ${other.roomId} overlap on the plan`).toBe(false)
+      }
     }
   })
 })

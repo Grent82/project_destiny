@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom'
 import './HouseScreen.css'
 import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 import { HouseSigil } from '../components/HouseSigil'
+import { HouseMap } from './maps/HouseMap'
 
 const ROOM_EFFECTS: Record<string, string> = {
   'room-kitchen': 'When intact: each NPC\'s daily wage drops by 1 Mark. The house feeds its own.',
@@ -85,12 +86,14 @@ function RoomCard({
   room,
   marks,
   justSearched,
+  isFocused,
   onSearch,
 }: {
   occupants: Array<{ npcId: string; name: string }>
   room: HouseRoom
   marks: number
   justSearched: boolean
+  isFocused: boolean
   onSearch: () => void
 }) {
   const dispatch = useAppDispatch()
@@ -111,7 +114,10 @@ function RoomCard({
 
   return (
     <>
-    <article className={`house-room ${STATE_CLASS[room.state]}`}>
+    <article
+      className={`house-room ${STATE_CLASS[room.state]}${isFocused ? ' house-room--focus' : ''}`}
+      id={`room-card-${room.roomId}`}
+    >
       <header className="house-room__header">
         <h3 className="house-room__name">{room.name}</h3>
         <span className="house-room__state-badge">{STATE_LABELS[room.state]}</span>
@@ -266,6 +272,16 @@ export function HouseScreen() {
   const pairingPolicy = useAppSelector((state) => state.game.house.npcPairingPolicy)
   const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
+  const [focusedRoomId, setFocusedRoomId] = useState<string | null>(null)
+
+  const occupantsByRoom = new Map(
+    roomOccupancy.map((entry) => [entry.roomId, entry.occupants.map((occupant) => occupant.name)]),
+  )
+
+  function focusRoomCard(roomId: string) {
+    setFocusedRoomId(roomId)
+    document.getElementById(`room-card-${roomId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 
   return (
     <section className="screen-panel district-the-pale">
@@ -281,6 +297,8 @@ export function HouseScreen() {
         right evidence to open.
       </p>
       <VenueContextBanner />
+
+      <HouseMap rooms={rooms} occupantsByRoom={occupantsByRoom} onSelectRoom={focusRoomCard} />
 
       <div className="house-status-bar">
         <span>
@@ -305,6 +323,7 @@ export function HouseScreen() {
             occupants={roomOccupancy.find((entry) => entry.roomId === room.roomId)?.occupants ?? []}
             room={room}
             justSearched={room.roomId === justSearchedId}
+            isFocused={room.roomId === focusedRoomId}
             onSearch={() => setJustSearchedId(room.roomId)}
           />
         ))}
@@ -313,8 +332,8 @@ export function HouseScreen() {
       <section className="house-wards-section">
         <h2>Room Assignments</h2>
         <p className="summary">
-          Decide who actually lives and works in each restored part of the house. These placements
-          are narrative signals first: they make the house feel occupied, not abstract.
+          Who sleeps and works under this roof. A room with a name on its door is a room the house
+          will not give up easily.
         </p>
         {roster.length === 0 ? (
           <p className="quest-briefing">No one is currently available to house.</p>

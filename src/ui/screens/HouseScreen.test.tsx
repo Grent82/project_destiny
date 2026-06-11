@@ -52,7 +52,7 @@ describe('HouseScreen — search result lifecycle', () => {
     }
     renderHouseScreen(preSearched)
 
-    const bureauCard = screen.getByText('Bureau').closest('article')!
+    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
 
     // Compact "Searched" mark is present
     expect(within(bureauCard).getByText('✓ Searched')).toBeInTheDocument()
@@ -80,7 +80,7 @@ describe('HouseScreen — search result lifecycle', () => {
     }
     renderHouseScreen(preSearched)
 
-    const kitchenCard = screen.getByText('Kitchen').closest('article')!
+    const kitchenCard = screen.getByRole('heading', { name: 'Kitchen' }).closest('article')!
     expect(within(kitchenCard).getByText('✓ Searched')).toBeInTheDocument()
     // Kitchen has no actionableFinds — just a simple searched state
     expect(within(kitchenCard).queryByText(/survivors cache/i)).toBeNull()
@@ -90,7 +90,7 @@ describe('HouseScreen — search result lifecycle', () => {
 describe('HouseScreen — repair outcomes', () => {
   it('shows explicit payoff statement before repairing bureau', () => {
     renderHouseScreen()
-    const bureauCard = screen.getByText('Bureau').closest('article')!
+    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
     // Bureau copy explains what repair unlocks before the player pays
     expect(within(bureauCard).getByText(/working accounts office/i)).toBeInTheDocument()
     expect(within(bureauCard).getByText(/Repair to track debts/i)).toBeInTheDocument()
@@ -102,7 +102,7 @@ describe('HouseScreen — repair outcomes', () => {
     const richState = { ...initialGameStateSnapshot, money: 100 }
     const store = renderHouseScreen(richState)
 
-    const bureauCard = screen.getByText('Bureau').closest('article')!
+    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
     await user.click(within(bureauCard).getByRole('button', { name: /Repair/i }))
 
     expect(within(bureauCard).getByText(/Repairs underway/i)).toBeInTheDocument()
@@ -121,13 +121,13 @@ describe('HouseScreen — repair outcomes', () => {
 
   it('shows explicit payoff for kitchen before repair', () => {
     renderHouseScreen()
-    const kitchenCard = screen.getByText('Kitchen').closest('article')!
+    const kitchenCard = screen.getByRole('heading', { name: 'Kitchen' }).closest('article')!
     expect(within(kitchenCard).getByText(/daily wage drops by 1 Mark/i)).toBeInTheDocument()
   })
 
   it('shows explicit payoff for master chamber before repair', () => {
     renderHouseScreen()
-    const chamberCard = screen.getByText("Master's Chamber").closest('article') ??
+    const chamberCard = screen.getByRole('heading', { name: "Master's Chamber" }).closest('article') ??
       screen.getByText(/master/i, { selector: 'h3' }).closest('article')!
     expect(chamberCard).toBeTruthy()
     const effectText = chamberCard!.textContent ?? ''
