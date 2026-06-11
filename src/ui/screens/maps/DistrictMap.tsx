@@ -112,6 +112,12 @@ function plateTexture(texture: string) {
   }
 }
 
+function footprintRotation(poiId: string): number {
+  let hash = 0
+  for (const char of poiId) hash = (hash * 31 + char.charCodeAt(0)) % 997
+  return (hash % 15) - 7
+}
+
 export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere, selectedPoiId, onSelectPoi }: DistrictMapProps) {
   const geometry = districtMapGeometry[districtId]
   if (!geometry) return null
@@ -127,13 +133,6 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
       roamingNpcs.push(marker)
     }
   }
-  const roamingLabel =
-    roamingNpcs.length > 3
-      ? `${roamingNpcs
-          .slice(0, 3)
-          .map((npc) => npc.name)
-          .join(', ')} +${roamingNpcs.length - 3}`
-      : roamingNpcs.map((npc) => npc.name).join(', ')
   const plateHand = geometry.theme.surveyLayer === 'hand'
 
   return (
@@ -178,6 +177,24 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
           {geometry.streets.map((d) => (
             <path key={`over-${d}`} d={d} className="map-street-over" />
           ))}
+          {geometry.lanes.map((d) => (
+            <path key={`lane-${d}`} d={d} className="map-lane" />
+          ))}
+        </g>
+
+        {/* the grown fabric: building clusters and their yards */}
+        <g className="map-blocks">
+          {geometry.blocks.map((block) => (
+            <rect
+              key={`${block.x},${block.y}`}
+              x={block.x}
+              y={block.y}
+              width={block.w}
+              height={block.h}
+              transform={`rotate(${block.r} ${block.x + block.w / 2} ${block.y + block.h / 2})`}
+              className="map-block"
+            />
+          ))}
         </g>
 
         {pois.map((poi) => {
@@ -210,6 +227,25 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
                 }
               }}
             >
+              {poi.type === 'market' ? (
+                <rect
+                  x={node.x - 16}
+                  y={node.y - 13}
+                  width={32}
+                  height={26}
+                  className="map-poi-plaza"
+                  transform={`rotate(${footprintRotation(poi.id)} ${node.x} ${node.y})`}
+                />
+              ) : (
+                <rect
+                  x={node.x - 12}
+                  y={node.y - 9}
+                  width={24}
+                  height={18}
+                  className="map-poi-footprint"
+                  transform={`rotate(${footprintRotation(poi.id)} ${node.x} ${node.y})`}
+                />
+              )}
               <circle cx={node.x} cy={node.y} r="11" className="map-poi-ring" />
               <PoiMark type={poi.type} x={node.x} y={node.y} size={13} className="map-poi-icon" />
               <text x={node.x} y={node.y + 24} className="map-poi-name">
@@ -243,7 +279,7 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
         {roamingNpcs.length > 0 && (
           <text x="12" y="20" className="map-roaming-note">
             <tspan className="map-npc-glyph">✦ </tspan>
-            seen here: {roamingLabel}
+            {roamingNpcs.length} about the ward
             <title>{roamingNpcs.map((npc) => npc.name).join(', ')}</title>
           </text>
         )}
@@ -254,15 +290,25 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
           {districtName} · {plateHand ? 'the house hand' : 'after the Compact survey'}
         </text>
         {isHere && (
-          <g aria-hidden>
+          <g>
             <circle cx="344" cy="16" r="6" className="map-player-pulse" />
             <circle cx="344" cy="16" r="3" className="map-player-dot" />
-            <text x="334" y="20" className="map-presence-note">
-              you are in this district
-            </text>
+            <title>You are in this district</title>
           </g>
         )}
       </svg>
+      <figcaption className="map-legend">
+        {isHere && <span className="map-legend-item">● you are here</span>}
+        <span className="map-legend-item">
+          <span className="map-legend-dot map-legend-dot--work" /> work posted
+        </span>
+        <span className="map-legend-item">
+          <span className="map-legend-dot map-legend-dot--people" /> people for hire
+        </span>
+        <span className="map-legend-item">✦ folk about — see the ledger</span>
+        <span className="map-legend-item">☾ closed at this hour</span>
+        <span className="map-legend-item map-legend-item--house">red ring: your house</span>
+      </figcaption>
     </figure>
   )
 }

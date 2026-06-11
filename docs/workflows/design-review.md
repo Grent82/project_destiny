@@ -161,6 +161,36 @@ It means the world model and the player’s route through it still make sense.
 - Is the distinction between new information and ongoing information clear?
 - Is any text only compensating for weak structure?
 
+### Map / plate / diagram review
+
+Any surface that draws the world (maps, plans, charts) must pass these
+before its bead closes. Findings from 2026-06-11 showed green tests and
+good-looking screenshots can still fail all four.
+
+1. **Legend completeness.** Every recurring mark — dot, glyph, ring,
+   dash style, color — is explained in a visible legend on that surface,
+   or it does not ship. A symbol the author can explain in chat but the
+   player cannot decode on screen is a defect.
+2. **Spatial plausibility.** Drawn objects sit in believable relation:
+   buildings beside streets (not centered on them), doors toward
+   streets, docks against water, markets as open ground. Ask of every
+   element: *could this exist where I drew it?*
+3. **Fabric, not diagram.** A grown place shows growth: blocks, lanes,
+   yards, irregularity. If the surface is only nodes and connectors, it
+   is a diagram wearing a map's clothes.
+4. **No narrated context.** Text that states what the surface already
+   shows ("you are in this district" on the district's own plate) is
+   removed; marks may carry tooltips instead.
+5. **Stranger test for names.** Any name shown to the player (NPCs
+   "seen here", stakeholders, places) must carry enough context for
+   someone meeting it for the first time — a role, a one-line note, or
+   a path to one. Bare name-drops are defects.
+
+Verification: before closing the bead, screenshot each affected surface
+and walk this list as a fresh player. Record the violations found (or
+"none") in the bead — finding zero on a first pass is a signal the pass
+was not honest.
+
 ## Red flags
 
 Stop and critique harder if you see:
@@ -171,6 +201,8 @@ Stop and critique harder if you see:
 - a room, NPC, or item that reads like a static dossier
 - guidance links that exist only because the flow is otherwise confusing
 - a test that proves availability but not discoverability
+- any symbol or color on a map/plate that the legend does not explain
+- drawn objects in impossible spatial relations (buildings on roads)
 
 ## Required acceptance for player-facing beads
 

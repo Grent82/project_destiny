@@ -48,6 +48,17 @@ export function DistrictInteriorScreen() {
       .filter((npc) => !anchoredNpcs.some((view) => view.npcId === npc.id))
       .map((npc) => ({ npcId: npc.id, name: npc.name, poiId: null })),
   ]
+  function folkNote(text: string | undefined): string {
+    if (!text) return ''
+    const firstSentence = text.split(/(?<=\.)\s/)[0] ?? text
+    return firstSentence.length > 110 ? `${firstSentence.slice(0, 107)}…` : firstSentence
+  }
+  const wardFolk = [
+    ...anchoredNpcs.map((view) => ({ npcId: view.npcId, name: view.name, note: folkNote(view.background) })),
+    ...districtNpcs
+      .filter((npc) => !anchoredNpcs.some((view) => view.npcId === npc.id))
+      .map((npc) => ({ npcId: npc.id, name: npc.name, note: folkNote(npc.description) })),
+  ]
   const mapPois = pois.map((poi) => ({
     ...poi,
     isOpen: selectPoiAvailability(poi.id, timeSlot),
@@ -114,6 +125,7 @@ export function DistrictInteriorScreen() {
             isOpen={selectedPoi?.isOpen ?? true}
             timeSlot={timeSlot}
             npcsPresent={npcsAtSelectedPoi}
+            wardFolk={wardFolk}
             onEnter={(poiId) => navigate(`/district/${district.id}/poi/${poiId}`)}
           />
         </div>

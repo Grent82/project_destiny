@@ -38,20 +38,52 @@ export interface PoiLedgerEntry {
   dialogueId: string | null
 }
 
+export interface WardFolkEntry {
+  npcId: string
+  name: string
+  /** One line on who this is, from their definition. */
+  note: string
+}
+
 interface PoiLedgerPanelProps {
   poi: PoiLedgerEntry | null
   isHere: boolean
   isOpen: boolean
   timeSlot: string
   npcsPresent: string[]
+  wardFolk: WardFolkEntry[]
   onEnter: (poiId: string) => void
 }
 
-export function PoiLedgerPanel({ poi, isHere, isOpen, timeSlot, npcsPresent, onEnter }: PoiLedgerPanelProps) {
+export function PoiLedgerPanel({ poi, isHere, isOpen, timeSlot, npcsPresent, wardFolk, onEnter }: PoiLedgerPanelProps) {
   if (!poi) {
     return (
       <aside className="map-ledger-panel" aria-label="Place ledger">
-        <p className="map-ledger-empty">Point at a place on the plate to read its entry.</p>
+        <h2>About the ward</h2>
+        <div className="map-ledger-body">
+          {wardFolk.length > 0 ? (
+            <>
+              <p className="map-ledger-note">
+                <span className="map-npc-glyph">✦</span> Seen about this {SLOT_LABELS[timeSlot] ?? timeSlot} — people
+                worth knowing, if you can find them:
+              </p>
+              <ul style={{ margin: '0 0 0.6rem', paddingLeft: '1.1rem' }}>
+                {wardFolk.map((folk) => (
+                  <li key={folk.npcId} style={{ marginBottom: '0.35rem' }}>
+                    <strong>{folk.name}</strong>
+                    {folk.note && <span className="map-ledger-note"> — {folk.note}</span>}
+                  </li>
+                ))}
+              </ul>
+              <p className="map-ledger-note">Folk move between wards as the day turns.</p>
+            </>
+          ) : (
+            <p className="map-ledger-note">No one of note has been seen about at this hour.</p>
+          )}
+          <p className="map-ledger-empty" style={{ marginTop: '0.6rem' }}>
+            Point at a place on the plate to read its entry.
+          </p>
+        </div>
       </aside>
     )
   }

@@ -23,11 +23,24 @@ export interface DistrictMapTheme {
   marginNote: string
 }
 
+export interface DistrictBlock {
+  x: number
+  y: number
+  w: number
+  h: number
+  /** Rotation in degrees — grown cities are never square. */
+  r: number
+}
+
 export interface DistrictMapGeometry {
   theme: DistrictMapTheme
   pois: DistrictPoiNode[]
   /** Hand-authored street network: every plate shows how you move through the ward. */
   streets: string[]
+  /** Narrow alleys and back lanes cutting between the blocks. */
+  lanes: string[]
+  /** Building clusters — the grown fabric of the ward. */
+  blocks: DistrictBlock[]
 }
 
 export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
@@ -35,12 +48,26 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     theme: { surveyLayer: 'official', water: 'west', texture: 'docks', marginNote: 'Tide gates close at dusk.' },
     streets: [
       'M46,16 C54,90 52,160 48,230',
-      'M48,86 C110,76 180,66 244,62 C280,60 310,64 334,72',
-      'M50,154 C110,150 160,136 200,124 C236,114 270,122 298,134',
-      'M48,196 H78',
-      'M46,112 H66',
-      'M206,126 V172',
-      'M152,66 C152,90 154,110 156,134',
+      'M48,72 C110,58 180,48 244,48 C282,48 312,54 334,64',
+      'M50,138 C100,134 150,126 196,118 C240,112 268,118 298,126',
+      'M196,122 C200,140 202,156 204,170',
+      'M48,184 C58,186 64,188 70,190',
+    ],
+    lanes: [
+      'M152,76 C150,96 150,112 152,128',
+      'M244,80 C246,96 248,112 250,126',
+      'M124,166 C124,178 124,188 122,198',
+    ],
+    blocks: [
+      { x: 60, y: 28, w: 26, h: 16, r: -4 },
+      { x: 96, y: 26, w: 30, h: 18, r: 3 },
+      { x: 200, y: 26, w: 24, h: 16, r: -6 },
+      { x: 300, y: 30, w: 22, h: 14, r: 5 },
+      { x: 88, y: 84, w: 24, h: 16, r: 6 },
+      { x: 170, y: 86, w: 28, h: 16, r: -3 },
+      { x: 262, y: 88, w: 22, h: 14, r: 4 },
+      { x: 150, y: 196, w: 26, h: 16, r: -5 },
+      { x: 246, y: 196, w: 28, h: 16, r: 4 },
     ],
     pois: [
       { id: 'poi-harbor-the-hold', x: 62, y: 110 },
@@ -56,12 +83,27 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-gilded-heights': {
     theme: { surveyLayer: 'official', texture: 'terraces', marginNote: 'Clearance checked twice on the upper terrace.' },
     streets: [
-      'M30,66 Q180,52 330,66',
-      'M30,104 Q180,90 330,104',
-      'M30,152 Q180,138 330,152',
-      'M30,190 Q180,176 330,190',
-      'M104,188 Q108,148 112,102',
-      'M252,186 Q256,146 260,100',
+      'M30,42 Q180,30 330,42',
+      'M30,80 Q180,68 330,80',
+      'M30,122 Q180,110 330,122',
+      'M30,168 Q180,156 330,168',
+      'M30,206 Q180,194 330,206',
+    ],
+    lanes: [
+      'M108,204 Q112,150 116,84',
+      'M256,202 Q260,148 264,82',
+    ],
+    blocks: [
+      { x: 52, y: 46, w: 30, h: 14, r: -2 },
+      { x: 218, y: 44, w: 26, h: 14, r: 3 },
+      { x: 60, y: 86, w: 26, h: 14, r: 2 },
+      { x: 160, y: 82, w: 26, h: 14, r: -3 },
+      { x: 288, y: 86, w: 24, h: 14, r: 2 },
+      { x: 52, y: 128, w: 26, h: 14, r: -2 },
+      { x: 150, y: 124, w: 26, h: 14, r: 3 },
+      { x: 240, y: 126, w: 24, h: 14, r: -2 },
+      { x: 60, y: 172, w: 24, h: 14, r: 2 },
+      { x: 200, y: 170, w: 26, h: 14, r: -3 },
     ],
     pois: [
       { id: 'poi-gilded-advocates-row', x: 86, y: 152 },
@@ -77,12 +119,27 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-ironworks': {
     theme: { surveyLayer: 'official', water: 'south', texture: 'yards', marginNote: 'Slag canal runs the southern rim.' },
     streets: [
-      'M16,196 C90,192 180,196 250,198 C280,199 310,196 336,192',
-      'M20,116 C70,112 110,104 150,92 C180,82 210,70 236,72 C266,76 296,84 322,92',
-      'M150,94 C170,112 190,130 204,142 C220,158 240,180 252,194',
-      'M260,92 C278,110 296,128 306,144',
-      'M92,170 C80,180 64,190 50,196',
-      'M22,150 C50,158 72,164 90,168',
+      'M16,210 C90,206 180,210 250,212 C290,212 320,208 336,204',
+      'M20,100 C70,94 110,88 150,74 C170,62 195,50 232,52 C262,56 292,66 322,76',
+      'M152,80 C170,104 188,124 204,138 C220,154 238,176 250,192',
+      'M262,96 C278,112 292,126 300,136',
+      'M104,158 C94,172 76,188 60,200',
+    ],
+    lanes: [
+      'M118,88 C119,96 120,100 120,104',
+      'M182,78 C183,90 184,98 185,106',
+      'M258,100 C257,110 256,118 256,126',
+    ],
+    blocks: [
+      { x: 60, y: 120, w: 30, h: 18, r: -4 },
+      { x: 150, y: 120, w: 26, h: 16, r: 3 },
+      { x: 226, y: 108, w: 26, h: 16, r: -3 },
+      { x: 288, y: 100, w: 24, h: 16, r: 4 },
+      { x: 74, y: 214, w: 26, h: 14, r: 3 },
+      { x: 150, y: 216, w: 30, h: 14, r: -3 },
+      { x: 282, y: 170, w: 24, h: 14, r: -4 },
+      { x: 40, y: 60, w: 26, h: 16, r: 5 },
+      { x: 86, y: 48, w: 28, h: 16, r: -4 },
     ],
     pois: [
       { id: 'poi-ironworks-underground-cache', x: 48, y: 196 },
@@ -98,13 +155,29 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-the-pale': {
     theme: { surveyLayer: 'hand', texture: 'streets', marginNote: 'The vault under the house is still sealed.' },
     streets: [
-      'M48,74 C110,84 150,94 178,98 C212,104 246,122 254,140',
-      'M180,98 C196,80 210,64 224,58 C252,48 290,64 316,82',
-      'M46,170 C90,152 108,146 122,142',
-      'M124,144 C140,160 146,178 152,194',
-      'M154,196 C200,202 256,198 298,190',
-      'M256,144 C272,158 288,174 298,186',
-      'M64,72 C56,104 50,136 48,166',
+      'M50,86 C100,92 140,96 180,100 C218,104 240,118 252,128',
+      'M186,94 C198,76 210,58 226,46 C254,38 290,52 316,66',
+      'M44,154 C84,140 104,132 124,128',
+      'M130,130 C142,148 148,166 152,184',
+      'M158,186 C200,190 256,186 296,176',
+      'M260,130 C274,146 288,160 298,172',
+      'M64,84 C56,108 50,134 46,154',
+    ],
+    lanes: [
+      'M96,96 C98,112 100,124 102,134',
+      'M226,64 C228,76 230,86 230,94',
+      'M280,180 C272,168 264,158 258,150',
+    ],
+    blocks: [
+      { x: 70, y: 108, w: 26, h: 16, r: 4 },
+      { x: 140, y: 112, w: 24, h: 14, r: -3 },
+      { x: 206, y: 118, w: 26, h: 16, r: 3 },
+      { x: 74, y: 182, w: 26, h: 14, r: -4 },
+      { x: 196, y: 168, w: 28, h: 16, r: 4 },
+      { x: 262, y: 86, w: 24, h: 14, r: -5 },
+      { x: 120, y: 54, w: 26, h: 14, r: 3 },
+      { x: 40, y: 196, w: 24, h: 14, r: 5 },
+      { x: 286, y: 128, w: 20, h: 12, r: -3 },
     ],
     pois: [
       { id: 'poi-pale-wren-safe-house', x: 46, y: 168 },
@@ -121,13 +194,29 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-the-warrens': {
     theme: { surveyLayer: 'official', texture: 'ruins', marginNote: 'Streets unnamed past the second bend.' },
     streets: [
-      'M62,88 C90,80 112,96 138,126 C152,142 162,138 176,118 C190,98 198,94 206,92',
-      'M206,92 C226,76 244,64 262,60',
-      'M174,46 C186,60 196,76 204,88',
-      'M208,94 C238,108 270,124 300,136',
-      'M140,134 C124,156 110,178 102,194',
-      'M240,180 C260,166 282,152 298,140',
-      'M104,192 C148,188 196,186 238,182',
+      'M58,72 C84,62 108,76 130,108 C144,126 158,122 172,104 C188,88 196,90 204,92',
+      'M206,90 C222,74 236,62 250,52',
+      'M182,52 C190,64 196,74 202,84',
+      'M210,98 C238,112 270,124 296,132',
+      'M132,142 C118,162 106,176 96,186',
+      'M246,170 C262,158 280,148 294,142',
+      'M108,188 C148,180 196,176 232,174',
+    ],
+    lanes: [
+      'M86,94 C92,108 100,118 110,126',
+      'M214,104 C220,124 228,148 236,168',
+    ],
+    blocks: [
+      { x: 96, y: 56, w: 22, h: 14, r: 8 },
+      { x: 130, y: 80, w: 20, h: 12, r: -7 },
+      { x: 160, y: 140, w: 22, h: 14, r: 6 },
+      { x: 196, y: 120, w: 20, h: 12, r: -8 },
+      { x: 236, y: 86, w: 22, h: 14, r: 7 },
+      { x: 268, y: 108, w: 20, h: 12, r: -6 },
+      { x: 124, y: 168, w: 22, h: 14, r: -7 },
+      { x: 180, y: 196, w: 24, h: 14, r: 6 },
+      { x: 262, y: 196, w: 22, h: 12, r: -5 },
+      { x: 60, y: 120, w: 20, h: 12, r: 7 },
     ],
     pois: [
       { id: 'poi-warrens-ring-den', x: 78, y: 82 },
@@ -143,13 +232,27 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-the-hollows': {
     theme: { surveyLayer: 'hand', texture: 'ruins', marginNote: 'Survey abandoned past the detention house.' },
     streets: [
-      'M52,62 C90,64 140,72 196,78 C222,74 244,64 266,58',
-      'M268,60 C284,82 298,108 306,128',
-      'M130,124 C108,148 96,168 90,186',
-      'M132,122 C152,142 158,162 162,178',
-      'M164,184 C190,192 216,198 238,198',
-      'M198,82 C172,96 148,110 134,120',
-      'M240,198 C264,176 288,152 304,134',
+      'M50,74 C90,76 140,80 200,80 C224,76 244,66 262,70',
+      'M272,72 C286,90 298,110 304,122',
+      'M124,134 C106,154 96,170 90,180',
+      'M138,128 C152,146 158,160 162,170',
+      'M170,188 C192,194 214,198 228,198',
+      'M206,88 C180,100 156,110 142,118',
+      'M246,192 C268,172 288,152 300,142',
+    ],
+    lanes: [
+      'M76,72 C80,92 84,112 88,132',
+      'M212,92 C220,108 228,124 234,138',
+    ],
+    blocks: [
+      { x: 100, y: 90, w: 24, h: 14, r: -6 },
+      { x: 156, y: 92, w: 22, h: 12, r: 5 },
+      { x: 230, y: 110, w: 22, h: 14, r: -5 },
+      { x: 110, y: 156, w: 22, h: 12, r: 6 },
+      { x: 196, y: 156, w: 24, h: 14, r: -4 },
+      { x: 282, y: 86, w: 20, h: 12, r: 4 },
+      { x: 60, y: 148, w: 20, h: 12, r: -5 },
+      { x: 262, y: 164, w: 20, h: 12, r: 6 },
     ],
     pois: [
       { id: 'poi-hollows-compact-hall', x: 70, y: 60 },
@@ -165,11 +268,24 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-ash-quay': {
     theme: { surveyLayer: 'official', water: 'south', texture: 'docks', marginNote: "Merrow's seal on every bollard." },
     streets: [
-      'M14,176 C90,170 180,176 260,170 C292,168 320,162 344,156',
-      'M40,120 C90,112 130,104 158,98 C176,94 182,72 186,52',
-      'M160,100 C188,118 214,140 232,156',
-      'M234,154 C256,138 276,122 294,110',
-      'M88,146 C90,156 90,166 90,174',
+      'M14,176 C90,170 180,176 260,170 C292,168 322,162 344,156',
+      'M40,128 C90,120 130,112 156,108',
+      'M164,108 C190,124 212,142 228,154',
+      'M186,62 V88',
+      'M238,152 C258,136 276,122 290,116',
+    ],
+    lanes: [
+      'M96,130 C94,136 92,140 92,146',
+      'M120,116 C122,104 124,96 126,88',
+    ],
+    blocks: [
+      { x: 52, y: 142, w: 26, h: 14, r: -4 },
+      { x: 120, y: 128, w: 24, h: 14, r: 4 },
+      { x: 206, y: 118, w: 26, h: 16, r: -3 },
+      { x: 262, y: 134, w: 22, h: 12, r: 4 },
+      { x: 120, y: 60, w: 26, h: 14, r: -3 },
+      { x: 226, y: 72, w: 28, h: 16, r: 4 },
+      { x: 60, y: 84, w: 24, h: 14, r: 3 },
     ],
     pois: [
       { id: 'poi-ash-quay-customs-house', x: 88, y: 142 },
@@ -182,11 +298,21 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-the-mireward': {
     theme: { surveyLayer: 'official', texture: 'marsh', marginNote: 'Paths flood at the spring tide.' },
     streets: [
-      'M30,150 C70,134 90,126 108,120 C142,110 162,86 178,68',
-      'M110,120 C156,124 202,126 246,128',
-      'M250,130 C266,150 278,170 290,188',
-      'M106,122 C98,146 92,168 88,186',
-      'M182,70 C204,86 226,108 246,126',
+      'M30,150 C70,136 92,130 120,128',
+      'M126,124 C148,104 162,86 172,76',
+      'M126,132 C166,136 206,138 240,138',
+      'M252,138 C264,156 276,172 284,182',
+      'M104,132 C98,152 92,168 88,180',
+    ],
+    lanes: [
+      'M188,76 C200,90 214,106 234,120',
+    ],
+    blocks: [
+      { x: 140, y: 148, w: 20, h: 12, r: 5 },
+      { x: 210, y: 150, w: 20, h: 12, r: -4 },
+      { x: 64, y: 162, w: 18, h: 10, r: 4 },
+      { x: 156, y: 96, w: 18, h: 10, r: -5 },
+      { x: 262, y: 150, w: 18, h: 10, r: 5 },
     ],
     pois: [
       { id: 'poi-mireward-apothecary', x: 108, y: 118 },
@@ -199,11 +325,23 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-cinder-row': {
     theme: { surveyLayer: 'official', texture: 'yards', marginNote: 'Coal dust settles on everything by noon.' },
     streets: [
-      'M40,96 C70,92 88,88 104,86 C150,76 188,70 220,68 C252,68 280,94 296,118',
-      'M104,90 C124,108 144,126 160,140',
-      'M160,144 C134,160 106,176 84,186',
-      'M164,142 C210,134 256,128 294,124',
-      'M84,184 C140,190 220,192 290,184',
+      'M40,96 C70,92 88,90 102,88 C150,78 184,72 214,78 C248,76 276,98 290,110',
+      'M108,98 C124,114 142,128 154,136',
+      'M156,148 C132,162 106,176 90,182',
+      'M168,148 C210,142 252,136 286,130',
+      'M92,196 C150,202 220,204 286,196',
+    ],
+    lanes: [
+      'M222,84 C223,96 224,104 224,112',
+    ],
+    blocks: [
+      { x: 120, y: 104, w: 28, h: 16, r: -3 },
+      { x: 190, y: 96, w: 26, h: 16, r: 4 },
+      { x: 246, y: 108, w: 24, h: 14, r: -4 },
+      { x: 116, y: 160, w: 26, h: 14, r: 3 },
+      { x: 206, y: 160, w: 28, h: 16, r: -3 },
+      { x: 60, y: 120, w: 22, h: 14, r: 4 },
+      { x: 262, y: 170, w: 24, h: 14, r: 3 },
     ],
     pois: [
       { id: 'poi-cinder-tenements', x: 80, y: 188 },
@@ -217,10 +355,24 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     theme: { surveyLayer: 'official', water: 'south', texture: 'streets', marginNote: 'Every door here keeps a ledger.' },
     streets: [
       'M16,182 C100,176 200,182 280,176 C310,174 330,170 346,166',
-      'M60,84 C100,80 150,68 200,60 C232,56 264,72 284,88',
-      'M122,82 C108,108 96,134 90,154',
-      'M240,166 C252,140 268,112 284,92',
-      'M92,158 C140,164 190,168 238,168',
+      'M60,70 C100,62 150,50 202,46 C234,44 264,58 282,74',
+      'M118,92 C106,116 96,136 90,148',
+      'M244,156 C256,134 270,112 282,98',
+      'M96,164 C140,170 188,172 232,172',
+    ],
+    lanes: [
+      'M206,68 C208,86 210,104 212,122',
+      'M150,64 C152,76 154,88 156,100',
+    ],
+    blocks: [
+      { x: 76, y: 100, w: 28, h: 14, r: -2 },
+      { x: 150, y: 108, w: 28, h: 14, r: 2 },
+      { x: 216, y: 98, w: 26, h: 14, r: -2 },
+      { x: 120, y: 128, w: 26, h: 14, r: 2 },
+      { x: 190, y: 130, w: 28, h: 14, r: -2 },
+      { x: 60, y: 38, w: 26, h: 14, r: 2 },
+      { x: 150, y: 28, w: 28, h: 14, r: -2 },
+      { x: 250, y: 30, w: 26, h: 14, r: 2 },
     ],
     pois: [
       { id: 'poi-northbank-courier-post', x: 90, y: 158 },
@@ -233,11 +385,18 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
   'district-the-below': {
     theme: { surveyLayer: 'hand', texture: 'tunnels', marginNote: 'Not on the official survey. Keep it so.' },
     streets: [
-      'M58,64 C80,76 100,84 120,90',
-      'M124,94 C150,106 178,118 202,126',
-      'M206,128 C232,114 258,100 280,94',
-      'M204,130 C190,148 174,164 162,176',
-      'M60,66 C56,110 60,150 76,178 C100,196 130,190 158,180',
+      'M52,76 C76,86 96,94 112,100',
+      'M130,102 C156,114 180,122 194,126',
+      'M214,122 C238,110 260,100 272,96',
+      'M198,138 C186,152 174,164 166,170',
+      'M52,78 C50,116 56,150 72,172 C96,190 126,188 150,182',
+    ],
+    lanes: [],
+    blocks: [
+      { x: 88, y: 120, w: 22, h: 12, r: 6 },
+      { x: 226, y: 150, w: 22, h: 12, r: -5 },
+      { x: 120, y: 52, w: 20, h: 10, r: -4 },
+      { x: 244, y: 66, w: 20, h: 10, r: 5 },
     ],
     pois: [
       { id: 'poi-below-access-tunnel', x: 58, y: 62 },

@@ -41,10 +41,22 @@ describe('DistrictInteriorScreen — district map and place ledger', () => {
     expect(screen.getByRole('button', { name: /^Tallow Ring Den/ })).toBeInTheDocument()
   })
 
-  it('shows NPCs present in the district on the map plate', () => {
+  it('introduces the folk about the ward in the ledger verso, not as bare names on the plate', () => {
     renderInterior('district-the-pale', 'district-the-pale')
-    // Garet Doyle and Sister Vael are scheduled in The Pale in the morning slot
-    expect(screen.getByText(/seen here:.*Garet Doyle/)).toBeInTheDocument()
+    // The plate carries only a compact count; the ledger explains who these people are
+    expect(screen.getByText(/\d+ about the ward/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'About the ward' })).toBeInTheDocument()
+    const panel = placeLedger()
+    // Garet Doyle is scheduled in The Pale in the morning slot, introduced with a note
+    expect(within(panel).getByText('Garet Doyle')).toBeInTheDocument()
+    expect(within(panel).getByText(/Folk move between wards as the day turns/i)).toBeInTheDocument()
+  })
+
+  it('explains the plate marks in a legend', () => {
+    renderInterior('district-the-pale', 'district-the-pale')
+    expect(screen.getByText(/work posted/i)).toBeInTheDocument()
+    expect(screen.getByText(/people for hire/i)).toBeInTheDocument()
+    expect(screen.getByText(/closed at this hour/i)).toBeInTheDocument()
   })
 
   it('selecting a place fills the ledger panel and Enter location navigates', async () => {
