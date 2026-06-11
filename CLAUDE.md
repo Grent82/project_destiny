@@ -73,7 +73,11 @@ bd close <id>         # Complete work
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
-4. **Run `bd preflight`** - Checks: `bd lint` + `bd stale` + `bd orphans`
+4. **Run quality gates**:
+   - `bd preflight` (beads hygiene: lint + stale + orphans; note: the Go/Nix checklist in its output is a known limitation of the beads CLI — ignore those lines)
+   - `pnpm lint` — ESLint + TypeScript
+   - `pnpm typecheck` — `tsc --noEmit`
+   - `pnpm test:run` — Vitest test suite
 5. **Push code** (if changes made):
    ```bash
    git add .
@@ -82,7 +86,8 @@ bd close <id>         # Complete work
    **Note:** No git remote configured. Commits are local-only.
 
 **CRITICAL RULES:**
-- Run `bd preflight` before considering work shippable
+- Run quality gates before considering work shippable: `pnpm lint && pnpm typecheck && pnpm test:run`
+- Note: `bd preflight` output includes a Go/Nix checklist that doesn't apply to this TypeScript project — this is a known limitation of the beads CLI; ignore those lines and use the pnpm commands above
 - All commits are local-only (no remote configured)
 - Use `bd close <id>` to mark issues complete
 - The `SessionEnd` hook auto-runs `bd preflight` on session exit
