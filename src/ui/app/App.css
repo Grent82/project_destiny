@@ -1918,6 +1918,91 @@ strong { color: var(--text-secondary); }
 }
 
 /* ── Contract board ──────────────────────────────────────── */
+
+/* Quest lead card chips (narrative-first layout) */
+.quest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.chip-reward {
+  background: rgba(201, 168, 76, 0.2);
+  color: #d4aa44;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+}
+
+.chip-deadline {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fde68a;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.chip-location {
+  background: rgba(168, 144, 112, 0.12);
+  color: #a89070;
+  border: 1px solid rgba(168, 144, 112, 0.25);
+}
+
+.chip-district {
+  background: rgba(138, 106, 191, 0.12);
+  color: #b894e8;
+  border: 1px solid rgba(138, 106, 191, 0.25);
+}
+
+.quest-hook {
+  font-style: italic;
+  color: var(--text-secondary);
+  border-left: 2px solid rgba(201, 168, 76, 0.3);
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.quest-dossier {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: var(--radius-md);
+}
+
+.quest-dossier .quest-briefing {
+  margin: 0.35rem 0;
+  font-size: 0.85em;
+}
+
+.quest-dossier .quest-meta {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+  font-size: 0.8em;
+}
+
+.action-button--tertiary {
+  border-color: rgba(201, 168, 76, 0.25);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.action-button--tertiary:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+}
+
 .faction-icon {
   width: 32px;
   height: 32px;
