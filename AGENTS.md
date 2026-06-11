@@ -51,6 +51,7 @@ The RPG audit answers four questions about whether this session's planned work a
 - For player-facing Beads, verify not only state correctness but also player comprehension, route clarity, and post-action readability.
 - After regressions, interruptions, or user-reported quality failures, run a `KI Retro` pass before moving on if the user asks for process improvement. Convert important findings into docs, Beads, tests, or instruction updates.
 - **Destructive CLI writes** (`bd update --description/--notes`, file overwrites from variables): never feed them from an unverified pipeline. Validate the variable first, run the loop on ONE id and read the result back, then batch. (A failed parse once blanked 8 bead descriptions.)
+- **Bead claims must be code-verified first.** Before writing 'X is missing' or 'nothing does Y' into a bead, grep for it. A bead that misdescribes the system misroutes every model that executes it. (A 2026-06-11 bead claimed missing antagonists while simulateRivalOrgs acted daily.)
 - In screen tests, prefer **role-based queries** (`getByRole('heading', …)`, panel scoping via `within`) over `getByText` for any string that can legitimately appear twice (map label + panel, card + plan).
 
 ## Audit → Bead Traceability Rule
