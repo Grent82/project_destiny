@@ -420,13 +420,19 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   gap: 1.25rem;
-  align-items: start;
+  align-items: stretch;
 }
 
-@media (max-width: 1100px) {
-  .map-with-ledger {
-    grid-template-columns: 1fr;
-  }
+/* The map plate defines the row height; the ledger fills it exactly
+   and scrolls internally when its entry runs long. */
+.map-with-ledger .city-map,
+.map-with-ledger .district-map {
+  margin: 0;
+}
+
+.map-ledger-holder {
+  position: relative;
+  min-width: 0;
 }
 
 .map-ledger-panel {
@@ -434,8 +440,20 @@
   border-radius: 3px;
   background: #161009;
   padding: 1rem 1.1rem 1.2rem;
-  position: sticky;
-  top: 1rem;
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 1100px) {
+  .map-with-ledger {
+    grid-template-columns: 1fr;
+  }
+
+  .map-ledger-panel {
+    position: static;
+    overflow-y: visible;
+  }
 }
 
 .map-ledger-panel h2 {
@@ -514,6 +532,47 @@
 .map-poi--closed .map-poi-icon,
 .map-poi--closed .map-poi-name {
   opacity: 0.6;
+}
+
+/* ── Streets: ink underlay, cleared corridor overlay ── */
+.map-street-under {
+  fill: none;
+  stroke: rgba(58, 44, 26, 0.45);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.map-street-over {
+  fill: none;
+  stroke: #d8c99e;
+  stroke-width: 4.6;
+  stroke-linecap: round;
+}
+
+/* crooked alleys of the ruin wards: broken pavement */
+.map-streets--ruins .map-street-over {
+  stroke-dasharray: 11 3;
+}
+
+/* marsh causeways: narrow plank paths */
+.map-streets--marsh .map-street-under {
+  stroke-width: 5;
+}
+
+.map-streets--marsh .map-street-over {
+  stroke-width: 2.8;
+  stroke-dasharray: 7 3;
+}
+
+/* the Below: passages cut through dark ground */
+.map-streets--tunnels .map-street-under {
+  stroke: #2c2723;
+  stroke-width: 9;
+}
+
+.map-streets--tunnels .map-street-over {
+  stroke: #5f5850;
+  stroke-width: 5.5;
 }
 
 .map-poi-closed-mark {

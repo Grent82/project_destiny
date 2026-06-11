@@ -55,14 +55,16 @@ export function DistrictMapScreen() {
           onSelectDistrict={setSelectedDistrictId}
           onSelectEnvirons={() => navigate('/expedition')}
         />
-        <DistrictLedgerPanel
-          entry={selectedEntry}
-          houseDistrictId={houseDistrictId}
-          isCompactBlacklisted={isCompactBlacklisted}
-          travelTimeCost={selectActionTimeCost('travel')}
-          onTravel={handleTravel}
-          onView={(districtId) => navigate(`/district/${districtId}`)}
-        />
+        <div className="map-ledger-holder">
+          <DistrictLedgerPanel
+            entry={selectedEntry}
+            houseDistrictId={houseDistrictId}
+            isCompactBlacklisted={isCompactBlacklisted}
+            travelTimeCost={selectActionTimeCost('travel')}
+            onTravel={handleTravel}
+            onView={(districtId) => navigate(`/district/${districtId}`)}
+          />
+        </div>
       </div>
     </section>
   )

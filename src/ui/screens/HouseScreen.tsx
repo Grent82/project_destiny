@@ -110,21 +110,23 @@ export function HouseScreen() {
           unresolvedRoomIds={unresolvedRoomIds}
           onSelectRoom={setSelectedRoomId}
         />
-        <RoomLedgerPanel
-          room={selectedRoom}
-          marks={debt.marks}
-          vaultUnlocked={vaultUnlocked}
-          justSearched={selectedRoom?.roomId === justSearchedId}
-          occupants={selectedOccupants}
-          roster={roster.map((npc) => ({ npcId: npc.npcId, name: npc.name, roomAssignment: npc.roomAssignment }))}
-          assignable={selectedRoom != null && assignableRooms.some((room) => room.roomId === selectedRoom.roomId)}
-          onRepair={(roomId) => dispatch(gameActions.repairRoom(roomId))}
-          onSearch={(roomId) => {
-            setJustSearchedId(roomId)
-            dispatch(gameActions.searchRoom(roomId))
-          }}
-          onAssign={(npcId, roomId) => dispatch(gameActions.setNpcRoomAssignment({ npcId, roomId }))}
-        />
+        <div className="map-ledger-holder">
+          <RoomLedgerPanel
+            room={selectedRoom}
+            marks={debt.marks}
+            vaultUnlocked={vaultUnlocked}
+            justSearched={selectedRoom?.roomId === justSearchedId}
+            occupants={selectedOccupants}
+            roster={roster.map((npc) => ({ npcId: npc.npcId, name: npc.name, roomAssignment: npc.roomAssignment }))}
+            assignable={selectedRoom != null && assignableRooms.some((room) => room.roomId === selectedRoom.roomId)}
+            onRepair={(roomId) => dispatch(gameActions.repairRoom(roomId))}
+            onSearch={(roomId) => {
+              setJustSearchedId(roomId)
+              dispatch(gameActions.searchRoom(roomId))
+            }}
+            onAssign={(npcId, roomId) => dispatch(gameActions.setNpcRoomAssignment({ npcId, roomId }))}
+          />
+        </div>
       </div>
 
       <section className="house-wards-section">

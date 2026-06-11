@@ -107,14 +107,16 @@ export function DistrictInteriorScreen() {
           selectedPoiId={selectedPoiId}
           onSelectPoi={setSelectedPoiId}
         />
-        <PoiLedgerPanel
-          poi={selectedPoi}
-          isHere={isHere}
-          isOpen={selectedPoi?.isOpen ?? true}
-          timeSlot={timeSlot}
-          npcsPresent={npcsAtSelectedPoi}
-          onEnter={(poiId) => navigate(`/district/${district.id}/poi/${poiId}`)}
-        />
+        <div className="map-ledger-holder">
+          <PoiLedgerPanel
+            poi={selectedPoi}
+            isHere={isHere}
+            isOpen={selectedPoi?.isOpen ?? true}
+            timeSlot={timeSlot}
+            npcsPresent={npcsAtSelectedPoi}
+            onEnter={(poiId) => navigate(`/district/${district.id}/poi/${poiId}`)}
+          />
+        </div>
       </div>
     </section>
   )

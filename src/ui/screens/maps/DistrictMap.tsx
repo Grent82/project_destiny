@@ -107,11 +107,8 @@ function plateTexture(texture: string) {
         </g>
       )
     default:
-      return (
-        <g className="map-texture">
-          <path d="M70,30 Q92,120 120,210 M210,24 Q228,120 250,216 M30,120 Q180,104 330,96 M60,166 Q180,154 312,150" />
-        </g>
-      )
+      // 'streets' theme: the real street network carries the plate
+      return null
   }
 }
 
@@ -172,6 +169,16 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
 
         {geometry.theme.water && waterStrip(geometry.theme.water)}
         {plateTexture(geometry.theme.texture)}
+
+        {/* the ward's streets — drawn as cleared corridors in the ink */}
+        <g className={`map-streets map-streets--${geometry.theme.texture}`}>
+          {geometry.streets.map((d) => (
+            <path key={d} d={d} className="map-street-under" />
+          ))}
+          {geometry.streets.map((d) => (
+            <path key={`over-${d}`} d={d} className="map-street-over" />
+          ))}
+        </g>
 
         {pois.map((poi) => {
           const node = nodeById.get(poi.id)
