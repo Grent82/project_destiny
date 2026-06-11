@@ -19,7 +19,7 @@ function makeLead(questId: string, day = 1) {
 }
 
 describe('ContractBoardScreen', () => {
-  it('shows issuer and origin for available leads and can accept them into active contracts', async () => {
+  it('shows narrative hook first with expandable dossier for available leads and can accept them', async () => {
     const user = userEvent.setup()
     const store = createGameStore({
       ...initialGameStateSnapshot,
@@ -37,14 +37,24 @@ describe('ContractBoardScreen', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Available Leads' })).toBeInTheDocument()
+
+    // Narrative hook (briefing) is visible by default
+    expect(screen.getByText(/A Compact checkpoint at the harbor gate/i)).toBeInTheDocument()
+
+    // Reward and deadline shown as chips
+    expect(screen.getByText(/180 Marks/i)).toBeInTheDocument()
+    expect(screen.getByText(/5 days/i)).toBeInTheDocument()
+
+    // Full dossier is hidden behind expand
+    expect(screen.queryByText(/Issuer:/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Look closer/i })).toBeInTheDocument()
+
+    // Expand to see full dossier
+    await user.click(screen.getByRole('button', { name: /Look closer/i }))
     expect(screen.getByText(/Issuer:/i)).toBeInTheDocument()
     expect(screen.getByText(/Payer:/i)).toBeInTheDocument()
     expect(screen.getByText(/Stakeholder:/i)).toBeInTheDocument()
-    expect(screen.getByText(/Likely fallout:/i)).toBeInTheDocument()
     expect(screen.getByText(/Civic Compact/i)).toBeInTheDocument()
-    expect(screen.getByText(/Posted at Harbor Guild Hall in Harbor Ward/i)).toBeInTheDocument()
-    expect(screen.getByText(/Compact quartermasters release the fee only if the checkpoint is cleaned up quietly/i)).toBeInTheDocument()
-    expect(screen.getByText(/Harbor gate wardens and dockside traffic trapped inside the shakedown/i)).toBeInTheDocument()
     expect(screen.getByText(/Compact standing \+8; Unrest -5/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Accept contract' }))

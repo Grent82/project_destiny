@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { EmptyState } from '../components/EmptyState'
 
 import {
@@ -81,6 +82,109 @@ function resolveReadinessBadge(readiness: { state: string; blocked: boolean }) {
         className: `badge ${readiness.blocked ? 'badge-warning' : 'badge-positive'}`,
       }
   }
+}
+
+/**
+ * LeadCardDisplay: renders a quest lead with narrative-first layout.
+ * Shows the briefing (hook) up top, reward/deadline as chips, and full dossier behind expand.
+ */
+function LeadCardDisplay({
+  lead,
+  template,
+  presentation,
+}: {
+  lead: ReturnType<typeof selectAvailableQuestLeads>[number]['lead']
+  template: NonNullable<ReturnType<typeof selectAvailableQuestLeads>[number]['template']>
+  presentation: ReturnType<typeof selectAvailableQuestLeads>[number]['presentation']
+}) {
+  const dispatch = useAppDispatch()
+  const [expanded, setExpanded] = useState(false)
+
+  const discoveryDistrictName = lead.discoveryDistrictId
+    ? contentCatalog.districtsById.get(lead.discoveryDistrictId)?.name ?? lead.discoveryDistrictId
+    : null
+
+  const hasTimeLimit = template.timeLimitDays != null
+  const hasReward = template.rewardMarks > 0
+  const discoveryDistrictLabel = discoveryDistrictName ? `Found in ${discoveryDistrictName}` : null
+
+  return (
+    <div className="mission-row">
+      <div className="mission-row-header">
+        <strong>{template.title}</strong>
+        {template.questType === 'story' && (
+          <span className="badge badge-story">◆ House Obligation</span>
+        )}
+        <span className="badge">{presentation.categoryLabel}</span>
+        <span className={`badge ${lead.freshness === 'stale' ? 'badge-warning' : lead.freshness === 'aging' ? 'badge-warning' : 'badge-positive'}`}>
+          {formatLeadFreshnessLabel(lead.freshness)}
+        </span>
+        {template.timeLimitDays != null && template.timeLimitDays <= 2 && (
+          <span className="badge badge-warning">Urgent</span>
+        )}
+        {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
+      </div>
+
+      {/* Narrative hook — the pitch */}
+      {template.briefing && (
+        <p className="quest-briefing quest-hook">
+          {template.briefing}
+        </p>
+      )}
+
+      {/* Scannable chips: reward, deadline, location */}
+      <div className="quest-chips">
+        {hasReward && <span className="chip chip-reward">{formatMarks(template.rewardMarks)}</span>}
+        {hasTimeLimit && <span className="chip chip-deadline">{template.timeLimitDays} {template.timeLimitDays === 1 ? 'day' : 'days'}</span>}
+        {discoveryDistrictLabel && <span className="chip chip-location">{discoveryDistrictLabel}</span>}
+        {template.districtId && (
+          <span className="chip chip-district">
+            {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
+          </span>
+        )}
+      </div>
+
+      {/* Expandable dossier */}
+      {!expanded ? (
+        <button
+          className="action-button action-button--secondary"
+          onClick={() => setExpanded(true)}
+          type="button"
+        >
+          Look closer →
+        </button>
+      ) : (
+        <div className="quest-dossier">
+          <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
+          <p className="quest-briefing"><strong>Payer:</strong> {presentation.payerLabel}</p>
+          <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
+          <p className="quest-briefing"><strong>Stakeholder:</strong> {presentation.stakeholderLabel}</p>
+          <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
+          <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
+          <p className="quest-briefing"><strong>Likely fallout:</strong> {presentation.likelyConsequence}</p>
+          <div className="quest-meta">
+            <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
+            {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}
+          </div>
+          <button
+            className="action-button action-button--tertiary"
+            onClick={() => setExpanded(false)}
+            type="button"
+          >
+            Collapse →
+          </button>
+        </div>
+      )}
+
+      <button
+        className="action-button action-button--primary"
+        onClick={() => dispatch(gameActions.acceptQuest({ questId: template.id }))}
+        type="button"
+      >
+        Accept contract
+      </button>
+    </div>
+  )
 }
 
 export function ContractBoardScreen() {
@@ -171,12 +275,7 @@ export function ContractBoardScreen() {
                       <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
                     </>
                   )}
-                  {template?.briefing && !isStory && (
-                    <p className="quest-briefing">{template.briefing}</p>
-                  )}
-                  {isStory && !template?.openingText && template?.briefing && (
-                    <p className="quest-briefing">{template.briefing}</p>
-                  )}
+                  {/* Briefing removed from active contracts — shown only on lead cards for narrative-first UX */}
                   <div className="quest-meta">
                     {template?.rewardMarks != null && template.rewardMarks > 0 && (
                       <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>
@@ -373,56 +472,9 @@ export function ContractBoardScreen() {
             />
           ) : (
             <div className="mission-list">
-              {availableQuestLeads.map(({ lead, template, presentation }) => {
-                const discoveryDistrictName = lead.discoveryDistrictId
-                  ? contentCatalog.districtsById.get(lead.discoveryDistrictId)?.name ?? lead.discoveryDistrictId
-                  : null
-
-                return (
-                <div key={lead.leadId} className="mission-row">
-                  <div className="mission-row-header">
-                    <strong>{template.title}</strong>
-                    {template.questType === 'story' && (
-                      <span className="badge badge-story">◆ House Obligation</span>
-                    )}
-                    <span className="badge">{presentation.categoryLabel}</span>
-                    <span className={`badge ${lead.freshness === 'stale' ? 'badge-warning' : lead.freshness === 'aging' ? 'badge-warning' : 'badge-positive'}`}>
-                      {formatLeadFreshnessLabel(lead.freshness)}
-                    </span>
-                    {template.timeLimitDays != null && template.timeLimitDays <= 2 && (
-                      <span className="badge badge-warning">Urgent</span>
-                    )}
-                    {template.riskLevel && <span className="badge">{template.riskLevel} risk</span>}
-                  </div>
-                  <p className="quest-briefing"><strong>Issuer:</strong> {presentation.issuerLabel}</p>
-                  <p className="quest-briefing"><strong>Payer:</strong> {presentation.payerLabel}</p>
-                  <p className="quest-briefing"><strong>Origin:</strong> {presentation.originLabel}</p>
-                  <p className="quest-briefing"><strong>Stakeholder:</strong> {presentation.stakeholderLabel}</p>
-                  <p className="quest-briefing"><strong>Why now:</strong> {presentation.whyNow}</p>
-                  <p className="quest-briefing"><strong>What they want:</strong> {presentation.employerIntent}</p>
-                  <p className="quest-briefing"><strong>Likely fallout:</strong> {presentation.likelyConsequence}</p>
-                  <div className="quest-meta">
-                    {template.rewardMarks > 0 && <span>Reward: <strong>{formatMarks(template.rewardMarks)}</strong></span>}
-                    {template.timeLimitDays != null && <span>Time limit: <strong>{template.timeLimitDays} days</strong></span>}
-                    <span>Surfaced: <strong>Day {lead.discoveredDay}</strong></span>
-                    {lead.expiresOnDay != null && <span>Withdraws after: <strong>Day {lead.expiresOnDay}</strong></span>}
-                    {discoveryDistrictName && <span>Found in: <strong>{discoveryDistrictName}</strong></span>}
-                    {template.districtId && (
-                      <span>
-                        District: {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    className="action-button action-button--primary"
-                    onClick={() => dispatch(gameActions.acceptQuest({ questId: template.id }))}
-                    type="button"
-                  >
-                    Accept contract
-                  </button>
-                </div>
-                )
-              })}
+              {availableQuestLeads.map(({ lead, template, presentation }) => (
+                <LeadCardDisplay key={lead.leadId} lead={lead} template={template} presentation={presentation} />
+              ))}
             </div>
           )}
         </article>
