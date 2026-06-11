@@ -1,1 +1,3 @@
 - [Feedback: Beads Child-Schließung bei offenem Parent-Epic](feedback_beads-child-close.md)
+- [Feedback: Destruktive CLI-Writes nie aus ungeprüften Pipelines](feedback_destructive-cli-pipelines.md) — 8 Bead-Beschreibungen durch leeren Pipeline-Output gelöscht
+- [Feedback: Gestaltungs-Richtungsfragen mit 2–4 Optionen + Empfehlung stellen](feedback_design-decision-questions.md) — 4× ohne Korrekturrunde bestätigt

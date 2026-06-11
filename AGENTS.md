@@ -49,6 +49,8 @@ The RPG audit answers four questions about whether this session's planned work a
 - For narrative-heavy Beads, record a `fiction contract`.
 - For player-facing Beads, verify not only state correctness but also player comprehension, route clarity, and post-action readability.
 - After regressions, interruptions, or user-reported quality failures, run a `KI Retro` pass before moving on if the user asks for process improvement. Convert important findings into docs, Beads, tests, or instruction updates.
+- **Destructive CLI writes** (`bd update --description/--notes`, file overwrites from variables): never feed them from an unverified pipeline. Validate the variable first, run the loop on ONE id and read the result back, then batch. (A failed parse once blanked 8 bead descriptions.)
+- In screen tests, prefer **role-based queries** (`getByRole('heading', …)`, panel scoping via `within`) over `getByText` for any string that can legitimately appear twice (map label + panel, card + plan).
 
 ## Audit → Bead Traceability Rule
 
@@ -78,15 +80,19 @@ cp -rf source dest
 A Playwright MCP server is configured in `.mcp.json`. For any UI/layout/screen work, use it to take screenshots and verify the result visually before committing:
 
 ```bash
-pnpm dev   # start dev server first (port 5173)
+pnpm dev   # start dev server first
 # then use playwright MCP tools: playwright_screenshot, playwright_navigate, playwright_click
 ```
+
+**Read the actual port from the dev-server output before verifying.** Vite falls back to 5174+ when 5173 is taken; a browser pointed at a stale server silently shows old assets (changes "don't work", icons "missing"). If a change does not appear, check the server port before debugging the change.
+
+**Before closing a player-facing UI bead**, walk the fresh-eyes and map/plate checklists in `docs/workflows/design-review.md` against screenshots — legend completeness, spatial plausibility, stranger test for names — and record the violations found in the bead. Zero findings on a first pass means the pass was not honest.
 
 **UI/UX and Art Direction beads must be labeled.** When creating or updating a bead that touches screens, components, layout, or visual identity:
 
 ```bash
-bd label <id> ui-ux        # for interaction and layout work
-bd label <id> art-direction # for visual identity, icons, images
+bd label add <id> ui-ux        # for interaction and layout work
+bd label add <id> art-direction # for visual identity, icons, images
 ```
 
 This rule applies to all agents. A UI bead without a label is a gap.
