@@ -8,6 +8,8 @@ export interface DistrictMapPoi {
   type: string
   hasContracts: boolean
   hasHireables: boolean
+  /** Open in the current time slot. */
+  isOpen: boolean
 }
 
 export interface DistrictMapNpcMarker {
@@ -23,6 +25,7 @@ interface DistrictMapProps {
   pois: DistrictMapPoi[]
   npcMarkers: DistrictMapNpcMarker[]
   isHere: boolean
+  selectedPoiId: string | null
   onSelectPoi: (poiId: string) => void
 }
 
@@ -112,7 +115,7 @@ function plateTexture(texture: string) {
   }
 }
 
-export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere, onSelectPoi }: DistrictMapProps) {
+export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere, selectedPoiId, onSelectPoi }: DistrictMapProps) {
   const geometry = districtMapGeometry[districtId]
   if (!geometry) return null
   const nodeById = new Map(geometry.pois.map((node) => [node.id, node]))
@@ -183,18 +186,18 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
                 `map-poi--${poi.type}`,
                 isHere ? 'map-poi--reachable' : 'map-poi--distant',
                 isHouse ? 'map-poi--house' : '',
+                poi.id === selectedPoiId ? 'map-poi--selected' : '',
+                poi.isOpen ? '' : 'map-poi--closed',
               ]
                 .filter(Boolean)
                 .join(' ')}
               role="button"
-              tabIndex={isHere ? 0 : -1}
-              aria-disabled={!isHere}
-              aria-label={isHere ? poi.name : `${poi.name} — enter the district to approach`}
-              onClick={() => {
-                if (isHere) onSelectPoi(poi.id)
-              }}
+              tabIndex={0}
+              aria-pressed={poi.id === selectedPoiId}
+              aria-label={`${poi.name}${poi.isOpen ? '' : ' — closed at this hour'}`}
+              onClick={() => onSelectPoi(poi.id)}
               onKeyDown={(e) => {
-                if (isHere && (e.key === 'Enter' || e.key === ' ')) {
+                if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
                   onSelectPoi(poi.id)
                 }
@@ -207,6 +210,12 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
               </text>
               {poi.hasContracts && <circle cx={node.x + 10} cy={node.y - 9} r="3.5" className="map-poi-flag map-poi-flag--work" />}
               {poi.hasHireables && <circle cx={node.x - 10} cy={node.y - 9} r="3.5" className="map-poi-flag map-poi-flag--people" />}
+              {!poi.isOpen && (
+                <path
+                  className="map-poi-closed-mark"
+                  d={`M${node.x - 14},${node.y - 10} a5 5 0 1 0 4 -8 a4.4 4.4 0 0 1 -4 8`}
+                />
+              )}
               {present.length > 0 && (
                 <g className="map-npc-marker">
                   <text x={node.x + 16} y={node.y - 12} className="map-npc-glyph">
@@ -216,9 +225,9 @@ export function DistrictMap({ districtId, districtName, pois, npcMarkers, isHere
                 </g>
               )}
               <title>
-                {isHere
-                  ? `${poi.name}${present.length > 0 ? ` — here: ${present.map((p) => p.name).join(', ')}` : ''}`
-                  : `${poi.name} — enter the district to approach`}
+                {poi.name}
+                {poi.isOpen ? '' : ' — closed at this hour'}
+                {present.length > 0 ? ` — here: ${present.map((p) => p.name).join(', ')}` : ''}
               </title>
             </g>
           )

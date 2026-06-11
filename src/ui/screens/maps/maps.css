@@ -415,6 +415,122 @@
   stroke: rgba(28, 8, 8, 0.75);
 }
 
+/* ── Map + ledger panel layout (master–detail) ── */
+.map-with-ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .map-with-ledger {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map-ledger-panel {
+  border: 1px solid #3a2c1c;
+  border-radius: 3px;
+  background: #161009;
+  padding: 1rem 1.1rem 1.2rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.map-ledger-panel h2 {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.25rem;
+  margin: 0 0 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.map-ledger-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.35rem 0 0.6rem;
+}
+
+.map-ledger-body {
+  font-size: 0.86rem;
+  color: var(--text-secondary, #a89070);
+  line-height: 1.5;
+}
+
+.map-ledger-body p {
+  margin: 0 0 0.55rem;
+}
+
+.map-ledger-hook {
+  font-style: italic;
+  color: var(--text-accent, #d7bf82);
+}
+
+.map-ledger-note {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-muted, #6b5a47);
+}
+
+.map-ledger-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.map-ledger-empty {
+  font-style: italic;
+  color: var(--text-muted, #6b5a47);
+  font-size: 0.85rem;
+}
+
+.map-ledger-stamp {
+  flex: none;
+}
+
+.map-ledger-stamp .map-seal-ring,
+.map-ledger-stamp .map-symbol path,
+.map-ledger-stamp .map-symbol circle {
+  stroke: var(--text-secondary, #a89070);
+}
+
+/* selected element on plates */
+.map-district--selected,
+.map-poi--selected .map-poi-ring,
+.house-plan-room--selected .house-plan-room-wall {
+  stroke: #d4b46a;
+  stroke-width: 3;
+}
+
+/* closed-at-this-hour POIs on the district plate */
+.map-poi--closed .map-poi-ring {
+  stroke-dasharray: 3 3;
+}
+
+.map-poi--closed .map-poi-icon,
+.map-poi--closed .map-poi-name {
+  opacity: 0.6;
+}
+
+.map-poi-closed-mark {
+  fill: none;
+  stroke: var(--map-ink-faded);
+  stroke-width: 1.2;
+  pointer-events: none;
+}
+
+/* unresolved discovery mark on Plate I */
+.house-plan-lead-mark {
+  fill: none;
+  stroke: var(--map-wax);
+  stroke-width: 1.6;
+  pointer-events: none;
+}
+
 /* ── Legend ── */
 .map-legend {
   display: flex;
@@ -484,8 +600,12 @@
   stroke-width: 2.6;
 }
 
-.map-poi--reachable:focus-visible {
+.map-poi:focus {
   outline: none;
+}
+
+.map-poi:focus-visible .map-poi-ring {
+  stroke: #d4b46a;
 }
 
 .map-poi--house .map-poi-ring {

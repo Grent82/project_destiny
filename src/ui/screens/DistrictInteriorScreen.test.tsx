@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
@@ -29,13 +29,16 @@ function renderInterior(districtId: string, currentDistrictId: string | null) {
   return store
 }
 
-describe('DistrictInteriorScreen — district map', () => {
+function placeLedger() {
+  return screen.getByRole('complementary', { name: 'Place ledger' })
+}
+
+describe('DistrictInteriorScreen — district map and place ledger', () => {
   it('renders the district map plate with every POI of the district', () => {
     renderInterior('district-the-pale', 'district-the-pale')
     expect(screen.getByRole('figure', { name: 'Map of The Pale' })).toBeInTheDocument()
-    // POI names appear on the map and in the location cards
-    expect(screen.getAllByText('House Valdric').length).toBeGreaterThanOrEqual(2)
-    expect(screen.getAllByText('Tallow Ring Den').length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByRole('button', { name: /^House Valdric/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Tallow Ring Den/ })).toBeInTheDocument()
   })
 
   it('shows NPCs present in the district on the map plate', () => {
@@ -44,19 +47,42 @@ describe('DistrictInteriorScreen — district map', () => {
     expect(screen.getByText(/seen here:.*Garet Doyle/)).toBeInTheDocument()
   })
 
-  it('navigates to the POI screen when a map node is clicked while present', async () => {
+  it('selecting a place fills the ledger panel and Enter location navigates', async () => {
     const user = userEvent.setup()
     renderInterior('district-the-pale', 'district-the-pale')
-    await user.click(screen.getByRole('button', { name: 'House Valdric' }))
+
+    // Before selection, the panel invites pointing at the plate
+    expect(within(placeLedger()).getByText(/Point at a place on the plate/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /^House Valdric/ }))
+    const panel = placeLedger()
+    expect(within(panel).getByRole('heading', { name: 'House Valdric' })).toBeInTheDocument()
+    expect(within(panel).getByText(/Your inherited house/i)).toBeInTheDocument()
+
+    await user.click(within(panel).getByRole('button', { name: 'Enter location' }))
     expect(screen.getByText('poi probe screen')).toBeInTheDocument()
   })
 
-  it('does not navigate from map nodes when the player is elsewhere', async () => {
+  it('offers no Enter action when the player is elsewhere, but the entry stays readable', async () => {
     const user = userEvent.setup()
     renderInterior('district-the-pale', 'district-harbor')
-    await user.click(
-      screen.getByRole('button', { name: /House Valdric — enter the district to approach/i }),
-    )
+
+    await user.click(screen.getByRole('button', { name: /^House Valdric/ }))
+    const panel = placeLedger()
+    expect(within(panel).getByRole('heading', { name: 'House Valdric' })).toBeInTheDocument()
+    expect(within(panel).queryByRole('button', { name: 'Enter location' })).toBeNull()
+    expect(within(panel).getByText(/Enter the district to approach this place/i)).toBeInTheDocument()
     expect(screen.queryByText('poi probe screen')).toBeNull()
+  })
+
+  it('marks places that keep no hours in the current slot as closed', async () => {
+    const user = userEvent.setup()
+    // The Hold keeps evening/night hours; the game starts in the morning
+    renderInterior('district-harbor', 'district-the-pale')
+
+    await user.click(screen.getByRole('button', { name: /^The Hold — closed at this hour/ }))
+    const panel = placeLedger()
+    expect(within(panel).getByText('Closed at this hour')).toBeInTheDocument()
+    expect(within(panel).getByText(/Keeps hours: evening, night/i)).toBeInTheDocument()
   })
 })

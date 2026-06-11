@@ -19,28 +19,39 @@ function renderHouseScreen(storeState = initialGameStateSnapshot) {
   return store
 }
 
+function roomLedger() {
+  return screen.getByRole('complementary', { name: 'Room ledger' })
+}
+
+async function selectRoomOnPlan(user: ReturnType<typeof userEvent.setup>, roomNamePattern: RegExp) {
+  await user.click(screen.getByRole('button', { name: roomNamePattern }))
+}
+
 describe('HouseScreen — search result lifecycle', () => {
   it('shows full discovery payload immediately after searching (fresh state)', async () => {
     const user = userEvent.setup()
     renderHouseScreen()
 
-    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
-    await user.click(within(bureauCard).getByRole('button', { name: 'Search' }))
+    await selectRoomOnPlan(user, /^Bureau —/)
+    await user.click(within(roomLedger()).getByRole('button', { name: 'Search' }))
 
     // Confirm the search in the confirmation modal
     const confirmButton = screen.getByRole('button', { name: /Search room/i })
     await user.click(confirmButton)
 
+    const panel = roomLedger()
     // Full discovery message visible in fresh state
-    expect(within(bureauCard).getByText(/A forgotten strongbox behind the panelling/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/A forgotten strongbox behind the panelling/i)).toBeInTheDocument()
     // Flavor finds visible in fresh state
-    expect(within(bureauCard).getByText(/22 Marks in pre-Breach reserve coin/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/22 Marks in pre-Breach reserve coin/i)).toBeInTheDocument()
     // Actionable find visible in fresh state
-    expect(within(bureauCard).getByText(/Removal chit proving two house ledgers were taken during the seizure/i)).toBeInTheDocument()
+    expect(
+      within(panel).getByText(/Removal chit proving two house ledgers were taken during the seizure/i),
+    ).toBeInTheDocument()
   })
 
-  it('collapses to compact state for a room that was already searched on load', () => {
-    // Pre-search the bureau in initial state
+  it('collapses to compact state for a room that was already searched on load', async () => {
+    const user = userEvent.setup()
     const preSearched = {
       ...initialGameStateSnapshot,
       house: {
@@ -52,23 +63,27 @@ describe('HouseScreen — search result lifecycle', () => {
     }
     renderHouseScreen(preSearched)
 
-    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
+    await selectRoomOnPlan(user, /^Bureau —/)
+    const panel = roomLedger()
 
     // Compact "Searched" mark is present
-    expect(within(bureauCard).getByText('✓ Searched')).toBeInTheDocument()
+    expect(within(panel).getByText('✓ Searched')).toBeInTheDocument()
 
     // Full discovery message is NOT shown in compact/archived state
-    expect(within(bureauCard).queryByText(/A forgotten strongbox behind the panelling/i)).toBeNull()
+    expect(within(panel).queryByText(/A forgotten strongbox behind the panelling/i)).toBeNull()
     // Flavor finds are NOT shown
-    expect(within(bureauCard).queryByText(/22 Marks in pre-Breach reserve coin/i)).toBeNull()
+    expect(within(panel).queryByText(/22 Marks in pre-Breach reserve coin/i)).toBeNull()
 
     // Actionable find IS shown (persistent — still needs resolution)
-    expect(within(bureauCard).getByText(/Removal chit proving two house ledgers were taken during the seizure/i)).toBeInTheDocument()
+    expect(
+      within(panel).getByText(/Removal chit proving two house ledgers were taken during the seizure/i),
+    ).toBeInTheDocument()
     // Follow-up guidance IS shown
-    expect(within(bureauCard).getByText(/Show the removal chit to Marion/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/Show the removal chit to Marion/i)).toBeInTheDocument()
   })
 
-  it('shows compact searched state for a room with no unresolved leads', () => {
+  it('shows compact searched state for a room with no unresolved leads', async () => {
+    const user = userEvent.setup()
     const preSearched = {
       ...initialGameStateSnapshot,
       house: {
@@ -80,20 +95,23 @@ describe('HouseScreen — search result lifecycle', () => {
     }
     renderHouseScreen(preSearched)
 
-    const kitchenCard = screen.getByRole('heading', { name: 'Kitchen' }).closest('article')!
-    expect(within(kitchenCard).getByText('✓ Searched')).toBeInTheDocument()
+    await selectRoomOnPlan(user, /^Kitchen —/)
+    const panel = roomLedger()
+    expect(within(panel).getByText('✓ Searched')).toBeInTheDocument()
     // Kitchen has no actionableFinds — just a simple searched state
-    expect(within(kitchenCard).queryByText(/survivors cache/i)).toBeNull()
+    expect(within(panel).queryByText(/survivors cache/i)).toBeNull()
   })
 })
 
 describe('HouseScreen — repair outcomes', () => {
-  it('shows explicit payoff statement before repairing bureau', () => {
+  it('shows explicit payoff statement before repairing bureau', async () => {
+    const user = userEvent.setup()
     renderHouseScreen()
-    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
+    await selectRoomOnPlan(user, /^Bureau —/)
+    const panel = roomLedger()
     // Bureau copy explains what repair unlocks before the player pays
-    expect(within(bureauCard).getByText(/working accounts office/i)).toBeInTheDocument()
-    expect(within(bureauCard).getByText(/Repair to track debts/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/working accounts office/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/Repair to track debts/i)).toBeInTheDocument()
   })
 
   it('shows post-repair follow-up link for bureau after repair', async () => {
@@ -102,10 +120,10 @@ describe('HouseScreen — repair outcomes', () => {
     const richState = { ...initialGameStateSnapshot, money: 100 }
     const store = renderHouseScreen(richState)
 
-    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
-    await user.click(within(bureauCard).getByRole('button', { name: /Repair/i }))
+    await selectRoomOnPlan(user, /^Bureau —/)
+    await user.click(within(roomLedger()).getByRole('button', { name: /Repair/i }))
 
-    expect(within(bureauCard).getByText(/Repairs underway/i)).toBeInTheDocument()
+    expect(within(roomLedger()).getByText(/Repairs underway/i)).toBeInTheDocument()
 
     act(() => {
       store.dispatch(gameActions.endDay())
@@ -113,28 +131,28 @@ describe('HouseScreen — repair outcomes', () => {
       store.dispatch(gameActions.endDay())
     })
 
-    // After the timer completes: post-repair follow-up link visible
-    const repairedBureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
-    expect(within(repairedBureauCard).getByText(/Accounts are in order/i)).toBeInTheDocument()
-    expect(within(repairedBureauCard).getByRole('link', { name: /View House Accounts/i })).toBeInTheDocument()
+    // After the timer completes: post-repair follow-up link visible in the panel
+    const panel = roomLedger()
+    expect(within(panel).getByText(/Accounts are in order/i)).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: /View House Accounts/i })).toBeInTheDocument()
   })
 
-  it('shows explicit payoff for kitchen before repair', () => {
+  it('shows explicit payoff for kitchen before repair', async () => {
+    const user = userEvent.setup()
     renderHouseScreen()
-    const kitchenCard = screen.getByRole('heading', { name: 'Kitchen' }).closest('article')!
-    expect(within(kitchenCard).getByText(/daily wage drops by 1 Mark/i)).toBeInTheDocument()
+    await selectRoomOnPlan(user, /^Kitchen —/)
+    expect(within(roomLedger()).getByText(/daily wage drops by 1 Mark/i)).toBeInTheDocument()
   })
 
-  it('shows explicit payoff for master chamber before repair', () => {
+  it('shows explicit payoff for master chamber before repair', async () => {
+    const user = userEvent.setup()
     renderHouseScreen()
-    const chamberCard = screen.getByRole('heading', { name: "Master's Chamber" }).closest('article') ??
-      screen.getByText(/master/i, { selector: 'h3' }).closest('article')!
-    expect(chamberCard).toBeTruthy()
-    const effectText = chamberCard!.textContent ?? ''
-    expect(effectText).toMatch(/faction contacts/i)
+    await selectRoomOnPlan(user, /^Master's Chamber —/)
+    expect(within(roomLedger()).getByText(/faction contacts/i)).toBeInTheDocument()
   })
 
-  it('shows assigned room function effect summaries when a purpose is set', () => {
+  it('shows assigned room function effect summaries when a purpose is set', async () => {
+    const user = userEvent.setup()
     const assignedState = {
       ...initialGameStateSnapshot,
       house: {
@@ -148,9 +166,10 @@ describe('HouseScreen — repair outcomes', () => {
     }
     renderHouseScreen(assignedState)
 
-    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
-    expect(within(bureauCard).getByText(/Assigned purpose:/i)).toBeInTheDocument()
-    expect(within(bureauCard).getByText(/keeps one active rumor from cooling as quickly/i)).toBeInTheDocument()
+    await selectRoomOnPlan(user, /^Bureau —/)
+    const panel = roomLedger()
+    expect(within(panel).getByText(/Assigned purpose:/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/keeps one active rumor from cooling as quickly/i)).toBeInTheDocument()
   })
 })
 
@@ -206,15 +225,17 @@ describe('HouseScreen — domestic aftermath', () => {
 })
 
 describe('HouseScreen — room occupancy', () => {
-  it('starts with Marion assigned to the quarters', () => {
+  it('starts with Marion assigned to the quarters', async () => {
+    const user = userEvent.setup()
     renderHouseScreen()
 
-    const marionRoomCard = screen.getByRole('heading', { name: 'Quarters' }).closest('article')!
-    expect(within(marionRoomCard).getByText('Marion Vale')).toBeInTheDocument()
-    expect(within(marionRoomCard).getByText(/Any housed resident can recover here between assignments/i)).toBeInTheDocument()
+    await selectRoomOnPlan(user, /^Quarters —/)
+    const panel = roomLedger()
+    expect(within(panel).getByText(/Quartered here: Marion Vale/i)).toBeInTheDocument()
+    expect(within(panel).getByText(/Any housed resident can recover here between assignments/i)).toBeInTheDocument()
   })
 
-  it('lets the player assign a roster NPC to a room and shows the occupant on the room card', async () => {
+  it('lets the player quarter a roster NPC from the room ledger and shows the name on the plan', async () => {
     const user = userEvent.setup()
     const readyHouseState = {
       ...initialGameStateSnapshot,
@@ -229,14 +250,15 @@ describe('HouseScreen — room occupancy', () => {
     }
     const store = renderHouseScreen(readyHouseState)
 
+    await selectRoomOnPlan(user, /^Bureau —/)
     await user.selectOptions(
-      screen.getByRole('combobox', { name: 'Assign Marion Vale to room' }),
-      'room-bureau',
+      within(roomLedger()).getByRole('combobox', { name: 'Assign an occupant to Bureau' }),
+      'npc-marion-vale',
     )
 
     expect(store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')?.roomAssignment).toBe('room-bureau')
-
-    const bureauCard = screen.getByRole('heading', { name: 'Bureau' }).closest('article')!
-    expect(within(bureauCard).getByText('Marion Vale')).toBeInTheDocument()
+    expect(within(roomLedger()).getByText(/Quartered here: Marion Vale/i)).toBeInTheDocument()
+    // The plan writes the occupant into the room
+    expect(screen.getAllByText(/Marion Vale/).length).toBeGreaterThanOrEqual(2)
   })
 })

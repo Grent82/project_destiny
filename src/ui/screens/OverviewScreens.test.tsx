@@ -19,7 +19,8 @@ describe('overview screens', () => {
 
     expect(screen.getByRole('heading', { name: 'The City' })).toBeInTheDocument()
     expect(screen.getAllByText('Harbor Ward').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Compact').length).toBeGreaterThan(0)
+    // The current district's ledger entry opens by default and names the powers in play
+    expect(screen.getAllByText(/Contested — Compact/).length).toBeGreaterThan(0)
   })
 
   it('renders seeded faction overview entries', () => {

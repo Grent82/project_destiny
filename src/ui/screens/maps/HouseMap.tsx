@@ -14,6 +14,9 @@ const STATE_LABELS: Record<RoomState, string> = {
 interface HouseMapProps {
   rooms: HouseRoom[]
   occupantsByRoom: Map<string, string[]>
+  selectedRoomId: string | null
+  /** Rooms with searched-but-unresolved discoveries — marked on the plan. */
+  unresolvedRoomIds: Set<string>
   onSelectRoom: (roomId: string) => void
 }
 
@@ -51,7 +54,7 @@ function roomStateDecor(room: HouseRoom, shape: { x: number; y: number; width: n
   }
 }
 
-export function HouseMap({ rooms, occupantsByRoom, onSelectRoom }: HouseMapProps) {
+export function HouseMap({ rooms, occupantsByRoom, selectedRoomId, unresolvedRoomIds, onSelectRoom }: HouseMapProps) {
   const roomsById = new Map(rooms.map((room) => [room.roomId, room]))
 
   return (
@@ -113,6 +116,7 @@ export function HouseMap({ rooms, occupantsByRoom, onSelectRoom }: HouseMapProps
           const classes = [
             'house-plan-room',
             `house-plan-room--${room.state}`,
+            shape.roomId === selectedRoomId ? 'house-plan-room--selected' : '',
             shape.annotation ? 'house-plan-room--annotation' : '',
           ]
             .filter(Boolean)
@@ -123,6 +127,7 @@ export function HouseMap({ rooms, occupantsByRoom, onSelectRoom }: HouseMapProps
               className={classes}
               role="button"
               tabIndex={0}
+              aria-pressed={shape.roomId === selectedRoomId}
               aria-label={`${room.name} — ${STATE_LABELS[room.state]}${underRepair ? `, repairs ${room.repairDaysRemaining} days` : ''}`}
               onClick={() => onSelectRoom(shape.roomId)}
               onKeyDown={(e) => {
@@ -149,6 +154,9 @@ export function HouseMap({ rooms, occupantsByRoom, onSelectRoom }: HouseMapProps
                   className="house-plan-tick"
                   d={`M${shape.x + shape.width - 14},${shape.y + 8} l3,4 6,-7`}
                 />
+              )}
+              {unresolvedRoomIds.has(shape.roomId) && (
+                <circle cx={shape.x + 9} cy={shape.y + 9} r="3.5" className="house-plan-lead-mark" />
               )}
               <text x={shape.label.x} y={shape.label.y} className="house-plan-room-name">
                 {room.name}

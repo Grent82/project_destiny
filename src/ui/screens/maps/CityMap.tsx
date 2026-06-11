@@ -35,7 +35,8 @@ interface CityMapProps {
   entries: CityMapEntry[]
   houseDistrictId: string | null
   travelTimeCost: number
-  onSelectDistrict: (districtId: string, accessRestricted: boolean) => void
+  selectedDistrictId: string | null
+  onSelectDistrict: (districtId: string) => void
   onSelectEnvirons: () => void
 }
 
@@ -52,7 +53,14 @@ function CrossingMark({ crossing, x, y }: { crossing: string; x: number; y: numb
   }
 }
 
-export function CityMap({ entries, houseDistrictId, travelTimeCost, onSelectDistrict, onSelectEnvirons }: CityMapProps) {
+export function CityMap({
+  entries,
+  houseDistrictId,
+  travelTimeCost,
+  selectedDistrictId,
+  onSelectDistrict,
+  onSelectEnvirons,
+}: CityMapProps) {
   const entriesById = new Map(entries.map((entry) => [entry.id, entry]))
 
   return (
@@ -124,13 +132,13 @@ export function CityMap({ entries, houseDistrictId, travelTimeCost, onSelectDist
         {cityDistrictShapes.map((shape) => {
           const entry = entriesById.get(shape.id)
           if (!entry) return null
-          const interactive = !entry.accessRestricted
           const classes = [
             'map-district',
             `map-district--${shape.surveyLayer}`,
             `map-district--danger-${entry.dangerLevel}`,
             entry.isCurrent ? 'map-district--current' : '',
             entry.accessRestricted ? 'map-district--restricted' : '',
+            shape.id === selectedDistrictId ? 'map-district--selected' : '',
             shape.unofficial ? 'map-district--unofficial' : '',
           ]
             .filter(Boolean)
@@ -143,14 +151,14 @@ export function CityMap({ entries, houseDistrictId, travelTimeCost, onSelectDist
                 className={classes}
                 filter={handDrawn ? 'url(#map-ink-rough)' : undefined}
                 role="button"
-                tabIndex={interactive ? 0 : -1}
-                aria-disabled={!interactive}
+                tabIndex={0}
+                aria-pressed={shape.id === selectedDistrictId}
                 aria-label={`${entry.name}${entry.isCurrent ? ' — you are here' : ''}${entry.accessRestricted ? ' — access restricted' : ''}`}
-                onClick={() => onSelectDistrict(shape.id, entry.accessRestricted)}
+                onClick={() => onSelectDistrict(shape.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    onSelectDistrict(shape.id, entry.accessRestricted)
+                    onSelectDistrict(shape.id)
                   }
                 }}
               >
@@ -160,7 +168,7 @@ export function CityMap({ entries, houseDistrictId, travelTimeCost, onSelectDist
                     ? ' — access restricted'
                     : entry.isCurrent
                       ? ' — you are here'
-                      : ` — travel: ${travelTimeCost} time slot${travelTimeCost === 1 ? '' : 's'}`}
+                      : ''}
                 </title>
               </polygon>
               <text x={shape.label.x} y={shape.label.y} className="map-district-name">

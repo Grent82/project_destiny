@@ -9,56 +9,16 @@ import {
   selectHouseRoomOccupancy,
   selectHouseRooms,
 } from '../../application'
-import { HOUSE_ROOM_FUNCTION_EFFECT_SUMMARIES } from '../../application/commands/houseRoomFunctions'
 import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import type { HouseRoom, NpcPairingPolicy, RoomState } from '../../domain/game/contracts'
+import type { NpcPairingPolicy } from '../../domain/game/contracts'
 import { VenueContextBanner } from './VenueContextBanner'
-import { ConfirmationModal } from '../components/ConfirmationModal'
 import { Link } from 'react-router-dom'
 import './HouseScreen.css'
-import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
+import { formatMarks } from '../../domain/game/currency'
 import { HouseSigil } from '../components/HouseSigil'
 import { HouseMap } from './maps/HouseMap'
-
-const ROOM_EFFECTS: Record<string, string> = {
-  'room-kitchen': 'When intact: each NPC\'s daily wage drops by 1 Mark. The house feeds its own.',
-  'room-study': 'When intact: NPCs in training gain +25% skill per day.',
-  'room-bureau': 'When intact: working accounts office. Repair to track debts, income, and house obligations from the Ledger.',
-  'room-master-chamber': 'When intact: the lord\'s chamber receives visitors. Faction contacts begin to treat the house as a going concern.',
-  'room-servant-quarters': 'When intact: +1 roster slot. The house can shelter another.',
-  'room-barracks': 'When intact: +1 roster slot for trained fighters.',
-  'room-east-wing': 'When intact: +2 roster slots. The east wing is habitable again.',
-  'room-garret': 'When intact: overlook the street below. Read district movement before it reaches the door.',
-  'room-quarters': 'One of the few sleeping rooms still fit for use. Any housed resident can recover here between assignments.',
-}
-
-/** For intact rooms with an unclear follow-up loop: surface the next actionable step. */
-const ROOM_INTACT_FOLLOWUP: Record<string, { text: string; to: string; label: string }> = {
-  'room-bureau': {
-    text: 'Accounts are in order.',
-    to: '/ledger',
-    label: 'View House Accounts →',
-  },
-}
-
-const STATE_LABELS: Record<RoomState, string> = {
-  intact: 'Intact',
-  damaged: 'Damaged',
-  stripped: 'Stripped',
-  destroyed: 'Destroyed',
-  locked: 'Locked',
-  collapsed: 'Collapsed',
-}
-
-const STATE_CLASS: Record<RoomState, string> = {
-  intact: 'house-room--intact',
-  damaged: 'house-room--damaged',
-  stripped: 'house-room--stripped',
-  destroyed: 'house-room--destroyed',
-  locked: 'house-room--locked',
-  collapsed: 'house-room--collapsed',
-}
+import { RoomLedgerPanel } from './maps/RoomLedgerPanel'
 
 const PAIRING_POLICY_COPY: Record<
   NpcPairingPolicy,
@@ -81,185 +41,6 @@ const PAIRING_POLICY_COPY: Record<
   },
 }
 
-function RoomCard({
-  occupants,
-  room,
-  marks,
-  justSearched,
-  isFocused,
-  onSearch,
-}: {
-  occupants: Array<{ npcId: string; name: string }>
-  room: HouseRoom
-  marks: number
-  justSearched: boolean
-  isFocused: boolean
-  onSearch: () => void
-}) {
-  const dispatch = useAppDispatch()
-  const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
-  const [confirmSearch, setConfirmSearch] = useState(false)
-  const canRepair =
-    room.repairCost > 0 &&
-    room.repairDaysRemaining === 0 &&
-    (room.state === 'damaged' || room.state === 'stripped' || room.state === 'collapsed' || room.state === 'destroyed') &&
-    marks >= room.repairCost
-  const canSearch =
-    !room.searched &&
-    room.state !== 'locked' &&
-    room.state !== 'collapsed' &&
-    room.state !== 'destroyed'
-  const discovery = room.searched ? getHouseDiscovery(room.roomId, vaultUnlocked) : null
-  const hasUnresolvedLeads = (discovery?.actionableFinds.length ?? 0) > 0
-
-  return (
-    <>
-    <article
-      className={`house-room ${STATE_CLASS[room.state]}${isFocused ? ' house-room--focus' : ''}`}
-      id={`room-card-${room.roomId}`}
-    >
-      <header className="house-room__header">
-        <h3 className="house-room__name">{room.name}</h3>
-        <span className="house-room__state-badge">{STATE_LABELS[room.state]}</span>
-      </header>
-
-      {ROOM_EFFECTS[room.roomId] && (
-        <p className="house-room__effect">{ROOM_EFFECTS[room.roomId]}</p>
-      )}
-      {room.roomFunction && (
-        <p className="house-room__effect">
-          Assigned purpose: <strong>{room.roomFunction}</strong>. {HOUSE_ROOM_FUNCTION_EFFECT_SUMMARIES[room.roomFunction]}
-        </p>
-      )}
-      {occupants.length > 0 && (
-        <div className="house-room__discovery" style={{ marginTop: '0.45rem' }}>
-          <p className="house-room__effect" style={{ fontStyle: 'normal', marginBottom: '0.25rem' }}>
-            Occupants
-          </p>
-          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
-            {occupants.map((occupant) => (
-              <li key={occupant.npcId}>{occupant.name}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {room.repairDaysRemaining > 0 && (
-        <p className="house-room__effect">
-          Repairs underway: <strong>{room.repairDaysRemaining}</strong> day{room.repairDaysRemaining !== 1 ? 's' : ''} remaining.
-        </p>
-      )}
-      {room.state === 'intact' && ROOM_INTACT_FOLLOWUP[room.roomId] && (
-        <p className="house-room__effect" style={{ marginTop: '0.35rem' }}>
-          {ROOM_INTACT_FOLLOWUP[room.roomId]!.text}{' '}
-          <Link to={ROOM_INTACT_FOLLOWUP[room.roomId]!.to}>
-            {ROOM_INTACT_FOLLOWUP[room.roomId]!.label}
-          </Link>
-        </p>
-      )}
-
-      {/* Fresh search: show full discovery payload */}
-      {room.searched && justSearched && discovery && (
-        <div className="house-room__discovery house-room__discovery--fresh" style={{ marginTop: '0.45rem' }}>
-          <p className="house-room__effect" style={{ fontStyle: 'normal' }}>
-            {discovery.message}
-          </p>
-          {discovery.actionableFinds.length > 0 && (
-            <div style={{ marginTop: '0.4rem' }}>
-              <p className="house-room__effect" style={{ fontStyle: 'normal', marginBottom: '0.25rem' }}>
-                Found
-              </p>
-              <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
-                {discovery.actionableFinds.map((find) => (
-                  <li key={find.itemId}>{find.label}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {discovery.flavorFinds.length > 0 && (
-            <ul style={{ margin: '0.35rem 0 0', paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--text-secondary, #9e8c6e)' }}>
-              {discovery.flavorFinds.map((find) => (
-                <li key={find}>{find}</li>
-              ))}
-            </ul>
-          )}
-          {discovery.followUp && (
-            <p className="house-room__effect" style={{ marginTop: '0.45rem', fontStyle: 'normal' }}>
-              — {discovery.followUp}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Returning view: compact searched state — only persistent leads and guidance */}
-      {room.searched && !justSearched && (
-        <div className="house-room__discovery house-room__discovery--archived" style={{ marginTop: '0.45rem' }}>
-          <p className="house-room__searched">✓ Searched</p>
-          {hasUnresolvedLeads && discovery && (
-            <ul style={{ margin: '0.3rem 0 0', paddingLeft: '1.1rem', fontSize: '0.78rem', color: 'var(--ink-2, #5d4630)' }}>
-              {discovery.actionableFinds.map((find) => (
-                <li key={find.itemId}>{find.label}</li>
-              ))}
-            </ul>
-          )}
-          {discovery?.followUp && (
-            <p className="house-room__effect" style={{ marginTop: '0.35rem', fontStyle: 'normal', fontSize: '0.78rem' }}>
-              — {discovery.followUp}
-            </p>
-          )}
-        </div>
-      )}
-
-      <footer className="house-room__actions">
-        {canRepair && (
-          <button
-            className="action-button action-button--primary"
-            onClick={() => dispatch(gameActions.repairRoom(room.roomId))}
-            type="button"
-          >
-            Repair — {formatMarksAbbrev(room.repairCost)}
-          </button>
-        )}
-        {room.repairCost > 0 && !canRepair && room.state !== 'intact' && room.repairDaysRemaining === 0 && (
-          <p className="house-room__cost-note">
-            {marks < room.repairCost
-              ? `Needs ${formatMarksAbbrev(room.repairCost)} (short ${formatMarksAbbrev(room.repairCost - marks)})`
-              : STATE_LABELS[room.state]}
-          </p>
-        )}
-        {canSearch && (
-          <button
-            className="action-button action-button--secondary"
-            onClick={() => setConfirmSearch(true)}
-            type="button"
-          >
-            Search
-          </button>
-        )}
-        {room.state === 'locked' && (
-          <p className="house-room__cost-note">Sealed. The hidden catch has not been found.</p>
-        )}
-        {room.state === 'collapsed' && room.repairCost > 0 && marks < room.repairCost && (
-          <p className="house-room__cost-note">Structural collapse. Clear rubble: {formatMarksAbbrev(room.repairCost)}.</p>
-        )}
-      </footer>
-    </article>
-    {confirmSearch && (
-      <ConfirmationModal
-        heading={`Search ${room.name}?`}
-        consequence="Searching the room will consume the search opportunity. Any findings will be revealed."
-        confirmLabel="Search room"
-        onConfirm={() => {
-          onSearch()
-          dispatch(gameActions.searchRoom(room.roomId))
-          setConfirmSearch(false)
-        }}
-        onCancel={() => setConfirmSearch(false)}
-      />
-    )}
-    </>
-  )
-}
-
 export function HouseScreen() {
   const dispatch = useAppDispatch()
   const rooms = useAppSelector(selectHouseRooms)
@@ -270,18 +51,26 @@ export function HouseScreen() {
   const roomOccupancy = useAppSelector(selectHouseRoomOccupancy)
   const roster = useAppSelector((state) => state.game.roster)
   const pairingPolicy = useAppSelector((state) => state.game.house.npcPairingPolicy)
+  const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
-  const [focusedRoomId, setFocusedRoomId] = useState<string | null>(null)
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>('room-entrance-hall')
 
   const occupantsByRoom = new Map(
     roomOccupancy.map((entry) => [entry.roomId, entry.occupants.map((occupant) => occupant.name)]),
   )
-
-  function focusRoomCard(roomId: string) {
-    setFocusedRoomId(roomId)
-    document.getElementById(`room-card-${roomId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
+  const unresolvedRoomIds = new Set(
+    rooms
+      .filter(
+        (room) =>
+          room.searched && (getHouseDiscovery(room.roomId, vaultUnlocked)?.actionableFinds.length ?? 0) > 0,
+      )
+      .map((room) => room.roomId),
+  )
+  const selectedRoom = rooms.find((room) => room.roomId === selectedRoomId) ?? null
+  const selectedOccupants = selectedRoom
+    ? (roomOccupancy.find((entry) => entry.roomId === selectedRoom.roomId)?.occupants ?? [])
+    : []
 
   return (
     <section className="screen-panel district-the-pale">
@@ -298,8 +87,6 @@ export function HouseScreen() {
       </p>
       <VenueContextBanner />
 
-      <HouseMap rooms={rooms} occupantsByRoom={occupantsByRoom} onSelectRoom={focusRoomCard} />
-
       <div className="house-status-bar">
         <span>
           <strong>{summary.intactCount}</strong> of {rooms.length} rooms intact
@@ -315,65 +102,30 @@ export function HouseScreen() {
         </span>
       </div>
 
-      <div className="house-room-grid">
-        {rooms.map((room) => (
-          <RoomCard
-            key={room.roomId}
-            marks={debt.marks}
-            occupants={roomOccupancy.find((entry) => entry.roomId === room.roomId)?.occupants ?? []}
-            room={room}
-            justSearched={room.roomId === justSearchedId}
-            isFocused={room.roomId === focusedRoomId}
-            onSearch={() => setJustSearchedId(room.roomId)}
-          />
-        ))}
+      <div className="map-with-ledger">
+        <HouseMap
+          rooms={rooms}
+          occupantsByRoom={occupantsByRoom}
+          selectedRoomId={selectedRoomId}
+          unresolvedRoomIds={unresolvedRoomIds}
+          onSelectRoom={setSelectedRoomId}
+        />
+        <RoomLedgerPanel
+          room={selectedRoom}
+          marks={debt.marks}
+          vaultUnlocked={vaultUnlocked}
+          justSearched={selectedRoom?.roomId === justSearchedId}
+          occupants={selectedOccupants}
+          roster={roster.map((npc) => ({ npcId: npc.npcId, name: npc.name, roomAssignment: npc.roomAssignment }))}
+          assignable={selectedRoom != null && assignableRooms.some((room) => room.roomId === selectedRoom.roomId)}
+          onRepair={(roomId) => dispatch(gameActions.repairRoom(roomId))}
+          onSearch={(roomId) => {
+            setJustSearchedId(roomId)
+            dispatch(gameActions.searchRoom(roomId))
+          }}
+          onAssign={(npcId, roomId) => dispatch(gameActions.setNpcRoomAssignment({ npcId, roomId }))}
+        />
       </div>
-
-      <section className="house-wards-section">
-        <h2>Room Assignments</h2>
-        <p className="summary">
-          Who sleeps and works under this roof. A room with a name on its door is a room the house
-          will not give up easily.
-        </p>
-        {roster.length === 0 ? (
-          <p className="quest-briefing">No one is currently available to house.</p>
-        ) : (
-          <div className="mission-list">
-            {roster.map((npc) => (
-              <div key={npc.npcId} className="mission-row">
-                <div className="mission-row-header">
-                  <strong>{npc.name}</strong>
-                  <span className="badge">{npc.assignment.replace('_', ' ')}</span>
-                </div>
-                <label className="quest-briefing" style={{ display: 'block', marginBottom: '0.35rem' }}>
-                  Assign room
-                  <select
-                    aria-label={`Assign ${npc.name} to room`}
-                    className="title-picker"
-                    onChange={(event) =>
-                      dispatch(
-                        gameActions.setNpcRoomAssignment({
-                          npcId: npc.npcId,
-                          roomId: event.target.value || null,
-                        }),
-                      )
-                    }
-                    style={{ display: 'block', marginTop: '0.3rem', maxWidth: '20rem' }}
-                    value={npc.roomAssignment ?? ''}
-                  >
-                    <option value="">No fixed room</option>
-                    {assignableRooms.map((room) => (
-                      <option key={room.roomId} value={room.roomId}>
-                        {room.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
 
       <section className="house-wards-section">
         <h2>Household Policy</h2>
