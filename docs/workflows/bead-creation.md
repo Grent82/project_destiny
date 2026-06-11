@@ -197,6 +197,23 @@ The strong version says what changes and what the player will notice.
 
 Prefer Beads that can prove one meaningful claim end to end.
 
+## C.L.E.A.R. Review before Bead Closure
+
+Before closing any implementation Bead with code changes, run a C.L.E.A.R. review:
+
+```bash
+/clear-review src/path/to/changed/files
+```
+
+Minimum requirements for closure:
+- **Correctness:** Tests pass, edge cases handled
+- **Libraries:** No hallucinated packages, dependencies valid
+- **Efficiency:** No obvious anti-patterns
+- **Architecture:** Clean boundaries maintained
+- **Risks:** Security review complete (if applicable)
+
+Record the review findings in the Bead notes before closure.
+
 Good:
 
 - `Household rivalry can block a rival expansion and surface the result in state and log`

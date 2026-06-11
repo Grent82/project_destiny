@@ -13,6 +13,7 @@ Project Destiny uses a coordinator-led multi-agent workflow with Beads as the on
 - Use [docs/workflows/dialogue-review.md](docs/workflows/dialogue-review.md) when designing or reviewing dialogue trees.
 - Use [docs/workflows/loop-level-verification.md](docs/workflows/loop-level-verification.md) for player-facing loop changes, routing changes, event pacing changes, and aftermath surfaces.
 - Use [docs/workflows/ki-retro.md](docs/workflows/ki-retro.md) when the user asks for lessons learned from a session, workflow errors, collaboration failures, or sustainable process improvements.
+- Use `/clear-review` skill for structured code reviews using the C.L.E.A.R. Framework (Correctness, Libraries, Efficiency, Architecture, Risks).
 - Respect role boundaries in [docs/roles](docs/roles).
 - Use [docs/workflows](docs/workflows) when the task is narrative, UI-heavy, or art-direction-heavy.
 
@@ -138,6 +139,40 @@ Before any `git commit`, verify:
 - [ ] No unintended file changes (check `git status`)
 - [ ] Commit message follows convention (`feat:`, `fix:`, `docs:`, `chore:`)
 
+## C.L.E.A.R. Review Checklist
+
+Before closing any implementation Bead with code changes:
+
+### C - Correctness
+- [ ] Code compiles without errors
+- [ ] All functional requirements met
+- [ ] Edge cases handled (null, empty, boundaries)
+- [ ] Logic verified (no off-by-one, correct conditions)
+
+### L - Libraries & Dependencies
+- [ ] All imports exist in package.json
+- [ ] No hallucinated packages or APIs
+- [ ] Dependencies follow clean architecture (Domain has no external deps)
+- [ ] `npm audit` clean or known issues documented
+
+### E - Efficiency
+- [ ] No obvious O(n²) patterns where O(n) possible
+- [ ] No redundant operations in loops
+- [ ] Resources properly managed (no leaks)
+- [ ] React: no unnecessary re-renders
+
+### A - Architecture Fit
+- [ ] Domain logic in domain layer only
+- [ ] No framework code in domain
+- [ ] Side effects at system boundaries
+- [ ] Code follows project patterns
+
+### R - Risks & Security
+- [ ] No secrets/credentials in code
+- [ ] Input validated at boundaries
+- [ ] No XSS/SQL injection risks
+- [ ] Error messages don't leak internals
+
 ## Schema Change Checklist
 
 Whenever `gameStateSchema` in `src/domain/game/contracts.ts` changes:
@@ -176,7 +211,8 @@ bd close <id>         # Complete work
 
 - Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
 - Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
+- Use `bd remember` for session-relevant insights during active work
+- Use `.claude/memory/MEMORY.md` for durable project knowledge that persists across sessions (ki-retro output)
 
 ## Session Completion
 

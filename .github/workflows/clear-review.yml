@@ -1,0 +1,203 @@
+# C.L.E.A.R. Code Review Workflow
+# Runs automated C.L.E.A.R. framework checks on pull requests
+
+name: C.L.E.A.R. Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  clear-review:
+    name: C.L.E.A.R. Framework Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # C - Correctness: Typecheck
+      - name: C - Correctness: Typecheck
+        id: typecheck
+        run: |
+          echo "### C - Correctness" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if pnpm typecheck; then
+            echo "- ✅ **Typecheck:** Passed - no TypeScript errors" >> $GITHUB_STEP_SUMMARY
+            echo "typecheck_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "- ❌ **Typecheck:** Failed - see errors below" >> $GITHUB_STEP_SUMMARY
+            echo "pnpm typecheck" >> $GITHUB_STEP_SUMMARY
+            echo "typecheck_passed=false" >> $GITHUB_OUTPUT
+          fi
+
+      # C - Correctness: Tests
+      - name: C - Correctness: Tests
+        id: tests
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          TEST_OUTPUT=$(pnpm test:run 2>&1) || true
+          TEST_COUNT=$(echo "$TEST_OUTPUT" | grep -oP '\d+(?= tests? passed)' | tail -1)
+
+          if echo "$TEST_OUTPUT" | grep -q "Test Files.*failed"; then
+            echo "- ❌ **Tests:** Some tests failed" >> $GITHUB_STEP_SUMMARY
+            echo "tests_passed=false" >> $GITHUB_OUTPUT
+          else
+            echo "- ✅ **Tests:** All $TEST_COUNT tests passed" >> $GITHUB_STEP_SUMMARY
+            echo "tests_passed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # L - Libraries: Audit and Check
+      - name: L - Libraries: Security Audit
+        id: audit
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          AUDIT_OUTPUT=$(pnpm audit --json 2>&1) || true
+          CRITICAL=$(echo "$AUDIT_OUTPUT" | grep -oP '"severity":"critical"' | wc -l || echo "0")
+          HIGH=$(echo "$AUDIT_OUTPUT" | grep -oP '"severity":"high"' | wc -l || echo "0")
+
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "- ❌ **Security Audit:** $CRITICAL critical vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            echo "audit_passed=false" >> $GITHUB_OUTPUT
+          elif [ "$HIGH" -gt 5 ]; then
+            echo "- ⚠️ **Security Audit:** $HIGH high-severity vulnerabilities (review recommended)" >> $GITHUB_STEP_SUMMARY
+            echo "audit_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "- ✅ **Security Audit:** No critical vulnerabilities" >> $GITHUB_STEP_SUMMARY
+            echo "audit_passed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # L - Libraries: Check for unused dependencies
+      - name: L - Libraries: Check unused dependencies
+        id: unused-deps
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check if import statements reference packages not in package.json
+          UNFOUND=$(grep -rh "^import.*from ['\"]" src/ | \
+            grep -oP "from ['\"]\K[^'\"]+" | \
+            grep -v "^\." | \
+            grep -v "^@" | \
+            sort -u | \
+            while read pkg; do
+              # Extract base package name (first segment)
+              BASE_PKG=$(echo "$pkg" | cut -d'/' -f1)
+              if [ "${BASE_PKG:0:1}" != "@" ]; then
+                if ! grep -q "\"$BASE_PKG\"" package.json; then
+                  echo "  - $pkg"
+                fi
+              else
+                # Scoped package
+                FULL_NAME=$(echo "$pkg" | cut -d'/' -f1,2)
+                if ! grep -q "\"$FULL_NAME\"" package.json; then
+                  echo "  - $pkg"
+                fi
+              fi
+            done)
+
+          if [ -n "$UNFOUND" ]; then
+            echo "- ⚠️ **Unused/Unknown Imports:**" >> $GITHUB_STEP_SUMMARY
+            echo "$UNFOUND" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ✅ **Imports:** All imports resolved to dependencies" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # A - Architecture: Check dependency direction
+      - name: A - Architecture: Dependency Direction Check
+        id: architecture
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check that domain does not import from application, ui, or infrastructure
+          DOMAIN_VIOLATIONS=$(grep -r "^import.*from.*\(application\|ui\|infrastructure\)" src/domain/ 2>/dev/null || true)
+
+          if [ -n "$DOMAIN_VIOLATIONS" ]; then
+            echo "- ❌ **Architecture:** Domain layer violations detected:" >> $GITHUB_STEP_SUMMARY
+            echo "$DOMAIN_VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+            echo "arch_passed=false" >> $GITHUB_OUTPUT
+          else
+            echo "- ✅ **Architecture:** Clean dependency direction maintained" >> $GITHUB_STEP_SUMMARY
+            echo "arch_passed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # R - Risks: Check for hardcoded secrets
+      - name: R - Risks: Secret Detection
+        id: secrets
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Common secret patterns
+          SECRET_PATTERNS=(
+            'apiKey\s*[:=]\s*["\x27][a-zA-Z0-9]{32,}["\x27]'
+            'secret\s*[:=]\s*["\x27][a-zA-Z0-9]{20,}["\x27]'
+            'password\s*[:=]\s*["\x27][^\s]{8,}["\x27]'
+            'AWS[_A-Z]*_SECRET'
+            'PRIVATE[_A-Z]*KEY'
+          )
+
+          SECRETS_FOUND=""
+          for pattern in "${SECRET_PATTERNS[@]}"; do
+            MATCHES=$(grep -rE "$pattern" src/ data/ 2>/dev/null | grep -v "example" | grep -v ".test." || true)
+            if [ -n "$MATCHES" ]; then
+              SECRETS_FOUND="$SECRETS_FOUND\n$MATCHES"
+            fi
+          done
+
+          if [ -n "$SECRETS_FOUND" ]; then
+            echo "- ⚠️ **Secret Detection:** Potential secrets found (review manually):" >> $GITHUB_STEP_SUMMARY
+            echo -e "$SECRETS_FOUND" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ✅ **Secret Detection:** No obvious secrets found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # Summary
+      - name: Generate C.L.E.A.R. Review Summary
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "## C.L.E.A.R. Review Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          PASSED=true
+
+          if [ "${{ steps.typecheck.outputs.typecheck_passed }}" != "true" ]; then
+            PASSED=false
+          fi
+
+          if [ "${{ steps.tests.outputs.tests_passed }}" != "true" ]; then
+            PASSED=false
+          fi
+
+          if [ "${{ steps.audit.outputs.audit_passed }}" != "true" ]; then
+            PASSED=false
+          fi
+
+          if [ "${{ steps.architecture.outputs.arch_passed }}" != "true" ]; then
+            PASSED=false
+          fi
+
+          if [ "$PASSED" = "true" ]; then
+            echo "✅ **C.L.E.A.R. Review: PASSED**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **C.L.E.A.R. Review: FAILED** - Please address issues above" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
