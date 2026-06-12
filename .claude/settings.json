@@ -33,5 +33,9 @@
         "matcher": ""
       }
     ]
+  },
+  "statusLine": {
+    "command": "/bin/bash ./.claude/hooks/agent-statusline.sh",
+    "type": "command"
   }
 }
