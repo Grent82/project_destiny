@@ -4,3 +4,7 @@
 - [Feedback: Modellwahl pro Aufgabe selbst entscheiden](feedback_model-selection.md) — Nutzer-Direktive 2026-06-11, Kriterien im lower-model-playbook
 - [Feedback: Enemy NPCs müssen in npcs.json UND enemy-npcs.json existieren](feedback_npc-content-validation.md) — contentCatalog validiert enemyNpcId gegen npcsById, nicht enemyNpcsById
 - [Feedback: JSON-Dateien nie mit Bash-Heredocs editieren](feedback_avoid_bash_json_manipulation.md) — Immer Read → Edit workflow verwenden
+- [Feedback: bd-CLI-Konventionen — Epic-Parenting via --parent, Pflichtsektionen je Typ](feedback_bd-cli-conventions.md) — 21 Fehlermeldungen + 2 Patch-Runden 2026-06-12
+- [Feedback: Bead-Batches vor Freigabe durch Fact-Check-Subagent reviewen](feedback_backlog-review-subagent.md) — fand 2 Blocker in 21 frischen Beads
+- [Feedback: Audit-Artefakte sofort nach reports/ oder in Beads einbetten, nie Chat-Verweise](feedback_audit-evidence-as-files.md) — Review-BLOCKER wegen nicht existenter 68er-Liste
+- [Projekt: Tooling-Quirks — vitest schluckt console.log, Playwright-MCP-Screenshots flüchtig](project_test-tooling-quirks.md) — Headless-Sim als Audit-Werkzeug
