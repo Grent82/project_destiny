@@ -1226,9 +1226,6 @@ Summary:
 
 ### 16.4 What sensual presentation is not
 
-- It is not a skin system or unlock store
-- It is not applied uniformly to all characters regardless of who they are in the world
-- It is not present in the UI outside of character-specific relationship contexts
 - It does not override character competence, political identity, or narrative function — a character's primary identity remains who they are, not what they look like
 
 
