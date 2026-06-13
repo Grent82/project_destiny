@@ -15,7 +15,7 @@ function makeQuestState(overrides: Partial<QuestRuntime> = {}): GameState {
     stageId: 'accepted',
     objectiveMet: false,
     currentObjectiveLabel: 'Do the thing.',
-    progress: { requiredSteps: 2, completedSteps: 1, lastAdvancedDay: null },
+    progress: { requiredSteps: 2, completedSteps: 1, lastAdvancedDay: null, lastSurveillanceLoggedDay: null },
     context: {
       incidentDistrictId: null,
       issuerFactionId: null,

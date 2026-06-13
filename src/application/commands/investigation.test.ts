@@ -307,6 +307,7 @@ describe('resolveInvestigation', () => {
           requiredSteps: 5,
           completedSteps: 4,
           lastAdvancedDay: 2,
+          lastSurveillanceLoggedDay: 2,
         },
       })],
       money: 0,

@@ -14,7 +14,7 @@ function makeQuestRuntime(partial: Partial<QuestRuntime> = {}): QuestRuntime {
     stageId: 'on-site-prep',
     objectiveMet: false,
     currentObjectiveLabel: 'Engage the threat.',
-    progress: { requiredSteps: 2, completedSteps: 1, lastAdvancedDay: null },
+    progress: { requiredSteps: 2, completedSteps: 1, lastAdvancedDay: null, lastSurveillanceLoggedDay: null },
     context: {
       incidentDistrictId: 'district-the-warrens',
       issuerFactionId: 'faction-civic-compact',

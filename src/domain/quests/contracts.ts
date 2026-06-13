@@ -85,6 +85,7 @@ export const questRuntimeProgressSchema = z.object({
   requiredSteps: z.number().int().nonnegative().default(1),
   completedSteps: z.number().int().nonnegative().default(0),
   lastAdvancedDay: z.number().int().positive().nullable().default(null),
+  lastSurveillanceLoggedDay: z.number().int().positive().nullable().default(null),
 }).strict()
 
 export const questRuntimeContextSchema = z.object({
@@ -125,6 +126,7 @@ export const questRuntimeSchema = z.object({
     requiredSteps: 1,
     completedSteps: 0,
     lastAdvancedDay: null,
+    lastSurveillanceLoggedDay: null,
   })),
   context: questRuntimeContextSchema.default(() => ({
     incidentDistrictId: null,

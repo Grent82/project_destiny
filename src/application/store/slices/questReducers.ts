@@ -247,8 +247,10 @@ export const questReducers = {
     if (requiredDays != null) {
       const setupSteps = 2
       const surveillanceDaysLogged = Math.max(0, runtime.progress.completedSteps - setupSteps)
+      // Use lastSurveillanceLoggedDay for deduplication - separate from lastAdvancedDay
+      // which can be overwritten by startInvestigation on subsequent days
       const alreadyWorkedToday =
-        surveillanceDaysLogged > 0 && runtime.progress.lastAdvancedDay === state.day
+        surveillanceDaysLogged > 0 && runtime.progress.lastSurveillanceLoggedDay === state.day
       const nextSurveillanceDaysLogged = alreadyWorkedToday
         ? surveillanceDaysLogged
         : Math.min(requiredDays, surveillanceDaysLogged + 1)
@@ -257,6 +259,11 @@ export const questReducers = {
         runtime.progress.completedSteps,
         setupSteps + nextSurveillanceDaysLogged,
       )
+      // Only update lastSurveillanceLoggedDay when actually logging progress
+      if (!alreadyWorkedToday) {
+        runtime.progress.lastSurveillanceLoggedDay = state.day
+      }
+      // Always update lastAdvancedDay for generic "last touched" tracking
       runtime.progress.lastAdvancedDay = state.day
 
       if (!alreadyWorkedToday) {
