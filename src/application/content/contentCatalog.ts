@@ -164,22 +164,130 @@ export const contentCatalog = {
   ),
 }
 
+// Required-field matrix for outcome types
+const outcomeRequiredFields: Record<string, { required: string[]; enumTarget?: string[]; forbidKeys?: string[] }> = {
+  adjustFactionStanding: { required: ['target', 'delta'] },
+  adjustCityDial: { required: ['target', 'delta'], enumTarget: ['control', 'prosperity', 'unrest', 'corruption'] },
+  adjustCityResource: { required: ['target', 'delta'], enumTarget: ['foodSecurity', 'waterAccess', 'materialStock'] },
+  addCredits: { required: ['delta'] },
+  addActivityLogEntry: { required: ['message'] },
+  setCorridorStatus: { required: ['target'], enumTarget: ['open', 'disrupted', 'blocked'] },
+  adjustNpcRelationship: { required: ['npcId', 'axis', 'delta'], forbidKeys: ['target'] },
+  createQuestLead: { required: ['questId'] },
+  updateQuestStage: { required: ['questId', 'stageId'] },
+  unlockNpc: { required: ['npcId'] },
+  addNpcToRoster: { required: ['npcId'] },
+  transferBondedNpc: { required: [] },
+}
+
+const npcAxes = ['affinity', 'respect', 'fear', 'trust', 'loyalty'] as const
+
 function validateCatalogIntegrity(): void {
   const errors: string[] = []
-  const { questsById, npcsById, itemsById } = contentCatalog
+  const { questsById, npcsById, itemsById, factionsById, districtsById } = contentCatalog
 
-  // Check event outcome cross-references
+  // Check event outcome cross-references and required fields
   for (const event of contentCatalog.events) {
+    // Validate sourceDistrictId if present
+    if (event.sourceDistrictId != null && !districtsById.has(event.sourceDistrictId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid sourceDistrictId "${event.sourceDistrictId}" which does not exist in districts catalog`,
+      )
+    }
+
+    // Validate sourceNpcId if present
+    if (event.sourceNpcId != null && !npcsById.has(event.sourceNpcId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid sourceNpcId "${event.sourceNpcId}" which does not exist in npcs catalog`,
+      )
+    }
+
+    // Validate trigger conditions
+    const tc = event.triggerConditions
+    if (tc.currentDistrict != null && !districtsById.has(tc.currentDistrict)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid triggerConditions.currentDistrict "${tc.currentDistrict}" which does not exist in districts catalog`,
+      )
+    }
+    if (tc.requiredRosterNpcId != null && !npcsById.has(tc.requiredRosterNpcId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid triggerConditions.requiredRosterNpcId "${tc.requiredRosterNpcId}" which does not exist in npcs catalog`,
+      )
+    }
+    if (tc.activeQuestId != null && !questsById.has(tc.activeQuestId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid triggerConditions.activeQuestId "${tc.activeQuestId}" which does not exist in quests catalog`,
+      )
+    }
+    if (tc.factionStandingBelow?.factionId && !factionsById.has(tc.factionStandingBelow.factionId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid triggerConditions.factionStandingBelow.factionId "${tc.factionStandingBelow.factionId}" which does not exist in factions catalog`,
+      )
+    }
+    if (tc.factionStandingAbove?.factionId && !factionsById.has(tc.factionStandingAbove.factionId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid triggerConditions.factionStandingAbove.factionId "${tc.factionStandingAbove.factionId}" which does not exist in factions catalog`,
+      )
+    }
+    if (tc.npcRelationshipMin?.npcId && !npcsById.has(tc.npcRelationshipMin.npcId)) {
+      errors.push(
+        `events.json: event "${event.id}" has invalid triggerConditions.npcRelationshipMin.npcId "${tc.npcRelationshipMin.npcId}" which does not exist in npcs catalog`,
+      )
+    }
+
     for (const choice of event.choices) {
       for (const outcome of choice.outcomes) {
+        const outcomeType = outcome.type
+        const rules = outcomeRequiredFields[outcomeType]
+
+        // Check required fields
+        if (rules) {
+          for (const field of rules.required) {
+            if (outcome[field as keyof typeof outcome] == null) {
+              errors.push(
+                `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" missing required field "${field}"`,
+              )
+            }
+          }
+
+          // Check enum targets
+          if (rules.enumTarget && outcome.target && !rules.enumTarget!.includes(outcome.target)) {
+            errors.push(
+              `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" has invalid target "${outcome.target}"; expected one of: ${rules.enumTarget!.join(', ')}`,
+            )
+          }
+
+          // Check forbidden keys (the "target" vs "npcId" bug class)
+          if (rules.forbidKeys?.includes('target') && outcome.target != null) {
+            errors.push(
+              `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" uses forbidden field "target" instead of "npcId"`,
+            )
+          }
+        }
+
+        // Validate ID references
         if (outcome.npcId != null && !npcsById.has(outcome.npcId)) {
           errors.push(
-            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcome.type}" references npcId "${outcome.npcId}" which does not exist in npcs catalog`,
+            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" references npcId "${outcome.npcId}" which does not exist in npcs catalog`,
           )
         }
         if (outcome.questId != null && !questsById.has(outcome.questId)) {
           errors.push(
-            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcome.type}" references questId "${outcome.questId}" which does not exist in quests catalog`,
+            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" references questId "${outcome.questId}" which does not exist in quests catalog`,
+          )
+        }
+        if (outcome.target != null) {
+          // Validate target against appropriate catalog based on outcome type
+          if (outcomeType === 'adjustFactionStanding' && !factionsById.has(outcome.target)) {
+            errors.push(
+              `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" references target faction "${outcome.target}" which does not exist in factions catalog`,
+            )
+          }
+        }
+        // Validate axis for adjustNpcRelationship
+        if (outcomeType === 'adjustNpcRelationship' && outcome.axis && !npcAxes.includes(outcome.axis as typeof npcAxes[number])) {
+          errors.push(
+            `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" has invalid axis "${outcome.axis}"`,
           )
         }
       }

@@ -136,7 +136,7 @@
         "outcomes": [
           {
             "type": "setCorridorStatus",
-            "value": "disrupted"
+            "target": "disrupted"
           },
           {
             "type": "adjustFactionStanding",
@@ -155,7 +155,7 @@
         "outcomes": [
           {
             "type": "setCorridorStatus",
-            "value": "disrupted"
+            "target": "disrupted"
           },
           {
             "type": "adjustCityDial",
