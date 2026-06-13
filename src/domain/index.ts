@@ -1,4 +1,5 @@
 export * from './combat/contracts'
+export * from './chronicle/contracts'
 export * from './districts/contracts'
 export * from './rumors/contracts'
 export * from './events/contracts'

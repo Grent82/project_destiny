@@ -96,6 +96,7 @@ const baseState: GameState = {
   rumors: [],
   bondVisibility: {},
   ownedItems: [],
+  chronicle: { entriesByDay: {}, version: 1 },
   houseStorageCapacity: 40,
   installedHouseModules: [],
   eventInstances: [],

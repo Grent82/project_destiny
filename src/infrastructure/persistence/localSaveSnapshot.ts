@@ -1,5 +1,6 @@
 import { gameStateSchema, type GameState } from '../../domain'
 import type { SaveGameStore } from '../../application/ports/saveGameStore'
+import { createEmptyChronicle } from '../../domain/chronicle/contracts'
 
 interface StorageLike {
   getItem(key: string): string | null
@@ -86,6 +87,12 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 2) {
+    // v2 → v3: add chronicle field
+    const raw2 = raw as Record<string, unknown>
+    return gameStateSchema.safeParse({ ...raw2, saveVersion: 3, chronicle: createEmptyChronicle() }).data ?? null
+  }
+
+  if (version === 3) {
     return gameStateSchema.safeParse(raw).data ?? null
   }
 

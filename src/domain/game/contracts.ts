@@ -21,6 +21,7 @@ import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
 import { npcSitePresenceSchema, siteRuntimeSchema } from '../world/runtime'
+import { chronicleSchema } from '../chronicle/contracts'
 
 export const districtRuntimeStateSchema = z
   .object({
@@ -384,6 +385,10 @@ export const gameStateSchema = z
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),
+    chronicle: chronicleSchema.default(() => ({
+      entriesByDay: {},
+      version: 1,
+    })),
     rumors: z.array(rumorSchema).default([]),
     bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),
     worldNpcStates: z.array(worldNpcRuntimeStateSchema).default([]),

@@ -20,7 +20,7 @@ import {
   captivityPregnancyDiscoveryKey,
 } from '../../commands/captivityPregnancyDiscovery'
 import { getNpcCaptivityState, setNpcCaptivityState } from '../../commands/captivityRegistry'
-import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
+import { MAX_ACTIVITY_ENTRIES, generateActivityLogId } from '../../commands/activityLog'
 
 export const rosterReducers = {
   addNpcToSelectedSquad(state: GameState, action: PayloadAction<string>) {
@@ -102,7 +102,7 @@ export const rosterReducers = {
     npc.activeTitle = titleId
     const roleLabel = titleId.replace('title-', '').replace('-', ' ')
     state.activityLog.unshift({
-      id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+      id: generateActivityLogId(state.activityLog, state.day, state.timeSlot),
       day: state.day,
       timeSlot: state.timeSlot,
       category: 'system',
@@ -118,7 +118,7 @@ export const rosterReducers = {
     if (!npc) return
     npc.activeTitle = null
     state.activityLog.unshift({
-      id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
+      id: generateActivityLogId(state.activityLog, state.day, state.timeSlot),
       day: state.day,
       timeSlot: state.timeSlot,
       category: 'system',
@@ -167,7 +167,7 @@ export const rosterReducers = {
     }
 
     state.activityLog.unshift({
-      id: `log-${state.day}-${state.timeSlot}-rescue-${npcId}`,
+      id: generateActivityLogId(state.activityLog, state.day, state.timeSlot),
       day: state.day,
       timeSlot: state.timeSlot,
       category: 'system',
