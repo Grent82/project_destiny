@@ -17,7 +17,7 @@ export function EventModal() {
 
   if (pendingEvents.length === 0 && !lastResolvedEventSummary) return null
 
-  if (pendingEvents.length === 0 && lastResolvedEventSummary) {
+  if (lastResolvedEventSummary) {
     const sections = [
       { title: 'Player Impact', lines: lastResolvedEventSummary.playerEffects },
       { title: 'NPC Impact', lines: lastResolvedEventSummary.npcEffects },
@@ -51,6 +51,11 @@ export function EventModal() {
                 </section>
               ))}
             </div>
+          )}
+          {pendingEvents.length > 0 && (
+            <p className="event-modal-queue">
+              +{pendingEvents.length} more event{pendingEvents.length > 1 ? 's' : ''} pending
+            </p>
           )}
           <div className="event-modal-choices">
             <button
