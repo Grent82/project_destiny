@@ -33,6 +33,8 @@ import { applyNpcRoomInteractions } from './applyNpcRoomInteractions'
 import { applyWorldHouseholdGrowth } from './applyWorldHouseholdGrowth'
 import { applyAbstractCustodySimulation } from './applyAbstractCustodySimulation'
 import { tickHouseRepairs } from './houseRepairs'
+import { expireTimedQuestsOnState } from './questLifecycle'
+import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -243,6 +245,25 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyCaptivityDegradation(afterEvents)
   afterEvents = tickWardStages(afterEvents)
   const finalState = checkMainQuestProgression(afterEvents)
+
+  // Step 13: Quest expiry and debt crisis (end-of-day consequences)
+  expireTimedQuestsOnState(finalState)
+  if (
+    !finalState.debtPaid &&
+    !finalState.debtCrisisTriggered &&
+    finalState.day >= finalState.debtDueDay &&
+    finalState.money < finalState.debtAmount
+  ) {
+    finalState.debtCrisisTriggered = true
+    finalState.activityLog.unshift({
+      id: `log-${finalState.day}-${finalState.timeSlot}-debt-crisis`,
+      day: finalState.day,
+      timeSlot: finalState.timeSlot,
+      category: 'system',
+      message: 'The debt-claim against House Valdris has come due. Court-backed enforcers move on the note. The house is seized.',
+    })
+    if (finalState.activityLog.length >= MAX_ACTIVITY_ENTRIES) finalState.activityLog.pop()
+  }
 
   // Store advanced RNG seed for next day's deterministic run
   return { ...finalState, rngSeed: seeded.getSeed() }

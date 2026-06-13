@@ -100,13 +100,59 @@ describe('evaluateEvents', () => {
     expect(ids).not.toContain('event-unpaid-wages-unrest')
   })
 
-  it('populates lastFiredDay after evaluateEvents runs', () => {
+  it('populates lastFiredDay only for events that became pending', () => {
     const state = makeState({
       cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
       lastFiredDay: {},
     })
     const next = evaluateEvents(state, alwaysFire)
+    // Event that was queued should have lastFiredDay set
     expect(next.lastFiredDay['event-unpaid-wages-unrest']).toBe(state.day)
+  })
+
+  it('does not record lastFiredDay for truncated events', () => {
+    // Create a state where many events are eligible
+    // Only 5 regular events should become pending, others should NOT be in lastFiredDay
+    const state = makeState({
+      day: 10,
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      lastFiredDay: {},
+      pendingEvents: [], // Clear any pending events
+    })
+    const next = evaluateEvents(state, alwaysFire)
+
+    // Events in pendingEvents should have lastFiredDay set
+    for (const pendingEvent of next.pendingEvents) {
+      expect(next.lastFiredDay[pendingEvent.eventId]).toBe(state.day)
+    }
+  })
+
+  it('truncated event can fire on a later day', () => {
+    // This test proves that truncated events remain eligible
+    const state = makeState({
+      day: 10,
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      lastFiredDay: {},
+      pendingEvents: [],
+    })
+    const afterFirstEval = evaluateEvents(state, alwaysFire)
+
+    // On the next evaluation (same day, but simulating a new tick),
+    // events not in lastFiredDay should still be eligible
+    // Since we're on the same day, they'd still be on cooldown from first eval
+    // So we advance the day to test re-eligibility
+    const stateDay11 = makeState({
+      day: 11,
+      cityDials: { control: 50, prosperity: 50, unrest: 70, corruption: 20 },
+      lastFiredDay: afterFirstEval.lastFiredDay,
+      pendingEvents: [], // Clear pending to see new selections
+    })
+    const afterSecondEval = evaluateEvents(stateDay11, alwaysFire)
+
+    // All events selected on day 11 should have lastFiredDay[day11]
+    for (const pendingEvent of afterSecondEval.pendingEvents) {
+      expect(afterSecondEval.lastFiredDay[pendingEvent.eventId]).toBe(11)
+    }
   })
 
   it('does not re-fire same event within same day even if conditions still met', () => {

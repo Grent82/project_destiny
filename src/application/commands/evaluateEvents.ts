@@ -56,14 +56,13 @@ function isOnCooldown(template: EventTemplate, state: GameState): boolean {
 
 // Maximum regular (non-priority) events surfaced to the player per tick.
 // Priority (isFirstRun tutorial) events are always included and do not count against this cap.
-// All eligible events consume RNG and are recorded in lastFiredDay to keep the seed sequence
-// deterministic across days — only the subset presented to the player is truncated.
+// Only events that actually become pending are recorded in lastFiredDay.
+// Truncated events remain eligible and compete again next tick.
 const MAX_REGULAR_EVENTS_PER_TICK = 5
 
 export function evaluateEvents(state: GameState, rng: Rng = Math.random): GameState {
   const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
   const eligible: Array<{ eventId: string; isPriority: boolean }> = []
-  const newLastFiredDay: Record<string, number> = {}
 
   for (const template of contentCatalog.events) {
     if (alreadyPending.has(template.id)) continue
@@ -71,7 +70,6 @@ export function evaluateEvents(state: GameState, rng: Rng = Math.random): GameSt
     if (!checkConditions(template, state, rng)) continue
     const isPriority = template.triggerConditions.isFirstRun === true
     eligible.push({ eventId: template.id, isPriority })
-    newLastFiredDay[template.id] = state.day
   }
 
   if (eligible.length === 0) return state
@@ -79,10 +77,17 @@ export function evaluateEvents(state: GameState, rng: Rng = Math.random): GameSt
   // Apply budget: all events consume RNG above; only a capped set becomes pending.
   const priorityEvents = eligible.filter((e) => e.isPriority)
   const regularEvents = eligible.filter((e) => !e.isPriority)
+  const selectedRegular = regularEvents.slice(0, MAX_REGULAR_EVENTS_PER_TICK)
   const newPending: typeof state.pendingEvents = [
     ...priorityEvents.map((e) => ({ eventId: e.eventId, firedOnDay: state.day })),
-    ...regularEvents.slice(0, MAX_REGULAR_EVENTS_PER_TICK).map((e) => ({ eventId: e.eventId, firedOnDay: state.day })),
+    ...selectedRegular.map((e) => ({ eventId: e.eventId, firedOnDay: state.day })),
   ]
+
+  // Only record lastFiredDay for events that actually became pending
+  const newLastFiredDay: Record<string, number> = {}
+  for (const e of [...priorityEvents, ...selectedRegular]) {
+    newLastFiredDay[e.eventId] = state.day
+  }
 
   return {
     ...state,
