@@ -116,7 +116,7 @@
       "faction",
       "political"
     ],
-    "sourceDistrictId": "district-gilded-quarter",
+    "sourceDistrictId": "district-gilded-heights",
     "sourceNpcId": null,
     "presentationFlavour": "A sealed letter bearing House Aurevaine's crest. The wax is still warm."
   },
@@ -232,7 +232,7 @@
       "economy",
       "black-market"
     ],
-    "sourceDistrictId": "district-pale-warrens",
+    "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
     "presentationFlavour": "The broker smells of tallow and speaks too quietly to be overheard."
   },
@@ -3074,7 +3074,7 @@
         "outcomes": [
           {
             "type": "adjustNpcRelationship",
-            "target": "npc-marion-vale",
+            "npcId": "npc-marion-vale",
             "axis": "trust",
             "delta": 5
           },
@@ -3158,7 +3158,7 @@
         "outcomes": [
           {
             "type": "adjustNpcRelationship",
-            "target": "npc-garet-doyle",
+            "npcId": "npc-garet-doyle",
             "axis": "trust",
             "delta": 3
           },
@@ -3174,7 +3174,7 @@
         "outcomes": [
           {
             "type": "adjustNpcRelationship",
-            "target": "npc-garet-doyle",
+            "npcId": "npc-garet-doyle",
             "axis": "trust",
             "delta": 5
           },
