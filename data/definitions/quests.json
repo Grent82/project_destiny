@@ -23,6 +23,11 @@
     "successorRumorIds": ["rumor-valdris-cleared-harborwatch"],
     "midQuestBeats": [
       {
+        "atStageId": "pressured",
+        "label": "The Tallow Ring has moved up their timeline. They are coming tonight.",
+        "journalEntry": "The Ring learned about the Compact's request. They are accelerating their response — you have less time than expected."
+      },
+      {
         "atStageId": "on-site-prep",
         "label": "The watchpost is abandoned. Someone cleared it out before you arrived.",
         "journalEntry": "No one is at the Harborwatch post. The dispute may run deeper than a missing guard."
@@ -61,6 +66,11 @@
     "successorQuestId": "quest-ledger-debt-followup",
     "successorOnFailQuestId": "quest-ledger-burned",
     "midQuestBeats": [
+      {
+        "atStageId": "pressured",
+        "label": "Lady Sorn has sent a message: the ledger is worth more dead than alive.",
+        "journalEntry": "A courier delivered a warning — burn the ledger or lose your house. Lady Sorn is not waiting for the Court's decision."
+      },
       {
         "atStageId": "on-site-prep",
         "label": "The ledger chamber is not empty. Someone is already here.",
@@ -494,6 +504,11 @@
     "rewardDebtReduction": 0,
     "rewardRelationshipDeltas": [{"npcId": "npc-mira", "trust": 40, "fear": -20}],
     "midQuestBeats": [
+      {
+        "atStageId": "pressured",
+        "label": "The Court has doubled the guard rotation. They know you are coming.",
+        "journalEntry": "A runner from the tannery's perimeter reported back: the Gilded Court has increased the guard count. Someone tipped them off."
+      },
       {
         "atStageId": "engaged",
         "label": "Inside the tannery. The guards are not expecting resistance — but they are positioned.",

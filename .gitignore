@@ -14,3 +14,7 @@ storybook-static
 
 # Playwright session artifacts
 .playwright-mcp/
+
+.claude/*
+
+.claude/ralph-loop.local.md

@@ -35,6 +35,7 @@ import { applyAbstractCustodySimulation } from './applyAbstractCustodySimulation
 import { tickHouseRepairs } from './houseRepairs'
 import { expireTimedQuestsOnState } from './questLifecycle'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
+import { applyOpponentPressure, logOpponentPressure } from './applyOpponentPressure'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -218,6 +219,11 @@ export function endDay(state: GameState): GameState {
   afterEvents = applyFactionActivity(afterEvents)
   afterEvents = applyWorldNpcSocialSimulation(afterEvents, rng)
   afterEvents = applyRumorSpread(afterEvents, rng)
+
+  // Step 9a: Opponent pressure on running quests (15% chance per active quest with enemy)
+  const opponentPressureRandoms = Array.from({ length: afterEvents.activeQuests.length }, () => rng())
+  const pressured = applyOpponentPressure(afterEvents, opponentPressureRandoms)
+  logOpponentPressure(afterEvents, pressured)
 
   // Steps 9b-9c: Experiential trait drift and arc stage transitions
   afterEvents = applyNpcTraitDrift(afterEvents, rng)
