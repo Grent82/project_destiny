@@ -264,6 +264,8 @@
   "availableQuestLeads": [],
   "activeQuests": [],
   "completedQuestIds": [],
+  "failedQuestIds": [],
+  "questHistory": [],
   "councilSeats": {
     "faction-civic-compact": 3,
     "faction-gilded-court": 2,

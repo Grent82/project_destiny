@@ -209,10 +209,13 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   }
   runtime.journalEntries = journalEntries
 
+  // Archive the completed quest before removing from active
+  const archivedQuest = { ...runtime }
   state.activeQuests.splice(questIndex, 1)
   if (!state.completedQuestIds.includes(questId)) {
     state.completedQuestIds.push(questId)
   }
+  state.questHistory.push(archivedQuest)
 
   const questTitle = template?.title ?? runtime.acceptedTitle
   if (!template) {
@@ -448,10 +451,13 @@ export function settleQuestPartialSuccess(state: GameState, questId: string, opt
     runtime.journalEntries = [...runtime.journalEntries, template.aftermathText]
   }
 
+  // Archive the completed quest before removing from active
+  const archivedQuest = { ...runtime }
   state.activeQuests.splice(questIndex, 1)
   if (!state.completedQuestIds.includes(questId)) {
     state.completedQuestIds.push(questId)
   }
+  state.questHistory.push(archivedQuest)
 
   const questTitle = template?.title ?? runtime.acceptedTitle
   const halfReward = template ? Math.floor(template.rewardMarks * 0.5) : 0
@@ -496,7 +502,11 @@ export function settleQuestFailure(state: GameState, questId: string, options: Q
     options.journalEntry ?? 'The contract failed before the house could settle it.',
   ]
 
+  // Archive the failed quest before removing from active
+  const archivedQuest = { ...runtime }
   state.activeQuests.splice(questIndex, 1)
+  state.failedQuestIds.push(questId)
+  state.questHistory.push(archivedQuest)
 
   const questTitle = template?.title ?? runtime.acceptedTitle
   const applyStanding = options.applyStanding ?? true

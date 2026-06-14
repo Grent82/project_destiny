@@ -187,3 +187,68 @@ describe('resolveSimpleContractObjective (via resolveSimpleContract action)', ()
     expect(store.getState().game.completedQuestIds).toHaveLength(0)
   })
 })
+
+describe('failed quest archiving and rediscovery prevention', () => {
+  it('archives failed quests to questHistory and failedQuestIds', () => {
+    const store = makeStore({
+      day: 10,
+      availableQuestLeads: [],
+      activeQuests: [makeActiveQuest('quest-foundry-escort')],
+      completedQuestIds: [],
+      failedQuestIds: [],
+      questHistory: [],
+    })
+    store.dispatch(gameActions.expireTimedQuests())
+    const state = store.getState().game
+    expect(state.failedQuestIds).toContain('quest-foundry-escort')
+    expect(state.questHistory).toHaveLength(1)
+    expect(state.questHistory[0].questId).toBe('quest-foundry-escort')
+    expect(state.questHistory[0].status).toBe('failed')
+  })
+
+  it('archives completed quests to questHistory', () => {
+    const store = makeStore({
+      availableQuestLeads: [],
+      activeQuests: [makeActiveQuest('quest-nightbloom-extract')],
+      completedQuestIds: [],
+      failedQuestIds: [],
+      questHistory: [],
+    })
+    store.dispatch(gameActions.advanceToOnSiteStep({ questId: 'quest-nightbloom-extract' }))
+    store.dispatch(gameActions.resolveSimpleContract({ questId: 'quest-nightbloom-extract' }))
+    const state = store.getState().game
+    expect(state.questHistory).toHaveLength(1)
+    expect(state.questHistory[0].questId).toBe('quest-nightbloom-extract')
+    expect(state.questHistory[0].status).toBe('completed')
+  })
+
+  it('prevents rediscovery of failed quests with retryBehavior fail', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      availableQuestLeads: [],
+      activeQuests: [],
+      completedQuestIds: [],
+      failedQuestIds: ['quest-foundry-escort'],
+      questHistory: [makeActiveQuest('quest-foundry-escort', { status: 'failed' })],
+    })
+    // quest-foundry-escort has retryBehavior 'fail' (default)
+    expect(canDiscoverQuest(state, 'quest-foundry-escort')).toBe(false)
+  })
+
+  it('allows rediscovery of failed quests with retryBehavior retryable', () => {
+    // Create a failed quest with retryable behavior
+    const failedQuest = makeActiveQuest('quest-harborwatch', {
+      status: 'failed',
+      context: { ...makeActiveQuest('quest-harborwatch').context, retryBehavior: 'retryable' },
+    })
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      availableQuestLeads: [],
+      activeQuests: [],
+      completedQuestIds: [],
+      failedQuestIds: ['quest-harborwatch'],
+      questHistory: [failedQuest],
+    })
+    expect(canDiscoverQuest(state, 'quest-harborwatch')).toBe(true)
+  })
+})

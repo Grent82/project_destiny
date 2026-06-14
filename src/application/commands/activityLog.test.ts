@@ -104,6 +104,8 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     npcSitePresences: overrides.npcSitePresences ?? [],
     pendingConsumableDecision: overrides.pendingConsumableDecision ?? null,
     houseWardSeats: overrides.houseWardSeats ?? 0,
+    failedQuestIds: overrides.failedQuestIds ?? [],
+    questHistory: overrides.questHistory ?? [],
     bondedPersonsRegistry: overrides.bondedPersonsRegistry ?? {},
     chronicle: overrides.chronicle ?? { entriesByDay: {}, version: 1 },
   }

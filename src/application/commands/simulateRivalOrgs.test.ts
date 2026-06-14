@@ -27,6 +27,8 @@ const baseState: GameState = {
   availableQuestLeads: [],
   activeQuests: [],
   completedQuestIds: [],
+  failedQuestIds: [],
+  questHistory: [],
   councilSeats: {},
   institutionalStanding: {},
   activeCouncilVotes: [],

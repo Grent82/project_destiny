@@ -22,11 +22,29 @@ function pushSystemLog(state: GameState, message: string) {
 }
 
 export function canDiscoverQuest(state: GameState, questId: string): boolean {
-  return (
-    !state.availableQuestLeads.some((lead) => lead.questId === questId) &&
-    !state.activeQuests.some((quest) => quest.questId === questId) &&
-    !state.completedQuestIds.includes(questId)
-  )
+  // Check basic state: not already a lead, not active, not completed
+  if (state.availableQuestLeads.some((lead) => lead.questId === questId)) return false
+  if (state.activeQuests.some((quest) => quest.questId === questId)) return false
+  if (state.completedQuestIds.includes(questId)) return false
+
+  // Check failed quests and their retry behavior
+  const failedIndex = state.failedQuestIds.findIndex((id) => id === questId)
+  if (failedIndex !== -1) {
+    const failedQuest = state.questHistory.find((q) => q.questId === questId)
+    if (!failedQuest) return false // Should not happen, but be safe
+
+    // 'fail' means the quest cannot be rediscovered after failure
+    if (failedQuest.context.retryBehavior === 'fail') return false
+
+    // 'retryable' means the quest can be rediscovered
+    if (failedQuest.context.retryBehavior === 'retryable') return true
+
+    // 'branch' means a successor quest should have been offered instead
+    // Treat as non-rediscoverable (the successor is the intended path)
+    return false
+  }
+
+  return true
 }
 
 export function addQuestLeadIfNew(

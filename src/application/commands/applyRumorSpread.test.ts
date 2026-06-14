@@ -30,6 +30,8 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     availableQuestLeads: [],
     activeQuests: [],
     completedQuestIds: [],
+    failedQuestIds: [],
+    questHistory: [],
     councilSeats: {},
     institutionalStanding: {},
     activeCouncilVotes: [],
