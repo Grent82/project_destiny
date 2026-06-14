@@ -25,12 +25,26 @@ function checkConditions(template: EventTemplate, state: GameState, rng: Rng): b
   if (cond.completedQuestCountMin !== undefined && state.completedQuestIds.length < cond.completedQuestCountMin) return false
   if (cond.isFirstRun !== undefined && state.isFirstRun !== cond.isFirstRun) return false
 
+  // Time slot check
+  if (cond.timeSlot !== undefined && state.timeSlot !== cond.timeSlot) return false
+
   if (cond.npcRelationshipMin !== undefined) {
     const { npcId, axis, min } = cond.npcRelationshipMin
     const key = buildRelationshipKey('player', npcId)
     const rel = state.relationships[key]
     const value = rel ? rel[axis] : 0
     if (value < min) return false
+  }
+
+  // NPC state array check (multiple conditions on one or more NPCs)
+  if (cond.npcState !== undefined) {
+    for (const npcCond of cond.npcState) {
+      const key = buildRelationshipKey('player', npcCond.npcId)
+      const rel = state.relationships[key]
+      const value = rel ? rel[npcCond.axis] : 0
+      if (npcCond.min !== undefined && value < npcCond.min) return false
+      if (npcCond.max !== undefined && value > npcCond.max) return false
+    }
   }
 
   if (cond.factionStandingBelow) {

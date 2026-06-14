@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { entityIdSchema } from '../shared/contracts'
+import { entityIdSchema, timeSlotSchema } from '../shared/contracts'
 
 export const eventOutcomeTypeSchema = z.enum([
   'adjustFactionStanding',
@@ -70,6 +70,17 @@ export const eventTriggerConditionsSchema = z
         axis: z.enum(['affinity', 'respect', 'fear', 'trust', 'loyalty']),
         min: z.number(),
       })
+      .optional(),
+    timeSlot: timeSlotSchema.optional(),
+    npcState: z
+      .array(
+        z.object({
+          npcId: z.string(),
+          axis: z.enum(['affinity', 'respect', 'fear', 'trust', 'loyalty']),
+          min: z.number().optional(),
+          max: z.number().optional(),
+        }),
+      )
       .optional(),
     isFirstRun: z.boolean().optional(),
     probability: z.number().min(0).max(1).default(1),

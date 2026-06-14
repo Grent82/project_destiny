@@ -20,6 +20,8 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     cityDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
     cityResources: {
       foodSecurity: 80,
+      foodStock: 800,
+      foodCapacity: 1000,
       waterAccess: 80,
       materialStock: 80,
       corridorStatus: 'open',
@@ -246,13 +248,13 @@ describe('applyOutcomes', () => {
   })
 
   it('adjustCityResource clamps at 0', () => {
-    const state = makeState({ cityResources: { foodSecurity: 5, waterAccess: 80, materialStock: 80, corridorStatus: 'open' } })
+    const state = makeState({ cityResources: { foodSecurity: 5, foodStock: 50, foodCapacity: 1000, waterAccess: 80, materialStock: 80, corridorStatus: 'open' } })
     const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: -20 }])
     expect(next.cityResources.foodSecurity).toBe(0)
   })
 
   it('adjustCityResource clamps at 100', () => {
-    const state = makeState({ cityResources: { foodSecurity: 95, waterAccess: 80, materialStock: 80, corridorStatus: 'open' } })
+    const state = makeState({ cityResources: { foodSecurity: 95, foodStock: 950, foodCapacity: 1000, waterAccess: 80, materialStock: 80, corridorStatus: 'open' } })
     const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: 20 }])
     expect(next.cityResources.foodSecurity).toBe(100)
   })
@@ -423,5 +425,253 @@ describe('pending event visibility', () => {
 
     const visible = selectPendingEvents({ game: state } as { game: GameState })
     expect(visible).toEqual([{ eventId: 'event-rival-gilded-hand-bribe-warning', firedOnDay: 5 }])
+  })
+})
+
+describe('timeSlot trigger condition', () => {
+  it('fires event when timeSlot matches', () => {
+    const originalEvents = contentCatalog.events
+    ;(contentCatalog as { events: typeof originalEvents }).events = [
+      {
+        id: 'test-timeslot-match',
+        title: 'Night Watch',
+        description: 'Only fires at night',
+        triggerConditions: { timeSlot: 'night', probability: 1 },
+        choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+        isAutoResolved: false,
+        tags: [],
+        repeatable: false,
+        cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
+      },
+    ]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({
+      timeSlot: 'night',
+      pendingEvents: [],
+      lastFiredDay: {},
+    })
+    const next = evaluateEvents(state, () => 0)
+    expect(next.pendingEvents.map((e) => e.eventId)).toContain('test-timeslot-match')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+
+  it('does not fire event when timeSlot does not match', () => {
+    const originalEvents = contentCatalog.events
+    ;(contentCatalog as { events: typeof originalEvents }).events = [
+      {
+        id: 'test-timeslot-no-match',
+        title: 'Morning Meeting',
+        description: 'Only fires in morning',
+        triggerConditions: { timeSlot: 'morning', probability: 1 },
+        choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+        isAutoResolved: false,
+        tags: [],
+        repeatable: false,
+        cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
+      },
+    ]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({
+      timeSlot: 'evening',
+      pendingEvents: [],
+      lastFiredDay: {},
+    })
+    const next = evaluateEvents(state, () => 0)
+    expect(next.pendingEvents.map((e) => e.eventId)).not.toContain('test-timeslot-no-match')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+})
+
+describe('npcState trigger condition', () => {
+  it('fires event when NPC state meets min threshold', () => {
+    const originalEvents = contentCatalog.events
+    const marionKey = buildRelationshipKey('player', 'npc-marion-vale')
+    ;(contentCatalog as { events: typeof originalEvents }).events = [
+      {
+        id: 'test-npcstate-min',
+        title: 'Trusted Confidant',
+        description: 'Requires high trust with NPC',
+        triggerConditions: {
+          npcState: [{ npcId: 'npc-marion-vale', axis: 'trust', min: 50 }],
+          probability: 1,
+        },
+        choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+        isAutoResolved: false,
+        tags: [],
+        repeatable: false,
+        cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
+      },
+    ]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({
+      relationships: {
+        ...initialGameStateSnapshot.relationships,
+        [marionKey]: { affinity: 20, respect: 30, fear: 0, trust: 60, loyalty: 10 },
+      },
+      pendingEvents: [],
+      lastFiredDay: {},
+    })
+    const next = evaluateEvents(state, () => 0)
+    expect(next.pendingEvents.map((e) => e.eventId)).toContain('test-npcstate-min')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+
+  it('does not fire event when NPC state below min threshold', () => {
+    const originalEvents = contentCatalog.events
+    const marionKey = buildRelationshipKey('player', 'npc-marion-vale')
+    ;(contentCatalog as { events: typeof originalEvents }).events = [
+      {
+        id: 'test-npcstate-min-fail',
+        title: 'Trusted Confidant',
+        description: 'Requires high trust with NPC',
+        triggerConditions: {
+          npcState: [{ npcId: 'npc-marion-vale', axis: 'trust', min: 80 }],
+          probability: 1,
+        },
+        choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+        isAutoResolved: false,
+        tags: [],
+        repeatable: false,
+        cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
+      },
+    ]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({
+      relationships: {
+        ...initialGameStateSnapshot.relationships,
+        [marionKey]: { affinity: 20, respect: 30, fear: 0, trust: 50, loyalty: 10 },
+      },
+      pendingEvents: [],
+      lastFiredDay: {},
+    })
+    const next = evaluateEvents(state, () => 0)
+    expect(next.pendingEvents.map((e) => e.eventId)).not.toContain('test-npcstate-min-fail')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+
+  it('fires event when NPC state within min and max bounds', () => {
+    const originalEvents = contentCatalog.events
+    const marionKey = buildRelationshipKey('player', 'npc-marion-vale')
+    ;(contentCatalog as { events: typeof originalEvents }).events = [
+      {
+        id: 'test-npcstate-bounds',
+        title: 'Balanced Relationship',
+        description: 'Requires fear within bounds',
+        triggerConditions: {
+          npcState: [{ npcId: 'npc-marion-vale', axis: 'fear', min: 10, max: 70 }],
+          probability: 1,
+        },
+        choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+        isAutoResolved: false,
+        tags: [],
+        repeatable: false,
+        cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
+      },
+    ]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({
+      relationships: {
+        ...initialGameStateSnapshot.relationships,
+        [marionKey]: { affinity: 20, respect: 30, fear: 40, trust: 50, loyalty: 10 },
+      },
+      pendingEvents: [],
+      lastFiredDay: {},
+    })
+    const next = evaluateEvents(state, () => 0)
+    expect(next.pendingEvents.map((e) => e.eventId)).toContain('test-npcstate-bounds')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+
+  it('does not fire event when NPC state exceeds max bound', () => {
+    const originalEvents = contentCatalog.events
+    const marionKey = buildRelationshipKey('player', 'npc-marion-vale')
+    ;(contentCatalog as { events: typeof originalEvents }).events = [
+      {
+        id: 'test-npcstate-max-fail',
+        title: 'Moderate Fear',
+        description: 'Requires fear below threshold',
+        triggerConditions: {
+          npcState: [{ npcId: 'npc-marion-vale', axis: 'fear', max: 50 }],
+          probability: 1,
+        },
+        choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+        isAutoResolved: false,
+        tags: [],
+        repeatable: false,
+        cooldownDays: 7,
+        sourceDistrictId: null,
+        sourceNpcId: null,
+        presentationFlavour: null,
+      },
+    ]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({
+      relationships: {
+        ...initialGameStateSnapshot.relationships,
+        [marionKey]: { affinity: 20, respect: 30, fear: 80, trust: 50, loyalty: 10 },
+      },
+      pendingEvents: [],
+      lastFiredDay: {},
+    })
+    const next = evaluateEvents(state, () => 0)
+    expect(next.pendingEvents.map((e) => e.eventId)).not.toContain('test-npcstate-max-fail')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
   })
 })

@@ -5518,5 +5518,67 @@
     "sourceDistrictId": null,
     "sourceNpcId": null,
     "presentationFlavour": null
+  },
+  {
+    "id": "test-sample-timeslot-night",
+    "title": "Night Watch Report",
+    "description": "A sample event demonstrating timeSlot triggering. The night watch brings news from the walls while the city sleeps.",
+    "triggerConditions": {
+      "timeSlot": "night",
+      "probability": 0.3
+    },
+    "choices": [
+      {
+        "id": "choice-listen-report",
+        "label": "Listen to the report",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "The night watch captain reports all quiet along the northern gate."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["sample", "timeslot"],
+    "repeatable": true,
+    "cooldownDays": 2,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
+  },
+  {
+    "id": "test-sample-npcstate-high-trust",
+    "title": "Private Counsel",
+    "description": "A sample event demonstrating npcState triggering. A trusted confidant approaches with sensitive information.",
+    "triggerConditions": {
+      "npcState": [
+        {
+          "npcId": "npc-marion-vale",
+          "axis": "trust",
+          "min": 60
+        }
+      ],
+      "probability": 0.4
+    },
+    "choices": [
+      {
+        "id": "choice-hear-out",
+        "label": "Hear what they have to say",
+        "outcomes": [
+          {
+            "type": "addActivityLogEntry",
+            "message": "Your confidant shares intelligence gathered from a quiet source."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": ["sample", "npcstate"],
+    "repeatable": true,
+    "cooldownDays": 5,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null
   }
 ]
