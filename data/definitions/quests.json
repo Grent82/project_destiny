@@ -5,7 +5,7 @@
     "employerFactionId": "faction-civic-compact",
     "enemyFactionId": "faction-tallow-ring",
     "districtId": "district-the-warrens",
-    "briefing": "A Compact checkpoint at the harbor gate is being shaken down nightly. Three wardens hurt last week. They want it stopped quietly \u2014 nothing in the Register.",
+    "briefing": "A Compact checkpoint at the harbor gate is being shaken down nightly. Three wardens hurt last week. They want it stopped quietly — nothing in the Register.",
     "objectiveType": "combat",
     "rewardMarks": 180,
     "rewardStandingFactionId": "faction-civic-compact",
@@ -20,7 +20,9 @@
     "rewardCityDialId": "unrest",
     "rewardCityDialDelta": -5,
     "successorQuestId": "quest-harborwatch-followup",
-    "successorRumorIds": ["rumor-valdris-cleared-harborwatch"],
+    "successorRumorIds": [
+      "rumor-valdris-cleared-harborwatch"
+    ],
     "midQuestBeats": [
       {
         "atStageId": "pressured",
@@ -42,6 +44,14 @@
         "label": "Backup arrived from the dockside. Someone gave the crew warning.",
         "journalEntry": "Additional Ring men moved in. The post has more protection than the Compact knew — this was never just a shakedown."
       }
+    ],
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
     ]
   },
   {
@@ -62,7 +72,9 @@
     "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
     "enemyNpcId": "npc-enemy-lady-sorn",
-    "rewardItemIds": ["item-ledger-bureau"],
+    "rewardItemIds": [
+      "item-ledger-bureau"
+    ],
     "successorQuestId": "quest-ledger-debt-followup",
     "successorOnFailQuestId": "quest-ledger-burned",
     "midQuestBeats": [
@@ -87,7 +99,18 @@
         "journalEntry": "The final address is a locked archive room beneath the Notary Quarter. The ledger is on the desk. The agent is reading from it."
       }
     ],
-    "successorRumorIds": ["rumor-ledger-recovered-northbank", "rumor-vael-maret-knowing"]
+    "successorRumorIds": [
+      "rumor-ledger-recovered-northbank",
+      "rumor-vael-maret-knowing"
+    ],
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-foundry-escort",
@@ -105,7 +128,15 @@
     "linkedMissionId": null,
     "discoverySource": "faction_house",
     "discoveryDistrictId": "district-ironworks",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "sourceNpcId": "npc-bog",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-bog",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-ring-debt",
@@ -113,7 +144,7 @@
     "employerFactionId": null,
     "enemyFactionId": "faction-tallow-ring",
     "districtId": "district-the-hollows",
-    "briefing": "Someone is using a dead man's name to collect on old Ring debts. The payments are real \u2014 the claims are not. You have one lead. Work it before the next collection window closes.",
+    "briefing": "Someone is using a dead man's name to collect on old Ring debts. The payments are real — the claims are not. You have one lead. Work it before the next collection window closes.",
     "objectiveType": "investigation",
     "rewardMarks": 200,
     "rewardStandingFactionId": "faction-tallow-ring",
@@ -147,6 +178,14 @@
         "label": "The safehouse is in the lower Hollows. One collector. Two witnesses. They have not realized who is watching.",
         "journalEntry": "The collection point smells like old paper and new coin. The collector has not recognized the house yet."
       }
+    ],
+    "sourceNpcId": "npc-old-maret",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-old-maret",
+        "trust": 4,
+        "respect": 2
+      }
     ]
   },
   {
@@ -155,7 +194,7 @@
     "employerFactionId": "faction-restored",
     "enemyFactionId": "faction-gilded-court",
     "districtId": null,
-    "briefing": "They need a document retrieved from a Court archive before it is sealed. No violence \u2014 they are specific about this. Get in, find the record, leave. The Restored will handle the rest.",
+    "briefing": "They need a document retrieved from a Court archive before it is sealed. No violence — they are specific about this. Get in, find the record, leave. The Restored will handle the rest.",
     "objectiveType": "investigation",
     "rewardMarks": 150,
     "rewardStandingFactionId": "faction-restored",
@@ -168,7 +207,15 @@
     "requiredFactionStanding": {
       "factionId": "faction-restored",
       "minStanding": -10
-    }
+    },
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-warrens-extraction",
@@ -198,6 +245,14 @@
         "label": "The shelter occupant ran for help. Someone else now knows the house is here.",
         "journalEntry": "Noise carries in the Warrens. The sympathizer's call is going to bring attention to the safehouse."
       }
+    ],
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
     ]
   },
   {
@@ -219,7 +274,15 @@
     "requiredFactionStanding": {
       "factionId": "faction-tallow-ring",
       "minStanding": 10
-    }
+    },
+    "sourceNpcId": "npc-tessaly-ash",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-tessaly-ash",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-nightbloom-extract",
@@ -227,7 +290,7 @@
     "employerFactionId": null,
     "enemyFactionId": null,
     "districtId": "district-the-hollows",
-    "briefing": "Three units of nightbloom extract. No paperwork, no licensed supplier, no questions. The buyer is not available for discussion. You will need the right contacts \u2014 the Hollows is where you start.",
+    "briefing": "Three units of nightbloom extract. No paperwork, no licensed supplier, no questions. The buyer is not available for discussion. You will need the right contacts — the Hollows is where you start.",
     "objectiveType": "delivery",
     "rewardMarks": 160,
     "rewardStandingFactionId": null,
@@ -238,8 +301,20 @@
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-hollows",
     "requiredFactionStanding": null,
-    "rewardItemIds": ["item-nightbloom-extract"],
-    "successorRumorIds": ["rumor-nightbloom-pale-word"]
+    "rewardItemIds": [
+      "item-nightbloom-extract"
+    ],
+    "successorRumorIds": [
+      "rumor-nightbloom-pale-word"
+    ],
+    "sourceNpcId": "npc-cutter",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-cutter",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-pale-wagon-escort",
@@ -258,7 +333,15 @@
     "linkedMissionId": null,
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-pale",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-foundry-sabotage",
@@ -290,6 +373,14 @@
         "label": "The League flagged the intrusion. A foreman is bringing security from the east corridor.",
         "journalEntry": "League security is moving in. The window for clean interference has closed."
       }
+    ],
+    "sourceNpcId": "npc-bog",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-bog",
+        "trust": 4,
+        "respect": 2
+      }
     ]
   },
   {
@@ -309,7 +400,17 @@
     "discoverySource": "bar",
     "discoveryDistrictId": "district-the-hollows",
     "requiredFactionStanding": null,
-    "successorRumorIds": ["rumor-maret-settled-accounts"]
+    "successorRumorIds": [
+      "rumor-maret-settled-accounts"
+    ],
+    "sourceNpcId": "npc-old-maret",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-old-maret",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-slaver-house-dispute",
@@ -317,7 +418,7 @@
     "employerFactionId": null,
     "enemyFactionId": null,
     "districtId": "district-the-pale",
-    "briefing": "Two minor bond-holder houses are disputing a shared contract and the costs are mounting. A neutral third party is needed \u2014 someone with no position in the outcome. Tact is the minimum requirement. Discretion is assumed.",
+    "briefing": "Two minor bond-holder houses are disputing a shared contract and the costs are mounting. A neutral third party is needed — someone with no position in the outcome. Tact is the minimum requirement. Discretion is assumed.",
     "objectiveType": "investigation",
     "rewardMarks": 150,
     "rewardStandingFactionId": null,
@@ -329,7 +430,15 @@
     "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
     "rewardCityDialId": "prosperity",
-    "rewardCityDialDelta": 4
+    "rewardCityDialDelta": 4,
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-compact-watch",
@@ -361,7 +470,17 @@
         "journalEntry": "Vorn handed off a sealed folder to an unmarked contact. The folder was not Compact issue. The exchange was practiced — this is not the first time."
       }
     ],
-    "successorRumorIds": ["rumor-compact-watch-cleared"]
+    "successorRumorIds": [
+      "rumor-compact-watch-cleared"
+    ],
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-gilded-auction-guard",
@@ -380,7 +499,15 @@
     "linkedMissionId": null,
     "discoverySource": "court",
     "discoveryDistrictId": "district-gilded-heights",
-    "requiredFactionStanding": null
+    "requiredFactionStanding": null,
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-ironworks-cleanup",
@@ -400,7 +527,15 @@
     "discoveryDistrictId": "district-ironworks",
     "requiredFactionStanding": null,
     "rewardCityDialId": "unrest",
-    "rewardCityDialDelta": -6
+    "rewardCityDialDelta": -6,
+    "sourceNpcId": "npc-bog",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-bog",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-mira-act1-wren-favor",
@@ -423,7 +558,13 @@
     "sourceNpcId": "npc-tessaly-ash",
     "riskLevel": "medium",
     "successorQuestId": "quest-mira-act2-tannery-watch",
-    "rewardRelationshipDeltas": [{"npcId": "npc-tessaly-ash", "trust": 10, "respect": 5}],
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-tessaly-ash",
+        "trust": 10,
+        "respect": 5
+      }
+    ],
     "midQuestBeats": [
       {
         "atStageId": "investigating",
@@ -459,7 +600,13 @@
     "riskLevel": "high",
     "prerequisiteQuestId": "quest-mira-act1-wren-favor",
     "successorQuestId": "quest-mira-rescue",
-    "rewardRelationshipDeltas": [{"npcId": "npc-tessaly-ash", "trust": 10, "respect": 5}],
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-tessaly-ash",
+        "trust": 10,
+        "respect": 5
+      }
+    ],
     "midQuestBeats": [
       {
         "atStageId": "investigating",
@@ -479,7 +626,7 @@
     "employerFactionId": null,
     "enemyFactionId": "faction-gilded-court",
     "districtId": "district-the-pale",
-    "briefing": "Mira is alive \u2014 held somewhere in The Pale under Gilded Court supervision. Getting her out means going through their people.",
+    "briefing": "Mira is alive — held somewhere in The Pale under Gilded Court supervision. Getting her out means going through their people.",
     "objectiveType": "combat",
     "rewardMarks": 0,
     "rewardStandingFactionId": "faction-tallow-ring",
@@ -494,15 +641,26 @@
     "riskLevel": "extreme",
     "flavorNote": "Tessaly says she left a note. She did not say what it contains.",
     "questType": "story",
-    "openingText": "Tessaly sets down the cup before she speaks. 'She is alive. The Gilded Court has her in the old tannery on the Pale's eastern edge. They are not using her yet \u2014 but they will.' She does not elaborate on what *yet* means. She does not need to.",
-    "aftermathText": "Mira walks out on her own feet, which tells you something. She does not speak on the way back. When she does, it is only to say: 'I knew you would come. I did not know if that was a good thing.' She has a name for you now, too \u2014 one you have not heard before. House Valdris, she says, as if she is testing the weight of it.",
+    "openingText": "Tessaly sets down the cup before she speaks. 'She is alive. The Gilded Court has her in the old tannery on the Pale's eastern edge. They are not using her yet — but they will.' She does not elaborate on what *yet* means. She does not need to.",
+    "aftermathText": "Mira walks out on her own feet, which tells you something. She does not speak on the way back. When she does, it is only to say: 'I knew you would come. I did not know if that was a good thing.' She has a name for you now, too — one you have not heard before. House Valdris, she says, as if she is testing the weight of it.",
     "prerequisiteQuestId": "quest-mira-act2-tannery-watch",
     "unlocksNpcId": "npc-mira",
     "successorQuestId": "quest-mira-act4-court-answer",
     "rewardCityDialId": "control",
     "rewardCityDialDelta": -8,
     "rewardDebtReduction": 0,
-    "rewardRelationshipDeltas": [{"npcId": "npc-mira", "trust": 40, "fear": -20}],
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-mira",
+        "trust": 40,
+        "fear": -20
+      },
+      {
+        "npcId": "npc-tessaly-ash",
+        "trust": 4,
+        "respect": 2
+      }
+    ],
     "midQuestBeats": [
       {
         "atStageId": "pressured",
@@ -520,7 +678,10 @@
         "journalEntry": "A runner slipped out before the squad could cut the route. They know someone is inside. Time is now the primary enemy."
       }
     ],
-    "successorRumorIds": ["rumor-mira-freed-pale", "rumor-mira-freed-mireward"]
+    "successorRumorIds": [
+      "rumor-mira-freed-pale",
+      "rumor-mira-freed-mireward"
+    ]
   },
   {
     "id": "quest-mira-act4-court-answer",
@@ -540,13 +701,20 @@
     "executionDurationWatches": 3,
     "linkedMissionId": null,
     "requiredFactionStanding": null,
-    "discoverySource": null,
-    "discoveryDistrictId": null,
-    "sourceNpcId": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-sister-vael",
     "riskLevel": "extreme",
     "prerequisiteQuestId": "quest-mira-rescue",
     "rewardCityDialId": "control",
     "rewardCityDialDelta": -5,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ],
     "aftermathText": "The writ fails but is filed — the Court now needs the debt to succeed where the raid did not. Mira stands in the doorway behind you, silent. She has not spoken since she walked out of the tannery. When she finally does, it is only to say that the Court will not forget this either."
   },
   {
@@ -555,7 +723,7 @@
     "employerFactionId": null,
     "enemyFactionId": "faction-civic-compact",
     "districtId": "district-the-hollows",
-    "briefing": "Orren Wex, your former steward, is in Compact custody in The Hollows. His knowledge of House Valdris's debts could change everything \u2014 if you can get him out.",
+    "briefing": "Orren Wex, your former steward, is in Compact custody in The Hollows. His knowledge of House Valdris's debts could change everything — if you can get him out.",
     "objectiveType": "investigation",
     "rewardMarks": 0,
     "rewardStandingFactionId": null,
@@ -570,14 +738,25 @@
     "riskLevel": "high",
     "flavorNote": "Marion knows where he is. She has known for weeks.",
     "questType": "story",
-    "openingText": "Marion does not sit when she brings this to you. She stands near the door, as if she is not certain you will want her in the room when she is done. 'Orren Wex is in Compact custody. He has been for six weeks. They are not charging him \u2014 they are keeping him available. He knows every number in the house's original accounts. If they let him talk to the right people, the debt becomes very clearly yours.'",
-    "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him \u2014 the copy, not the original \u2014 and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question \u2014 one he is too tired to answer tonight.",
+    "openingText": "Marion does not sit when she brings this to you. She stands near the door, as if she is not certain you will want her in the room when she is done. 'Orren Wex is in Compact custody. He has been for six weeks. They are not charging him — they are keeping him available. He knows every number in the house's original accounts. If they let him talk to the right people, the debt becomes very clearly yours.'",
+    "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him — the copy, not the original — and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question — one he is too tired to answer tonight.",
     "prerequisiteQuestId": null,
     "unlocksNpcId": "npc-orren-wex",
     "rewardDebtReduction": 80,
     "rewardCityDialId": null,
     "rewardCityDialDelta": 0,
-    "rewardRelationshipDeltas": [{"npcId": "npc-orren-wex", "trust": 30, "loyalty": 20}],
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-orren-wex",
+        "trust": 30,
+        "loyalty": 20
+      },
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 4,
+        "respect": 2
+      }
+    ],
     "midQuestBeats": [
       {
         "atStageId": "investigating",
@@ -590,7 +769,9 @@
         "journalEntry": "Inside. Orren recognized the house's people before they had to explain. He is older than his records suggested — and more careful."
       }
     ],
-    "successorRumorIds": ["rumor-wex-alive-northbank"]
+    "successorRumorIds": [
+      "rumor-wex-alive-northbank"
+    ]
   },
   {
     "id": "quest-harborwatch-followup",
@@ -599,7 +780,7 @@
     "employerFactionId": "faction-civic-compact",
     "enemyFactionId": "faction-tallow-ring",
     "districtId": "district-the-warrens",
-    "briefing": "The Harborwatch dispute is unresolved \u2014 the post was cleared before you arrived. The Compact wants the name behind the order. Work the Ring lead they gave you and bring back something they can use.",
+    "briefing": "The Harborwatch dispute is unresolved — the post was cleared before you arrived. The Compact wants the name behind the order. Work the Ring lead they gave you and bring back something they can use.",
     "objectiveType": "investigation",
     "rewardMarks": 250,
     "rewardStandingFactionId": "faction-civic-compact",
@@ -609,7 +790,17 @@
     "prerequisiteQuestId": "quest-harborwatch",
     "riskLevel": "medium",
     "flavorNote": "The Compact is embarrassed. They want evidence, not a body count.",
-    "successorRumorIds": ["rumor-valdris-harbor-committed"]
+    "successorRumorIds": [
+      "rumor-valdris-harbor-committed"
+    ],
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-ledger-debt-followup",
@@ -627,7 +818,15 @@
     "timeLimitDays": 6,
     "prerequisiteQuestId": "quest-ledger-recovery",
     "riskLevel": "high",
-    "flavorNote": "The Foundry League will not negotiate. They will however be distracted."
+    "flavorNote": "The Foundry League will not negotiate. They will however be distracted.",
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-ledger-burned",
@@ -636,7 +835,7 @@
     "employerFactionId": "faction-gilded-court",
     "enemyFactionId": null,
     "districtId": "district-the-pale",
-    "briefing": "The ledger is gone \u2014 burned before you could reach it. The Court's reaction is controlled fury. They want a likely hand behind it. Work the surviving lead and give them a name they can use.",
+    "briefing": "The ledger is gone — burned before you could reach it. The Court's reaction is controlled fury. They want a likely hand behind it. Work the surviving lead and give them a name they can use.",
     "objectiveType": "investigation",
     "rewardMarks": 180,
     "rewardStandingFactionId": "faction-gilded-court",
@@ -645,7 +844,15 @@
     "timeLimitDays": 8,
     "prerequisiteQuestId": "quest-ledger-recovery",
     "riskLevel": "medium",
-    "flavorNote": "A failure can still be profitable if someone else is blamed."
+    "flavorNote": "A failure can still be profitable if someone else is blamed.",
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-rival-iron-covenant-counter",
@@ -665,7 +872,15 @@
     "discoveryDistrictId": "district-ironworks",
     "requiredFactionStanding": null,
     "riskLevel": "medium",
-    "flavorNote": "The Covenant do not announce a line until the line is already theirs."
+    "flavorNote": "The Covenant do not announce a line until the line is already theirs.",
+    "sourceNpcId": "npc-bog",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-bog",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-rival-pale-sisters-counter",
@@ -685,7 +900,15 @@
     "discoveryDistrictId": "district-the-pale",
     "requiredFactionStanding": null,
     "riskLevel": "medium",
-    "flavorNote": "The Sisters do not need to own a room if every pen in it already answers to them."
+    "flavorNote": "The Sisters do not need to own a room if every pen in it already answers to them.",
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-rival-gilded-hand-counter",
@@ -705,7 +928,15 @@
     "discoveryDistrictId": "district-gilded-heights",
     "requiredFactionStanding": null,
     "riskLevel": "high",
-    "flavorNote": "Professional rivals are still rivals. The paperwork just arrives on better paper."
+    "flavorNote": "Professional rivals are still rivals. The paperwork just arrives on better paper.",
+    "sourceNpcId": "npc-sister-vael",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   },
   {
     "id": "quest-rival-ashen-compact-counter",
@@ -725,6 +956,14 @@
     "discoveryDistrictId": "district-the-warrens",
     "requiredFactionStanding": null,
     "riskLevel": "medium",
-    "flavorNote": "The Compact are most dangerous when they still look like an employer instead of a rival house."
+    "flavorNote": "The Compact are most dangerous when they still look like an employer instead of a rival house.",
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 4,
+        "respect": 2
+      }
+    ]
   }
 ]

@@ -5,6 +5,7 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import { createQuestLeadRuntime, createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
 import { getQuestTemplates } from '../content/contentCatalog'
+import { contentCatalog } from '../content/contentCatalog'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
@@ -376,5 +377,30 @@ describe('expireTimedQuests', () => {
     expect(runtime.context.sourceNpcId).toBeTruthy()
     expect(runtime.progress.requiredSteps).toBeGreaterThan(1)
     expect(runtime.journalEntries.length).toBeGreaterThan(0)
+  })
+})
+
+describe('quest catalog integrity', () => {
+  it('every quest template has a sourceNpcId assigned', () => {
+    const templates = getQuestTemplates()
+    const withoutGiver = templates.filter((t) => t.sourceNpcId == null)
+
+    expect(withoutGiver).toHaveLength(0)
+    if (withoutGiver.length > 0) {
+      console.error('Quests without sourceNpcId:', withoutGiver.map((t) => t.id))
+    }
+  })
+
+  it('every sourceNpcId references a valid NPC definition', () => {
+    const templates = getQuestTemplates()
+    const invalidGivers = templates.filter((t) => {
+      if (t.sourceNpcId == null) return false
+      return !contentCatalog.npcsById.has(t.sourceNpcId)
+    })
+
+    expect(invalidGivers).toHaveLength(0)
+    if (invalidGivers.length > 0) {
+      console.error('Quests with invalid sourceNpcId:', invalidGivers.map((t) => ({ id: t.id, sourceNpcId: t.sourceNpcId })))
+    }
   })
 })
