@@ -1,0 +1,24 @@
+.environs-map-container {
+  width: 100%;
+  margin-bottom: 1rem;
+  border: 1px solid #c9a67a;
+  border-radius: 4px;
+  background: #faf8f5;
+}
+
+.environs-map {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.environs-map .enviros-destination:hover circle {
+  fill: #8b4513;
+  stroke: #ffd700;
+}
+
+.environs-map .enviros-destination.selected circle {
+  fill: #8b4513;
+  stroke: #ffd700;
+  stroke-width: 3;
+}

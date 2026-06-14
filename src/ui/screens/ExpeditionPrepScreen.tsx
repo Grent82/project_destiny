@@ -10,6 +10,7 @@ import { contentCatalog } from '../../application/content/contentCatalog'
 import { isDeployable } from '../../application/commands/isDeployable'
 import { EmptyState } from '../components/EmptyState'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { EnvironsMap } from './maps/EnvironsMap'
 
 export function ExpeditionPrepScreen() {
   const dispatch = useAppDispatch()
@@ -98,6 +99,7 @@ export function ExpeditionPrepScreen() {
       <div className="overview-grid">
         <article className="detail-panel">
           <h2>Destination</h2>
+          <EnvironsMap selectedId={selectedDest} onSelect={setSelectedDest} />
           <div className="mission-list">
             {destinations.map((dest) => (
               <div
