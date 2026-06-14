@@ -39,6 +39,35 @@ function scoreFactionForProposal(
   if (proposesWhen.standingWithPlayerBelow !== undefined && standing < proposesWhen.standingWithPlayerBelow) score += 10
   if (proposesWhen.prosperityBelow !== undefined && prosperity < proposesWhen.prosperityBelow) score += 15
 
+  // Leader trait modifiers
+  const leaderNpcId = factionState?.leaderNpcId
+  if (leaderNpcId) {
+    const leader = contentCatalog.npcsById.get(leaderNpcId)
+    const traits = leader?.startingTraits
+    if (traits) {
+      // High ambition: +20 to proposal score regardless of pressure (proactive)
+      if (traits.ambition > 65) score += 20
+      // High prudence: requires proposesWhen conditions to be 20% stricter (cautious)
+      if (traits.prudence > 65) {
+        // Apply a penalty that makes the faction more cautious
+        score = Math.floor(score * 0.8)
+      }
+      // High ruthlessness: prefers targeting weaker factions (adversarial votes)
+      if (traits.ruthlessness > 65) {
+        // Check if there's a hostile target faction
+        const hasHostileTarget = Object.entries(state.factionStandings).some(
+          ([fid, st]) => st < -20 && fid !== factionId
+        )
+        if (hasHostileTarget) score += 15
+      }
+      // Low loyalty: may act against faction's stated agenda (corruption/defection signal)
+      if (traits.loyalty < 35) {
+        // Reduce score slightly as leader may defect
+        score = Math.floor(score * 0.9)
+      }
+    }
+  }
+
   return score
 }
 

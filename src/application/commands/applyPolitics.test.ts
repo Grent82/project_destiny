@@ -4,6 +4,7 @@ import { applyPolitics, applyVoteEffects, selectAgendaVote } from './applyPoliti
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import type { CouncilVoteEvent } from '../../domain/governance/contracts'
+import { contentCatalog } from '../content/contentCatalog'
 
 // ── Shared vote fixture factory ───────────────────────────────────────────────
 
@@ -317,5 +318,265 @@ describe('applyPolitics debt enforcement interest', () => {
 
     expect(favorableNext.debtAmount).toBe(805)
     expect(hostileNext.debtAmount).toBe(820)
+  })
+})
+
+describe('leader trait modifiers', () => {
+  it('high ambition leader adds +20 to proposal score', () => {
+    // Create a test faction with high ambition leader
+    const originalFactions = contentCatalog.factions
+    const originalNpcs = Array.from(contentCatalog.npcsById.values())
+
+    // Mock a faction with agendaAxes
+    const mockFaction = {
+      id: 'faction-test-faction',
+      name: 'Test Faction',
+      agendaAxes: {
+        values: ['test-value'],
+        proposesWhen: {},
+      },
+      description: 'Test',
+    }
+
+    // Mock a leader with high ambition
+    const mockLeader = {
+      id: 'npc-test-leader',
+      name: 'Ambitious Leader',
+      startingTraits: {
+        ambition: 80,
+        prudence: 30,
+        ruthlessness: 30,
+        loyalty: 60,
+        charm: 50,
+        competence: 50,
+      },
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-test-leader', mockLeader as any)
+
+    const templates: CouncilVoteEvent[] = [
+      {
+        ...makeVote(),
+        proposingFactionId: 'faction-test-faction',
+        tags: ['test-value'],
+      },
+    ]
+
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      factionStates: [
+        {
+          factionId: 'faction-test-faction',
+          power: 50,
+          wealth: 50,
+          security: 50,
+          standingWithPlayer: 0,
+          activePressure: 50,
+          leaderNpcId: 'npc-test-leader',
+        },
+      ],
+      factionStandings: { ...initialGameStateSnapshot.factionStandings },
+    })
+
+    const result = selectAgendaVote(state, templates, () => 0)
+    expect(result).toBeDefined()
+    expect(result?.proposingFactionId).toBe('faction-test-faction')
+
+    // Restore
+    ;(contentCatalog as any).factions = originalFactions
+    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+  })
+
+  it('high prudence leader reduces proposal score by 20%', () => {
+    const mockFaction = {
+      id: 'faction-prudent-faction',
+      name: 'Prudent Faction',
+      agendaAxes: {
+        values: ['test-value'],
+        proposesWhen: {},
+      },
+      description: 'Test',
+    }
+
+    const mockLeader = {
+      id: 'npc-prudent-leader',
+      startingTraits: {
+        ambition: 30,
+        prudence: 80,
+        ruthlessness: 30,
+        loyalty: 60,
+        charm: 50,
+        competence: 50,
+      },
+    }
+
+    const originalFactions = contentCatalog.factions
+    const originalNpcs = Array.from(contentCatalog.npcsById.values())
+
+    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
+    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
+    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-prudent-leader', mockLeader as any)
+
+    const templates: CouncilVoteEvent[] = [
+      {
+        ...makeVote(),
+        proposingFactionId: 'faction-prudent-faction',
+        tags: ['test-value'],
+      },
+    ]
+
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      factionStates: [
+        {
+          factionId: 'faction-prudent-faction',
+          power: 50,
+          wealth: 50,
+          security: 50,
+          standingWithPlayer: 0,
+          activePressure: 80,
+          leaderNpcId: 'npc-prudent-leader',
+        },
+      ],
+      factionStandings: { ...initialGameStateSnapshot.factionStandings },
+    })
+
+    // Without prudence, score would be 80 + any bonuses
+    // With prudence, score should be 80 * 0.8 = 64
+    const result = selectAgendaVote(state, templates, () => 0)
+    expect(result).toBeDefined()
+
+    ;(contentCatalog as any).factions = originalFactions
+    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+  })
+
+  it('high ruthlessness leader adds +15 when hostile target exists', () => {
+    const mockFaction = {
+      id: 'faction-ruthless-faction',
+      name: 'Ruthless Faction',
+      agendaAxes: {
+        values: ['test-value'],
+        proposesWhen: {},
+      },
+      description: 'Test',
+    }
+
+    const mockLeader = {
+      id: 'npc-ruthless-leader',
+      startingTraits: {
+        ambition: 50,
+        prudence: 30,
+        ruthlessness: 85,
+        loyalty: 60,
+        charm: 50,
+        competence: 50,
+      },
+    }
+
+    const originalFactions = contentCatalog.factions
+    const originalNpcs = Array.from(contentCatalog.npcsById.values())
+
+    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
+    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
+    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-ruthless-leader', mockLeader as any)
+
+    const templates: CouncilVoteEvent[] = [
+      {
+        ...makeVote(),
+        proposingFactionId: 'faction-ruthless-faction',
+        tags: ['test-value'],
+      },
+    ]
+
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      factionStates: [
+        {
+          factionId: 'faction-ruthless-faction',
+          power: 50,
+          wealth: 50,
+          security: 50,
+          standingWithPlayer: 0,
+          activePressure: 50,
+          leaderNpcId: 'npc-ruthless-leader',
+        },
+      ],
+      factionStandings: {
+        ...initialGameStateSnapshot.factionStandings,
+        'faction-tallow-ring': -50, // Hostile target
+      },
+    })
+
+    const result = selectAgendaVote(state, templates, () => 0)
+    expect(result).toBeDefined()
+
+    ;(contentCatalog as any).factions = originalFactions
+    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+  })
+
+  it('low loyalty leader reduces proposal score by 10%', () => {
+    const mockFaction = {
+      id: 'faction-corrupt-faction',
+      name: 'Corrupt Faction',
+      agendaAxes: {
+        values: ['test-value'],
+        proposesWhen: {},
+      },
+      description: 'Test',
+    }
+
+    const mockLeader = {
+      id: 'npc-corrupt-leader',
+      startingTraits: {
+        ambition: 70,
+        prudence: 30,
+        ruthlessness: 50,
+        loyalty: 20,
+        charm: 50,
+        competence: 50,
+      },
+    }
+
+    const originalFactions = contentCatalog.factions
+    const originalNpcs = Array.from(contentCatalog.npcsById.values())
+
+    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
+    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
+    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-corrupt-leader', mockLeader as any)
+
+    const templates: CouncilVoteEvent[] = [
+      {
+        ...makeVote(),
+        proposingFactionId: 'faction-corrupt-faction',
+        tags: ['test-value'],
+      },
+    ]
+
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      factionStates: [
+        {
+          factionId: 'faction-corrupt-faction',
+          power: 50,
+          wealth: 50,
+          security: 50,
+          standingWithPlayer: 0,
+          activePressure: 70,
+          leaderNpcId: 'npc-corrupt-leader',
+        },
+      ],
+      factionStandings: { ...initialGameStateSnapshot.factionStandings },
+    })
+
+    const result = selectAgendaVote(state, templates, () => 0)
+    expect(result).toBeDefined()
+
+    ;(contentCatalog as any).factions = originalFactions
+    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
   })
 })
