@@ -496,6 +496,33 @@
         "repairDaysRemaining": 0,
         "searched": false,
         "roomFunction": null
+      },
+      {
+        "roomId": "room-east-wing",
+        "name": "East Wing",
+        "state": "collapsed",
+        "repairCost": 200,
+        "repairDaysRemaining": 0,
+        "searched": false,
+        "roomFunction": null
+      },
+      {
+        "roomId": "room-servant-quarters",
+        "name": "Servant Quarters",
+        "state": "collapsed",
+        "repairCost": 100,
+        "repairDaysRemaining": 0,
+        "searched": false,
+        "roomFunction": null
+      },
+      {
+        "roomId": "room-barracks",
+        "name": "Barracks",
+        "state": "collapsed",
+        "repairCost": 150,
+        "repairDaysRemaining": 0,
+        "searched": false,
+        "roomFunction": null
       }
     ],
     "vaultUnlocked": false,

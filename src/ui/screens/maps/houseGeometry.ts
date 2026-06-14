@@ -30,6 +30,11 @@ export const houseRoomShapes: HouseRoomShape[] = [
   { roomId: 'room-bureau', x: 220, y: 154, width: 80, height: 90, label: { x: 260, y: 195 } },
   // Cellar / vault — below the hall (annotation box)
   { roomId: 'room-vault', x: 140, y: 258, width: 80, height: 44, label: { x: 180, y: 278 }, annotation: 'below' },
+  // Rear block — across the yard (servant quarters and barracks) - placed to the left of the vault
+  { roomId: 'room-servant-quarters', x: 60, y: 258, width: 80, height: 44, label: { x: 100, y: 278 } },
+  { roomId: 'room-barracks', x: 220, y: 258, width: 80, height: 44, label: { x: 260, y: 278 } },
+  // East wing — attached to the east side
+  { roomId: 'room-east-wing', x: 304, y: 64, width: 80, height: 180, label: { x: 344, y: 154 } },
 ]
 
 /** Fixed plan furniture: walls, the yard, the street door, the stair down. */
