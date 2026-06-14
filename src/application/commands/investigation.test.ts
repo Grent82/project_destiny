@@ -756,3 +756,35 @@ describe('resolveInvestigation', () => {
     expect(state.activityLog.length).toBe(before.activityLog.length)
   })
 })
+
+describe('startInvestigation with midQuestBeats', () => {
+  it('applies midQuestBeat journal entry for quest-compact-watch', () => {
+    const store = makeStore({
+      activeQuests: [makeActiveQuest('quest-compact-watch')],
+    })
+
+    store.dispatch(gameActions.startInvestigation({ questId: 'quest-compact-watch' }))
+
+    const runtime = store.getState().game.activeQuests[0]
+    // The beat journal entry should be present
+    expect(runtime?.journalEntries).toContainEqual(
+      expect.stringContaining('Assessor Vorn is pulling sealed case files'),
+    )
+  })
+
+  it('story quest start copy overrides beat objective label', () => {
+    const store = makeStore({
+      activeQuests: [makeActiveQuest('quest-orren-wex-rescue')],
+    })
+
+    store.dispatch(gameActions.startInvestigation({ questId: 'quest-orren-wex-rescue' }))
+
+    const runtime = store.getState().game.activeQuests[0]
+    // The beat journal entry should be present
+    expect(runtime?.journalEntries).toContainEqual(
+      expect.stringContaining('custody'),
+    )
+    // But the objective label should be from start copy, not beat
+    expect(runtime?.currentObjectiveLabel).toContain('custody')
+  })
+})

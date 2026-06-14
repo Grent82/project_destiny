@@ -10,6 +10,7 @@ import {
   resolveSimpleContractObjective,
   advanceToOnSiteStep,
   resolveWithComplicationCheck,
+  applyMidQuestBeats,
 } from '../../commands/questLifecycle'
 import { settleQuestFailure, settleQuestSuccess } from '../../commands/questSettlement'
 import {
@@ -55,15 +56,9 @@ export const questReducers = {
     if (!quest) return
     if (action.payload.stageId !== undefined) {
       quest.stageId = action.payload.stageId
-      const template = getQuestTemplates().find((t) => t.id === quest.questId)
-      if (template?.midQuestBeats) {
-        for (const beat of template.midQuestBeats) {
-          if (beat.atStageId === action.payload.stageId) {
-            quest.currentObjectiveLabel = beat.label
-            quest.journalEntries = [...quest.journalEntries, beat.journalEntry]
-          }
-        }
-      }
+      const template = getQuestTemplates().find((t) => t.id === quest.questId) ?? null
+      // Use shared helper for consistent beat application
+      applyMidQuestBeats(quest, template, action.payload.stageId)
     }
     if (action.payload.currentObjectiveLabel !== undefined) {
       quest.currentObjectiveLabel = action.payload.currentObjectiveLabel
@@ -165,12 +160,17 @@ export const questReducers = {
     state.lastInvestigationResult = null
     const runtime = state.activeQuests.find((aq) => aq.questId === action.payload.questId)
     if (runtime) {
-      const startCopy = getInvestigationStartCopy(action.payload.questId)
       applyInvestigationQuestSetup(runtime, action.payload.questId)
       runtime.stageId = 'investigating'
-      runtime.currentObjectiveLabel = startCopy.objectiveLabel
       runtime.progress.completedSteps = Math.max(runtime.progress.completedSteps, 1)
       runtime.progress.lastAdvancedDay = state.day
+
+      // Apply mid-quest beats FIRST (for generic quests)
+      applyMidQuestBeats(runtime, quest ?? null, 'investigating')
+
+      // Then apply start copy (overrides beat for story quests with custom setup)
+      const startCopy = getInvestigationStartCopy(action.payload.questId)
+      runtime.currentObjectiveLabel = startCopy.objectiveLabel
       runtime.journalEntries = [...runtime.journalEntries, startCopy.journalEntry]
     }
   },

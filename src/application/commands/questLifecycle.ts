@@ -21,6 +21,29 @@ function pushSystemLog(state: GameState, message: string) {
   if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
 }
 
+/**
+ * Applies mid-quest beats when transitioning to a new stage.
+ * Shared helper used by all stage transitions to ensure beats fire consistently.
+ */
+export function applyMidQuestBeats(
+  runtime: { stageId: string; journalEntries: string[]; currentObjectiveLabel: string | null },
+  template: { midQuestBeats?: Array<{ atStageId: string; label: string; journalEntry: string }> } | null,
+  newStageId: string,
+): void {
+  if (!template?.midQuestBeats) return
+
+  for (const beat of template.midQuestBeats) {
+    if (beat.atStageId === newStageId) {
+      // Only apply if this beat hasn't been applied yet (check journal entries)
+      const beatAlreadyApplied = runtime.journalEntries.includes(beat.journalEntry)
+      if (!beatAlreadyApplied) {
+        runtime.currentObjectiveLabel = beat.label
+        runtime.journalEntries.push(beat.journalEntry)
+      }
+    }
+  }
+}
+
 export function canDiscoverQuest(state: GameState, questId: string): boolean {
   // Check basic state: not already a lead, not active, not completed
   if (state.availableQuestLeads.some((lead) => lead.questId === questId)) return false
@@ -141,6 +164,10 @@ export function advanceToOnSiteStep(state: GameState, questId: string): boolean 
   runtime.progress.lastAdvancedDay = state.day
   runtime.currentObjectiveLabel = stepLabel
   runtime.journalEntries.push(stepLabel)
+
+  // Apply mid-quest beats for the 'on-site' stage
+  applyMidQuestBeats(runtime, template, 'on-site')
+
   return true
 }
 

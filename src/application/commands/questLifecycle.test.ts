@@ -5,7 +5,7 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import { createQuestLeadRuntime, createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
 import { getQuestTemplates } from '../content/contentCatalog'
-import { canDiscoverQuest } from './questLifecycle'
+import { canDiscoverQuest, applyMidQuestBeats } from './questLifecycle'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
@@ -250,5 +250,76 @@ describe('failed quest archiving and rediscovery prevention', () => {
       questHistory: [failedQuest],
     })
     expect(canDiscoverQuest(state, 'quest-harborwatch')).toBe(true)
+  })
+})
+
+describe('applyMidQuestBeats', () => {
+  it('applies beat label and journal entry when transitioning to beat stage', () => {
+    const runtime = {
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+    const template = {
+      midQuestBeats: [
+        { atStageId: 'investigating', label: 'Investigation beat label', journalEntry: 'Investigation beat journal' },
+        { atStageId: 'on-site', label: 'On-site beat label', journalEntry: 'On-site beat journal' },
+      ],
+    }
+
+    applyMidQuestBeats(runtime, template, 'investigating')
+
+    expect(runtime.currentObjectiveLabel).toBe('Investigation beat label')
+    expect(runtime.journalEntries).toContain('Investigation beat journal')
+    expect(runtime.journalEntries).not.toContain('On-site beat journal')
+  })
+
+  it('does not duplicate beat on repeated calls', () => {
+    const runtime = {
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+    const template = {
+      midQuestBeats: [
+        { atStageId: 'investigating', label: 'Beat label', journalEntry: 'Beat journal' },
+      ],
+    }
+
+    applyMidQuestBeats(runtime, template, 'investigating')
+    applyMidQuestBeats(runtime, template, 'investigating')
+
+    expect(runtime.journalEntries.filter((e) => e === 'Beat journal')).toHaveLength(1)
+  })
+
+  it('does nothing if no beat matches the stage', () => {
+    const runtime = {
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+    const template = {
+      midQuestBeats: [
+        { atStageId: 'investigating', label: 'Beat label', journalEntry: 'Beat journal' },
+      ],
+    }
+
+    applyMidQuestBeats(runtime, template, 'unknown-stage')
+
+    expect(runtime.currentObjectiveLabel).toBe('Default objective')
+    expect(runtime.journalEntries).toHaveLength(1)
+  })
+
+  it('handles null template gracefully', () => {
+    const runtime = {
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+
+    applyMidQuestBeats(runtime, null, 'investigating')
+
+    expect(runtime.currentObjectiveLabel).toBe('Default objective')
+    expect(runtime.journalEntries).toHaveLength(1)
   })
 })
