@@ -52,7 +52,8 @@
         "trust": 4,
         "respect": 2
       }
-    ]
+    ],
+    "aftermathText": "The checkpoint holds. Three Ring men in the morgue, two more who decided tonight was not the night to argue."
   },
   {
     "id": "quest-ledger-recovery",
@@ -110,7 +111,8 @@
         "trust": 4,
         "respect": 2
       }
-    ]
+    ],
+    "aftermathText": "The ledger is back where it belongs, though the notary asks no questions about how it was lost in the first place."
   },
   {
     "id": "quest-foundry-escort",
@@ -135,6 +137,19 @@
         "npcId": "npc-bog",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The engineer reaches the foundry gates. The ambush crew is scattered; the League will count this as a victory.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The contact point is empty. Someone cleared it before you arrived.",
+        "journalEntry": "No one is waiting at the rendezvous. The target may have been moved or the intel was stale."
+      },
+      {
+        "atStageId": "engaged",
+        "label": "Contact made. The opposition is armed and prepared.",
+        "journalEntry": "The target is here, and they brought backup. This is going to be messy."
       }
     ]
   },
@@ -186,7 +201,8 @@
         "trust": 4,
         "respect": 2
       }
-    ]
+    ],
+    "aftermathText": "The ledger surfaces in a counting house off Northbank. Someone is using old debts as leverage."
   },
   {
     "id": "quest-restored-appeal",
@@ -214,6 +230,19 @@
         "npcId": "npc-sister-vael",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The seal is verified. The restored house now has standing to press claims against its former stewards.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
       }
     ]
   },
@@ -253,7 +282,8 @@
         "trust": 4,
         "respect": 2
       }
-    ]
+    ],
+    "aftermathText": "The target walks out of the Warrens under a new name. The Foundry will pay for discretion."
   },
   {
     "id": "quest-ring-debt-collection",
@@ -281,6 +311,19 @@
         "npcId": "npc-tessaly-ash",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The ledger is recovered from a Ring safehouse. The debt collectors know who owes what now.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The contact point is empty. Someone cleared it before you arrived.",
+        "journalEntry": "No one is waiting at the rendezvous. The target may have been moved or the intel was stale."
+      },
+      {
+        "atStageId": "engaged",
+        "label": "Contact made. The opposition is armed and prepared.",
+        "journalEntry": "The target is here, and they brought backup. This is going to be messy."
       }
     ]
   },
@@ -314,6 +357,19 @@
         "trust": 4,
         "respect": 2
       }
+    ],
+    "aftermathText": "The extract is delivered. The buyer asks no questions about where the nightblooms were sourced.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The drop point has been moved.",
+        "journalEntry": "The contact sent a new location at the last minute. Something feels off."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The exchange is interrupted.",
+        "journalEntry": "Someone else showed up for the handoff. This was a setup."
+      }
     ]
   },
   {
@@ -340,6 +396,19 @@
         "npcId": "npc-garet-doyle",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The wagon reaches the destination. The watch crew holds through the job; the Tallow Ring learns not to test this route.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The position is more exposed than expected.",
+        "journalEntry": "The defensive line is thinner than briefed. More eyes are watching this spot."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The enemy tests the position.",
+        "journalEntry": "A probe attack confirms they know where we are. The real assault is coming."
       }
     ]
   },
@@ -381,7 +450,8 @@
         "trust": 4,
         "respect": 2
       }
-    ]
+    ],
+    "aftermathText": "The sabotage is complete. The League will trace this back to the Ring; the war escalates."
   },
   {
     "id": "quest-hollows-ledger",
@@ -410,6 +480,19 @@
         "trust": 4,
         "respect": 2
       }
+    ],
+    "aftermathText": "The ledger is found. Someone in the Hollows has been keeping accounts that should have stayed buried.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
+      }
     ]
   },
   {
@@ -437,6 +520,19 @@
         "npcId": "npc-sister-vael",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The dispute is settled. The slaver house learns that the Court does not tolerate unauthorized trafficking.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
       }
     ]
   },
@@ -480,7 +576,8 @@
         "trust": 4,
         "respect": 2
       }
-    ]
+    ],
+    "aftermathText": "Three days of surveillance yield a pattern. Vorn is pulling files, not writing them."
   },
   {
     "id": "quest-gilded-auction-guard",
@@ -506,6 +603,19 @@
         "npcId": "npc-garet-doyle",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The auction ends without incident. The Court counts this as a success; the bidder who tried something does not return.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The position is more exposed than expected.",
+        "journalEntry": "The defensive line is thinner than briefed. More eyes are watching this spot."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The enemy tests the position.",
+        "journalEntry": "A probe attack confirms they know where we are. The real assault is coming."
       }
     ]
   },
@@ -534,6 +644,19 @@
         "npcId": "npc-bog",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The cleanup is complete. The ironworks runs smoother now; the foundry knows who to call next time.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The drop point has been moved.",
+        "journalEntry": "The contact sent a new location at the last minute. Something feels off."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The exchange is interrupted.",
+        "journalEntry": "Someone else showed up for the handoff. This was a setup."
       }
     ]
   },
@@ -576,7 +699,8 @@
         "label": "The courier is in a side alley off the Pale's eastern market. He has noticed you.",
         "journalEntry": "The courier reached for a signal before you had to show yourself. Tessaly's price for information is trust — and she is testing whether you can earn it."
       }
-    ]
+    ],
+    "aftermathText": "The contract is settled. The house bears the cost or collects the reward."
   },
   {
     "id": "quest-mira-act2-tannery-watch",
@@ -618,7 +742,8 @@
         "label": "The schedule is signed by an assessor from the Northbank. This is not a holding — it is a transfer.",
         "journalEntry": "Mira is being moved in two days. The signature on the order belongs to someone with access to the Court's internal transport — this is not a routine detention."
       }
-    ]
+    ],
+    "aftermathText": "The contract is settled. The house bears the cost or collects the reward."
   },
   {
     "id": "quest-mira-rescue",
@@ -715,7 +840,19 @@
         "respect": 2
       }
     ],
-    "aftermathText": "The writ fails but is filed — the Court now needs the debt to succeed where the raid did not. Mira stands in the doorway behind you, silent. She has not spoken since she walked out of the tannery. When she finally does, it is only to say that the Court will not forget this either."
+    "aftermathText": "The writ fails but is filed — the Court now needs the debt to succeed where the raid did not. Mira stands in the doorway behind you, silent. She has not spoken since she walked out of the tannery. When she finally does, it is only to say that the Court will not forget this either.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The position is more exposed than expected.",
+        "journalEntry": "The defensive line is thinner than briefed. More eyes are watching this spot."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The enemy tests the position.",
+        "journalEntry": "A probe attack confirms they know where we are. The real assault is coming."
+      }
+    ]
   },
   {
     "id": "quest-orren-wex-rescue",
@@ -800,6 +937,21 @@
         "trust": 4,
         "respect": 2
       }
+    ],
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-warrens",
+    "aftermathText": "The Ring learns that the harbor is not theirs to shake down. The Compact notes who did the work.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
+      }
     ]
   },
   {
@@ -826,6 +978,21 @@
         "trust": 4,
         "respect": 2
       }
+    ],
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "aftermathText": "The debt is called in. The Court now has leverage over a house that thought it was secure.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The drop point has been moved.",
+        "journalEntry": "The contact sent a new location at the last minute. Something feels off."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The exchange is interrupted.",
+        "journalEntry": "Someone else showed up for the handoff. This was a setup."
+      }
     ]
   },
   {
@@ -851,6 +1018,21 @@
         "npcId": "npc-sister-vael",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "discoverySource": "event",
+    "discoveryDistrictId": "district-the-pale",
+    "aftermathText": "The ledger is ash. Someone wins, someone loses, and the notary loses a job either way.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
       }
     ]
   },
@@ -880,6 +1062,19 @@
         "trust": 4,
         "respect": 2
       }
+    ],
+    "aftermathText": "The covenant learns that the Foundry does not tolerate encroachment. Their expansion stalls.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
+      }
     ]
   },
   {
@@ -907,6 +1102,19 @@
         "npcId": "npc-sister-vael",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The sisters learn that the Compact watches them closely. Their recruitment slows.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
       }
     ]
   },
@@ -936,6 +1144,19 @@
         "trust": 4,
         "respect": 2
       }
+    ],
+    "aftermathText": "The hand learns that the Court does not tolerate theft. Their grip loosens.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
+      }
     ]
   },
   {
@@ -963,6 +1184,19 @@
         "npcId": "npc-garet-doyle",
         "trust": 4,
         "respect": 2
+      }
+    ],
+    "aftermathText": "The compact learns that the Ring has teeth. Their pressure campaign stalls.",
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The location is not what the briefing suggested.",
+        "journalEntry": "The intel was incomplete. Someone has been active here recently."
+      },
+      {
+        "atStageId": "investigating",
+        "label": "A lead surfaces that was not in the original brief.",
+        "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
       }
     ]
   }
