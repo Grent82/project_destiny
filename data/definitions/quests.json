@@ -1199,5 +1199,59 @@
         "journalEntry": "Something unexpected turned up. The trail runs deeper than anticipated."
       }
     ]
+  },
+  {
+    "id": "quest-compact-watch-followup",
+    "title": "The Vorn Files",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-civic-compact",
+    "districtId": "district-the-pale",
+    "briefing": "The surveillance on Assessor Vorn yielded something. Someone wants the files back - or destroyed. The Compact is offering a substantial reward for the evidence that was never supposed to exist.",
+    "objectiveType": "delivery",
+    "rewardMarks": 300,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": 5,
+    "linkedMissionId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": null,
+    "discoveryDistrictId": null,
+    "sourceNpcId": "npc-sister-vael",
+    "riskLevel": "high",
+    "flavorNote": "The files Vorn was retrieving implicate someone in the Court. That someone is willing to pay well to keep it quiet.",
+    "questType": "contract",
+    "openingText": null,
+    "aftermathText": "The files change hands. The buyer never reveals what was in them, but the payment speaks to the value. Vorn continues his work; someone else sleeps easier tonight.",
+    "prerequisiteQuestId": null,
+    "unlocksNpcId": null,
+    "rewardCityDialId": "corruption",
+    "rewardCityDialDelta": 2,
+    "rewardDebtReduction": 0,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sister-vael",
+        "trust": 6,
+        "respect": 3
+      }
+    ],
+    "successorQuestId": null,
+    "successorOnFailQuestId": null,
+    "midQuestBeats": [
+      {
+        "atStageId": "on-site-prep",
+        "label": "The drop box is empty. Someone beat you to it.",
+        "journalEntry": "The evidence is gone. Either the buyer got nervous or the Compact decided to clean up their own mess."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The buyer arrives with armed escort. They do not trust you.",
+        "journalEntry": "The contact brings two guards. They inspect the files carefully before handing over the payment. Whatever is in those pages is worth the protection."
+      }
+    ],
+    "successorRumorIds": ["rumor-compact-watch-evidence-leaked"],
+    "complicationRisk": 0.2,
+    "retryBehavior": "fail",
+    "prerequisiteQuestId": "quest-compact-watch"
   }
 ]

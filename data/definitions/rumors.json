@@ -475,7 +475,11 @@
     "truth": "true",
     "credibility": 60,
     "tags": ["compact-watch", "harbor", "valdris", "sequel"],
-    "autoSpawn": false
+    "autoSpawn": false,
+    "consequences": {
+      "heatThreshold": 55,
+      "unlocksQuestId": "quest-compact-watch-followup"
+    }
   },
   {
     "id": "rumor-nightbloom-pale-word",

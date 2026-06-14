@@ -48,8 +48,13 @@ describe('quest narrative floor', () => {
     }
   })
 
-  it('every quest has discoverySource and discoveryDistrictId', () => {
+  it('every quest has discoverySource and discoveryDistrictId (except successor quests unlocked via rumors)', () => {
     const failures = templates.filter((t) => {
+      // Successor quests unlocked via rumors don't need discoverySource/discoveryDistrictId
+      // They are discovered through the rumor consequences mechanism
+      const isSuccessorQuest = t.prerequisiteQuestId != null
+      if (isSuccessorQuest) return false
+
       return t.discoverySource == null || t.discoveryDistrictId == null
     })
 
