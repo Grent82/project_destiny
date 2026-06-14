@@ -7,4 +7,6 @@
 - [Feedback: bd-CLI-Konventionen — Epic-Parenting via --parent, Pflichtsektionen je Typ](feedback_bd-cli-conventions.md) — 21 Fehlermeldungen + 2 Patch-Runden 2026-06-12
 - [Feedback: Bead-Batches vor Freigabe durch Fact-Check-Subagent reviewen](feedback_backlog-review-subagent.md) — fand 2 Blocker in 21 frischen Beads
 - [Feedback: Audit-Artefakte sofort nach reports/ oder in Beads einbetten, nie Chat-Verweise](feedback_audit-evidence-as-files.md) — Review-BLOCKER wegen nicht existenter 68er-Liste
+- [Feedback: House Geometry — bounds und overlaps vor Positionierung prüfen](feedback_house-geometry-planning.md) — 3 Iterationen für room-east-wing/servant-quarters/barracks 2026-06-14
 - [Projekt: Tooling-Quirks — vitest schluckt console.log, Playwright-MCP-Screenshots flüchtig](project_test-tooling-quirks.md) — Headless-Sim als Audit-Werkzeug
+- [Test mock strategy](feedback_test-mock-strategy.md) — only mock fields code reads, cast at boundary
