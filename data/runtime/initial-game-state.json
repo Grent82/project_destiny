@@ -186,6 +186,8 @@
   ],
   "cityResources": {
     "foodSecurity": 62,
+    "foodStock": 620,
+    "foodCapacity": 1000,
     "waterAccess": 70,
     "materialStock": 50,
     "corridorStatus": "open"
@@ -534,7 +536,7 @@
     "lastDomesticRelationshipBeat": null
   },
   "visitedDialogueNodes": {},
-  "saveVersion": 3,
+  "saveVersion": 4,
   "rumors": [],
   "bondVisibility": {},
   "ownedItems": [

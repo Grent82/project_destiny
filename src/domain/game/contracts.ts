@@ -61,6 +61,8 @@ export const corridorStatusSchema = z.enum(['open', 'disrupted', 'blocked'])
 export const cityResourcesSchema = z
   .object({
     foodSecurity: z.number().min(0).max(100),
+    foodStock: nonNegativeIntegerSchema,
+    foodCapacity: nonNegativeIntegerSchema,
     waterAccess: z.number().min(0).max(100),
     materialStock: z.number().min(0).max(100),
     corridorStatus: corridorStatusSchema,

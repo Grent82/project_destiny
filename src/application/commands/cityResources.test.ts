@@ -20,6 +20,8 @@ describe('selectCityResources', () => {
     const state = makeRootState(initialGameStateSnapshot)
     expect(selectCityResources(state as Parameters<typeof selectCityResources>[0])).toEqual({
       foodSecurity: 62,
+      foodStock: 620,
+      foodCapacity: 1000,
       waterAccess: 70,
       materialStock: 50,
       corridorStatus: 'open',

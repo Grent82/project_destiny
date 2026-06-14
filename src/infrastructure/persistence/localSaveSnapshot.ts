@@ -93,7 +93,25 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 3) {
-    return gameStateSchema.safeParse(raw).data ?? null
+    // v3 → v4: add foodStock and foodCapacity, derive foodStock from foodSecurity
+    // foodSecurity = (foodStock / foodCapacity) * 100
+    // Therefore: foodStock = (foodSecurity / 100) * foodCapacity
+    const raw3 = raw as Record<string, unknown>
+    const cityResources = raw3['cityResources'] as Record<string, unknown> | undefined
+    if (cityResources) {
+      const foodSecurity = cityResources['foodSecurity'] as number | undefined
+      const foodCapacity = 1000 // Default capacity
+      const foodStock = foodSecurity !== undefined
+        ? Math.round((foodSecurity / 100) * foodCapacity)
+        : 620 // Default stock (62% of capacity)
+      const migratedCityResources = {
+        ...cityResources,
+        foodStock,
+        foodCapacity,
+      }
+      return gameStateSchema.safeParse({ ...raw3, saveVersion: 4, cityResources: migratedCityResources }).data ?? null
+    }
+    return gameStateSchema.safeParse({ ...raw3, saveVersion: 4 }).data ?? null
   }
 
   // Unknown future version — cannot load
