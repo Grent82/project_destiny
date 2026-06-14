@@ -55,6 +55,8 @@ export const questTemplateSchema = z.object({
     loyalty: z.number().optional(),
   }).strict()).default([]),
   successorRumorIds: z.array(z.string()).default([]),
+  complicationRisk: z.number().min(0).max(1).default(0),
+  retryBehavior: z.enum(['fail', 'retryable', 'branch']).default('fail'),
 }).strict()
 
 export const questClueSchema = z.object({
@@ -268,7 +270,7 @@ export function createQuestRuntime(
       discoverySource: lead?.discoverySource ?? template.discoverySource,
       discoveryDistrictId: lead?.discoveryDistrictId ?? template.discoveryDistrictId,
       selectedBranchId: null,
-      retryBehavior: 'fail',
+      retryBehavior: template.retryBehavior,
       executionDurationDays: template.executionDurationDays,
       executionDurationWatches: template.executionDurationWatches,
     },

@@ -170,6 +170,8 @@ export function generateProceduralCombatQuest(
     rewardItemIds: [],
     rewardRelationshipDeltas: [],
     successorRumorIds: [],
+    complicationRisk: 0,
+    retryBehavior: 'fail',
   }
 }
 

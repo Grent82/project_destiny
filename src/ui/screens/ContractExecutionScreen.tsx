@@ -154,7 +154,6 @@ export function ContractExecutionScreen() {
                   dispatch(gameActions.advanceTimeSlot())
                   dispatch(gameActions.resolveContractWithComplicationCheck({
                     questId: runtime.questId,
-                    complicationRisk: 0,
                   }))
                   navigate('/contracts')
                 }}

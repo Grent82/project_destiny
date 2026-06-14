@@ -138,9 +138,9 @@ export const questReducers = {
 
   resolveContractWithComplicationCheck(
     state: GameState,
-    action: PayloadAction<{ questId: string; complicationRisk?: number }>,
+    action: PayloadAction<{ questId: string }>,
   ) {
-    resolveWithComplicationCheck(state, action.payload.questId, action.payload.complicationRisk ?? 0)
+    resolveWithComplicationCheck(state, action.payload.questId)
   },
 
   failQuest(state: GameState, action: PayloadAction<{ questId: string }>) {

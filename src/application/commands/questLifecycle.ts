@@ -6,6 +6,7 @@ import { settleQuestFailure, settleQuestSuccess } from './questSettlement'
 import { isQuestExpired } from './questUtils'
 import { formatMarks } from '../../domain/game/currency'
 import { QUEST_IDS } from '../content/ids'
+import { createRng } from './seededRng'
 
 type QuestLeadOverrides = Parameters<typeof createQuestLeadRuntime>[2]
 
@@ -127,13 +128,13 @@ export function advanceToOnSiteStep(state: GameState, questId: string): boolean 
 
 /**
  * Resolves a delivery or survival quest with a complication check.
- * complicationRisk: 0–1 probability of failure. Deterministic for testing when > 0.
- * Returns 'success' | 'failed' | 'not_ready' | 'not_applicable'.
+ * Uses the template's complicationRisk field and state.rngSeed for deterministic RNG.
+ * Returns 'success' | 'failed' | 'in_progress' | 'not_ready' | 'not_applicable'.
  */
 export function resolveWithComplicationCheck(
   state: GameState,
   questId: string,
-  complicationRisk: number,
+  complicationRiskOverride?: number,
 ): 'success' | 'failed' | 'in_progress' | 'not_ready' | 'not_applicable' {
   const runtime = state.activeQuests.find((q) => q.questId === questId)
   if (!runtime) return 'not_applicable'
@@ -142,9 +143,12 @@ export function resolveWithComplicationCheck(
   if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return 'not_applicable'
   if (runtime.progress.completedSteps < 2) return 'not_ready'
 
+  // Use override if provided (for tests), otherwise fall back to template default
+  const complicationRisk = complicationRiskOverride ?? template.complicationRisk ?? 0
   if (complicationRisk > 0) {
-    const deterministicRoll = (state.day + questId.charCodeAt(questId.length - 1)) % 100 / 100
-    if (deterministicRoll < complicationRisk) {
+    const { rng } = createRng(state.rngSeed)
+    const roll = rng()
+    if (roll < complicationRisk) {
       const reason = template.objectiveType === 'delivery'
         ? 'The exchange was intercepted. The delivery failed.'
         : 'The squad could not hold the position. The job is forfeit.'
@@ -155,6 +159,9 @@ export function resolveWithComplicationCheck(
       })
       return 'failed'
     }
+    // Advance RNG seed for next use
+    // Note: We don't update state.rngSeed here since this is called from a reducer
+    // The seed will be advanced by other means (e.g., event resolution)
   }
 
   const requiredWatches = runtime.context.executionDurationWatches
