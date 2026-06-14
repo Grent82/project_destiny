@@ -24,6 +24,8 @@ function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
     inventory: [],
     cityResources: {
       foodSecurity: 60,
+      foodStock: 600,
+      foodCapacity: 1000,
       waterAccess: 70,
       materialStock: 50,
       corridorStatus: 'open',

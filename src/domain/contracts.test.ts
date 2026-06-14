@@ -222,6 +222,8 @@ describe('gameStateSchema', () => {
       inventory: [],
       cityResources: {
         foodSecurity: 62,
+        foodStock: 620,
+        foodCapacity: 1000,
         waterAccess: 70,
         materialStock: 50,
         corridorStatus: 'open',
@@ -257,6 +259,8 @@ describe('gameStateSchema', () => {
       inventory: [],
       cityResources: {
         foodSecurity: 62,
+        foodStock: 620,
+        foodCapacity: 1000,
         waterAccess: 70,
         materialStock: 50,
         corridorStatus: 'open',
@@ -311,6 +315,8 @@ describe('gameStateSchema', () => {
       inventory: [],
       cityResources: {
         foodSecurity: 62,
+        foodStock: 620,
+        foodCapacity: 1000,
         waterAccess: 70,
         materialStock: 50,
         corridorStatus: 'open',
