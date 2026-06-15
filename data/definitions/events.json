@@ -30,7 +30,7 @@
       },
       {
         "id": "choice-ignore",
-        "label": "Ignore it \u2014 they'll manage",
+        "label": "Ignore it — they'll manage",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -56,12 +56,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-gilded-court-approach",
     "title": "A Gilded Messenger",
-    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting \u2014 on their terms. You are not foolish enough to think this is a kindness.",
+    "description": "A courier in House Aurevaine livery arrives with a sealed letter. The Court proposes a meeting — on their terms. You are not foolish enough to think this is a kindness.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-gilded-court",
@@ -87,7 +88,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You attend. The Court notes your cooperation \u2014 and your face."
+            "message": "You attend. The Court notes your cooperation — and your face."
           },
           {
             "type": "createQuestLead",
@@ -97,7 +98,7 @@
       },
       {
         "id": "choice-decline",
-        "label": "Decline \u2014 send a polite refusal",
+        "label": "Decline — send a polite refusal",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -118,7 +119,8 @@
     ],
     "sourceDistrictId": "district-gilded-heights",
     "sourceNpcId": null,
-    "presentationFlavour": "A sealed letter bearing House Aurevaine's crest. The wax is still warm."
+    "presentationFlavour": "A sealed letter bearing House Aurevaine's crest. The wax is still warm.",
+    "firingMode": "world"
   },
   {
     "id": "event-corridor-disruption",
@@ -145,13 +147,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The League thanks you. The Corridor is placed under watch \u2014 disrupted but not closed."
+            "message": "The League thanks you. The Corridor is placed under watch — disrupted but not closed."
           }
         ]
       },
       {
         "id": "choice-ignore-corridor",
-        "label": "Keep it quiet \u2014 not your problem",
+        "label": "Keep it quiet — not your problem",
         "outcomes": [
           {
             "type": "setCorridorStatus",
@@ -176,12 +178,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-ring-smuggler-contact",
     "title": "A Ring Offer",
-    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods \u2014 restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
+    "description": "A Tallow Ring broker makes contact through a ward intermediary. They have goods — restricted documents, unlicensed medicine, salvage that didn't make the League manifest. The price is fair. The paperwork doesn't exist.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-tallow-ring",
@@ -234,12 +237,13 @@
     ],
     "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
-    "presentationFlavour": "The broker smells of tallow and speaks too quietly to be overheard."
+    "presentationFlavour": "The broker smells of tallow and speaks too quietly to be overheard.",
+    "firingMode": "world"
   },
   {
     "id": "event-restored-appeal",
     "title": "A Petition from the Warrens",
-    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help \u2014 money, testimony, or a distraction that buys them time.",
+    "description": "Three Restored community organizers wait in your anteroom. They represent a tenement block in the Warrens facing eviction by a Compact-linked landlord. They are asking for help — money, testimony, or a distraction that buys them time.",
     "triggerConditions": {
       "minUnrest": 40,
       "probability": 0.45,
@@ -266,7 +270,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The Restored accept your help quietly. Word will spread \u2014 in the right places."
+            "message": "The Restored accept your help quietly. Word will spread — in the right places."
           }
         ]
       },
@@ -314,12 +318,13 @@
     ],
     "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
-    "presentationFlavour": "Three tired faces. They have rehearsed this appeal more times than you can count."
+    "presentationFlavour": "Three tired faces. They have rehearsed this appeal more times than you can count.",
+    "firingMode": "world"
   },
   {
     "id": "event-market-price-spike",
     "title": "Supply Shortage in the Harbor",
-    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week \u2014 but this week it matters.",
+    "description": "A dockworkers' dispute has halted three incoming trade barges. Shop prices in the Harbor Ward are climbing. It won't last more than a week — but this week it matters.",
     "triggerConditions": {
       "probability": 0.3,
       "dayMin": 3
@@ -367,12 +372,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-foundry-inspection",
     "title": "League Safety Inspection",
-    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current \u2014 but inspections have a way of finding things.",
+    "description": "The Foundry League has sent inspectors to the Ironworks district. Any operation with wall-adjacent contracts is being reviewed. Your permits are current — but inspections have a way of finding things.",
     "triggerConditions": {
       "factionStandingAbove": {
         "factionId": "faction-foundry-league",
@@ -384,7 +390,7 @@
     "choices": [
       {
         "id": "choice-cooperate-fully",
-        "label": "Cooperate fully \u2014 nothing to hide",
+        "label": "Cooperate fully — nothing to hide",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -424,12 +430,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-auto-npc-injury-complication",
     "title": "Injury Complications",
-    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover \u2014 but it will take time and rest.",
+    "description": "An old wound has reopened. One of your people is in worse shape than the healers first thought. They will recover — but it will take time and rest.",
     "triggerConditions": {
       "probability": 0.25,
       "dayMin": 4
@@ -472,7 +479,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-hollows-entry",
@@ -486,11 +494,11 @@
     "choices": [
       {
         "id": "choice-keep-moving",
-        "label": "Keep moving \u2014 head down",
+        "label": "Keep moving — head down",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You move through without incident. The Hollows lets you pass \u2014 this time."
+            "message": "You move through without incident. The Hollows lets you pass — this time."
           }
         ]
       },
@@ -518,12 +526,13 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-pale-approach",
     "title": "The Pale Keeps Its Silence",
-    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate \u2014 politely, professionally, with a list of questions you were not expecting.",
+    "description": "The Pale is Court territory in everything but name. Gilded Heights money flows here quietly. A minor functionary intercepts you at the gate — politely, professionally, with a list of questions you were not expecting.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "probability": 0.3,
@@ -547,7 +556,7 @@
       },
       {
         "id": "choice-deflect-questions",
-        "label": "Deflect \u2014 you are here on private business",
+        "label": "Deflect — you are here on private business",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -574,14 +583,15 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-betrayal",
     "title": "A Knife in the Dark",
     "description": "One of your own has turned against you. They have carried your secrets to your enemies. The damage is already done.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -603,12 +613,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-loyal-npc-milestone",
     "title": "A Reliable Hand",
-    "description": "One of your people has been consistent \u2014 steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
+    "description": "One of your people has been consistent — steady work, no complaints, no departures. They have not asked for recognition and they will not. But they have noticed whether you have.",
     "triggerConditions": {
       "dayMin": 10,
       "probability": 0.3
@@ -629,13 +640,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The bonus is delivered without ceremony. The work continues \u2014 better than before."
+            "message": "The bonus is delivered without ceremony. The work continues — better than before."
           }
         ]
       },
       {
         "id": "choice-acknowledge-words",
-        "label": "Acknowledge the work \u2014 no payment",
+        "label": "Acknowledge the work — no payment",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -667,12 +678,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-stressed-npc-warning",
     "title": "Someone Is Close to Breaking",
-    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer \u2014 or they will simply stop showing up.",
+    "description": "One of your people is running on nothing. The strain has been visible for days and it has not improved. If this continues, the work will suffer — or they will simply stop showing up.",
     "triggerConditions": {
       "minUnrest": 55,
       "probability": 0.45,
@@ -681,7 +693,7 @@
     "choices": [
       {
         "id": "choice-give-rest",
-        "label": "Give them two days off \u2014 no assignments",
+        "label": "Give them two days off — no assignments",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -715,7 +727,7 @@
       },
       {
         "id": "choice-push-through",
-        "label": "Push through \u2014 the work does not wait",
+        "label": "Push through — the work does not wait",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -737,7 +749,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-harbor-windfall",
@@ -750,7 +763,7 @@
     "choices": [
       {
         "id": "choice-invest-shipment",
-        "label": "Buy in \u2014 invest 80 Marks",
+        "label": "Buy in — invest 80 Marks",
         "outcomes": [
           {
             "type": "addCredits",
@@ -768,13 +781,13 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "The goods clear the dock before the inspection. The investment was sound \u2014 the materials arrive and the margin holds."
+            "message": "The goods clear the dock before the inspection. The investment was sound — the materials arrive and the margin holds."
           }
         ]
       },
       {
         "id": "choice-pass-windfall",
-        "label": "Pass \u2014 the timing is suspicious",
+        "label": "Pass — the timing is suspicious",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -791,14 +804,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-city-crisis",
     "title": "The City Trembles",
     "description": "Stability in Valdenmoor is critically low. Riots have broken out in the outer districts. Your operations may be affected.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -812,7 +826,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Your team moves into the outer districts. Order is restored \u2014 for now. The Compact takes note."
+            "message": "Your team moves into the outer districts. Order is restored — for now. The Compact takes note."
           }
         ]
       },
@@ -835,14 +849,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-rival-expansion",
     "title": "Rivals Move",
     "description": "A rival organization has seized control of a district market. Competition for contracts will be fiercer.",
     "triggerConditions": {
-      "probability": 0,
+      "probability": 1,
       "minUnrest": 40
     },
     "choices": [
@@ -865,7 +880,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-gilded-notice",
@@ -876,7 +892,7 @@
         "factionId": "faction-gilded-court",
         "threshold": 30
       },
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -913,7 +929,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-npc-marion-note",
@@ -944,7 +961,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-marion-warning",
@@ -975,7 +993,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": "npc-marion-vale",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-ida-blade",
@@ -1006,7 +1025,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-ida-provisions",
@@ -1037,7 +1057,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-verek-marks",
@@ -1068,7 +1089,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-verek-routes",
@@ -1099,7 +1121,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-rutha-terms",
@@ -1130,7 +1153,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-rutha-thornwall",
@@ -1161,7 +1185,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-sable-survey",
@@ -1192,7 +1217,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-aldric-manners",
@@ -1223,7 +1249,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-dara-route",
@@ -1241,7 +1268,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street \u2014 second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
+            "message": "Dara drops her satchel and says, almost to herself: \"The Harbor Ward gate on Splinter Street — second guard changes at the second bell. Good time to move things.\" She is already eating before you can ask what things."
           }
         ]
       }
@@ -1254,7 +1281,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-oswin-logistics",
@@ -1272,7 +1300,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Oswin spreads a hand-drawn map on the table \u2014 distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
+            "message": "Oswin spreads a hand-drawn map on the table — distribution points, Compact checkpoints, the gap between them. \"We could feed three more blocks if this route were clear.\" He has the names of who blocked it last time. He adds them to his list."
           }
         ]
       }
@@ -1285,7 +1313,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-cress-treats",
@@ -1303,7 +1332,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Cress notices the cut on your forearm and says nothing \u2014 just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
+            "message": "Cress notices the cut on your forearm and says nothing — just takes your arm and begins cleaning the wound. When she finishes she says: \"You should have had this done yesterday.\" That is all. That is enough."
           }
         ]
       }
@@ -1316,7 +1345,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-tav-register",
@@ -1347,7 +1377,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-maret-record",
@@ -1365,7 +1396,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Maret sets a copied page on the table \u2014 a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
+            "message": "Maret sets a copied page on the table — a sealed Compact filing from three years ago, reclassified twice. \"The record is complete,\" she says. \"What you do with it is your concern.\" She means it as information, not permission."
           }
         ]
       }
@@ -1378,7 +1409,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-npc-lirien-father",
@@ -1409,7 +1441,8 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-ledger-keeper",
@@ -1439,7 +1472,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-iron-docks-rates",
@@ -1469,7 +1503,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-pale-court-annex",
@@ -1499,12 +1534,13 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-ashfields-convoy",
     "title": "Turned Back on the Ashfields Road",
-    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings.",
+    "description": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings.",
     "triggerConditions": {
       "dayMin": 7,
       "probability": 1
@@ -1516,7 +1552,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers \u2014 no faction markings."
+            "message": "Three merchants on the Ashfields road reported their convoy was turned back by armed strangers — no faction markings."
           }
         ]
       }
@@ -1529,7 +1565,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-tangle-silence-broken",
@@ -1559,7 +1596,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-guild-notices-torn",
@@ -1589,7 +1627,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-foundry-fire",
@@ -1619,7 +1658,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-compact-census",
@@ -1649,7 +1689,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-ring-broker-missing",
@@ -1679,7 +1720,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-old-bridge-cracks",
@@ -1709,7 +1751,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-gilded-court-auction",
@@ -1739,7 +1782,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-pale-recruits",
@@ -1769,7 +1813,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-food-price-spike",
@@ -1799,7 +1844,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-patrol-rerouted",
@@ -1829,7 +1875,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-rumor-ship-unscheduled",
@@ -1859,7 +1906,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-debt-weight",
@@ -1917,7 +1965,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-first-success",
@@ -1963,7 +2012,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-marion-vale",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-combat-aftermath",
@@ -2035,7 +2085,8 @@
     "cooldownDays": 14,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-growing-roster",
@@ -2091,7 +2142,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-provisions-crisis",
@@ -2137,12 +2189,13 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-loyal-stay",
     "title": "Marion Is Still Here",
-    "description": "The debt is past due. Others have noticed. Marion's old contacts in the Harbor Ward have sent her two discreet offers \u2014 you found the letters, by accident, in the kitchen fire. She hasn't taken either. She has not mentioned them. She is setting the table for supper.",
+    "description": "The debt is past due. Others have noticed. Marion's old contacts in the Harbor Ward have sent her two discreet offers — you found the letters, by accident, in the kitchen fire. She hasn't taken either. She has not mentioned them. She is setting the table for supper.",
     "triggerConditions": {
       "dayMin": 20,
       "debtPaid": false,
@@ -2184,7 +2237,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "You sit. Marion serves without ceremony. The debt is not spoken of. It hangs in the air like smoke \u2014 but the table is set."
+            "message": "You sit. Marion serves without ceremony. The debt is not spoken of. It hangs in the air like smoke — but the table is set."
           }
         ]
       }
@@ -2201,7 +2254,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-house-renown",
@@ -2262,7 +2316,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-personal-history",
@@ -2335,7 +2390,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-harbor-smuggling-tip",
@@ -2386,12 +2442,13 @@
     "cooldownDays": 8,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-harbor-compact-inspection",
     "title": "Scheduled Inspection",
-    "description": "A Compact clerk informs you that a cargo inventory inspection is scheduled at your berth \u2014 apparently a routine check. Your name is on the list. How thorough this becomes depends on your standing.",
+    "description": "A Compact clerk informs you that a cargo inventory inspection is scheduled at your berth — apparently a routine check. Your name is on the list. How thorough this becomes depends on your standing.",
     "triggerConditions": {
       "currentDistrict": "district-harbor",
       "dayMin": 4,
@@ -2437,12 +2494,13 @@
     "cooldownDays": 10,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-harbor-dockworker-dispute",
     "title": "Dispute at the Gate",
-    "description": "Two crews are blocking the gate access, disputing a missing payment from a shipping contract. Neither will move until it's settled. Your people can't get through \u2014 and waiting costs time.",
+    "description": "Two crews are blocking the gate access, disputing a missing payment from a shipping contract. Neither will move until it's settled. Your people can't get through — and waiting costs time.",
     "triggerConditions": {
       "currentDistrict": "district-harbor",
       "dayMin": 3,
@@ -2494,12 +2552,13 @@
     "cooldownDays": 9,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-gilded-invitation",
     "title": "An Invitation to Supper",
-    "description": "A liveried messenger delivers a card embossed with a crest you half-recognize \u2014 a minor Court house extending an informal dinner invitation. The phrasing is pleasant and tells you nothing about why.",
+    "description": "A liveried messenger delivers a card embossed with a crest you half-recognize — a minor Court house extending an informal dinner invitation. The phrasing is pleasant and tells you nothing about why.",
     "triggerConditions": {
       "currentDistrict": "district-gilded-heights",
       "dayMin": 3,
@@ -2508,7 +2567,7 @@
     "choices": [
       {
         "id": "choice-gilded-attend",
-        "label": "Attend \u2014 it costs nothing to be seen",
+        "label": "Attend — it costs nothing to be seen",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -2546,7 +2605,8 @@
     "cooldownDays": 12,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-gilded-debt-broker",
@@ -2597,12 +2657,13 @@
     "cooldownDays": 14,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-ironworks-labor-stoppage",
     "title": "Work Stoppage on Floor Three",
-    "description": "A section of League workers has stopped production over a safety dispute \u2014 part of a larger pattern of industrial grievances. The foreman wants someone with authority to hear the complaint. The League is watching.",
+    "description": "A section of League workers has stopped production over a safety dispute — part of a larger pattern of industrial grievances. The foreman wants someone with authority to hear the complaint. The League is watching.",
     "triggerConditions": {
       "currentDistrict": "district-ironworks",
       "dayMin": 3,
@@ -2611,7 +2672,7 @@
     "choices": [
       {
         "id": "choice-ironworks-side-workers",
-        "label": "Back the workers \u2014 the foreman was wrong",
+        "label": "Back the workers — the foreman was wrong",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -2631,7 +2692,7 @@
       },
       {
         "id": "choice-ironworks-side-league",
-        "label": "Back the League \u2014 work resumes",
+        "label": "Back the League — work resumes",
         "outcomes": [
           {
             "type": "adjustFactionStanding",
@@ -2659,12 +2720,13 @@
     "cooldownDays": 10,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-ironworks-salvage-find",
     "title": "Something in the Wreckage",
-    "description": "A worker pulls you aside near a collapsed section of the old foundry annex. He's found something buried under the debris \u2014 tools, ingots, or something worth considerably more. He wants a cut to keep quiet.",
+    "description": "A worker pulls you aside near a collapsed section of the old foundry annex. He's found something buried under the debris — tools, ingots, or something worth considerably more. He wants a cut to keep quiet.",
     "triggerConditions": {
       "currentDistrict": "district-ironworks",
       "dayMin": 2,
@@ -2687,7 +2749,7 @@
       },
       {
         "id": "choice-ironworks-take-all",
-        "label": "Take it all \u2014 threaten his silence",
+        "label": "Take it all — threaten his silence",
         "outcomes": [
           {
             "type": "addCredits",
@@ -2713,7 +2775,8 @@
     "cooldownDays": 12,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-pale-shelter-request",
@@ -2770,12 +2833,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-pale-breach-relic",
     "title": "Something Left by the Breach",
-    "description": "One of your people brings you an object they found in the rubble of the old gate district. It is clearly pre-Breach \u2014 its purpose is not immediately apparent, but it is intact. The Restored will pay for this. So will the right scholar.",
+    "description": "One of your people brings you an object they found in the rubble of the old gate district. It is clearly pre-Breach — its purpose is not immediately apparent, but it is intact. The Restored will pay for this. So will the right scholar.",
     "triggerConditions": {
       "currentDistrict": "district-the-pale",
       "dayMin": 5,
@@ -2803,7 +2867,7 @@
       },
       {
         "id": "choice-pale-relic-keep",
-        "label": "Keep it \u2014 it might matter later",
+        "label": "Keep it — it might matter later",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -2821,12 +2885,13 @@
     "cooldownDays": 15,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-warrens-pickpocket-ring",
     "title": "A Familiar Pattern",
-    "description": "Three of your people have had their pockets turned inside out in the same block over two days. Someone is working the area systematically. The locals know who \u2014 they just won't say.",
+    "description": "Three of your people have had their pockets turned inside out in the same block over two days. Someone is working the area systematically. The locals know who — they just won't say.",
     "triggerConditions": {
       "currentDistrict": "district-the-warrens",
       "dayMin": 3,
@@ -2882,12 +2947,13 @@
     "cooldownDays": 9,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-warrens-night-patrol",
     "title": "Night Patrol Request",
-    "description": "A block elder approaches you: three assaults on the same street this week. The Compact patrol doesn't come after dark. He's asking if your people would walk the street one night \u2014 no contract, no payment. Just presence.",
+    "description": "A block elder approaches you: three assaults on the same street this week. The Compact patrol doesn't come after dark. He's asking if your people would walk the street one night — no contract, no payment. Just presence.",
     "triggerConditions": {
       "currentDistrict": "district-the-warrens",
       "dayMin": 4,
@@ -2939,7 +3005,8 @@
     "cooldownDays": 10,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-hollows-gang-toll",
@@ -2967,7 +3034,7 @@
       },
       {
         "id": "choice-hollows-push-through",
-        "label": "Push through \u2014 show them what your people are",
+        "label": "Push through — show them what your people are",
         "outcomes": [
           {
             "type": "adjustCityDial",
@@ -2982,7 +3049,7 @@
       },
       {
         "id": "choice-hollows-find-another-way",
-        "label": "Turn back \u2014 find another route",
+        "label": "Turn back — find another route",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3000,12 +3067,13 @@
     "cooldownDays": 6,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-hollows-missing-person",
     "title": "A Face You Almost Know",
-    "description": "A woman stops you on a narrow street and shows you a drawing \u2014 a young man's face, roughly done. 'He went in three days ago,' she says. 'He hasn't come out.' She is not asking for help exactly. She is just telling someone.",
+    "description": "A woman stops you on a narrow street and shows you a drawing — a young man's face, roughly done. 'He went in three days ago,' she says. 'He hasn't come out.' She is not asking for help exactly. She is just telling someone.",
     "triggerConditions": {
       "currentDistrict": "district-the-hollows",
       "dayMin": 3,
@@ -3033,7 +3101,7 @@
       },
       {
         "id": "choice-hollows-cant-help",
-        "label": "You can't help \u2014 move on",
+        "label": "You can't help — move on",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3051,7 +3119,8 @@
     "cooldownDays": 12,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-marion-milestone-motivation",
@@ -3065,8 +3134,9 @@
         "axis": "trust",
         "min": 65
       },
-      "probability": 1.0
+      "probability": 1
     },
+    "firingMode": "system",
     "choices": [
       {
         "id": "choice-marion-listen",
@@ -3110,8 +3180,9 @@
     "description": "Ida drops a name without ceremony: Dara Slink, a runner she trusts, has been looking for steadier work. Ida does not vouch for people lightly. The implication is clear.",
     "triggerConditions": {
       "dayMin": 1,
-      "probability": 1.0
+      "probability": 1
     },
+    "firingMode": "system",
     "choices": [
       {
         "id": "choice-ida-contact-follow-up",
@@ -3146,11 +3217,12 @@
   {
     "id": "event-doyle-milestone-holst",
     "title": "What Doyle Knows About Holst",
-    "description": "Doyle does not often talk about Holst. Tonight he does. Not everything \u2014 he is not built that way \u2014 but enough. The locked box he carries is mentioned. So is the name of a man who should not still be alive.",
+    "description": "Doyle does not often talk about Holst. Tonight he does. Not everything — he is not built that way — but enough. The locked box he carries is mentioned. So is the name of a man who should not still be alive.",
     "triggerConditions": {
       "dayMin": 1,
-      "probability": 1.0
+      "probability": 1
     },
+    "firingMode": "system",
     "choices": [
       {
         "id": "choice-doyle-press",
@@ -3198,11 +3270,12 @@
   {
     "id": "event-vael-milestone-network",
     "title": "Vael's Accounting",
-    "description": "Sister Vael tells you she has been keeping an informal record \u2014 debts, movements, faces in the Pale's confessionals. She offers to share what is relevant. Her price is discretion. You can live with that.",
+    "description": "Sister Vael tells you she has been keeping an informal record — debts, movements, faces in the Pale's confessionals. She offers to share what is relevant. Her price is discretion. You can live with that.",
     "triggerConditions": {
       "dayMin": 1,
-      "probability": 1.0
+      "probability": 1
     },
+    "firingMode": "system",
     "choices": [
       {
         "id": "choice-vael-accept-network",
@@ -3216,7 +3289,7 @@
       },
       {
         "id": "choice-vael-decline-network",
-        "label": "Decline \u2014 too entangled",
+        "label": "Decline — too entangled",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3240,7 +3313,7 @@
     "title": "League Word: Covenant Muster",
     "description": "A Foundry League factor sends word that the Iron Covenant are moving men and steel through a hidden muster route in the Ironworks. If the house wants a chance to cut the line, it needs to move before the route settles.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3271,14 +3344,15 @@
     ],
     "sourceDistrictId": "district-ironworks",
     "sourceNpcId": null,
-    "presentationFlavour": "The note is grease-marked and folded into a foundry tally sheet."
+    "presentationFlavour": "The note is grease-marked and folded into a foundry tally sheet.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-pale-sisters-counter-lead",
     "title": "A Name Passed Quietly",
     "description": "A Compact clerk slips you a warning: the Pale Sisters are collecting names in the Pale and paying for silence in chapel coin. Someone needs to follow the chain before it turns into leverage.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3309,14 +3383,15 @@
     ],
     "sourceDistrictId": "district-the-pale",
     "sourceNpcId": null,
-    "presentationFlavour": "The warning comes in the margin of a chapel supply receipt."
+    "presentationFlavour": "The warning comes in the margin of a chapel supply receipt.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-gilded-hand-counter-lead",
     "title": "Upper Ward Contract Movement",
     "description": "A Restored contact reports that the Gilded Hand are signing upper-ward security contracts faster than the Court can pretend not to notice. If the house wants leverage, it needs proof and timing before those contracts become permanent.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3347,14 +3422,15 @@
     ],
     "sourceDistrictId": "district-gilded-heights",
     "sourceNpcId": null,
-    "presentationFlavour": "The paper smells faintly of sealing wax and expensive tobacco."
+    "presentationFlavour": "The paper smells faintly of sealing wax and expensive tobacco.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-ashen-compact-counter-lead",
     "title": "Forn Is Hiring Again",
     "description": "Word out of the Warrens says Director Forn's people are making quiet offers to the displaced and the useful. Someone wants to know what shape the Compact are building before it shows up armed at the door.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3385,14 +3461,15 @@
     ],
     "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
-    "presentationFlavour": "The report arrives second-hand, which is how Forn prefers his tracks."
+    "presentationFlavour": "The report arrives second-hand, which is how Forn prefers his tracks.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-iron-covenant-bribe-warning",
     "title": "A Ledger Changes Hands",
     "description": "A League bookkeeper warns that the Iron Covenant have started paying for softer inspections and cleaner manifests. Someone on the district line just got expensive.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3413,14 +3490,15 @@
     ],
     "sourceDistrictId": "district-ironworks",
     "sourceNpcId": null,
-    "presentationFlavour": "The warning is written on the back of a scrap freight docket."
+    "presentationFlavour": "The warning is written on the back of a scrap freight docket.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-pale-sisters-bribe-warning",
     "title": "Someone Was Paid to Forget",
     "description": "A parish contact murmurs that the Pale Sisters have started paying for closed mouths and missing names. If a record matters, trust it less today than yesterday.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3441,14 +3519,15 @@
     ],
     "sourceDistrictId": "district-the-pale",
     "sourceNpcId": null,
-    "presentationFlavour": "The message is delivered with no signature and perfect handwriting."
+    "presentationFlavour": "The message is delivered with no signature and perfect handwriting.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-gilded-hand-bribe-warning",
     "title": "Retainers in the Upper Ward",
     "description": "A contact warns that Gilded Hand money is buying doors open in the upper wards. The move is clean, legal enough, and bad for anyone counting on neutral ground.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3469,14 +3548,15 @@
     ],
     "sourceDistrictId": "district-gilded-heights",
     "sourceNpcId": null,
-    "presentationFlavour": "The report arrives folded into a host's invitation."
+    "presentationFlavour": "The report arrives folded into a host's invitation.",
+    "firingMode": "system"
   },
   {
     "id": "event-rival-ashen-compact-bribe-warning",
     "title": "Cheap Coin, Expensive Damage",
     "description": "Someone in the Warrens is taking Ashen Compact money to point at loose crews, hungry hands, and weak houses. The offers are cheap. The consequences probably are not.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3497,15 +3577,16 @@
     ],
     "sourceDistrictId": "district-the-warrens",
     "sourceNpcId": null,
-    "presentationFlavour": "The warning comes from someone who does not want their name written anywhere near it."
+    "presentationFlavour": "The warning comes from someone who does not want their name written anywhere near it.",
+    "firingMode": "system"
   },
   {
     "id": "lissel-first-shape",
     "title": "Something Is Settling",
-    "description": "Lissel finds you at a quiet moment. She has been watching herself in situations lately \u2014 the way she reacted to something, the space she took up or didn't. She is not sure what she is noticing. She is sure she is noticing it.",
+    "description": "Lissel finds you at a quiet moment. She has been watching herself in situations lately — the way she reacted to something, the space she took up or didn't. She is not sure what she is noticing. She is sure she is noticing it.",
     "triggerConditions": {
       "dayMin": 999999,
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3520,7 +3601,7 @@
           },
           {
             "type": "addActivityLogEntry",
-            "message": "Lissel nods. She didn't need you to explain it \u2014 just to not dismiss it."
+            "message": "Lissel nods. She didn't need you to explain it — just to not dismiss it."
           }
         ]
       },
@@ -3571,15 +3652,16 @@
     ],
     "sourceNpcId": "npc-lissel-crane",
     "sourceDistrictId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "lissel-crystallized-disciplined",
     "title": "She Has Found Her Bearing",
-    "description": "Something has set in Lissel. You notice it before she names it \u2014 the way she organizes things without being asked, the way she doesn't leave tasks half-finished. She has found the framework she was missing. She requests more systematic responsibility.",
+    "description": "Something has set in Lissel. You notice it before she names it — the way she organizes things without being asked, the way she doesn't leave tasks half-finished. She has found the framework she was missing. She requests more systematic responsibility.",
     "triggerConditions": {
       "dayMin": 999999,
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3624,15 +3706,16 @@
     ],
     "sourceNpcId": "npc-lissel-crane",
     "sourceDistrictId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "lissel-crystallized-empathic",
     "title": "She Sees What Others Miss",
-    "description": "Lissel has become a reader of people. She began doing it for survival; now she does it because she can't stop. She is beginning to use it intentionally \u2014 she tells you something about a house member you hadn't noticed yourself.",
+    "description": "Lissel has become a reader of people. She began doing it for survival; now she does it because she can't stop. She is beginning to use it intentionally — she tells you something about a house member you hadn't noticed yourself.",
     "triggerConditions": {
       "dayMin": 999999,
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3677,15 +3760,16 @@
     ],
     "sourceNpcId": "npc-lissel-crane",
     "sourceDistrictId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "lissel-crystallized-ruthless",
     "title": "The Softness Has Gone Out of Her",
-    "description": "You notice it gradually, then all at once. Lissel doesn't flinch at things that used to slow her down. The house showed her certain things and she adjusted. She is not cruel \u2014 that is not what this is. But something that was uncertain in her has resolved into something harder.",
+    "description": "You notice it gradually, then all at once. Lissel doesn't flinch at things that used to slow her down. The house showed her certain things and she adjusted. She is not cruel — that is not what this is. But something that was uncertain in her has resolved into something harder.",
     "triggerConditions": {
       "dayMin": 999999,
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3730,15 +3814,16 @@
     ],
     "sourceNpcId": "npc-lissel-crane",
     "sourceDistrictId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "lissel-crystallized-curious",
     "title": "She Has Found Her Question",
-    "description": "Lissel has become an investigator. Not in any official sense \u2014 she doesn't have the standing for that yet. But she has found the thing that makes her stay up late and wake up early: the need to understand. She brings you a thread she's been pulling on for weeks. It leads somewhere you hadn't looked.",
+    "description": "Lissel has become an investigator. Not in any official sense — she doesn't have the standing for that yet. But she has found the thing that makes her stay up late and wake up early: the need to understand. She brings you a thread she's been pulling on for weeks. It leads somewhere you hadn't looked.",
     "triggerConditions": {
       "dayMin": 999999,
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3789,7 +3874,8 @@
     ],
     "sourceNpcId": "npc-lissel-crane",
     "sourceDistrictId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "lissel-settled",
@@ -3797,7 +3883,7 @@
     "description": "Lissel finds you at the end of a day that wasn't remarkable in any particular way. She says: she's been thinking about the time since she joined. Not everything. Some things she doesn't put in the notebook. But she wanted you to know that she stayed on purpose. That it was a choice, even when it didn't feel like one.",
     "triggerConditions": {
       "dayMin": 999999,
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3848,14 +3934,15 @@
     ],
     "sourceNpcId": "npc-lissel-crane",
     "sourceDistrictId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-npc-dominance-tension",
     "title": "Two Heads, One Table",
     "description": "Two of your people are no longer deferring to each other. The tension is plain: both want precedence, and neither is willing to yield it. This has been building for weeks.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3864,7 +3951,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You separate the question of rank from the question of respect. It holds \u2014 for now."
+            "message": "You separate the question of rank from the question of respect. It holds — for now."
           }
         ]
       },
@@ -3898,14 +3985,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The room gets quieter when both of them are in it. You've been watching this build."
+    "presentationFlavour": "The room gets quieter when both of them are in it. You've been watching this build.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-methods-disagreement",
     "title": "A Concern About How It Was Done",
     "description": "One of your people has raised a concern about how a recent job was handled. The objection is moral, not operational. Another sees the objection itself as a liability.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3930,7 +4018,7 @@
       },
       {
         "id": "choice-mediate",
-        "label": "Mediate \u2014 both positions have merit",
+        "label": "Mediate — both positions have merit",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3948,14 +4036,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The disagreement is quiet, which makes it worse. It has been waiting for you to decide something."
+    "presentationFlavour": "The disagreement is quiet, which makes it worse. It has been waiting for you to decide something.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-ambition-comparison",
     "title": "The Comparison Is Made",
-    "description": "It has been spoken aloud \u2014 one of your people has measured themselves against another and found the accounting unfair. The comment was quiet, but everyone in the room heard it.",
+    "description": "It has been spoken aloud — one of your people has measured themselves against another and found the accounting unfair. The comment was quiet, but everyone in the room heard it.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -3964,13 +4053,13 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You redirect ambition into function. The comparison fades \u2014 for now."
+            "message": "You redirect ambition into function. The comparison fades — for now."
           }
         ]
       },
       {
         "id": "choice-deflect",
-        "label": "Deflect \u2014 change the subject",
+        "label": "Deflect — change the subject",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3998,14 +4087,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "Ambition doesn't disappear when you ignore it. It finds a comparison to make."
+    "presentationFlavour": "Ambition doesn't disappear when you ignore it. It finds a comparison to make.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-recognition-rivalry",
     "title": "The Unacknowledged One",
-    "description": "Someone was praised and someone was not. The pointed remark came quietly, between tasks \u2014 but the bitterness behind it was not quiet at all.",
+    "description": "Someone was praised and someone was not. The pointed remark came quietly, between tasks — but the bitterness behind it was not quiet at all.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -4038,19 +4128,20 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The words were careful. The intention behind them was not."
+    "presentationFlavour": "The words were careful. The intention behind them was not.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-ideological-friction",
     "title": "The Same Outcome, Different Meanings",
-    "description": "A job was completed. Two of your people have interpreted what it meant in completely different terms \u2014 and neither interpretation is compatible with the other.",
+    "description": "A job was completed. Two of your people have interpreted what it meant in completely different terms — and neither interpretation is compatible with the other.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
         "id": "choice-arbitrate",
-        "label": "Arbitrate \u2014 name your own meaning for what was done",
+        "label": "Arbitrate — name your own meaning for what was done",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4078,14 +4169,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "They both did the work. They cannot agree on what the work was for."
+    "presentationFlavour": "They both did the work. They cannot agree on what the work was for.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-late-conversation",
     "title": "Still Talking",
     "description": "The lamps were burning low when you passed by. Two of your people had not stopped talking.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -4108,14 +4200,15 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-npc-quiet-respect",
     "title": "Reliability Noted",
     "description": "Nothing was said. But it was observed.",
     "triggerConditions": {
-      "probability": 0
+      "probability": 1
     },
     "choices": [
       {
@@ -4138,12 +4231,13 @@
     ],
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-tutorial-house-debt",
     "title": "The Debt",
-    "description": "Marion sets a folded paper on the table. The numbers are neat. The margin is not.\n\n800 Marks due at month's end. The house's accounts are near empty. Contracts, work orders, expedition returns \u2014 these are the only paths forward. The districts post public work. Start there.",
+    "description": "Marion sets a folded paper on the table. The numbers are neat. The margin is not.\n\n800 Marks due at month's end. The house's accounts are near empty. Contracts, work orders, expedition returns — these are the only paths forward. The districts post public work. Start there.",
     "triggerConditions": {
       "isFirstRun": true,
       "dayMin": 2,
@@ -4171,7 +4265,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-tutorial-find-work",
@@ -4204,12 +4299,13 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-tutorial-equip-before-combat",
     "title": "Ready Your People",
-    "description": "Ida Rhys arrived capable but unequipped. Before any field deployment, visit the Roster screen and assign a weapon and armor through the Loadout tab.\n\nAn unequipped operative fights at a significant disadvantage. The shops carry weapons and armor \u2014 buy before you send anyone into the field.",
+    "description": "Ida Rhys arrived capable but unequipped. Before any field deployment, visit the Roster screen and assign a weapon and armor through the Loadout tab.\n\nAn unequipped operative fights at a significant disadvantage. The shops carry weapons and armor — buy before you send anyone into the field.",
     "triggerConditions": {
       "isFirstRun": true,
       "dayMin": 2,
@@ -4238,12 +4334,13 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-tutorial-titles",
     "title": "What a Title Means",
-    "description": "Your roster can earn while idle. From the Roster screen, assign a title to an NPC \u2014 each unlocks a passive bonus or income stream. A Fence generates marks from black-market contacts. A Quartermaster reduces supply costs. A Medic accelerates recovery.\n\nTitles do not require deployment. They work in the background.",
+    "description": "Your roster can earn while idle. From the Roster screen, assign a title to an NPC — each unlocks a passive bonus or income stream. A Fence generates marks from black-market contacts. A Quartermaster reduces supply costs. A Medic accelerates recovery.\n\nTitles do not require deployment. They work in the background.",
     "triggerConditions": {
       "isFirstRun": true,
       "dayMin": 2,
@@ -4271,7 +4368,8 @@
     "repeatable": false,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-arrival",
@@ -4320,7 +4418,8 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-petra-sunn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-petra-elyn-silent",
@@ -4360,12 +4459,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-petra-sunn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-first-word",
     "title": "Elyn Speaks",
-    "description": "It has been some time since Elyn arrived. She has been watching. Today she said something \u2014 unprompted, to no one in particular. Something small. About the quality of the light, or the smell from the kitchen, or what a tool was called. It was not much. It was something.",
+    "description": "It has been some time since Elyn arrived. She has been watching. Today she said something — unprompted, to no one in particular. Something small. About the quality of the light, or the smell from the kitchen, or what a tool was called. It was not much. It was something.",
     "triggerConditions": {
       "dayMin": 150,
       "dayMax": 250,
@@ -4404,12 +4504,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-enters-childhood",
     "title": "Elyn, Older",
-    "description": "Elyn has been in the house long enough to have opinions. She has preferences about food. She has people she goes to when something is wrong. She is not a problem the house solved \u2014 she is a person the house grew. You notice it one day in something small: she corrected someone. Gently. But correctly.",
+    "description": "Elyn has been in the house long enough to have opinions. She has preferences about food. She has people she goes to when something is wrong. She is not a problem the house solved — she is a person the house grew. You notice it one day in something small: she corrected someone. Gently. But correctly.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4436,12 +4537,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-asks-to-help",
     "title": "Elyn Wants to Be Useful",
-    "description": "Elyn comes to you directly, which she has never done before. She asks if there is something real she can do. Not errands. Something that matters. She uses that word \u2014 matters. She is watching your face when she says it.",
+    "description": "Elyn comes to you directly, which she has never done before. She asks if there is something real she can do. Not errands. Something that matters. She uses that word — matters. She is watching your face when she says it.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4489,12 +4591,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-knows-something",
     "title": "Elyn Has Observed",
-    "description": "Elyn comes to you with something she has seen. She is careful about how she describes it \u2014 she got that from living here. She does not know if it is important. She thought you should know. It might be nothing. It might not be.",
+    "description": "Elyn comes to you with something she has seen. She is careful about how she describes it — she got that from living here. She does not know if it is important. She thought you should know. It might be nothing. It might not be.",
     "triggerConditions": {
       "dayMin": 700,
       "dayMax": 1000,
@@ -4534,12 +4637,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-asks-about-mother",
     "title": "The Question",
-    "description": "Elyn asks about her mother. Not dramatically \u2014 she asks the way she asks everything: carefully, after watching, at a time when no one else is around. She says she knows you might not know. She says she is asking anyway. She has been waiting to ask for a long time.",
+    "description": "Elyn asks about her mother. Not dramatically — she asks the way she asks everything: carefully, after watching, at a time when no one else is around. She says she knows you might not know. She says she is asking anyway. She has been waiting to ask for a long time.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4557,7 +4661,7 @@
       },
       {
         "id": "choice-honest-ignorance",
-        "label": "Tell her you do not know \u2014 honestly.",
+        "label": "Tell her you do not know — honestly.",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4588,12 +4692,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-elyn-chooses",
     "title": "What Elyn Wants",
-    "description": "Elyn tells you what she wants to do with her life. She has thought about it for a long time \u2014 you can tell by how specific she is, how calm. She is not asking for permission. She is telling you, the way someone tells you something important when they trust you to hear it.",
+    "description": "Elyn tells you what she wants to do with her life. She has thought about it for a long time — you can tell by how specific she is, how calm. She is not asking for permission. She is telling you, the way someone tells you something important when they trust you to hear it.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-elyn",
       "probability": 1
@@ -4632,12 +4737,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-elyn",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-bren-fracture-visible",
     "title": "Something in Bren",
-    "description": "It was not a breakdown. It was a pause. Someone asked him a routine question and he went still for a moment \u2014 not long, not long enough for most people to notice \u2014 and then answered correctly and moved on. But you noticed. There is something in him that is not visible yet but is there.",
+    "description": "It was not a breakdown. It was a pause. Someone asked him a routine question and he went still for a moment — not long, not long enough for most people to notice — and then answered correctly and moved on. But you noticed. There is something in him that is not visible yet but is there.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4674,12 +4780,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-bren-aldoth",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-bren-anchor-found",
     "title": "Someone Reached Him",
-    "description": "You do not know exactly when it happened, but someone on the roster has been reaching Bren. Not with words \u2014 with proximity. With consistency. He is different around them: quieter in a better way. Something is holding.",
+    "description": "You do not know exactly when it happened, but someone on the roster has been reaching Bren. Not with words — with proximity. With consistency. He is different around them: quieter in a better way. Something is holding.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4716,12 +4823,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-bren-aldoth",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-bren-returning",
     "title": "Bren, Coming Back",
-    "description": "You see it in something small. He did not count the exits. He asked someone on the roster how they were doing without waiting for the question to come back to him. He stayed in the room after the briefing ended. The thing that was broken is still there \u2014 but he is making choices around it now.",
+    "description": "You see it in something small. He did not count the exits. He asked someone on the roster how they were doing without waiting for the question to come back to him. He stayed in the room after the briefing ended. The thing that was broken is still there — but he is making choices around it now.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4758,7 +4866,8 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-bren-aldoth",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-bren-leaving-warning",
@@ -4810,12 +4919,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-bren-aldoth",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-bren-left",
     "title": "Bren Is Gone",
-    "description": "Bren is not here. He left during the night \u2014 no note, nothing missing except him and what he came with. You will find a small tool he borrowed on the workbench, cleaned and returned. That is the whole message.",
+    "description": "Bren is not here. He left during the night — no note, nothing missing except him and what he came with. You will find a small tool he borrowed on the workbench, cleaned and returned. That is the whole message.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-bren-aldoth",
       "probability": 1
@@ -4842,12 +4952,13 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-bren-aldoth",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-nessa-partner-district-node",
     "title": "Nessa Has Been Working",
-    "description": "Nessa brings you something she has been building for three weeks. A district resource node \u2014 specifically, a water distribution relay point in the outer quarter \u2014 that she has quietly converted from a liability into a revenue stream. She is telling you because she needs your formal authorization to close the last step. Not your permission. Your signature.",
+    "description": "Nessa brings you something she has been building for three weeks. A district resource node — specifically, a water distribution relay point in the outer quarter — that she has quietly converted from a liability into a revenue stream. She is telling you because she needs your formal authorization to close the last step. Not your permission. Your signature.",
     "triggerConditions": {
       "requiredRosterNpcId": "npc-nessa-vain",
       "dayMin": 150,
@@ -4894,7 +5005,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-nessa-vain",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-nessa-partner-rival-neutralize",
@@ -4952,7 +5064,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-nessa-vain",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-nessa-partner-information-pipeline",
@@ -4991,7 +5104,8 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": "npc-nessa-vain",
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "event-bound-npc-notices-difference",
@@ -5033,7 +5147,8 @@
     "cooldownDays": 14,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "A quiet comparison has become impossible to ignore."
+    "presentationFlavour": "A quiet comparison has become impossible to ignore.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-freed",
@@ -5065,7 +5180,8 @@
     "cooldownDays": 7,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The room goes still around a freedom people can price."
+    "presentationFlavour": "The room goes still around a freedom people can price.",
+    "firingMode": "system"
   },
   {
     "id": "event-title-npc-bond-objection",
@@ -5107,7 +5223,8 @@
     "cooldownDays": 28,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The objection is not loud. It lands anyway."
+    "presentationFlavour": "The objection is not loud. It lands anyway.",
+    "firingMode": "system"
   },
   {
     "id": "event-captivity-pregnancy-discovery",
@@ -5170,7 +5287,8 @@
     "cooldownDays": 365,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The moment is quiet because spectacle would be a failure."
+    "presentationFlavour": "The moment is quiet because spectacle would be a failure.",
+    "firingMode": "system"
   },
   {
     "id": "event-heir-announcement",
@@ -5217,12 +5335,13 @@
     "cooldownDays": 9999,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "Recognizing an heir is not a warm family moment. It is a declaration."
+    "presentationFlavour": "Recognizing an heir is not a warm family moment. It is a declaration.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-pairing-noticed",
     "title": "Something Between Them",
-    "description": "You've noticed it yourself \u2014 or someone in the house has. Two of your crew have moved past the ordinary rhythms of shared work. They are not making a show of it, but the house has eyes. What happens under this roof is your concern.",
+    "description": "You've noticed it yourself — or someone in the house has. Two of your crew have moved past the ordinary rhythms of shared work. They are not making a show of it, but the house has eyes. What happens under this roof is your concern.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5258,12 +5377,13 @@
     "cooldownDays": 30,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "Not everything under this roof is your business. Some of it is anyway."
+    "presentationFlavour": "Not everything under this roof is your business. Some of it is anyway.",
+    "firingMode": "system"
   },
   {
     "id": "event-npc-pairing-pregnancy-discovery",
     "title": "A Child is Expected",
-    "description": "Word reaches you through the house \u2014 gently, carefully, as if the teller is not sure how you will receive it. Two of your crew are expecting a child. The timing is not ideal. It rarely is. What matters is what comes next.",
+    "description": "Word reaches you through the house — gently, carefully, as if the teller is not sure how you will receive it. Two of your crew are expecting a child. The timing is not ideal. It rarely is. What matters is what comes next.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5310,12 +5430,13 @@
     "cooldownDays": 365,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": "The house has always needed more than one generation to mean anything."
+    "presentationFlavour": "The house has always needed more than one generation to mean anything.",
+    "firingMode": "system"
   },
   {
     "id": "event-ward-stage-infant-to-child",
     "title": "The Child Grows",
-    "description": "The infant in your household is no longer so small. Marion mentions it in passing \u2014 they are walking, watching, beginning to understand the house around them. A child now, in all the ways that matter.",
+    "description": "The infant in your household is no longer so small. Marion mentions it in passing — they are walking, watching, beginning to understand the house around them. A child now, in all the ways that matter.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5341,7 +5462,8 @@
     "cooldownDays": 1,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-ward-stage-child-to-teenager",
@@ -5372,12 +5494,13 @@
     "cooldownDays": 1,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-ward-stage-teenager-to-young-adult",
     "title": "Coming of Age",
-    "description": "The ward you took in is grown. They have survived what the city has thrown at this house, have watched how you operate, and have formed their own view of it. What they become from here is partly yours to shape \u2014 and partly theirs alone.",
+    "description": "The ward you took in is grown. They have survived what the city has thrown at this house, have watched how you operate, and have formed their own view of it. What they become from here is partly yours to shape — and partly theirs alone.",
     "triggerConditions": {
       "probability": 1
     },
@@ -5403,14 +5526,15 @@
     "cooldownDays": 1,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-site-pressure-warning",
     "title": "Pressure on a Quiet Site",
     "description": "A location tied to shelter, custody, or discreet traffic is beginning to attract the wrong kind of notice.",
     "triggerConditions": {
-      "probability": 0,
+      "probability": 1,
       "dayMin": 1
     },
     "choices": [
@@ -5435,14 +5559,15 @@
     "cooldownDays": 1,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "bond-acquisition-offer",
     "title": "An Acquisition Offer",
     "description": "A buyer has made an offer to acquire one of your bonded persons. The offer has been delivered through formal channels.",
     "triggerConditions": {
-      "probability": 0,
+      "probability": 1,
       "dayMin": 1
     },
     "choices": [
@@ -5461,7 +5586,7 @@
         "outcomes": [
           {
             "type": "addActivityLogEntry",
-            "message": "You sent a counter-offer. The buyer withdrew \u2014 they will not negotiate."
+            "message": "You sent a counter-offer. The buyer withdrew — they will not negotiate."
           }
         ]
       },
@@ -5485,14 +5610,15 @@
     "cooldownDays": 1,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "event-abstract-custody-alert",
     "title": "Custody Deteriorates Offscreen",
     "description": "A person being held out of sight is deteriorating, and the consequences are starting to press outward even before the room itself is exposed.",
     "triggerConditions": {
-      "probability": 0,
+      "probability": 1,
       "dayMin": 1
     },
     "choices": [
@@ -5517,7 +5643,8 @@
     "cooldownDays": 3,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "system"
   },
   {
     "id": "test-sample-timeslot-night",
@@ -5540,12 +5667,16 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["sample", "timeslot"],
+    "tags": [
+      "sample",
+      "timeslot"
+    ],
     "repeatable": true,
     "cooldownDays": 2,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   },
   {
     "id": "test-sample-npcstate-high-trust",
@@ -5574,11 +5705,15 @@
       }
     ],
     "isAutoResolved": false,
-    "tags": ["sample", "npcstate"],
+    "tags": [
+      "sample",
+      "npcstate"
+    ],
     "repeatable": true,
     "cooldownDays": 5,
     "sourceDistrictId": null,
     "sourceNpcId": null,
-    "presentationFlavour": null
+    "presentationFlavour": null,
+    "firingMode": "world"
   }
 ]

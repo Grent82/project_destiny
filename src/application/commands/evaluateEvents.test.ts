@@ -75,6 +75,7 @@ describe('evaluateEvents', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -166,6 +167,68 @@ describe('evaluateEvents', () => {
     const next2 = evaluateEvents(next1, alwaysFire)
     const matches = next2.pendingEvents.filter((e) => e.eventId === 'event-unpaid-wages-unrest')
     expect(matches).toHaveLength(0)
+  })
+
+  it('never fires firingMode:system templates via evaluateEvents', () => {
+    const originalEvents = contentCatalog.events
+    // Keep only world events with no special conditions (to ensure they're all eligible)
+    const eligibleWorldEvents = originalEvents.filter(
+      (e) => e.firingMode === 'world' &&
+             e.triggerConditions.isFirstRun !== true &&
+             !e.triggerConditions.requiredRosterNpcId &&
+             !e.triggerConditions.minUnrest &&
+             !e.triggerConditions.minFoodSecurity &&
+             !e.triggerConditions.currentDistrict &&
+             !e.triggerConditions.activeQuestId
+    )
+    const testSystemEvent = {
+      id: 'test-system-event',
+      title: 'System Event',
+      description: 'Should never fire via evaluateEvents',
+      triggerConditions: { probability: 1 },
+      choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+      isAutoResolved: false,
+      tags: [],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: null,
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'system' as const,
+    }
+    const testWorldEvent = {
+      id: 'test-world-event',
+      title: 'World Event',
+      description: 'Should fire via evaluateEvents',
+      triggerConditions: { probability: 1 },
+      choices: [{ id: 'c1', label: 'OK', outcomes: [] }],
+      isAutoResolved: false,
+      tags: [],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: null,
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'world' as const,
+    }
+    // Put test events first so they're selected within the 5-event budget
+    ;(contentCatalog as { events: typeof originalEvents }).events = [testWorldEvent, testSystemEvent, ...eligibleWorldEvents]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      contentCatalog.events.map((e) => [e.id, e]),
+    )
+
+    const state = makeState({ day: 10, pendingEvents: [], lastFiredDay: {} })
+    const next = evaluateEvents(state, alwaysFire)
+
+    // System event should NOT be in pending
+    expect(next.pendingEvents.map((e) => e.eventId)).not.toContain('test-system-event')
+    // World event SHOULD be in pending (it's first in the list, so within budget)
+    expect(next.pendingEvents.map((e) => e.eventId)).toContain('test-world-event')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
   })
 })
 
@@ -445,6 +508,7 @@ describe('timeSlot trigger condition', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -481,6 +545,7 @@ describe('timeSlot trigger condition', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -523,6 +588,7 @@ describe('npcState trigger condition', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -566,6 +632,7 @@ describe('npcState trigger condition', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -609,6 +676,7 @@ describe('npcState trigger condition', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
@@ -652,6 +720,7 @@ describe('npcState trigger condition', () => {
         sourceDistrictId: null,
         sourceNpcId: null,
         presentationFlavour: null,
+        firingMode: 'world',
       },
     ]
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(

@@ -72,7 +72,6 @@ function checkRelationshipMilestones(state: GameState): GameState {
       lastFiredDay: {
         ...next.lastFiredDay,
         [key]: next.day,
-        [milestone.eventId]: next.day,
       },
       pendingEvents: [...next.pendingEvents, { eventId: milestone.eventId, firedOnDay: next.day }],
     }

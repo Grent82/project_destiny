@@ -87,6 +87,8 @@ export const eventTriggerConditionsSchema = z
   })
   .strict()
 
+export const eventFiringModeSchema = z.enum(['world', 'system']).default('world')
+
 export const eventTemplateSchema = z
   .object({
     id: entityIdSchema,
@@ -101,6 +103,7 @@ export const eventTemplateSchema = z
     sourceDistrictId: z.string().nullable().default(null),
     sourceNpcId: z.string().nullable().default(null),
     presentationFlavour: z.string().nullable().default(null),
+    firingMode: eventFiringModeSchema,
   })
   .strict()
 

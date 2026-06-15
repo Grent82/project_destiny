@@ -79,6 +79,8 @@ export function evaluateEvents(state: GameState, rng: Rng = Math.random): GameSt
   const eligible: Array<{ eventId: string; isPriority: boolean }> = []
 
   for (const template of contentCatalog.events) {
+    // Skip system-mode templates — they are pushed directly by their owning systems
+    if (template.firingMode === 'system') continue
     if (alreadyPending.has(template.id)) continue
     if (isOnCooldown(template, state)) continue
     if (!checkConditions(template, state, rng)) continue

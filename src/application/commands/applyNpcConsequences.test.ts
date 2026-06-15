@@ -108,9 +108,12 @@ describe('checkRelationshipMilestones (via applyNpcConsequences)', () => {
     expect(result.lastFiredDay['rel-milestone-npc-marion-vale-trust-65']).toBe(7)
   })
 
-  it('records the event id in lastFiredDay to prevent generic rescheduling', () => {
+  it('records the milestone key in lastFiredDay (event id no longer recorded due to firingMode:system)', () => {
     const state = { ...stateWithRelationship('npc-marion-vale', 67, 0), day: 7 }
     const result = applyNpcConsequences(state, state.relationships, noop)
-    expect(result.lastFiredDay['event-marion-milestone-motivation']).toBe(7)
+    // The milestone key is still recorded to prevent re-firing the milestone
+    expect(result.lastFiredDay['rel-milestone-npc-marion-vale-trust-65']).toBe(7)
+    // The event id is no longer recorded because firingMode:'system' prevents evaluateEvents from firing it
+    expect(result.lastFiredDay['event-marion-milestone-motivation']).toBeUndefined()
   })
 })
