@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { advanceRomanceArc } from './advanceRomanceArc'
 import { initialStateWithIda } from './testFixtures'
-import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { buildRelationshipKey, type IntimacyStage } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain'
 
 const NPC_ID = 'npc-ida-rhys'
@@ -27,7 +27,7 @@ function stateWithRelationship(overrides: {
         fear: overrides.fear ?? 0,
         respect: 0,
         loyalty: 0,
-        intimacyStage: (overrides.intimacyStage as any) ?? undefined,
+        intimacyStage: (overrides.intimacyStage as IntimacyStage) ?? undefined,
         bondType: overrides.bondType,
       },
       [npcToPlayer]: {
@@ -36,7 +36,7 @@ function stateWithRelationship(overrides: {
         fear: 0,
         respect: 0,
         loyalty: overrides.loyalty ?? 0,
-        intimacyStage: (overrides.intimacyStage as any) ?? undefined,
+        intimacyStage: (overrides.intimacyStage as IntimacyStage) ?? undefined,
         bondType: overrides.bondType,
       },
     },

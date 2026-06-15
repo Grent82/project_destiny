@@ -5,6 +5,7 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameStateSchema } from '../../domain'
 import type { CouncilVoteEvent } from '../../domain/governance/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+import type { FactionDefinition, NpcDefinition } from '../../domain'
 
 // ── Shared vote fixture factory ───────────────────────────────────────────────
 
@@ -388,23 +389,33 @@ describe('leader trait modifiers', () => {
     expect(result?.proposingFactionId).toBe('faction-test-faction')
 
     // Restore
-    ;(contentCatalog as any).factions = originalFactions
-    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = originalFactions
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
   })
 
   it('high prudence leader reduces proposal score by 20%', () => {
     const mockFaction = {
       id: 'faction-prudent-faction',
       name: 'Prudent Faction',
+      primer: 'Test primer',
+      agenda: 'Test agenda',
       agendaAxes: {
         values: ['test-value'],
         proposesWhen: {},
       },
       description: 'Test',
+      territory: [],
+      tags: [],
     }
 
     const mockLeader = {
       id: 'npc-prudent-leader',
+      name: 'Prudent Leader',
+      npcType: 'roster',
+      origin: 'Test origin',
+      background: 'Test background',
+      rarity: 'common',
+      status: 'citizen',
       startingTraits: {
         ambition: 30,
         prudence: 80,
@@ -413,14 +424,21 @@ describe('leader trait modifiers', () => {
         charm: 50,
         competence: 50,
       },
+      assignment: 'none',
+      captivityState: null,
+      npcArc: null,
+      npcMemory: [],
+      wardenRefs: [],
+      currentLocation: null,
+      isBondBuyer: false,
     }
 
     const originalFactions = contentCatalog.factions
     const originalNpcs = Array.from(contentCatalog.npcsById.values())
 
-    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
-    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
-    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-prudent-leader', mockLeader as any)
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = [...contentCatalog.factions, mockFaction]
+    ;(contentCatalog as Partial<typeof contentCatalog>).factionsById = new Map(contentCatalog.factions.map((f: FactionDefinition) => [f.id, f]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(contentCatalog.npcsById).set('npc-prudent-leader', mockLeader as unknown as NpcDefinition)
 
     const templates: CouncilVoteEvent[] = [
       {
@@ -451,23 +469,33 @@ describe('leader trait modifiers', () => {
     const result = selectAgendaVote(state, templates, () => 0)
     expect(result).toBeDefined()
 
-    ;(contentCatalog as any).factions = originalFactions
-    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = originalFactions
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
   })
 
   it('high ruthlessness leader adds +15 when hostile target exists', () => {
     const mockFaction = {
       id: 'faction-ruthless-faction',
       name: 'Ruthless Faction',
+      primer: 'Test primer',
+      agenda: 'Test agenda',
       agendaAxes: {
         values: ['test-value'],
         proposesWhen: {},
       },
       description: 'Test',
+      territory: [],
+      tags: [],
     }
 
     const mockLeader = {
       id: 'npc-ruthless-leader',
+      name: 'Ruthless Leader',
+      npcType: 'roster',
+      origin: 'Test origin',
+      background: 'Test background',
+      rarity: 'common',
+      status: 'citizen',
       startingTraits: {
         ambition: 50,
         prudence: 30,
@@ -481,9 +509,9 @@ describe('leader trait modifiers', () => {
     const originalFactions = contentCatalog.factions
     const originalNpcs = Array.from(contentCatalog.npcsById.values())
 
-    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
-    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
-    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-ruthless-leader', mockLeader as any)
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = [...contentCatalog.factions, mockFaction]
+    ;(contentCatalog as Partial<typeof contentCatalog>).factionsById = new Map(contentCatalog.factions.map((f: FactionDefinition) => [f.id, f]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(contentCatalog.npcsById).set('npc-ruthless-leader', mockLeader as unknown as NpcDefinition)
 
     const templates: CouncilVoteEvent[] = [
       {
@@ -515,23 +543,33 @@ describe('leader trait modifiers', () => {
     const result = selectAgendaVote(state, templates, () => 0)
     expect(result).toBeDefined()
 
-    ;(contentCatalog as any).factions = originalFactions
-    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = originalFactions
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
   })
 
   it('low loyalty leader reduces proposal score by 10%', () => {
     const mockFaction = {
       id: 'faction-corrupt-faction',
       name: 'Corrupt Faction',
+      primer: 'Test primer',
+      agenda: 'Test agenda',
       agendaAxes: {
         values: ['test-value'],
         proposesWhen: {},
       },
       description: 'Test',
+      territory: [],
+      tags: [],
     }
 
     const mockLeader = {
       id: 'npc-corrupt-leader',
+      name: 'Corrupt Leader',
+      npcType: 'roster',
+      origin: 'Test origin',
+      background: 'Test background',
+      rarity: 'common',
+      status: 'citizen',
       startingTraits: {
         ambition: 70,
         prudence: 30,
@@ -545,9 +583,9 @@ describe('leader trait modifiers', () => {
     const originalFactions = contentCatalog.factions
     const originalNpcs = Array.from(contentCatalog.npcsById.values())
 
-    ;(contentCatalog as any).factions = [...contentCatalog.factions, mockFaction]
-    ;(contentCatalog as any).factionsById = new Map(contentCatalog.factions.map((f: any) => [f.id, f]))
-    ;(contentCatalog as any).npcsById = new Map(contentCatalog.npcsById).set('npc-corrupt-leader', mockLeader as any)
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = [...contentCatalog.factions, mockFaction]
+    ;(contentCatalog as Partial<typeof contentCatalog>).factionsById = new Map(contentCatalog.factions.map((f: FactionDefinition) => [f.id, f]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(contentCatalog.npcsById).set('npc-corrupt-leader', mockLeader as unknown as NpcDefinition)
 
     const templates: CouncilVoteEvent[] = [
       {
@@ -576,7 +614,7 @@ describe('leader trait modifiers', () => {
     const result = selectAgendaVote(state, templates, () => 0)
     expect(result).toBeDefined()
 
-    ;(contentCatalog as any).factions = originalFactions
-    ;(contentCatalog as any).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
+    ;(contentCatalog as Partial<typeof contentCatalog>).factions = originalFactions
+    ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
   })
 })

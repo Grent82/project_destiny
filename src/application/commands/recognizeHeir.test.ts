@@ -4,6 +4,7 @@ import { formalizeHeir } from './formalizeHeir'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { selectHeirLegitimacyWeight } from '../selectors/house'
 import type { GameState, Heir } from '../../domain/game/contracts'
+import type { RootState } from '../store/gameStore'
 
 function makeHeir(overrides: Partial<Heir> = {}): Heir {
   return {
@@ -75,27 +76,27 @@ describe('recognizeHeir', () => {
 
 describe('selectHeirLegitimacyWeight', () => {
   it('returns 0 with no heirs', () => {
-    const weight = selectHeirLegitimacyWeight({ game: initialGameStateSnapshot } as any)
+    const weight = selectHeirLegitimacyWeight({ game: initialGameStateSnapshot } as RootState)
     expect(weight).toBe(0)
   })
 
   it('returns 3 for a recognized heir', () => {
     const state = stateWithHeir(makeHeir({ legitimacyStatus: 'recognized' }))
-    const weight = selectHeirLegitimacyWeight({ game: state } as any)
+    const weight = selectHeirLegitimacyWeight({ game: state } as RootState)
     expect(weight).toBe(3)
   })
 
   it('returns 1 for a contested heir', () => {
     const state = stateWithHeir(makeHeir({ legitimacyStatus: 'contested' }))
-    const weight = selectHeirLegitimacyWeight({ game: state } as any)
+    const weight = selectHeirLegitimacyWeight({ game: state } as RootState)
     expect(weight).toBe(1)
   })
 
   it('returns 0 for hidden or unknown heir', () => {
     const hidden = stateWithHeir(makeHeir({ legitimacyStatus: 'hidden' }))
-    expect(selectHeirLegitimacyWeight({ game: hidden } as any)).toBe(0)
+    expect(selectHeirLegitimacyWeight({ game: hidden } as RootState)).toBe(0)
     const unknown = stateWithHeir(makeHeir({ legitimacyStatus: 'unknown' }))
-    expect(selectHeirLegitimacyWeight({ game: unknown } as any)).toBe(0)
+    expect(selectHeirLegitimacyWeight({ game: unknown } as RootState)).toBe(0)
   })
 })
 

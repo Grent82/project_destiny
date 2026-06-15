@@ -24,7 +24,7 @@ export function initializeRosterRelationships(state: GameState, rng: Rng = Math.
   const { roster } = state
   if (roster.length < 2) return state
 
-  let relationships = { ...state.relationships }
+  const relationships = { ...state.relationships }
   let changed = false
 
   // Seed Tier 1 authored bonds first (both directions, for all roster pairs)

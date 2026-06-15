@@ -32,7 +32,7 @@ describe('applyWorldNpcSocialSimulation', () => {
       .filter((npcId) => npcId !== 'npc-garet-doyle')
       .slice(0, 5)
 
-    let state = makeState()
+    const state = makeState()
     state.relationships = worldNpcIds.reduce((relationships, npcId, index) => {
       const forward = buildRelationshipKey('npc-garet-doyle', npcId)
       const reverse = buildRelationshipKey(npcId, 'npc-garet-doyle')

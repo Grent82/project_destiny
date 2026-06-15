@@ -80,7 +80,7 @@ describe('Chronicle schema', () => {
               entryId: 'entry-1',
               day: 1,
               timeSlot: 'morning',
-              kind: 'invalid_kind' as any,
+              kind: 'invalid_kind' as any, // eslint-disable-line @typescript-eslint/no-explicit-any
               headline: 'Test',
               detailLines: [],
               actors: [],

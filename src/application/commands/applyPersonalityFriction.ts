@@ -4,7 +4,6 @@ import { applyRelationshipDelta } from './adjustRelationship'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { TRAIT_HIGH, TRAIT_DOMINANT, TRAIT_MODERATE } from '../../domain/npc/traitThresholds'
-import type { Rng } from './seededRng'
 import { EVENT_IDS } from '../content/ids'
 
 const MAX_EVENTS_PER_CYCLE = 2
@@ -28,7 +27,8 @@ function isOnCooldown(state: GameState, key: string, cooldownDays: number): bool
 }
 
 /** Monthly pass: evaluates all eligible roster pairs for personality friction and bonding moments. */
-export function applyPersonalityFriction(state: GameState, _rng: Rng): GameState {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function applyPersonalityFriction(state: GameState, _rng?: () => number): GameState {
   const eligible = state.roster.filter(
     (npc) =>
       npc.assignment !== 'recovering' &&

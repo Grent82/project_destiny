@@ -258,7 +258,7 @@ function applyRescue(
     }
   })
 
-  let next: GameState = {
+  const next: GameState = {
     ...state,
     money: Math.max(0, state.money - cost),
     roster,

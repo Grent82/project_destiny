@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { eventOutcomeSchema } from '../../domain/events/contracts'
+import type { CorridorStatus } from '../../domain'
 
 describe('Content catalog validator - red fixtures', () => {
   it('rejects adjustNpcRelationship with "target" instead of "npcId" (C4 bug class)', () => {
@@ -28,7 +29,7 @@ describe('Content catalog validator - red fixtures', () => {
   it('rejects adjustCityDial with invalid target', () => {
     const badOutcome = {
       type: 'adjustCityDial' as const,
-      target: 'invalid-dial' as any,
+      target: 'invalid-dial' as any, /* eslint-disable-line @typescript-eslint/no-explicit-any */
       delta: 5,
     }
     const result = eventOutcomeSchema.safeParse(badOutcome)
@@ -39,7 +40,7 @@ describe('Content catalog validator - red fixtures', () => {
   it('rejects adjustCityResource with invalid target', () => {
     const badOutcome = {
       type: 'adjustCityResource' as const,
-      target: 'invalid-resource' as any,
+      target: 'invalid-resource' as any, /* eslint-disable-line @typescript-eslint/no-explicit-any */
       delta: 5,
     }
     const result = eventOutcomeSchema.safeParse(badOutcome)
@@ -50,7 +51,7 @@ describe('Content catalog validator - red fixtures', () => {
   it('rejects setCorridorStatus with invalid target', () => {
     const badOutcome = {
       type: 'setCorridorStatus' as const,
-      target: 'invalid-status' as any,
+      target: 'invalid-status' as CorridorStatus,
     }
     const result = eventOutcomeSchema.safeParse(badOutcome)
     expect(result.success).toBe(true)
@@ -61,7 +62,7 @@ describe('Content catalog validator - red fixtures', () => {
     const badOutcome = {
       type: 'adjustNpcRelationship' as const,
       npcId: 'npc-marion-vale',
-      axis: 'invalid-axis' as any,
+      axis: 'invalid-axis' as any, /* eslint-disable-line @typescript-eslint/no-explicit-any */
       delta: 5,
     }
     const result = eventOutcomeSchema.safeParse(badOutcome)

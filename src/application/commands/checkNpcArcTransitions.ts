@@ -1,7 +1,6 @@
 import type { GameState } from '../../domain'
 import { npcArcDefinitionSchema } from '../../domain/npc/contracts'
 import type { Traits } from '../../domain/npc/contracts'
-import type { Rng } from './seededRng'
 import npcArcsData from '../../../data/definitions/npc-arcs.json'
 import { appendActivityLogEntry } from './activityLog'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
@@ -69,7 +68,8 @@ function resolveEventId(baseId: string, stageFlags: Record<string, boolean>): st
 }
 
 /** Step 9c: Check arc stage transitions for all NPCs that have an active arc. */
-export function checkNpcArcTransitions(state: GameState, _rng: Rng = Math.random): GameState {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function checkNpcArcTransitions(state: GameState, _rng?: () => number): GameState {
   const arcNpcs = state.roster.filter((npc) => npc.npcArc != null)
   if (arcNpcs.length === 0) return state
 

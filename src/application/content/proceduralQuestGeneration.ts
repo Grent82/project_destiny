@@ -6,7 +6,6 @@
  * district tension, and available NPCs.
  */
 
-import type { GameState } from '../../domain/game/contracts'
 import type { QuestTemplate, QuestDiscoverySource } from '../../domain/quests/contracts'
 
 /**
@@ -209,7 +208,6 @@ export function hasConflictPotential(
  * @returns Array of quest leads ready for presentation
  */
 export function generateQuestLeadsFromWorldState(
-  _state: GameState
 ): Array<{ template: QuestTemplate; discoverySource: QuestDiscoverySource; discoveryDistrictId: string }> {
   // Placeholder: returns empty until faction tension/district state is tracked
   return []

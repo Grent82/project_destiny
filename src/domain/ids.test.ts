@@ -11,13 +11,6 @@
 
 import { describe, it, expect } from 'vitest'
 import {
-  type NpcId,
-  type QuestId,
-  type FactionId,
-  type DistrictId,
-  type EventId,
-  type TitleId,
-  type RoomId,
   asNpcId,
   asQuestId,
   asFactionId,
@@ -25,16 +18,30 @@ import {
   asEventId,
   asTitleId,
   asRoomId,
+  type NpcId,
+  type QuestId,
+  type FactionId,
+  type DistrictId,
+  type EventId,
+  type TitleId,
+  type RoomId,
 } from './ids'
 
 // ── Helpers used only for type checking ──────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireNpcId(_id: NpcId): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireQuestId(_id: QuestId): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireFactionId(_id: FactionId): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireDistrictId(_id: DistrictId): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireEventId(_id: EventId): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireTitleId(_id: TitleId): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function requireRoomId(_id: RoomId): void {}
 
 // ── Type-safety tests ─────────────────────────────────────────────────────────

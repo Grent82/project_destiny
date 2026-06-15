@@ -146,7 +146,7 @@ describe('hasConflictPotential', () => {
 
 describe('generateQuestLeadsFromWorldState', () => {
   it('returns empty array when no conflict conditions are met', () => {
-    const leads = generateQuestLeadsFromWorldState({ day: 10 } as any)
+    const leads = generateQuestLeadsFromWorldState()
     expect(leads).toEqual([])
   })
 

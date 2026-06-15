@@ -116,7 +116,7 @@ export function applyProximityGains(state: GameState, npcIds: string[]): GameSta
       .map((n) => [n.npcId, n.traits]),
   )
 
-  let next = state
+  const next = state
 
   for (let i = 0; i < npcIds.length; i++) {
     for (let j = i + 1; j < npcIds.length; j++) {

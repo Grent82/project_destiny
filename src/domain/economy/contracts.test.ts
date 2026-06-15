@@ -25,7 +25,7 @@ describe('Good', () => {
 
   it('rejects an invalid good id', () => {
     const result = goodSchema.safeParse({
-      id: 'invalid_good' as any,
+      id: 'invalid_good' as any, // eslint-disable-line @typescript-eslint/no-explicit-any
       label: 'Test',
     })
     expect(result.success).toBe(false)
