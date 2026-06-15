@@ -39,7 +39,7 @@ type QuestPresentationMetadata = Pick<
 const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
   'quest-harborwatch': {
     categoryLabel: 'Licensed contract',
-    payerLabel: 'Compact quartermasters release the fee only if the checkpoint is cleaned up quietly.',
+    payerLabel: 'Civic Compact quartermasters release the fee only if the checkpoint is cleaned up quietly.',
     originLabel: 'Posted at Harbor Guild Hall in Harbor Ward',
     stakeholderLabel: 'Harbor gate wardens and dockside traffic trapped inside the shakedown.',
     stakeholderActors: [
@@ -49,7 +49,7 @@ const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
     ],
     whyNow: 'Three wardens were hurt last week and the checkpoint shakedown is escalating into a political embarrassment.',
     employerIntent: 'Quietly break the extortion ring and restore the gate without forcing the Compact to file it publicly.',
-    likelyConsequence: 'Compact standing +8; Unrest -5.',
+    likelyConsequence: 'Civic Compact standing +8; Unrest -5.',
   },
   'quest-ledger-recovery': {
     categoryLabel: 'Court petition',

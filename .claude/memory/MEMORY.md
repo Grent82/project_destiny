@@ -5,7 +5,8 @@
 - [Feedback: Enemy NPCs müssen in npcs.json UND enemy-npcs.json existieren](feedback_npc-content-validation.md) — contentCatalog validiert enemyNpcId gegen npcsById, nicht enemyNpcsById
 - [Feedback: JSON-Dateien nie mit Bash-Heredocs editieren](feedback_avoid_bash_json_manipulation.md) — Immer Read → Edit workflow verwenden
 - [Feedback: bd-CLI-Konventionen — Epic-Parenting via --parent, Pflichtsektionen je Typ](feedback_bd-cli-conventions.md) — 21 Fehlermeldungen + 2 Patch-Runden 2026-06-12
-- [Feedback: Bead-Batches vor Freigabe durch Fact-Check-Subagent reviewen](feedback_backlog-review-subagent.md) — fand 2 Blocker in 21 frischen Beads
+- [Feedback: Bead-Batches vor Freigabe durch Fact-Check-Subagent reviewen](feedback_backlog-review-subagent.md) — fand 2 Blocker in 21 frischen Beads; Auslöser 2026-06-14 auf Auto verschärft
+- [Feedback: Code-Fakten gegen Live-Code prüfen, nicht aus Kompaktierungs-Summary](feedback_verify-claims-against-code.md) — Save-Version v2→v3 statt v3→v4, Phantom-Befehl setBondForSale (2026-06-14)
 - [Feedback: Audit-Artefakte sofort nach reports/ oder in Beads einbetten, nie Chat-Verweise](feedback_audit-evidence-as-files.md) — Review-BLOCKER wegen nicht existenter 68er-Liste
 - [Feedback: House Geometry — bounds und overlaps vor Positionierung prüfen](feedback_house-geometry-planning.md) — 3 Iterationen für room-east-wing/servant-quarters/barracks 2026-06-14
 - [Projekt: Tooling-Quirks — vitest schluckt console.log, Playwright-MCP-Screenshots flüchtig](project_test-tooling-quirks.md) — Headless-Sim als Audit-Werkzeug

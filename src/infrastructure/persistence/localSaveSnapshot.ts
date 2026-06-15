@@ -114,6 +114,12 @@ function migrateState(raw: unknown): GameState | null {
     return gameStateSchema.safeParse({ ...raw3, saveVersion: 4 }).data ?? null
   }
 
+  if (version === 4) {
+    // v4 is current — just validate and return
+    const raw4 = raw as Record<string, unknown>
+    return gameStateSchema.safeParse(raw4).data ?? null
+  }
+
   // Unknown future version — cannot load
   return null
 }

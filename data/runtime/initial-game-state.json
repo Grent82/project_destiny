@@ -566,5 +566,9 @@
   "npcSitePresences": [],
   "houseStorageCapacity": 40,
   "installedHouseModules": [],
-  "bondedPersonsRegistry": {}
+  "bondedPersonsRegistry": {},
+  "chronicle": {
+    "version": 1,
+    "entriesByDay": {}
+  }
 }

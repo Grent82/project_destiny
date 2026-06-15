@@ -54,8 +54,8 @@ describe('ContractBoardScreen', () => {
     expect(screen.getByText(/Issuer:/i)).toBeInTheDocument()
     expect(screen.getByText(/Payer:/i)).toBeInTheDocument()
     expect(screen.getByText(/Stakeholder:/i)).toBeInTheDocument()
-    expect(screen.getByText(/Civic Compact/i)).toBeInTheDocument()
-    expect(screen.getByText(/Compact standing \+8; Unrest -5/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Civic Compact/i)).toHaveLength(2)
+    expect(screen.getByText(/Civic Compact standing \+8; Unrest -5/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Accept contract' }))
 
