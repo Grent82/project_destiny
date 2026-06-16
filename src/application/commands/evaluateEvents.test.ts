@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { GameState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
@@ -61,6 +61,10 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     ...overrides,
   }
 }
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('evaluateEvents', () => {
   it('fires an event when conditions are met', () => {
@@ -475,6 +479,48 @@ describe('applyOutcomes', () => {
     const state = makeState()
     const next = applyOutcomes(state, [{ type: 'setCorridorStatus', value: 'blocked' }])
     expect(next.cityResources.corridorStatus).toBe('blocked')
+  })
+
+  it('adjustCityResource warns and leaves state unchanged for invalid resource targets', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'grainStores' as 'foodSecurity', delta: -10 }])
+
+    expect(next.cityResources).toEqual(state.cityResources)
+    expect(warn).toHaveBeenCalledWith('applyEventOutcome: invalid resource target "grainStores"')
+  })
+
+  it('setCorridorStatus warns and leaves state unchanged for invalid corridor values', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'setCorridorStatus', value: 'sealed' as 'blocked' }])
+
+    expect(next.cityResources.corridorStatus).toBe(state.cityResources.corridorStatus)
+    expect(warn).toHaveBeenCalledWith('applyEventOutcome: invalid corridor status "sealed"')
+  })
+
+  it('warns and skips outcomes with missing required fields instead of silently no-oping', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState()
+    const next = applyOutcomes(state, [
+      { type: 'adjustCityResource', target: 'foodSecurity' },
+      { type: 'setCorridorStatus' },
+      { type: 'adjustFactionStanding', delta: 5 },
+    ])
+
+    expect(next).toEqual(state)
+    expect(warn).toHaveBeenNthCalledWith(
+      1,
+      'applyEventOutcome: outcome type "adjustCityResource" is missing required field(s): delta',
+    )
+    expect(warn).toHaveBeenNthCalledWith(
+      2,
+      'applyEventOutcome: outcome type "setCorridorStatus" is missing required field(s): value',
+    )
+    expect(warn).toHaveBeenNthCalledWith(
+      3,
+      'applyEventOutcome: outcome type "adjustFactionStanding" is missing required field(s): target',
+    )
   })
 
   it('addNpcToRoster places NPC on roster with arc initialized', () => {
