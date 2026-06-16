@@ -8,6 +8,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { selectPendingEvents } from '../selectors/events'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import type { EventTemplate } from '../../domain/events/contracts'
 
 /** Deterministic rng that always returns the provided value — for test control. */
 const alwaysFire = () => 0   // rng() > probability is always false → event fires
@@ -246,6 +247,84 @@ describe('evaluateEvents', () => {
     expect(next.pendingEvents.map((e) => e.eventId)).not.toContain('test-system-event')
     // World event SHOULD be in pending (it's first in the list, so within budget)
     expect(next.pendingEvents.map((e) => e.eventId)).toContain('test-world-event')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+
+  it('auto-resolved rumor events apply authored outcomes and never become pending', () => {
+    const originalEvents = contentCatalog.events
+    const autoRumorEvent: EventTemplate = {
+      id: 'test-auto-rumor',
+      title: 'Auto Rumor',
+      description: 'Should resolve immediately.',
+      triggerConditions: { probability: 1 },
+      choices: [
+        {
+          id: 'c1',
+          label: 'Noted',
+          outcomes: [{ type: 'addActivityLogEntry', message: 'Authored rumor line.' }],
+        },
+      ],
+      isAutoResolved: true,
+      tags: ['rumor'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: null,
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'world' as const,
+    }
+    ;(contentCatalog as { events: typeof originalEvents }).events = [autoRumorEvent]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map([[autoRumorEvent.id, autoRumorEvent]])
+
+    const state = makeState({ day: 10, pendingEvents: [], lastFiredDay: {}, activityLog: [] })
+    const next = evaluateEvents(state, alwaysFire)
+
+    expect(next.pendingEvents.map((event) => event.eventId)).not.toContain(autoRumorEvent.id)
+    expect(next.activityLog.some((entry) => entry.message === 'Authored rumor line.')).toBe(true)
+    expect(next.lastFiredDay[autoRumorEvent.id]).toBe(state.day)
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(
+      originalEvents.map((e) => [e.id, e]),
+    )
+  })
+
+  it('auto-resolved non-rumor events also resolve immediately instead of becoming pending', () => {
+    const originalEvents = contentCatalog.events
+    const autoWorldEvent: EventTemplate = {
+      id: 'test-auto-world',
+      title: 'Auto World',
+      description: 'Should resolve immediately.',
+      triggerConditions: { probability: 1 },
+      choices: [
+        {
+          id: 'c1',
+          label: 'Proceed',
+          outcomes: [{ type: 'addCredits', delta: 25 }],
+        },
+      ],
+      isAutoResolved: true,
+      tags: ['world'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: null,
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'world' as const,
+    }
+    ;(contentCatalog as { events: typeof originalEvents }).events = [autoWorldEvent]
+    ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map([[autoWorldEvent.id, autoWorldEvent]])
+
+    const state = makeState({ day: 10, pendingEvents: [], lastFiredDay: {}, money: 100 })
+    const next = evaluateEvents(state, alwaysFire)
+
+    expect(next.pendingEvents.map((event) => event.eventId)).not.toContain(autoWorldEvent.id)
+    expect(next.money).toBe(125)
+    expect(next.lastFiredDay[autoWorldEvent.id]).toBe(state.day)
 
     ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
     ;(contentCatalog as { eventsById: Map<string, unknown> }).eventsById = new Map(

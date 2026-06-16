@@ -4,9 +4,8 @@ import { selectNpcCoercionRisk } from "../selectors/npcs"
 import { appendActivityLogEntry } from "./activityLog"
 import { evaluateEvents } from "./evaluateEvents"
 import { expireHireOffers } from "./recruitment"
-import { contentCatalog } from "../content/contentCatalog"
 import { generateDistrictHireOffers } from "./generateHireOffers"
-import { createRng, type Rng } from "./seededRng"
+import { createRng } from "./seededRng"
 import { applyWages } from "./applyWages"
 import { applyStateDecay } from "./applyStateDecay"
 import { applyThresholds } from "./applyThresholds"
@@ -97,24 +96,6 @@ export function applyEndOfDayResources(state: GameState): GameState {
   return next
 }
 
-function resolveRumorEvents(state: GameState, rng: Rng): GameState {
-  const rumorPending = state.pendingEvents.filter((pe) => {
-    const template = contentCatalog.eventsById.get(pe.eventId)
-    return template?.isAutoResolved === true && template.tags.includes("rumor")
-  })
-  if (rumorPending.length === 0) return state
-
-  const chosen = rumorPending[Math.floor(rng() * rumorPending.length)]!
-  const template = contentCatalog.eventsById.get(chosen.eventId)!
-
-  let next = appendActivityLogEntry(state, "system", `Rumor: ${template.description}`)
-  next = {
-    ...next,
-    pendingEvents: next.pendingEvents.filter((pe) => pe.eventId !== chosen.eventId),
-  }
-  return next
-}
-
 /** Every 7 days held: condition steps down one tier. At 'broken': rescue difficulty rises. */
 const CAPTIVITY_DEGRADATION_DAYS = 7
 const CONDITION_PROGRESSION: CaptivityCondition[] = ['healthy', 'hurt', 'broken', 'altered']
@@ -202,9 +183,9 @@ export function endDay(state: GameState): GameState {
   if (nextDay % 3 === 0 && afterExpiry.currentDistrictId) {
     const refreshed: GameState = { ...afterExpiry, availableForHire: [...afterExpiry.availableForHire] }
     generateDistrictHireOffers(refreshed, afterExpiry.currentDistrictId, undefined, rng)
-    afterEvents = evaluateEvents(refreshed, rng)
+    afterEvents = evaluateEvents(refreshed, rng, seeded)
   } else {
-    afterEvents = evaluateEvents(afterExpiry, rng)
+    afterEvents = evaluateEvents(afterExpiry, rng, seeded)
   }
 
   afterEvents = applyWorldHouseholdGrowth(afterEvents, rng)
@@ -246,8 +227,7 @@ export function endDay(state: GameState): GameState {
   afterEvents = checkBondAcquisitionOffers(afterEvents, rng)
   afterEvents = applyNpcHeldConditionDecay(afterEvents)
 
-  // Steps 10-12: Rumor events + captivity degradation + main quest progression
-  afterEvents = resolveRumorEvents(afterEvents, rng)
+  // Steps 10-12: Captivity degradation + main quest progression
   afterEvents = applyCaptivityDegradation(afterEvents)
   afterEvents = tickWardStages(afterEvents)
   const finalState = checkMainQuestProgression(afterEvents)

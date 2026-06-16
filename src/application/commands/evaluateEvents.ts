@@ -2,7 +2,8 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain'
 import type { EventTemplate } from '../../domain/events/contracts'
 import { contentCatalog } from '../content/contentCatalog'
-import type { Rng } from './seededRng'
+import { applyOutcomes, type OutcomeContext } from './applyEventOutcome'
+import { createRng, type Rng } from './seededRng'
 
 function checkConditions(template: EventTemplate, state: GameState, rng: Rng): boolean {
   const cond = template.triggerConditions
@@ -74,9 +75,13 @@ function isOnCooldown(template: EventTemplate, state: GameState): boolean {
 // Truncated events remain eligible and compete again next tick.
 const MAX_REGULAR_EVENTS_PER_TICK = 5
 
-export function evaluateEvents(state: GameState, rng: Rng): GameState {
+export function evaluateEvents(
+  state: GameState,
+  rng: Rng,
+  seededState?: ReturnType<typeof createRng>,
+): GameState {
   const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
-  const eligible: Array<{ eventId: string; isPriority: boolean }> = []
+  const eligible: Array<{ template: EventTemplate; isPriority: boolean }> = []
 
   for (const template of contentCatalog.events) {
     // Skip system-mode templates — they are pushed directly by their owning systems
@@ -85,29 +90,52 @@ export function evaluateEvents(state: GameState, rng: Rng): GameState {
     if (isOnCooldown(template, state)) continue
     if (!checkConditions(template, state, rng)) continue
     const isPriority = template.triggerConditions.isFirstRun === true
-    eligible.push({ eventId: template.id, isPriority })
+    eligible.push({ template, isPriority })
   }
 
   if (eligible.length === 0) return state
 
-  // Apply budget: all events consume RNG above; only a capped set becomes pending.
-  const priorityEvents = eligible.filter((e) => e.isPriority)
-  const regularEvents = eligible.filter((e) => !e.isPriority)
-  const selectedRegular = regularEvents.slice(0, MAX_REGULAR_EVENTS_PER_TICK)
-  const newPending: typeof state.pendingEvents = [
-    ...priorityEvents.map((e) => ({ eventId: e.eventId, firedOnDay: state.day })),
-    ...selectedRegular.map((e) => ({ eventId: e.eventId, firedOnDay: state.day })),
+  const autoResolvedEvents = eligible.filter((entry) => entry.template.isAutoResolved)
+  const autoRumorEvents = autoResolvedEvents.filter((entry) => entry.template.tags.includes('rumor'))
+  const selectedAutoRumorEvents =
+    autoRumorEvents.length === 0
+      ? []
+      : [autoRumorEvents[Math.floor(rng() * autoRumorEvents.length)]!]
+  const selectedAutoResolved = [
+    ...autoResolvedEvents.filter((entry) => !entry.template.tags.includes('rumor')),
+    ...selectedAutoRumorEvents,
   ]
 
-  // Only record lastFiredDay for events that actually became pending
+  let nextState = state
+  for (const entry of selectedAutoResolved) {
+    const choice = entry.template.choices[0]
+    if (!choice) continue
+    const context: OutcomeContext = {
+      npcId: entry.template.sourceNpcId ?? null,
+      contextId: null,
+    }
+    nextState = applyOutcomes(nextState, choice.outcomes, context, seededState)
+  }
+
+  // Apply budget: all events consume RNG above; only a capped set becomes pending.
+  const queueEligible = eligible.filter((entry) => !entry.template.isAutoResolved)
+  const priorityEvents = queueEligible.filter((e) => e.isPriority)
+  const regularEvents = queueEligible.filter((e) => !e.isPriority)
+  const selectedRegular = regularEvents.slice(0, MAX_REGULAR_EVENTS_PER_TICK)
+  const newPending: typeof state.pendingEvents = [
+    ...priorityEvents.map((e) => ({ eventId: e.template.id, firedOnDay: state.day })),
+    ...selectedRegular.map((e) => ({ eventId: e.template.id, firedOnDay: state.day })),
+  ]
+
+  // Only record lastFiredDay for events that actually resolved or became pending.
   const newLastFiredDay: Record<string, number> = {}
-  for (const e of [...priorityEvents, ...selectedRegular]) {
-    newLastFiredDay[e.eventId] = state.day
+  for (const e of [...selectedAutoResolved, ...priorityEvents, ...selectedRegular]) {
+    newLastFiredDay[e.template.id] = state.day
   }
 
   return {
-    ...state,
-    pendingEvents: [...state.pendingEvents, ...newPending],
-    lastFiredDay: { ...state.lastFiredDay, ...newLastFiredDay },
+    ...nextState,
+    pendingEvents: [...nextState.pendingEvents, ...newPending],
+    lastFiredDay: { ...nextState.lastFiredDay, ...newLastFiredDay },
   }
 }
