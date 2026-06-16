@@ -9,11 +9,56 @@ import { createRng } from './seededRng'
 import { transferBondedNpc } from './bondTransfer'
 
 export type OutcomeContext = { npcId?: string | null; contextId?: string | null }
+type NpcStateSubject = 'highest-stress' | 'lowest-morale' | 'highest-loyalty' | `npcId:${string}`
+type AdjustNpcStateAxis =
+  | 'health'
+  | 'fatigue'
+  | 'stress'
+  | 'morale'
+  | 'fear'
+  | 'anger'
+  | 'hunger'
+  | 'injury'
+  | 'intoxication'
+  | 'hygiene'
+  | 'loyalty'
 
 function warnAndSkip(outcomeType: string, field: string, missingId: string): void {
   console.warn(
     `applyEventOutcome: outcome type "${outcomeType}" references ${field} "${missingId}" which does not exist in contentCatalog — outcome skipped`,
   )
+}
+
+function clampNpcStateValue(value: number) {
+  return Math.max(0, Math.min(100, value))
+}
+
+export function resolveNpcStateSubject(
+  roster: GameState['roster'],
+  subject: NpcStateSubject,
+) {
+  if (roster.length === 0) return null
+
+  if (subject.startsWith('npcId:')) {
+    const npcId = subject.slice('npcId:'.length)
+    return roster.find((entry) => entry.npcId === npcId) ?? null
+  }
+
+  const candidates = [...roster]
+  switch (subject) {
+    case 'highest-stress':
+      return candidates.reduce((best, current) =>
+        current.states.stress > best.states.stress ? current : best,
+      )
+    case 'lowest-morale':
+      return candidates.reduce((best, current) =>
+        current.states.morale < best.states.morale ? current : best,
+      )
+    case 'highest-loyalty':
+      return candidates.reduce((best, current) =>
+        current.traits.loyalty > best.traits.loyalty ? current : best,
+      )
+  }
 }
 
 export function applyOutcomes(state: GameState, outcomes: EventOutcome[], context?: OutcomeContext): GameState {
@@ -58,6 +103,45 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[], contex
               ...next.cityResources,
               [resource]: Math.max(0, Math.min(100, next.cityResources[resource] + outcome.delta)),
             },
+          }
+        }
+        break
+      case 'adjustNpcState':
+        if (outcome.subject && outcome.axis && outcome.delta !== undefined) {
+          const subject = resolveNpcStateSubject(next.roster, outcome.subject as NpcStateSubject)
+          if (!subject) {
+            console.warn(`applyEventOutcome: outcome type "adjustNpcState" could not resolve subject "${outcome.subject}" — outcome skipped`)
+            break
+          }
+
+          const axis = outcome.axis as AdjustNpcStateAxis
+          next = {
+            ...next,
+            roster: next.roster.map((entry) => {
+              if (entry.npcId !== subject.npcId) return entry
+              if (axis === 'loyalty') {
+                return {
+                  ...entry,
+                  traits: {
+                    ...entry.traits,
+                    loyalty: clampNpcStateValue(entry.traits.loyalty + outcome.delta!),
+                  },
+                }
+              }
+
+              return {
+                ...entry,
+                states: {
+                  ...entry.states,
+                  [axis]: clampNpcStateValue(entry.states[axis] + outcome.delta!),
+                },
+              }
+            }),
+          }
+
+          const resolvedMessage = outcome.message?.replaceAll('{npcName}', subject.name)
+          if (resolvedMessage) {
+            next = appendActivityLogEntry(next, 'system', resolvedMessage)
           }
         }
         break

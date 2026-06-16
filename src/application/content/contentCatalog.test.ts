@@ -79,6 +79,29 @@ describe('Content catalog validator - red fixtures', () => {
     // But validator should reject missing required field
   })
 
+  it('accepts adjustNpcState schema shape for a rule-based subject', () => {
+    const outcome = {
+      type: 'adjustNpcState' as const,
+      subject: 'highest-stress',
+      axis: 'stress' as const,
+      delta: -10,
+      message: '{npcName} finally rests.',
+    }
+    const result = eventOutcomeSchema.safeParse(outcome)
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects adjustNpcState with an invalid axis at schema level', () => {
+    const outcome = {
+      type: 'adjustNpcState' as const,
+      subject: 'highest-stress',
+      axis: 'bad-axis' as any, /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      delta: -10,
+    }
+    const result = eventOutcomeSchema.safeParse(outcome)
+    expect(result.success).toBe(false)
+  })
+
   it('rejects addActivityLogEntry with empty message', () => {
     const badOutcome = {
       type: 'addActivityLogEntry' as const,

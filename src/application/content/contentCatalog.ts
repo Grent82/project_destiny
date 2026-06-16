@@ -169,6 +169,7 @@ const outcomeRequiredFields: Record<string, { required: string[]; enumTarget?: s
   adjustFactionStanding: { required: ['target', 'delta'] },
   adjustCityDial: { required: ['target', 'delta'], enumTarget: ['control', 'prosperity', 'unrest', 'corruption'] },
   adjustCityResource: { required: ['target', 'delta'], enumTarget: ['foodSecurity', 'waterAccess', 'materialStock'] },
+  adjustNpcState: { required: ['subject', 'axis', 'delta'] },
   addCredits: { required: ['delta'] },
   addActivityLogEntry: { required: ['message'] },
   setCorridorStatus: { required: ['target'], enumTarget: ['open', 'disrupted', 'blocked'] },
@@ -181,6 +182,7 @@ const outcomeRequiredFields: Record<string, { required: string[]; enumTarget?: s
 }
 
 const npcAxes = ['affinity', 'respect', 'fear', 'trust', 'loyalty'] as const
+const npcStateAxes = ['health', 'fatigue', 'stress', 'morale', 'fear', 'anger', 'hunger', 'injury', 'intoxication', 'hygiene', 'loyalty'] as const
 
 function validateCatalogIntegrity(): void {
   const errors: string[] = []
@@ -289,6 +291,28 @@ function validateCatalogIntegrity(): void {
           errors.push(
             `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" has invalid axis "${outcome.axis}"`,
           )
+        }
+
+        if (outcomeType === 'adjustNpcState') {
+          if (outcome.axis && !npcStateAxes.includes(outcome.axis as typeof npcStateAxes[number])) {
+            errors.push(
+              `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" has invalid axis "${outcome.axis}"`,
+            )
+          }
+          if (outcome.subject) {
+            const directNpcMatch = outcome.subject.match(/^npcId:(.+)$/)
+            if (directNpcMatch && !npcsById.has(directNpcMatch[1]!)) {
+              errors.push(
+                `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" references subject npcId "${directNpcMatch[1]}" which does not exist in npcs catalog`,
+              )
+            }
+            const subjectKeywords = ['highest-stress', 'lowest-morale', 'highest-loyalty']
+            if (!directNpcMatch && !subjectKeywords.includes(outcome.subject)) {
+              errors.push(
+                `events.json: event "${event.id}" choice "${choice.id}" outcome type "${outcomeType}" has invalid subject "${outcome.subject}"`,
+              )
+            }
+          }
         }
       }
     }

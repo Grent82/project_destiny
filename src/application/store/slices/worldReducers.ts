@@ -5,7 +5,7 @@ import type { CouncilVoteEvent, GameState } from '../../../domain'
 import type { NpcSitePresence } from '../../../domain/world/runtime'
 import type { InstitutionalTier } from '../../../domain/governance/contracts'
 import { getRenownLevel } from '../../../domain/progression/contracts'
-import { applyOutcomes, type OutcomeContext } from '../../commands/applyEventOutcome'
+import { applyOutcomes, resolveNpcStateSubject, type OutcomeContext } from '../../commands/applyEventOutcome'
 import { concretizeSite as concretizeSiteCommand, collapseSite as collapseSiteCommand } from '../../commands/siteLifecycle'
 import { travelToDistrict as travelToDistrictCommand } from '../../commands/districtTravel'
 import { applyRelationshipDelta } from '../../commands/adjustRelationship'
@@ -33,6 +33,20 @@ const cityResourceLabels = {
   foodSecurity: 'Food security',
   waterAccess: 'Water access',
   materialStock: 'Material stock',
+} as const
+
+const npcStateLabels = {
+  health: 'health',
+  fatigue: 'fatigue',
+  stress: 'stress',
+  morale: 'morale',
+  fear: 'fear',
+  anger: 'anger',
+  hunger: 'hunger',
+  injury: 'injury',
+  intoxication: 'intoxication',
+  hygiene: 'hygiene',
+  loyalty: 'loyalty',
 } as const
 
 function describeDelta(delta: number) {
@@ -75,8 +89,9 @@ function buildResolvedEventSummary(
         const npcId = outcome.npcId ?? outcome.target ?? sourceNpcId
         const npcName = npcId ? contentCatalog.npcsById.get(npcId)?.name ?? 'The contact' : 'The contact'
         if (outcome.axis && typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          const relationshipAxis = outcome.axis as keyof typeof relationshipAxisLabels
           npcEffects.push(
-            `${npcName}'s ${relationshipAxisLabels[outcome.axis]} ${describeDelta(outcome.delta)}.`,
+            `${npcName}'s ${relationshipAxisLabels[relationshipAxis]} ${describeDelta(outcome.delta)}.`,
           )
         }
         break
@@ -104,6 +119,15 @@ function buildResolvedEventSummary(
           worldEffects.push(`${label} ${describeDelta(outcome.delta)}.`)
         }
         break
+      case 'adjustNpcState': {
+        if (outcome.subject && outcome.axis && typeof outcome.delta === 'number' && outcome.delta !== 0) {
+          const npc = resolveNpcStateSubject(state.roster, outcome.subject as `npcId:${string}` | 'highest-stress' | 'lowest-morale' | 'highest-loyalty')
+          const npcName = npc?.name ?? 'A retainer'
+          const label = npcStateLabels[outcome.axis as keyof typeof npcStateLabels] ?? outcome.axis
+          npcEffects.push(`${npcName}'s ${label} ${describeDelta(outcome.delta)}.`)
+        }
+        break
+      }
       case 'setCorridorStatus':
         if (outcome.value) {
           worldEffects.push(`Corridor status shifts to ${outcome.value}.`)

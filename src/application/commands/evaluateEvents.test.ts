@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { GameState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { evaluateEvents } from './evaluateEvents'
-import { applyOutcomes } from './applyEventOutcome'
+import { applyOutcomes, resolveNpcStateSubject } from './applyEventOutcome'
 import { contentCatalog } from '../content/contentCatalog'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { selectPendingEvents } from '../selectors/events'
@@ -12,6 +12,28 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 /** Deterministic rng that always returns the provided value — for test control. */
 const alwaysFire = () => 0   // rng() > probability is always false → event fires
 const neverFire = () => 1    // rng() > probability is always true  → event blocked
+function cloneRosterNpc(index: number, overrides: Partial<GameState['roster'][number]> = {}) {
+  const base = initialGameStateSnapshot.roster[0]
+  if (!base) {
+    throw new Error('Expected at least one roster NPC in initialGameStateSnapshot for tests')
+  }
+
+  return {
+    ...base,
+    npcId: overrides.npcId ?? `${base.npcId}-test-${index}`,
+    name: overrides.name ?? `${base.name} ${index}`,
+    traits: {
+      ...base.traits,
+      ...overrides.traits,
+    },
+    states: {
+      ...base.states,
+      ...overrides.states,
+    },
+    ...overrides,
+  }
+}
+
 function makeState(overrides: Partial<GameState> = {}): GameState {
   return {
     ...initialGameStateSnapshot,
@@ -264,6 +286,54 @@ describe('district travel event triggers', () => {
 })
 
 describe('applyOutcomes', () => {
+  it('resolveNpcStateSubject selects highest-stress deterministically', () => {
+    const state = makeState({
+      roster: [
+        cloneRosterNpc(1, { name: 'First', states: { stress: 80 } as GameState['roster'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Second', states: { stress: 40 } as GameState['roster'][number]['states'] }),
+      ],
+    })
+
+    const resolved = resolveNpcStateSubject(state.roster, 'highest-stress')
+    expect(resolved?.name).toBe('First')
+  })
+
+  it('resolveNpcStateSubject selects lowest morale', () => {
+    const state = makeState({
+      roster: [
+        cloneRosterNpc(1, { name: 'First', states: { morale: 70 } as GameState['roster'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Second', states: { morale: 25 } as GameState['roster'][number]['states'] }),
+      ],
+    })
+
+    const resolved = resolveNpcStateSubject(state.roster, 'lowest-morale')
+    expect(resolved?.name).toBe('Second')
+  })
+
+  it('resolveNpcStateSubject selects highest loyalty by trait and breaks ties by stable order', () => {
+    const tieState = makeState({
+      roster: [
+        cloneRosterNpc(1, { name: 'First', traits: { loyalty: 72 } as GameState['roster'][number]['traits'] }),
+        cloneRosterNpc(2, { name: 'Second', traits: { loyalty: 72 } as GameState['roster'][number]['traits'] }),
+      ],
+    })
+
+    expect(resolveNpcStateSubject(tieState.roster, 'highest-loyalty')?.name).toBe('First')
+  })
+
+  it('resolveNpcStateSubject resolves explicit npcId subjects', () => {
+    const first = cloneRosterNpc(1)
+    const second = cloneRosterNpc(2)
+    const state = makeState({ roster: [first, second] })
+
+    const resolved = resolveNpcStateSubject(state.roster, `npcId:${second.npcId}`)
+    expect(resolved?.npcId).toBe(second.npcId)
+  })
+
+  it('resolveNpcStateSubject returns null for empty roster', () => {
+    expect(resolveNpcStateSubject([], 'highest-stress')).toBeNull()
+  })
+
   it('adjustFactionStanding applies delta and clamps', () => {
     const state = makeState({ factionStandings: { 'faction-civic-compact': 95 } })
     const next = applyOutcomes(state, [
@@ -357,6 +427,59 @@ describe('applyOutcomes', () => {
     const next = applyOutcomes(state, [{ type: 'addActivityLogEntry', message: 'Something happened.' }])
     expect(next.activityLog[0]?.message).toBe('Something happened.')
     expect(next.activityLog[0]?.category).toBe('system')
+  })
+
+  it('adjustNpcState changes the resolved NPC state and logs the named outcome', () => {
+    const state = makeState({
+      roster: [
+        cloneRosterNpc(1, { name: 'Cress', states: { stress: 85 } as GameState['roster'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Mara', states: { stress: 30 } as GameState['roster'][number]['states'] }),
+      ],
+    })
+
+    const next = applyOutcomes(state, [
+      {
+        type: 'adjustNpcState',
+        subject: 'highest-stress',
+        axis: 'stress',
+        delta: -20,
+        message: '{npcName} finally rests.',
+      },
+    ])
+
+    expect(next.roster[0]?.states.stress).toBe(65)
+    expect(next.activityLog[0]?.message).toBe('Cress finally rests.')
+  })
+
+  it('adjustNpcState clamps at schema bounds', () => {
+    const first = cloneRosterNpc(1)
+    const state = makeState({
+      roster: [
+        {
+          ...first,
+          states: { ...first.states, health: 95 },
+          traits: { ...first.traits, loyalty: 95 },
+        },
+      ],
+    })
+
+    const next = applyOutcomes(state, [
+      { type: 'adjustNpcState', subject: 'highest-stress', axis: 'health', delta: 20 },
+      { type: 'adjustNpcState', subject: `npcId:${first.npcId}`, axis: 'loyalty', delta: 10 },
+    ])
+
+    expect(next.roster[0]?.states.health).toBe(100)
+    expect(next.roster[0]?.traits.loyalty).toBe(100)
+  })
+
+  it('adjustNpcState skips cleanly on empty roster', () => {
+    const state = makeState({ roster: [] })
+    const next = applyOutcomes(state, [
+      { type: 'adjustNpcState', subject: 'highest-stress', axis: 'stress', delta: -10, message: '{npcName} rests.' },
+    ])
+
+    expect(next.roster).toHaveLength(0)
+    expect(next.activityLog[0]?.message).not.toBe('rests.')
   })
 })
 
