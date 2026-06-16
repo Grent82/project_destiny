@@ -1,19 +1,11 @@
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { contentCatalog } from '../../application/content/contentCatalog'
-import { gameActions, selectLastResolvedEventSummary, selectPendingEvents } from '../../application'
+import { gameActions, selectEventPresentation, selectLastResolvedEventSummary, selectPendingEvents } from '../../application'
 
 export function EventModal() {
   const dispatch = useAppDispatch()
   const pendingEvents = useAppSelector(selectPendingEvents)
   const lastResolvedEventSummary = useAppSelector(selectLastResolvedEventSummary)
-  const firstEventId = pendingEvents[0]?.eventId ?? null
-  const instance = useAppSelector((state) =>
-    firstEventId
-      ? state.game.eventInstances.find(
-          (entry) => entry.eventId === firstEventId && entry.resolvedOnDay === null,
-        ) ?? null
-      : null,
-  )
+  const presentation = useAppSelector(selectEventPresentation)
 
   if (pendingEvents.length === 0 && !lastResolvedEventSummary) return null
 
@@ -70,22 +62,43 @@ export function EventModal() {
     )
   }
 
-  const first = pendingEvents[0]
-  const template = contentCatalog.eventsById.get(first.eventId)
-  if (!template) return null
+  if (!presentation) return null
 
   return (
     <div className="event-modal-overlay">
       <div className="event-modal">
-        <h2 className="event-modal-title">{template.title}</h2>
-        <p className="event-modal-description">{instance?.presentationText ?? template.description}</p>
+        <p className="event-modal-kicker">{presentation.kicker}</p>
+        {(presentation.actorName || presentation.districtName) && (
+          <div className="event-modal-chip-row">
+            {presentation.actorName && (
+              <div className="event-modal-actor-chip">
+                {presentation.actorPortraitSrc && (
+                  <img
+                    src={presentation.actorPortraitSrc}
+                    alt={`${presentation.actorName} portrait`}
+                    className="event-modal-actor-portrait"
+                  />
+                )}
+                <span>{presentation.actorName}</span>
+              </div>
+            )}
+            {presentation.districtName && (
+              <span className="event-modal-district-tag">{presentation.districtName}</span>
+            )}
+          </div>
+        )}
+        <h2 className="event-modal-title">{presentation.title}</h2>
+        {presentation.sceneText && (
+          <p className="event-modal-scene">{presentation.sceneText}</p>
+        )}
+        <p className="event-modal-description">{presentation.bodyText}</p>
         <div className="event-modal-choices">
-          {template.choices.map((choice) => (
+          {presentation.choices.map((choice) => (
             <button
               key={choice.id}
               className="event-modal-choice-btn"
               onClick={() =>
-                dispatch(gameActions.resolveEvent({ eventId: first.eventId, choiceId: choice.id }))
+                dispatch(gameActions.resolveEvent({ eventId: presentation.eventId, choiceId: choice.id }))
               }
             >
               {choice.label}

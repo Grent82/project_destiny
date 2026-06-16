@@ -24,8 +24,32 @@ describe('EventModal', () => {
       </AppProviders>,
     )
 
+    expect(screen.getByText('A Scene')).toBeInTheDocument()
+    expect(screen.getByText('Marion Vale')).toBeInTheDocument()
     expect(screen.getByText(/before a night run/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Hear the warning and take the escort/i })).toBeInTheDocument()
+  })
+
+  it('renders a world report with district tag and scene-setting flavour', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 8,
+      pendingEvents: [{ eventId: 'event-restored-appeal', firedOnDay: 8 }],
+      eventInstances: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <EventModal />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText('Word from the City')).toBeInTheDocument()
+    expect(screen.getByText('The Warrens')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'A Petition from the Warrens' })).toBeInTheDocument()
+    expect(screen.getByText(/Three tired faces/i)).toBeInTheDocument()
   })
 
   it('shows a resolved event summary without requiring the activity log', async () => {

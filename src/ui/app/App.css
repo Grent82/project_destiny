@@ -2107,10 +2107,48 @@ a:focus-visible,
   line-height: 1.6;
   color: var(--color-text-secondary, #aaa);
 }
+.event-modal-scene {
+  margin: -0.35rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-accent, #d7bf82);
+  font-style: italic;
+}
 .event-modal-meta {
   margin: -0.5rem 0 0;
   font-size: 0.78rem;
   color: var(--color-text-secondary, #999);
+}
+.event-modal-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+.event-modal-actor-chip,
+.event-modal-district-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 168, 76, 0.24);
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--text-primary);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.event-modal-district-tag {
+  color: var(--text-accent, #d7bf82);
+  background: rgba(138, 106, 191, 0.14);
+  border-color: rgba(138, 106, 191, 0.28);
+}
+.event-modal-actor-portrait {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(201, 168, 76, 0.3);
 }
 .event-modal-choices {
   display: flex;
