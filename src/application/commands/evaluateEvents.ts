@@ -74,7 +74,7 @@ function isOnCooldown(template: EventTemplate, state: GameState): boolean {
 // Truncated events remain eligible and compete again next tick.
 const MAX_REGULAR_EVENTS_PER_TICK = 5
 
-export function evaluateEvents(state: GameState, rng: Rng = Math.random): GameState {
+export function evaluateEvents(state: GameState, rng: Rng): GameState {
   const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
   const eligible: Array<{ eventId: string; isPriority: boolean }> = []
 

@@ -13,6 +13,7 @@ import { buildEventRumorEntry } from '../../commands/spawnEventRumor'
 import { contentCatalog, getNpcDefinitions } from '../../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 import { applyVoteEffects } from '../../commands/applyPolitics'
+import { createRng } from '../../commands/seededRng'
 
 const relationshipAxisLabels = {
   affinity: 'affinity',
@@ -251,7 +252,8 @@ export const worldReducers = {
       npcId: matchingInstance?.sourceNpcId ?? null,
       contextId: matchingInstance?.contextId ?? null,
     }
-    return applyOutcomes(next, choice.outcomes, context)
+    const seeded = createRng(state.rngSeed)
+    return applyOutcomes(next, choice.outcomes, context, seeded)
   },
 
   dismissResolvedEventSummary(state: GameState) {

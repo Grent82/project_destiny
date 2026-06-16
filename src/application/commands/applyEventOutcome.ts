@@ -9,6 +9,7 @@ import { createRng } from './seededRng'
 import { transferBondedNpc } from './bondTransfer'
 
 export type OutcomeContext = { npcId?: string | null; contextId?: string | null }
+type OutcomeRngState = ReturnType<typeof createRng>
 type NpcStateSubject = 'highest-stress' | 'lowest-morale' | 'highest-loyalty' | `npcId:${string}`
 type AdjustNpcStateAxis =
   | 'health'
@@ -61,8 +62,21 @@ export function resolveNpcStateSubject(
   }
 }
 
-export function applyOutcomes(state: GameState, outcomes: EventOutcome[], context?: OutcomeContext): GameState {
+export function applyOutcomes(
+  state: GameState,
+  outcomes: EventOutcome[],
+  context?: OutcomeContext,
+  seededState?: OutcomeRngState,
+): GameState {
   let next = state
+  let sharedSeeded = seededState
+
+  const getSeeded = (): OutcomeRngState => {
+    if (sharedSeeded) return sharedSeeded
+    sharedSeeded = createRng(next.rngSeed)
+    return sharedSeeded
+  }
+
   for (const outcome of outcomes) {
     switch (outcome.type) {
       case 'adjustFactionStanding':
@@ -285,8 +299,9 @@ export function applyOutcomes(state: GameState, outcomes: EventOutcome[], contex
                 npcArc,
               }
               next = { ...next, roster: [...next.roster, newEntry] }
-              const { rng } = createRng(next.rngSeed)
-              next = initializeRosterRelationships(next, rng)
+              const seeded = getSeeded()
+              next = initializeRosterRelationships(next, seeded.rng)
+              next = { ...next, rngSeed: seeded.getSeed() }
               next = appendActivityLogEntry(next, 'system', `${npcDef.name} has come to stay in the house.`)
             }
           }

@@ -415,6 +415,13 @@ describe('applyOutcomes', () => {
     expect(elyn?.npcArc).toBeNull()
   })
 
+  it('addNpcToRoster advances rngSeed after initializing roster relationships', () => {
+    const state = makeState({ rngSeed: 12345 })
+    const next = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn' }])
+
+    expect(next.rngSeed).not.toBe(state.rngSeed)
+  })
+
   it('addNpcToRoster is idempotent — does not duplicate if already on roster', () => {
     const state = makeState()
     const once = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
@@ -481,6 +488,65 @@ describe('applyOutcomes', () => {
     expect(next.roster).toHaveLength(0)
     expect(next.activityLog[0]?.message).not.toBe('rests.')
   })
+
+  it('retrofitted loyal-npc milestone pays loyalty to the highest-loyalty NPC', () => {
+    const event = contentCatalog.eventsById.get('event-loyal-npc-milestone')
+    const choice = event?.choices.find((entry) => entry.id === 'choice-acknowledge-bonus')
+    expect(choice).toBeDefined()
+
+    const state = makeState({
+      money: 100,
+      cityDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
+      roster: [
+        cloneRosterNpc(1, { name: 'Steady', traits: { loyalty: 80 } as GameState['roster'][number]['traits'] }),
+        cloneRosterNpc(2, { name: 'Shaky', traits: { loyalty: 45 } as GameState['roster'][number]['traits'] }),
+      ],
+    })
+
+    const next = applyOutcomes(state, choice!.outcomes)
+    expect(next.money).toBe(70)
+    expect(next.roster[0]?.traits.loyalty).toBeGreaterThan(state.roster[0]!.traits.loyalty)
+    expect(next.cityDials.unrest).toBe(20)
+  })
+
+  it('retrofitted stressed-npc rest choice relieves the most stressed NPC instead of city unrest', () => {
+    const event = contentCatalog.eventsById.get('event-stressed-npc-warning')
+    const choice = event?.choices.find((entry) => entry.id === 'choice-give-rest')
+    expect(choice).toBeDefined()
+
+    const state = makeState({
+      cityDials: { control: 50, prosperity: 50, unrest: 60, corruption: 20 },
+      roster: [
+        cloneRosterNpc(1, { name: 'Spent', states: { stress: 90, morale: 20 } as GameState['roster'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Stable', states: { stress: 35, morale: 55 } as GameState['roster'][number]['states'] }),
+      ],
+    })
+
+    const next = applyOutcomes(state, choice!.outcomes)
+    expect(next.roster[0]?.states.stress).toBeLessThan(state.roster[0]!.states.stress)
+    expect(next.roster[0]?.states.morale).toBeGreaterThan(state.roster[0]!.states.morale)
+    expect(next.cityDials.unrest).toBe(60)
+  })
+
+  it('retrofitted market spike buy choice actually adds supplies', () => {
+    const event = contentCatalog.eventsById.get('event-market-price-spike')
+    const choice = event?.choices.find((entry) => entry.id === 'choice-buy-ahead')
+    expect(choice).toBeDefined()
+
+    const state = makeState({
+      money: 100,
+      cityResources: {
+        ...initialGameStateSnapshot.cityResources,
+        materialStock: 20,
+      },
+      cityDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
+    })
+
+    const next = applyOutcomes(state, choice!.outcomes)
+    expect(next.money).toBe(40)
+    expect(next.cityResources.materialStock).toBeGreaterThan(state.cityResources.materialStock)
+    expect(next.cityDials.prosperity).toBe(47)
+  })
 })
 
 describe('resolveEvent reducer', () => {
@@ -514,6 +580,21 @@ describe('resolveEvent reducer', () => {
       gameActions.resolveEvent({ eventId: 'event-does-not-exist', choiceId: 'choice-foo' }),
     )
     expect(next).toEqual(initialState)
+  })
+
+  it('advances rngSeed when resolving an event with addNpcToRoster', () => {
+    const initialState = makeState({
+      rngSeed: 98765,
+      pendingEvents: [{ eventId: 'event-elyn-arrival', firedOnDay: 3 }],
+    })
+
+    const next = gameSliceReducer(
+      initialState,
+      gameActions.resolveEvent({ eventId: 'event-elyn-arrival', choiceId: 'choice-take-her-in' }),
+    )
+
+    expect(next.rngSeed).not.toBe(initialState.rngSeed)
+    expect(next.roster.some((entry) => entry.npcId === 'npc-elyn')).toBe(true)
   })
 
   it('can dismiss the last resolved event summary', () => {

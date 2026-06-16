@@ -339,6 +339,11 @@
             "delta": -60
           },
           {
+            "type": "adjustCityResource",
+            "target": "materialStock",
+            "delta": 8
+          },
+          {
             "type": "adjustCityDial",
             "target": "prosperity",
             "delta": -3
@@ -634,9 +639,10 @@
             "delta": -30
           },
           {
-            "type": "adjustCityDial",
-            "target": "unrest",
-            "delta": -3
+            "type": "adjustNpcState",
+            "subject": "highest-loyalty",
+            "axis": "loyalty",
+            "delta": 8
           },
           {
             "type": "addActivityLogEntry",
@@ -649,6 +655,12 @@
         "label": "Acknowledge the work — no payment",
         "outcomes": [
           {
+            "type": "adjustNpcState",
+            "subject": "highest-loyalty",
+            "axis": "loyalty",
+            "delta": 2
+          },
+          {
             "type": "addActivityLogEntry",
             "message": "You say something brief. They nod. Neither of you makes more of it than it is."
           }
@@ -659,9 +671,10 @@
         "label": "Say nothing",
         "outcomes": [
           {
-            "type": "adjustCityDial",
-            "target": "unrest",
-            "delta": 2
+            "type": "adjustNpcState",
+            "subject": "highest-loyalty",
+            "axis": "loyalty",
+            "delta": -5
           },
           {
             "type": "addActivityLogEntry",
@@ -696,9 +709,16 @@
         "label": "Give them two days off — no assignments",
         "outcomes": [
           {
-            "type": "adjustCityDial",
-            "target": "unrest",
-            "delta": -5
+            "type": "adjustNpcState",
+            "subject": "highest-stress",
+            "axis": "stress",
+            "delta": -25
+          },
+          {
+            "type": "adjustNpcState",
+            "subject": "highest-stress",
+            "axis": "morale",
+            "delta": 8
           },
           {
             "type": "addActivityLogEntry",
@@ -715,9 +735,16 @@
             "delta": -25
           },
           {
-            "type": "adjustCityDial",
-            "target": "unrest",
-            "delta": -8
+            "type": "adjustNpcState",
+            "subject": "highest-stress",
+            "axis": "stress",
+            "delta": -35
+          },
+          {
+            "type": "adjustNpcState",
+            "subject": "highest-stress",
+            "axis": "morale",
+            "delta": 12
           },
           {
             "type": "addActivityLogEntry",
@@ -730,9 +757,16 @@
         "label": "Push through — the work does not wait",
         "outcomes": [
           {
-            "type": "adjustCityDial",
-            "target": "unrest",
-            "delta": 6
+            "type": "adjustNpcState",
+            "subject": "highest-stress",
+            "axis": "stress",
+            "delta": 15
+          },
+          {
+            "type": "adjustNpcState",
+            "subject": "highest-stress",
+            "axis": "morale",
+            "delta": -10
           },
           {
             "type": "addActivityLogEntry",
