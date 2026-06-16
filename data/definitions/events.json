@@ -601,7 +601,7 @@
     "choices": [
       {
         "id": "choice-noted",
-        "label": "Noted.",
+        "label": "Mark the traitor and move on.",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -668,7 +668,7 @@
       },
       {
         "id": "choice-ignore-milestone",
-        "label": "Say nothing",
+        "label": "Let the work stand without a gesture",
         "outcomes": [
           {
             "type": "adjustNpcState",
@@ -897,7 +897,7 @@
     "choices": [
       {
         "id": "choice-noted",
-        "label": "Noted.",
+        "label": "Treat the market as contested ground",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3508,7 +3508,7 @@
     "choices": [
       {
         "id": "choice-rival-iron-covenant-bribe-noted",
-        "label": "Noted",
+        "label": "Tighten the books around the Iron Covenant",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3537,7 +3537,7 @@
     "choices": [
       {
         "id": "choice-rival-pale-sisters-bribe-noted",
-        "label": "Noted",
+        "label": "Treat parish records as compromised",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3566,7 +3566,7 @@
     "choices": [
       {
         "id": "choice-rival-gilded-hand-bribe-noted",
-        "label": "Noted",
+        "label": "Assume the upper wards are bought",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -3595,7 +3595,7 @@
     "choices": [
       {
         "id": "choice-rival-ashen-compact-bribe-noted",
-        "label": "Noted",
+        "label": "Treat Warrens tips as poisoned",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4281,7 +4281,7 @@
     "choices": [
       {
         "id": "choice-noted",
-        "label": "I understand the stakes.",
+        "label": "The house survives only if I earn",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4315,7 +4315,7 @@
     "choices": [
       {
         "id": "choice-noted",
-        "label": "I know where to look.",
+        "label": "Start with district work, then the board",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
@@ -4384,7 +4384,7 @@
     "choices": [
       {
         "id": "choice-noted",
-        "label": "Good to know.",
+        "label": "Put the roster to work between jobs",
         "outcomes": [
           {
             "type": "addActivityLogEntry",
