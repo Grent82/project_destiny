@@ -237,6 +237,47 @@ describe('endDay', () => {
     expect(next.pendingEvents.length).toBeLessThanOrEqual(10)
   })
 
+  it('prunes expired event instances at day turn and logs that the moment passed', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 4,
+      pendingEvents: [
+        {
+          eventId: 'event-rival-gilded-hand-bribe-warning',
+          firedOnDay: 4,
+          instanceId: 'instance-expired-warning',
+        },
+      ],
+      eventInstances: [
+        {
+          instanceId: 'instance-expired-warning',
+          eventId: 'event-rival-gilded-hand-bribe-warning',
+          firedOnDay: 4,
+          resolvedOnDay: null,
+          chosenOptionId: null,
+          sourceDistrictId: 'district-harbor',
+          sourceNpcId: null,
+          presentationText: null,
+          contextId: null,
+          expiresOnDay: 4,
+        },
+      ],
+    }
+
+    const next = endDay(state)
+
+    expect(next.pendingEvents.some((event) => event.instanceId === 'instance-expired-warning')).toBe(false)
+    expect(
+      next.eventInstances.find((instance) => instance.instanceId === 'instance-expired-warning')?.resolvedOnDay,
+    ).toBe(5)
+    expect(
+      next.activityLog.some((entry) =>
+        entry.message.includes('Retainers in the Upper Ward') &&
+        entry.message.includes('has passed'),
+      ),
+    ).toBe(true)
+  })
+
   it('city dial: high unrest (>=70) decays all NPC loyalty by 1 and logs a message', () => {
     const state = {
       ...initialStateWithIda,

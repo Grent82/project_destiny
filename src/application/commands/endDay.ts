@@ -35,6 +35,7 @@ import { tickHouseRepairs } from './houseRepairs'
 import { expireTimedQuestsOnState } from './questLifecycle'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { applyOpponentPressure, logOpponentPressure } from './applyOpponentPressure'
+import { pruneExpiredEventInstances } from './eventInstances'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -177,6 +178,7 @@ export function endDay(state: GameState): GameState {
   next = applyPolitics(next, rng)
 
   // Step 8: Prune expired quest leads, expire stale hire offers, optionally refresh, then evaluate world events
+  next = pruneExpiredEventInstances(next)
   next = pruneExpiredQuestLeads(next)
   const afterExpiry = expireHireOffers(next)
   let afterEvents: GameState

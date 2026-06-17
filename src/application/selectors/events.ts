@@ -3,13 +3,16 @@ import { createSelector } from '@reduxjs/toolkit'
 import type { EventChoice } from '../../domain/events/contracts'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
-import { normalizePendingEventInstances } from '../commands/eventInstances'
+import { isEventInstanceExpired, normalizePendingEventInstances } from '../commands/eventInstances'
 
 const selectGame = (state: RootState) => state.game
 
-export const selectPendingEvents = createSelector([selectGame], (game) =>
-  normalizePendingEventInstances(game).pendingEvents.filter((event) => event.firedOnDay <= game.day),
-)
+export const selectPendingEvents = createSelector([selectGame], (game) => {
+  const normalized = normalizePendingEventInstances(game)
+  return normalized.pendingEvents.filter(
+    (event) => event.firedOnDay <= normalized.day && !isEventInstanceExpired(normalized, event),
+  )
+})
 
 export const selectPendingEventsCount = (state: RootState) =>
   selectPendingEvents(state).length

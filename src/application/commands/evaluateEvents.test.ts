@@ -1005,6 +1005,36 @@ describe('pending event visibility', () => {
       }),
     ])
   })
+
+  it('hides expired instances from the visible queue', () => {
+    const state = makeState({
+      day: 5,
+      pendingEvents: [
+        {
+          eventId: 'event-rival-gilded-hand-bribe-warning',
+          firedOnDay: 5,
+          instanceId: 'instance-expired',
+        },
+      ],
+      eventInstances: [
+        {
+          instanceId: 'instance-expired',
+          eventId: 'event-rival-gilded-hand-bribe-warning',
+          firedOnDay: 5,
+          resolvedOnDay: null,
+          chosenOptionId: null,
+          sourceDistrictId: 'district-harbor',
+          sourceNpcId: null,
+          presentationText: null,
+          contextId: null,
+          expiresOnDay: 4,
+        },
+      ],
+    })
+
+    const visible = selectPendingEvents({ game: state } as { game: GameState })
+    expect(visible).toEqual([])
+  })
 })
 
 describe('timeSlot trigger condition', () => {

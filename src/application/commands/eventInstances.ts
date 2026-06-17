@@ -1,6 +1,7 @@
 import type { EventInstance, EventTemplate, PendingEvent } from '../../domain/events/contracts'
 import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
+import { appendActivityLogEntry } from './activityLog'
 
 function nextEventInstanceId(state: GameState, eventId: string, prefix = 'event') {
   const count = state.eventInstances.filter((instance) => instance.eventId === eventId).length + 1
@@ -96,4 +97,43 @@ export function enqueueEventInstance(
     eventInstances: [...normalized.eventInstances, instance],
     lastFiredDay: { ...normalized.lastFiredDay, [template.id]: instance.firedOnDay },
   }
+}
+
+export function isEventInstanceExpired(
+  state: Pick<GameState, 'day' | 'eventInstances'>,
+  pendingEvent: PendingEvent,
+) {
+  if (!pendingEvent.instanceId) return false
+  const instance = state.eventInstances.find((entry) => entry.instanceId === pendingEvent.instanceId)
+  if (!instance || instance.resolvedOnDay !== null || instance.expiresOnDay == null) return false
+  return instance.expiresOnDay < state.day
+}
+
+export function pruneExpiredEventInstances(state: GameState): GameState {
+  const normalized = normalizePendingEventInstances(state)
+  const expiredPending = normalized.pendingEvents.filter((pending) =>
+    isEventInstanceExpired(normalized, pending),
+  )
+  if (expiredPending.length === 0) return normalized
+
+  const expiredIds = new Set(expiredPending.map((pending) => pending.instanceId).filter(Boolean))
+  let next: GameState = {
+    ...normalized,
+    pendingEvents: normalized.pendingEvents.filter((pending) => !expiredIds.has(pending.instanceId ?? null)),
+    eventInstances: normalized.eventInstances.map((instance) =>
+      expiredIds.has(instance.instanceId) ? { ...instance, resolvedOnDay: normalized.day } : instance,
+    ),
+  }
+
+  for (const pending of expiredPending) {
+    const template = contentCatalog.eventsById.get(pending.eventId)
+    if (!template) continue
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `The moment to answer "${template.title}" has passed.`,
+    )
+  }
+
+  return next
 }
