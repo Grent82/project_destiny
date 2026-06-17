@@ -3,11 +3,12 @@ import { createSelector } from '@reduxjs/toolkit'
 import type { EventChoice } from '../../domain/events/contracts'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
+import { normalizePendingEventInstances } from '../commands/eventInstances'
 
 const selectGame = (state: RootState) => state.game
 
 export const selectPendingEvents = createSelector([selectGame], (game) =>
-  game.pendingEvents.filter((event) => event.firedOnDay <= game.day),
+  normalizePendingEventInstances(game).pendingEvents.filter((event) => event.firedOnDay <= game.day),
 )
 
 export const selectPendingEventsCount = (state: RootState) =>
@@ -21,6 +22,7 @@ export const selectFirstPendingEvent = (state: RootState) => {
 }
 
 export type EventPresentation = {
+  instanceId: string | null
   eventId: string
   choiceId: string | null
   title: string
@@ -65,12 +67,15 @@ function classifyEventKicker(params: {
 
 function buildEventPresentation(
   game: RootState['game'],
-  eventId: string,
+  pendingEvent: RootState['game']['pendingEvents'][number],
 ): EventPresentation | null {
-  const template = contentCatalog.eventsById.get(eventId)
+  const template = contentCatalog.eventsById.get(pendingEvent.eventId)
   if (!template) return null
   const instance =
-    game.eventInstances.find((entry) => entry.eventId === eventId && entry.resolvedOnDay === null) ?? null
+    (pendingEvent.instanceId
+      ? game.eventInstances.find((entry) => entry.instanceId === pendingEvent.instanceId)
+      : game.eventInstances.find((entry) => entry.eventId === pendingEvent.eventId && entry.resolvedOnDay === null)) ??
+    null
   const sourceNpcId = instance?.sourceNpcId ?? template.sourceNpcId
   const sourceDistrictId = instance?.sourceDistrictId ?? template.sourceDistrictId
   const actorName = sourceNpcId ? (contentCatalog.npcsById.get(sourceNpcId)?.name ?? null) : null
@@ -79,6 +84,7 @@ function buildEventPresentation(
     : null
 
   return {
+    instanceId: instance?.instanceId ?? pendingEvent.instanceId ?? null,
     eventId: template.id,
     choiceId: template.choices[0]?.id ?? null,
     title: template.title,
@@ -124,7 +130,7 @@ function classifyMorningReportSection(presentation: EventPresentation): MorningR
 
 export const selectMorningReportItems = createSelector([selectGame], (game): MorningReportItem[] =>
   selectPendingEvents({ game } as RootState)
-    .map((pending) => buildEventPresentation(game, pending.eventId))
+    .map((pending) => buildEventPresentation(normalizePendingEventInstances(game), pending))
     .filter(isInformationalPresentation)
     .map((presentation) => {
       const section = classifyMorningReportSection(presentation)
@@ -153,8 +159,9 @@ export const selectMorningReportItems = createSelector([selectGame], (game): Mor
 )
 
 export const selectEventPresentation = createSelector([selectGame], (game): EventPresentation | null => {
+  const normalized = normalizePendingEventInstances(game)
   const pending = selectPendingEvents({ game } as RootState)
-    .map((event) => buildEventPresentation(game, event.eventId))
+    .map((event) => buildEventPresentation(normalized, event))
     .find((presentation) => presentation && !isInformationalPresentation(presentation))
 
   if (!pending) return null

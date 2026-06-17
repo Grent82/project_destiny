@@ -3,6 +3,7 @@ import type { GameState } from '../../domain'
 import type { EventTemplate } from '../../domain/events/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { applyOutcomes, type OutcomeContext } from './applyEventOutcome'
+import { createEventInstance, createPendingEvent, normalizePendingEventInstances } from './eventInstances'
 import { appendEventChronicleEntry } from './eventResolutionArtifacts'
 import { createRng, type Rng } from './seededRng'
 
@@ -81,20 +82,21 @@ export function evaluateEvents(
   rng: Rng,
   seededState?: ReturnType<typeof createRng>,
 ): GameState {
-  const alreadyPending = new Set(state.pendingEvents.map((e) => e.eventId))
+  const normalizedState = normalizePendingEventInstances(state)
+  const alreadyPending = new Set(normalizedState.pendingEvents.map((e) => e.eventId))
   const eligible: Array<{ template: EventTemplate; isPriority: boolean }> = []
 
   for (const template of contentCatalog.events) {
     // Skip system-mode templates — they are pushed directly by their owning systems
     if (template.firingMode === 'system') continue
     if (alreadyPending.has(template.id)) continue
-    if (isOnCooldown(template, state)) continue
-    if (!checkConditions(template, state, rng)) continue
+    if (isOnCooldown(template, normalizedState)) continue
+    if (!checkConditions(template, normalizedState, rng)) continue
     const isPriority = template.triggerConditions.isFirstRun === true
     eligible.push({ template, isPriority })
   }
 
-  if (eligible.length === 0) return state
+  if (eligible.length === 0) return normalizedState
 
   const autoResolvedEvents = eligible.filter((entry) => entry.template.isAutoResolved)
   const autoRumorEvents = autoResolvedEvents.filter((entry) => entry.template.tags.includes('rumor'))
@@ -107,21 +109,30 @@ export function evaluateEvents(
     ...selectedAutoRumorEvents,
   ]
 
-  let nextState = state
+  let nextState = normalizedState
   for (const entry of selectedAutoResolved) {
     const choice = entry.template.choices[0]
     if (!choice) continue
+    const instance = createEventInstance(nextState, entry.template, {
+      chosenOptionId: choice.id,
+      resolvedOnDay: nextState.day,
+    })
+    nextState = {
+      ...nextState,
+      eventInstances: [...nextState.eventInstances, instance],
+      lastFiredDay: { ...nextState.lastFiredDay, [entry.template.id]: nextState.day },
+    }
     const context: OutcomeContext = {
-      npcId: entry.template.sourceNpcId ?? null,
-      contextId: null,
+      npcId: instance.sourceNpcId,
+      contextId: instance.contextId,
     }
     const resolved = applyOutcomes(nextState, choice.outcomes, context, seededState)
     nextState = appendEventChronicleEntry(
       resolved,
       entry.template.id,
       choice.id,
-      entry.template.sourceNpcId ?? null,
-      entry.template.sourceDistrictId ?? null,
+      instance.sourceNpcId,
+      instance.sourceDistrictId,
       { autoResolved: true },
     )
   }
@@ -131,20 +142,17 @@ export function evaluateEvents(
   const priorityEvents = queueEligible.filter((e) => e.isPriority)
   const regularEvents = queueEligible.filter((e) => !e.isPriority)
   const selectedRegular = regularEvents.slice(0, MAX_REGULAR_EVENTS_PER_TICK)
-  const newPending: typeof state.pendingEvents = [
-    ...priorityEvents.map((e) => ({ eventId: e.template.id, firedOnDay: state.day })),
-    ...selectedRegular.map((e) => ({ eventId: e.template.id, firedOnDay: state.day })),
-  ]
-
-  // Only record lastFiredDay for events that actually resolved or became pending.
-  const newLastFiredDay: Record<string, number> = {}
-  for (const e of [...selectedAutoResolved, ...priorityEvents, ...selectedRegular]) {
-    newLastFiredDay[e.template.id] = state.day
-  }
+  const queuedInstances = [...priorityEvents, ...selectedRegular].map((entry) =>
+    createEventInstance(nextState, entry.template),
+  )
 
   return {
     ...nextState,
-    pendingEvents: [...nextState.pendingEvents, ...newPending],
-    lastFiredDay: { ...nextState.lastFiredDay, ...newLastFiredDay },
+    pendingEvents: [...nextState.pendingEvents, ...queuedInstances.map(createPendingEvent)],
+    eventInstances: [...nextState.eventInstances, ...queuedInstances],
+    lastFiredDay: {
+      ...nextState.lastFiredDay,
+      ...Object.fromEntries(queuedInstances.map((instance) => [instance.eventId, instance.firedOnDay])),
+    },
   }
 }

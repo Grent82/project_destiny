@@ -74,6 +74,12 @@ describe('evaluateEvents', () => {
     const next = evaluateEvents(state, alwaysFire)
     const ids = next.pendingEvents.map((e) => e.eventId)
     expect(ids).toContain('event-unpaid-wages-unrest')
+    expect(next.pendingEvents.find((event) => event.eventId === 'event-unpaid-wages-unrest')?.instanceId).toBeTruthy()
+    expect(
+      next.eventInstances.some(
+        (instance) => instance.eventId === 'event-unpaid-wages-unrest' && instance.resolvedOnDay === null,
+      ),
+    ).toBe(true)
   })
 
   it('does not fire already-pending events', () => {
@@ -799,9 +805,9 @@ describe('resolveEvent reducer', () => {
       day: 10,
       timeSlot: 'evening',
       pendingEvents: [
-        { eventId: eventA.id, firedOnDay: 10 },
-        { eventId: eventB.id, firedOnDay: 10 },
-        { eventId: eventC.id, firedOnDay: 10 },
+        { eventId: eventA.id, firedOnDay: 10, instanceId: 'instance-a' },
+        { eventId: eventB.id, firedOnDay: 10, instanceId: 'instance-b' },
+        { eventId: eventC.id, firedOnDay: 10, instanceId: 'instance-c' },
       ],
       eventInstances: [
         {
@@ -843,15 +849,15 @@ describe('resolveEvent reducer', () => {
 
     const afterFirst = gameSliceReducer(
       initialState,
-      gameActions.resolveEvent({ eventId: eventA.id, choiceId: 'choice-open' }),
+      gameActions.resolveEvent({ instanceId: 'instance-a', eventId: eventA.id, choiceId: 'choice-open' }),
     )
     const afterSecond = gameSliceReducer(
       afterFirst,
-      gameActions.resolveEvent({ eventId: eventB.id, choiceId: 'choice-pay' }),
+      gameActions.resolveEvent({ instanceId: 'instance-b', eventId: eventB.id, choiceId: 'choice-pay' }),
     )
     const afterThird = gameSliceReducer(
       afterSecond,
-      gameActions.resolveEvent({ eventId: eventC.id, choiceId: 'choice-accept' }),
+      gameActions.resolveEvent({ instanceId: 'instance-c', eventId: eventC.id, choiceId: 'choice-accept' }),
     )
 
     const chronicleEntries = selectChronicleEntries({ game: afterThird })
@@ -992,7 +998,12 @@ describe('pending event visibility', () => {
     })
 
     const visible = selectPendingEvents({ game: state } as { game: GameState })
-    expect(visible).toEqual([{ eventId: 'event-rival-gilded-hand-bribe-warning', firedOnDay: 5 }])
+    expect(visible).toEqual([
+      expect.objectContaining({
+        eventId: 'event-rival-gilded-hand-bribe-warning',
+        firedOnDay: 5,
+      }),
+    ])
   })
 })
 

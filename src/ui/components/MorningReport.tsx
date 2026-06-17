@@ -35,18 +35,19 @@ export function MorningReport() {
               <h3 className="event-report-section-title">{section}</h3>
               <ul className="event-report-list">
                 {sectionItems.map((item) => {
-                  const isExpanded = expandedIds.includes(item.eventId)
+                  const expandedKey = item.instanceId ?? item.eventId
+                  const isExpanded = expandedIds.includes(expandedKey)
                   const anchor = item.actorName ?? item.districtName ?? item.kicker
                   return (
-                    <li key={item.eventId} className="event-report-item">
+                    <li key={expandedKey} className="event-report-item">
                       <button
                         type="button"
                         className="event-report-item-toggle"
                         onClick={() =>
                           setExpandedIds((current) =>
                             isExpanded
-                              ? current.filter((entry) => entry !== item.eventId)
-                              : [...current, item.eventId],
+                              ? current.filter((entry) => entry !== expandedKey)
+                              : [...current, expandedKey],
                           )
                         }
                       >
@@ -78,7 +79,7 @@ export function MorningReport() {
             onClick={() =>
               dispatch(
                 gameActions.resolveInformationalEvents({
-                  eventIds: items.map((item) => item.eventId),
+                  instanceIds: items.map((item) => item.instanceId).filter(Boolean) as string[],
                 }),
               )
             }

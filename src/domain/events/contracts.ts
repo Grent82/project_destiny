@@ -130,6 +130,7 @@ export const pendingEventSchema = z
   .object({
     eventId: entityIdSchema,
     firedOnDay: z.number(),
+    instanceId: z.string().nullable().optional(),
   })
   .strict()
 
@@ -145,6 +146,7 @@ export const eventInstanceSchema = z
     sourceNpcId: z.string().nullable().default(null),
     presentationText: z.string().nullable().default(null),
     contextId: z.string().nullable().default(null),
+    expiresOnDay: z.number().int().positive().nullable().optional(),
   })
   .strict()
 

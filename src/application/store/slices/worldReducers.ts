@@ -6,6 +6,7 @@ import type { NpcSitePresence } from '../../../domain/world/runtime'
 import type { InstitutionalTier } from '../../../domain/governance/contracts'
 import { getRenownLevel } from '../../../domain/progression/contracts'
 import { applyOutcomes, type OutcomeContext } from '../../commands/applyEventOutcome'
+import { createEventInstance, normalizePendingEventInstances } from '../../commands/eventInstances'
 import { appendEventChronicleEntry, buildResolvedEventArtifacts } from '../../commands/eventResolutionArtifacts'
 import { concretizeSite as concretizeSiteCommand, collapseSite as collapseSiteCommand } from '../../commands/siteLifecycle'
 import { travelToDistrict as travelToDistrictCommand } from '../../commands/districtTravel'
@@ -44,39 +45,54 @@ export const worldReducers = {
     })
   },
 
-  resolveEvent(state: GameState, action: PayloadAction<{ eventId: string; choiceId: string }>) {
-    const { eventId, choiceId } = action.payload
+  resolveEvent(
+    state: GameState,
+    action: PayloadAction<{ instanceId?: string | null; eventId: string; choiceId: string }>,
+  ) {
+    const { eventId, choiceId, instanceId } = action.payload
+    const normalized = normalizePendingEventInstances(state)
     const template = contentCatalog.eventsById.get(eventId)
     if (!template) return
 
     const choice = template.choices.find((c) => c.id === choiceId)
     if (!choice) return
 
-    const pendingIndex = state.pendingEvents.findIndex((event) => event.eventId === eventId)
+    const pendingIndex = normalized.pendingEvents.findIndex((event) =>
+      instanceId ? event.instanceId === instanceId : event.eventId === eventId,
+    )
     const pendingEvents =
       pendingIndex === -1
-        ? state.pendingEvents
-        : state.pendingEvents.filter((_, index) => index !== pendingIndex)
-    const matchingInstance = state.eventInstances.find(
-      (instance) => instance.eventId === eventId && instance.resolvedOnDay === null,
-    )
+        ? normalized.pendingEvents
+        : normalized.pendingEvents.filter((_, index) => index !== pendingIndex)
+    const matchingInstance =
+      (instanceId
+        ? normalized.eventInstances.find((instance) => instance.instanceId === instanceId)
+        : normalized.eventInstances.find(
+            (instance) => instance.eventId === eventId && instance.resolvedOnDay === null,
+          )) ??
+      createEventInstance(normalized, template)
     const next = {
-      ...state,
+      ...normalized,
       lastResolvedEventSummary: buildResolvedEventArtifacts(
-        state,
+        normalized,
         eventId,
         choiceId,
         matchingInstance?.sourceNpcId ?? template.sourceNpcId ?? null,
         matchingInstance?.sourceDistrictId ?? template.sourceDistrictId ?? null,
       )?.summary ?? null,
       pendingEvents,
-      eventInstances: matchingInstance
-        ? state.eventInstances.map((instance) =>
+      eventInstances: normalized.eventInstances.some(
+        (instance) => instance.instanceId === matchingInstance.instanceId,
+      )
+        ? normalized.eventInstances.map((instance) =>
             instance.instanceId === matchingInstance.instanceId
-              ? { ...instance, resolvedOnDay: state.day, chosenOptionId: choiceId }
+              ? { ...instance, resolvedOnDay: normalized.day, chosenOptionId: choiceId }
               : instance,
           )
-        : state.eventInstances,
+        : [
+            ...normalized.eventInstances,
+            { ...matchingInstance, resolvedOnDay: normalized.day, chosenOptionId: choiceId },
+          ],
     }
     const context: OutcomeContext = {
       npcId: matchingInstance?.sourceNpcId ?? null,
@@ -93,29 +109,28 @@ export const worldReducers = {
     )
   },
 
-  resolveInformationalEvents(state: GameState, action: PayloadAction<{ eventIds: string[] }>) {
+  resolveInformationalEvents(state: GameState, action: PayloadAction<{ instanceIds: string[] }>) {
     const seeded = createRng(state.rngSeed)
-    let next = { ...state, pendingEvents: [...state.pendingEvents], eventInstances: [...state.eventInstances] }
+    let next = normalizePendingEventInstances(state)
 
-    for (const eventId of action.payload.eventIds) {
-      const template = contentCatalog.eventsById.get(eventId)
+    for (const instanceId of action.payload.instanceIds) {
+      const matchingInstance = next.eventInstances.find(
+        (instance) => instance.instanceId === instanceId && instance.resolvedOnDay === null,
+      )
+      if (!matchingInstance) continue
+
+      const template = contentCatalog.eventsById.get(matchingInstance.eventId)
       const choice = template?.choices[0]
       if (!template || !choice) continue
 
-      const matchingInstance = next.eventInstances.find(
-        (instance) => instance.eventId === eventId && instance.resolvedOnDay === null,
-      )
-
       next = {
         ...next,
-        pendingEvents: next.pendingEvents.filter((event) => event.eventId !== eventId),
-        eventInstances: matchingInstance
-          ? next.eventInstances.map((instance) =>
-              instance.instanceId === matchingInstance.instanceId
-                ? { ...instance, resolvedOnDay: next.day, chosenOptionId: choice.id }
-                : instance,
-            )
-          : next.eventInstances,
+        pendingEvents: next.pendingEvents.filter((event) => event.instanceId !== instanceId),
+        eventInstances: next.eventInstances.map((instance) =>
+          instance.instanceId === matchingInstance.instanceId
+            ? { ...instance, resolvedOnDay: next.day, chosenOptionId: choice.id }
+            : instance,
+        ),
       }
 
       const context: OutcomeContext = {
@@ -125,7 +140,7 @@ export const worldReducers = {
       const resolved = applyOutcomes(next, choice.outcomes, context, seeded)
       next = appendEventChronicleEntry(
         resolved,
-        eventId,
+        matchingInstance.eventId,
         choice.id,
         matchingInstance?.sourceNpcId ?? template.sourceNpcId ?? null,
         matchingInstance?.sourceDistrictId ?? template.sourceDistrictId ?? null,

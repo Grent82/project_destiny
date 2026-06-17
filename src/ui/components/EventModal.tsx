@@ -98,7 +98,13 @@ export function EventModal() {
               key={choice.id}
               className="event-modal-choice-btn"
               onClick={() =>
-                dispatch(gameActions.resolveEvent({ eventId: presentation.eventId, choiceId: choice.id }))
+                dispatch(
+                  gameActions.resolveEvent({
+                    instanceId: presentation.instanceId,
+                    eventId: presentation.eventId,
+                    choiceId: choice.id,
+                  }),
+                )
               }
             >
               {choice.label}
