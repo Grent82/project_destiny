@@ -3,6 +3,7 @@ import type { GameState } from '../../domain'
 import type { EventTemplate } from '../../domain/events/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { applyOutcomes, type OutcomeContext } from './applyEventOutcome'
+import { appendEventChronicleEntry } from './eventResolutionArtifacts'
 import { createRng, type Rng } from './seededRng'
 
 function checkConditions(template: EventTemplate, state: GameState, rng: Rng): boolean {
@@ -114,7 +115,15 @@ export function evaluateEvents(
       npcId: entry.template.sourceNpcId ?? null,
       contextId: null,
     }
-    nextState = applyOutcomes(nextState, choice.outcomes, context, seededState)
+    const resolved = applyOutcomes(nextState, choice.outcomes, context, seededState)
+    nextState = appendEventChronicleEntry(
+      resolved,
+      entry.template.id,
+      choice.id,
+      entry.template.sourceNpcId ?? null,
+      entry.template.sourceDistrictId ?? null,
+      { autoResolved: true },
+    )
   }
 
   // Apply budget: all events consume RNG above; only a capped set becomes pending.

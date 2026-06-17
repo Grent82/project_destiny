@@ -7,6 +7,7 @@ import { applyOutcomes, resolveNpcStateSubject } from './applyEventOutcome'
 import { contentCatalog } from '../content/contentCatalog'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { selectPendingEvents } from '../selectors/events'
+import { selectChronicleEntries } from '../selectors/chronicle'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { EventTemplate } from '../../domain/events/contracts'
 
@@ -740,6 +741,181 @@ describe('resolveEvent reducer', () => {
 
     const next = gameSliceReducer(initialState, gameActions.dismissResolvedEventSummary())
     expect(next.lastResolvedEventSummary).toBeNull()
+  })
+
+  it('appends one chronicle entry for each resolved queued event with the chosen label', () => {
+    const originalEvents = contentCatalog.events
+    const eventA: EventTemplate = {
+      id: 'event-test-chronicle-a',
+      title: 'A Knock at Dusk',
+      description: 'Someone waits in the rain.',
+      triggerConditions: { probability: 1 },
+      choices: [{ id: 'choice-open', label: 'Open the door', outcomes: [{ type: 'addCredits', delta: 10 }] }],
+      isAutoResolved: false,
+      tags: ['personal'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: 'district-the-pale',
+      sourceNpcId: 'npc-marion-vale',
+      presentationFlavour: 'Marion has already unbarred the hall.',
+      firingMode: 'world',
+    }
+    const eventB: EventTemplate = {
+      id: 'event-test-chronicle-b',
+      title: 'A Toll at the Gate',
+      description: 'Collectors stop a courier.',
+      triggerConditions: { probability: 1 },
+      choices: [{ id: 'choice-pay', label: 'Pay the toll', outcomes: [{ type: 'adjustCityDial', target: 'unrest', delta: -2 }] }],
+      isAutoResolved: false,
+      tags: ['world'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: 'district-the-pale',
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'world',
+    }
+    const eventC: EventTemplate = {
+      id: 'event-test-chronicle-c',
+      title: 'A Quiet Favor',
+      description: 'A contact wants discretion.',
+      triggerConditions: { probability: 1 },
+      choices: [{ id: 'choice-accept', label: 'Accept the favor', outcomes: [{ type: 'createQuestLead', questId: 'quest-debtors-due' }] }],
+      isAutoResolved: false,
+      tags: ['npc'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: 'district-the-pale',
+      sourceNpcId: 'npc-marion-vale',
+      presentationFlavour: null,
+      firingMode: 'world',
+    }
+    ;(contentCatalog as { events: typeof originalEvents }).events = [eventA, eventB, eventC]
+    ;(contentCatalog as { eventsById: Map<string, EventTemplate> }).eventsById = new Map(
+      [eventA, eventB, eventC].map((event) => [event.id, event]),
+    )
+
+    const initialState = makeState({
+      day: 10,
+      timeSlot: 'evening',
+      pendingEvents: [
+        { eventId: eventA.id, firedOnDay: 10 },
+        { eventId: eventB.id, firedOnDay: 10 },
+        { eventId: eventC.id, firedOnDay: 10 },
+      ],
+      eventInstances: [
+        {
+          instanceId: 'instance-a',
+          eventId: eventA.id,
+          firedOnDay: 10,
+          resolvedOnDay: null,
+          chosenOptionId: null,
+          sourceDistrictId: 'district-the-pale',
+          sourceNpcId: 'npc-marion-vale',
+          presentationText: null,
+          contextId: null,
+        },
+        {
+          instanceId: 'instance-b',
+          eventId: eventB.id,
+          firedOnDay: 10,
+          resolvedOnDay: null,
+          chosenOptionId: null,
+          sourceDistrictId: 'district-the-pale',
+          sourceNpcId: null,
+          presentationText: null,
+          contextId: null,
+        },
+        {
+          instanceId: 'instance-c',
+          eventId: eventC.id,
+          firedOnDay: 10,
+          resolvedOnDay: null,
+          chosenOptionId: null,
+          sourceDistrictId: 'district-the-pale',
+          sourceNpcId: 'npc-marion-vale',
+          presentationText: null,
+          contextId: null,
+        },
+      ],
+      chronicle: { entriesByDay: {}, version: 1 },
+    })
+
+    const afterFirst = gameSliceReducer(
+      initialState,
+      gameActions.resolveEvent({ eventId: eventA.id, choiceId: 'choice-open' }),
+    )
+    const afterSecond = gameSliceReducer(
+      afterFirst,
+      gameActions.resolveEvent({ eventId: eventB.id, choiceId: 'choice-pay' }),
+    )
+    const afterThird = gameSliceReducer(
+      afterSecond,
+      gameActions.resolveEvent({ eventId: eventC.id, choiceId: 'choice-accept' }),
+    )
+
+    const chronicleEntries = selectChronicleEntries({ game: afterThird })
+    expect(chronicleEntries).toHaveLength(3)
+    expect(chronicleEntries.map((entry) => entry.detailLines[0])).toEqual([
+      'You chose: Open the door',
+      'You chose: Pay the toll',
+      'You chose: Accept the favor',
+    ])
+    expect(chronicleEntries.every((entry) => entry.linkedTarget?.targetType === 'event')).toBe(true)
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, EventTemplate> }).eventsById = new Map(
+      originalEvents.map((event) => [event.id, event]),
+    )
+  })
+
+  it('auto-resolved events append a chronicle info entry without a choice line', () => {
+    const originalEvents = contentCatalog.events
+    const autoWorldEvent: EventTemplate = {
+      id: 'event-test-auto-chronicle',
+      title: 'Whispers Along the Canal',
+      description: 'Rumors spread through the dock lanes.',
+      triggerConditions: { probability: 1 },
+      choices: [
+        {
+          id: 'choice-note',
+          label: 'Noted',
+          outcomes: [{ type: 'addActivityLogEntry', message: 'Dock gossip says the canal watch is stretched thin.' }],
+        },
+      ],
+      isAutoResolved: true,
+      tags: ['world'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: 'district-iron-docks',
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'world',
+    }
+    ;(contentCatalog as { events: typeof originalEvents }).events = [autoWorldEvent]
+    ;(contentCatalog as { eventsById: Map<string, EventTemplate> }).eventsById = new Map(
+      [[autoWorldEvent.id, autoWorldEvent]],
+    )
+
+    const state = makeState({
+      day: 10,
+      timeSlot: 'morning',
+      pendingEvents: [],
+      lastFiredDay: {},
+      chronicle: { entriesByDay: {}, version: 1 },
+    })
+    const next = evaluateEvents(state, alwaysFire)
+    const chronicleEntries = selectChronicleEntries({ game: next })
+
+    expect(chronicleEntries).toHaveLength(1)
+    expect(chronicleEntries[0]?.kind).toBe('world')
+    expect(chronicleEntries[0]?.detailLines).not.toContain('You chose: Noted')
+    expect(chronicleEntries[0]?.detailLines).toContain('Dock gossip says the canal watch is stretched thin.')
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, EventTemplate> }).eventsById = new Map(
+      originalEvents.map((event) => [event.id, event]),
+    )
   })
 })
 
