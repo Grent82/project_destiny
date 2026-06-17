@@ -32,6 +32,7 @@ export const dialogueChoiceSchema = z
     id: z.string().min(1),
     label: z.string().min(1),
     nextNodeId: z.string().nullable(),
+    kind: z.enum(['ask', 'push', 'commit', 'leave']).optional(),
     outcome: dialogueOutcomeSchema.optional(),
     condition: dialogueConditionSchema.optional(),
     conditionAll: z.array(dialogueConditionSchema).min(1).optional(),
@@ -43,6 +44,7 @@ export const dialogueNodeSchema = z
     id: z.string().min(1),
     npcId: z.string().min(1),
     text: z.string().min(1),
+    stageDirection: z.string().min(1).optional(),
     choices: z.array(dialogueChoiceSchema),
   })
   .strict()
@@ -52,6 +54,7 @@ export const dialogueTreeSchema = z
     id: z.string().min(1),
     npcId: z.string().min(1),
     openingNodeId: z.string().min(1),
+    sceneLocation: z.string().min(1).optional(),
     nodes: z.array(dialogueNodeSchema),
   })
   .strict()

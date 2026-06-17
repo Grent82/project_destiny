@@ -2,6 +2,176 @@ import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import { meetsDialogueCondition, isDialogueChoiceAvailable } from '../commands/dialogue'
 import type { DialogueChoice } from '../../domain/dialogue/contracts'
+import type { GameState } from '../../domain'
+
+export type DialogueChoiceKind = 'ask' | 'push' | 'commit' | 'leave'
+
+export type DialogueChoicePresentation = {
+  id: string
+  label: string
+  kind: DialogueChoiceKind
+  nextNodeId: string | null
+  effectNotes: string[]
+}
+
+export type ActiveDialoguePresentation = {
+  dialogueId: string
+  npcId: string
+  npcName: string
+  portraitSrc: string | null
+  sceneLocation: string
+  stageDirection: string
+  lineText: string
+  choices: DialogueChoicePresentation[]
+}
+
+function stripQuotedLabel(label: string) {
+  return label.replace(/^"|"$/g, '')
+}
+
+function classifyDialogueChoiceKind(choice: DialogueChoice): DialogueChoiceKind {
+  if (choice.kind) return choice.kind
+
+  const normalized = stripQuotedLabel(choice.label).trim().toLowerCase()
+
+  if (
+    normalized.startsWith('leave') ||
+    normalized.startsWith('nothing today') ||
+    normalized.startsWith('nothing yet') ||
+    normalized.startsWith('not now') ||
+    normalized.startsWith('not today') ||
+    normalized.startsWith('not yet') ||
+    normalized.startsWith('another time') ||
+    normalized.startsWith('perhaps not today') ||
+    normalized.startsWith('wrong time') ||
+    normalized.startsWith('neither') ||
+    normalized.startsWith('carry on') ||
+    normalized.startsWith('fair enough') ||
+    normalized.startsWith('good.') ||
+    normalized.includes('come back')
+  ) {
+    return 'leave'
+  }
+
+  if (
+    normalized.includes('?') ||
+    normalized.startsWith('what ') ||
+    normalized.startsWith('who ') ||
+    normalized.startsWith('how ') ||
+    normalized.startsWith('why ') ||
+    normalized.startsWith('where ') ||
+    normalized.startsWith('when ') ||
+    normalized.startsWith('can ') ||
+    normalized.startsWith('tell me ') ||
+    normalized.startsWith('ask about ') ||
+    normalized.startsWith('show ')
+  ) {
+    return 'ask'
+  }
+
+  if (normalized.startsWith('i ') || normalized.startsWith("i'") || normalized.startsWith('we ')) {
+    return 'commit'
+  }
+
+  return 'push'
+}
+
+function formatDialogueOutcomeNote(npcId: string, choice: DialogueChoice) {
+  const outcome = choice.outcome
+  if (!outcome) {
+    return choice.nextNodeId === null
+      ? ['The exchange closes for now.']
+      : ['The topic shifts under the pressure of your answer.']
+  }
+
+  switch (outcome.type) {
+    case 'loyalty':
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} grow more loyal.`]
+    case 'trust':
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} trust you more.`]
+    case 'respect':
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} revise their measure of you upward.`]
+    case 'questUnlock': {
+      const questTitle = contentCatalog.questsById.get(String(outcome.value))?.title ?? 'A new lead'
+      return [`New lead surfaced: ${questTitle}.`]
+    }
+    case 'mainQuestHint':
+      return ['A fresh clue is entered into the house memory.']
+    case 'item': {
+      const itemName = contentCatalog.itemsById.get(String(outcome.value))?.name ?? 'An item'
+      return [`Item gained: ${itemName}.`]
+    }
+    case 'factionStanding': {
+      const factionName =
+        contentCatalog.factionsById.get(outcome.targetId ?? '')?.name ?? 'A faction'
+      return [`Standing shifts with ${factionName}.`]
+    }
+    case 'activityLog':
+      return [String(outcome.value)]
+    default:
+      return choice.nextNodeId === null
+        ? ['The exchange closes for now.']
+        : ['The topic shifts under the pressure of your answer.']
+  }
+}
+
+function resolveDialogueSceneLocation(state: GameState, dialogueId: string, npcId: string) {
+  const tree = contentCatalog.dialoguesById.get(dialogueId)
+  if (tree?.sceneLocation) return tree.sceneLocation
+
+  const npcDef = contentCatalog.npcsById.get(npcId)
+  const districtId = state.currentDistrictId ?? npcDef?.districtId ?? null
+  const districtName = districtId
+    ? (contentCatalog.districtsById.get(districtId)?.name ?? districtId)
+    : null
+
+  if (state.currentDistrictId && state.currentDistrictId === state.houseDistrictId) {
+    return districtName ? `House Valdris · ${districtName}` : 'House Valdris'
+  }
+
+  if (districtName) return districtName
+  return 'A private room kept out of the noise'
+}
+
+function resolveStageDirection(choiceCount: number, rawStageDirection?: string) {
+  if (rawStageDirection) return rawStageDirection
+  if (choiceCount === 0) return 'The room goes still around the last word, waiting to see whether you press further.'
+  return 'The room stays tight and attentive while each of you tests what can be said aloud.'
+}
+
+export function selectActiveDialoguePresentation(state: RootState): ActiveDialoguePresentation | null {
+  const { activeDialogueId, activeDialogueNodeId } = state.game
+  if (!activeDialogueId || !activeDialogueNodeId) return null
+
+  const tree = contentCatalog.dialoguesById.get(activeDialogueId)
+  if (!tree) return null
+
+  const node = tree.nodes.find((entry) => entry.id === activeDialogueNodeId)
+  if (!node) return null
+
+  const npcDef = contentCatalog.npcsById.get(tree.npcId)
+  const portraitId = tree.npcId.replace('npc-', '')
+  const visibleChoices = node.choices.filter((choice) =>
+    isDialogueChoiceAvailable(state.game, tree.id, choice),
+  )
+
+  return {
+    dialogueId: tree.id,
+    npcId: tree.npcId,
+    npcName: npcDef?.name ?? tree.npcId,
+    portraitSrc: `/portraits/${portraitId}.jpg`,
+    sceneLocation: resolveDialogueSceneLocation(state.game, tree.id, tree.npcId),
+    stageDirection: resolveStageDirection(visibleChoices.length, node.stageDirection),
+    lineText: node.text,
+    choices: visibleChoices.map((choice) => ({
+      id: choice.id,
+      label: stripQuotedLabel(choice.label),
+      kind: classifyDialogueChoiceKind(choice),
+      nextNodeId: choice.nextNodeId,
+      effectNotes: formatDialogueOutcomeNote(tree.npcId, choice),
+    })),
+  }
+}
 
 /**
  * Returns true when an NPC's dialogue tree has at least one hasItem-conditioned

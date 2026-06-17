@@ -72,7 +72,7 @@
           },
           {
             "id": "marion-choice-debt-talk",
-            "label": "\"What do we do if the debt breaks us?\"",
+            "label": "What do we do if the debt breaks us?",
             "nextNodeId": "marion-node-debt-crisis-intro",
             "condition": {
               "type": "debtPaid",
@@ -119,7 +119,7 @@
         "choices": [
           {
             "id": "marion-choice-ledger-chit-keep",
-            "label": "\"Then the debt was handled before it ever reached me.\"",
+            "label": "Then the debt was handled before it ever reached me.",
             "nextNodeId": null,
             "outcome": {
               "type": "mainQuestHint",
@@ -135,7 +135,7 @@
         "choices": [
           {
             "id": "marion-choice-arrangement-below-understood",
-            "label": "\"Then we read the house before we force it.\"",
+            "label": "Then we read the house before we force it.",
             "nextNodeId": null,
             "outcome": {
               "type": "mainQuestHint",
@@ -151,7 +151,7 @@
         "choices": [
           {
             "id": "marion-choice-early-ask-ledger",
-            "label": "\"What are you working on?\"",
+            "label": "What are you working on?",
             "nextNodeId": "marion-node-early-ledger-a"
           },
           {
@@ -168,7 +168,7 @@
         "choices": [
           {
             "id": "marion-choice-early-thanks",
-            "label": "\"Thank you for this.\"",
+            "label": "Thank you for this.",
             "nextNodeId": "marion-node-early-thanks-b",
             "outcome": {
               "type": "loyalty",
@@ -177,12 +177,12 @@
           },
           {
             "id": "marion-choice-early-bristle",
-            "label": "\"I know how to run a household.\"",
+            "label": "I know how to run a household.",
             "nextNodeId": "marion-node-early-bristle-b"
           },
           {
             "id": "marion-choice-early-orren",
-            "label": "\"Who kept the original accounts before all this?\"",
+            "label": "Who kept the original accounts before all this?",
             "nextNodeId": "marion-node-orren-hook-b",
             "condition": {
               "type": "choiceNotTaken",
@@ -210,7 +210,7 @@
         "choices": [
           {
             "id": "marion-choice-orren-act",
-            "label": "\"Then I need to get to him before they make him disappear.\"",
+            "label": "Then I need to get to him before they make him disappear.",
             "nextNodeId": null,
             "outcome": {
               "type": "questUnlock",
@@ -219,7 +219,7 @@
           },
           {
             "id": "marion-choice-orren-wait",
-            "label": "\"Not yet. I need more room to move first.\"",
+            "label": "Not yet. I need more room to move first.",
             "nextNodeId": null
           }
         ]
@@ -231,12 +231,12 @@
         "choices": [
           {
             "id": "marion-choice-debt-what-worst",
-            "label": "\"Define 'the worst.'\"",
+            "label": "Define 'the worst.'",
             "nextNodeId": "marion-node-debt-crisis-a"
           },
           {
             "id": "marion-choice-debt-stop",
-            "label": "\"Don't. Not yet.\"",
+            "label": "Don't. Not yet.",
             "nextNodeId": "marion-node-debt-stop-b"
           }
         ]
@@ -248,7 +248,7 @@
         "choices": [
           {
             "id": "marion-choice-debt-relieved",
-            "label": "\"That's... actually a relief.\"",
+            "label": "That's... actually a relief.",
             "nextNodeId": "marion-node-debt-plan-c",
             "outcome": {
               "type": "loyalty",
@@ -257,7 +257,7 @@
           },
           {
             "id": "marion-choice-debt-wont-happen",
-            "label": "\"It won't come to that.\"",
+            "label": "It won't come to that.",
             "nextNodeId": "marion-node-debt-optimist-c"
           }
         ]
@@ -287,12 +287,12 @@
         "choices": [
           {
             "id": "marion-choice-renown-earned",
-            "label": "\"We earned it.\"",
+            "label": "We earned it.",
             "nextNodeId": "marion-node-renown-earned-a"
           },
           {
             "id": "marion-choice-renown-careful",
-            "label": "\"Then we need to be careful. Visibility cuts both ways.\"",
+            "label": "Then we need to be careful. Visibility cuts both ways.",
             "nextNodeId": "marion-node-renown-careful-a",
             "outcome": {
               "type": "loyalty",
@@ -301,7 +301,7 @@
           },
           {
             "id": "marion-choice-renown-shrug",
-            "label": "\"Does it matter?\"",
+            "label": "Does it matter?",
             "nextNodeId": "marion-node-renown-shrug-a"
           }
         ]
@@ -331,7 +331,7 @@
         "choices": [
           {
             "id": "marion-choice-trust-yes",
-            "label": "\"Ask.\"",
+            "label": "Ask.",
             "nextNodeId": "marion-node-trust-ask-a",
             "condition": {
               "type": "minNpcTrust",
@@ -341,7 +341,7 @@
           },
           {
             "id": "marion-choice-trust-later",
-            "label": "\"Not now, Marion.\"",
+            "label": "Not now, Marion.",
             "nextNodeId": "marion-node-trust-later-a"
           }
         ]
@@ -353,7 +353,7 @@
         "choices": [
           {
             "id": "marion-choice-trust-want-it",
-            "label": "\"I want it. I'm just not sure how yet.\"",
+            "label": "I want it. I'm just not sure how yet.",
             "nextNodeId": "marion-node-trust-honest-b",
             "outcome": {
               "type": "loyalty",
@@ -362,7 +362,7 @@
           },
           {
             "id": "marion-choice-trust-found-here",
-            "label": "\"Honestly? I found myself here.\"",
+            "label": "Honestly? I found myself here.",
             "nextNodeId": "marion-node-trust-found-b",
             "outcome": {
               "type": "loyalty",
@@ -670,7 +670,7 @@
         "choices": [
           {
             "id": "maret-choice-ring-understood",
-            "label": "\"Then the house was approached, not merely raided.\"",
+            "label": "Then the house was approached, not merely raided.",
             "nextNodeId": null,
             "outcome": {
               "type": "mainQuestHint",
@@ -754,7 +754,7 @@
         "choices": [
           {
             "id": "tessaly-choice-mira",
-            "label": "\"Orren said you know where Mira was taken.\"",
+            "label": "Orren said you know where Mira was taken.",
             "nextNodeId": "tessaly-node-mira-a",
             "condition": {
               "type": "mainQuestStage",
@@ -772,7 +772,7 @@
           },
           {
             "id": "tessaly-choice-leave",
-            "label": "\"Not today.\"",
+            "label": "Not today.",
             "nextNodeId": null
           }
         ]
@@ -784,7 +784,7 @@
         "choices": [
           {
             "id": "tessaly-choice-mira-confirm",
-            "label": "\"Then put the lead in my hand.\"",
+            "label": "Then put the lead in my hand.",
             "nextNodeId": null,
             "outcome": {
               "type": "questUnlock",
@@ -800,7 +800,7 @@
         "choices": [
           {
             "id": "tessaly-choice-letter-answer",
-            "label": "\"I need the rest of the trail.\"",
+            "label": "I need the rest of the trail.",
             "nextNodeId": "tessaly-node-mira-a",
             "condition": {
               "type": "mainQuestStage",
@@ -809,7 +809,7 @@
           },
           {
             "id": "tessaly-choice-letter-wait",
-            "label": "\"Then I'll come back when I can move on it.\"",
+            "label": "Then I'll come back when I can move on it.",
             "nextNodeId": null
           }
         ]

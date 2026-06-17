@@ -57,6 +57,22 @@ describe('dialogue conditions', () => {
 })
 
 describe('dialogue consequence resolution', () => {
+  it('keeps authored dialogue options in one plain voice without wrapper quotes', () => {
+    const wrappedLabels: string[] = []
+
+    for (const tree of contentCatalog.dialoguesById.values()) {
+      for (const node of tree.nodes) {
+        for (const choice of node.choices) {
+          if (/^".*"$/.test(choice.label)) {
+            wrappedLabels.push(`${tree.id}:${choice.id}:${choice.label}`)
+          }
+        }
+      }
+    }
+
+    expect(wrappedLabels).toEqual([])
+  })
+
   it('restarts future conversations at the opening node after leaving a terminal leaf', () => {
     const store = makeStore()
 
