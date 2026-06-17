@@ -1362,9 +1362,9 @@
       }
     ],
     "schedule": {
-      "morning": "district-the-pale",
-      "afternoon": "district-the-pale",
-      "evening": "district-the-pale"
+      "morning": "poi-pale-the-ash",
+      "afternoon": "poi-pale-the-ash",
+      "evening": "poi-pale-the-ash"
     }
   },
   {
@@ -1479,9 +1479,9 @@
       }
     ],
     "schedule": {
-      "morning": "district-the-pale",
-      "afternoon": "district-the-pale",
-      "evening": "district-the-pale"
+      "morning": "poi-pale-wren-safe-house",
+      "afternoon": "poi-pale-wren-safe-house",
+      "evening": "poi-pale-wren-safe-house"
     }
   },
   {
@@ -1591,9 +1591,9 @@
       }
     ],
     "schedule": {
-      "afternoon": "district-harbor",
-      "evening": "district-harbor",
-      "night": "district-harbor"
+      "afternoon": "poi-harbor-guild-hall",
+      "evening": "poi-harbor-guild-hall",
+      "night": "poi-harbor-guild-hall"
     }
   },
   {
@@ -1780,9 +1780,9 @@
       }
     ],
     "schedule": {
-      "afternoon": "district-ironworks",
-      "evening": "district-ironworks",
-      "night": "district-ironworks"
+      "afternoon": "poi-ironworks-slag-tavern",
+      "evening": "poi-ironworks-slag-tavern",
+      "night": "poi-ironworks-slag-tavern"
     }
   },
   {
@@ -1968,8 +1968,8 @@
       }
     ],
     "schedule": {
-      "evening": "district-the-warrens",
-      "night": "district-the-warrens"
+      "evening": "poi-warrens-ring-den",
+      "night": "poi-warrens-ring-den"
     }
   },
   {
@@ -2157,8 +2157,8 @@
       }
     ],
     "schedule": {
-      "morning": "district-the-hollows",
-      "afternoon": "district-the-hollows"
+      "morning": "poi-hollows-pawnbrokers",
+      "afternoon": "poi-hollows-pawnbrokers"
     }
   },
   {
@@ -2278,9 +2278,9 @@
       }
     ],
     "schedule": {
-      "morning": "district-the-hollows",
-      "afternoon": "district-the-hollows",
-      "evening": "district-the-hollows"
+      "morning": "poi-hollows-relief-station",
+      "afternoon": "poi-hollows-relief-station",
+      "evening": "poi-hollows-relief-station"
     }
   },
   {
@@ -4544,9 +4544,9 @@
       }
     ],
     "schedule": {
-      "morning": "district-the-northbank",
-      "afternoon": "district-the-northbank",
-      "evening": "district-the-northbank"
+      "morning": "poi-northbank-succession-registry",
+      "afternoon": "poi-northbank-succession-registry",
+      "evening": "poi-northbank-succession-registry"
     }
   },
   {

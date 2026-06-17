@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { selectPoiAvailability, selectNpcCurrentLocation, selectWorldNpcsByDistrictAndSlot } from './districts'
+import { contentCatalog } from '../content/contentCatalog'
 
 describe('selectPoiAvailability', () => {
   it('returns true for a POI with no slot restriction in any slot', () => {
@@ -31,16 +32,16 @@ describe('selectPoiAvailability', () => {
 })
 
 describe('selectNpcCurrentLocation', () => {
-  it('returns districtId for Torvald Messe in afternoon (he works afternoon)', () => {
-    expect(selectNpcCurrentLocation('npc-torvald-messe', 'afternoon')).toBe('district-harbor')
+  it('returns POI id for Torvald Messe in afternoon (he works afternoon)', () => {
+    expect(selectNpcCurrentLocation('npc-torvald-messe', 'afternoon')).toBe('poi-harbor-guild-hall')
   })
 
   it('returns null for Torvald Messe in morning (he is not available)', () => {
     expect(selectNpcCurrentLocation('npc-torvald-messe', 'morning')).toBeNull()
   })
 
-  it('returns districtId for The Wren at night (evening/night schedule)', () => {
-    expect(selectNpcCurrentLocation('npc-the-wren', 'night')).toBe('district-the-warrens')
+  it('returns POI id for The Wren at night (evening/night schedule)', () => {
+    expect(selectNpcCurrentLocation('npc-the-wren', 'night')).toBe('poi-warrens-ring-den')
   })
 
   it('returns null for The Wren in morning', () => {
@@ -50,6 +51,17 @@ describe('selectNpcCurrentLocation', () => {
   it('returns null for NPC with no schedule', () => {
     // Marion is a roster NPC with no schedule
     expect(selectNpcCurrentLocation('npc-marion-vale', 'morning')).toBeNull()
+  })
+
+  it('uses valid POI ids for every authored schedule entry', () => {
+    const scheduledLocations = contentCatalog.npcs.flatMap((npc) =>
+      Object.values(npc.schedule ?? {}).filter((locationId): locationId is string => Boolean(locationId)),
+    )
+
+    expect(scheduledLocations.length).toBeGreaterThan(0)
+    for (const locationId of scheduledLocations) {
+      expect(contentCatalog.poisById.has(locationId)).toBe(true)
+    }
   })
 })
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
-import { selectWorldNpcStates, selectWorldNpcState, selectWorldNpcView, selectNpcBonds, selectDiscoverableBonds } from './worldNpcs'
+import { selectWorldNpcStates, selectWorldNpcState, selectWorldNpcView, selectNpcBonds, selectDiscoverableBonds, selectWorldNpcViewsByDistrict } from './worldNpcs'
 import { contentCatalog } from '../content/contentCatalog'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { initialGameStateSnapshot } from '../store/initialGameState'
@@ -68,6 +68,15 @@ describe('worldNpc runtime state selectors', () => {
     const store = createGameStore()
     const view = selectWorldNpcView('npc-does-not-exist', 'morning')(store.getState())
     expect(view).toBeNull()
+  })
+
+  it('anchors scheduled NPCs at authored POIs in district views', () => {
+    const store = createGameStore()
+    const views = selectWorldNpcViewsByDistrict(store.getState(), 'district-harbor', 'afternoon')
+    const torvald = views.find((entry) => entry.npcId === 'npc-torvald-messe')
+
+    expect(torvald).toBeDefined()
+    expect(torvald?.currentLocationId).toBe('poi-harbor-guild-hall')
   })
 
   it('selectNpcBonds returns soft-bond edges for a world NPC', () => {

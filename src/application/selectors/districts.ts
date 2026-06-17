@@ -133,7 +133,7 @@ export function selectPoiAvailability(poiId: string, timeSlot: TimeSlot): boolea
 }
 
 /**
- * Returns the locationId where the NPC is currently found based on their schedule.
+ * Returns the authored POI id where the NPC is currently found based on their schedule.
  * Returns null if no schedule entry for the current slot.
  */
 export function selectNpcCurrentLocation(npcId: string, timeSlot: TimeSlot): string | null {
@@ -150,7 +150,9 @@ export function selectWorldNpcsByDistrictAndSlot(districtId: string, timeSlot: T
     .filter((npc) => npc.npcType === 'world' && npc.districtId === districtId)
     .filter((npc) => {
       if (!npc.schedule || Object.keys(npc.schedule).length === 0) return true
-      return npc.schedule[timeSlot] === districtId
+      const scheduledPoiId = selectNpcCurrentLocation(npc.id, timeSlot)
+      if (!scheduledPoiId) return false
+      return contentCatalog.poisById.get(scheduledPoiId)?.districtId === districtId
     })
     .map((npc) => ({
       id: npc.id,
