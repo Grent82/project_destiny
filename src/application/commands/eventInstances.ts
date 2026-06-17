@@ -3,6 +3,8 @@ import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 
+export const MAX_RESOLVED_EVENT_INSTANCES = 200
+
 function nextEventInstanceId(state: GameState, eventId: string, prefix = 'event') {
   const count = state.eventInstances.filter((instance) => instance.eventId === eventId).length + 1
   return `${prefix}-${eventId}-${state.day}-${count}`
@@ -99,6 +101,16 @@ export function enqueueEventInstance(
   }
 }
 
+export function enqueueTemplateEvent(
+  state: GameState,
+  eventId: string,
+  overrides: Partial<EventInstance> = {},
+): GameState {
+  const template = contentCatalog.eventsById.get(eventId)
+  if (!template) return state
+  return enqueueEventInstance(state, template, overrides)
+}
+
 export function isEventInstanceExpired(
   state: Pick<GameState, 'day' | 'eventInstances'>,
   pendingEvent: PendingEvent,
@@ -136,4 +148,31 @@ export function pruneExpiredEventInstances(state: GameState): GameState {
   }
 
   return next
+}
+
+export function compactResolvedEventInstances(state: GameState): GameState {
+  const normalized = normalizePendingEventInstances(state)
+  const protectedIds = new Set(
+    normalized.pendingEvents
+      .map((pending) => pending.instanceId)
+      .filter((instanceId): instanceId is string => Boolean(instanceId)),
+  )
+  const removableResolved = normalized.eventInstances
+    .filter((instance) => instance.resolvedOnDay !== null && !protectedIds.has(instance.instanceId))
+    .sort((left, right) => {
+      const leftResolved = left.resolvedOnDay ?? Number.MAX_SAFE_INTEGER
+      const rightResolved = right.resolvedOnDay ?? Number.MAX_SAFE_INTEGER
+      if (leftResolved !== rightResolved) return leftResolved - rightResolved
+      if (left.firedOnDay !== right.firedOnDay) return left.firedOnDay - right.firedOnDay
+      return left.instanceId.localeCompare(right.instanceId)
+    })
+
+  if (removableResolved.length <= MAX_RESOLVED_EVENT_INSTANCES) return normalized
+
+  const overflow = removableResolved.length - MAX_RESOLVED_EVENT_INSTANCES
+  const trimmedIds = new Set(removableResolved.slice(0, overflow).map((instance) => instance.instanceId))
+  return {
+    ...normalized,
+    eventInstances: normalized.eventInstances.filter((instance) => !trimmedIds.has(instance.instanceId)),
+  }
 }

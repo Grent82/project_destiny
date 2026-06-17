@@ -55,6 +55,7 @@ describe('recognizeHeir', () => {
     const state = stateWithHeir(makeHeir())
     const result = recognizeHeir(state, 'heir-test')
     expect(result.pendingEvents.some((pe) => pe.eventId === 'event-heir-announcement')).toBe(true)
+    expect(result.pendingEvents.find((pe) => pe.eventId === 'event-heir-announcement')?.instanceId).toBeTruthy()
   })
 
   it('does not fire announcement event twice', () => {

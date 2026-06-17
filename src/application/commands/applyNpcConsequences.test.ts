@@ -29,6 +29,14 @@ describe('checkRelationshipMilestones (via applyNpcConsequences)', () => {
     const state = stateWithRelationship('npc-marion-vale', 67, 0)
     const result = applyNpcConsequences(state, state.relationships, noop)
     expect(result.pendingEvents.some((e) => e.eventId === 'event-marion-milestone-motivation')).toBe(true)
+    expect(
+      result.pendingEvents.find((e) => e.eventId === 'event-marion-milestone-motivation')?.instanceId,
+    ).toBeTruthy()
+    expect(
+      result.eventInstances.some(
+        (instance) => instance.eventId === 'event-marion-milestone-motivation' && instance.resolvedOnDay === null,
+      ),
+    ).toBe(true)
   })
 
   it('does not fire Marion milestone when trust is below 65', () => {
@@ -108,12 +116,10 @@ describe('checkRelationshipMilestones (via applyNpcConsequences)', () => {
     expect(result.lastFiredDay['rel-milestone-npc-marion-vale-trust-65']).toBe(7)
   })
 
-  it('records the milestone key in lastFiredDay (event id no longer recorded due to firingMode:system)', () => {
+  it('records both the milestone key and the concrete event fire day', () => {
     const state = { ...stateWithRelationship('npc-marion-vale', 67, 0), day: 7 }
     const result = applyNpcConsequences(state, state.relationships, noop)
-    // The milestone key is still recorded to prevent re-firing the milestone
     expect(result.lastFiredDay['rel-milestone-npc-marion-vale-trust-65']).toBe(7)
-    // The event id is no longer recorded because firingMode:'system' prevents evaluateEvents from firing it
-    expect(result.lastFiredDay['event-marion-milestone-motivation']).toBeUndefined()
+    expect(result.lastFiredDay['event-marion-milestone-motivation']).toBe(7)
   })
 })

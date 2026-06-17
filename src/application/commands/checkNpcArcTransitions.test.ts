@@ -90,6 +90,7 @@ describe('checkNpcArcTransitions', () => {
 
     const result = checkNpcArcTransitions(state)
     expect(result.pendingEvents.some((pe) => pe.eventId === 'lissel-first-shape')).toBe(true)
+    expect(result.pendingEvents.find((pe) => pe.eventId === 'lissel-first-shape')?.instanceId).toBeTruthy()
   })
 
   it('writes dominant trait type to stageFlags when entering crystallizing', () => {

@@ -222,10 +222,15 @@ describe('applyRivalActions', () => {
     const result = applyRivalActions(baseState, [
       { orgId: 'rival-org-gilded-hand', actionType: 'bribe', targetFactionId: 'faction-gilded-court', day: 5 },
     ])
-    expect(result.pendingEvents).toContainEqual({
-      eventId: 'event-rival-gilded-hand-bribe-warning',
-      firedOnDay: 5,
-    })
+    const pending = result.pendingEvents.find((event) => event.eventId === 'event-rival-gilded-hand-bribe-warning')
+    expect(pending).toBeTruthy()
+    expect(pending?.firedOnDay).toBe(5)
+    expect(pending?.instanceId).toBeTruthy()
+    expect(
+      result.eventInstances.some(
+        (instance) => instance.eventId === 'event-rival-gilded-hand-bribe-warning' && instance.resolvedOnDay === null,
+      ),
+    ).toBe(true)
   })
 
   it('reduces cityStability on pressure', () => {

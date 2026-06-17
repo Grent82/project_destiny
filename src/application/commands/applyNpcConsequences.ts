@@ -7,6 +7,7 @@ import { TRAIT_HIGH } from '../../domain/npc/traitThresholds'
 import type { Rng } from './seededRng'
 import { ensureCaptivityPregnancyDiscovery } from './captivityPregnancyDiscovery'
 import { DISTRICT_IDS, EVENT_IDS, NPC_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 interface RelationshipMilestone {
   readonly npcId: string
@@ -67,14 +68,17 @@ function checkRelationshipMilestones(state: GameState): GameState {
     const value = rel[milestone.axis]
     if (value < milestone.threshold) continue
 
-    next = {
-      ...next,
-      lastFiredDay: {
-        ...next.lastFiredDay,
-        [key]: next.day,
+    next = enqueueTemplateEvent(
+      {
+        ...next,
+        lastFiredDay: {
+          ...next.lastFiredDay,
+          [key]: next.day,
+        },
       },
-      pendingEvents: [...next.pendingEvents, { eventId: milestone.eventId, firedOnDay: next.day }],
-    }
+      milestone.eventId,
+      { firedOnDay: next.day },
+    )
 
     if (milestone.hireOffer) {
       const alreadyAvailable = next.availableForHire.some((o) => o.npcId === milestone.hireOffer!.npcId)
@@ -173,13 +177,7 @@ export function applyNpcConsequences(
         }
       }
       next = appendActivityLogEntry(next, 'system', `${result.npcName}: ${result.consequence}`)
-      next = {
-        ...next,
-        pendingEvents: [
-          ...next.pendingEvents,
-          { eventId: EVENT_IDS.NPC_BETRAYAL, firedOnDay: next.day },
-        ],
-      }
+      next = enqueueTemplateEvent(next, EVENT_IDS.NPC_BETRAYAL, { firedOnDay: next.day })
     }
   }
 

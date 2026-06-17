@@ -5,6 +5,7 @@ import npcArcsData from '../../../data/definitions/npc-arcs.json'
 import { appendActivityLogEntry } from './activityLog'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { EVENT_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 const npcArcDefinitions = npcArcDefinitionSchema.array().parse(npcArcsData)
 const npcArcsById = new Map(npcArcDefinitions.map((a) => [a.arcId, a]))
@@ -127,13 +128,7 @@ export function checkNpcArcTransitions(state: GameState, _rng?: () => number): G
       const resolvedEventId = resolveEventId(stageDef.transitionEventId, updatedStageFlags)
       const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === resolvedEventId)
       if (!alreadyPending) {
-        next = {
-          ...next,
-          pendingEvents: [
-            ...next.pendingEvents,
-            { eventId: resolvedEventId, firedOnDay: state.day },
-          ],
-        }
+        next = enqueueTemplateEvent(next, resolvedEventId, { firedOnDay: state.day })
       }
     }
 
@@ -141,13 +136,7 @@ export function checkNpcArcTransitions(state: GameState, _rng?: () => number): G
     if (arc.arcId === 'arc-becoming' && nextStage.id === 'set') {
       const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === 'lissel-settled')
       if (!alreadyPending) {
-        next = {
-          ...next,
-          pendingEvents: [
-            ...next.pendingEvents,
-            { eventId: 'lissel-settled', firedOnDay: state.day },
-          ],
-        }
+        next = enqueueTemplateEvent(next, 'lissel-settled', { firedOnDay: state.day })
       }
     }
 
@@ -203,7 +192,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
         }
         next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
         if (!alreadyPending) {
-          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: EVENT_IDS.BREN_ANCHOR_FOUND, firedOnDay: state.day }] }
+          next = enqueueTemplateEvent(next, EVENT_IDS.BREN_ANCHOR_FOUND, { firedOnDay: state.day })
         }
         next = appendActivityLogEntry(next, 'system', `${npc.name} is finding a way back. Something — someone — is holding.`)
       } else {
@@ -215,7 +204,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
         next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
         const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === EVENT_IDS.BREN_LEAVING_WARNING)
         if (!alreadyPending) {
-          next = { ...next, pendingEvents: [...next.pendingEvents, { eventId: EVENT_IDS.BREN_LEAVING_WARNING, firedOnDay: state.day }] }
+          next = enqueueTemplateEvent(next, EVENT_IDS.BREN_LEAVING_WARNING, { firedOnDay: state.day })
         }
         next = appendActivityLogEntry(next, 'system', `${npc.name} is slipping. The fracture has gone deeper.`)
       }
@@ -239,8 +228,8 @@ export function checkFracturedArcBranching(state: GameState): GameState {
         next = {
           ...next,
           roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
-          pendingEvents: [...next.pendingEvents, { eventId: EVENT_IDS.BREN_LEFT, firedOnDay: state.day }],
         }
+        next = enqueueTemplateEvent(next, EVENT_IDS.BREN_LEFT, { firedOnDay: state.day })
       }
     }
   }

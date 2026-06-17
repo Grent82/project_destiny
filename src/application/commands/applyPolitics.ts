@@ -8,6 +8,7 @@ import type { Rng } from './seededRng'
 import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
 import { adjustCityDial, adjustDistrictTension } from './economicConsequences'
 import { getRelationshipPoliticalCapital } from './politicalLeverage'
+import { enqueueTemplateEvent } from './eventInstances'
 
 /**
  * Score a faction's propensity to propose a vote on this day.
@@ -291,11 +292,14 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === crisisEventId)
     const alreadyFired = next.lastFiredDay[crisisEventId] !== undefined
     if (!alreadyPending && !alreadyFired) {
-      next = {
-        ...next,
-        pendingEvents: [...next.pendingEvents, { eventId: crisisEventId, firedOnDay: next.day }],
-        lastFiredDay: { ...next.lastFiredDay, [crisisEventId]: next.day },
-      }
+      next = enqueueTemplateEvent(
+        {
+          ...next,
+          lastFiredDay: { ...next.lastFiredDay, [crisisEventId]: next.day },
+        },
+        crisisEventId,
+        { firedOnDay: next.day },
+      )
     }
   }
 
@@ -304,10 +308,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     const noticeEventId = EVENT_IDS.GILDED_NOTICE
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === noticeEventId)
     if (!alreadyPending) {
-      next = {
-        ...next,
-        pendingEvents: [...next.pendingEvents, { eventId: noticeEventId, firedOnDay: next.day }],
-      }
+      next = enqueueTemplateEvent(next, noticeEventId, { firedOnDay: next.day })
     }
   }
 
@@ -334,11 +335,14 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     const warningEventId = EVENT_IDS.DEBT_FACTION_WARNING
     const alreadyPending = next.pendingEvents.some((e) => e.eventId === warningEventId)
     if (!alreadyPending) {
-      next = {
-        ...next,
-        pendingEvents: [...next.pendingEvents, { eventId: warningEventId, firedOnDay: next.day }],
-        lastFiredDay: { ...next.lastFiredDay, [warningEventId]: next.day },
-      }
+      next = enqueueTemplateEvent(
+        {
+          ...next,
+          lastFiredDay: { ...next.lastFiredDay, [warningEventId]: next.day },
+        },
+        warningEventId,
+        { firedOnDay: next.day },
+      )
       next = appendActivityLogEntry(
         next,
         'system',

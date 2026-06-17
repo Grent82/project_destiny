@@ -82,4 +82,28 @@ describe('LocalSaveSnapshotStore', () => {
     expect(result).toBeNull()
     expect(storage.getItem('save-slot')).toBeNull()
   })
+
+  it('normalizes legacy pending events into concrete event instances on load', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    storage.setItem(
+      'save-slot',
+      JSON.stringify({
+        ...initialGameStateSnapshot,
+        pendingEvents: [{ eventId: 'event-unpaid-wages-unrest', firedOnDay: 3 }],
+        eventInstances: [],
+      }),
+    )
+
+    const result = snapshotStore.load()
+
+    expect(result?.pendingEvents[0]?.instanceId).toBeTruthy()
+    expect(result?.eventInstances).toHaveLength(1)
+    expect(result?.eventInstances[0]).toMatchObject({
+      eventId: 'event-unpaid-wages-unrest',
+      firedOnDay: 3,
+      resolvedOnDay: null,
+    })
+  })
 })

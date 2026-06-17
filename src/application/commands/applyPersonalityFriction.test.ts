@@ -66,6 +66,9 @@ describe('applyPersonalityFriction', () => {
       const state = stateWithNpcs(npcA, npcB)
       const result = applyPersonalityFriction(state, noop)
       expect(result.pendingEvents.some((e) => e.eventId === 'event-npc-dominance-tension')).toBe(true)
+      expect(
+        result.pendingEvents.find((e) => e.eventId === 'event-npc-dominance-tension')?.instanceId,
+      ).toBeTruthy()
     })
 
     it('does not fire dominance event when one NPC has a title (title differentiation)', () => {

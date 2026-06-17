@@ -2,6 +2,7 @@ import type { GameState } from '../../domain/game/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 export type RivalAction = {
   orgId: string
@@ -106,10 +107,7 @@ function hasLiveCounterLeadForOrg(state: GameState, orgId: string) {
 function schedulePendingEvent(state: GameState, eventId: string, firedOnDay: number) {
   if (hasPendingEvent(state, eventId)) return state
 
-  return {
-    ...state,
-    pendingEvents: [...state.pendingEvents, { eventId, firedOnDay }],
-  }
+  return enqueueTemplateEvent(state, eventId, { firedOnDay })
 }
 
 function scheduleCounterLeadEvent(state: GameState, action: RivalAction) {

@@ -278,6 +278,54 @@ describe('endDay', () => {
     ).toBe(true)
   })
 
+  it('compacts old resolved event instances while preserving unresolved queue entries', () => {
+    const oldResolvedInstances = Array.from({ length: 205 }, (_, index) => ({
+      instanceId: `resolved-${index + 1}`,
+      eventId: 'event-rumor-ledger-keeper',
+      firedOnDay: 1,
+      resolvedOnDay: 1 + index,
+      chosenOptionId: 'choice-acknowledge',
+      sourceDistrictId: null,
+      sourceNpcId: null,
+      presentationText: null,
+      contextId: null,
+      expiresOnDay: null,
+    }))
+    const unresolvedInstance = {
+      instanceId: 'instance-live',
+      eventId: 'event-rival-gilded-hand-bribe-warning',
+      firedOnDay: 4,
+      resolvedOnDay: null,
+      chosenOptionId: null,
+      sourceDistrictId: 'district-harbor',
+      sourceNpcId: null,
+      presentationText: null,
+      contextId: null,
+      expiresOnDay: 8,
+    }
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 4,
+      pendingEvents: [
+        {
+          eventId: 'event-rival-gilded-hand-bribe-warning',
+          firedOnDay: 4,
+          instanceId: unresolvedInstance.instanceId,
+        },
+      ],
+      eventInstances: [...oldResolvedInstances, unresolvedInstance],
+    }
+
+    const next = endDay(state)
+
+    expect(next.eventInstances.find((instance) => instance.instanceId === unresolvedInstance.instanceId)).toMatchObject({
+      resolvedOnDay: null,
+    })
+    expect(next.pendingEvents.some((event) => event.instanceId === unresolvedInstance.instanceId)).toBe(true)
+    expect(next.eventInstances.some((instance) => instance.instanceId === 'resolved-1')).toBe(false)
+    expect(next.eventInstances.filter((instance) => instance.resolvedOnDay !== null)).toHaveLength(200)
+  })
+
   it('city dial: high unrest (>=70) decays all NPC loyalty by 1 and logs a message', () => {
     const state = {
       ...initialStateWithIda,

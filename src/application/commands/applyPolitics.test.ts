@@ -320,6 +320,26 @@ describe('applyPolitics debt enforcement interest', () => {
     expect(favorableNext.debtAmount).toBe(805)
     expect(hostileNext.debtAmount).toBe(820)
   })
+
+  it('queues city crisis events as concrete instances', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      day: 12,
+      cityStability: 25,
+      pendingEvents: [],
+      eventInstances: [],
+    })
+
+    const after = applyPolitics(state, () => 0.5)
+    const pending = after.pendingEvents.find((event) => event.eventId === 'event-city-crisis')
+
+    expect(pending?.instanceId).toBeTruthy()
+    expect(
+      after.eventInstances.some(
+        (instance) => instance.eventId === 'event-city-crisis' && instance.resolvedOnDay === null,
+      ),
+    ).toBe(true)
+  })
 })
 
 describe('leader trait modifiers', () => {

@@ -1,6 +1,7 @@
 import { gameStateSchema, type GameState } from '../../domain'
 import type { SaveGameStore } from '../../application/ports/saveGameStore'
 import { createEmptyChronicle } from '../../domain/chronicle/contracts'
+import { normalizePendingEventInstances } from '../../application/commands/eventInstances'
 
 interface StorageLike {
   getItem(key: string): string | null
@@ -149,7 +150,7 @@ export class LocalSaveSnapshotStore implements SaveGameStore {
       return null
     }
 
-    return migrated
+    return normalizePendingEventInstances(migrated)
   }
 
   save(state: GameState): void {

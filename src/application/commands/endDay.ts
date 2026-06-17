@@ -35,7 +35,7 @@ import { tickHouseRepairs } from './houseRepairs'
 import { expireTimedQuestsOnState } from './questLifecycle'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { applyOpponentPressure, logOpponentPressure } from './applyOpponentPressure'
-import { pruneExpiredEventInstances } from './eventInstances'
+import { compactResolvedEventInstances, pruneExpiredEventInstances } from './eventInstances'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -179,6 +179,7 @@ export function endDay(state: GameState): GameState {
 
   // Step 8: Prune expired quest leads, expire stale hire offers, optionally refresh, then evaluate world events
   next = pruneExpiredEventInstances(next)
+  next = compactResolvedEventInstances(next)
   next = pruneExpiredQuestLeads(next)
   const afterExpiry = expireHireOffers(next)
   let afterEvents: GameState
@@ -232,7 +233,7 @@ export function endDay(state: GameState): GameState {
   // Steps 10-12: Captivity degradation + main quest progression
   afterEvents = applyCaptivityDegradation(afterEvents)
   afterEvents = tickWardStages(afterEvents)
-  const finalState = checkMainQuestProgression(afterEvents)
+  let finalState = checkMainQuestProgression(afterEvents)
 
   // Step 13: Quest expiry and debt crisis (end-of-day consequences)
   expireTimedQuestsOnState(finalState)
@@ -254,5 +255,6 @@ export function endDay(state: GameState): GameState {
   }
 
   // Store advanced RNG seed for next day's deterministic run
+  finalState = compactResolvedEventInstances(finalState)
   return { ...finalState, rngSeed: seeded.getSeed() }
 }

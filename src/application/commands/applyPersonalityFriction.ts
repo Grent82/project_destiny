@@ -5,6 +5,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { TRAIT_HIGH, TRAIT_DOMINANT, TRAIT_MODERATE } from '../../domain/npc/traitThresholds'
 import { EVENT_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 const MAX_EVENTS_PER_CYCLE = 2
 const FRICTION_COOLDOWN = 14
@@ -104,14 +105,11 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
         if (sameTitleStatus) {
           const key = frictionKey(npcA.npcId, npcB.npcId, 'dominance-rivalry')
           if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
-            next = {
-              ...next,
-              lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
-              pendingEvents: [
-                ...next.pendingEvents,
-                { eventId: EVENT_IDS.NPC_DOMINANCE_TENSION, firedOnDay: next.day },
-              ],
-            }
+            next = enqueueTemplateEvent(
+              { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } },
+              EVENT_IDS.NPC_DOMINANCE_TENSION,
+              { firedOnDay: next.day },
+            )
             generated++
             continue
           }
@@ -125,14 +123,11 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
       ) {
         const key = frictionKey(npcA.npcId, npcB.npcId, 'moral-methods')
         if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
-          next = {
-            ...next,
-            lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
-            pendingEvents: [
-              ...next.pendingEvents,
-              { eventId: EVENT_IDS.NPC_METHODS_DISAGREEMENT, firedOnDay: next.day },
-            ],
-          }
+          next = enqueueTemplateEvent(
+            { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } },
+            EVENT_IDS.NPC_METHODS_DISAGREEMENT,
+            { firedOnDay: next.day },
+          )
           generated++
           continue
         }
@@ -147,14 +142,11 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
       ) {
         const key = frictionKey(npcA.npcId, npcB.npcId, 'ambition-rivalry')
         if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
-          next = {
-            ...next,
-            lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
-            pendingEvents: [
-              ...next.pendingEvents,
-              { eventId: EVENT_IDS.NPC_AMBITION_COMPARISON, firedOnDay: next.day },
-            ],
-          }
+          next = enqueueTemplateEvent(
+            { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } },
+            EVENT_IDS.NPC_AMBITION_COMPARISON,
+            { firedOnDay: next.day },
+          )
           generated++
           continue
         }
@@ -164,14 +156,11 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
       if (npcA.traits.vanity > TRAIT_DOMINANT && npcB.traits.vanity > TRAIT_DOMINANT) {
         const key = frictionKey(npcA.npcId, npcB.npcId, 'vanity-recognition')
         if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
-          next = {
-            ...next,
-            lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
-            pendingEvents: [
-              ...next.pendingEvents,
-              { eventId: EVENT_IDS.NPC_RECOGNITION_RIVALRY, firedOnDay: next.day },
-            ],
-          }
+          next = enqueueTemplateEvent(
+            { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } },
+            EVENT_IDS.NPC_RECOGNITION_RIVALRY,
+            { firedOnDay: next.day },
+          )
           generated++
           continue
         }
@@ -188,14 +177,11 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
         ) {
           const key = frictionKey(npcA.npcId, npcB.npcId, 'zeal-clash')
           if (!isOnCooldown(next, key, FRICTION_COOLDOWN)) {
-            next = {
-              ...next,
-              lastFiredDay: { ...next.lastFiredDay, [key]: next.day },
-              pendingEvents: [
-                ...next.pendingEvents,
-                { eventId: EVENT_IDS.NPC_IDEOLOGICAL_FRICTION, firedOnDay: next.day },
-              ],
-            }
+            next = enqueueTemplateEvent(
+              { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } },
+              EVENT_IDS.NPC_IDEOLOGICAL_FRICTION,
+              { firedOnDay: next.day },
+            )
             generated++
             continue
           }
