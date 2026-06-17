@@ -93,6 +93,49 @@ export const worldReducers = {
     )
   },
 
+  resolveInformationalEvents(state: GameState, action: PayloadAction<{ eventIds: string[] }>) {
+    const seeded = createRng(state.rngSeed)
+    let next = { ...state, pendingEvents: [...state.pendingEvents], eventInstances: [...state.eventInstances] }
+
+    for (const eventId of action.payload.eventIds) {
+      const template = contentCatalog.eventsById.get(eventId)
+      const choice = template?.choices[0]
+      if (!template || !choice) continue
+
+      const matchingInstance = next.eventInstances.find(
+        (instance) => instance.eventId === eventId && instance.resolvedOnDay === null,
+      )
+
+      next = {
+        ...next,
+        pendingEvents: next.pendingEvents.filter((event) => event.eventId !== eventId),
+        eventInstances: matchingInstance
+          ? next.eventInstances.map((instance) =>
+              instance.instanceId === matchingInstance.instanceId
+                ? { ...instance, resolvedOnDay: next.day, chosenOptionId: choice.id }
+                : instance,
+            )
+          : next.eventInstances,
+      }
+
+      const context: OutcomeContext = {
+        npcId: matchingInstance?.sourceNpcId ?? null,
+        contextId: matchingInstance?.contextId ?? null,
+      }
+      const resolved = applyOutcomes(next, choice.outcomes, context, seeded)
+      next = appendEventChronicleEntry(
+        resolved,
+        eventId,
+        choice.id,
+        matchingInstance?.sourceNpcId ?? template.sourceNpcId ?? null,
+        matchingInstance?.sourceDistrictId ?? template.sourceDistrictId ?? null,
+        { autoResolved: true },
+      )
+    }
+
+    return { ...next, rngSeed: seeded.getSeed() }
+  },
+
   dismissResolvedEventSummary(state: GameState) {
     state.lastResolvedEventSummary = null
   },

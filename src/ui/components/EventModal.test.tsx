@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
+import { contentCatalog } from '../../application/content/contentCatalog'
+import type { EventTemplate } from '../../domain/events/contracts'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
 import { AppProviders } from '../app/AppProviders'
 import { EventModal } from './EventModal'
@@ -50,6 +52,51 @@ describe('EventModal', () => {
     expect(screen.getByText('The Warrens')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'A Petition from the Warrens' })).toBeInTheDocument()
     expect(screen.getByText(/Three tired faces/i)).toBeInTheDocument()
+  })
+
+  it('does not render informational one-choice events as modals', () => {
+    const originalEvents = contentCatalog.events
+    const infoEvent: EventTemplate = {
+      id: 'event-test-info-modal-hidden',
+      title: 'Dock Rates Adjusted',
+      description: 'Harbor tariffs creep upward overnight.',
+      triggerConditions: { probability: 1 },
+      choices: [{ id: 'choice-file', label: 'File the notice', outcomes: [] }],
+      isAutoResolved: false,
+      tags: ['world', 'economy'],
+      repeatable: false,
+      cooldownDays: 7,
+      sourceDistrictId: 'district-harbor',
+      sourceNpcId: null,
+      presentationFlavour: null,
+      firingMode: 'world',
+    }
+    ;(contentCatalog as { events: typeof originalEvents }).events = [infoEvent]
+    ;(contentCatalog as { eventsById: Map<string, EventTemplate> }).eventsById = new Map(
+      [[infoEvent.id, infoEvent]],
+    )
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 8,
+      pendingEvents: [{ eventId: infoEvent.id, firedOnDay: 8 }],
+      eventInstances: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <EventModal />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.queryByRole('heading', { name: 'Dock Rates Adjusted' })).not.toBeInTheDocument()
+
+    ;(contentCatalog as { events: typeof originalEvents }).events = originalEvents
+    ;(contentCatalog as { eventsById: Map<string, EventTemplate> }).eventsById = new Map(
+      originalEvents.map((event) => [event.id, event]),
+    )
   })
 
   it('shows a resolved event summary without requiring the activity log', async () => {
