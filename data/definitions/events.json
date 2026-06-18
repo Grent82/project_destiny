@@ -887,6 +887,56 @@
     "firingMode": "system"
   },
   {
+    "id": "event-debt-faction-warning",
+    "title": "The Note Is Being Watched",
+    "description": "A lacquered envelope arrives with the Gilded Court seal pressed deep into the wax. The message is short: the debt is noticed, the deadline approaches, and other interests are measuring whether House Valdris can still be squeezed.",
+    "triggerConditions": {
+      "probability": 1
+    },
+    "choices": [
+      {
+        "id": "choice-send-assurances",
+        "label": "Send assurances that the house will answer the note.",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": 2
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You answer the Court with careful assurances. It buys a little patience, and a little scrutiny."
+          }
+        ]
+      },
+      {
+        "id": "choice-let-them-wait",
+        "label": "Let the seal go unanswered.",
+        "outcomes": [
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": -4
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "You leave the warning unanswered. By dusk, the Court knows exactly what that silence means."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "debt",
+      "court",
+      "pressure"
+    ],
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "presentationFlavour": null,
+    "firingMode": "system"
+  },
+  {
     "id": "event-rival-expansion",
     "title": "Rivals Move",
     "description": "A rival organization has seized control of a district market. Competition for contracts will be fiercer.",

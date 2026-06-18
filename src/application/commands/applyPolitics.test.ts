@@ -321,6 +321,32 @@ describe('applyPolitics debt enforcement interest', () => {
     expect(hostileNext.debtAmount).toBe(820)
   })
 
+  it('queues the authored debt faction warning as a concrete instance on day 20', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      day: 20,
+      debtAmount: 600,
+      debtPaid: false,
+      debtEnforcementFactionId: 'faction-gilded-court',
+      debtClaimantNpcId: 'npc-voss',
+      pendingEvents: [],
+      eventInstances: [],
+    })
+
+    const after = applyPolitics(state, () => 0.5)
+    const pending = after.pendingEvents.find(
+      (event) => event.eventId === 'event-debt-faction-warning',
+    )
+
+    expect(pending?.instanceId).toBeTruthy()
+    expect(
+      after.eventInstances.some(
+        (instance) =>
+          instance.eventId === 'event-debt-faction-warning' && instance.resolvedOnDay === null,
+      ),
+    ).toBe(true)
+  })
+
   it('queues city crisis events as concrete instances', () => {
     const state = gameStateSchema.parse({
       ...initialGameStateSnapshot,
