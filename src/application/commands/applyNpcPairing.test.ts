@@ -106,6 +106,7 @@ describe('applyNpcPairing — stage progression', () => {
     const result = applyNpcPairing(baseState, noopRng)
     const hasPairingEvent = result.pendingEvents.some((pe) => pe.eventId === 'event-npc-pairing-noticed')
     expect(hasPairingEvent).toBe(true)
+    expect(result.pendingEvents.find((pe) => pe.eventId === 'event-npc-pairing-noticed')?.instanceId).toBeTruthy()
   })
 
   it('skips deployed NPCs', () => {
@@ -173,6 +174,9 @@ describe('applyNpcPairing — pregnancy', () => {
     })
     const result = applyNpcPairing(state, alwaysRng)
     expect(result.pendingEvents.some((pe) => pe.eventId === 'event-npc-pairing-pregnancy-discovery')).toBe(true)
+    expect(
+      result.pendingEvents.find((pe) => pe.eventId === 'event-npc-pairing-pregnancy-discovery')?.instanceId,
+    ).toBeTruthy()
   })
 })
 

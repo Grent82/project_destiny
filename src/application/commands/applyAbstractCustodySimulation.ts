@@ -5,6 +5,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
 import { resolveSiteRuntime } from './siteLifecycle'
 import { EVENT_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 export const ABSTRACT_CUSTODY_ALERT_EVENT_ID = EVENT_IDS.ABSTRACT_CUSTODY_ALERT
 
@@ -78,34 +79,24 @@ function queueAbstractCustodyAlert(next: GameState, site: SiteRuntime, npcId: st
       ? `${npcName} is being changed by what is happening in ${site.name}, and the city will not leave that truth buried forever.`
       : `${npcName}'s condition is worsening inside ${site.name}. ${districtName} will eventually notice, even if the room stays off the books.`
 
-  return {
-    ...next,
-    pendingEvents: [
-      ...next.pendingEvents,
-      {
-        eventId: ABSTRACT_CUSTODY_ALERT_EVENT_ID,
-        firedOnDay: next.day,
+  return enqueueTemplateEvent(
+    {
+      ...next,
+      lastFiredDay: {
+        ...next.lastFiredDay,
+        [key]: next.day,
       },
-    ],
-    eventInstances: [
-      ...next.eventInstances,
-      {
-        instanceId: `abstract-custody-alert-${site.siteId}-${next.day}`,
-        eventId: ABSTRACT_CUSTODY_ALERT_EVENT_ID,
-        firedOnDay: next.day,
-        resolvedOnDay: null,
-        chosenOptionId: null,
-        sourceDistrictId: site.districtId,
-        sourceNpcId: npcId,
-        presentationText: detail,
-        contextId: site.siteId,
-      },
-    ],
-    lastFiredDay: {
-      ...next.lastFiredDay,
-      [key]: next.day,
     },
-  }
+    ABSTRACT_CUSTODY_ALERT_EVENT_ID,
+    {
+      instanceId: `abstract-custody-alert-${site.siteId}-${next.day}`,
+      firedOnDay: next.day,
+      sourceDistrictId: site.districtId,
+      sourceNpcId: npcId,
+      presentationText: detail,
+      contextId: site.siteId,
+    },
+  )
 }
 
 function appendAbstractCustodyRumor(next: GameState, site: SiteRuntime, npcId: string) {

@@ -19,8 +19,10 @@ import {
   CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
   captivityPregnancyDiscoveryKey,
 } from '../../commands/captivityPregnancyDiscovery'
+import { createEventInstance, createPendingEvent } from '../../commands/eventInstances'
 import { getNpcCaptivityState, setNpcCaptivityState } from '../../commands/captivityRegistry'
 import { MAX_ACTIVITY_ENTRIES, generateActivityLogId } from '../../commands/activityLog'
+import { contentCatalog } from '../../content/contentCatalog'
 
 export const rosterReducers = {
   addNpcToSelectedSquad(state: GameState, action: PayloadAction<string>) {
@@ -178,25 +180,24 @@ export const rosterReducers = {
     if (npc.pregnancyState?.context === 'unknown') {
       const key = captivityPregnancyDiscoveryKey(npcId)
       if (state.lastFiredDay[key] === undefined) {
-        state.pendingEvents.push({
-          eventId: CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
-          firedOnDay: state.day,
-        })
-        state.eventInstances.push({
+        const template = contentCatalog.eventsById.get(CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID)
+        if (!template) return
+        const snapshot = current(state) as GameState
+        const instance = createEventInstance(snapshot, template, {
           instanceId: `${key}-${state.day}`,
-          eventId: CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
           firedOnDay: state.day,
-          resolvedOnDay: null,
-          chosenOptionId: null,
           sourceDistrictId: state.currentDistrictId,
           sourceNpcId: npcId,
           presentationText: buildCaptivityPregnancyDiscoveryPresentationText(
-            current(state) as GameState,
+            snapshot,
             current(npc) as typeof npc,
           ),
           contextId: null,
         })
+        state.pendingEvents.push(createPendingEvent(instance))
+        state.eventInstances.push(instance)
         state.lastFiredDay[key] = state.day
+        state.lastFiredDay[CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID] = state.day
       }
     }
   },

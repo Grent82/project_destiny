@@ -82,6 +82,9 @@ describe('applyAbstractCustodySimulation', () => {
     expect(next.npcCaptivityStates[captiveId]?.condition).toBe('broken')
     expect(next.roster.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(14)
     expect(next.pendingEvents.some((event) => event.eventId === ABSTRACT_CUSTODY_ALERT_EVENT_ID)).toBe(true)
+    expect(
+      next.pendingEvents.find((event) => event.eventId === ABSTRACT_CUSTODY_ALERT_EVENT_ID)?.instanceId,
+    ).toBeTruthy()
   })
 
   it('lets protective abstract custody improve condition and reduce fear', () => {

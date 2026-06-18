@@ -41,9 +41,10 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
 
     const next = ensureCaptivityPregnancyDiscovery(state)
 
-    expect(next.pendingEvents).toEqual([
-      { eventId: 'event-captivity-pregnancy-discovery', firedOnDay: 14 },
-    ])
+    expect(next.pendingEvents).toHaveLength(1)
+    expect(next.pendingEvents[0]?.eventId).toBe('event-captivity-pregnancy-discovery')
+    expect(next.pendingEvents[0]?.firedOnDay).toBe(14)
+    expect(next.pendingEvents[0]?.instanceId).toBeTruthy()
     expect(next.eventInstances[0]?.sourceNpcId).toBe('npc-marion-vale')
     expect(next.eventInstances[0]?.presentationText).toContain('asks to speak in private')
     expect(next.eventInstances[0]?.presentationText).toContain('grieves ahead of herself')

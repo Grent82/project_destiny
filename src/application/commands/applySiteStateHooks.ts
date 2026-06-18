@@ -6,6 +6,7 @@ import { getAllNpcCaptivityStates } from './captivityRegistry'
 import { addQuestLeadIfNew } from './questLifecycle'
 import { resolveSiteRuntime } from './siteLifecycle'
 import { EVENT_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 export const SITE_PRESSURE_EVENT_ID = EVENT_IDS.SITE_PRESSURE_WARNING
 
@@ -170,34 +171,24 @@ function queueSitePressureEvent(next: GameState, site: SiteRuntime, pressureScor
     ? `${site.name} is carrying quiet pressure in ${districtName}. ${captiveCount} captive situation${captiveCount === 1 ? '' : 's'} and ${protectedCount} sheltered or discreet occupant${protectedCount === 1 ? '' : 's'} make the place harder to keep invisible.`
     : `${site.name} is carrying quiet pressure in ${districtName}. ${protectedCount} sheltered or discreet occupant${protectedCount === 1 ? '' : 's'} make the place visible to the wrong people if the pattern holds.`
 
-  return {
-    ...next,
-    pendingEvents: [
-      ...next.pendingEvents,
-      {
-        eventId: SITE_PRESSURE_EVENT_ID,
-        firedOnDay: next.day,
+  return enqueueTemplateEvent(
+    {
+      ...next,
+      lastFiredDay: {
+        ...next.lastFiredDay,
+        [key]: next.day,
       },
-    ],
-    eventInstances: [
-      ...next.eventInstances,
-      {
-        instanceId: `site-pressure-${site.siteId}-${next.day}`,
-        eventId: SITE_PRESSURE_EVENT_ID,
-        firedOnDay: next.day,
-        resolvedOnDay: null,
-        chosenOptionId: null,
-        sourceDistrictId: site.districtId,
-        sourceNpcId: site.ownerNpcId,
-        presentationText: `${pressureText} Pressure estimate: ${pressureScore}.`,
-        contextId: site.siteId,
-      },
-    ],
-    lastFiredDay: {
-      ...next.lastFiredDay,
-      [key]: next.day,
     },
-  }
+    SITE_PRESSURE_EVENT_ID,
+    {
+      instanceId: `site-pressure-${site.siteId}-${next.day}`,
+      firedOnDay: next.day,
+      sourceDistrictId: site.districtId,
+      sourceNpcId: site.ownerNpcId,
+      presentationText: `${pressureText} Pressure estimate: ${pressureScore}.`,
+      contextId: site.siteId,
+    },
+  )
 }
 
 function maybeQueueProtectedSitePressure(next: GameState, site: SiteRuntime, presences: NpcSitePresence[], captives: Array<{ npcId: string; captivity: CaptivityState }>) {

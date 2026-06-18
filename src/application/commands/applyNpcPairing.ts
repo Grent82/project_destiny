@@ -5,6 +5,7 @@ import { buildRelationshipKey, getRelationship } from '../../domain/relationship
 import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
 import type { Rng } from './seededRng'
 import { EVENT_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 const COMPATIBILITY_THRESHOLD = -10
 const DOMINANCE_IMBALANCE_LIMIT = 40
@@ -126,10 +127,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
             const eventKey = EVENT_IDS.NPC_PAIRING_NOTICED
             const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === eventKey)
             if (!alreadyPending) {
-              next = {
-                ...next,
-                pendingEvents: [...next.pendingEvents, { eventId: eventKey, firedOnDay: next.day }],
-              }
+              next = enqueueTemplateEvent(next, eventKey, { firedOnDay: next.day })
             }
           }
         }
@@ -170,10 +168,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
           // Fire pregnancy discovery event
           const discoveryKey = EVENT_IDS.NPC_PAIRING_PREGNANCY_DISCOVERY
           if (!next.pendingEvents.some((pe) => pe.eventId === discoveryKey)) {
-            next = {
-              ...next,
-              pendingEvents: [...next.pendingEvents, { eventId: discoveryKey, firedOnDay: next.day }],
-            }
+            next = enqueueTemplateEvent(next, discoveryKey, { firedOnDay: next.day })
           }
         }
       }

@@ -3,6 +3,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta, writeNpcMemory } from './adjustRelationship'
 import { adjustCityDial } from './economicConsequences'
 import { EVENT_IDS, FACTION_IDS, TITLE_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 const TALLOW_RING_ID = FACTION_IDS.TALLOW_RING
 const GILDED_COURT_ID = FACTION_IDS.GILDED_COURT
@@ -21,20 +22,17 @@ function queueEvent(state: GameState, eventId: string): GameState {
     return state
   }
 
-  return {
-    ...state,
-    pendingEvents: [
-      ...state.pendingEvents,
-      {
-        eventId,
-        firedOnDay: state.day,
+  return enqueueTemplateEvent(
+    {
+      ...state,
+      lastFiredDay: {
+        ...state.lastFiredDay,
+        [eventId]: state.day,
       },
-    ],
-    lastFiredDay: {
-      ...state.lastFiredDay,
-      [eventId]: state.day,
     },
-  }
+    eventId,
+    { firedOnDay: state.day },
+  )
 }
 
 export function freeNpc(state: GameState, npcId: string): GameState {

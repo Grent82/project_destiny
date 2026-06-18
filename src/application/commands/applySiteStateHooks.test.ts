@@ -88,6 +88,7 @@ describe('applySiteStateHooks', () => {
     const next = applySiteStateHooks(state)
 
     expect(next.pendingEvents.some((event) => event.eventId === SITE_PRESSURE_EVENT_ID)).toBe(true)
+    expect(next.pendingEvents.find((event) => event.eventId === SITE_PRESSURE_EVENT_ID)?.instanceId).toBeTruthy()
     const instance = next.eventInstances.find((event) => event.eventId === SITE_PRESSURE_EVENT_ID)
     expect(instance?.contextId).toBe('site-world-chapel-saint-vey')
     expect(instance?.presentationText).toContain('Chapel of Saint Vey')

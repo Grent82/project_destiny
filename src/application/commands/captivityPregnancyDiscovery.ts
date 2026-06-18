@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { EVENT_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 export const CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID = EVENT_IDS.CAPTIVITY_PREGNANCY_DISCOVERY
 
@@ -77,36 +78,24 @@ function queueInstance(state: GameState, npc: NpcRuntimeState): GameState {
     return state
   }
 
-  const instanceId = `${key}-${state.day}`
-
-  return {
-    ...state,
-    pendingEvents: [
-      ...state.pendingEvents,
-      {
-        eventId: CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
-        firedOnDay: state.day,
+  return enqueueTemplateEvent(
+    {
+      ...state,
+      lastFiredDay: {
+        ...state.lastFiredDay,
+        [key]: state.day,
       },
-    ],
-    eventInstances: [
-      ...state.eventInstances,
-      {
-        instanceId,
-        eventId: CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
-        firedOnDay: state.day,
-        resolvedOnDay: null,
-        chosenOptionId: null,
-        sourceDistrictId: state.currentDistrictId,
-        sourceNpcId: npc.npcId,
-        presentationText: buildCaptivityPregnancyDiscoveryPresentationText(state, npc),
-        contextId: null,
-      },
-    ],
-    lastFiredDay: {
-      ...state.lastFiredDay,
-      [key]: state.day,
     },
-  }
+    CAPTIVITY_PREGNANCY_DISCOVERY_EVENT_ID,
+    {
+      instanceId: `${key}-${state.day}`,
+      firedOnDay: state.day,
+      sourceDistrictId: state.currentDistrictId,
+      sourceNpcId: npc.npcId,
+      presentationText: buildCaptivityPregnancyDiscoveryPresentationText(state, npc),
+      contextId: null,
+    },
+  )
 }
 
 export function ensureCaptivityPregnancyDiscovery(state: GameState): GameState {

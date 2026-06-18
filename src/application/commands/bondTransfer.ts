@@ -3,6 +3,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import type { Rng } from './seededRng'
 import { FACTION_IDS } from '../content/ids'
+import { enqueueTemplateEvent } from './eventInstances'
 
 const TALLOW_RING_FACTION = FACTION_IDS.TALLOW_RING
 
@@ -97,33 +98,26 @@ export function checkBondAcquisitionOffers(state: GameState, rng: Rng): GameStat
     // Only one offer per day
     if (next.pendingEvents.some((e) => e.eventId === 'bond-acquisition-offer')) break
 
-    next = {
-      ...next,
-      pendingEvents: [
-        ...next.pendingEvents,
-        { eventId: 'bond-acquisition-offer', firedOnDay: state.day },
-      ],
-      eventInstances: [
-        ...next.eventInstances,
-        {
-          instanceId,
-          eventId: 'bond-acquisition-offer',
-          firedOnDay: state.day,
-          resolvedOnDay: null,
-          chosenOptionId: null,
-          sourceDistrictId: state.currentDistrictId,
-          sourceNpcId: npc.npcId,
-          presentationText: `${buyer.name} has made an offer for ${npc.name}. Offer: ${offerAmount} Marks.`,
-          contextId: buyer.id,
-        },
-      ],
-      lastFiredDay: { ...next.lastFiredDay, 'bond-acquisition-offer': state.day },
-      roster: next.roster.map((r) =>
-        r.npcId === npc.npcId && r.bondStatus
-          ? { ...r, bondStatus: { ...r.bondStatus, lastOfferDay: state.day } }
-          : r,
-      ),
-    }
+    next = enqueueTemplateEvent(
+      {
+        ...next,
+        lastFiredDay: { ...next.lastFiredDay, 'bond-acquisition-offer': state.day },
+        roster: next.roster.map((r) =>
+          r.npcId === npc.npcId && r.bondStatus
+            ? { ...r, bondStatus: { ...r.bondStatus, lastOfferDay: state.day } }
+            : r,
+        ),
+      },
+      'bond-acquisition-offer',
+      {
+        instanceId,
+        firedOnDay: state.day,
+        sourceDistrictId: state.currentDistrictId,
+        sourceNpcId: npc.npcId,
+        presentationText: `${buyer.name} has made an offer for ${npc.name}. Offer: ${offerAmount} Marks.`,
+        contextId: buyer.id,
+      },
+    )
 
     break // one offer per day
   }

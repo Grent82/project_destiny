@@ -69,6 +69,7 @@ describe('freeNpc', () => {
     const marion = next.roster.find((npc) => npc.npcId === 'npc-marion-vale')!
     expect(marion.states.morale).toBe(71)
     expect(next.pendingEvents.some((event) => event.eventId === 'event-npc-freed')).toBe(true)
+    expect(next.pendingEvents.find((event) => event.eventId === 'event-npc-freed')?.instanceId).toBeTruthy()
   })
 })
 
@@ -107,6 +108,9 @@ describe('applyBondServiceEffects', () => {
     expect(next.cityDials.corruption).toBeGreaterThan(state.cityDials.corruption)
     expect(next.cityDials.prosperity).toBeLessThan(state.cityDials.prosperity)
     expect(next.pendingEvents.some((event) => event.eventId === 'event-bound-npc-notices-difference')).toBe(true)
+    expect(
+      next.pendingEvents.find((event) => event.eventId === 'event-bound-npc-notices-difference')?.instanceId,
+    ).toBeTruthy()
   })
 
   it('forces high-empathy stewards and archivists to step down after a month of bond operations', () => {
@@ -131,6 +135,9 @@ describe('applyBondServiceEffects', () => {
 
     expect(marion.activeTitle).toBeNull()
     expect(next.pendingEvents.some((event) => event.eventId === 'event-title-npc-bond-objection')).toBe(true)
+    expect(
+      next.pendingEvents.find((event) => event.eventId === 'event-title-npc-bond-objection')?.instanceId,
+    ).toBeTruthy()
   })
 })
 

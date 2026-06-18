@@ -224,6 +224,9 @@ describe('rescueNpc action', () => {
 
     expect(state.pendingEvents.some((event) => event.eventId === 'event-captivity-pregnancy-discovery')).toBe(true)
     expect(
+      state.pendingEvents.find((event) => event.eventId === 'event-captivity-pregnancy-discovery')?.instanceId,
+    ).toBeTruthy()
+    expect(
       state.lastFiredDay['captivity-pregnancy-discovery-npc-marion-vale'],
     ).toBe(state.day)
     expect(

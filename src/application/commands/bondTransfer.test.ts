@@ -130,6 +130,7 @@ describe('checkBondAcquisitionOffers', () => {
     const state = stateWithBondedNpc(npc, 10)
     const result = checkBondAcquisitionOffers(state, () => 0)
     expect(result.pendingEvents.some((e) => e.eventId === 'bond-acquisition-offer')).toBe(true)
+    expect(result.pendingEvents.find((e) => e.eventId === 'bond-acquisition-offer')?.instanceId).toBeTruthy()
   })
 
   it('does not fire when forSale=false', () => {
