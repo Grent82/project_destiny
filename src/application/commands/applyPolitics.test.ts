@@ -368,6 +368,45 @@ describe('applyPolitics debt enforcement interest', () => {
   })
 })
 
+describe('applyPolitics Mira reminder gates', () => {
+  it('records the lead-found Mira reminder without pretending it is an authored event', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      day: 12,
+      mainQuest: { ...initialGameStateSnapshot.mainQuest, stage: 'lead-found' },
+      lastFiredDay: {},
+    })
+
+    const after = applyPolitics(state, () => 0.5)
+
+    expect(after.lastFiredDay['main-quest-mira-location-reminder']).toBe(12)
+    expect(after.lastFiredDay['event-mira-location']).toBeUndefined()
+    expect(
+      after.activityLog.some((entry) => entry.message.includes('Tessaly Ash is still waiting')),
+    ).toBe(true)
+  })
+
+  it('records the location-known Mira pressure reminder without inventing a missing event template', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      day: 20,
+      mainQuest: { ...initialGameStateSnapshot.mainQuest, stage: 'location-known' },
+      completedQuestIds: [],
+      lastFiredDay: {},
+    })
+
+    const after = applyPolitics(state, () => 0.5)
+
+    expect(after.lastFiredDay['main-quest-mira-pressure-reminder']).toBe(20)
+    expect(after.lastFiredDay['event-mira-pressure']).toBeUndefined()
+    expect(
+      after.activityLog.some((entry) =>
+        entry.message.includes('Mira is still inside the Pale tannery'),
+      ),
+    ).toBe(true)
+  })
+})
+
 describe('leader trait modifiers', () => {
   it('high ambition leader adds +20 to proposal score', () => {
     // Create a test faction with high ambition leader

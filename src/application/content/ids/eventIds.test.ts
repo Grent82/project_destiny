@@ -15,4 +15,12 @@ describe('politics event ids content gate', () => {
       expect(contentCatalog.eventsById.has(eventId)).toBe(true)
     }
   })
+
+  it('does not keep reminder-only Mira and tutorial keys in the authored event id catalog', () => {
+    const authoredEventIds = Object.values(EVENT_IDS)
+
+    expect(authoredEventIds).not.toContain('event-mira-location')
+    expect(authoredEventIds).not.toContain('event-mira-pressure')
+    expect(authoredEventIds).not.toContain('event-tutorial-end-day-rhythm')
+  })
 })

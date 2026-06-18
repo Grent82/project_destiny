@@ -16,8 +16,6 @@ export const EVENT_IDS = {
   HOLLOWS_ENTRY: 'event-hollows-entry',
   IDA_MILESTONE_CONTACT: 'event-ida-milestone-contact',
   MARION_MILESTONE_MOTIVATION: 'event-marion-milestone-motivation',
-  MIRA_LOCATION: 'event-mira-location',
-  MIRA_PRESSURE: 'event-mira-pressure',
   NPC_AMBITION_COMPARISON: 'event-npc-ambition-comparison',
   NPC_BETRAYAL: 'event-npc-betrayal',
   NPC_DOMINANCE_TENSION: 'event-npc-dominance-tension',
@@ -38,8 +36,6 @@ export const EVENT_IDS = {
   RIVAL_PALE_SISTERS_COUNTER_LEAD: 'event-rival-pale-sisters-counter-lead',
   SITE_PRESSURE_WARNING: 'event-site-pressure-warning',
   TITLE_NPC_BOND_OBJECTION: 'event-title-npc-bond-objection',
-  TUTORIAL_END_DAY_RHYTHM: 'event-tutorial-end-day-rhythm',
   UNPAID_WAGES_UNREST: 'event-unpaid-wages-unrest',
   VAEL_MILESTONE_NETWORK: 'event-vael-milestone-network',
 } as const
-

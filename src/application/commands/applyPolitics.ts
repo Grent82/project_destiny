@@ -10,6 +10,9 @@ import { adjustCityDial, adjustDistrictTension } from './economicConsequences'
 import { getRelationshipPoliticalCapital } from './politicalLeverage'
 import { enqueueTemplateEvent } from './eventInstances'
 
+const MIRA_LOCATION_REMINDER_KEY = 'main-quest-mira-location-reminder'
+const MIRA_PRESSURE_REMINDER_KEY = 'main-quest-mira-pressure-reminder'
+
 /**
  * Score a faction's propensity to propose a vote on this day.
  * Returns 0 if the faction has no agendaAxes or no vote templates.
@@ -383,11 +386,11 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
 
   // Step 7g: Main quest pressure after Orren's clue has surfaced
   if (next.mainQuest.stage === 'lead-found' && next.day >= 12) {
-    const alreadyFired = EVENT_IDS.MIRA_LOCATION in next.lastFiredDay
+    const alreadyFired = MIRA_LOCATION_REMINDER_KEY in next.lastFiredDay
     if (!alreadyFired) {
       next = {
         ...next,
-        lastFiredDay: { ...next.lastFiredDay, [EVENT_IDS.MIRA_LOCATION]: next.day },
+        lastFiredDay: { ...next.lastFiredDay, [MIRA_LOCATION_REMINDER_KEY]: next.day },
       }
       next = appendActivityLogEntry(
         next,
@@ -398,11 +401,11 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
   }
 
   if (next.mainQuest.stage === 'location-known' && next.day >= 20 && !next.completedQuestIds.includes(QUEST_IDS.MIRA_RESCUE)) {
-    const alreadyFired = EVENT_IDS.MIRA_PRESSURE in next.lastFiredDay
+    const alreadyFired = MIRA_PRESSURE_REMINDER_KEY in next.lastFiredDay
     if (!alreadyFired) {
       next = {
         ...next,
-        lastFiredDay: { ...next.lastFiredDay, [EVENT_IDS.MIRA_PRESSURE]: next.day },
+        lastFiredDay: { ...next.lastFiredDay, [MIRA_PRESSURE_REMINDER_KEY]: next.day },
       }
       next = appendActivityLogEntry(
         next,
