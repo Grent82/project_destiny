@@ -119,6 +119,12 @@ If the Codex desktop environment resolves `node` to the bundled app runtime and 
 ./scripts/codex-build.sh
 ```
 
+`./scripts/codex-test.sh` also carries Codex-desktop stability overrides:
+- sets `STORYBOOK_DISABLE_CHROMATIC=1` for local test runs
+- defaults Vitest to `--maxWorkers=4` unless you override it explicitly
+
+If the full test run starts failing through Storybook/browser worker noise again, inspect that wrapper and `vite.config.ts` before treating it as a gameplay regression.
+
 ## TDD Practice
 
 Write tests parallel to code, not after. When writing a test:

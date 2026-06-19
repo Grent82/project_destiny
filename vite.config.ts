@@ -13,6 +13,8 @@ export default defineConfig({
     projects: [{
       extends: true,
       test: {
+        include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+        exclude: ['src/**/*.stories.@(js|jsx|mjs|ts|tsx)', 'src/**/*.mdx'],
         environment: 'jsdom',
         globals: true,
         setupFiles: './src/test/setup.ts'
@@ -27,6 +29,7 @@ export default defineConfig({
       })],
       test: {
         name: 'storybook',
+        include: ['src/**/*.stories.@(js|jsx|mjs|ts|tsx)', 'src/**/*.mdx'],
         browser: {
           enabled: true,
           headless: true,

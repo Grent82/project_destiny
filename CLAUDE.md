@@ -113,6 +113,12 @@ If the Codex desktop runtime hits the `rolldown` native-binding / codesign failu
 ./scripts/codex-build.sh
 ```
 
+`./scripts/codex-test.sh` also applies the current Codex-desktop stability guardrails:
+- `STORYBOOK_DISABLE_CHROMATIC=1`
+- default `--maxWorkers=4` unless you override it explicitly
+
+Check that wrapper and `vite.config.ts` first if the full Vitest run starts failing through Storybook/browser worker startup noise.
+
 When running repo-wide tests, watch for nested worktrees or generated mirrors under `.claude/worktrees/`.
 They can cause duplicate test discovery, worker timeouts, or misleading failures if the runner traverses them as part of the repository.
 Treat that as a test-discovery hygiene problem first, not immediately as a product regression.
