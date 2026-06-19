@@ -138,6 +138,43 @@ describe('DashboardScreen', () => {
     expect(screen.queryByRole('link', { name: /Open the ledger/i })).not.toBeInTheDocument()
   })
 
+  it('surfaces an economy brief with reserves, pressure, and next levers in operations', async () => {
+    const user = userEvent.setup()
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      cityResources: {
+        ...initialGameStateSnapshot.cityResources,
+        foodStock: 350,
+        foodCapacity: 1000,
+        corridorStatus: 'disrupted',
+        corridorClearanceProgressDays: 1,
+      },
+      roster: initialGameStateSnapshot.roster.slice(0, 2),
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    await user.click(screen.getByRole('tab', { name: 'Operations' }))
+
+    expect(screen.getByRole('heading', { name: 'City Resources' })).toBeInTheDocument()
+    expect(screen.getByText('350 / 1000 stores')).toBeInTheDocument()
+    expect(screen.getByText('35% security')).toBeInTheDocument()
+    expect(screen.getByText('Daily demand')).toBeInTheDocument()
+    expect(screen.getByText('601 rations')).toBeInTheDocument()
+    expect(screen.getByText('Corridor imports')).toBeInTheDocument()
+    expect(screen.getByText('150 rations/day')).toBeInTheDocument()
+    expect(screen.getByText('Market read')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Check available work' })).toHaveAttribute('href', '/contracts')
+    expect(screen.getByRole('link', { name: 'Review ward prices' })).toHaveAttribute('href', '/shops')
+  })
+
   it('Work Board CTA uses router navigation without hard-reloading', async () => {
     const user = userEvent.setup()
 

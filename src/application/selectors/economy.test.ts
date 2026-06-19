@@ -7,7 +7,9 @@ import {
   selectWaterAccess,
   selectMaterialStock,
   selectCorridorStatus,
+  selectEconomyOverview,
 } from './economy'
+import { DEFAULT_FOOD_BASE_PRICE } from './marketPricing'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 
 function makeState(overrides: Partial<typeof initialGameStateSnapshot> = {}): { game: typeof initialGameStateSnapshot } {
@@ -126,5 +128,46 @@ describe('selectCorridorStatus', () => {
       cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'blocked' },
     })
     expect(selectCorridorStatus(state)).toBe('blocked')
+  })
+})
+
+describe('selectEconomyOverview', () => {
+  it('surfaces a single-source food and corridor snapshot for the dashboard', () => {
+    const state = makeState({
+      cityResources: {
+        ...initialGameStateSnapshot.cityResources,
+        foodStock: 350,
+        foodCapacity: 1000,
+        corridorStatus: 'disrupted',
+        corridorClearanceProgressDays: 1,
+      },
+      roster: initialGameStateSnapshot.roster.slice(0, 2),
+      currentDistrictId: 'district-harbor',
+    })
+
+    const overview = selectEconomyOverview(state)
+
+    expect(overview.foodStock).toBe(350)
+    expect(overview.foodCapacity).toBe(1000)
+    expect(overview.foodSecurity).toBe(35)
+    expect(overview.dailyConsumption).toBe(601)
+    expect(overview.corridorImport).toBe(150)
+    expect(overview.netFoodDelta).toBe(-451)
+    expect(overview.foodPrice).toBeLessThan(DEFAULT_FOOD_BASE_PRICE)
+    expect(overview.foodPriceTrend).toBe('falling')
+    expect(overview.marketState).toMatch(/good supply|discount/i)
+    expect(overview.corridorProgress.daysRemaining).toBe(1)
+    expect(overview.playerActions.marketRoute).toBe('/shops')
+    expect(overview.playerActions.contractsRoute).toBe('/contracts')
+  })
+
+  it('routes market review through the district map when the house is not in a district', () => {
+    const state = makeState({
+      currentDistrictId: null,
+    })
+
+    const overview = selectEconomyOverview(state)
+
+    expect(overview.playerActions.marketRoute).toBe('/district-map')
   })
 })

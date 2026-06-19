@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 type ProjectWithTest = {
   test?: {
@@ -9,10 +9,21 @@ type ProjectWithTest = {
   }
 }
 
+async function loadResolvedConfig() {
+  const mod = await import('../../vite.config')
+  const exported = mod.default as unknown
+  if (typeof exported === 'function') {
+    return exported()
+  }
+  return exported
+}
+
 describe('vitest project scoping', () => {
   it('limits the storybook browser project to story files', async () => {
     process.env.STORYBOOK_DISABLE_CHROMATIC = '1'
-    const { default: config } = await import('../../vite.config')
+    delete process.env.CODEX_DISABLE_STORYBOOK_PROJECT
+    vi.resetModules()
+    const config = await loadResolvedConfig()
     const projects = (config.test?.projects ?? []) as ProjectWithTest[]
     expect(Array.isArray(projects)).toBe(true)
 
@@ -28,7 +39,9 @@ describe('vitest project scoping', () => {
 
   it('keeps the primary jsdom project scoped to normal test files', async () => {
     process.env.STORYBOOK_DISABLE_CHROMATIC = '1'
-    const { default: config } = await import('../../vite.config')
+    delete process.env.CODEX_DISABLE_STORYBOOK_PROJECT
+    vi.resetModules()
+    const config = await loadResolvedConfig()
     const projects = (config.test?.projects ?? []) as ProjectWithTest[]
     expect(Array.isArray(projects)).toBe(true)
 
@@ -44,5 +57,19 @@ describe('vitest project scoping', () => {
       'src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
       'src/**/*.mdx',
     ])
+  })
+
+  it('can omit the storybook browser project for local codex wrapper runs', async () => {
+    process.env.STORYBOOK_DISABLE_CHROMATIC = '1'
+    process.env.CODEX_DISABLE_STORYBOOK_PROJECT = '1'
+    vi.resetModules()
+    const config = await loadResolvedConfig()
+    const projects = (config.test?.projects ?? []) as ProjectWithTest[]
+
+    expect(
+      projects.find((project) => project.test?.name === 'storybook'),
+    ).toBeUndefined()
+
+    delete process.env.CODEX_DISABLE_STORYBOOK_PROJECT
   })
 })

@@ -1,6 +1,18 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../domain/game/contracts'
+import {
+  BASE_CORRIDOR_IMPORT,
+  CORRIDOR_THROUGHPUT_MODIFIERS,
+  getCorridorReopeningProgress,
+} from '../commands/applyCorridorImport'
+import { calculateTotalConsumption } from '../commands/applyFoodConsumption'
+import {
+  DEFAULT_FOOD_BASE_PRICE,
+  describeFoodMarketState,
+  selectFoodMarketPrice,
+  selectMarketPressure,
+} from './marketPricing'
 
 const selectGame = (state: { game: GameState }): GameState => state.game
 
@@ -60,4 +72,60 @@ export const selectMaterialStock = createSelector(
 export const selectCorridorStatus = createSelector(
   [selectGame],
   (game) => game.cityResources.corridorStatus ?? 'blocked'
+)
+
+export const selectEconomyOverview = createSelector(
+  [
+    selectGame,
+    selectFoodStock,
+    selectFoodCapacity,
+    selectFoodSecurity,
+    selectWaterAccess,
+    selectMaterialStock,
+    selectCorridorStatus,
+    selectFoodMarketPrice,
+    selectMarketPressure,
+  ],
+  (
+    game,
+    foodStock,
+    foodCapacity,
+    foodSecurity,
+    waterAccess,
+    materialStock,
+    corridorStatus,
+    foodPrice,
+    marketPressure,
+  ) => {
+    const corridorImport = Math.round(
+      BASE_CORRIDOR_IMPORT * CORRIDOR_THROUGHPUT_MODIFIERS[corridorStatus],
+    )
+    const dailyConsumption = calculateTotalConsumption(game)
+    const netFoodDelta = corridorImport - dailyConsumption
+
+    let foodPriceTrend: 'rising' | 'steady' | 'falling' = 'steady'
+    if (foodPrice > DEFAULT_FOOD_BASE_PRICE) foodPriceTrend = 'rising'
+    else if (foodPrice < DEFAULT_FOOD_BASE_PRICE) foodPriceTrend = 'falling'
+
+    return {
+      foodStock,
+      foodCapacity,
+      foodSecurity,
+      waterAccess,
+      materialStock,
+      dailyConsumption,
+      corridorStatus,
+      corridorImport,
+      corridorProgress: getCorridorReopeningProgress(game),
+      netFoodDelta,
+      foodPrice,
+      foodPriceTrend,
+      marketPressure,
+      marketState: describeFoodMarketState(foodPrice, DEFAULT_FOOD_BASE_PRICE),
+      playerActions: {
+        contractsRoute: '/contracts',
+        marketRoute: game.currentDistrictId ? '/shops' : '/district-map',
+      },
+    }
+  },
 )

@@ -23,6 +23,6 @@ if [[ $HAS_MAX_WORKERS -eq 0 ]]; then
   fi
 fi
 
-exec env STORYBOOK_DISABLE_CHROMATIC=1 \
+exec env STORYBOOK_DISABLE_CHROMATIC=1 CODEX_DISABLE_STORYBOOK_PROJECT=1 \
   "$SCRIPT_DIR/with-system-node.sh" \
   "$PROJECT_ROOT/node_modules/.bin/vitest" run "${ARGS[@]}"

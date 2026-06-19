@@ -45,20 +45,11 @@ export const selectDailyIncomeBreakdown = createSelector([selectGame], (game) =>
   return { wages, workingNpcIncome, titleIncome, net }
 })
 
-export const selectLedgerSummary = createSelector([selectGame], (game) => {
-  const rosterWages = game.roster.reduce((sum, npc) => sum + wageForStatus(npc.status), 0)
+export const selectLedgerSummary = createSelector([selectGame, selectDailyIncomeBreakdown], (game, dailyIncome) => {
+  const rosterWages = dailyIncome.wages
   const dailyExpenses = rosterWages
   const daysRemaining = Math.max(0, game.debtDueDay - game.day)
-
-  // Burn rate: use net daily burn (wages minus estimated passive income) for runway
-  const workingNpcIncome = game.roster
-    .filter((npc) => npc.assignment === 'working')
-    .reduce((sum, npc) => sum + computeWorkingIncome(npc.skills), 0)
-  const HOUSE_BASELINE = 5
-  const titleIncome = game.roster.reduce(
-    (sum, npc) => sum + estimateTitleIncome(npc), 0
-  ) + HOUSE_BASELINE
-  const netDailyBurn = Math.max(0, dailyExpenses - workingNpcIncome - titleIncome)
+  const netDailyBurn = Math.max(0, dailyExpenses - dailyIncome.workingNpcIncome - dailyIncome.titleIncome)
   const daysOfRunwayAtCurrentRate =
     netDailyBurn > 0 ? Math.floor(game.money / netDailyBurn) : 999
   const projectedMarksByDebt =

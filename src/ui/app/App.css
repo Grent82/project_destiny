@@ -2008,7 +2008,36 @@ strong { color: var(--text-secondary); }
 .resource-status-panel {
   margin-top: 1.25rem;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.resource-status-panel__headline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.resource-status-panel__kicker {
+  margin: 0 0 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resource-status-panel__headline-value {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.resource-status-panel__trend {
+  margin-left: 0.35rem;
+  color: var(--text-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--size-sm);
+  text-transform: capitalize;
 }
 
 .resource-bar {
@@ -2063,6 +2092,45 @@ strong { color: var(--text-secondary); }
   padding-top: 0.25rem;
 }
 
+.resource-status-panel__bar-note,
+.resource-status-panel__hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--size-sm);
+}
+
+.resource-status-panel__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0;
+}
+
+.resource-status-panel__facts div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.resource-status-panel__facts dt {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.resource-status-panel__facts dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--size-sm);
+  font-weight: 600;
+}
+
+.resource-status-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 /* badge variants: corridor status and resource levels */
 .badge--stable,
 .resource-corridor--open      { background: rgba(74, 222, 128, 0.18); color: #bbf7d0; }
@@ -2070,6 +2138,13 @@ strong { color: var(--text-secondary); }
 .resource-corridor--disrupted { background: rgba(251, 191, 36, 0.18); color: #fde68a; }
 .badge--critical,
 .resource-corridor--blocked   { background: rgba(239, 68, 68, 0.18);  color: #fca5a5; }
+
+@media (max-width: 700px) {
+  .resource-status-panel__headline,
+  .resource-status-panel__facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 /* ── District map ─────────────────────────────────────────── */
 .district-card--current {
