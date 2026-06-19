@@ -168,6 +168,8 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('35% security')).toBeInTheDocument()
     expect(screen.getByText('Daily demand')).toBeInTheDocument()
     expect(screen.getByText('601 rations')).toBeInTheDocument()
+    expect(screen.getByText('Local output')).toBeInTheDocument()
+    expect(screen.getByText('102 rations/day')).toBeInTheDocument()
     expect(screen.getByText('Corridor imports')).toBeInTheDocument()
     expect(screen.getByText('150 rations/day')).toBeInTheDocument()
     expect(screen.getByText('Market read')).toBeInTheDocument()

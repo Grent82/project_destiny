@@ -84,6 +84,13 @@ describe('endDay', () => {
     expect(next.timeSlot).toBe('morning')
   })
 
+  it('runs real food stock-and-flow and keeps food security synchronized to stock', () => {
+    const next = endDay(initialGameStateSnapshot)
+
+    expect(next.cityResources.foodStock).toBe(621)
+    expect(next.cityResources.foodSecurity).toBe(62)
+  })
+
   it('logs a day-separator entry in the activity log', () => {
     const next = endDay(initialGameStateSnapshot)
     const dayEntry = next.activityLog.find((e) => e.message.includes('Day 2'))

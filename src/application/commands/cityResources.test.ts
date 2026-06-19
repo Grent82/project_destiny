@@ -104,34 +104,30 @@ describe('applyEndOfDayResources', () => {
     }
   })
 
-  it('reduces foodSecurity by 10 and logs warning when corridor is blocked', () => {
+  it('logs a corridor warning when the route is blocked without mutating stock-derived security directly', () => {
     const blockedState: GameState = {
       ...initialGameStateSnapshot,
       cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'blocked' },
     }
     const result = applyEndOfDayResources(blockedState)
-    expect(result.cityResources.foodSecurity).toBe(
-      initialGameStateSnapshot.cityResources.foodSecurity - 10,
-    )
+    expect(result.cityResources.foodSecurity).toBe(initialGameStateSnapshot.cityResources.foodSecurity)
     const warning = result.activityLog.find((e) => e.message.includes('Green Corridor'))
     expect(warning).toBeDefined()
     expect(warning?.category).toBe('system')
   })
 
-  it('reduces foodSecurity by 3 when corridor is disrupted (no warning logged)', () => {
+  it('leaves foodSecurity unchanged when the corridor is disrupted', () => {
     const disruptedState: GameState = {
       ...initialGameStateSnapshot,
       cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'disrupted' },
     }
     const result = applyEndOfDayResources(disruptedState)
-    expect(result.cityResources.foodSecurity).toBe(
-      initialGameStateSnapshot.cityResources.foodSecurity - 3,
-    )
+    expect(result.cityResources.foodSecurity).toBe(initialGameStateSnapshot.cityResources.foodSecurity)
     const corridorLog = result.activityLog.find((e) => e.message.includes('Green Corridor'))
     expect(corridorLog).toBeUndefined()
   })
 
-  it('clamps foodSecurity to 0 when blocked and nearly depleted', () => {
+  it('does not clamp foodSecurity on its own when the blocked-corridor pressure is handled by stock-and-flow', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
       cityResources: {
@@ -141,6 +137,6 @@ describe('applyEndOfDayResources', () => {
       },
     }
     const result = applyEndOfDayResources(state)
-    expect(result.cityResources.foodSecurity).toBe(0)
+    expect(result.cityResources.foodSecurity).toBe(5)
   })
 })

@@ -1,5 +1,7 @@
 import { type GameState } from '../../domain/game/contracts'
 
+import { syncFoodSecurityToStock } from './foodFlow'
+
 /**
  * Per-capita daily food consumption in units.
  * Based on typical rations: 1 unit = 1 person-day of food.
@@ -40,11 +42,13 @@ export function applyFoodConsumption(state: GameState): GameState {
   const newFoodStock = Math.max(0, state.cityResources.foodStock - totalConsumption)
 
   return {
-    ...state,
+    ...syncFoodSecurityToStock({
+      ...state,
     cityResources: {
       ...state.cityResources,
       foodStock: newFoodStock,
     },
+    }),
   }
 }
 

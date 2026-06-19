@@ -36,6 +36,9 @@ import { expireTimedQuestsOnState } from './questLifecycle'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { applyOpponentPressure, logOpponentPressure } from './applyOpponentPressure'
 import { compactResolvedEventInstances, pruneExpiredEventInstances } from './eventInstances'
+import { applyFoodProduction } from './applyFoodProduction'
+import { applyFoodConsumption } from './applyFoodConsumption'
+import { applyCorridorImport } from './applyCorridorImport'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -72,26 +75,11 @@ export function applyEndOfDayResources(state: GameState): GameState {
 
   // Corridor status → food supply impact
   if (next.cityResources.corridorStatus === "blocked") {
-    next = {
-      ...next,
-      cityResources: {
-        ...next.cityResources,
-        foodSecurity: Math.max(0, next.cityResources.foodSecurity - 10),
-      },
-    }
     next = appendActivityLogEntry(
       next,
       "system",
       "The Green Corridor remains sealed. Food reserves dwindle.",
     )
-  } else if (next.cityResources.corridorStatus === "disrupted") {
-    next = {
-      ...next,
-      cityResources: {
-        ...next.cityResources,
-        foodSecurity: Math.max(0, next.cityResources.foodSecurity - 3),
-      },
-    }
   }
 
   return next
@@ -161,7 +149,12 @@ export function endDay(state: GameState): GameState {
   next = applyThresholds(next)
   next = applyTitleEffects(next, rng)
 
-  // Step 5: City resource consequences
+  // Step 5: Real stock-and-flow before the city reacts to the shortage.
+  next = applyFoodProduction(next)
+  next = applyCorridorImport(next).state
+  next = applyFoodConsumption(next)
+
+  // Step 5b: City resource consequences
   next = applyEndOfDayResources(next)
 
   // Steps 5b-5d: relationship drift, NPC departure, durability warnings

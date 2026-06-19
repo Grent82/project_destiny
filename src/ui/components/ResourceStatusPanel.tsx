@@ -86,6 +86,10 @@ export function ResourceStatusPanel() {
           <dd>{overview.dailyConsumption} rations</dd>
         </div>
         <div>
+          <dt>Local output</dt>
+          <dd>{overview.localOutput} rations/day</dd>
+        </div>
+        <div>
           <dt>Corridor imports</dt>
           <dd>{overview.corridorImport} rations/day</dd>
         </div>
@@ -99,7 +103,7 @@ export function ResourceStatusPanel() {
         </div>
       </dl>
       <p className="resource-status-panel__hint">
-        {overview.marketState}. The city is currently leaning on Corridor supply rather than restored local output.
+        {overview.marketState}. Local production is contributing {overview.localOutput} rations a day; the rest of the city's breathing room depends on the Corridor staying open.
       </p>
       <div className="resource-status-panel__actions">
         <Link className="action-button action-button--secondary" to={overview.playerActions.contractsRoute}>

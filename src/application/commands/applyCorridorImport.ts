@@ -1,20 +1,10 @@
 import { type GameState } from '../../domain/game/contracts'
+import {
+  getCorridorImportAmount,
+  syncFoodSecurityToStock,
+} from './foodFlow'
 
-/**
- * Corridor throughput multipliers based on status.
- * narrative.md section 11: ~50% of city food comes via the Green Corridor.
- */
-export const CORRIDOR_THROUGHPUT_MODIFIERS: Record<GameState['cityResources']['corridorStatus'], number> = {
-  open: 1.0,
-  disrupted: 0.3,
-  blocked: 0.0,
-}
-
-/**
- * Base daily food import through the Green Corridor when fully open.
- * This represents the ~50% of city supply that comes via the corridor.
- */
-export const BASE_CORRIDOR_IMPORT = 500
+export { BASE_CORRIDOR_IMPORT, CORRIDOR_THROUGHPUT_MODIFIERS } from './foodFlow'
 
 /**
  * Toll rate: percentage of import value collected by the managing coalition.
@@ -39,8 +29,7 @@ export const CORRIDOR_TOLL_RATE = 0.05 // 5% toll
  * @returns New game state with updated food stock and optional toll income
  */
 export function applyCorridorImport(state: GameState): { state: GameState; tollIncome: number } {
-  const modifier = CORRIDOR_THROUGHPUT_MODIFIERS[state.cityResources.corridorStatus]
-  const importAmount = Math.round(BASE_CORRIDOR_IMPORT * modifier)
+  const importAmount = getCorridorImportAmount(state.cityResources.corridorStatus)
 
   const newFoodStock = state.cityResources.foodStock + importAmount
 
@@ -48,13 +37,13 @@ export function applyCorridorImport(state: GameState): { state: GameState; tollI
   const tollIncome = Math.round(importAmount * CORRIDOR_TOLL_RATE)
 
   return {
-    state: {
+    state: syncFoodSecurityToStock({
       ...state,
       cityResources: {
         ...state.cityResources,
         foodStock: newFoodStock,
       },
-    },
+    }),
     tollIncome,
   }
 }

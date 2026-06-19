@@ -2,11 +2,15 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../domain/game/contracts'
 import {
-  BASE_CORRIDOR_IMPORT,
-  CORRIDOR_THROUGHPUT_MODIFIERS,
   getCorridorReopeningProgress,
 } from '../commands/applyCorridorImport'
 import { calculateTotalConsumption } from '../commands/applyFoodConsumption'
+import {
+  buildCanonicalFoodProducers,
+  calculateFoodProductionTotal,
+  deriveFoodSecurityFromStock,
+  getCorridorImportAmount,
+} from '../commands/foodFlow'
 import {
   DEFAULT_FOOD_BASE_PRICE,
   describeFoodMarketState,
@@ -44,9 +48,7 @@ export const selectFoodSecurity = createSelector(
   (game) => {
     const foodStock = game.cityResources.foodStock ?? 0
     const foodCapacity = game.cityResources.foodCapacity ?? 1000
-    if (foodCapacity <= 0) return 0
-    const ratio = Math.min(Math.max(foodStock / foodCapacity, 0), 1)
-    return Math.round(ratio * 100)
+    return deriveFoodSecurityFromStock(foodStock, foodCapacity)
   }
 )
 
@@ -97,11 +99,10 @@ export const selectEconomyOverview = createSelector(
     foodPrice,
     marketPressure,
   ) => {
-    const corridorImport = Math.round(
-      BASE_CORRIDOR_IMPORT * CORRIDOR_THROUGHPUT_MODIFIERS[corridorStatus],
-    )
+    const localOutput = calculateFoodProductionTotal(buildCanonicalFoodProducers(game))
+    const corridorImport = getCorridorImportAmount(corridorStatus)
     const dailyConsumption = calculateTotalConsumption(game)
-    const netFoodDelta = corridorImport - dailyConsumption
+    const netFoodDelta = localOutput + corridorImport - dailyConsumption
 
     let foodPriceTrend: 'rising' | 'steady' | 'falling' = 'steady'
     if (foodPrice > DEFAULT_FOOD_BASE_PRICE) foodPriceTrend = 'rising'
@@ -113,6 +114,7 @@ export const selectEconomyOverview = createSelector(
       foodSecurity,
       waterAccess,
       materialStock,
+      localOutput,
       dailyConsumption,
       corridorStatus,
       corridorImport,
