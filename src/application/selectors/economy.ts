@@ -6,6 +6,7 @@ import {
 } from '../commands/applyCorridorImport'
 import { calculateTotalConsumption } from '../commands/applyFoodConsumption'
 import {
+  BOUND_KITCHEN_HAND_YIELD,
   buildCanonicalFoodProducers,
   calculateFoodProductionTotal,
   deriveFoodSecurityFromStock,
@@ -99,7 +100,11 @@ export const selectEconomyOverview = createSelector(
     foodPrice,
     marketPressure,
   ) => {
-    const localOutput = calculateFoodProductionTotal(buildCanonicalFoodProducers(game))
+    const producers = buildCanonicalFoodProducers(game)
+    const localOutput = calculateFoodProductionTotal(producers)
+    const boundKitchenProducer = producers.find((producer) => producer.agentId === 'producer-bound-kitchen-service')
+    const boundKitchenHands = boundKitchenProducer?.assignedLabor ?? 0
+    const boundKitchenOutput = boundKitchenHands * BOUND_KITCHEN_HAND_YIELD
     const corridorImport = getCorridorImportAmount(corridorStatus)
     const dailyConsumption = calculateTotalConsumption(game)
     const netFoodDelta = localOutput + corridorImport - dailyConsumption
@@ -116,6 +121,8 @@ export const selectEconomyOverview = createSelector(
       materialStock,
       localOutput,
       dailyConsumption,
+      boundKitchenHands,
+      boundKitchenOutput,
       corridorStatus,
       corridorImport,
       corridorProgress: getCorridorReopeningProgress(game),

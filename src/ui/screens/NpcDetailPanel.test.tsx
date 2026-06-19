@@ -40,6 +40,18 @@ function renderIdaPanel(storeState = initialStateWithIda) {
   return store
 }
 
+function withKitchenState<T extends typeof initialStateWithIda>(state: T, roomState: 'intact' | 'damaged') {
+  return {
+    ...state,
+    house: {
+      ...state.house,
+      rooms: state.house.rooms.map((room) =>
+        room.roomId === 'room-kitchen' ? { ...room, state: roomState } : room,
+      ),
+    },
+  }
+}
+
 function stateWithPlayerHeldIda() {
   return {
     ...initialStateWithIda,
@@ -220,7 +232,7 @@ describe('NpcDetailPanel — courtship loop', () => {
 })
 
 describe('NpcDetailPanel — bond status visibility', () => {
-  it('shows house-held bond details and safe existing actions for player-held NPCs', () => {
+  it('shows house-held bond details and an honest kitchen gate when the room is still damaged', () => {
     renderIdaPanel(stateWithPlayerHeldIda())
 
     expect(screen.getByRole('heading', { name: 'Bond Status' })).toBeInTheDocument()
@@ -229,6 +241,14 @@ describe('NpcDetailPanel — bond status visibility', () => {
     expect(screen.getByText(/Contract buyout: 40 Marks/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Release from bond' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Offer for transfer' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Repair kitchen for food service' })).toBeDisabled()
+    expect(screen.getByText(/Repair the kitchen before assigning food service/i)).toBeInTheDocument()
+  })
+
+  it('shows the food-service action once the kitchen is repaired', () => {
+    renderIdaPanel(withKitchenState(stateWithPlayerHeldIda(), 'intact'))
+
+    expect(screen.getByRole('button', { name: 'Place in food service' })).toBeInTheDocument()
   })
 
   it('shows transferred holder details and rescue actions for NPC-held bonds', () => {
@@ -240,5 +260,16 @@ describe('NpcDetailPanel — bond status visibility', () => {
     expect(screen.getByRole('button', { name: 'Buy freedom' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Extract quietly' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Seize by force' })).toBeInTheDocument()
+  })
+
+  it('can place a player-held bonded NPC into kitchen food service', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel(withKitchenState(stateWithPlayerHeldIda(), 'intact'))
+
+    await user.click(screen.getByRole('button', { name: 'Place in food service' }))
+
+    const ida = store.getState().game.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
+    expect(ida?.assignment).toBe('working')
+    expect(ida?.roomAssignment).toBe('room-kitchen')
   })
 })

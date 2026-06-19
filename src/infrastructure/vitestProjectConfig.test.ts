@@ -19,7 +19,7 @@ async function loadResolvedConfig() {
 }
 
 describe('vitest project scoping', () => {
-  it('limits the storybook browser project to story files', async () => {
+  it.runIf(process.env.CODEX_DISABLE_STORYBOOK_PROJECT !== '1')('limits the storybook browser project to story files', async () => {
     process.env.STORYBOOK_DISABLE_CHROMATIC = '1'
     delete process.env.CODEX_DISABLE_STORYBOOK_PROJECT
     vi.resetModules()
@@ -37,9 +37,9 @@ describe('vitest project scoping', () => {
     ])
   })
 
-  it('keeps the primary jsdom project scoped to normal test files', async () => {
+  it('keeps the primary jsdom project scoped to normal test files for local codex wrapper runs', async () => {
     process.env.STORYBOOK_DISABLE_CHROMATIC = '1'
-    delete process.env.CODEX_DISABLE_STORYBOOK_PROJECT
+    process.env.CODEX_DISABLE_STORYBOOK_PROJECT = '1'
     vi.resetModules()
     const config = await loadResolvedConfig()
     const projects = (config.test?.projects ?? []) as ProjectWithTest[]
@@ -57,6 +57,8 @@ describe('vitest project scoping', () => {
       'src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
       'src/**/*.mdx',
     ])
+
+    delete process.env.CODEX_DISABLE_STORYBOOK_PROJECT
   })
 
   it('can omit the storybook browser project for local codex wrapper runs', async () => {

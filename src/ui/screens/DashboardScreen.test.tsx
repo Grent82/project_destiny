@@ -30,6 +30,15 @@ function createMemorySaveStore(): SaveGameStore {
   }
 }
 
+function makeHouseKitchenIntact() {
+  return {
+    ...initialGameStateSnapshot.house,
+    rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+      room.roomId === 'room-kitchen' ? { ...room, state: 'intact' as const } : room,
+    ),
+  }
+}
+
 describe('DashboardScreen', () => {
   it('surfaces a clear recommended next quest action in overview', () => {
     const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
@@ -175,6 +184,50 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('Market read')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Check available work' })).toHaveAttribute('href', '/contracts')
     expect(screen.getByRole('link', { name: 'Review ward prices' })).toHaveAttribute('href', '/shops')
+  })
+
+  it('surfaces bonded kitchen service when the house is using bound food labor', async () => {
+    const user = userEvent.setup()
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      house: makeHouseKitchenIntact(),
+      roster: initialGameStateSnapshot.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? {
+              ...npc,
+              assignment: 'working' as const,
+              roomAssignment: 'room-kitchen',
+              bondStatus: {
+                holderId: 'player',
+                contractValue: 55,
+                termDays: 20,
+                entryReason: 'voluntary' as const,
+                alongsideFreeAssignmentDays: 0,
+                lastEqualityNoticeDay: null,
+                forSale: false,
+                lastOfferDay: null,
+                marketValue: 140,
+                ownerType: 'player' as const,
+                bondStartDay: 1,
+              },
+            }
+          : npc,
+      ),
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    await user.click(screen.getByRole('tab', { name: 'Operations' }))
+
+    expect(screen.getByText('Bonded kitchen service')).toBeInTheDocument()
+    expect(screen.getByText('1 hand · +6 rations/day')).toBeInTheDocument()
+    expect(screen.getByText('126 rations/day')).toBeInTheDocument()
   })
 
   it('Work Board CTA uses router navigation without hard-reloading', async () => {

@@ -16,6 +16,8 @@ export interface Producer extends EconomicAgent {
   requiredLabor: number
 }
 
+export const BOUND_KITCHEN_HAND_YIELD = 6
+
 export const BASE_CORRIDOR_IMPORT = 500
 
 export const CORRIDOR_THROUGHPUT_MODIFIERS: Record<GameState['cityResources']['corridorStatus'], number> = {
@@ -86,13 +88,38 @@ export function getCorridorImportAmount(
 export function buildCanonicalFoodProducers(state: GameState): Producer[] {
   const kitchen = state.house.rooms.find((room) => room.roomId === 'room-kitchen')
   const houseLabor = kitchen?.state === 'intact' ? 2 : 0
+  const boundKitchenHands =
+    kitchen?.state === 'intact'
+      ? state.roster.filter(
+          (npc) =>
+            npc.assignment === 'working' &&
+            npc.roomAssignment === 'room-kitchen' &&
+            npc.bondStatus?.holderId === 'player' &&
+            npc.bondStatus?.ownerType === 'player',
+        ).length
+      : 0
 
-  return [
+  const producers = [
     buildProducer('producer-house-kitchen-gardens', 'house', 'inside-walls', 18, houseLabor, 2),
     buildProducer('producer-inner-gardens', 'district', 'inside-walls', 24, 3, 3),
     buildProducer('producer-field-belt-shares', 'district', 'field-belt', 50, 5, 5),
     buildProducer('producer-corridor-fed-farms', 'district', 'corridor-fed', 32, 4, 4),
   ]
+
+  if (boundKitchenHands > 0) {
+    producers.push(
+      buildProducer(
+        'producer-bound-kitchen-service',
+        'house',
+        'inside-walls',
+        BOUND_KITCHEN_HAND_YIELD * boundKitchenHands,
+        boundKitchenHands,
+        boundKitchenHands,
+      ),
+    )
+  }
+
+  return producers
 }
 
 export function calculateFoodProductionTotal(producers: readonly Producer[]): number {

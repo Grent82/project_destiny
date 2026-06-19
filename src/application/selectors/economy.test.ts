@@ -21,6 +21,15 @@ function makeState(overrides: Partial<typeof initialGameStateSnapshot> = {}): { 
   }
 }
 
+function makeHouseKitchenIntact() {
+  return {
+    ...initialGameStateSnapshot.house,
+    rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+      room.roomId === 'room-kitchen' ? { ...room, state: 'intact' as const } : room,
+    ),
+  }
+}
+
 describe('selectFoodSecurity', () => {
   it('returns 0 when food stock is zero', () => {
     const state = makeState({
@@ -170,5 +179,39 @@ describe('selectEconomyOverview', () => {
     const overview = selectEconomyOverview(state)
 
     expect(overview.playerActions.marketRoute).toBe('/district-map')
+  })
+
+  it('includes bonded kitchen labor in local output when a player-held bound NPC is placed into food service', () => {
+    const state = makeState({
+      house: makeHouseKitchenIntact(),
+      roster: initialGameStateSnapshot.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? {
+              ...npc,
+              assignment: 'working' as const,
+              roomAssignment: 'room-kitchen',
+              bondStatus: {
+                holderId: 'player',
+                contractValue: 55,
+                termDays: 20,
+                entryReason: 'voluntary' as const,
+                alongsideFreeAssignmentDays: 0,
+                lastEqualityNoticeDay: null,
+                forSale: false,
+                lastOfferDay: null,
+                marketValue: 140,
+                ownerType: 'player' as const,
+                bondStartDay: 1,
+              },
+            }
+          : npc,
+      ),
+    })
+
+    const overview = selectEconomyOverview(state)
+
+    expect(overview.localOutput).toBe(126)
+    expect(overview.boundKitchenHands).toBe(1)
+    expect(overview.boundKitchenOutput).toBe(6)
   })
 })

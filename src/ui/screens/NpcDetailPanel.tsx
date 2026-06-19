@@ -150,6 +150,17 @@ const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as cons
 function BondStatusSection({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
   const bondSurface = useAppSelector((state) => selectNpcBondSurface(state, detail.npcId))
+  const kitchenIsIntact = useAppSelector((state) =>
+    state.game.house.rooms.some((room) => room.roomId === 'room-kitchen' && room.state === 'intact'),
+  )
+  const isAssignedToKitchenService = useAppSelector((state) =>
+    state.game.roster.some(
+      (npc) =>
+        npc.npcId === detail.npcId &&
+        npc.assignment === 'working' &&
+        npc.roomAssignment === 'room-kitchen',
+    ),
+  )
 
   if (bondSurface.status === 'free') {
     return (
@@ -174,6 +185,7 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
             {bondSurface.termDays !== null && <span className="badge">Term: {bondSurface.termDays} days</span>}
             {bondSurface.marketValue !== null && <span className="badge">Transfer value: {bondSurface.marketValue} Marks</span>}
             {bondSurface.forSale && <span className="badge badge-warning">Marked for transfer</span>}
+            {isAssignedToKitchenService && <span className="badge">Assigned to kitchen service</span>}
           </div>
           <div className="bond-status-actions">
             <button
@@ -198,7 +210,38 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
             >
               {bondSurface.forSale ? 'Withdraw transfer offer' : 'Offer for transfer'}
             </button>
+            {kitchenIsIntact ? (
+              <button
+                className="action-button"
+                type="button"
+                onClick={() => {
+                  if (isAssignedToKitchenService) {
+                    dispatch(gameActions.setNpcRoomAssignment({ npcId: detail.npcId, roomId: null }))
+                    dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: 'idle' }))
+                    return
+                  }
+                  dispatch(gameActions.setNpcRoomAssignment({ npcId: detail.npcId, roomId: 'room-kitchen' }))
+                  dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: 'working' }))
+                }}
+              >
+                {isAssignedToKitchenService ? 'Remove from food service' : 'Place in food service'}
+              </button>
+            ) : (
+              <button
+                className="action-button action-button--secondary"
+                type="button"
+                disabled
+                title="Repair the kitchen before assigning food service."
+              >
+                Repair kitchen for food service
+              </button>
+            )}
           </div>
+          {!kitchenIsIntact && (
+            <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+              Repair the kitchen before assigning food service.
+            </p>
+          )}
         </>
       ) : (
         <>
