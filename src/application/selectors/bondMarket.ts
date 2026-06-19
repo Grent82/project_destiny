@@ -1,8 +1,90 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
+import type { BondEntryReason, BondStatus } from '../../domain/npc/contracts'
 
 const selectGame = (state: RootState) => state.game
+
+const BOND_ENTRY_REASON_LABELS: Record<BondEntryReason, string> = {
+  'compact-assessment': 'Compact assessment',
+  'debt-settlement': 'Debt settlement',
+  voluntary: 'Voluntary contract',
+  'combat-capture': 'Combat capture',
+  inherited: 'Inherited claim',
+}
+
+function formatBondEntryReason(entryReason: BondEntryReason): string {
+  return BOND_ENTRY_REASON_LABELS[entryReason]
+}
+
+function getHolderName(bondStatus: BondStatus): string {
+  if (bondStatus.ownerType === 'player' || bondStatus.holderId === 'player') {
+    return 'House Valdris'
+  }
+
+  return contentCatalog.bondBuyersById.get(bondStatus.holderId)?.name ?? 'Unknown holder'
+}
+
+export interface NpcBondSurface {
+  status: 'free' | 'player-held' | 'npc-held'
+  holderName: string | null
+  entryReasonLabel: string | null
+  contractValue: number | null
+  termDays: number | null
+  marketValue: number | null
+  forSale: boolean
+  ransomCost: number | null
+  rosterSummary: string | null
+  rosterBadges: string[]
+}
+
+export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSurface {
+  if (!bondStatus) {
+    return {
+      status: 'free',
+      holderName: null,
+      entryReasonLabel: null,
+      contractValue: null,
+      termDays: null,
+      marketValue: null,
+      forSale: false,
+      ransomCost: null,
+      rosterSummary: null,
+      rosterBadges: [],
+    }
+  }
+
+  const holderName = getHolderName(bondStatus)
+  const entryReasonLabel = formatBondEntryReason(bondStatus.entryReason)
+
+  if (bondStatus.ownerType === 'player') {
+    return {
+      status: 'player-held',
+      holderName,
+      entryReasonLabel,
+      contractValue: bondStatus.contractValue,
+      termDays: bondStatus.termDays,
+      marketValue: bondStatus.marketValue,
+      forSale: bondStatus.forSale,
+      ransomCost: null,
+      rosterSummary: 'Bound to the house',
+      rosterBadges: bondStatus.forSale ? ['Marked for transfer'] : [],
+    }
+  }
+
+  return {
+    status: 'npc-held',
+    holderName,
+    entryReasonLabel,
+    contractValue: bondStatus.contractValue,
+    termDays: bondStatus.termDays,
+    marketValue: bondStatus.marketValue,
+    forSale: false,
+    ransomCost: Math.ceil(bondStatus.marketValue * 1.5),
+    rosterSummary: `Held by ${holderName}`,
+    rosterBadges: [],
+  }
+}
 
 export const selectBondedPersonsRegistry = createSelector(
   [selectGame],
@@ -35,3 +117,8 @@ export const selectForSaleNpcs = createSelector(
       (npc) => npc.bondStatus?.forSale === true && npc.bondStatus.ownerType === 'player',
     ),
 )
+
+export function selectNpcBondSurface(state: RootState, npcId: string): NpcBondSurface {
+  const npc = state.game.roster.find((entry) => entry.npcId === npcId)
+  return describeNpcBondSurface(npc?.bondStatus ?? null)
+}

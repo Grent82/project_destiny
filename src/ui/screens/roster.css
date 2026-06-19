@@ -119,6 +119,19 @@
   line-height: 1.35;
 }
 
+.muster-entry-bond {
+  margin: 0.22rem 0 0;
+  font-size: 0.72rem;
+  color: var(--text-accent, #d7bf82);
+}
+
+.muster-entry-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
 .muster-condition {
   display: flex;
   gap: 0.55rem;
@@ -352,4 +365,24 @@
   font-style: italic;
   color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+.bond-status-copy {
+  margin: 0.2rem 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.bond-status-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.5rem 0 0;
+}
+
+.bond-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }

@@ -40,6 +40,63 @@ function renderIdaPanel(storeState = initialStateWithIda) {
   return store
 }
 
+function stateWithPlayerHeldIda() {
+  return {
+    ...initialStateWithIda,
+    roster: initialStateWithIda.roster.map((npc) =>
+      npc.npcId === 'npc-ida-rhys'
+        ? {
+            ...npc,
+            bondStatus: {
+              holderId: 'player',
+              contractValue: 40,
+              termDays: 30,
+              entryReason: 'debt-settlement' as const,
+              alongsideFreeAssignmentDays: 0,
+              lastEqualityNoticeDay: null,
+              forSale: false,
+              lastOfferDay: null,
+              marketValue: 120,
+              ownerType: 'player' as const,
+              bondStartDay: 1,
+            },
+          }
+        : npc,
+    ),
+  }
+}
+
+function stateWithTransferredIda() {
+  return {
+    ...initialStateWithIda,
+    money: 500,
+    bondedPersonsRegistry: {
+      'buyer-compact-registrar': ['npc-ida-rhys'],
+    },
+    roster: initialStateWithIda.roster.map((npc) =>
+      npc.npcId === 'npc-ida-rhys'
+        ? {
+            ...npc,
+            assignment: 'transferred' as const,
+            bondStatus: {
+              holderId: 'buyer-compact-registrar',
+              contractValue: 40,
+              termDays: 30,
+              entryReason: 'debt-settlement' as const,
+              alongsideFreeAssignmentDays: 0,
+              lastEqualityNoticeDay: null,
+              forSale: false,
+              lastOfferDay: 1,
+              marketValue: 120,
+              ownerType: 'npc' as const,
+              bondStartDay: 1,
+            },
+          }
+        : npc,
+    ),
+  }
+}
+
 describe('NpcDetailPanel — Marion clue discoverability', () => {
   it('shows no new-topic hint when the player holds no relevant items', () => {
     renderMarionPanel()
@@ -159,5 +216,29 @@ describe('NpcDetailPanel — courtship loop', () => {
     expect(screen.getByText(/Courtship History/i)).toBeInTheDocument()
     expect(screen.getByText(/You make time to court Ida Rhys/i)).toBeInTheDocument()
     expect(store.getState().game.relationships['player→npc-ida-rhys']?.intimacyStage).toBe('affinity')
+  })
+})
+
+describe('NpcDetailPanel — bond status visibility', () => {
+  it('shows house-held bond details and safe existing actions for player-held NPCs', () => {
+    renderIdaPanel(stateWithPlayerHeldIda())
+
+    expect(screen.getByRole('heading', { name: 'Bond Status' })).toBeInTheDocument()
+    expect(screen.getByText(/Held by House Valdris/i)).toBeInTheDocument()
+    expect(screen.getByText(/Debt settlement/i)).toBeInTheDocument()
+    expect(screen.getByText(/Contract buyout: 40 Marks/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Release from bond' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Offer for transfer' })).toBeInTheDocument()
+  })
+
+  it('shows transferred holder details and rescue actions for NPC-held bonds', () => {
+    renderIdaPanel(stateWithTransferredIda())
+
+    expect(screen.getByRole('heading', { name: 'Bond Status' })).toBeInTheDocument()
+    expect(screen.getByText(/Transferred to Compact Registrar/i)).toBeInTheDocument()
+    expect(screen.getByText(/Legal buyout: 180 Marks/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Buy freedom' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Extract quietly' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Seize by force' })).toBeInTheDocument()
   })
 })

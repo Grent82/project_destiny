@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -146,6 +146,96 @@ interface NpcDetailPanelProps {
 }
 
 const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as const
+
+function BondStatusSection({ detail }: { detail: NpcDetail }) {
+  const dispatch = useAppDispatch()
+  const bondSurface = useAppSelector((state) => selectNpcBondSurface(state, detail.npcId))
+
+  if (bondSurface.status === 'free') {
+    return (
+      <>
+        <h3 className="muster-section-title">Bond Status</h3>
+        <p className="bond-status-copy">Free service. No active bond contract is attached to this operative.</p>
+      </>
+    )
+  }
+
+  const defaultMarketValue = Math.max(bondSurface.marketValue ?? 0, bondSurface.contractValue ?? 0)
+
+  return (
+    <>
+      <h3 className="muster-section-title">Bond Status</h3>
+      {bondSurface.status === 'player-held' ? (
+        <>
+          <p className="bond-status-copy">Held by {bondSurface.holderName}.</p>
+          <p className="bond-status-copy">{bondSurface.entryReasonLabel}.</p>
+          <div className="bond-status-facts">
+            <span className="badge badge-warning">Contract buyout: {bondSurface.contractValue} Marks</span>
+            {bondSurface.termDays !== null && <span className="badge">Term: {bondSurface.termDays} days</span>}
+            {bondSurface.marketValue !== null && <span className="badge">Transfer value: {bondSurface.marketValue} Marks</span>}
+            {bondSurface.forSale && <span className="badge badge-warning">Marked for transfer</span>}
+          </div>
+          <div className="bond-status-actions">
+            <button
+              className="action-button action-button--secondary"
+              type="button"
+              onClick={() => dispatch(gameActions.freeNpc({ npcId: detail.npcId }))}
+            >
+              Release from bond
+            </button>
+            <button
+              className="action-button"
+              type="button"
+              onClick={() =>
+                dispatch(
+                  gameActions.markNpcForSale({
+                    npcId: detail.npcId,
+                    forSale: !bondSurface.forSale,
+                    marketValue: defaultMarketValue,
+                  }),
+                )
+              }
+            >
+              {bondSurface.forSale ? 'Withdraw transfer offer' : 'Offer for transfer'}
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="bond-status-copy">Transferred to {bondSurface.holderName}.</p>
+          <p className="bond-status-copy">{bondSurface.entryReasonLabel}.</p>
+          <div className="bond-status-facts">
+            <span className="badge badge-warning">Legal buyout: {bondSurface.ransomCost} Marks</span>
+            {bondSurface.marketValue !== null && <span className="badge">Filed value: {bondSurface.marketValue} Marks</span>}
+          </div>
+          <div className="bond-status-actions">
+            <button
+              className="action-button action-button--secondary"
+              type="button"
+              onClick={() => dispatch(gameActions.rescueBondedNpcLegal({ npcId: detail.npcId }))}
+            >
+              Buy freedom
+            </button>
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => dispatch(gameActions.rescueBondedNpcExtraction({ npcId: detail.npcId }))}
+            >
+              Extract quietly
+            </button>
+            <button
+              className="action-button action-button--danger"
+              type="button"
+              onClick={() => dispatch(gameActions.rescueBondedNpcForce({ npcId: detail.npcId }))}
+            >
+              Seize by force
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  )
+}
 
 function DutySection({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
@@ -629,6 +719,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
       </div>
 
       <DutySection detail={detail} />
+      <BondStatusSection detail={detail} />
       <EquipmentSection detail={detail} onOpenSlot={setEquipSlot} />
       {equipSlot && (
         <ItemSelectionModal

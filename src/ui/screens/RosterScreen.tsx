@@ -17,10 +17,11 @@ const ROSTER_GROUPS = [
   { key: 'training', label: 'In training' },
   { key: 'idle', label: 'At liberty' },
   { key: 'recovering', label: 'Recovering' },
+  { key: 'transferred', label: 'Transferred away' },
 ] as const
 
 type SortKey = 'name' | 'health' | 'morale' | 'stress' | 'melee' | 'ranged' | 'medicine' | 'administration' | 'engineering' | 'negotiation' | 'survival' | 'security' | 'crafting' | 'intrigue'
-type AssignmentFilter = 'all' | 'deployed' | 'assigned_title' | 'working' | 'training' | 'idle' | 'recovering'
+type AssignmentFilter = 'all' | 'deployed' | 'assigned_title' | 'working' | 'training' | 'idle' | 'recovering' | 'transferred'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'name', label: 'Name' },
@@ -239,6 +240,16 @@ function RosterRow({ entry, selectedNpcId, onSelect }: {
         <p className="muster-entry-note">
           {entry.firstQuirkText.charAt(0).toUpperCase() + entry.firstQuirkText.slice(1)}.
         </p>
+      )}
+      {entry.bondSummary && (
+        <p className="muster-entry-bond">{entry.bondSummary}</p>
+      )}
+      {entry.bondBadges.length > 0 && (
+        <div className="muster-entry-badges">
+          {entry.bondBadges.map((badge) => (
+            <span key={badge} className="badge badge-warning">{badge}</span>
+          ))}
+        </div>
       )}
       <div className="muster-condition">
         {([

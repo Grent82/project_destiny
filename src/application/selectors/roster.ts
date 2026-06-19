@@ -3,6 +3,7 @@ import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import { selectCharacterSignature } from './characterSignature'
 import type { Skills } from '../../domain/npc/contracts'
+import { describeNpcBondSurface } from './bondMarket'
 
 export const WORKING_INCOME_SKILLS: (keyof Skills)[] = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
 
@@ -73,6 +74,7 @@ export const selectRosterEntries = createSelector(
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const def = npcDef ?? contentCatalog.enemyNpcsById.get(npc.npcId)
     const quirks = npcDef?.quirks ?? []
+    const bondSurface = describeNpcBondSurface(npc.bondStatus ?? null)
     return {
       npcId: npc.npcId,
       name: def?.name ?? npc.npcId,
@@ -87,6 +89,8 @@ export const selectRosterEntries = createSelector(
       loyalty: npc.traits.loyalty,
       skills: npc.skills,
       workingIncome: computeWorkingIncome(npc.skills),
+      bondSummary: bondSurface.rosterSummary,
+      bondBadges: bondSurface.rosterBadges,
       // Attachment moment fields
       firstQuirkText: quirks[0]?.text ?? null,
       backgroundPhrase: npcDef?.background ? npcDef.background.split('.')[0] : null,
