@@ -73,7 +73,7 @@ export const CORRIDOR_REOPENING_THRESHOLDS = {
  * Progress rules:
  *   - blocked -> disrupted: requires 3 consecutive days of effort
  *   - disrupted -> open: requires 2 consecutive days of effort
- *   - Progress is tracked in lastFiredDay under 'corridorClearance' key
+ *   - Progress is tracked in cityResources.corridorClearanceProgressDays
  *
  * @param state - Current game state
  * @param effortDays - Number of days of clearance effort to apply
@@ -89,8 +89,7 @@ export function reopenCorridor(state: GameState, effortDays: number = 1): GameSt
   }
 
   // Track clearance progress
-  const clearanceKey = 'corridorClearance'
-  const currentProgress = next.lastFiredDay[clearanceKey] ?? 0
+  const currentProgress = next.cityResources.corridorClearanceProgressDays ?? 0
   const newProgress = currentProgress + effortDays
 
   // Check if we can advance status
@@ -101,10 +100,7 @@ export function reopenCorridor(state: GameState, effortDays: number = 1): GameSt
       cityResources: {
         ...next.cityResources,
         corridorStatus: 'disrupted',
-      },
-      lastFiredDay: {
-        ...next.lastFiredDay,
-        [clearanceKey]: 0, // Reset progress for next stage
+        corridorClearanceProgressDays: 0,
       },
     }
   } else if (currentStatus === 'disrupted' && newProgress >= CORRIDOR_REOPENING_THRESHOLDS.disruptedToOpen) {
@@ -114,19 +110,16 @@ export function reopenCorridor(state: GameState, effortDays: number = 1): GameSt
       cityResources: {
         ...next.cityResources,
         corridorStatus: 'open',
-      },
-      lastFiredDay: {
-        ...next.lastFiredDay,
-        [clearanceKey]: 0,
+        corridorClearanceProgressDays: 0,
       },
     }
   } else {
     // Just accumulate progress
     next = {
       ...next,
-      lastFiredDay: {
-        ...next.lastFiredDay,
-        [clearanceKey]: newProgress,
+      cityResources: {
+        ...next.cityResources,
+        corridorClearanceProgressDays: newProgress,
       },
     }
   }
@@ -146,7 +139,7 @@ export function getCorridorReopeningProgress(state: GameState): {
   daysRemaining: number
 } {
   const currentStatus = state.cityResources.corridorStatus
-  const daysProgress = state.lastFiredDay['corridorClearance'] ?? 0
+  const daysProgress = state.cityResources.corridorClearanceProgressDays ?? 0
 
   let daysRemaining = 0
   if (currentStatus === 'blocked') {

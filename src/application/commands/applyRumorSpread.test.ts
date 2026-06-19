@@ -20,7 +20,7 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     districts: [],
     roster: [],
     inventory: [],
-    cityResources: { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open' },
+    cityResources: { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0 },
     activityLog: [],
     selectedSquadNpcIds: [],
     activeCombat: null,

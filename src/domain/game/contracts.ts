@@ -66,6 +66,7 @@ export const cityResourcesSchema = z
     waterAccess: z.number().min(0).max(100),
     materialStock: z.number().min(0).max(100),
     corridorStatus: corridorStatusSchema,
+    corridorClearanceProgressDays: nonNegativeIntegerSchema.default(0),
   })
   .strict()
 

@@ -25,6 +25,7 @@ describe('selectCityResources', () => {
       waterAccess: 70,
       materialStock: 50,
       corridorStatus: 'open',
+      corridorClearanceProgressDays: 0,
     })
   })
 })
