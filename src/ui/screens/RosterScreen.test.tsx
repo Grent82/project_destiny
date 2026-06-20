@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
+import { vi } from 'vitest'
 
 import { createGameStore } from '../../application'
 import { initialStateWithIda } from '../../application/commands/testFixtures'
@@ -8,6 +9,26 @@ import { AppProviders } from '../app/AppProviders'
 import { RosterScreen } from './RosterScreen'
 
 describe('RosterScreen', () => {
+  it('does not emit unstable selector warnings on initial roster render', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    render(
+      <AppProviders store={createGameStore(initialStateWithIda)}>
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    const unstableWarnings = warn.mock.calls.filter(([message]) =>
+      typeof message === 'string' &&
+      message.includes('returned a different result when called with the same parameters'),
+    )
+
+    expect(unstableWarnings).toHaveLength(0)
+    warn.mockRestore()
+  })
+
   it('renders seeded roster entries and updates the selected detail panel', async () => {
     const user = userEvent.setup()
     const store = createGameStore(initialStateWithIda)

@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { vi } from 'vitest'
 
 import {
   createGameStore,
@@ -40,6 +41,26 @@ function makeHouseKitchenIntact() {
 }
 
 describe('DashboardScreen', () => {
+  it('does not emit unstable selector warnings on dashboard render', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    render(
+      <AppProviders store={createGameStore(initialGameStateSnapshot)}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    const unstableWarnings = warn.mock.calls.filter(([message]) =>
+      typeof message === 'string' &&
+      message.includes('returned a different result when called with the same parameters'),
+    )
+
+    expect(unstableWarnings).toHaveLength(0)
+    warn.mockRestore()
+  })
+
   it('surfaces a clear recommended next quest action in overview', () => {
     const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
     if (!harborwatch) {

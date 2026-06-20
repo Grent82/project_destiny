@@ -5,6 +5,8 @@ import { selectCharacterSignature } from './characterSignature'
 import type { Skills } from '../../domain/npc/contracts'
 import { describeNpcBondSurface } from './bondMarket'
 
+const selectRoster = (state: RootState) => state.game.roster
+
 export const WORKING_INCOME_SKILLS: (keyof Skills)[] = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
 
 export function computeWorkingIncome(skills: Partial<Skills>): number {
@@ -44,28 +46,38 @@ const TRAIT_LOW_LABELS: Record<string, string> = {
 
 /** Returns up to two dominant trait sentences for a given NPC. */
 export function selectNpcCharacterDescription(npcId: string) {
-  return (state: RootState): string[] => {
-    const runtime = state.game.roster.find((r) => r.npcId === npcId)
-    if (!runtime) return []
-    const traits = runtime.traits
-    return Object.entries(traits)
-      .filter(([, val]) => val > 65 || val < 35)
-      .sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50))
-      .slice(0, 2)
-      .map(([key, val]) => {
-        if (val > 65) return `Highly ${TRAIT_LABELS[key] ?? key}.`
-        return `Unusually ${TRAIT_LOW_LABELS[key] ?? key}.`
-      })
+  let selector = npcCharacterDescriptionSelectorCache.get(npcId)
+  if (!selector) {
+    selector = createSelector([selectRoster], (roster): string[] => {
+      const runtime = roster.find((r) => r.npcId === npcId)
+      if (!runtime) return []
+      const traits = runtime.traits
+      return Object.entries(traits)
+        .filter(([, val]) => val > 65 || val < 35)
+        .sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50))
+        .slice(0, 2)
+        .map(([key, val]) => {
+          if (val > 65) return `Highly ${TRAIT_LABELS[key] ?? key}.`
+          return `Unusually ${TRAIT_LOW_LABELS[key] ?? key}.`
+        })
+    })
+    npcCharacterDescriptionSelectorCache.set(npcId, selector)
   }
+  return selector
 }
 
 /** Returns the estimated working income for a given NPC (in Marks). */
 export function selectEstimatedNpcIncome(npcId: string) {
-  return (state: RootState): number => {
-    const runtime = state.game.roster.find((r) => r.npcId === npcId)
-    if (!runtime) return 3
-    return computeWorkingIncome(runtime.skills)
+  let selector = estimatedNpcIncomeSelectorCache.get(npcId)
+  if (!selector) {
+    selector = createSelector([selectRoster], (roster): number => {
+      const runtime = roster.find((r) => r.npcId === npcId)
+      if (!runtime) return 3
+      return computeWorkingIncome(runtime.skills)
+    })
+    estimatedNpcIncomeSelectorCache.set(npcId, selector)
   }
+  return selector
 }
 
 export const selectRosterEntries = createSelector(
@@ -100,8 +112,8 @@ export const selectRosterEntries = createSelector(
   }),
 )
 
-export function selectRosterDetail(state: RootState, npcId: string) {
-  const runtime = state.game.roster.find((entry) => entry.npcId === npcId)
+function buildRosterDetail(root: RootState, npcId: string) {
+  const runtime = root.game.roster.find((entry) => entry.npcId === npcId)
 
   if (!runtime) {
     return null
@@ -183,6 +195,21 @@ export function selectRosterDetail(state: RootState, npcId: string) {
     wagesOwedDays: runtime.wagesOwedDays,
     trainingFocus: runtime.trainingFocus,
     rarity: definition?.rarity ?? 'common',
-    signature: definition ? selectCharacterSignature(state, npcId) : '',
+    signature: definition ? selectCharacterSignature(root, npcId) : '',
   }
 }
+
+type RosterDetailView = ReturnType<typeof buildRosterDetail>
+
+export function selectRosterDetail(state: RootState, npcId: string): RosterDetailView {
+  let selector = rosterDetailSelectorCache.get(npcId)
+  if (!selector) {
+    selector = createSelector([(root: RootState) => root], (root): RosterDetailView => buildRosterDetail(root, npcId))
+    rosterDetailSelectorCache.set(npcId, selector)
+  }
+  return selector(state)
+}
+
+const npcCharacterDescriptionSelectorCache = new Map<string, (state: RootState) => string[]>()
+const estimatedNpcIncomeSelectorCache = new Map<string, (state: RootState) => number>()
+const rosterDetailSelectorCache = new Map<string, (state: RootState) => RosterDetailView>()

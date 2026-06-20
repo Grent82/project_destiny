@@ -119,6 +119,18 @@ export const selectForSaleNpcs = createSelector(
 )
 
 export function selectNpcBondSurface(state: RootState, npcId: string): NpcBondSurface {
-  const npc = state.game.roster.find((entry) => entry.npcId === npcId)
-  return describeNpcBondSurface(npc?.bondStatus ?? null)
+  let selector = npcBondSurfaceSelectorCache.get(npcId)
+  if (!selector) {
+    selector = createSelector(
+      [(root: RootState) => root.game.roster],
+      (roster) => {
+        const npc = roster.find((entry) => entry.npcId === npcId)
+        return describeNpcBondSurface(npc?.bondStatus ?? null)
+      },
+    )
+    npcBondSurfaceSelectorCache.set(npcId, selector)
+  }
+  return selector(state)
 }
+
+const npcBondSurfaceSelectorCache = new Map<string, (state: RootState) => NpcBondSurface>()

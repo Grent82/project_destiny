@@ -1,3 +1,4 @@
+import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import type { OwnedItemLocation } from '../../domain/items/contracts'
@@ -26,6 +27,18 @@ const CATEGORY_PRIMARY_ACTION: Record<string, ItemAction> = {
 export function selectItemsByLocation(state: RootState, location: OwnedItemLocation) {
   return state.game.ownedItems.filter((i) => i.location === location)
 }
+
+export const selectGiftInventoryItems = createSelector(
+  [(state: RootState) => state.game.ownedItems],
+  (ownedItems) =>
+    ownedItems
+      .filter((owned) => owned.location === 'inventory')
+      .flatMap((owned) => {
+        const definition = contentCatalog.itemsById.get(owned.itemId)
+        if (!definition || definition.category !== 'gift') return []
+        return [{ instanceId: owned.instanceId, itemName: definition.name }]
+      }),
+)
 
 /** Returns all available actions for a given owned item instance */
 export function selectItemActions(state: RootState, instanceId: string): ItemAction[] {

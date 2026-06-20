@@ -8,6 +8,7 @@ import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibi
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
+import { selectGiftInventoryItems } from '../../application/selectors/inventory'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
 import { ConfirmationModal } from '../components/ConfirmationModal'
@@ -492,15 +493,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const courtshipHistory = useAppSelector(selectCourtshipHistoryWithPlayer(detail.npcId))
   const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
   const houseDistrictId = useAppSelector((state) => state.game.houseDistrictId)
-  const giftItems = useAppSelector((state) =>
-    state.game.ownedItems
-      .filter((owned) => owned.location === 'inventory')
-      .flatMap((owned) => {
-        const definition = contentCatalog.itemsById.get(owned.itemId)
-        if (!definition || definition.category !== 'gift') return []
-        return [{ instanceId: owned.instanceId, itemName: definition.name }]
-      }),
-  )
+  const giftItems = useAppSelector(selectGiftInventoryItems)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const romanceEligible = contentCatalog.npcsById.get(detail.npcId)?.romanceEligible === true

@@ -1,3 +1,4 @@
+import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import { meetsDialogueCondition, isDialogueChoiceAvailable } from '../commands/dialogue'
@@ -182,18 +183,23 @@ export function selectActiveDialoguePresentation(state: RootState): ActiveDialog
  * by talking.
  */
 export function selectNpcHasNewDialogueTopics(npcId: string) {
-  return (state: RootState): boolean => {
-    const tree = contentCatalog.dialoguesByNpcId.get(npcId)
-    if (!tree) return false
-    const rootNode = tree.nodes.find((n) => n.id === tree.openingNodeId)
-    if (!rootNode) return false
-    const resolved = state.game.resolvedDialogueChoices[tree.id] ?? []
-    return rootNode.choices.some((choice) => {
-      if (!choice.condition || choice.condition.type !== 'hasItem') return false
-      if (resolved.includes(choice.id)) return false
-      return meetsDialogueCondition(state.game, tree.id, choice.condition)
+  let selector = npcHasNewDialogueTopicsSelectorCache.get(npcId)
+  if (!selector) {
+    selector = createSelector([(state: RootState) => state.game], (game): boolean => {
+      const tree = contentCatalog.dialoguesByNpcId.get(npcId)
+      if (!tree) return false
+      const rootNode = tree.nodes.find((n) => n.id === tree.openingNodeId)
+      if (!rootNode) return false
+      const resolved = game.resolvedDialogueChoices[tree.id] ?? []
+      return rootNode.choices.some((choice) => {
+        if (!choice.condition || choice.condition.type !== 'hasItem') return false
+        if (resolved.includes(choice.id)) return false
+        return meetsDialogueCondition(game, tree.id, choice.condition)
+      })
     })
+    npcHasNewDialogueTopicsSelectorCache.set(npcId, selector)
   }
+  return selector
 }
 
 /**
@@ -214,3 +220,5 @@ export function selectVisibleDialogueChoices(nodeId: string) {
     return node.choices.filter((c) => isDialogueChoiceAvailable(state.game, tree.id, c))
   }
 }
+
+const npcHasNewDialogueTopicsSelectorCache = new Map<string, (state: RootState) => boolean>()
