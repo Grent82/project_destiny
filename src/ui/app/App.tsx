@@ -23,6 +23,7 @@ import { MissionPrepScreen } from '../screens/MissionPrepScreen'
 import { OpeningScreen } from '../screens/OpeningScreen'
 import { RecruitmentScreen } from '../screens/RecruitmentScreen'
 import { RosterScreen } from '../screens/RosterScreen'
+import { BrokerageScreen } from '../screens/BrokerageScreen'
 import { ShopsScreen } from '../screens/ShopsScreen'
 import { screenCatalog } from '../screens/screenCatalog'
 import { EventModal } from '../components/EventModal'
@@ -90,6 +91,7 @@ export function App() {
             <Route path="/" element={<Navigate replace to="/dashboard" />} />
             <Route path="/dashboard" element={<DashboardScreen />} />
             <Route path="/roster" element={<RosterScreen />} />
+            <Route path="/brokerage" element={<BrokerageScreen />} />
             <Route path="/recruitment" element={<RecruitmentScreen />} />
             <Route path="/district-map" element={<DistrictMapScreen />} />
             <Route path="/district/:districtId" element={<DistrictInteriorScreen />} />

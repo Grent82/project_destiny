@@ -205,6 +205,7 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('Market read')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Check available work' })).toHaveAttribute('href', '/contracts')
     expect(screen.getByRole('link', { name: 'Review ward prices' })).toHaveAttribute('href', '/shops')
+    expect(screen.getByRole('link', { name: 'Review labor brokerage' })).toHaveAttribute('href', '/brokerage')
   })
 
   it('surfaces bonded kitchen service when the house is using bound food labor', async () => {

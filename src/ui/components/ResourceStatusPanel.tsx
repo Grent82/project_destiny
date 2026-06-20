@@ -118,6 +118,9 @@ export function ResourceStatusPanel() {
         <Link className="action-button action-button--secondary" to={overview.playerActions.marketRoute}>
           Review ward prices
         </Link>
+        <Link className="action-button action-button--secondary" to={overview.playerActions.brokerageRoute}>
+          Review labor brokerage
+        </Link>
       </div>
     </article>
   )

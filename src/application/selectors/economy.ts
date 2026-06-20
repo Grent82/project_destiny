@@ -134,6 +134,7 @@ export const selectEconomyOverview = createSelector(
       playerActions: {
         contractsRoute: '/contracts',
         marketRoute: game.currentDistrictId ? '/shops' : '/district-map',
+        brokerageRoute: '/brokerage',
       },
     }
   },
