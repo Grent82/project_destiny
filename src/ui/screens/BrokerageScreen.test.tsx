@@ -179,4 +179,29 @@ describe('BrokerageScreen', () => {
     expect(ida?.bondStatus?.entryReason).toBe('debt-settlement')
     expect(store.getState().game.availableForHire).toHaveLength(0)
   })
+
+  it('surfaces the ongoing moral and civic pressure of bonded labor', () => {
+    renderBrokerageScreen({
+      ...stateWithBrokerageActivity(),
+      roster: stateWithBrokerageActivity().roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? {
+              ...npc,
+              assignment: 'working' as const,
+              roomAssignment: 'room-kitchen',
+              bondStatus: npc.bondStatus
+                ? { ...npc.bondStatus, alongsideFreeAssignmentDays: 6 }
+                : npc.bondStatus,
+            }
+          : npc.npcId === 'npc-ida-rhys'
+            ? { ...npc, assignment: 'working' as const, bondStatus: null }
+            : npc,
+      ),
+    })
+
+    expect(screen.getByRole('heading', { name: 'Operational pressure' })).toBeInTheDocument()
+    expect(screen.getByText(/1 coercive contract under the house/i)).toBeInTheDocument()
+    expect(screen.getByText(/Equal-work notice in about 8 days/i)).toBeInTheDocument()
+    expect(screen.getByText(/Every 28 days: corruption \+2, prosperity -1, unrest \+1/i)).toBeInTheDocument()
+  })
 })

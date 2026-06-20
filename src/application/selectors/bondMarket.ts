@@ -6,6 +6,14 @@ import { BOUND_KITCHEN_HAND_YIELD } from '../commands/foodFlow'
 import { deriveBondTermsFromHireOffer } from '../commands/recruitment'
 
 const selectGame = (state: RootState) => state.game
+const COERCIVE_ENTRY_REASONS = new Set<BondEntryReason>([
+  'compact-assessment',
+  'combat-capture',
+  'debt-settlement',
+])
+const EQUALITY_NOTICE_THRESHOLD_DAYS = 14
+const HOLDER_MORAL_THRESHOLD_COUNT = 3
+const MONTHLY_BOND_OPERATION_INTERVAL_DAYS = 28
 
 const BOND_ENTRY_REASON_LABELS: Record<BondEntryReason, string> = {
   'compact-assessment': 'Compact assessment',
@@ -70,6 +78,18 @@ export interface BrokerageIntakeEntry {
   termDays: number
   marketValue: number
   background: string
+}
+
+export interface BrokerageRiskOverview {
+  coerciveHoldCount: number
+  workingBoundCount: number
+  freeWorkerCount: number
+  empathicWitnessCount: number
+  monthlyCostsActive: boolean
+  monthlyCostsEveryDays: number
+  equalityNoticeDaysRemaining: number | null
+  heavyHoldThreshold: number
+  heavyHoldActive: boolean
 }
 
 export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSurface {
@@ -204,6 +224,26 @@ export const selectBrokerageOverview = createSelector(
       .filter((entry): entry is BrokerageIntakeEntry => entry !== null)
 
     const boundKitchenHands = houseHeld.filter((entry) => entry.assignedToKitchen).length
+    const workingBoundNpcs = game.roster.filter(
+      (npc) =>
+        npc.bondStatus?.ownerType === 'player' &&
+        npc.bondStatus.holderId === 'player' &&
+        npc.assignment === 'working',
+    )
+    const freeWorkers = game.roster.filter(
+      (npc) => npc.assignment === 'working' && !(npc.bondStatus?.ownerType === 'player' && npc.bondStatus.holderId === 'player'),
+    )
+    const empathicWitnessCount = game.roster.filter((npc) => !npc.bondStatus && npc.traits.empathy > 55).length
+    const equalityNoticeDaysRemaining =
+      workingBoundNpcs.length > 0 && freeWorkers.length > 0
+        ? Math.max(
+            0,
+            EQUALITY_NOTICE_THRESHOLD_DAYS -
+              Math.max(
+                ...workingBoundNpcs.map((npc) => npc.bondStatus?.alongsideFreeAssignmentDays ?? 0),
+              ),
+          )
+        : null
 
     return {
       houseHeld,
@@ -213,6 +253,22 @@ export const selectBrokerageOverview = createSelector(
       hasBrokerageActivity: houseHeld.length + transferred.length + intake.length > 0,
       boundKitchenHands,
       boundKitchenOutput: boundKitchenHands * BOUND_KITCHEN_HAND_YIELD,
+      risks: {
+        coerciveHoldCount: game.roster.filter(
+          (npc) =>
+            npc.bondStatus?.ownerType === 'player' &&
+            npc.bondStatus.holderId === 'player' &&
+            COERCIVE_ENTRY_REASONS.has(npc.bondStatus.entryReason),
+        ).length,
+        workingBoundCount: workingBoundNpcs.length,
+        freeWorkerCount: freeWorkers.length,
+        empathicWitnessCount,
+        monthlyCostsActive: workingBoundNpcs.length > 0,
+        monthlyCostsEveryDays: MONTHLY_BOND_OPERATION_INTERVAL_DAYS,
+        equalityNoticeDaysRemaining,
+        heavyHoldThreshold: HOLDER_MORAL_THRESHOLD_COUNT,
+        heavyHoldActive: houseHeld.length >= HOLDER_MORAL_THRESHOLD_COUNT,
+      } satisfies BrokerageRiskOverview,
       routes: {
         refusalRoute: game.currentDistrictId ? '/recruitment' : '/district-map',
         rosterRoute: '/roster',

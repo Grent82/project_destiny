@@ -54,6 +54,40 @@ export function BrokerageScreen() {
             </article>
           </div>
 
+          <article className="detail-panel" style={{ marginBottom: '1rem' }}>
+            <h2>Operational pressure</h2>
+            <p className="summary">
+              {overview.risks.coerciveHoldCount} coercive contract
+              {overview.risks.coerciveHoldCount === 1 ? '' : 's'} under the house.
+            </p>
+            {overview.risks.monthlyCostsActive ? (
+              <>
+                <p className="summary">
+                  Every {overview.risks.monthlyCostsEveryDays} days: corruption +2, prosperity -1, unrest +1.
+                </p>
+                <p className="summary">
+                  {overview.risks.empathicWitnessCount > 0
+                    ? `${overview.risks.empathicWitnessCount} empathic free hand${overview.risks.empathicWitnessCount === 1 ? '' : 's'} will lose morale when the books come due.`
+                    : 'No empathic free hands are currently in position to register the books.'}
+                </p>
+              </>
+            ) : (
+              <p className="summary">
+                No bound contract is currently being worked on the floor. The monthly civic drag is dormant.
+              </p>
+            )}
+            <p className="summary">
+              {overview.risks.equalityNoticeDaysRemaining === null
+                ? 'No equal-work comparison is active right now.'
+                : `Equal-work notice in about ${overview.risks.equalityNoticeDaysRemaining} day${overview.risks.equalityNoticeDaysRemaining === 1 ? '' : 's'}.`}
+            </p>
+            <p className="summary">
+              {overview.risks.heavyHoldActive
+                ? 'Holding this many contracts is already drawing daily Court pressure: unrest +1, Gilded Court standing -1.'
+                : `Court pressure escalates once the house holds ${overview.risks.heavyHoldThreshold} contracts at once.`}
+            </p>
+          </article>
+
           <div className="muster-layout">
             <div className="muster-roll">
               <div className="muster-section">
