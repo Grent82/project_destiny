@@ -12,30 +12,43 @@ import { npcArcDefinitionSchema } from '../../domain/npc/contracts'
 const npcArcDefs = npcArcDefinitionSchema.array().parse(npcArcsData)
 const npcArcDefsById = new Map(npcArcDefs.map((a) => [a.arcId, a]))
 
-export function recruitNpc(state: GameState, npcId: string): GameState {
-  const offer = state.availableForHire.find((o) => o.npcId === npcId)
-  if (!offer) return state
+const DEFAULT_BOUND_TERM_DAYS = 30
 
-  if (offer.signingBonus > state.money) return state
+export interface DerivedBondTerms {
+  intakeFee: number
+  contractValue: number
+  termDays: number
+  marketValue: number
+}
 
-  // Gate: player must meet the required faction standing to hire this NPC
-  if (offer.requiredFactionId) {
-    const standing = state.factionStandings[offer.requiredFactionId] ?? -100
-    if (standing < offer.requiredFactionStanding) return state
+export function deriveBondTermsFromHireOffer(
+  offer: Pick<GameState['availableForHire'][number], 'wagePerDay' | 'signingBonus'>,
+): DerivedBondTerms {
+  const intakeFee = Math.max(5, Math.ceil(offer.signingBonus * 0.5))
+  const contractValue = Math.max(offer.signingBonus, offer.wagePerDay * 12)
+  const marketValue = Math.max(contractValue, Math.ceil(contractValue * 1.2))
+
+  return {
+    intakeFee,
+    contractValue,
+    termDays: DEFAULT_BOUND_TERM_DAYS,
+    marketValue,
   }
+}
 
+function buildRosterEntryFromOffer(
+  state: GameState,
+  npcId: string,
+  wagePerDay: number,
+  initialLoyaltyPenalty: number,
+  bondStatus: GameState['roster'][number]['bondStatus'],
+) {
   const npcDef = contentCatalog.npcsById.get(npcId)
-  if (!npcDef) return state
+  if (!npcDef) return null
 
-  const alreadyOnRoster = state.roster.some((r) => r.npcId === npcId)
-  if (alreadyOnRoster) return state
+  const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - initialLoyaltyPenalty)
 
-  const renownLevel = getRenownLevel(state.playerCharacter.renown)
-  if (state.roster.length >= renownLevel.rosterSlots) return state
-
-  const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - 20)
-
-  const newRosterEntry = {
+  return {
     npcId,
     name: npcDef.name,
     status: npcDef.status,
@@ -43,7 +56,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     assignedDistrictId: null,
     activeTitle: null,
     wagesOwedDays: 0,
-    contractWagePerDay: offer.wagePerDay,
+    contractWagePerDay: wagePerDay,
     trainingFocus: null,
     roomAssignment: null,
     attributes: { ...npcDef.baseAttributes },
@@ -69,7 +82,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
       consumableIds: [],
     },
     npcMemory: [],
-    bondStatus: null,
+    bondStatus,
     npcArc: npcDef.defaultArcId
       ? (() => {
           const arcDef = npcArcDefsById.get(npcDef.defaultArcId!)
@@ -78,6 +91,31 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
         })()
       : null,
   }
+}
+
+export function recruitNpc(state: GameState, npcId: string): GameState {
+  const offer = state.availableForHire.find((o) => o.npcId === npcId)
+  if (!offer) return state
+
+  if (offer.signingBonus > state.money) return state
+
+  // Gate: player must meet the required faction standing to hire this NPC
+  if (offer.requiredFactionId) {
+    const standing = state.factionStandings[offer.requiredFactionId] ?? -100
+    if (standing < offer.requiredFactionStanding) return state
+  }
+
+  const npcDef = contentCatalog.npcsById.get(npcId)
+  if (!npcDef) return state
+
+  const alreadyOnRoster = state.roster.some((r) => r.npcId === npcId)
+  if (alreadyOnRoster) return state
+
+  const renownLevel = getRenownLevel(state.playerCharacter.renown)
+  if (state.roster.length >= renownLevel.rosterSlots) return state
+
+  const newRosterEntry = buildRosterEntryFromOffer(state, npcId, offer.wagePerDay, 20, null)
+  if (!newRosterEntry) return state
 
   let next: GameState = {
     ...state,
@@ -96,6 +134,64 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     next,
     'economy',
     `${npcDef.name} takes on work with the house.${bonusNote}`,
+  )
+
+  return next
+}
+
+export function acquireBoundHireOffer(state: GameState, npcId: string): GameState {
+  const offer = state.availableForHire.find((entry) => entry.npcId === npcId)
+  if (!offer) return state
+
+  if (offer.requiredFactionId) {
+    const standing = state.factionStandings[offer.requiredFactionId] ?? -100
+    if (standing < offer.requiredFactionStanding) return state
+  }
+
+  const alreadyOnRoster = state.roster.some((entry) => entry.npcId === npcId)
+  if (alreadyOnRoster) return state
+
+  const renownLevel = getRenownLevel(state.playerCharacter.renown)
+  if (state.roster.length >= renownLevel.rosterSlots) return state
+
+  const terms = deriveBondTermsFromHireOffer(offer)
+  if (state.money < terms.intakeFee) return state
+
+  const newRosterEntry = buildRosterEntryFromOffer(
+    state,
+    npcId,
+    offer.wagePerDay,
+    30,
+    {
+      holderId: 'player',
+      contractValue: terms.contractValue,
+      termDays: terms.termDays,
+      entryReason: 'debt-settlement',
+      alongsideFreeAssignmentDays: 0,
+      lastEqualityNoticeDay: null,
+      forSale: false,
+      lastOfferDay: null,
+      marketValue: terms.marketValue,
+      ownerType: 'player',
+      bondStartDay: state.day,
+    },
+  )
+  if (!newRosterEntry) return state
+
+  let next: GameState = {
+    ...state,
+    money: state.money - terms.intakeFee,
+    roster: [...state.roster, newRosterEntry],
+    availableForHire: state.availableForHire.filter((entry) => entry.npcId !== npcId),
+  }
+
+  const { rng } = createRng(state.rngSeed)
+  next = initializeRosterRelationships(next, rng)
+
+  next = appendActivityLogEntry(
+    next,
+    'economy',
+    `${newRosterEntry.name} enters the house under a debt contract. Intake cost: ${formatMarks(terms.intakeFee)}.`,
   )
 
   return next

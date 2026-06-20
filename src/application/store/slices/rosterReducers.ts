@@ -5,7 +5,7 @@ import type { GameState } from '../../../domain'
 import type { Attributes, Skills, Traits, WorldNpcDisposition, CaptivityState } from '../../../domain/npc/contracts'
 import { selectNpcCoercionRisk } from '../../selectors/npcs'
 import { applyRelationshipDelta } from '../../commands/adjustRelationship'
-import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand } from '../../commands/recruitment'
+import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand, acquireBoundHireOffer as acquireBoundHireOfferCommand } from '../../commands/recruitment'
 import { freeNpc as freeNpcCommand } from '../../commands/bondService'
 import { courtNpc as courtNpcCommand } from '../../commands/courtNpc'
 import {
@@ -37,6 +37,10 @@ export const rosterReducers = {
     const nextState = recruitNpcCommand(state, action.payload.npcId)
     applyRelationshipDelta(nextState, 'player', action.payload.npcId, 'trust', 5)
     return nextState
+  },
+
+  acquireBoundHireOffer(state: GameState, action: PayloadAction<{ npcId: string }>) {
+    return acquireBoundHireOfferCommand(state, action.payload.npcId)
   },
 
   dismissNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {

@@ -57,6 +57,33 @@ export function BrokerageScreen() {
           <div className="muster-layout">
             <div className="muster-roll">
               <div className="muster-section">
+                <h2 className="muster-section-label">Available intake</h2>
+                {overview.intake.length === 0 ? (
+                  <p className="muster-entry-note">No one is currently being offered to the house under contract terms.</p>
+                ) : (
+                  overview.intake.map((entry) => (
+                    <div key={entry.npcId} className="muster-entry">
+                      <span className="muster-entry-name">{entry.name}</span>
+                      <span className="muster-entry-role"> — debt contract candidate</span>
+                      <p className="muster-entry-bond">
+                        Intake {entry.intakeFee} Marks · Release {entry.contractValue} Marks · Market value {entry.marketValue} Marks · {entry.termDays} day term
+                      </p>
+                      <p className="muster-entry-note">{entry.background}</p>
+                      <div className="bond-status-actions" style={{ marginTop: '0.45rem' }}>
+                        <button
+                          className="action-button"
+                          type="button"
+                          onClick={() => dispatch(gameActions.acquireBoundHireOffer({ npcId: entry.npcId }))}
+                        >
+                          Take under debt contract
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="muster-section">
                 <h2 className="muster-section-label">House-held contracts</h2>
                 {overview.houseHeld.length === 0 ? (
                   <p className="muster-entry-note">No one is currently held by the house.</p>

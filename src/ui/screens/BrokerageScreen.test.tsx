@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
@@ -93,13 +93,33 @@ describe('BrokerageScreen', () => {
     renderBrokerageScreen()
 
     expect(screen.getByRole('heading', { name: 'Labor Brokerage' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'House-held contracts' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Transferred away' })).toBeInTheDocument()
-    expect(screen.getByText(/Marion Vale/i)).toBeInTheDocument()
-    expect(screen.getByText(/Ida Rhys/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Place in food service' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Offer for transfer' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Buy freedom' })).toBeInTheDocument()
+    const intakeSection = screen
+      .getByRole('heading', { name: 'Available intake' })
+      .closest('.muster-section') as HTMLElement | null
+    const houseHeldSection = screen
+      .getByRole('heading', { name: 'House-held contracts' })
+      .closest('.muster-section') as HTMLElement | null
+    const transferredSection = screen
+      .getByRole('heading', { name: 'Transferred away' })
+      .closest('article') as HTMLElement | null
+
+    expect(intakeSection).not.toBeNull()
+    expect(houseHeldSection).not.toBeNull()
+    expect(transferredSection).not.toBeNull()
+
+    expect(within(intakeSection!).getByText(/Ida Rhys/i)).toBeInTheDocument()
+    expect(within(intakeSection!).getAllByRole('button', { name: 'Take under debt contract' }).length).toBeGreaterThan(0)
+    expect(within(houseHeldSection!).getByText(/Marion Vale/i)).toBeInTheDocument()
+    expect(
+      within(houseHeldSection!).getByRole('button', { name: 'Place in food service' }),
+    ).toBeInTheDocument()
+    expect(
+      within(houseHeldSection!).getByRole('button', { name: 'Offer for transfer' }),
+    ).toBeInTheDocument()
+    expect(within(transferredSection!).getByText(/Ida Rhys/i)).toBeInTheDocument()
+    expect(
+      within(transferredSection!).getByRole('button', { name: 'Buy freedom' }),
+    ).toBeInTheDocument()
   })
 
   it('lets the player place a house-held bonded NPC into food service from the brokerage surface', async () => {
@@ -119,6 +139,7 @@ describe('BrokerageScreen', () => {
       withKitchenState(
         {
           ...initialGameStateSnapshot,
+          availableForHire: [],
           roster: initialGameStateSnapshot.roster.map((npc) => ({
             ...npc,
             bondStatus: null,
@@ -130,5 +151,32 @@ describe('BrokerageScreen', () => {
 
     expect(screen.getByText(/The house is not currently running bound placements/i)).toBeInTheDocument()
     expect(screen.getByText(/Food output is resting on free or waged hands/i)).toBeInTheDocument()
+  })
+
+  it('can take an available intake offer into a player-held debt contract', async () => {
+    const user = userEvent.setup()
+    const store = renderBrokerageScreen({
+      ...withKitchenState(initialGameStateSnapshot, 'intact'),
+      currentDistrictId: 'district-the-pale',
+      availableForHire: [
+        {
+          npcId: 'npc-ida-rhys',
+          discoveredInDistrictId: 'district-the-pale',
+          wagePerDay: 8,
+          signingBonus: 0,
+          requiredFactionId: null,
+          requiredFactionStanding: 0,
+          turnsAvailable: 10,
+          source: 'district',
+        },
+      ],
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Take under debt contract' }))
+
+    const ida = store.getState().game.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
+    expect(ida?.bondStatus?.ownerType).toBe('player')
+    expect(ida?.bondStatus?.entryReason).toBe('debt-settlement')
+    expect(store.getState().game.availableForHire).toHaveLength(0)
   })
 })

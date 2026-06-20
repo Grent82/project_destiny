@@ -3,6 +3,7 @@ import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import type { BondEntryReason, BondStatus } from '../../domain/npc/contracts'
 import { BOUND_KITCHEN_HAND_YIELD } from '../commands/foodFlow'
+import { deriveBondTermsFromHireOffer } from '../commands/recruitment'
 
 const selectGame = (state: RootState) => state.game
 
@@ -57,6 +58,18 @@ export interface BrokerageTransferredEntry {
   entryReasonLabel: string
   marketValue: number
   ransomCost: number
+}
+
+export interface BrokerageIntakeEntry {
+  npcId: string
+  name: string
+  wagePerDay: number
+  signingBonus: number
+  intakeFee: number
+  contractValue: number
+  termDays: number
+  marketValue: number
+  background: string
 }
 
 export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSurface {
@@ -171,13 +184,33 @@ export const selectBrokerageOverview = createSelector(
         ransomCost: Math.ceil(npc.bondStatus!.marketValue * 1.5),
       }))
 
+    const intake: BrokerageIntakeEntry[] = game.availableForHire
+      .map((offer) => {
+        const npc = contentCatalog.npcsById.get(offer.npcId)
+        if (!npc) return null
+        const terms = deriveBondTermsFromHireOffer(offer)
+        return {
+          npcId: offer.npcId,
+          name: npc.name,
+          wagePerDay: offer.wagePerDay,
+          signingBonus: offer.signingBonus,
+          intakeFee: terms.intakeFee,
+          contractValue: terms.contractValue,
+          termDays: terms.termDays,
+          marketValue: terms.marketValue,
+          background: npc.background,
+        }
+      })
+      .filter((entry): entry is BrokerageIntakeEntry => entry !== null)
+
     const boundKitchenHands = houseHeld.filter((entry) => entry.assignedToKitchen).length
 
     return {
       houseHeld,
       transferred,
+      intake,
       kitchenIsIntact,
-      hasBrokerageActivity: houseHeld.length + transferred.length > 0,
+      hasBrokerageActivity: houseHeld.length + transferred.length + intake.length > 0,
       boundKitchenHands,
       boundKitchenOutput: boundKitchenHands * BOUND_KITCHEN_HAND_YIELD,
       routes: {

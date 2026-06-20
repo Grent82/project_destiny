@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { initialStateWithIda } from './testFixtures'
-import { recruitNpc, dismissNpc, expireHireOffers } from './recruitment'
+import { recruitNpc, dismissNpc, expireHireOffers, deriveBondTermsFromHireOffer, acquireBoundHireOffer } from './recruitment'
 
 const stateWithOffers = {
   ...initialGameStateSnapshot,
@@ -141,6 +141,51 @@ describe('recruitNpc', () => {
     const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
     const logEntry = next.activityLog.find((e) => e.message.includes('Verek Holst'))
     expect(logEntry).toBeDefined()
+  })
+})
+
+describe('deriveBondTermsFromHireOffer', () => {
+  it('derives a reduced upfront intake fee and durable contract values from a hire offer', () => {
+    expect(
+      deriveBondTermsFromHireOffer({
+        wagePerDay: 20,
+        signingBonus: 75,
+      }),
+    ).toEqual({
+      intakeFee: 38,
+      contractValue: 240,
+      termDays: 30,
+      marketValue: 288,
+    })
+  })
+})
+
+describe('acquireBoundHireOffer', () => {
+  it('adds the NPC to the roster under a player-held debt contract', () => {
+    const next = acquireBoundHireOffer(stateWithOffers, 'npc-cress-aldmoor')
+    const onRoster = next.roster.find((entry) => entry.npcId === 'npc-cress-aldmoor')
+
+    expect(onRoster).toBeDefined()
+    expect(onRoster?.bondStatus?.ownerType).toBe('player')
+    expect(onRoster?.bondStatus?.entryReason).toBe('debt-settlement')
+  })
+
+  it('deducts the intake fee rather than the full signing bonus', () => {
+    const next = acquireBoundHireOffer(stateWithOffers, 'npc-cress-aldmoor')
+
+    expect(next.money).toBe(stateWithOffers.money - 38)
+  })
+
+  it('removes the intake offer after taking the contract', () => {
+    const next = acquireBoundHireOffer(stateWithOffers, 'npc-cress-aldmoor')
+
+    expect(next.availableForHire.find((entry) => entry.npcId === 'npc-cress-aldmoor')).toBeUndefined()
+  })
+
+  it('logs the intake as a debt contract rather than ordinary hire', () => {
+    const next = acquireBoundHireOffer(stateWithOffers, 'npc-cress-aldmoor')
+
+    expect(next.activityLog.some((entry) => entry.message.includes('debt contract'))).toBe(true)
   })
 })
 
