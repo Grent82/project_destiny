@@ -69,6 +69,8 @@ export interface BrokerageTransferredEntry {
   marketValue: number
   ransomCost: number
   legalRescueLabel: string
+  canAffordLegalRescue: boolean
+  legalRescueBlockedReason: string | null
   extractionLabel: string
   forceLabel: string
 }
@@ -232,11 +234,12 @@ export const selectBrokerageOverview = createSelector(
       .map((npc) => {
         const buyer = contentCatalog.bondBuyersById.get(npc.bondStatus!.holderId)
         const ransomCost = Math.ceil(npc.bondStatus!.marketValue * 1.5)
+        const holderName = getHolderName(npc.bondStatus!)
 
         return {
           npcId: npc.npcId,
           name: npc.name,
-          holderName: getHolderName(npc.bondStatus!),
+          holderName,
           holderNote: buyer
             ? describeBuyerSpecialization(buyer.specialization).replace(/^([A-Z][^-]+) placement/, '$1 holding')
             : 'Current holder is not fully known.',
@@ -244,6 +247,9 @@ export const selectBrokerageOverview = createSelector(
           marketValue: npc.bondStatus!.marketValue,
           ransomCost,
           legalRescueLabel: `Buy freedom (${ransomCost} Marks)`,
+          canAffordLegalRescue: game.money >= ransomCost,
+          legalRescueBlockedReason:
+            game.money >= ransomCost ? null : `Need ${ransomCost - game.money} more Marks to meet the ${holderName} bid.`,
           extractionLabel: 'Extract quietly (health -20, Ring -15)',
           forceLabel: 'Seize by force (health -15)',
         }

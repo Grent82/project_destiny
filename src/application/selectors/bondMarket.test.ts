@@ -143,6 +143,8 @@ describe('selectBrokerageOverview', () => {
 
     expect(ida?.holderNote).toBe('Registrar holding - slow, legal, and watched.')
     expect(ida?.legalRescueLabel).toBe('Buy freedom (180 Marks)')
+    expect(ida?.canAffordLegalRescue).toBe(false)
+    expect(ida?.legalRescueBlockedReason).toBe('Need 80 more Marks to meet the Compact Registrar bid.')
     expect(ida?.extractionLabel).toBe('Extract quietly (health -20, Ring -15)')
     expect(ida?.forceLabel).toBe('Seize by force (health -15)')
   })

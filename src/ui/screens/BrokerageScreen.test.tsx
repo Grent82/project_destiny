@@ -121,12 +121,18 @@ describe('BrokerageScreen', () => {
       within(transferredSection!).getByRole('button', { name: 'Buy freedom (180 Marks)' }),
     ).toBeInTheDocument()
     expect(
+      within(transferredSection!).getByRole('button', { name: 'Buy freedom (180 Marks)' }),
+    ).toBeDisabled()
+    expect(
       within(transferredSection!).getByRole('button', {
         name: 'Extract quietly (health -20, Ring -15)',
       }),
     ).toBeInTheDocument()
     expect(
       within(transferredSection!).getByText(/Registrar holding - slow, legal, and watched/i),
+    ).toBeInTheDocument()
+    expect(
+      within(transferredSection!).getByText(/Need 80 more Marks to meet the Compact Registrar bid/i),
     ).toBeInTheDocument()
   })
 

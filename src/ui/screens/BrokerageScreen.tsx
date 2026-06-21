@@ -230,6 +230,7 @@ export function BrokerageScreen() {
                         <button
                           className="action-button action-button--secondary"
                           type="button"
+                          disabled={!entry.canAffordLegalRescue}
                           onClick={() => dispatch(gameActions.rescueBondedNpcLegal({ npcId: entry.npcId }))}
                         >
                           {entry.legalRescueLabel}
@@ -249,6 +250,11 @@ export function BrokerageScreen() {
                           {entry.forceLabel}
                         </button>
                       </div>
+                      {entry.legalRescueBlockedReason ? (
+                        <p className="muster-entry-note" style={{ marginTop: '0.45rem' }}>
+                          {entry.legalRescueBlockedReason}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                 ))
