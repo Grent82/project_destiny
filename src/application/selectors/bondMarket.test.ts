@@ -100,4 +100,40 @@ describe('selectBrokerageOverview', () => {
     expect(overview.risks.equalityNoticeDaysRemaining).toBeNull()
     expect(overview.risks.heavyHoldActive).toBe(false)
   })
+
+  it('derives explicit buyer quotes when a house-held contract is marked for transfer', () => {
+    const state = {
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? {
+              ...npc,
+              bondStatus: {
+                holderId: 'player' as const,
+                contractValue: 40,
+                termDays: 30,
+                entryReason: 'debt-settlement' as const,
+                alongsideFreeAssignmentDays: 0,
+                lastEqualityNoticeDay: null,
+                forSale: true,
+                lastOfferDay: null,
+                marketValue: 120,
+                ownerType: 'player' as const,
+                bondStartDay: 1,
+              },
+            }
+          : npc,
+      ),
+    }
+
+    const overview = selectBrokerageOverview({ game: state })
+    const marion = overview.houseHeld.find((entry) => entry.npcId === 'npc-marion-vale')
+
+    expect(marion?.saleQuotes.map((quote) => `${quote.buyerName}:${quote.offerAmount}`)).toEqual([
+      'Compact Registrar:102',
+      'Noble House Agent:126',
+      'Tallow Ring Broker:108',
+      'Merchant Factor:114',
+    ])
+  })
 })

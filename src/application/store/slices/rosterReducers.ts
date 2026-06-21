@@ -9,6 +9,7 @@ import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expir
 import { freeNpc as freeNpcCommand } from '../../commands/bondService'
 import { courtNpc as courtNpcCommand } from '../../commands/courtNpc'
 import {
+  transferBondedNpc as transferBondedNpcCommand,
   rescueBondedNpcLegal,
   rescueBondedNpcExtraction,
   rescueBondedNpcForce,
@@ -218,6 +219,13 @@ export const rosterReducers = {
     if (forSale) {
       npc.bondStatus.bondStartDay = npc.bondStatus.bondStartDay || state.day
     }
+  },
+
+  transferBondedNpc(
+    state: GameState,
+    action: PayloadAction<{ npcId: string; buyerId: string }>,
+  ) {
+    return transferBondedNpcCommand(state, action.payload.npcId, action.payload.buyerId)
   },
 
   rescueBondedNpcLegal(state: GameState, action: PayloadAction<{ npcId: string }>) {

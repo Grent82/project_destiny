@@ -180,6 +180,35 @@ describe('BrokerageScreen', () => {
     expect(store.getState().game.availableForHire).toHaveLength(0)
   })
 
+  it('shows buyer quotes and allows direct transfer once a contract is marked for sale', async () => {
+    const user = userEvent.setup()
+    const store = renderBrokerageScreen({
+      ...stateWithBrokerageActivity(),
+      money: 100,
+      roster: stateWithBrokerageActivity().roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale' && npc.bondStatus
+          ? {
+              ...npc,
+              bondStatus: { ...npc.bondStatus, forSale: true, marketValue: 120 },
+            }
+          : npc,
+      ),
+    })
+
+    expect(screen.getByText(/Buyer quotes/i)).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Transfer to Noble House Agent (126 Marks)' }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Transfer to Noble House Agent (126 Marks)' }))
+
+    expect(store.getState().game.money).toBe(226)
+    const marion = store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')
+    expect(marion?.assignment).toBe('transferred')
+    expect(marion?.bondStatus?.ownerType).toBe('npc')
+    expect(screen.getByText(/held by Noble House Agent/i)).toBeInTheDocument()
+  })
+
   it('surfaces the ongoing moral and civic pressure of bonded labor', () => {
     renderBrokerageScreen({
       ...stateWithBrokerageActivity(),

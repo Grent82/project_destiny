@@ -134,6 +134,33 @@ export function BrokerageScreen() {
                         {entry.forSale ? <span className="badge badge-warning">Marked for transfer</span> : null}
                         {entry.assignedToKitchen ? <span className="badge">Assigned to kitchen service</span> : null}
                       </div>
+                      {entry.forSale ? (
+                        <div className="detail-panel" style={{ marginTop: '0.75rem', padding: '0.75rem' }}>
+                          <h3 style={{ marginTop: 0 }}>Buyer quotes</h3>
+                          {entry.saleQuotes.map((quote) => (
+                            <div key={`${entry.npcId}-${quote.buyerId}`} style={{ marginTop: '0.5rem' }}>
+                              <p className="muster-entry-bond" style={{ marginBottom: '0.25rem' }}>
+                                {quote.buyerName} — {quote.offerAmount} Marks
+                              </p>
+                              <p className="muster-entry-note">{quote.note}</p>
+                              <button
+                                className="action-button"
+                                type="button"
+                                onClick={() =>
+                                  dispatch(
+                                    gameActions.transferBondedNpc({
+                                      npcId: entry.npcId,
+                                      buyerId: quote.buyerId,
+                                    }),
+                                  )
+                                }
+                              >
+                                {`Transfer to ${quote.buyerName} (${quote.offerAmount} Marks)`}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                       <div className="bond-status-actions" style={{ marginTop: '0.45rem' }}>
                         <button
                           className="action-button action-button--secondary"

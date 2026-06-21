@@ -57,6 +57,7 @@ export interface BrokerageHouseHeldEntry {
   marketValue: number
   forSale: boolean
   assignedToKitchen: boolean
+  saleQuotes: BrokerageSaleQuote[]
 }
 
 export interface BrokerageTransferredEntry {
@@ -78,6 +79,27 @@ export interface BrokerageIntakeEntry {
   termDays: number
   marketValue: number
   background: string
+}
+
+export interface BrokerageSaleQuote {
+  buyerId: string
+  buyerName: string
+  offerAmount: number
+  note: string
+}
+
+function describeBuyerSpecialization(specialization: string): string {
+  switch (specialization) {
+    case 'assessed':
+      return 'Registrar placement - slow, legal, and watched.'
+    case 'specialist':
+      return 'Noble placement - highest price, cleaner conditions.'
+    case 'security':
+      return 'Ring holding - harsher security and faster decline.'
+    case 'labor':
+    default:
+      return 'Merchant placement - steady labor extraction.'
+  }
 }
 
 export interface BrokerageRiskOverview {
@@ -191,6 +213,14 @@ export const selectBrokerageOverview = createSelector(
         forSale: npc.bondStatus!.forSale,
         assignedToKitchen:
           npc.assignment === 'working' && npc.roomAssignment === 'room-kitchen',
+        saleQuotes: npc.bondStatus!.forSale
+          ? contentCatalog.bondBuyers.map((buyer) => ({
+              buyerId: buyer.id,
+              buyerName: buyer.name,
+              offerAmount: Math.round(npc.bondStatus!.marketValue * buyer.offerModifier),
+              note: describeBuyerSpecialization(buyer.specialization),
+            }))
+          : [],
       }))
 
     const transferred: BrokerageTransferredEntry[] = game.roster
