@@ -64,9 +64,13 @@ export interface BrokerageTransferredEntry {
   npcId: string
   name: string
   holderName: string
+  holderNote: string
   entryReasonLabel: string
   marketValue: number
   ransomCost: number
+  legalRescueLabel: string
+  extractionLabel: string
+  forceLabel: string
 }
 
 export interface BrokerageIntakeEntry {
@@ -225,14 +229,25 @@ export const selectBrokerageOverview = createSelector(
 
     const transferred: BrokerageTransferredEntry[] = game.roster
       .filter((npc) => npc.assignment === 'transferred' && npc.bondStatus?.ownerType === 'npc')
-      .map((npc) => ({
-        npcId: npc.npcId,
-        name: npc.name,
-        holderName: getHolderName(npc.bondStatus!),
-        entryReasonLabel: formatBondEntryReason(npc.bondStatus!.entryReason),
-        marketValue: npc.bondStatus!.marketValue,
-        ransomCost: Math.ceil(npc.bondStatus!.marketValue * 1.5),
-      }))
+      .map((npc) => {
+        const buyer = contentCatalog.bondBuyersById.get(npc.bondStatus!.holderId)
+        const ransomCost = Math.ceil(npc.bondStatus!.marketValue * 1.5)
+
+        return {
+          npcId: npc.npcId,
+          name: npc.name,
+          holderName: getHolderName(npc.bondStatus!),
+          holderNote: buyer
+            ? describeBuyerSpecialization(buyer.specialization).replace(/^([A-Z][^-]+) placement/, '$1 holding')
+            : 'Current holder is not fully known.',
+          entryReasonLabel: formatBondEntryReason(npc.bondStatus!.entryReason),
+          marketValue: npc.bondStatus!.marketValue,
+          ransomCost,
+          legalRescueLabel: `Buy freedom (${ransomCost} Marks)`,
+          extractionLabel: 'Extract quietly (health -20, Ring -15)',
+          forceLabel: 'Seize by force (health -15)',
+        }
+      })
 
     const intake: BrokerageIntakeEntry[] = game.availableForHire
       .map((offer) => {

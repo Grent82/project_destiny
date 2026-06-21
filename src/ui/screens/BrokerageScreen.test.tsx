@@ -118,7 +118,15 @@ describe('BrokerageScreen', () => {
     ).toBeInTheDocument()
     expect(within(transferredSection!).getByText(/Ida Rhys/i)).toBeInTheDocument()
     expect(
-      within(transferredSection!).getByRole('button', { name: 'Buy freedom' }),
+      within(transferredSection!).getByRole('button', { name: 'Buy freedom (180 Marks)' }),
+    ).toBeInTheDocument()
+    expect(
+      within(transferredSection!).getByRole('button', {
+        name: 'Extract quietly (health -20, Ring -15)',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      within(transferredSection!).getByText(/Registrar holding - slow, legal, and watched/i),
     ).toBeInTheDocument()
   })
 

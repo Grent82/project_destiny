@@ -225,27 +225,28 @@ export function BrokerageScreen() {
                       <p className="muster-entry-bond">
                         {entry.entryReasonLabel} · Filed value {entry.marketValue} Marks · Legal buyout {entry.ransomCost} Marks
                       </p>
+                      <p className="muster-entry-note">{entry.holderNote}</p>
                       <div className="bond-status-actions" style={{ marginTop: '0.45rem' }}>
                         <button
                           className="action-button action-button--secondary"
                           type="button"
                           onClick={() => dispatch(gameActions.rescueBondedNpcLegal({ npcId: entry.npcId }))}
                         >
-                          Buy freedom
+                          {entry.legalRescueLabel}
                         </button>
                         <button
                           className="action-button"
                           type="button"
                           onClick={() => dispatch(gameActions.rescueBondedNpcExtraction({ npcId: entry.npcId }))}
                         >
-                          Extract quietly
+                          {entry.extractionLabel}
                         </button>
                         <button
                           className="action-button action-button--danger"
                           type="button"
                           onClick={() => dispatch(gameActions.rescueBondedNpcForce({ npcId: entry.npcId }))}
                         >
-                          Seize by force
+                          {entry.forceLabel}
                         </button>
                       </div>
                     </div>

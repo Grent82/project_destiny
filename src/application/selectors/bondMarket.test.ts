@@ -136,4 +136,44 @@ describe('selectBrokerageOverview', () => {
       'Merchant Factor:114',
     ])
   })
+
+  it('surfaces rescue previews for transferred contracts', () => {
+    const overview = selectBrokerageOverview({ game: stateWithTransferredCompactHold() })
+    const ida = overview.transferred.find((entry) => entry.npcId === 'npc-ida-rhys')
+
+    expect(ida?.holderNote).toBe('Registrar holding - slow, legal, and watched.')
+    expect(ida?.legalRescueLabel).toBe('Buy freedom (180 Marks)')
+    expect(ida?.extractionLabel).toBe('Extract quietly (health -20, Ring -15)')
+    expect(ida?.forceLabel).toBe('Seize by force (health -15)')
+  })
 })
+
+function stateWithTransferredCompactHold() {
+  return {
+    ...initialStateWithIda,
+    roster: initialStateWithIda.roster.map((npc) =>
+      npc.npcId === 'npc-ida-rhys'
+        ? {
+            ...npc,
+            assignment: 'transferred' as const,
+            bondStatus: {
+              holderId: 'buyer-compact-registrar',
+              contractValue: 90,
+              termDays: 60,
+              entryReason: 'debt-settlement' as const,
+              alongsideFreeAssignmentDays: 0,
+              lastEqualityNoticeDay: null,
+              forSale: false,
+              lastOfferDay: null,
+              marketValue: 120,
+              ownerType: 'npc' as const,
+              bondStartDay: 0,
+            },
+          }
+        : npc,
+    ),
+    bondedPersonsRegistry: {
+      'buyer-compact-registrar': ['npc-ida-rhys'],
+    },
+  }
+}
