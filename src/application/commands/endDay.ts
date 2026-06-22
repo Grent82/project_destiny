@@ -38,7 +38,7 @@ import { applyOpponentPressure, logOpponentPressure } from './applyOpponentPress
 import { compactResolvedEventInstances, pruneExpiredEventInstances } from './eventInstances'
 import { applyFoodProduction } from './applyFoodProduction'
 import { applyFoodConsumption } from './applyFoodConsumption'
-import { applyCorridorImport } from './applyCorridorImport'
+import { applyCorridorImport, applyWorldCorridorClearance } from './applyCorridorImport'
 import { applyMiraCustodyRoutine } from './applyMiraCustodyRoutine'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
@@ -154,6 +154,9 @@ export function endDay(state: GameState): GameState {
   next = applyFoodProduction(next)
   next = applyCorridorImport(next).state
   next = applyFoodConsumption(next)
+
+  // Step 5a: World-driven corridor clearance (coalition efforts)
+  next = applyWorldCorridorClearance(next, rng)
 
   // Step 5b: City resource consequences
   next = applyEndOfDayResources(next)

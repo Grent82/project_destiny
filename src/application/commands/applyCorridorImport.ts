@@ -143,3 +143,38 @@ export function getCorridorReopeningProgress(state: GameState): {
     daysRemaining,
   }
 }
+
+/**
+ * applyWorldCorridorClearance: automatic coalition clearance efforts.
+ *
+ * When the Corridor is disrupted or blocked, the expedition coalition
+ * works to clear it. This provides a world-driven recovery path that
+ * doesn't require player intervention.
+ *
+ * - disrupted: 20% chance per day to add 1 progress day
+ * - blocked: 10% chance per day to add 1 progress day
+ *
+ * @param state - Current game state
+ * @param rng - Seeded RNG function
+ * @returns New game state with potential clearance progress
+ */
+export function applyWorldCorridorClearance(state: GameState, rng: () => number): GameState {
+  const currentStatus = state.cityResources.corridorStatus
+
+  // No automatic clearance when already open
+  if (currentStatus === 'open') {
+    return state
+  }
+
+  // Chance depends on status: disrupted is easier to clear than blocked
+  const clearanceChance = currentStatus === 'disrupted' ? 0.20 : 0.10
+  const roll = rng()
+
+  if (roll > clearanceChance) {
+    // No progress this day
+    return state
+  }
+
+  // Clearance effort succeeded
+  return reopenCorridor(state, 1)
+}
