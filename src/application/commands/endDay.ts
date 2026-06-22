@@ -39,6 +39,7 @@ import { compactResolvedEventInstances, pruneExpiredEventInstances } from './eve
 import { applyFoodProduction } from './applyFoodProduction'
 import { applyFoodConsumption } from './applyFoodConsumption'
 import { applyCorridorImport } from './applyCorridorImport'
+import { applyMiraCustodyRoutine } from './applyMiraCustodyRoutine'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -91,7 +92,7 @@ const CONDITION_PROGRESSION: CaptivityCondition[] = ['healthy', 'hurt', 'broken'
 
 function applyCaptivityDegradation(state: GameState): GameState {
   const activeEntries = Object.entries(getAllNpcCaptivityStates(state)).filter(
-    ([, cap]) => cap.status === 'missing' || cap.status === 'captive',
+    ([npcId, cap]) => (cap.status === 'missing' || cap.status === 'captive') && npcId !== 'npc-mira',
   )
   if (activeEntries.length === 0) return state
 
@@ -186,6 +187,7 @@ export function endDay(state: GameState): GameState {
 
   afterEvents = applyWorldHouseholdGrowth(afterEvents, rng)
   afterEvents = applyAbstractCustodySimulation(afterEvents, rng)
+  afterEvents = applyMiraCustodyRoutine(afterEvents, rng)
   afterEvents = applyNpcRoomInteractions(afterEvents, rng)
   afterEvents = applySiteStateHooks(afterEvents)
 

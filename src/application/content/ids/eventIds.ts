@@ -8,6 +8,7 @@ export const EVENT_IDS = {
   BREN_LEAVING_WARNING: 'event-bren-leaving-warning',
   BREN_LEFT: 'event-bren-left',
   CAPTIVITY_PREGNANCY_DISCOVERY: 'event-captivity-pregnancy-discovery',
+  MIRA_CUSTODY_TRANSFER: 'event-mira-custody-transfer',
   CITY_CRISIS: 'event-city-crisis',
   DEBT_FACTION_WARNING: 'event-debt-faction-warning',
   DOYLE_MILESTONE_HOLST: 'event-doyle-milestone-holst',
