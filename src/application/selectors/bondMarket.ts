@@ -57,6 +57,7 @@ export interface BrokerageHouseHeldEntry {
   marketValue: number
   forSale: boolean
   assignedToKitchen: boolean
+  conditionLabel: string
   saleQuotes: BrokerageSaleQuote[]
 }
 
@@ -68,6 +69,8 @@ export interface BrokerageTransferredEntry {
   entryReasonLabel: string
   marketValue: number
   ransomCost: number
+  conditionLabel: string
+  conditionTrendLabel: string
   legalRescueLabel: string
   canAffordLegalRescue: boolean
   legalRescueBlockedReason: string | null
@@ -107,6 +110,31 @@ function describeBuyerSpecialization(specialization: string): string {
     case 'labor':
     default:
       return 'Merchant placement - steady labor extraction.'
+  }
+}
+
+function describeHealthBand(health: number): string {
+  if (health >= 85) return 'stable'
+  if (health >= 70) return 'worn'
+  if (health >= 50) return 'strained'
+  if (health >= 30) return 'hurt'
+  return 'broken'
+}
+
+function describeConditionLabel(health: number): string {
+  return `Condition: ${describeHealthBand(health)} (${health} health).`
+}
+
+function describeHoldingDrift(specialization: string): string {
+  switch (specialization) {
+    case 'specialist':
+      return 'Daily drift: +1 health under this holding.'
+    case 'security':
+      return 'Daily drift: -2 health under this holding.'
+    case 'assessed':
+    case 'labor':
+    default:
+      return 'Daily drift: -1 health under this holding.'
   }
 }
 
@@ -221,6 +249,7 @@ export const selectBrokerageOverview = createSelector(
         forSale: npc.bondStatus!.forSale,
         assignedToKitchen:
           npc.assignment === 'working' && npc.roomAssignment === 'room-kitchen',
+        conditionLabel: describeConditionLabel(npc.states.health),
         saleQuotes: npc.bondStatus!.forSale
           ? contentCatalog.bondBuyers.map((buyer) => ({
               buyerId: buyer.id,
@@ -248,6 +277,8 @@ export const selectBrokerageOverview = createSelector(
           entryReasonLabel: formatBondEntryReason(npc.bondStatus!.entryReason),
           marketValue: npc.bondStatus!.marketValue,
           ransomCost,
+          conditionLabel: describeConditionLabel(npc.states.health),
+          conditionTrendLabel: describeHoldingDrift(buyer?.specialization ?? 'labor'),
           legalRescueLabel: `Buy freedom (${ransomCost} Marks)`,
           canAffordLegalRescue: game.money >= ransomCost,
           legalRescueBlockedReason:

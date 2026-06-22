@@ -163,6 +163,45 @@ describe('selectBrokerageOverview', () => {
     expect(cress?.intakeBlockedReason).toBe('Need 28 more Marks to buy in this debt contract.')
   })
 
+  it('surfaces condition and holding drift for brokerage cases', () => {
+    const state = {
+      ...stateWithTransferredCompactHold(),
+      roster: stateWithTransferredCompactHold().roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? {
+              ...npc,
+              bondStatus: {
+                holderId: 'player' as const,
+                contractValue: 40,
+                termDays: 30,
+                entryReason: 'debt-settlement' as const,
+                alongsideFreeAssignmentDays: 0,
+                lastEqualityNoticeDay: null,
+                forSale: false,
+                lastOfferDay: null,
+                marketValue: 120,
+                ownerType: 'player' as const,
+                bondStartDay: 1,
+              },
+            }
+          : npc.npcId === 'npc-ida-rhys'
+            ? {
+                ...npc,
+                states: { ...npc.states, health: 58 },
+              }
+            : npc,
+      ),
+    }
+
+    const overview = selectBrokerageOverview({ game: state })
+    const marion = overview.houseHeld.find((entry) => entry.npcId === 'npc-marion-vale')
+    const ida = overview.transferred.find((entry) => entry.npcId === 'npc-ida-rhys')
+
+    expect(marion?.conditionLabel).toBe('Condition: stable (96 health).')
+    expect(ida?.conditionLabel).toBe('Condition: strained (58 health).')
+    expect(ida?.conditionTrendLabel).toBe('Daily drift: -1 health under this holding.')
+  })
+
   it('surfaces rescue previews for transferred contracts', () => {
     const overview = selectBrokerageOverview({ game: stateWithTransferredCompactHold() })
     const ida = overview.transferred.find((entry) => entry.npcId === 'npc-ida-rhys')

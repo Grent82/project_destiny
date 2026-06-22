@@ -136,6 +136,24 @@ describe('BrokerageScreen', () => {
     ).toBeInTheDocument()
   })
 
+  it('shows visible condition and drift signals for bound cases', () => {
+    renderBrokerageScreen({
+      ...stateWithBrokerageActivity(),
+      roster: stateWithBrokerageActivity().roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys'
+          ? {
+              ...npc,
+              states: { ...npc.states, health: 58 },
+            }
+          : npc,
+      ),
+    })
+
+    expect(screen.getByText('Condition: stable (96 health).')).toBeInTheDocument()
+    expect(screen.getByText('Condition: strained (58 health).')).toBeInTheDocument()
+    expect(screen.getByText('Daily drift: -1 health under this holding.')).toBeInTheDocument()
+  })
+
   it('lets the player place a house-held bonded NPC into food service from the brokerage surface', async () => {
     const user = userEvent.setup()
     const store = renderBrokerageScreen()

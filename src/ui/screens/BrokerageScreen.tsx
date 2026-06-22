@@ -136,6 +136,7 @@ export function BrokerageScreen() {
                         Buyout {entry.contractValue} Marks · Transfer value {entry.marketValue} Marks
                         {entry.termDays !== null ? ` · ${entry.termDays} day term` : ''}
                       </p>
+                      <p className="muster-entry-note">{entry.conditionLabel}</p>
                       <div className="muster-entry-badges">
                         {entry.forSale ? <span className="badge badge-warning">Marked for transfer</span> : null}
                         {entry.assignedToKitchen ? <span className="badge">Assigned to kitchen service</span> : null}
@@ -231,7 +232,9 @@ export function BrokerageScreen() {
                       <p className="muster-entry-bond">
                         {entry.entryReasonLabel} · Filed value {entry.marketValue} Marks · Legal buyout {entry.ransomCost} Marks
                       </p>
+                      <p className="muster-entry-note">{entry.conditionLabel}</p>
                       <p className="muster-entry-note">{entry.holderNote}</p>
+                      <p className="muster-entry-note">{entry.conditionTrendLabel}</p>
                       <div className="bond-status-actions" style={{ marginTop: '0.45rem' }}>
                         <button
                           className="action-button action-button--secondary"
