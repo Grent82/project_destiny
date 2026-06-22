@@ -40,6 +40,42 @@ Examples:
 
 Which audit findings, files, screens, tests, or user-reported problems justify this Bead?
 
+## DO NOT
+
+Explicit failure modes to avoid. At least two bullet points.
+
+Examples:
+- DO NOT implement as probability roll when NPC agency is expected
+- DO NOT show zero counts in player-facing messages (use alternative phrasing or hide)
+- DO NOT sort when filtering is required
+- DO NOT log every NPC decision (noise, not signal)
+- DO NOT use Math.random (breaks determinism)
+- DO NOT make important events purely probabilistic without player agency
+
+## Visibility Level
+
+How much of this simulation should the player see?
+
+- **BACKGROUND**: Simulation runs invisibly. No Activity Log entries for intermediate steps.
+- **MOMENT**: Only important results appear in Activity Log with names (coalition forms, expedition succeeds, status changes).
+- **CONTINUOUS**: UI shows ongoing state (e.g., "3 NPCs working corridor").
+
+_Required for: any ticket involving NPC behavior, world simulation, or economy._
+
+## Examples
+
+Concrete before/after showing what "good" looks like.
+
+**BAD (mehrdeutig):**
+- "Coalition clears corridor over time"
+- "NPCs work on the corridor"
+
+**GOOD (klar):**
+- "Day 7: Activity Log - 'Tessaly assembled a coalition for the Green Corridor'"
+- "Day 10: Activity Log - 'Tessaly's coalition fought through bandits, cleared sector 2'"
+- "Day 12: Activity Log - 'The Green Corridor is open. Trade flows again.'"
+- "Player has NO visibility into days 7-11 progress unless they join"
+
 ## Acceptance Criteria
 
 1. **Player-visible:** What can the player now do or see?
