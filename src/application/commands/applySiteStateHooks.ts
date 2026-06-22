@@ -167,9 +167,17 @@ function queueSitePressureEvent(next: GameState, site: SiteRuntime, pressureScor
   if (next.pendingEvents.length >= MAX_PENDING_EVENTS) return next
 
   const districtName = contentCatalog.districtsById.get(site.districtId)?.name ?? site.districtId
-  const pressureText = captiveCount > 0
-    ? `${site.name} is carrying quiet pressure in ${districtName}. ${captiveCount} captive situation${captiveCount === 1 ? '' : 's'} and ${protectedCount} sheltered or discreet occupant${protectedCount === 1 ? '' : 's'} make the place harder to keep invisible.`
-    : `${site.name} is carrying quiet pressure in ${districtName}. ${protectedCount} sheltered or discreet occupant${protectedCount === 1 ? '' : 's'} make the place visible to the wrong people if the pattern holds.`
+  let pressureText: string
+
+  if (captiveCount > 0 && protectedCount > 0) {
+    pressureText = `${site.name} is carrying quiet pressure in ${districtName}. ${captiveCount} captive situation${captiveCount === 1 ? '' : 's'} and ${protectedCount} sheltered or discreet occupant${protectedCount === 1 ? '' : 's'} make the place harder to keep invisible.`
+  } else if (captiveCount > 0) {
+    pressureText = `${site.name} is carrying quiet pressure in ${districtName}. ${captiveCount} captive situation${captiveCount === 1 ? '' : 's'} here draw attention.`
+  } else if (protectedCount > 0) {
+    pressureText = `${site.name} is carrying quiet pressure in ${districtName}. ${protectedCount} sheltered or discreet occupant${protectedCount === 1 ? '' : 's'} make the place visible to the wrong people if the pattern holds.`
+  } else {
+    pressureText = `${site.name} is carrying quiet pressure in ${districtName} due to low security and its sensitive nature.`
+  }
 
   return enqueueTemplateEvent(
     {
