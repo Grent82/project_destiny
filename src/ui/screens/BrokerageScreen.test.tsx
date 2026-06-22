@@ -194,6 +194,29 @@ describe('BrokerageScreen', () => {
     expect(store.getState().game.availableForHire).toHaveLength(0)
   })
 
+  it('disables intake when the house cannot meet the entry fee and shows the shortfall', () => {
+    renderBrokerageScreen({
+      ...withKitchenState(initialGameStateSnapshot, 'intact'),
+      currentDistrictId: 'district-the-pale',
+      money: 10,
+      availableForHire: [
+        {
+          npcId: 'npc-cress-aldmoor',
+          discoveredInDistrictId: null,
+          wagePerDay: 20,
+          signingBonus: 75,
+          requiredFactionId: null,
+          requiredFactionStanding: 0,
+          turnsAvailable: 8,
+          source: 'district',
+        },
+      ],
+    })
+
+    expect(screen.getByRole('button', { name: 'Take under debt contract' })).toBeDisabled()
+    expect(screen.getByText(/Need 28 more Marks to buy in this debt contract/i)).toBeInTheDocument()
+  })
+
   it('shows buyer quotes and allows direct transfer once a contract is marked for sale', async () => {
     const user = userEvent.setup()
     const store = renderBrokerageScreen({

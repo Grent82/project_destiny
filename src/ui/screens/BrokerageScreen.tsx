@@ -107,11 +107,17 @@ export function BrokerageScreen() {
                         <button
                           className="action-button"
                           type="button"
+                          disabled={!entry.canAffordIntake}
                           onClick={() => dispatch(gameActions.acquireBoundHireOffer({ npcId: entry.npcId }))}
                         >
                           Take under debt contract
                         </button>
                       </div>
+                      {entry.intakeBlockedReason ? (
+                        <p className="muster-entry-note" style={{ marginTop: '0.45rem' }}>
+                          {entry.intakeBlockedReason}
+                        </p>
+                      ) : null}
                     </div>
                   ))
                 )}

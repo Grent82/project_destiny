@@ -137,6 +137,32 @@ describe('selectBrokerageOverview', () => {
     ])
   })
 
+  it('surfaces intake affordability when the house cannot pay the entry fee', () => {
+    const state = {
+      ...initialStateWithIda,
+      money: 10,
+      availableForHire: [
+        {
+          npcId: 'npc-cress-aldmoor',
+          discoveredInDistrictId: null,
+          wagePerDay: 20,
+          signingBonus: 75,
+          requiredFactionId: null,
+          requiredFactionStanding: 0,
+          turnsAvailable: 8,
+          source: 'district' as const,
+        },
+      ],
+    }
+
+    const overview = selectBrokerageOverview({ game: state })
+    const cress = overview.intake.find((entry) => entry.npcId === 'npc-cress-aldmoor')
+
+    expect(cress?.intakeFee).toBe(38)
+    expect(cress?.canAffordIntake).toBe(false)
+    expect(cress?.intakeBlockedReason).toBe('Need 28 more Marks to buy in this debt contract.')
+  })
+
   it('surfaces rescue previews for transferred contracts', () => {
     const overview = selectBrokerageOverview({ game: stateWithTransferredCompactHold() })
     const ida = overview.transferred.find((entry) => entry.npcId === 'npc-ida-rhys')

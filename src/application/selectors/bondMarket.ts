@@ -81,6 +81,8 @@ export interface BrokerageIntakeEntry {
   wagePerDay: number
   signingBonus: number
   intakeFee: number
+  canAffordIntake: boolean
+  intakeBlockedReason: string | null
   contractValue: number
   termDays: number
   marketValue: number
@@ -266,6 +268,11 @@ export const selectBrokerageOverview = createSelector(
           wagePerDay: offer.wagePerDay,
           signingBonus: offer.signingBonus,
           intakeFee: terms.intakeFee,
+          canAffordIntake: game.money >= terms.intakeFee,
+          intakeBlockedReason:
+            game.money >= terms.intakeFee
+              ? null
+              : `Need ${terms.intakeFee - game.money} more Marks to buy in this debt contract.`,
           contractValue: terms.contractValue,
           termDays: terms.termDays,
           marketValue: terms.marketValue,
