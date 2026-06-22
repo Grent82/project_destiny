@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { gameActions, selectAvailableForHire, selectRosterCapacity, selectRarityDescriptions, selectRaritySkillCaps } from '../../application'
@@ -22,12 +22,21 @@ export function RecruitmentScreen() {
   const [lastRecruitedName, setLastRecruitedName] = useState<string | null>(null)
   const venueContext = useVenueContext()
 
-  // Sort: district-matched offers first, then others
-  const offers = [...offersRaw].sort((a, b) => {
-    const aMatch = a.discoveredInDistrictId === currentDistrictId ? 0 : 1
-    const bMatch = b.discoveredInDistrictId === currentDistrictId ? 0 : 1
-    return aMatch - bMatch
-  })
+  // Filter: if we are at a specific POI, only show offers from that district
+  // Otherwise show all offers (sorted by current district match)
+  const offers = useMemo(() => {
+    const filtered = venueContext
+      ? offersRaw.filter((offer) => offer.discoveredInDistrictId === venueContext.districtId)
+      : offersRaw
+
+    // Sort: district-matched offers first, then others
+    return [...filtered].sort((a, b) => {
+      const targetDistrict = venueContext?.districtId ?? currentDistrictId
+      const aMatch = a.discoveredInDistrictId === targetDistrict ? 0 : 1
+      const bMatch = b.discoveredInDistrictId === targetDistrict ? 0 : 1
+      return aMatch - bMatch
+    })
+  }, [offersRaw, venueContext, currentDistrictId])
 
   const { isFull, current: rosterSize, total: totalSlots, houseBonus } = capacity
 
@@ -115,7 +124,9 @@ export function RecruitmentScreen() {
 
       {offers.length === 0 ? (
         <p className="text-muted">
-          No one is looking for work in Valdenmoor today. Check back after the next day turns.
+          {venueContext
+            ? `No one is looking for work at ${venueContext.poiName} today. Check back after the next day turns, or visit another location.`
+            : 'No one is looking for work in Valdenmoor today. Check back after the next day turns.'}
         </p>
       ) : (
         <div className="list-panel" role="list" aria-label="Available recruits">

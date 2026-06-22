@@ -10,7 +10,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { runScenario } from '../runner'
-import { eventSystemInvariantScenario, type InvariantRunResult } from './eventSystemInvariants'
+import { eventSystemInvariantScenario } from './eventSystemInvariants'
 import { contentCatalog } from '../../content/contentCatalog'
 
 describe('Event System Invariant Suite (destiny-lzke)', () => {
@@ -122,7 +122,6 @@ describe('Event System Invariant Suite (destiny-lzke)', () => {
 
     // Count invariant failures vs passes
     const invFailures = result.failures.filter(f => f.assertionId?.startsWith('invariant-'))
-    const invChecks = result.trace.filter(t => t.label.includes('Final state invariants'))
 
     // Document the current state
     console.log(`Invariant suite result: ${invFailures.length} failures out of 5 invariants checked`)
