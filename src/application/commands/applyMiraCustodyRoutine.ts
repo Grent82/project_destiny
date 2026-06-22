@@ -186,7 +186,7 @@ function queueMiraTransferEvent(
  * have earned access to this truth through investigation/clues.
  */
 export function getMiraCustodySchedule(
-  state: Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'day'>,
+  state: Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests' | 'day'>,
 ): {
   currentRoom: string | null
   nextRoom: string | null
