@@ -10,6 +10,8 @@ import {
   getMiraConditionDescription,
 } from './miraCustody'
 
+import type { QuestRuntime } from '../../domain/quests/contracts'
+
 function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests'> {
   return {
     ...initialGameStateSnapshot,
@@ -38,7 +40,7 @@ function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'n
 describe('getMiraCustodyTruthForPlayer', () => {
   it('returns null when Mira is not in captivity', () => {
     const state = createBaseState()
-    state.npcCaptivityStates['npc-mira']!.status = 'freed' as any
+    state.npcCaptivityStates['npc-mira']!.status = 'rescued'
 
     expect(getMiraCustodyTruthForPlayer(state)).toBeNull()
   })
@@ -67,7 +69,7 @@ describe('getMiraCustodyTruthForPlayer', () => {
 
   it('reveals site truth when act2 is active', () => {
     const state = createBaseState({
-      activeQuests: [{ questId: 'quest-mira-act2-tannery-watch' } as any],
+      activeQuests: [{ questId: 'quest-mira-act2-tannery-watch', acceptedOnDay: 1, status: 'active', acceptedTitle: 'Test', stageId: 'stage1' } as QuestRuntime],
     })
     const truth = getMiraCustodyTruthForPlayer(state)
 
@@ -93,7 +95,7 @@ describe('getMiraCustodyTruthForPlayer', () => {
 
   it('reveals condition truth when rescue is active', () => {
     const state = createBaseState({
-      activeQuests: [{ questId: 'quest-mira-rescue' } as any],
+      activeQuests: [{ questId: 'quest-mira-rescue', acceptedOnDay: 1, status: 'active', acceptedTitle: 'Test', stageId: 'stage1' } as QuestRuntime],
     })
     const truth = getMiraCustodyTruthForPlayer(state)
 

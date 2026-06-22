@@ -97,7 +97,7 @@ export function applyOutcomes(
 
   for (const outcome of outcomes) {
     switch (outcome.type) {
-      case 'adjustFactionStanding':
+      case 'adjustFactionStanding': {
         if (!hasRequiredFields(outcome, ['target', 'delta'])) break
         const standingTarget = outcome.target!
         const standingDelta = outcome.delta!
@@ -110,46 +110,45 @@ export function applyOutcomes(
           },
         }
         break
-      case 'adjustCityDial':
+      }
+      case 'adjustCityDial': {
         if (!hasRequiredFields(outcome, ['target', 'delta'])) break
-        {
-          const validDials = ['control', 'prosperity', 'unrest', 'corruption'] as const
-          const dialTarget = outcome.target!
-          const dialDelta = outcome.delta!
-          if (!validDials.includes(dialTarget as typeof validDials[number])) {
-            console.warn(`applyEventOutcome: invalid dial target "${dialTarget}"`)
-            break
-          }
-          const dial = dialTarget as typeof validDials[number]
-          next = {
-            ...next,
-            cityDials: {
-              ...next.cityDials,
-              [dial]: Math.max(0, Math.min(100, next.cityDials[dial] + dialDelta)),
-            },
-          }
+        const validDials = ['control', 'prosperity', 'unrest', 'corruption'] as const
+        const dialTarget = outcome.target!
+        const dialDelta = outcome.delta!
+        if (!validDials.includes(dialTarget as typeof validDials[number])) {
+          console.warn(`applyEventOutcome: invalid dial target "${dialTarget}"`)
+          break
+        }
+        const dial = dialTarget as typeof validDials[number]
+        next = {
+          ...next,
+          cityDials: {
+            ...next.cityDials,
+            [dial]: Math.max(0, Math.min(100, next.cityDials[dial] + dialDelta)),
+          },
         }
         break
-      case 'adjustCityResource':
+      }
+      case 'adjustCityResource': {
         if (!hasRequiredFields(outcome, ['target', 'delta'])) break
-        {
-          const validResources = ['foodSecurity', 'waterAccess', 'materialStock'] as const
-          const resourceTarget = outcome.target!
-          const resourceDelta = outcome.delta!
-          if (!validResources.includes(resourceTarget as typeof validResources[number])) {
-            console.warn(`applyEventOutcome: invalid resource target "${resourceTarget}"`)
-            break
-          }
-          const resource = resourceTarget as typeof validResources[number]
-          next = {
-            ...next,
-            cityResources: {
-              ...next.cityResources,
-              [resource]: Math.max(0, Math.min(100, next.cityResources[resource] + resourceDelta)),
-            },
-          }
+        const validResources = ['foodSecurity', 'waterAccess', 'materialStock'] as const
+        const resourceTarget = outcome.target!
+        const resourceDelta = outcome.delta!
+        if (!validResources.includes(resourceTarget as typeof validResources[number])) {
+          console.warn(`applyEventOutcome: invalid resource target "${resourceTarget}"`)
+          break
+        }
+        const resource = resourceTarget as typeof validResources[number]
+        next = {
+          ...next,
+          cityResources: {
+            ...next.cityResources,
+            [resource]: Math.max(0, Math.min(100, next.cityResources[resource] + resourceDelta)),
+          },
         }
         break
+      }
       case 'adjustNpcState':
         if (!hasRequiredFields(outcome, ['subject', 'axis', 'delta'])) break
         {
