@@ -739,8 +739,8 @@
       },
       {
         "atStageId": "on-site",
-        "label": "The schedule is signed by an assessor from the Northbank. This is not a holding — it is a transfer.",
-        "journalEntry": "Mira is being moved in two days. The signature on the order belongs to someone with access to the Court's internal transport — this is not a routine detention."
+        "label": "The schedule is signed by Dalen Morke. This is not a holding — it is a transfer.",
+        "journalEntry": "Mira is being moved in two days. Dalen Morke's name is on the order, which means someone inside the Court's transport chain is managing this personally."
       }
     ],
     "aftermathText": "The contract is settled. The house bears the cost or collects the reward."
@@ -794,8 +794,8 @@
       },
       {
         "atStageId": "engaged",
-        "label": "Inside the tannery. The guards are not expecting resistance — but they are positioned.",
-        "journalEntry": "The tannery's inner ring is occupied. Mira is somewhere past the holding floor, which means going through. The guards look like they have been told to expect someone."
+        "label": "Inside the tannery. Tomas Rell holds the yard while Catrin Hale keeps the holding floor.",
+        "journalEntry": "Tomas Rell has the outer route. Catrin Hale has the holding floor. Mira is somewhere past them in the inner ring, which means going through."
       },
       {
         "atStageId": "setback",
@@ -816,7 +816,7 @@
     "enemyFactionId": "faction-gilded-court",
     "enemyNpcId": "npc-enemy-tomas-rell",
     "districtId": "district-the-pale",
-    "briefing": "The Court does not forget loud raids. A seizure writ has been filed against the house — the same assessor who signed Mira's transfer order is now demanding the house's assets as restitution. Hold the door for three watches. The writ fails, but the Court now needs the debt to succeed where the raid did not.",
+    "briefing": "The Court does not forget loud raids. A seizure writ has been filed against the house — Dalen Morke, the assessor who signed Mira's transfer order, is now demanding the house's assets as restitution. Hold the door for three watches. The writ fails, but the Court now needs the debt to succeed where the raid did not.",
     "objectiveType": "survival",
     "rewardMarks": 0,
     "rewardStandingFactionId": null,

@@ -7,10 +7,15 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 
 describe('worldNpc runtime state selectors', () => {
-  it('starts with empty worldNpcStates', () => {
+  it('seeds the Mira custody chain runtime flags on the fresh save', () => {
     const store = createGameStore()
     const states = selectWorldNpcStates(store.getState())
-    expect(states).toEqual([])
+    expect(states.map((entry) => entry.npcId)).toEqual(
+      expect.arrayContaining(['npc-dalen-morke', 'npc-enemy-tomas-rell', 'npc-enemy-catrin-hale']),
+    )
+    expect(
+      states.find((entry) => entry.npcId === 'npc-dalen-morke')?.flags,
+    ).toContain('mira-custody-handler')
   })
 
   it('returns null for unknown NPC before any update', () => {

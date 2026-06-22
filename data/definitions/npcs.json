@@ -4595,5 +4595,61 @@
     },
     "allowedTitleIds": [],
     "loyalties": []
+  },
+  {
+    "id": "npc-enemy-catrin-hale",
+    "name": "Catrin Hale",
+    "npcType": "enemy",
+    "origin": "The Pale",
+    "background": "A Court warder assigned to deniable holding sites. She keeps doors, counts keys, and treats signed paper as more reliable than any witness.",
+    "rarity": "uncommon",
+    "status": "mercenary",
+    "factionAffinityId": "faction-gilded-court",
+    "baseAttributes": {
+      "might": 46,
+      "agility": 51,
+      "endurance": 55,
+      "intellect": 42,
+      "perception": 63,
+      "presence": 36,
+      "resolve": 61
+    },
+    "startingSkills": {
+      "melee": 54,
+      "ranged": 43,
+      "medicine": 8,
+      "administration": 32,
+      "engineering": 12,
+      "negotiation": 18,
+      "survival": 27,
+      "security": 72,
+      "crafting": 11,
+      "performance": 6,
+      "academics": 14,
+      "intrigue": 31
+    },
+    "startingTraits": {
+      "discipline": 78,
+      "ambition": 34,
+      "empathy": 16,
+      "ruthlessness": 58,
+      "prudence": 69,
+      "curiosity": 20,
+      "dominance": 61,
+      "loyalty": 47,
+      "vanity": 12,
+      "zeal": 18
+    },
+    "allowedTitleIds": [],
+    "ageBand": "adult",
+    "sex": "woman",
+    "appearanceTags": [
+      "warder",
+      "scarred-knuckles",
+      "court-livery"
+    ],
+    "quirks": [],
+    "loyalties": [],
+    "schedule": {}
   }
 ]

@@ -561,7 +561,29 @@
     }
   ],
   "eventInstances": [],
-  "worldNpcStates": [],
+  "worldNpcStates": [
+    {
+      "npcId": "npc-dalen-morke",
+      "lastContactDay": null,
+      "disposition": "unknown",
+      "locationOverride": null,
+      "flags": ["mira-custody-handler", "mira-custody-site:site-poi-pale-old-tannery"]
+    },
+    {
+      "npcId": "npc-enemy-tomas-rell",
+      "lastContactDay": null,
+      "disposition": "hostile",
+      "locationOverride": null,
+      "flags": ["mira-custody-guard", "mira-custody-site:site-poi-pale-old-tannery"]
+    },
+    {
+      "npcId": "npc-enemy-catrin-hale",
+      "lastContactDay": null,
+      "disposition": "hostile",
+      "locationOverride": null,
+      "flags": ["mira-custody-guard", "mira-custody-site:site-poi-pale-old-tannery"]
+    }
+  ],
   "siteRuntimes": {},
   "npcCaptivityStates": {
     "npc-mira": {
@@ -578,7 +600,38 @@
       "questTag": "quest-mira-rescue"
     }
   },
-  "npcSitePresences": [],
+  "npcSitePresences": [
+    {
+      "occupancyId": "occ-mira-handler-dalen",
+      "npcId": "npc-dalen-morke",
+      "siteId": "site-poi-pale-old-tannery",
+      "roomId": null,
+      "role": "visitor",
+      "visibility": "hidden",
+      "status": "assigned",
+      "sinceDay": 1
+    },
+    {
+      "occupancyId": "occ-mira-guard-rell",
+      "npcId": "npc-enemy-tomas-rell",
+      "siteId": "site-poi-pale-old-tannery",
+      "roomId": "tannery-yard",
+      "role": "guard",
+      "visibility": "discreet",
+      "status": "present",
+      "sinceDay": 1
+    },
+    {
+      "occupancyId": "occ-mira-guard-hale",
+      "npcId": "npc-enemy-catrin-hale",
+      "siteId": "site-poi-pale-old-tannery",
+      "roomId": "tannery-holding-floor",
+      "role": "guard",
+      "visibility": "hidden",
+      "status": "present",
+      "sinceDay": 1
+    }
+  ],
   "houseStorageCapacity": 40,
   "installedHouseModules": [],
   "bondedPersonsRegistry": {},

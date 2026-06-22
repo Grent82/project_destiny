@@ -26,6 +26,7 @@ describe('site selectors', () => {
 
   it('stores and filters NPC site occupancy for the player house', () => {
     const store = createGameStore()
+    const initialPresenceCount = selectNpcSitePresences(store.getState()).length
     store.dispatch(
       gameActions.upsertNpcSitePresence({
         occupancyId: 'occ-marion-quarters',
@@ -41,7 +42,7 @@ describe('site selectors', () => {
 
     const allPresences = selectNpcSitePresences(store.getState())
     const housePresences = selectPlayerHouseRoomOccupancy(store.getState())
-    expect(allPresences).toHaveLength(1)
+    expect(allPresences).toHaveLength(initialPresenceCount + 1)
     expect(housePresences).toHaveLength(1)
     expect(housePresences[0]?.roomId).toBe('room-quarters')
   })
