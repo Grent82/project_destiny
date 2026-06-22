@@ -126,6 +126,9 @@ If a task depends on another task’s output, encode that dependency in Beads. D
 - Narrative-heavy Beads must record a `fiction contract`.
 - Prefer capability Beads before content-expansion Beads.
 - Player-facing Beads should include acceptance for route clarity, post-action readability, and layer-appropriate information hierarchy where relevant.
+- **DO NOT section required**: Every Bead must list at least two failure modes to avoid (e.g., "DO NOT implement as probability roll when NPC agency is expected", "DO NOT show zero counts in messages").
+- **Visibility Level required for simulation work**: Choose BACKGROUND (invisible), MOMENT (important results only), or CONTINUOUS (UI shows ongoing state).
+- **Examples required for ambiguous work**: Show BAD (mehrdeutig) vs GOOD (klar) before/after to prevent implementation drift.
 
 ## Task Lifecycle
 

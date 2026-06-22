@@ -8,6 +8,7 @@ Project Destiny uses a coordinator-led multi-agent workflow with Beads as the on
 - Follow [docs/engineering-standards.md](docs/engineering-standards.md).
 - Use the task structure in [docs/task-contract.md](docs/task-contract.md).
 - Use [docs/workflows/bead-creation.md](docs/workflows/bead-creation.md) when creating or refining Beads.
+- **Bead clarity standards**: Every Bead must include `DO NOT` section (failure modes to avoid), `Visibility Level` (BACKGROUND|MOMENT|CONTINUOUS) for simulation work, and `Examples` (BAD vs GOOD) for ambiguous work. See template at `.beads/templates/bead-description.md`.
 - Use [docs/workflows/design-review.md](docs/workflows/design-review.md) for any player-facing design work or UX critique.
 - Use [docs/workflows/event-review.md](docs/workflows/event-review.md) when designing or reviewing authored events, tutorial events, or event aftermath presentation.
 - Use [docs/workflows/dialogue-review.md](docs/workflows/dialogue-review.md) when designing or reviewing dialogue trees.
