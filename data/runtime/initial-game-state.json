@@ -563,7 +563,21 @@
   "eventInstances": [],
   "worldNpcStates": [],
   "siteRuntimes": {},
-  "npcCaptivityStates": {},
+  "npcCaptivityStates": {
+    "npc-mira": {
+      "status": "captive",
+      "holderId": "faction-gilded-court",
+      "siteId": "site-poi-pale-old-tannery",
+      "roomId": "tannery-inner-ring",
+      "regime": "guarded",
+      "condition": "hurt",
+      "compliance": "resistant",
+      "bondType": "fear",
+      "timeHeldDays": 21,
+      "lastTransferDay": 0,
+      "questTag": "quest-mira-rescue"
+    }
+  },
   "npcSitePresences": [],
   "houseStorageCapacity": 40,
   "installedHouseModules": [],

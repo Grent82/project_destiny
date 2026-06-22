@@ -21,8 +21,8 @@ function makeStateWithCaptive(captivityOverride?: object): GameState {
       [SQUAD_NPC]: {
         status: 'captive' as const,
         holderId: 'faction-syndicate',
-        siteId: 'site-old-tannery',
-        roomId: 'room-holding-floor',
+        siteId: 'site-poi-pale-old-tannery',
+        roomId: 'tannery-holding-floor',
         regime: 'guarded' as const,
         condition: 'healthy' as const,
         compliance: 'resistant' as const,
@@ -40,8 +40,8 @@ function makeStateWithCaptive(captivityOverride?: object): GameState {
             captivityState: {
               status: 'captive' as const,
               holderId: 'faction-syndicate',
-              siteId: 'site-old-tannery',
-              roomId: 'room-holding-floor',
+              siteId: 'site-poi-pale-old-tannery',
+              roomId: 'tannery-holding-floor',
               regime: 'guarded' as const,
               condition: 'healthy' as const,
               compliance: 'resistant' as const,
@@ -66,8 +66,8 @@ describe('captivityStateSchema', () => {
       compliance: 'resistant',
       bondType: 'none',
       timeHeldDays: 0,
-      siteId: 'site-old-tannery',
-      roomId: 'room-holding-floor',
+      siteId: 'site-poi-pale-old-tannery',
+      roomId: 'tannery-holding-floor',
       regime: 'guarded',
       lastTransferDay: null,
       questTag: null,
@@ -135,7 +135,7 @@ describe('setCaptivityState action', () => {
         captivityState: {
           status: 'missing',
           holderId: null,
-          siteId: 'site-old-tannery',
+          siteId: 'site-poi-pale-old-tannery',
           roomId: null,
           regime: 'hidden',
           condition: 'healthy',
@@ -149,7 +149,7 @@ describe('setCaptivityState action', () => {
     )
     const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.status).toBe('missing')
-    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.siteId).toBe('site-old-tannery')
+    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.siteId).toBe('site-poi-pale-old-tannery')
   })
 
   it('clears captivityState when null is passed', () => {
@@ -168,8 +168,8 @@ describe('setCaptivityState action', () => {
         captivityState: {
           status: 'captive',
           holderId: 'faction-gilded-court',
-          siteId: 'site-old-tannery',
-          roomId: 'room-inner-ring',
+          siteId: 'site-poi-pale-old-tannery',
+          roomId: 'tannery-inner-ring',
           regime: 'guarded',
           condition: 'hurt',
           compliance: 'resistant',
@@ -181,7 +181,7 @@ describe('setCaptivityState action', () => {
       }),
     )
 
-    expect(store.getState().game.npcCaptivityStates['npc-mira']?.roomId).toBe('room-inner-ring')
+    expect(store.getState().game.npcCaptivityStates['npc-mira']?.roomId).toBe('tannery-inner-ring')
   })
 })
 
@@ -263,7 +263,15 @@ describe('captivity degradation in endDay', () => {
   })
 
   it('degrades condition from healthy→hurt at 7 days', () => {
-    const store = createGameStore(makeStateWithCaptive({ timeHeldDays: 6, condition: 'healthy' }))
+    const store = createGameStore(
+      makeStateWithCaptive({
+        timeHeldDays: 6,
+        condition: 'healthy',
+        siteId: null,
+        roomId: null,
+        regime: 'hidden',
+      }),
+    )
     store.dispatch(gameActions.endDay())
     const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.condition).toBe('hurt')
@@ -292,7 +300,7 @@ describe('captivity degradation in endDay', () => {
         'npc-mira': {
           status: 'captive',
           holderId: 'faction-gilded-court',
-          siteId: 'site-old-tannery',
+          siteId: 'site-poi-pale-old-tannery',
           roomId: null,
           regime: 'hidden',
           condition: 'healthy',
