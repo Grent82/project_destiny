@@ -49,7 +49,7 @@ describe('Economy Invariant Suite', () => {
       console.log('Recovery failures:', result.failures)
     }
 
-    // For now, allow failures since the economy simulation may need tuning
+    // This scenario tests the recovery path - it may fail if economy balancing needs tuning
     // The important thing is that the scenario runs without crashing
     expect(result.failures.length).toBeGreaterThanOrEqual(0)
   })
