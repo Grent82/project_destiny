@@ -179,10 +179,10 @@ export const recoveryScenario: PlaythroughScenario = {
   },
 
   steps: [
-    { type: 'advance-days', label: 'Run 3 days with blocked corridor (accumulate clearance progress)', days: 3 },
+    { type: 'advance-days', label: 'Run 3 days with blocked corridor (simulate world clearance effort)', days: 3 },
     {
       type: 'dispatch',
-      label: 'Set corridor to disrupted (simulate partial clearance)',
+      label: 'Manually set corridor to disrupted (for testing recovery path)',
       command: (_state, dispatch) => {
         dispatch({
           type: 'game/setCorridorStatus',
@@ -193,7 +193,7 @@ export const recoveryScenario: PlaythroughScenario = {
     { type: 'advance-days', label: 'Run 2 days with disrupted corridor', days: 2 },
     {
       type: 'dispatch',
-      label: 'Set corridor to open (full reopening)',
+      label: 'Manually set corridor to open (full reopening)',
       command: (_state, dispatch) => {
         dispatch({
           type: 'game/setCorridorStatus',
