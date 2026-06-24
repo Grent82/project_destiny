@@ -81,22 +81,18 @@ export const weaponDefinitionSchema = itemDefinitionSchema
   .extend({
     category: z.literal('weapon'),
     weaponClass: weaponClassSchema,
-    effectiveRange: combatRangeSchema,
     damageMin: nonNegativeIntegerSchema,
     damageMax: nonNegativeIntegerSchema,
     accuracy: percentageSchema,
     armorPiercing: percentageSchema,
     speed: positiveIntegerSchema,
-    rangeModifier: z
-      .object({
-        close: z.number().int().min(-100).max(100),
-        distant: z.number().int().min(-100).max(100),
-      })
-      .strict(),
+    rangeType: z.string().optional(),
+    rangeModifierClose: z.number().int().min(-100).max(100).optional(),
+    rangeModifierMedium: z.number().int().min(-100).max(100).optional(),
+    rangeModifierDistant: z.number().int().min(-100).max(100).optional(),
+    rangeTypePreference: combatRangeSchema.optional(),
     critChance: percentageSchema,
     staggerChance: percentageSchema,
-    ammoType: z.string().min(1).nullable(),
-    durability: positiveIntegerSchema,
     repairCost: nonNegativeIntegerSchema.optional(),
     durabilityMax: positiveIntegerSchema.optional(),
   })
@@ -118,12 +114,11 @@ export const armorDefinitionSchema = itemDefinitionSchema
     category: z.literal('armor'),
     armorClass: armorClassSchema,
     soak: percentageSchema,
-    evasionPenalty: percentageSchema,
-    speedPenalty: percentageSchema,
-    durability: positiveIntegerSchema,
-    repairCost: nonNegativeIntegerSchema,
+    evasionPenalty: z.number().int().min(-100).max(100),
+    speedPenalty: z.number().int().min(-100).max(100),
+    repairCost: nonNegativeIntegerSchema.optional(),
     durabilityMax: positiveIntegerSchema.optional(),
-    slotCoverage: z.array(z.string().min(1)).min(1),
+    slotCoverage: z.array(z.string().min(1)).min(1).optional(),
     resistances: z.record(z.string().min(1), percentageSchema).default({}),
   })
   .strict()
