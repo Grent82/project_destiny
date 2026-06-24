@@ -19,6 +19,9 @@ export const worldEventTypeSchema = z.enum([
   'npc-departed',
   'coalition-formed',
   'coalition-dissolved',
+  'coalition-progress',
+  'loot-distributed',
+  'coalition-casualties',
 ])
 
 export type WorldEventType = z.infer<typeof worldEventTypeSchema>
