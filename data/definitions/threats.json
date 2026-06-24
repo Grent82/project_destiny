@@ -1,0 +1,134 @@
+[
+  {
+    "id": "corridor-bandit-scout",
+    "name": "Corridor Scout",
+    "threatType": "bandit",
+    "combatStats": {
+      "health": 40,
+      "attack": 25,
+      "defense": 15,
+      "evasion": 20
+    },
+    "skills": {
+      "melee": 20,
+      "ranged": 15,
+      "stealth": 10
+    },
+    "traits": ["scattered", "opportunistic"],
+    "lootTable": ["item-scrap-metal", "item-rations-basic"],
+    "experienceValue": 5,
+    "description": "A lone scavenger watching the corridor, armed with a rusted blade and poor aim."
+  },
+  {
+    "id": "corridor-bandit-veteran",
+    "name": "Corridor Veteran",
+    "threatType": "bandit",
+    "combatStats": {
+      "health": 70,
+      "attack": 45,
+      "defense": 30,
+      "evasion": 25
+    },
+    "skills": {
+      "melee": 40,
+      "ranged": 35,
+      "stealth": 20
+    },
+    "traits": ["organized", "experienced"],
+    "lootTable": ["item-coin-pouch", "weapon-rusted-sword", "item-leather-armor"],
+    "experienceValue": 15,
+    "description": "A seasoned bandit who has survived the corridor for months. Fights with coordination and purpose."
+  },
+  {
+    "id": "corridor-bandit-leader",
+    "name": "Corridor Warlord",
+    "threatType": "bandit",
+    "combatStats": {
+      "health": 100,
+      "attack": 65,
+      "defense": 45,
+      "evasion": 30
+    },
+    "skills": {
+      "melee": 60,
+      "ranged": 40,
+      "stealth": 25
+    },
+    "traits": ["command", "ruthless", "organized"],
+    "lootTable": ["item-gold-chain", "weapon-steel-dagger", "armor-medium-chainmail", "item-rare-relic"],
+    "experienceValue": 35,
+    "description": "Leader of a corridor gang, commanding respect through brutality and tactical cunning."
+  },
+  {
+    "id": "wild-beast-hound",
+    "name": "Corridor Hound",
+    "threatType": "wild_beast",
+    "combatStats": {
+      "health": 35,
+      "attack": 30,
+      "defense": 10,
+      "evasion": 35
+    },
+    "skills": {},
+    "traits": ["feral", "pack-hunter"],
+    "lootTable": ["item-beast-hide", "item-beast-meat"],
+    "experienceValue": 3,
+    "description": "A feral dog driven mad by the corridor's corruption. Attacks in packs."
+  },
+  {
+    "id": "wild-beast-wolf",
+    "name": "Corrupted Wolf",
+    "threatType": "wild_beast",
+    "combatStats": {
+      "health": 60,
+      "attack": 50,
+      "defense": 20,
+      "evasion": 40
+    },
+    "skills": {},
+    "traits": ["feral", "pack-hunter", "night-stalker"],
+    "lootTable": ["item-wolf-pelt", "item-wolf-claws"],
+    "experienceValue": 12,
+    "description": "A wolf mutated by the corridor's decay. Larger, faster, and utterly merciless."
+  },
+  {
+    "id": "scavenger-looter",
+    "name": "Corridor Looter",
+    "threatType": "scavenger",
+    "combatStats": {
+      "health": 45,
+      "attack": 20,
+      "defense": 25,
+      "evasion": 30
+    },
+    "skills": {
+      "melee": 15,
+      "ranged": 10,
+      "stealth": 35
+    },
+    "traits": ["stealthy", "cowardly"],
+    "lootTable": ["item-stolen-goods", "item-scrap-metal", "item-rations-basic"],
+    "experienceValue": 6,
+    "description": "A scavenger who prefers hiding and stealing over direct combat. Quick to flee when outmatched."
+  },
+  {
+    "id": "scavenger-raider",
+    "name": "Corridor Raider",
+    "threatType": "scavenger",
+    "combatStats": {
+      "health": 65,
+      "attack": 50,
+      "defense": 30,
+      "evasion": 20
+    },
+    "skills": {
+      "melee": 45,
+      "ranged": 20,
+      "stealth": 15
+    },
+    "traits": ["brutal", "territorial"],
+    "lootTable": ["weapon-iron-mace", "armor-light-leather", "item-coin-pouch"],
+    "experienceValue": 18,
+    "description": "A violent raider who claims territory in the corridor and defends it with brutal efficiency."
+  }
+]

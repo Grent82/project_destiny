@@ -1,5 +1,50 @@
 import { z } from 'zod'
 
+import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema } from '../shared/contracts'
+
+/**
+ * Types of threats encountered in corridor expeditions.
+ */
+export const threatTypeSchema = z.enum(['monster', 'bandit', 'scavenger', 'wild_beast'])
+export type ThreatType = z.infer<typeof threatTypeSchema>
+
+/**
+ * Combat stats for a threat profile.
+ */
+export const threatCombatStatsSchema = z.object({
+  health: positiveIntegerSchema,
+  attack: positiveIntegerSchema,
+  defense: positiveIntegerSchema,
+  evasion: nonNegativeIntegerSchema,
+})
+export type ThreatCombatStats = z.infer<typeof threatCombatStatsSchema>
+
+/**
+ * Skills for humanoid threats (bandits, scavengers).
+ */
+export const threatSkillsSchema = z.object({
+  melee: nonNegativeIntegerSchema.default(0),
+  ranged: nonNegativeIntegerSchema.default(0),
+  stealth: nonNegativeIntegerSchema.default(0),
+})
+export type ThreatSkills = z.infer<typeof threatSkillsSchema>
+
+/**
+ * A threat profile defining an enemy type for corridor expeditions.
+ */
+export const threatProfileSchema = z.object({
+  id: entityIdSchema,
+  name: z.string().min(1),
+  threatType: threatTypeSchema,
+  combatStats: threatCombatStatsSchema,
+  skills: threatSkillsSchema.optional().default({ melee: 0, ranged: 0, stealth: 0 }),
+  traits: z.array(z.string().min(1)).default([]),
+  lootTable: z.array(entityIdSchema).default([]),
+  experienceValue: nonNegativeIntegerSchema.default(0),
+  description: z.string().optional(),
+})
+export type ThreatProfile = z.infer<typeof threatProfileSchema>
+
 const discoveryEntrySchema = z.object({
   type: z.enum(['item', 'lore', 'marks']),
   itemId: z.string().optional(),
