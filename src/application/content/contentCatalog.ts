@@ -11,6 +11,8 @@ import events from '../../../data/definitions/events.json'
 import expeditionDestinationsData from '../../../data/definitions/expedition-destinations.json'
 import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
+import weapons from '../../../data/definitions/weapons.json'
+import armor from '../../../data/definitions/armor.json'
 import npcs from '../../../data/definitions/npcs.json'
 import questsData from '../../../data/definitions/quests.json'
 import rumorsData from '../../../data/definitions/rumors.json'
@@ -29,6 +31,12 @@ import {
   timeSlotSchema,
   type NpcDefinition,
 } from '../../domain'
+import {
+  weaponDefinitionSchema,
+  armorDefinitionSchema,
+  type WeaponDefinition,
+  type ArmorDefinition,
+} from '../../domain/items/contracts'
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
 import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
 import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
@@ -81,6 +89,8 @@ const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
 const parsedPois = poiSchema.array().parse(poisData)
 const parsedItems = itemDefinitionSchema.array().parse(items)
+const parsedWeapons = weaponDefinitionSchema.array().parse(weapons)
+const parsedArmor = armorDefinitionSchema.array().parse(armor)
 const parsedShops = shopDefinitionSchema.array().parse(shops)
 const parsedEvents = eventTemplateSchema.array().parse(events)
 const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
@@ -104,6 +114,32 @@ function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
 }
 
+/**
+ * Builds a unified itemsById map from all item sources:
+ * - General items (items.json)
+ * - Weapons (weapons.json)
+ * - Armor (armor.json)
+ *
+ * This ensures that lookups for any item type return consistent results,
+ * fixing issues like 'unknown' categories in shops and missing item names
+ * in purchase/sell flows.
+ */
+function buildItemsById(): Map<string, WeaponDefinition | ArmorDefinition | typeof parsedItems[number]> {
+  const map = new Map<string, WeaponDefinition | ArmorDefinition | typeof parsedItems[number]>()
+
+  for (const item of parsedItems) {
+    map.set(item.id, item)
+  }
+  for (const weapon of parsedWeapons) {
+    map.set(weapon.id, weapon)
+  }
+  for (const armorPiece of parsedArmor) {
+    map.set(armorPiece.id, armorPiece)
+  }
+
+  return map
+}
+
 export const contentCatalog = {
   titles: parsedTitles,
   titlesById: toMap(parsedTitles),
@@ -114,7 +150,9 @@ export const contentCatalog = {
   factions: parsedFactions,
   factionsById: toMap(parsedFactions),
   items: parsedItems,
-  itemsById: toMap(parsedItems),
+  weapons: parsedWeapons,
+  armor: parsedArmor,
+  itemsById: buildItemsById(),
   npcs: parsedNpcs,
   npcsById: toMap(parsedNpcs),
   enemyNpcs: parsedEnemyNpcs,
@@ -339,6 +377,17 @@ function validateCatalogIntegrity(): void {
       if (!itemsById.has(itemId)) {
         errors.push(
           `quests.json: quest "${quest.id}" rewardItemIds references item "${itemId}" which does not exist in items catalog`,
+        )
+      }
+    }
+  }
+
+  // Check shop offer item references
+  for (const shop of contentCatalog.shops) {
+    for (const offer of shop.offers) {
+      if (!itemsById.has(offer.itemId)) {
+        errors.push(
+          `shops.json: shop "${shop.id}" offers item "${offer.itemId}" which does not exist in items catalog (items.json, weapons.json, or armor.json)`,
         )
       }
     }
