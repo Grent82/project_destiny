@@ -40,6 +40,8 @@ import { applyFoodProduction } from './applyFoodProduction'
 import { applyFoodConsumption } from './applyFoodConsumption'
 import { applyCorridorImport, applyWorldCorridorClearance } from './applyCorridorImport'
 import { applyMiraCustodyRoutine } from './applyMiraCustodyRoutine'
+import { formCorridorCoalition } from './expeditions/formCorridorCoalition'
+import { applyCoalitionLifecycle } from './expeditions/applyCoalitionLifecycle'
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
@@ -156,6 +158,9 @@ export function endDay(state: GameState): GameState {
   next = applyFoodConsumption(next)
 
   // Step 5a: World-driven corridor clearance (coalition efforts)
+  // Form coalition if corridor is blocked/disrupted and no active coalition exists
+  next = formCorridorCoalition(next, rng)
+  next = applyCoalitionLifecycle(next, rng)
   next = applyWorldCorridorClearance(next, rng)
 
   // Step 5b: City resource consequences

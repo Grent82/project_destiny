@@ -3,7 +3,7 @@ import { generateThreatEncounter } from '../../content/threatCatalog'
 /**
  * Minimal GameState shape needed for encounter generation.
  */
-interface EncounterGameState {
+export interface EncounterGameState {
   day: number
   roster: {
     skills: { melee?: number; ranged?: number }

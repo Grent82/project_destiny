@@ -1,4 +1,4 @@
-import type { GameState } from '../../domain'
+import type { GameState } from '../../../domain/game/contracts'
 import type { CoalitionMember, CoalitionRole } from '../../../domain/expedition/contracts'
 import { publishEvent } from '../events/publishEvent'
 
@@ -26,23 +26,6 @@ function findEligibleNPCs(state: GameState): EligibleNPC[] {
     const discipline = npc.traits.discipline ?? 0
 
     // Require melee > 50 OR security > 50, and discipline > 40
-    if ((melee > 50 || security > 50) && discipline > 40) {
-      eligible.push({
-        npcId: npc.npcId,
-        name: npc.name,
-        melee,
-        security,
-        discipline,
-      })
-    }
-  }
-
-  // Check world NPCs
-  for (const npc of state.worldNpcStates) {
-    const melee = npc.skills?.melee ?? 0
-    const security = npc.skills?.security ?? 0
-    const discipline = npc.traits?.discipline ?? 0
-
     if ((melee > 50 || security > 50) && discipline > 40) {
       eligible.push({
         npcId: npc.npcId,

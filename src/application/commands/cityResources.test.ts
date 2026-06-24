@@ -26,6 +26,8 @@ describe('selectCityResources', () => {
       materialStock: 50,
       corridorStatus: 'open',
       corridorClearanceProgressDays: 0,
+      activeCoalitions: [],
+      coalitionHistory: [],
     })
   })
 })

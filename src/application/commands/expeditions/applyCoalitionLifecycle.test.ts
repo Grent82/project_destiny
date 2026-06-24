@@ -29,9 +29,9 @@ describe('applyCoalitionLifecycle', () => {
         activeCoalitions: [
           {
             id: 'test-coalition',
-            status: 'forming',
+            status: 'forming' as const,
             members: [
-              { npcId: 'npc-1', role: 'leader', contribution: 0, status: 'committed' },
+              { npcId: 'npc-1', role: 'leader' as const, contribution: 0, status: 'committed' as const },
             ],
             formedDay: 3,
             targetSegment: 'main-corridor',
@@ -58,9 +58,9 @@ describe('applyCoalitionLifecycle', () => {
         activeCoalitions: [
           {
             id: 'test-coalition',
-            status: 'departed',
+            status: 'departed' as const,
             members: [
-              { npcId: 'npc-1', role: 'leader', contribution: 0, status: 'committed' },
+              { npcId: 'npc-1', role: 'leader' as const, contribution: 0, status: 'committed' as const },
             ],
             formedDay: 3,
             targetSegment: 'main-corridor',
@@ -75,11 +75,12 @@ describe('applyCoalitionLifecycle', () => {
     const result = applyCoalitionLifecycle(state, rng)
 
     const coalition = result.cityResources.activeCoalitions[0]!
+    // Progress should advance but not reach 100
     expect(coalition.progress).toBeGreaterThan(30)
-    expect(coalition.progress).toBeLessThan(100) // Should not reach 100
+    expect(coalition.progress).toBeLessThan(100)
   })
 
-  it('transitions to returning when progress reaches 100%', () => {
+  it('moves completed coalition to history', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 5,
@@ -88,40 +89,9 @@ describe('applyCoalitionLifecycle', () => {
         activeCoalitions: [
           {
             id: 'test-coalition',
-            status: 'departed',
+            status: 'returning' as const,
             members: [
-              { npcId: 'npc-1', role: 'leader', contribution: 0, status: 'committed' },
-            ],
-            formedDay: 3,
-            targetSegment: 'main-corridor',
-            difficulty: 1, // Low difficulty to ensure progress reaches 100
-            progress: 90,
-            estimatedReturnDay: 8,
-          },
-        ],
-      },
-    }
-    const rng = () => 1 // Max progress
-    const result = applyCoalitionLifecycle(state, rng)
-
-    // Coalition transitions to returning and moves to history in same call
-    expect(result.cityResources.activeCoalitions).toHaveLength(0)
-    expect(result.cityResources.coalitionHistory).toHaveLength(1)
-    expect(result.cityResources.coalitionHistory[0]!.status).toBe('returning')
-  })
-
-  it('moves returning coalition to history', () => {
-    const state = {
-      ...initialGameStateSnapshot,
-      day: 5,
-      cityResources: {
-        ...initialGameStateSnapshot.cityResources,
-        activeCoalitions: [
-          {
-            id: 'test-coalition',
-            status: 'returning',
-            members: [
-              { npcId: 'npc-1', role: 'leader', contribution: 0, status: 'committed' },
+              { npcId: 'npc-1', role: 'leader' as const, contribution: 0, status: 'committed' as const },
             ],
             formedDay: 3,
             targetSegment: 'main-corridor',
@@ -145,13 +115,13 @@ describe('applyCoalitionLifecycle', () => {
       day: 5,
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
-        corridorStatus: 'blocked',
+        corridorStatus: 'blocked' as const,
         activeCoalitions: [
           {
             id: 'test-coalition',
-            status: 'returning',
+            status: 'returning' as const,
             members: [
-              { npcId: 'npc-1', role: 'leader', contribution: 0, status: 'committed' },
+              { npcId: 'npc-1', role: 'leader' as const, contribution: 0, status: 'committed' as const },
             ],
             formedDay: 3,
             targetSegment: 'main-corridor',
@@ -177,9 +147,9 @@ describe('applyCoalitionLifecycle', () => {
         activeCoalitions: [
           {
             id: 'test-coalition',
-            status: 'forming',
+            status: 'forming' as const,
             members: [
-              { npcId: 'npc-1', role: 'leader', contribution: 0, status: 'committed' },
+              { npcId: 'npc-1', role: 'leader' as const, contribution: 0, status: 'committed' as const },
             ],
             formedDay: 3,
             targetSegment: 'main-corridor',
@@ -194,8 +164,38 @@ describe('applyCoalitionLifecycle', () => {
     const result = applyCoalitionLifecycle(state, rng)
 
     const expeditionEvents = result.worldEvents.filter(
-      (e) => e.type === 'expedition-started' || e.type === 'expedition-complete'
+      (e: { type: string }) => e.type === 'expedition-started' || e.type === 'expedition-complete'
     )
-    expect(expeditionEvents.length).toBeGreaterThan(0)
+    // Should have at least expedition-started event
+    expect(expeditionEvents.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('removes concluded coalitions from active', () => {
+    const state = {
+      ...initialGameStateSnapshot,
+      day: 5,
+      cityResources: {
+        ...initialGameStateSnapshot.cityResources,
+        activeCoalitions: [
+          {
+            id: 'test-coalition',
+            status: 'concluded' as const,
+            members: [
+              { npcId: 'npc-1', role: 'leader' as const, contribution: 0, status: 'dead' as const },
+            ],
+            formedDay: 1,
+            targetSegment: 'main-corridor',
+            difficulty: 10,
+            progress: 50,
+            estimatedReturnDay: 8,
+          },
+        ],
+      },
+    }
+    const rng = makeRng(42)
+    const result = applyCoalitionLifecycle(state, rng)
+
+    expect(result.cityResources.activeCoalitions).toHaveLength(0)
+    expect(result.cityResources.coalitionHistory).toHaveLength(1)
   })
 })

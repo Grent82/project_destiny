@@ -1,4 +1,4 @@
-import type { GameState } from '../../domain'
+import type { GameState } from '../../../domain/game/contracts'
 import type { CoalitionStatus } from '../../../domain/expedition/contracts'
 import { publishEvent } from '../events/publishEvent'
 
@@ -77,7 +77,7 @@ export function applyCoalitionLifecycle(
             },
             'npc',
             {
-              relatedNpcIds: coalition.members.map((m) => m.npcId),
+              relatedNpcIds: coalition.members.map((m: { npcId: string }) => m.npcId),
               activityLogMessage: `The corridor coalition has departed on their mission.`,
               activityLogCategory: 'system',
             }
@@ -110,7 +110,7 @@ export function applyCoalitionLifecycle(
             ...next,
             cityResources: {
               ...next.cityResources,
-              activeCoalitions: next.cityResources.activeCoalitions.filter((_, idx) => idx !== i),
+              activeCoalitions: next.cityResources.activeCoalitions.filter((_concluded, idx: number) => idx !== i),
               coalitionHistory: [...next.cityResources.coalitionHistory, returnedCoalition],
             },
           }
@@ -125,7 +125,7 @@ export function applyCoalitionLifecycle(
             },
             'npc',
             {
-              relatedNpcIds: coalition.members.map((m) => m.npcId),
+              relatedNpcIds: coalition.members.map((m: { npcId: string }) => m.npcId),
               activityLogMessage: undefined,
             }
           )
@@ -139,7 +139,7 @@ export function applyCoalitionLifecycle(
             },
             'npc',
             {
-              relatedNpcIds: coalition.members.map((m) => m.npcId),
+              relatedNpcIds: coalition.members.map((m: { npcId: string }) => m.npcId),
               activityLogMessage: 'The corridor coalition returns! The Green Corridor is partially reopened.',
               activityLogCategory: 'economy',
             }
@@ -154,7 +154,7 @@ export function applyCoalitionLifecycle(
             },
             'system',
             {
-              relatedNpcIds: coalition.members.map((m) => m.npcId),
+              relatedNpcIds: coalition.members.map((m: { npcId: string }) => m.npcId),
               activityLogMessage: undefined,
             }
           )
@@ -186,7 +186,7 @@ export function applyCoalitionLifecycle(
             },
             'npc',
             {
-              relatedNpcIds: returnedCoalition.members.map((m) => m.npcId),
+              relatedNpcIds: returnedCoalition.members.map((m: { npcId: string }) => m.npcId),
               activityLogMessage: 'The corridor coalition returns! The Green Corridor is partially reopened.',
               activityLogCategory: 'economy',
             }
@@ -194,11 +194,13 @@ export function applyCoalitionLifecycle(
         }
 
         // Add to history, remove from active
+        // Mark coalition as concluded so it gets filtered out in the final cleanup
+        coalitions[i] = { ...returnedCoalition, status: 'concluded' as const }
+
         next = {
           ...next,
           cityResources: {
             ...next.cityResources,
-            activeCoalitions: next.cityResources.activeCoalitions.filter((_, idx) => idx !== i),
             coalitionHistory: [...next.cityResources.coalitionHistory, returnedCoalition],
           },
         }
@@ -212,7 +214,7 @@ export function applyCoalitionLifecycle(
           },
           'system',
           {
-            relatedNpcIds: returnedCoalition.members.map((m) => m.npcId),
+            relatedNpcIds: returnedCoalition.members.map((m: { npcId: string }) => m.npcId),
             activityLogMessage: undefined,
           }
         )
@@ -226,7 +228,7 @@ export function applyCoalitionLifecycle(
           ...next,
           cityResources: {
             ...next.cityResources,
-            activeCoalitions: next.cityResources.activeCoalitions.filter((_, idx) => idx !== i),
+            activeCoalitions: next.cityResources.activeCoalitions.filter((_concluded, idx: number) => idx !== i),
             coalitionHistory: [...next.cityResources.coalitionHistory, concludedCoalition],
           },
         }
