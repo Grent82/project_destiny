@@ -99,6 +99,7 @@ const baseState: GameState = {
   bondVisibility: {},
   ownedItems: [],
   chronicle: { entriesByDay: {}, version: 1 },
+  worldEvents: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   eventInstances: [],

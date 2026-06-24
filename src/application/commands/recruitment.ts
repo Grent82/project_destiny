@@ -6,6 +6,7 @@ import { getRenownLevel } from '../../domain/progression/contracts'
 import { writeLossMemories } from './grief'
 import { initializeRosterRelationships } from './initializeRosterRelationships'
 import { createRng } from './seededRng'
+import { publishEvent } from './events/publishEvent'
 import npcArcsData from '../../../data/definitions/npc-arcs.json'
 import { npcArcDefinitionSchema } from '../../domain/npc/contracts'
 
@@ -136,6 +137,15 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     `${npcDef.name} takes on work with the house.${bonusNote}`,
   )
 
+  // Publish world event for NPC hiring
+  next = publishEvent(
+    next,
+    'npc-hired',
+    { npcId, npcName: npcDef.name, wagePerDay: offer.wagePerDay, source: offer.source ?? 'district' },
+    'player',
+    { sourceNpcId: npcId, activityLogMessage: undefined } // Already logged above
+  )
+
   return next
 }
 
@@ -218,6 +228,15 @@ export function dismissNpc(state: GameState, npcId: string): GameState {
     next,
     'system',
     `${name} leaves the house. An arrangement ends.`,
+  )
+
+  // Publish world event for NPC departure
+  next = publishEvent(
+    next,
+    'npc-departed',
+    { npcId, npcName: name, reason: 'dismissed' },
+    'player',
+    { sourceNpcId: npcId, activityLogMessage: undefined } // Already logged above
   )
 
   return next

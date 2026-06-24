@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { activeCombatStateSchema } from '../combat/contracts'
 import { rumorSchema, bondVisibilitySchema } from '../rumors/contracts'
 import { expeditionStateSchema } from '../expedition/contracts'
+import { worldEventSchema } from '../world/events'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
 import { intimacyStageSchema, relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
@@ -401,6 +402,7 @@ export const gameStateSchema = z
     npcCaptivityStates: z.record(z.string(), captivityStateSchema).default({}),
     npcSitePresences: z.array(npcSitePresenceSchema).default([]),
     bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
+    worldEvents: z.array(worldEventSchema).max(100).default([]),
   })
   .strict()
 

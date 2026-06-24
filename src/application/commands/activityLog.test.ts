@@ -108,6 +108,7 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     questHistory: overrides.questHistory ?? [],
     bondedPersonsRegistry: overrides.bondedPersonsRegistry ?? {},
     chronicle: overrides.chronicle ?? { entriesByDay: {}, version: 1 },
+    worldEvents: overrides.worldEvents ?? [],
   }
 }
 

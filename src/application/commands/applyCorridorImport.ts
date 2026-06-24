@@ -3,6 +3,7 @@ import {
   getCorridorImportAmount,
   syncFoodSecurityToStock,
 } from './foodFlow'
+import { publishEvent } from './events/publishEvent'
 
 export { BASE_CORRIDOR_IMPORT, CORRIDOR_THROUGHPUT_MODIFIERS } from './foodFlow'
 
@@ -84,24 +85,36 @@ export function reopenCorridor(state: GameState, effortDays: number = 1): GameSt
   // Check if we can advance status
   if (currentStatus === 'blocked' && newProgress >= CORRIDOR_REOPENING_THRESHOLDS.blockedToDisrupted) {
     // Advance to disrupted
-    next = {
-      ...next,
-      cityResources: {
-        ...next.cityResources,
-        corridorStatus: 'disrupted',
-        corridorClearanceProgressDays: 0,
+    next = publishEvent(
+      {
+        ...next,
+        cityResources: {
+          ...next.cityResources,
+          corridorStatus: 'disrupted',
+          corridorClearanceProgressDays: 0,
+        },
       },
-    }
+      'corridor-disrupted',
+      { previousStatus: 'blocked', progressDays: newProgress },
+      'system',
+      { activityLogMessage: 'The Green Corridor is partially reopened (disrupted status).', activityLogCategory: 'economy' }
+    )
   } else if (currentStatus === 'disrupted' && newProgress >= CORRIDOR_REOPENING_THRESHOLDS.disruptedToOpen) {
     // Advance to open
-    next = {
-      ...next,
-      cityResources: {
-        ...next.cityResources,
-        corridorStatus: 'open',
-        corridorClearanceProgressDays: 0,
+    next = publishEvent(
+      {
+        ...next,
+        cityResources: {
+          ...next.cityResources,
+          corridorStatus: 'open',
+          corridorClearanceProgressDays: 0,
+        },
       },
-    }
+      'corridor-cleared',
+      { previousStatus: 'disrupted', progressDays: newProgress },
+      'system',
+      { activityLogMessage: 'The Green Corridor is fully open again!', activityLogCategory: 'economy' }
+    )
   } else {
     // Just accumulate progress
     next = {
