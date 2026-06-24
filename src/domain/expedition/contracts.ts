@@ -100,3 +100,51 @@ export const expeditionStateSchema = z.object({
 })
 
 export type ExpeditionState = z.infer<typeof expeditionStateSchema>
+
+/**
+ * Status of a corridor coalition.
+ */
+export const coalitionStatusSchema = z.enum(['forming', 'departed', 'active', 'returning', 'concluded'])
+export type CoalitionStatus = z.infer<typeof coalitionStatusSchema>
+
+/**
+ * Role of a member in a corridor coalition.
+ */
+export const coalitionRoleSchema = z.enum(['leader', 'vanguard', 'support', 'scout'])
+export type CoalitionRole = z.infer<typeof coalitionRoleSchema>
+
+/**
+ * Membership status in a corridor coalition.
+ */
+export const coalitionMemberStatusSchema = z.enum(['committed', 'injured', 'dead', 'withdrew'])
+export type CoalitionMemberStatus = z.infer<typeof coalitionMemberStatusSchema>
+
+/**
+ * A member of a corridor coalition.
+ */
+export const coalitionMemberSchema = z.object({
+  npcId: entityIdSchema,
+  role: coalitionRoleSchema,
+  contribution: nonNegativeIntegerSchema.default(0),
+  status: coalitionMemberStatusSchema.default('committed'),
+})
+export type CoalitionMember = z.infer<typeof coalitionMemberSchema>
+
+/**
+ * A corridor coalition - a group of NPCs organized to clear the corridor.
+ */
+export const corridorCoalitionSchema = z.object({
+  id: entityIdSchema,
+  status: coalitionStatusSchema,
+  members: z.array(coalitionMemberSchema).default([]),
+  formedDay: positiveIntegerSchema,
+  targetSegment: z.string().min(1).default('main-corridor'),
+  difficulty: positiveIntegerSchema.default(5),
+  progress: z.number().min(0).max(100).default(0),
+  estimatedReturnDay: positiveIntegerSchema,
+  tollRights: z.object({
+    holder: z.string().min(1),
+    rate: z.number().min(0).max(100),
+  }).optional(),
+})
+export type CorridorCoalition = z.infer<typeof corridorCoalitionSchema>
