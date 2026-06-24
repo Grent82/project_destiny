@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { contentCatalog } from '../content/contentCatalog'
 import {
   selectShopsInCurrentDistrict,
   selectShopOverview,
@@ -274,5 +275,34 @@ describe('selectShopPricingBreakdown', () => {
     )
 
     expect(breakdown?.finalPrice).toBe(overviewOffer?.price)
+  })
+})
+
+describe('Category display fix - weapons and armor in shops', () => {
+  it('weapon-sword-court-dueling-blade has valid category in contentCatalog', () => {
+    const weapon = contentCatalog.itemsById.get('weapon-sword-court-dueling-blade')
+    expect(weapon).toBeDefined()
+    expect(weapon?.category).not.toBe('unknown')
+    expect(weapon?.category).toBe('weapon')
+  })
+
+  it('armor-specialized-compact-assessor-coat has valid category in contentCatalog', () => {
+    const armor = contentCatalog.itemsById.get('armor-specialized-compact-assessor-coat')
+    expect(armor).toBeDefined()
+    expect(armor?.category).not.toBe('unknown')
+    expect(armor?.category).toBe('armor')
+  })
+
+  it('all weapon items in contentCatalog have valid category', () => {
+    for (const item of contentCatalog.itemsById.values()) {
+      if (item.id.startsWith('weapon-')) {
+        expect(item.category, `Weapon ${item.id} should have valid category`).not.toBe('unknown')
+        expect(item.category).toBe('weapon')
+      }
+      if (item.id.startsWith('armor-')) {
+        expect(item.category, `Armor ${item.id} should have valid category`).not.toBe('unknown')
+        expect(item.category).toBe('armor')
+      }
+    }
   })
 })
