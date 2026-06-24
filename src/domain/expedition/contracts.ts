@@ -148,3 +148,52 @@ export const corridorCoalitionSchema = z.object({
   }).optional(),
 })
 export type CorridorCoalition = z.infer<typeof corridorCoalitionSchema>
+
+/**
+ * Status of a corridor expedition.
+ */
+export const expeditionStatusSchema = z.enum(['pending', 'in-progress', 'success', 'partial', 'failure'])
+export type ExpeditionStatus = z.infer<typeof expeditionStatusSchema>
+
+/**
+ * Combat round result in an expedition encounter.
+ */
+export const expeditionCombatRoundSchema = z.object({
+  round: positiveIntegerSchema,
+  coalitionDamageDealt: nonNegativeIntegerSchema.default(0),
+  threatDamageDealt: nonNegativeIntegerSchema.default(0),
+  coalitionCasualties: z.array(entityIdSchema).default([]),
+  threatCasualties: z.array(entityIdSchema).default([]),
+})
+export type ExpeditionCombatRound = z.infer<typeof expeditionCombatRoundSchema>
+
+/**
+ * An encounter during a corridor expedition.
+ */
+export const corridorExpeditionEncounterSchema = z.object({
+  encounterNumber: positiveIntegerSchema,
+  threatIds: z.array(entityIdSchema),
+  difficulty: positiveIntegerSchema,
+  roundResults: z.array(expeditionCombatRoundSchema).default([]),
+  result: z.enum(['victory', 'defeat', 'withdrawal']).optional(),
+})
+export type CorridorExpeditionEncounter = z.infer<typeof corridorExpeditionEncounterSchema>
+
+/**
+ * A corridor expedition - the actual mission run by a coalition.
+ */
+export const corridorExpeditionSchema = z.object({
+  id: entityIdSchema,
+  coalitionId: entityIdSchema,
+  status: expeditionStatusSchema,
+  segment: z.string().min(1).default('main-corridor'),
+  encounters: z.array(corridorExpeditionEncounterSchema).default([]),
+  currentProgress: z.number().min(0).max(100).default(0),
+  casualties: z.array(z.object({
+    npcId: entityIdSchema,
+    status: z.enum(['dead', 'injured']),
+  })).default([]),
+  lootAcquired: z.array(entityIdSchema).default([]),
+  conclusionDay: positiveIntegerSchema.optional(),
+})
+export type CorridorExpedition = z.infer<typeof corridorExpeditionSchema>
