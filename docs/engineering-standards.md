@@ -130,7 +130,8 @@ Intimacy ist ein **Living World Mechanic**, nicht Player-only:
 **Warum:** Living World Prinzip — NPCs sind Agenten mit eigenen Leben, nicht nur Player-Tools. Intimacy ist Teil der sozialen Simulation, nicht ein Player-Feature. Contraception als Item macht den Mechanic sichtbar, taktbar und in die Wirtschaft integrierbar.
 
 **Beads:**
-- `destiny-g094` — NPC-NPC physical intimacy mit pregnancy mechanics (P2)
+- `destiny-l3mw` — Player-NPC physical intimacy (CLOSED — implemented)
+- `destiny-k98y` — NPC-NPC physical intimacy (Living World) (P2)
 - `destiny-z7xr` — Contraception Items: NPC-Produktion, dynamisches Angebot/Nachfrage (P2)
 
 ## Quality Gates
