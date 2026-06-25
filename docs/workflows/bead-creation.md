@@ -286,6 +286,47 @@ When a list of findings is turned into Beads:
 
 Never close an audit with unmapped findings.
 
+## Fresh-eyes playthrough evidence (player-facing beads)
+
+**Requirement**: Any bead that changes player-facing behavior (events, quests, UI, dialogue, NPC interactions) must include playthrough evidence before closure.
+
+**Evidence types** (choose one or more):
+- Screenshot of the new behavior in action
+- Activity Log excerpt showing the change
+- Before/after comparison of player-visible output
+- Test output demonstrating the behavior
+
+**Checklist** (attach to bead notes):
+- [ ] Player can understand what happened
+- [ ] Route to next action is clear
+- [ ] Consequence is visible (not hidden in state)
+- [ ] Success/partial/failure paths are all demonstrated
+
+**Example**:
+```
+Playthrough evidence:
+- Day 3, Morning Report: event shows presentationFlavour scene text
+- Activity Log: "Marion leaves a note on your desk — corridor tolls raised"
+- Screenshot: event modal with kicker "A Scene" and actor portrait
+
+Checklist:
+- [x] Player understands the event source (Marion as actor)
+- [x] Next action clear (choose response or dismiss)
+- [x] Consequence visible in log and state
+- [x] All paths shown (auto-resolve + choice paths)
+```
+
+## Simulation scenario as Definition of Done (feature beads)
+
+**Requirement**: Any feature bead must name the playthrough/simulation scenario that proves its loop.
+
+**Examples**:
+- "Run `pnpm test:playthrough:funnel` — new quest path appears at day 5"
+- "Run 40-day sim (`destiny-lzke` scenario) — coalition lifecycle events fire and resolve"
+- "Manual playthrough day 1-7 — corridor reopening progress visible in Activity Log"
+
+**Stop condition**: If no existing scenario proves the loop, file a follow-up bead to create one — do not ship without coverage.
+
 ## Default quality bar
 
 If a Bead changes runtime behavior, it should normally identify:

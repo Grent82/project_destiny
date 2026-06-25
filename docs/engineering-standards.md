@@ -66,6 +66,24 @@ Do not treat one guard in one location as sufficient. Audit: selector, command, 
 - Keep data definitions declarative where content is expected to grow.
 - Separate immutable content definitions from mutable save-state.
 
+## Value-convention-as-schema rule
+
+**When two systems communicate through a value convention, that is a missing schema field.**
+
+Example: if command A writes `state.lastFiredDay['site-growth:pressure'] = 5` and command B reads it to make a decision, that string key and its numeric value represent shared domain knowledge. That knowledge should be:
+
+1. **Named** — a constant or enum member, not a magic string
+2. **Registered** — in the appropriate schema or catalog
+3. **Documented** — owner and key namespace recorded
+
+**Current lastFiredDay namespace example** (documented as anti-pattern, kept for migration):
+- `site-growth:*` — site pressure/growth tracking
+- `site-pressure:*` — site occupancy pressure
+- `rel-milestone-*` — relationship milestone fire days
+- `captivity-pregnancy:*` — captivity/pregnancy state
+
+**Rule**: New code must not add to grab-bag fields. If a value is shared across systems, it gets its own schema field with a default in initial state.
+
 ## Review Rules
 
 Code review should prioritize:
