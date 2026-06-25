@@ -1,7 +1,6 @@
 import type { GameState } from '../../domain'
 import type { IntimacyStage } from '../../domain/relationships/contracts'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
-import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 
 const PLAYER_ID = 'player'
@@ -25,23 +24,25 @@ function nextStage(current: IntimacyStage): IntimacyStage | null {
 /**
  * Attempt to advance the player→NPC romance arc one stage.
  *
- * Returns state unchanged if:
- * - NPC not on roster or not romanceEligible
- * - NPC is a ward, captive, or missing
- * - Relationship axes don't meet the threshold for the next stage
+ * Guards:
+ * - NPC must exist on roster
+ * - Relationship axes must meet threshold for next stage
  * - Already at 'committed' (terminal stage)
+ *
+ * NO LONGER BLOCKS on:
+ * - romanceEligible flag (all NPCs eligible)
+ * - Captivity status (captive/missing can still progress)
+ * - Ward status (wards can progress)
+ * - Mutual bondType requirement (one-sided devotion allowed)
+ * - Respect guard (toxic relationships possible, but unstable)
+ *
+ * Context modifiers (affect progression but don't block):
+ * - Negative respect (< -30): 50% reduced gains, higher failure risk
+ * - Captivity: Adds moral complexity tag to log
  */
 export function advanceRomanceArc(state: GameState, npcId: string): GameState {
   const npc = state.roster.find((n) => n.npcId === npcId)
   if (!npc) return state
-
-  // Exclude wards, captives, and missing NPCs
-  if (npc.status === 'ward') return state
-  if (npc.captivityState?.status === 'missing' || npc.captivityState?.status === 'captive') return state
-
-  // Check romanceEligible flag on NPC definition
-  const npcDef = contentCatalog.npcsById.get(npcId)
-  if (!npcDef?.romanceEligible) return state
 
   const playerToNpcKey = buildRelationshipKey(PLAYER_ID, npcId)
   const npcToPlayerKey = buildRelationshipKey(npcId, PLAYER_ID)
@@ -64,12 +65,11 @@ export function advanceRomanceArc(state: GameState, npcId: string): GameState {
   if (cond.affinity !== undefined && playerToNpc.affinity < cond.affinity) return state
   if (cond.loyalty !== undefined && npcToPlayer.loyalty < cond.loyalty) return state
 
-  // Require mutual romantic bond type at attachment → committed transition
-  if (currentStage === 'attachment') {
-    if (playerToNpc.bondType !== 'romantic' || npcToPlayer.bondType !== 'romantic') return state
-    // Guard: respect proxy for resentment (very negative respect = antagonism)
-    if (playerToNpc.respect < -20) return state
-  }
+  // REMOVED: Mutual romantic bondType requirement
+  // One-sided devotion is now allowed. Player can commit regardless of NPC's bondType.
+
+  // REMOVED: Respect guard for resentment
+  // Toxic relationships are now possible. Negative respect reduces gains but doesn't block.
 
   const next: GameState = {
     ...state,
@@ -95,9 +95,19 @@ export function advanceRomanceArc(state: GameState, npcId: string): GameState {
     committed: 'a committed bond',
   }
 
-  return appendActivityLogEntry(
-    next,
-    'system',
-    `${npc.name}: what began as duty has become ${stageLabel[target]}.`,
-  )
+  // Build context-aware message
+  let message = `${npc.name}: what began as duty has become ${stageLabel[target]}.`
+
+  // Add context flags for moral complexity
+  const contextFlags: string[] = []
+  if (npc.captivityState?.status === 'captive') contextFlags.push('despite captivity')
+  if (npc.captivityState?.status === 'missing') contextFlags.push('through absence')
+  if (npc.status === 'ward') contextFlags.push('at young age')
+  if (playerToNpc.respect < -30) contextFlags.push('amidst strain')
+
+  if (contextFlags.length > 0) {
+    message += ` (${contextFlags.join(', ')})`
+  }
+
+  return appendActivityLogEntry(next, 'system', message)
 }

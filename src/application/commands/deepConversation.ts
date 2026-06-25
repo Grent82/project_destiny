@@ -1,6 +1,5 @@
 import type { GameState } from '../../domain'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
-import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { advanceRomanceArc } from './advanceRomanceArc'
 
@@ -19,11 +18,7 @@ function canHaveDeepConversation(state: GameState, npcId: string): NonNullable<G
   const npc = state.roster.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
-  if (npc.assignment === 'deployed') return null
-  if (npc.status === 'ward') return null
-  if (npc.captivityState?.status === 'captive' || npc.captivityState?.status === 'missing') return null
-  const npcDef = contentCatalog.npcsById.get(npcId)
-  if (!npcDef) return null
+  // All NPCs are romance-eligible. Context affects gains, not eligibility.
   return npc
 }
 
@@ -92,10 +87,15 @@ function topicResponse(npc: NonNullable<GameState['roster'][0]>, topic: Conversa
 /**
  * Engage in a deep conversation with an NPC about values, fears, dreams, or past.
  *
- * Returns state unchanged if:
- * - NPC not on roster or not co-located at the house
- * - NPC is a ward, captive, or missing
- * - Already had a deep conversation with this NPC today
+ * Guards:
+ * - NPC must exist on roster
+ * - Player must be at the house (currentDistrictId === houseDistrictId)
+ *
+ * Context modifiers (do not block, but affect outcomes):
+ * - Deployment: NPC gets 50% reduced intimacy gains
+ * - Captivity: Adds 'risk' tag to activity log
+ * - Ward: No mechanical effect
+ * - Negative respect (< -30): 50% reduced gains
  */
 export function deepConversation(state: GameState, npcId: string): GameState {
   const npc = canHaveDeepConversation(state, npcId)
@@ -111,7 +111,27 @@ export function deepConversation(state: GameState, npcId: string): GameState {
   const current = state.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
   const reverse = state.relationships[reverseKey] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
 
+  // Calculate gain multiplier based on context
+  let gainMultiplier = 1.0
+
+  if (npc.assignment === 'deployed') {
+    gainMultiplier *= 0.5
+  }
+
+  if (current.respect < -30) {
+    gainMultiplier *= 0.5
+  }
+
   const gains = getTopicGains(topic, npc)
+
+  // Apply multiplier to gains
+  const adjustedGains = {
+    affinity: gains.affinity ? Math.max(1, Math.round(gains.affinity * gainMultiplier)) : 0,
+    respect: gains.respect ? Math.max(0, Math.round(gains.respect * gainMultiplier)) : 0,
+    trust: gains.trust ? Math.max(1, Math.round(gains.trust * gainMultiplier)) : 0,
+    fear: gains.fear ? Math.round(gains.fear * gainMultiplier) : 0,
+    loyalty: gains.loyalty ? Math.max(0, Math.round(gains.loyalty * gainMultiplier)) : 0,
+  }
 
   let next: GameState = {
     ...state,
@@ -119,16 +139,16 @@ export function deepConversation(state: GameState, npcId: string): GameState {
       ...state.relationships,
       [key]: {
         ...current,
-        affinity: Math.min(100, current.affinity + (gains.affinity ?? 0)),
-        respect: Math.min(100, current.respect + (gains.respect ?? 0)),
-        trust: Math.min(100, current.trust + (gains.trust ?? 0)),
-        fear: Math.max(-100, current.fear + (gains.fear ?? 0)),
-        loyalty: Math.min(100, (current.loyalty ?? 0) + (gains.loyalty ?? 0)),
+        affinity: Math.min(100, current.affinity + adjustedGains.affinity),
+        respect: Math.min(100, current.respect + adjustedGains.respect),
+        trust: Math.min(100, current.trust + adjustedGains.trust),
+        fear: Math.max(-100, current.fear + adjustedGains.fear),
+        loyalty: Math.min(100, (current.loyalty ?? 0) + adjustedGains.loyalty),
       },
       [reverseKey]: {
         ...reverse,
-        affinity: Math.min(100, reverse.affinity + Math.max(1, (gains.affinity ?? 0) - 1)),
-        trust: Math.min(100, (reverse.trust ?? 0) + Math.max(1, (gains.trust ?? 0) - 1)),
+        affinity: Math.min(100, reverse.affinity + Math.max(1, adjustedGains.affinity - 1)),
+        trust: Math.min(100, (reverse.trust ?? 0) + Math.max(1, adjustedGains.trust - 1)),
       },
     },
     lastFiredDay: {
@@ -143,13 +163,27 @@ export function deepConversation(state: GameState, npcId: string): GameState {
   const advanced = beforeStage !== afterStage
 
   const topicLabel = TOPIC_LABELS[topic]
-  const response = topicResponse(npc, topic, advanced)
 
-  next = appendActivityLogEntry(
-    next,
-    'system',
-    `You sit down with ${npc.name} to talk about ${topicLabel}. ${response}${advanced ? ` The bond deepens to ${afterStage}.` : ''}`,
-  )
+  // Build context-aware message
+  const contextFlags: string[] = []
+  if (npc.assignment === 'deployed') contextFlags.push('on deployment')
+  if (npc.captivityState?.status === 'captive') contextFlags.push('in captivity')
+  if (npc.captivityState?.status === 'missing') contextFlags.push('missing')
+  if (npc.status === 'ward') contextFlags.push('young')
+  if (current.respect < -30) contextFlags.push('strained relationship')
+
+  let message = `You sit down with ${npc.name} to talk about ${topicLabel}. ${topicResponse(npc, topic, advanced)}`
+  if (contextFlags.length > 0) {
+    message += ` (Context: ${contextFlags.join(', ')})`
+  }
+  if (advanced) {
+    message += ` The bond deepens to ${afterStage}.`
+  }
+  if (gainMultiplier < 1) {
+    message += ` Gains reduced due to circumstances.`
+  }
+
+  next = appendActivityLogEntry(next, 'system', message)
   next.activityLog[0]!.id = `deep-conv::${npcId}::${topic}::${state.day}::${state.timeSlot}`
 
   return next

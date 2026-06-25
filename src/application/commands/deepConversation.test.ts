@@ -12,12 +12,16 @@ function stateWithRelationship(overrides: {
   affinity?: number
   fear?: number
   loyalty?: number
+  respect?: number
   intimacyStage?: 'none' | 'affinity' | 'attachment' | 'committed'
   empathy?: number
   prudence?: number
   ambition?: number
   curiosity?: number
   ruthlessness?: number
+  assignment?: 'idle' | 'deployed' | 'working'
+  captivityStatus?: 'captive' | 'missing' | null
+  status?: 'mercenary' | 'ward'
 }): GameState {
   const playerToNpc = buildRelationshipKey(PLAYER_ID, NPC_ID)
   const npcToPlayer = buildRelationshipKey(NPC_ID, PLAYER_ID)
@@ -31,7 +35,7 @@ function stateWithRelationship(overrides: {
         affinity: overrides.affinity ?? 0,
         trust: overrides.trust ?? 0,
         fear: overrides.fear ?? 0,
-        respect: 0,
+        respect: overrides.respect ?? 0,
         loyalty: 0,
         intimacyStage: overrides.intimacyStage,
       },
@@ -47,7 +51,24 @@ function stateWithRelationship(overrides: {
     lastFiredDay: {},
     roster: [
       {
-        ...initialStateWithIda.roster[1]!, // Use Ida from roster (index 1), not Marion (index 0)
+        ...initialStateWithIda.roster[1]!,
+        assignment: overrides.assignment ?? 'idle',
+        status: overrides.status ?? 'mercenary',
+        captivityState: overrides.captivityStatus
+          ? {
+              status: overrides.captivityStatus,
+              holderId: null,
+              siteId: null,
+              roomId: null,
+              regime: 'unknown',
+              condition: 'healthy',
+              compliance: 'resistant',
+              bondType: 'none',
+              timeHeldDays: 0,
+              lastTransferDay: null,
+              questTag: null,
+            }
+          : undefined,
         traits: {
           ...initialStateWithIda.roster[1]!.traits,
           empathy: overrides.empathy ?? 50,
@@ -175,55 +196,58 @@ describe('deepConversation', () => {
 
     const result = deepConversation(deployedState, NPC_ID)
 
-    expect(result.activityLog).toEqual(state.activityLog)
+    // Deployed NPCs CAN still have deep conversations, just with reduced gains
+    expect(result.activityLog[0]?.message).toMatch(/on deployment/)
+    expect(result.activityLog[0]?.message).toMatch(/Gains reduced/)
   })
 
-  it('returns state unchanged for ward NPC', () => {
-    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10 })
-    const wardState = {
-      ...state,
-      roster: [{ ...state.roster[0]!, status: 'ward' as const }],
-    }
-
-    const result = deepConversation(wardState, NPC_ID)
-
-    expect(result.activityLog).toEqual(state.activityLog)
-  })
-
-  it('returns state unchanged for captive NPC', () => {
-    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10 })
-    const captiveState = {
-      ...state,
-      roster: [{
-        ...state.roster[0]!,
-        captivityState: {
-          status: 'captive' as const,
-          holderId: null,
-          siteId: null,
-          roomId: null,
-          regime: 'unknown' as const,
-          condition: 'healthy' as const,
-          compliance: 'resistant' as const,
-          bondType: 'none' as const,
-          timeHeldDays: 0,
-          lastTransferDay: null,
-          questTag: null,
-        },
-      }],
-    }
-
-    const result = deepConversation(captiveState, NPC_ID)
-
-    expect(result.activityLog).toEqual(state.activityLog)
-  })
-
-  it('applies ruthlessness penalty on emotional topics', () => {
-    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10, ruthlessness: 70, empathy: 40 })
+  it('applies deployment penalty (50% reduced gains)', () => {
+    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10, curiosity: 60, assignment: 'deployed' })
 
     const result = deepConversation(state, NPC_ID)
 
     const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
-    // With high ruthlessness, trust gain on fears/past is reduced
-    expect(edge.trust).toBeLessThanOrEqual(35) // Base 4 + 0 bonus (no empathy) - 1 penalty = 3
+    // Base trust gain for past is 3 + 2 (curiosity) = 5, with 50% reduction = 2.5, rounded to 3
+    expect(edge.trust).toBe(33) // 30 + 3
+    expect(result.activityLog[0]?.message).toMatch(/Gains reduced/)
+  })
+
+  it('applies negative respect penalty (50% reduced gains)', () => {
+    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10, curiosity: 60, respect: -35 })
+
+    const result = deepConversation(state, NPC_ID)
+
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    // Base trust gain for past is 3 + 2 (curiosity) = 5, with 50% reduction = 2.5, rounded to 3
+    expect(edge.trust).toBe(33) // 30 + 3
+    expect(result.activityLog[0]?.message).toMatch(/strained relationship/)
+  })
+
+  it('allows conversation for ward NPCs (no longer blocked)', () => {
+    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10, curiosity: 60, status: 'ward' })
+
+    const result = deepConversation(state, NPC_ID)
+
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    expect(edge.intimacyStage).toBe('affinity')
+    expect(result.activityLog[0]?.message).toMatch(/young/)
+  })
+
+  it('allows conversation for captive NPCs (no longer blocked)', () => {
+    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10, curiosity: 60, captivityStatus: 'captive' })
+
+    const result = deepConversation(state, NPC_ID)
+
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    expect(edge.intimacyStage).toBe('affinity')
+    expect(result.activityLog[0]?.message).toMatch(/in captivity/)
+  })
+
+  it('adds context tag for missing NPCs', () => {
+    const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10, curiosity: 60, captivityStatus: 'missing' })
+
+    const result = deepConversation(state, NPC_ID)
+
+    expect(result.activityLog[0]?.message).toMatch(/missing/)
   })
 })

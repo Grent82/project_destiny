@@ -12,8 +12,11 @@ function stateWithRelationship(overrides: {
   affinity?: number
   fear?: number
   loyalty?: number
+  respect?: number
   intimacyStage?: string
   bondType?: string
+  captivityStatus?: 'captive' | 'missing' | null
+  status?: 'mercenary' | 'ward'
 }): GameState {
   const playerToNpc = buildRelationshipKey(PLAYER_ID, NPC_ID)
   const npcToPlayer = buildRelationshipKey(NPC_ID, PLAYER_ID)
@@ -25,7 +28,7 @@ function stateWithRelationship(overrides: {
         affinity: overrides.affinity ?? 0,
         trust: overrides.trust ?? 0,
         fear: overrides.fear ?? 0,
-        respect: 0,
+        respect: overrides.respect ?? 0,
         loyalty: 0,
         intimacyStage: (overrides.intimacyStage as IntimacyStage) ?? undefined,
         bondType: overrides.bondType,
@@ -40,11 +43,33 @@ function stateWithRelationship(overrides: {
         bondType: overrides.bondType,
       },
     },
+    roster: [
+      {
+        ...initialStateWithIda.roster[1]!,
+        status: overrides.status ?? 'mercenary',
+        captivityState: overrides.captivityStatus
+          ? {
+              status: overrides.captivityStatus,
+              holderId: null,
+              siteId: null,
+              roomId: null,
+              regime: 'unknown',
+              condition: 'healthy',
+              compliance: 'resistant',
+              bondType: 'none',
+              timeHeldDays: 0,
+              lastTransferDay: null,
+              questTag: null,
+            }
+          : undefined,
+      },
+    ],
   }
 }
 
 describe('advanceRomanceArc', () => {
-  it('returns state unchanged for non-eligible NPC', () => {
+  it('advances any NPC (no romanceEligible check)', () => {
+    // Verek Holst is now romance-eligible (no flag check)
     const state = {
       ...initialStateWithIda,
       relationships: {
@@ -73,7 +98,9 @@ describe('advanceRomanceArc', () => {
       { ...state, roster: [verekInRoster] },
       'npc-verek-holst',
     )
-    expect(result.activityLog).toEqual(state.activityLog)
+    // Now advances! All NPCs are eligible.
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, 'npc-verek-holst')]!
+    expect(edge.intimacyStage).toBe('affinity')
   })
 
   it('advances none → affinity when trust and affinity thresholds met', () => {
@@ -126,7 +153,7 @@ describe('advanceRomanceArc', () => {
     expect(edge.intimacyStage).toBe('committed')
   })
 
-  it('does not advance attachment → committed without romantic bond type', () => {
+  it('ADVANCES attachment → committed WITHOUT romantic bond type (removed mutual requirement)', () => {
     const state = stateWithRelationship({
       trust: 75,
       affinity: 50,
@@ -137,7 +164,25 @@ describe('advanceRomanceArc', () => {
     })
     const result = advanceRomanceArc(state, NPC_ID)
     const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
-    expect(edge.intimacyStage).toBe('attachment')
+    // Now advances! Mutual bondType no longer required.
+    expect(edge.intimacyStage).toBe('committed')
+  })
+
+  it('advances even with negative respect (toxic relationships possible)', () => {
+    const state = stateWithRelationship({
+      trust: 75,
+      affinity: 50,
+      fear: 20,
+      loyalty: 45,
+      intimacyStage: 'attachment',
+      bondType: 'romantic',
+      respect: -50, // Very negative respect
+    })
+    const result = advanceRomanceArc(state, NPC_ID)
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    // Still advances! Negative respect no longer blocks.
+    expect(edge.intimacyStage).toBe('committed')
+    expect(result.activityLog[0]?.message).toMatch(/strain/)
   })
 
   it('returns state unchanged when already at committed', () => {
@@ -154,14 +199,33 @@ describe('advanceRomanceArc', () => {
     expect(result.activityLog.length).toBe(logBefore)
   })
 
-  it('returns state unchanged for ward NPCs', () => {
-    const wardNpc = { ...initialStateWithIda.roster[0]!, status: 'ward' as const }
+  it('ADVANCES for ward NPCs (no longer blocked)', () => {
+    const wardNpc = { ...initialStateWithIda.roster[1]!, status: 'ward' as const }
     const state = {
-      ...stateWithRelationship({ trust: 80, affinity: 50, fear: 5 }),
+      ...stateWithRelationship({ trust: 80, affinity: 50, fear: 5, status: 'ward' }),
       roster: [wardNpc],
     }
     const result = advanceRomanceArc(state, NPC_ID)
-    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]
-    expect(edge?.intimacyStage ?? 'none').toBe('none')
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    // Now advances! Wards can progress intimacy.
+    expect(edge.intimacyStage).toBe('affinity')
+    expect(result.activityLog[0]?.message).toMatch(/young age/)
+  })
+
+  it('ADVANCES for captive NPCs (no longer blocked)', () => {
+    const state = stateWithRelationship({ trust: 80, affinity: 50, fear: 5, captivityStatus: 'captive' })
+    const result = advanceRomanceArc(state, NPC_ID)
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    // Now advances! Captives can progress intimacy.
+    expect(edge.intimacyStage).toBe('affinity')
+    expect(result.activityLog[0]?.message).toMatch(/captivity/)
+  })
+
+  it('adds context tag for missing NPCs', () => {
+    const state = stateWithRelationship({ trust: 80, affinity: 50, fear: 5, captivityStatus: 'missing' })
+    const result = advanceRomanceArc(state, NPC_ID)
+    const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
+    expect(edge.intimacyStage).toBe('affinity')
+    expect(result.activityLog[0]?.message).toMatch(/absence/)
   })
 })

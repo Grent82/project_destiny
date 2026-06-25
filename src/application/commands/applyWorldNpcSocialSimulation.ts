@@ -384,8 +384,8 @@ function maybeEscalateFeud(state: GameState, a: NpcDefinition, b: NpcDefinition,
 
 function maybePromoteRomance(
   current: RelationshipAxes,
-  a: NpcDefinition,
-  b: NpcDefinition,
+  _a: NpcDefinition,
+  _b: NpcDefinition,
   overlap: number,
   rng: Rng,
 ): RelationshipAxes {
@@ -394,7 +394,7 @@ function maybePromoteRomance(
   if ((current.trust ?? 0) < 35 || (current.affinity ?? 0) < 30) return current
   if ((current.fear ?? 0) > 20) return current
   if (overlap < 3) return current
-  if (a.romanceEligible === false || b.romanceEligible === false) return current
+  // All NPCs are romance-eligible. No flag check needed.
   if (rng() >= 0.08) return current
 
   return {

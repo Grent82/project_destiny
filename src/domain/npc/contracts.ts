@@ -192,7 +192,7 @@ export const npcDefinitionSchema = z
     loyalties: z.array(npcLoyaltySchema).default([]),
     dialogueId: entityIdSchema.optional(),
     defaultArcId: z.string().optional(),
-    romanceEligible: z.boolean().optional(),
+    // All NPCs are romance-eligible by default. Relationship depth determines progression, not authoring flags.
     schedule: z.object({
       morning: z.string().optional(),
       afternoon: z.string().optional(),

@@ -496,7 +496,6 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const giftItems = useAppSelector(selectGiftInventoryItems)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const romanceEligible = contentCatalog.npcsById.get(detail.npcId)?.romanceEligible === true
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
   const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
@@ -509,6 +508,12 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
       : giftItems.length === 0
         ? 'Carry a gift item in inventory to offer one here.'
         : null
+
+  // All NPCs are romance-eligible. Context (deployment, captivity, ward) affects outcomes, not access.
+  const canCourt = currentDistrictId === houseDistrictId && detail.assignment !== 'deployed'
+  const courtUnavailableReason = currentDistrictId !== houseDistrictId
+    ? 'Courtship actions currently require the house as private ground.'
+    : null
 
   const wants = detail.motivation?.publicGoal
   const needs = detail.motivation?.privateNeed
@@ -582,28 +587,24 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             >
               {showGiftList ? 'Hide Gifts' : 'Offer Gift'}
             </button>
-            {romanceEligible && (
-              <button
-                className="action-button"
-                type="button"
-                onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
-                disabled={currentDistrictId !== houseDistrictId || detail.assignment === 'deployed'}
-                title={currentDistrictId !== houseDistrictId ? 'Courtship actions currently require the house as private ground.' : 'Spend time courting this NPC directly.'}
-              >
-                Court
-              </button>
-            )}
-            {romanceEligible && (
-              <button
-                className="action-button"
-                type="button"
-                onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
-                disabled={currentDistrictId !== houseDistrictId || detail.assignment === 'deployed'}
-                title={currentDistrictId !== houseDistrictId ? 'Deep conversations require the house as private ground.' : 'Share a meaningful conversation about values, fears, dreams, or past.'}
-              >
-                Talk Deeply
-              </button>
-            )}
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
+              disabled={!canCourt}
+              title={courtUnavailableReason ?? 'Spend time courting this NPC directly.'}
+            >
+              Court
+            </button>
+            <button
+              className="action-button"
+              type="button"
+              onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
+              disabled={!canCourt}
+              title={courtUnavailableReason ?? 'Share a meaningful conversation about values, fears, dreams, or past.'}
+            >
+              Talk Deeply
+            </button>
             <TitlePanel detail={detail} />
           </div>
           {hasNewTopics && dialogueTree && (

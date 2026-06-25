@@ -105,8 +105,7 @@
         "note": "Marion's supply chain runs partly through a noble hand she will not name. The arrangement predates her dock work and keeps certain goods moving without questions.",
         "visibility": "hidden"
       }
-    ],
-    "romanceEligible": true
+    ]
   },
   {
     "id": "npc-ida-rhys",
@@ -205,8 +204,7 @@
         "note": "Learned everything about not trusting a structure until you have tapped it from Marion. Will not say this directly.",
         "visibility": "hidden"
       }
-    ],
-    "romanceEligible": true
+    ]
   },
   {
     "id": "npc-verek-holst",
