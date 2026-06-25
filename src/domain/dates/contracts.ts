@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
+import { timeSlotSchema } from '../shared/contracts'
 import { intimacyStageSchema } from '../relationships/contracts'
 
 export const dateOutcomeSchema = z
