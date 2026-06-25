@@ -11,3 +11,4 @@
 - [Feedback: House Geometry — bounds und overlaps vor Positionierung prüfen](feedback_house-geometry-planning.md) — 3 Iterationen für room-east-wing/servant-quarters/barracks 2026-06-14
 - [Projekt: Tooling-Quirks — vitest schluckt console.log, Playwright-MCP-Screenshots flüchtig](project_test-tooling-quirks.md) — Headless-Sim als Audit-Werkzeug
 - [Test mock strategy](feedback_test-mock-strategy.md) — only mock fields code reads, cast at boundary
+- [Session Learnings 2026-06-24](session_learnings_2026-06-24.md) — KI-Retro after Living World Coalition/Expedition implementation

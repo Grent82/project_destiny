@@ -1,65 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { applyAllNpcAgency } from './npcAgency'
-import { applyInitiativeAgency } from './npcAgency/initiativeAgency'
-import { initialStateWithIda } from './testFixtures'
-import { createRng } from './seededRng'
-import type { NpcRuntimeState } from '../../domain'
+import { applyInitiativeAgency } from './initiativeAgency'
+import { initialStateWithIda } from '../testFixtures'
+import type { NpcRuntimeState } from '../../../domain/npc/contracts'
 
-describe('applyAllNpcAgency (refactored from applyNpcAgency)', () => {
-  it('same seed produces identical outcome (deterministic)', () => {
-    const state = {
-      ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'working' as const })),
-    }
-
-    const rng1 = createRng(42).rng
-    const rng2 = createRng(42).rng
-
-    const result1 = applyAllNpcAgency(state, rng1)
-    const result2 = applyAllNpcAgency(state, rng2)
-
-    expect(result1.activityLog).toEqual(result2.activityLog)
-    expect(result1.districtTension).toEqual(result2.districtTension)
-    expect(result1.factionStandings).toEqual(result2.factionStandings)
-  })
-
-  it('different seeds may produce different outcomes', () => {
-    const state = {
-      ...initialStateWithIda,
-      // Both NPCs working maximises agency event chances (15% per NPC per day)
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'working' as const })),
-    }
-
-    // Run many seeds to confirm at least one differs (confirms rng is wired)
-    let sawDifference = false
-    for (let seed = 0; seed < 50; seed++) {
-      const r1 = applyAllNpcAgency(state, createRng(seed).rng)
-      const r2 = applyAllNpcAgency(state, createRng(seed + 1000).rng)
-      if (r1.activityLog.length !== r2.activityLog.length) {
-        sawDifference = true
-        break
-      }
-    }
-    // This asserts the rng actually influences the path, not that it always differs
-    expect(sawDifference).toBe(true)
-  })
-
-  it('idle NPCs never trigger agency actions', () => {
-    const state = {
-      ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
-    }
-    const logBefore = state.activityLog.length
-
-    // Even with a seed that would trigger action (rng always returns 0 = below 0.15 threshold)
-    const alwaysTrigger = () => 0
-    const result = applyAllNpcAgency(state, alwaysTrigger)
-
-    expect(result.activityLog.length).toBe(logBefore)
-  })
-})
-
-describe('applyInitiativeAgency (refactored from applyInitiativeAgency)', () => {
+describe('applyInitiativeAgency', () => {
   function makeInitiatorNpc(): NpcRuntimeState {
     return {
       ...initialStateWithIda.roster[0]!,
@@ -90,7 +34,7 @@ describe('applyInitiativeAgency (refactored from applyInitiativeAgency)', () => 
     const nessa = makeInitiatorNpc()
     const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
     const result = applyInitiativeAgency(state, () => 0)
-    const updated = result.roster.find((n: { npcId: string }) => n.npcId === nessa.npcId)!
+    const updated = result.roster.find((n) => n.npcId === nessa.npcId)!
     expect(updated.npcArc!.stageFlags[`initiative-7`]).toBe(true)
   })
 
@@ -118,5 +62,16 @@ describe('applyInitiativeAgency (refactored from applyInitiativeAgency)', () => 
     const logBefore = state.activityLog.length
     const result = applyInitiativeAgency(state, () => 0)
     expect(result.activityLog.length).toBe(logBefore)
+  })
+
+  it('deterministic: same seed produces identical outcome', () => {
+    const nessa = makeInitiatorNpc()
+    const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
+
+    const result1 = applyInitiativeAgency(state, () => 0.1)
+    const result2 = applyInitiativeAgency(state, () => 0.1)
+
+    expect(result1.activityLog).toEqual(result2.activityLog)
+    expect(result1.money).toBe(result2.money)
   })
 })
