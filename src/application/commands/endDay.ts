@@ -1,264 +1,93 @@
 import type { GameState } from "../../domain"
-import type { CaptivityCondition } from "../../domain/npc/contracts"
-import { selectNpcCoercionRisk } from "../selectors/npcs"
-import { appendActivityLogEntry } from "./activityLog"
-import { evaluateEvents } from "./evaluateEvents"
-import { expireHireOffers } from "./recruitment"
-import { generateDistrictHireOffers } from "./generateHireOffers"
 import { createRng } from "./seededRng"
-import { applyWages } from "./applyWages"
-import { applyStateDecay } from "./applyStateDecay"
-import { applyThresholds } from "./applyThresholds"
-import { applyTitleEffects } from "./applyTitleEffects"
-import { applyNpcConsequences } from "./applyNpcConsequences"
-import { applyPolitics } from "./applyPolitics"
-import { applyAllNpcAgency } from './npcAgency'
-import { applyInitiativeAgency } from './npcAgency/initiativeAgency'
-import { applyNpcTraitDrift } from "./applyNpcTraitDrift"
-import { checkNpcArcTransitions, checkFracturedArcBranching } from "./checkNpcArcTransitions"
-import { applyFactionQuestBonus, applyFactionActivity } from "./applyFactionActivity"
-import { applyRumorSpread } from "./applyRumorSpread"
-import { tickWardStages } from "./houseWard"
-import { applyPersonalityFriction } from './applyPersonalityFriction'
-import { tickLegacyIntent, tickPregnancyProgress } from './pursuePlayerLegacy'
-import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
-import { applyBondServiceEffects } from './bondService'
-import { checkBondAcquisitionOffers, applyNpcHeldConditionDecay } from './bondTransfer'
-import { applyNpcPairing } from './applyNpcPairing'
-import { applyHouseholdIntimacy } from './applyHouseholdIntimacy'
-import { isQuestLeadExpired } from '../../domain/quests/contracts'
-import { getAllNpcCaptivityStates, setNpcCaptivityState } from './captivityRegistry'
-import { applySiteStateHooks } from './applySiteStateHooks'
-import { applyNpcRoomInteractions } from './applyNpcRoomInteractions'
-import { applyWorldHouseholdGrowth } from './applyWorldHouseholdGrowth'
-import { applyAbstractCustodySimulation } from './applyAbstractCustodySimulation'
-import { tickHouseRepairs } from './houseRepairs'
-import { expireTimedQuestsOnState } from './questLifecycle'
-import { MAX_ACTIVITY_ENTRIES } from './activityLog'
-import { applyOpponentPressure, logOpponentPressure } from './applyOpponentPressure'
-import { compactResolvedEventInstances, pruneExpiredEventInstances } from './eventInstances'
-import { applyFoodProduction } from './applyFoodProduction'
-import { applyFoodConsumption } from './applyFoodConsumption'
-import { applyCorridorImport, applyWorldCorridorClearance } from './applyCorridorImport'
-import { applyMiraCustodyRoutine } from './applyMiraCustodyRoutine'
-import { formCorridorCoalition } from './expeditions/formCorridorCoalition'
-import { applyCoalitionLifecycle } from './expeditions/applyCoalitionLifecycle'
+import type { Rng } from "./seededRng"
+import {
+  handleWagesPhase,
+  handleDecayPhase,
+  handleCorridorPhase,
+  handleResourcesPhase,
+  handleConsequencesPhase,
+  handleTimeAdvancePhase,
+  handlePoliticsPhase,
+  handleEventsPhase,
+  handleSocialSimulationPhase,
+  handlePersonalityPhase,
+  handlePairingPhase,
+  handleBondingPhase,
+  handleCaptivityPhase,
+  handleQuestsPhase,
+} from "./endDay/handlers"
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
 export { wageForStatus } from "./applyWages"
+export { pruneExpiredQuestLeads, applyEndOfDayResources } from "./endDay/legacy"
+export { applyCaptivityDegradation, checkMainQuestProgression } from "./endDay/legacy"
 
-export function pruneExpiredQuestLeads(state: GameState): GameState {
-  const filtered = state.availableQuestLeads.filter(
-    (lead) => !isQuestLeadExpired(lead, state.day),
-  )
-  if (filtered.length === state.availableQuestLeads.length) return state
-  return { ...state, availableQuestLeads: filtered }
-}
-
-export function applyEndOfDayResources(state: GameState): GameState {
-  let next = state
-
-  // Low food security → extra hunger decay for all NPCs
-  if (next.cityResources.foodSecurity < 40) {
-    next = {
-      ...next,
-      roster: next.roster.map((npc) => ({
-        ...npc,
-        states: {
-          ...npc.states,
-          hunger: Math.min(100, npc.states.hunger + 10),
-        },
-      })),
-    }
-    // Push unrest up each day
-    next = {
-      ...next,
-      cityDials: { ...next.cityDials, unrest: Math.min(100, next.cityDials.unrest + 5) },
-    }
-  }
-
-  // Corridor status → food supply impact
-  if (next.cityResources.corridorStatus === "blocked") {
-    next = appendActivityLogEntry(
-      next,
-      "system",
-      "The Green Corridor remains sealed. Food reserves dwindle.",
-    )
-  }
-
-  return next
-}
-
-/** Every 7 days held: condition steps down one tier. At 'broken': rescue difficulty rises. */
-const CAPTIVITY_DEGRADATION_DAYS = 7
-const CONDITION_PROGRESSION: CaptivityCondition[] = ['healthy', 'hurt', 'broken', 'altered']
-
-function applyCaptivityDegradation(state: GameState): GameState {
-  const activeEntries = Object.entries(getAllNpcCaptivityStates(state)).filter(
-    ([npcId, cap]) => (cap.status === 'missing' || cap.status === 'captive') && npcId !== 'npc-mira',
-  )
-  if (activeEntries.length === 0) return state
-
-  const next: GameState = {
-    ...state,
-    roster: state.roster.map((npc) => ({ ...npc })),
-    npcCaptivityStates: { ...state.npcCaptivityStates },
-  }
-
-  for (const [npcId, cap] of activeEntries) {
-    const rosterNpc = next.roster.find((npc) => npc.npcId === npcId)
-    const newDays = cap.timeHeldDays + 1
-    const risk = rosterNpc ? selectNpcCoercionRisk(rosterNpc) : 0
-    const threshold = risk > 0.6 ? Math.max(1, Math.floor(CAPTIVITY_DEGRADATION_DAYS / 2)) : CAPTIVITY_DEGRADATION_DAYS
-    const shouldDegrade = newDays > 0 && newDays % threshold === 0
-    const currentIdx = CONDITION_PROGRESSION.indexOf(cap.condition)
-    const newCondition: CaptivityCondition =
-      shouldDegrade && currentIdx < CONDITION_PROGRESSION.length - 1
-        ? CONDITION_PROGRESSION[currentIdx + 1]!
-        : cap.condition
-    setNpcCaptivityState(next, npcId, { ...cap, timeHeldDays: newDays, condition: newCondition })
-  }
-
-  return next
-}
-
-function checkMainQuestProgression(state: GameState): GameState {
-  const { stage } = state.mainQuest
-
-  // location-known → rescued: completing quest-mira-rescue
-  if (stage === "location-known" && state.completedQuestIds.includes("quest-mira-rescue")) {
-    return appendActivityLogEntry(
-      {
-        ...state,
-        mainQuest: {
-          stage: "rescued",
-          lastClue: "",
-        },
-      },
-      "system",
-      "Mira is out. She is not the same. Neither are you.",
-    )
-  }
-
-  return state
-}
-
+/**
+ * End-of-day orchestration via phased execution.
+ *
+ * Phases run in order:
+ * 1. WAGES — Economic obligations (wages, title income)
+ * 2. DECAY — State decay and threshold management
+ * 3. CORRIDOR — Food supply chain and corridor dynamics
+ * 4. RESOURCES — City resource consequences
+ * 5. CONSEQUENCES — Relationship drift, NPC departure
+ * 6. TIME_ADVANCE — Day increment and house repairs
+ * 7. POLITICS — Faction and political dynamics
+ * 8. EVENTS — Event lifecycle and world events
+ * 9. SOCIAL_SIMULATION — World NPC simulation and agency
+ * 10. PERSONALITY — Opponent pressure, trait drift, arc transitions
+ * 11. PAIRING — NPC-to-NPC pairing and intimacy
+ * 12. BONDING — Legacy, pregnancy, bond mechanics
+ * 13. CAPTIVITY — Captivity degradation, main quest progression
+ * 14. QUESTS — Quest expiry and debt crisis
+ */
 export function endDay(state: GameState): GameState {
   const seeded = createRng(state.rngSeed)
-  const rng = seeded.rng
+  const rng: Rng = seeded.rng
 
-  // Steps 1-4: wages, decay, thresholds, title effects + income
-  let next = applyWages(state)
-  next = applyStateDecay(next)
-  next = applyThresholds(next)
-  next = applyTitleEffects(next, rng)
+  // Phase 1: WAGES
+  let next = handleWagesPhase(state, rng)
 
-  // Step 5: Real stock-and-flow before the city reacts to the shortage.
-  next = applyFoodProduction(next)
-  next = applyCorridorImport(next).state
-  next = applyFoodConsumption(next)
+  // Phase 2: DECAY (includes THRESHOLDS)
+  next = handleDecayPhase(next)
 
-  // Step 5a: World-driven corridor clearance (coalition efforts)
-  // Form coalition if corridor is blocked/disrupted and no active coalition exists
-  next = formCorridorCoalition(next, rng)
-  next = applyCoalitionLifecycle(next, rng)
-  next = applyWorldCorridorClearance(next, rng)
+  // Phase 3: CORRIDOR
+  next = handleCorridorPhase(next, rng)
 
-  // Step 5b: City resource consequences
-  next = applyEndOfDayResources(next)
+  // Phase 4: RESOURCES
+  next = handleResourcesPhase(next)
 
-  // Steps 5b-5d: relationship drift, NPC departure, durability warnings
-  // Passes original relationships so departure check uses start-of-day loyalty values.
-  next = applyNpcConsequences(next, state.relationships, rng)
+  // Phase 5: CONSEQUENCES
+  next = handleConsequencesPhase(next, rng)
 
-  // Step 6: Advance time
-  const nextDay = next.day + 1
-  next = { ...next, day: nextDay, timeSlot: "morning" }
-  next = appendActivityLogEntry(next, "system", `The day turns. Day ${nextDay}.`)
-  next = tickHouseRepairs(next)
+  // Phase 6: TIME_ADVANCE
+  next = handleTimeAdvancePhase(next)
 
-  // Step 7: Politics, factions, debt
-  next = applyPolitics(next, rng)
+  // Phase 7: POLITICS
+  next = handlePoliticsPhase(next, rng)
 
-  // Step 8: Prune expired quest leads, expire stale hire offers, optionally refresh, then evaluate world events
-  next = pruneExpiredEventInstances(next)
-  next = compactResolvedEventInstances(next)
-  next = pruneExpiredQuestLeads(next)
-  const afterExpiry = expireHireOffers(next)
-  let afterEvents: GameState
-  if (nextDay % 3 === 0 && afterExpiry.currentDistrictId) {
-    const refreshed: GameState = { ...afterExpiry, availableForHire: [...afterExpiry.availableForHire] }
-    generateDistrictHireOffers(refreshed, afterExpiry.currentDistrictId, undefined, rng)
-    afterEvents = evaluateEvents(refreshed, rng, seeded)
-  } else {
-    afterEvents = evaluateEvents(afterExpiry, rng, seeded)
-  }
+  // Phase 8: EVENTS
+  next = handleEventsPhase(next, rng, seeded)
 
-  afterEvents = applyWorldHouseholdGrowth(afterEvents, rng)
-  afterEvents = applyAbstractCustodySimulation(afterEvents, rng)
-  afterEvents = applyMiraCustodyRoutine(afterEvents, rng)
-  afterEvents = applyNpcRoomInteractions(afterEvents, rng)
-  afterEvents = applySiteStateHooks(afterEvents)
+  // Phase 9: SOCIAL_SIMULATION
+  next = handleSocialSimulationPhase(next, rng)
 
-  // Step 9: Faction quest bonus, NPC agency, faction agenda, district tension
-  afterEvents = applyFactionQuestBonus(afterEvents)
-  afterEvents = applyAllNpcAgency(afterEvents, rng)
-  afterEvents = applyInitiativeAgency(afterEvents, rng)
-  afterEvents = applyFactionActivity(afterEvents)
-  afterEvents = applyWorldNpcSocialSimulation(afterEvents, rng)
-  afterEvents = applyRumorSpread(afterEvents, rng)
+  // Phase 10: PERSONALITY
+  next = handlePersonalityPhase(next, rng)
 
-  // Step 9a: Opponent pressure on running quests (15% chance per active quest with enemy)
-  const opponentPressureRandoms = Array.from({ length: afterEvents.activeQuests.length }, () => rng())
-  const pressured = applyOpponentPressure(afterEvents, opponentPressureRandoms)
-  logOpponentPressure(afterEvents, pressured)
+  // Phase 11: PAIRING
+  next = handlePairingPhase(next, rng)
 
-  // Steps 9b-9c: Experiential trait drift and arc stage transitions
-  afterEvents = applyNpcTraitDrift(afterEvents, rng)
-  afterEvents = checkNpcArcTransitions(afterEvents, rng)
-  afterEvents = checkFracturedArcBranching(afterEvents)
+  // Phase 12: BONDING
+  next = handleBondingPhase(next, rng)
 
-  // Step 9d: personality friction and bonding events (every 2 days)
-  if (nextDay % 2 === 0) {
-  afterEvents = applyPersonalityFriction(afterEvents, rng)
-  }
+  // Phase 13: CAPTIVITY
+  next = handleCaptivityPhase(next)
 
-  // Step 9e-roster: NPC-to-NPC pairing (proximity-gated, compatibility-gated)
-  afterEvents = applyNpcPairing(afterEvents, rng)
-  afterEvents = applyHouseholdIntimacy(afterEvents)
-
-  // Step 9e: Legacy intent chance and pregnancy tick
-  afterEvents = tickLegacyIntent(afterEvents, rng)
-  afterEvents = tickPregnancyProgress(afterEvents)
-  afterEvents = applyBondServiceEffects(afterEvents)
-  afterEvents = checkBondAcquisitionOffers(afterEvents, rng)
-  afterEvents = applyNpcHeldConditionDecay(afterEvents)
-
-  // Steps 10-12: Captivity degradation + main quest progression
-  afterEvents = applyCaptivityDegradation(afterEvents)
-  afterEvents = tickWardStages(afterEvents)
-  let finalState = checkMainQuestProgression(afterEvents)
-
-  // Step 13: Quest expiry and debt crisis (end-of-day consequences)
-  expireTimedQuestsOnState(finalState)
-  if (
-    !finalState.debtPaid &&
-    !finalState.debtCrisisTriggered &&
-    finalState.day >= finalState.debtDueDay &&
-    finalState.money < finalState.debtAmount
-  ) {
-    finalState.debtCrisisTriggered = true
-    finalState.activityLog.unshift({
-      id: `log-${finalState.day}-${finalState.timeSlot}-debt-crisis`,
-      day: finalState.day,
-      timeSlot: finalState.timeSlot,
-      category: 'system',
-      message: 'The debt-claim against House Valdris has come due. Court-backed enforcers move on the note. The house is seized.',
-    })
-    if (finalState.activityLog.length >= MAX_ACTIVITY_ENTRIES) finalState.activityLog.pop()
-  }
+  // Phase 14: QUESTS
+  next = handleQuestsPhase(next)
 
   // Store advanced RNG seed for next day's deterministic run
-  finalState = compactResolvedEventInstances(finalState)
-  return { ...finalState, rngSeed: seeded.getSeed() }
+  return { ...next, rngSeed: seeded.getSeed() }
 }

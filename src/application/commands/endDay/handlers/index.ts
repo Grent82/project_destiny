@@ -1,0 +1,16 @@
+// Phase handler exports for endDay orchestration
+
+export { handleWagesPhase } from "./handleWagesPhase"
+export { handleDecayPhase } from "./handleDecayPhase"
+export { handleCorridorPhase } from "./handleCorridorPhase"
+export { handleResourcesPhase } from "./handleResourcesPhase"
+export { handleConsequencesPhase } from "./handleConsequencesPhase"
+export { handleTimeAdvancePhase } from "./handleTimeAdvancePhase"
+export { handlePoliticsPhase } from "./handlePoliticsPhase"
+export { handleEventsPhase } from "./handleEventsPhase"
+export { handleSocialSimulationPhase } from "./handleSocialSimulationPhase"
+export { handlePersonalityPhase } from "./handlePersonalityPhase"
+export { handlePairingPhase } from "./handlePairingPhase"
+export { handleBondingPhase } from "./handleBondingPhase"
+export { handleCaptivityPhase } from "./handleCaptivityPhase"
+export { handleQuestsPhase } from "./handleQuestsPhase"
