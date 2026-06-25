@@ -13,6 +13,7 @@ import { engagePhysicalIntimacy as engagePhysicalIntimacyCommand } from '../../c
 import { cookMeal as cookMealCommand } from '../../commands/cookMeal'
 import { decorateRoom as decorateRoomCommand } from '../../commands/decorateRoom'
 import { hostGathering as hostGatheringCommand } from '../../commands/hostGathering'
+import { proposeDateWithPlayer as proposeDateWithPlayerCommand } from '../../commands/proposeDate'
 import {
   transferBondedNpc as transferBondedNpcCommand,
   rescueBondedNpcLegal,
@@ -82,6 +83,10 @@ export const rosterReducers = {
 
   hostGathering(state: GameState, action: PayloadAction<{ gatheringType: 'quietConversation' | 'sharedDrink' | 'storytelling' | 'musicNight'; participatingNpcIds: string[] }>) {
     return hostGatheringCommand(state, action.payload.gatheringType, action.payload.participatingNpcIds)
+  },
+
+  proposeDateWithPlayer(state: GameState, action: PayloadAction<{ targetNpcId: string; dateTemplateId: string; proposedDay: number; proposedTimeSlot: 'morning' | 'afternoon' | 'evening' | 'night'; proposedLocation: string | null }>) {
+    return proposeDateWithPlayerCommand(state, action.payload)
   },
 
   expireHireOffers(state: GameState) {

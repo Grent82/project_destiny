@@ -14,6 +14,7 @@ import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorN
 import { ConfirmationModal } from '../components/ConfirmationModal'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'
 import { IntimacyOptionsModal } from '../components/IntimacyOptionsModal'
+import { DateProposalModal } from '../components/DateProposalModal'
 import './roster.css'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
@@ -489,6 +490,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [showAssociates, setShowAssociates] = useState(false)
   const [showGiftList, setShowGiftList] = useState(false)
   const [showIntimacyModal, setShowIntimacyModal] = useState(false)
+  const [showDateProposalModal, setShowDateProposalModal] = useState(false)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
   const intimacyStage = useAppSelector(selectIntimacyStageWithPlayer(detail.npcId))
   const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
@@ -607,6 +609,15 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               title={courtUnavailableReason ?? 'Share a meaningful conversation about values, fears, dreams, or past.'}
             >
               Talk Deeply
+            </button>
+            <button
+              className="action-button action-button--ghost"
+              type="button"
+              onClick={() => setShowDateProposalModal(true)}
+              disabled={!canCourt || intimacyStage === 'none'}
+              title={intimacyStage === 'none' ? 'Build your relationship first before proposing a date.' : 'Propose a scheduled date with this NPC'}
+            >
+              Propose Date
             </button>
             <button
               className="action-button action-button--ghost"
@@ -821,6 +832,13 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             setShowIntimacyModal(false)
           }}
           onCancel={() => setShowIntimacyModal(false)}
+        />
+      )}
+      {showDateProposalModal && (
+        <DateProposalModal
+          npcId={detail.npcId}
+          npcName={detail.name}
+          onClose={() => setShowDateProposalModal(false)}
         />
       )}
     </div>

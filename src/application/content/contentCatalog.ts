@@ -19,6 +19,7 @@ import rumorsData from '../../../data/definitions/rumors.json'
 import eventRumorTemplatesData from '../../../data/definitions/event-rumor-templates.json'
 import shops from '../../../data/definitions/shops.json'
 import titlesData from '../../../data/definitions/titles.json'
+import datesData from '../../../data/definitions/dates.json'
 import { z } from 'zod'
 import {
   districtDefinitionSchema,
@@ -43,6 +44,7 @@ import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/gove
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
 import { rumorTemplateSchema, eventRumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
+import { dateDefinitionSchema } from '../../domain/dates/contracts'
 import { worldHouseholdSchema } from '../../domain/world/contracts'
 
 const npcStartingRelationshipSchema = z.object({
@@ -109,6 +111,8 @@ const bondBuyerSchema = z.object({
 })
 export type BondBuyerDefinition = z.infer<typeof bondBuyerSchema>
 const parsedBondBuyers = bondBuyerSchema.array().parse(bondBuyersData)
+const datesCatalogSchema = z.object({ dates: z.array(dateDefinitionSchema) })
+const parsedDates = datesCatalogSchema.parse(datesData).dates
 
 function toMap<T extends { id: string }>(entries: T[]) {
   return new Map(entries.map((entry) => [entry.id, entry]))
@@ -192,6 +196,8 @@ export const contentCatalog = {
   ),
   bondBuyers: parsedBondBuyers,
   bondBuyersById: toMap(parsedBondBuyers),
+  dates: parsedDates,
+  datesById: toMap(parsedDates),
   worldHouseholds: parsedWorldHouseholds,
   worldHouseholdsById: toMap(parsedWorldHouseholds),
   worldHouseholdsByDistrictId: new Map(
