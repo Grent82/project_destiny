@@ -120,12 +120,18 @@ Intimacy ist ein **Living World Mechanic**, nicht Player-only:
 
 3. **Keine globalen Settings** — Pregnancy ist immer ON. Kein Feature-Flag, kein "disable pregnancy" Toggle. Das ist ein Welt-Mechanic, keine Spiel-Einstellung.
 
-4. **Contraception ist abstract** — `boolean` preference auf NPC-Ebene (`consentPreferences.contraception`). Keine Items, keine Shop-Kataloge, keine Crafting-Rezepte, keine Economy-Integration. NPCs haben einfach eine Präferenz, die in der Simulation berücksichtigt wird.
+4. **Contraception ist item-driven** — Keine abstract boolean Preference. Contraception existiert nur als physische Items im Inventory von Spieler oder NPC.
+   - **NPC-Produktion:** Apotheker, Heiler, Schwarzmarkthändler produzieren Contraception Items (kein Spieler-Crafting)
+   - **Mehrere Quellen:** Gilded Heights (premium), The Tangle (schwarzmarkt), The Pale (basic)
+   - **Dynamisches Angebot/Nachfrage:** Verfügbarkeit schwankt per District-Tension, Restock-Cycles, Preis-Modulatoren
+   - **Item-Typen:** Herbal Contraceptive (basic, Einweg), Barrier Device (premium, mehrmalig), Tonic/Elixir (mittel, 3-5 uses)
+   - **Inventory-Check vor Intimacy:** Keine Items = kein Schutz, keine Checkbox im UI
 
-**Warum:** Living World Prinzip — NPCs sind Agenten mit eigenen Leben, nicht nur Player-Tools. Intimacy ist Teil der sozialen Simulation, nicht ein Player-Feature.
+**Warum:** Living World Prinzip — NPCs sind Agenten mit eigenen Leben, nicht nur Player-Tools. Intimacy ist Teil der sozialen Simulation, nicht ein Player-Feature. Contraception als Item macht den Mechanic sichtbar, taktbar und in die Wirtschaft integrierbar.
 
 **Beads:**
 - `destiny-g094` — NPC-NPC physical intimacy mit pregnancy mechanics (P2)
+- `destiny-z7xr` — Contraception Items: NPC-Produktion, dynamisches Angebot/Nachfrage (P2)
 
 ## Quality Gates
 
