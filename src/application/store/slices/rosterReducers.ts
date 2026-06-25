@@ -8,6 +8,7 @@ import { applyRelationshipDelta } from '../../commands/adjustRelationship'
 import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expireHireOffers as expireHireOffersCommand, acquireBoundHireOffer as acquireBoundHireOfferCommand } from '../../commands/recruitment'
 import { freeNpc as freeNpcCommand } from '../../commands/bondService'
 import { courtNpc as courtNpcCommand } from '../../commands/courtNpc'
+import { deepConversation as deepConversationCommand } from '../../commands/deepConversation'
 import {
   transferBondedNpc as transferBondedNpcCommand,
   rescueBondedNpcLegal,
@@ -54,6 +55,10 @@ export const rosterReducers = {
 
   courtNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {
     return courtNpcCommand(state, action.payload.npcId)
+  },
+
+  deepConversation(state: GameState, action: PayloadAction<{ npcId: string }>) {
+    return deepConversationCommand(state, action.payload.npcId)
   },
 
   expireHireOffers(state: GameState) {

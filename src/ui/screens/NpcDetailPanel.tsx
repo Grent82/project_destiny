@@ -593,6 +593,17 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 Court
               </button>
             )}
+            {romanceEligible && (
+              <button
+                className="action-button"
+                type="button"
+                onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
+                disabled={currentDistrictId !== houseDistrictId || detail.assignment === 'deployed'}
+                title={currentDistrictId !== houseDistrictId ? 'Deep conversations require the house as private ground.' : 'Share a meaningful conversation about values, fears, dreams, or past.'}
+              >
+                Talk Deeply
+              </button>
+            )}
             <TitlePanel detail={detail} />
           </div>
           {hasNewTopics && dialogueTree && (
