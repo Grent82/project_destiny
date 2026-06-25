@@ -373,6 +373,8 @@ export const npcRuntimeStateSchema = z
     pregnancyState: pregnancyStateSchema.optional(),
     bondStatus: bondStatusSchema.nullable().default(null),
     npcArc: npcArcSchema,
+    currentDirectiveId: entityIdSchema.nullable().default(null),
+    directiveDeadlineDay: z.number().int().nonnegative().nullable().default(null),
   })
   .strict()
 

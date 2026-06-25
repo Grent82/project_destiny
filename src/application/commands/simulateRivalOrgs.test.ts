@@ -101,6 +101,7 @@ const baseState: GameState = {
   ownedItems: [],
   chronicle: { entriesByDay: {}, version: 1 },
   worldEvents: [],
+  activeDirectives: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   eventInstances: [],

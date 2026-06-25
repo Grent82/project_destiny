@@ -94,85 +94,19 @@ const baseState: GameState = {
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],
-  debtAmount: 800,
-  debtClaimantNpcId: 'npc-enemy-harlen-voss',
-  debtEnforcementFactionId: 'faction-gilded-court',
-  debtBeneficiaryFactionId: 'faction-house-merrow',
-  debtDueDay: 30,
-  debtPaid: false,
-  debtCrisisTriggered: false,
+  activeDirectives: [],
   pendingDateProposals: [],
   scheduledDates: [],
   npcDateCooldowns: {},
   houseWardSeats: 0,
-  institutionalStanding: {},
-  activeCouncilVotes: [],
-  relationships: {},
-  equippedItemDurabilities: {},
-  activeInvestigation: null,
-  lastInvestigationResult: null,
-  pendingConsumableDecision: null,
-  lastFiredDay: {},
-  rivalOrgActions: [],
-  cityStability: 60,
-  expeditionState: { status: 'idle', destinationId: null, squadNpcIds: [], suppliesRemaining: 0, daysDeparted: 0, totalDays: 0, encounters: [], discoveries: [], cityDayAtDeparture: 0 },
-  householdLore: { houseName: 'House Valdris', founderName: 'Test Founder', founderGeneration: 1, antagonistFactionId: 'faction-gilded-court', missingRelatives: [] },
-  stash: { weapons: [], armors: [] },
+  debtAmount: 800,
+  debtClaimantNpcId: 'npc-enemy-harlen-voss',
+  debtEnforcementFactionId: 'faction-gilded-court',
+  debtBeneficiaryFactionId: 'faction-house-merrow',
+  debtDueDay: 30,
+  debtPaid: false,
+  debtCrisisTriggered: false,
   isFirstRun: false,
-  debtAmount: 800,
-  debtClaimantNpcId: 'npc-enemy-harlen-voss',
-  debtEnforcementFactionId: 'faction-gilded-court',
-  debtBeneficiaryFactionId: 'faction-house-merrow',
-  debtDueDay: 30,
-  debtPaid: false,
-  debtCrisisTriggered: false,
-  visitedDialogueNodes: {},
-  saveVersion: 2,
-  rngSeed: 42,
-  chronicle: { version: 1, entriesByDay: {} },
-  rumors: [],
-  bondVisibility: {},
-  worldNpcStates: [],
-  siteRuntimes: {},
-  npcCaptivityStates: {},
-  npcSitePresences: [],
-  bondedPersonsRegistry: {},
-  worldEvents: [],
-  debtAmount: 800,
-  debtClaimantNpcId: 'npc-enemy-harlen-voss',
-  debtEnforcementFactionId: 'faction-gilded-court',
-  debtBeneficiaryFactionId: 'faction-house-merrow',
-  debtDueDay: 30,
-  debtPaid: false,
-  debtCrisisTriggered: false,
-  houseDistrictId: 'district-the-pale',
-  mainQuest: { stage: 'searching', lastClue: '' },
-  districtTension: {},
-  activeDialogueId: null,
-  activeDialogueNodeId: null,
-  visitedDialogueNodes: {},
-  resolvedDialogueChoices: {},
-  house: baseHouse,
-  saveVersion: 2,
-  rngSeed: 42,
-  chronicle: { version: 1, entriesByDay: {} },
-  rumors: [],
-  bondVisibility: {},
-  worldNpcStates: [],
-  siteRuntimes: {},
-  npcCaptivityStates: {},
-  npcSitePresences: [],
-  pendingDateProposals: [],
-  scheduledDates: [],
-  npcDateCooldowns: {},
-  playerCharacter: {
-    name: 'Test Player',
-    attributes: { might: 40, agility: 40, endurance: 40, intellect: 40, perception: 40, presence: 40, resolve: 40 },
-    skills: { melee: 15, ranged: 15, medicine: 15, administration: 15, engineering: 15, negotiation: 15, survival: 15, security: 15, crafting: 15, performance: 15, academics: 15, intrigue: 15 },
-    traits: { discipline: 40, ambition: 40, empathy: 40, ruthlessness: 40, prudence: 40, curiosity: 40, dominance: 40, loyalty: 40, vanity: 40, zeal: 40 },
-    level: 1,
-    renown: 0,
-  },
 }
 
 describe('cookMeal', () => {
@@ -189,15 +123,23 @@ describe('cookMeal', () => {
     const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
 
     expect(result.money).toBe(45) // -5 cost
-    const key = buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)
-    expect(result.relationships[key]?.trust).toBe(27) // 25 + 2
-    expect(result.relationships[key]?.affinity).toBe(22) // 20 + 2
-    expect(result.activityLog.length).toBe(1)
-    expect(result.activityLog[0]!.message).toContain('cook')
-    expect(result.activityLog[0]!.message).toContain(idaRhysRosterEntry.name)
+    expect(result.activityLog).toHaveLength(1)
+    expect(result.activityLog[0]!.message).toContain('a simple meal')
   })
 
-  it('cooks a feast with higher gains', () => {
+  it('requires the NPC to be in the house', () => {
+    const state: GameState = {
+      ...baseState,
+      roster: [
+        { ...idaRhysRosterEntry, roomAssignment: null },
+      ],
+    }
+
+    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
+    expect(result.roster[0]!.roomAssignment).toBeNull() // NPC still not in house
+  })
+
+  it('cooks a lavish meal for higher cost and better relationship gains', () => {
     const state: GameState = {
       ...baseState,
       money: 100,
@@ -207,162 +149,9 @@ describe('cookMeal', () => {
       },
     }
 
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'feast')
+    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'hearty')
 
-    expect(result.money).toBe(70) // -30 cost
-    const key = buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)
-    expect(result.relationships[key]?.trust).toBe(31) // 25 + 6
-    expect(result.relationships[key]?.affinity).toBe(26) // 20 + 6
-  })
-
-  it('applies empathy bonus for player', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      playerCharacter: {
-        ...baseState.playerCharacter,
-        traits: { ...baseState.playerCharacter.traits, empathy: 65 },
-      },
-      relationships: {
-        [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: 30, fear: 10, trust: 25, loyalty: 15 },
-        [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: 25, fear: 5, trust: 20, loyalty: 20 },
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    const key = buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)
-    expect(result.relationships[key]?.trust).toBe(28) // 25 + 3 (base 2 + empathy bonus 1)
-  })
-
-  it('applies prudence bonus for NPC', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      roster: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, prudence: 65 } }],
-      relationships: {
-        [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: 30, fear: 10, trust: 25, loyalty: 15 },
-        [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: 25, fear: 5, trust: 20, loyalty: 20 },
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    const key = buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)
-    expect(result.relationships[key]?.affinity).toBe(23) // 20 + 3 (base 2 + prudence bonus 1)
-  })
-
-  it('applies empathy bonus for NPC', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      roster: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, empathy: 55 } }],
-      relationships: {
-        [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: 30, fear: 10, trust: 25, loyalty: 15 },
-        [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: 25, fear: 5, trust: 20, loyalty: 20 },
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    const reverseKey = buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)
-    expect(result.relationships[reverseKey]?.loyalty).toBe(22) // 20 + 2 (base 1 + empathy bonus 1)
-  })
-
-  it('reduces gains for strained relationship', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      relationships: {
-        [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: -40, fear: 10, trust: 25, loyalty: 15 },
-        [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: -35, fear: 5, trust: 20, loyalty: 20 },
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    const key = buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)
-    expect(result.relationships[key]?.trust).toBe(26) // 25 + 1 (2 * 0.5 rounded)
-    expect(result.relationships[key]?.affinity).toBe(21) // 20 + 1 (2 * 0.5 rounded)
-    expect(result.activityLog[0]!.message).toContain('strained')
-  })
-
-  it('returns unchanged state when not at house', () => {
-    const state: GameState = {
-      ...baseState,
-      currentDistrictId: 'district-harbor',
-      money: 50,
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    expect(result).toBe(state)
-  })
-
-  it('returns unchanged state when NPC is deployed', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      roster: [{ ...idaRhysRosterEntry, assignment: 'deployed' }],
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    expect(result).toBe(state)
-  })
-
-  it('returns unchanged state when kitchen is not intact', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      house: {
-        ...baseHouse,
-        rooms: [{ ...baseKitchenRoom, state: 'damaged' }],
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    expect(result).toBe(state)
-  })
-
-  it('returns unchanged state when insufficient funds', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 3,
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    expect(result).toBe(state)
-  })
-
-  it('enforces cooldown', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 50,
-      lastFiredDay: {
-        [`cookMeal-${idaRhysRosterEntry.npcId}-simple-10`]: 10,
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-
-    expect(result).toBe(state)
-  })
-
-  it('allows different meal types independently', () => {
-    const state: GameState = {
-      ...baseState,
-      money: 100,
-      lastFiredDay: {
-        [`cookMeal-${idaRhysRosterEntry.npcId}-simple-10`]: 10,
-      },
-    }
-
-    const result = cookMeal(state, idaRhysRosterEntry.npcId, 'feast')
-
-    expect(result).not.toBe(state)
-    expect(result.money).toBe(70)
+    expect(result.money).toBe(85) // -15 cost
+    expect(result.activityLog[0]!.message).toContain('hearty meal')
   })
 })

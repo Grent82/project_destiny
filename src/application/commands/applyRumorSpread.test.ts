@@ -397,6 +397,8 @@ describe('applyRumorSpread', () => {
         npcMemory: [],
         bondStatus: null,
         npcArc: null,
+        currentDirectiveId: null,
+        directiveDeadlineDay: null,
       }
     }
 

@@ -80,6 +80,8 @@ export function formalizeHeir(
     npcMemory: [],
     bondStatus: null,
     npcArc: null,
+    currentDirectiveId: null,
+    directiveDeadlineDay: null,
   }
 
   const next: GameState = {

@@ -96,6 +96,7 @@ const createBaseState = (roster: NpcRuntimeState[] = [idaRhysRosterEntry]): Game
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],
+  activeDirectives: [],
   pendingDateProposals: [],
   scheduledDates: [],
   npcDateCooldowns: {},

@@ -24,6 +24,8 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     npcMemory: [],
     bondStatus: null,
     npcArc: null,
+    currentDirectiveId: null,
+    directiveDeadlineDay: null,
     ...overrides,
   }
 }

@@ -164,6 +164,7 @@ const baseGameState: GameState = {
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],
+  activeDirectives: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   debtAmount: 800,

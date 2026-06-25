@@ -167,7 +167,9 @@
       "roomAssignment": "room-quarters",
       "npcMemory": [],
       "bondStatus": null,
-      "npcArc": null
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null
     }
   ],
   "inventory": [
@@ -667,5 +669,6 @@
   "worldEvents": [],
   "pendingDateProposals": [],
   "scheduledDates": [],
-  "npcDateCooldowns": {}
+  "npcDateCooldowns": {},
+  "activeDirectives": []
 }

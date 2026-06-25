@@ -89,6 +89,8 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   npcMemory: [],
   bondStatus: null,
   npcArc: null,
+  currentDirectiveId: null,
+  directiveDeadlineDay: null,
 }
 
 /** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */

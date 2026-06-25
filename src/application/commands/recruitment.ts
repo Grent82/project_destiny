@@ -91,6 +91,8 @@ function buildRosterEntryFromOffer(
           return { arcId: npcDef.defaultArcId!, stage: arcDef.stages[0]!.id, stageEnteredDay: state.day, stageFlags: {}, driftHistory: [] }
         })()
       : null,
+    currentDirectiveId: null,
+    directiveDeadlineDay: null,
   }
 }
 

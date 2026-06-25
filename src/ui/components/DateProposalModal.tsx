@@ -19,13 +19,14 @@ const INTIMACY_LABELS: Record<string, string> = {
 
 export function DateProposalModal({ npcId, npcName, onClose }: DateProposalModalProps) {
   const dispatch = useAppDispatch()
-  const intimacyStage = useAppSelector(() => selectIntimacyStageWithPlayer(npcId))
+  const intimacyStage = useAppSelector(selectIntimacyStageWithPlayer(npcId))
   const currentDay = useAppSelector((state) => state.game.day)
   const currentTimeSlot = useAppSelector((state) => state.game.timeSlot)
 
+  const intimacyStageStr = intimacyStage ?? 'none'
   const availableDates = contentCatalog.dates.filter((date) => {
     const requiredStageIndex = ['none', 'affinity', 'attachment', 'committed'].indexOf(date.requiredIntimacyStage)
-    const currentStageIndex = ['none', 'affinity', 'attachment', 'committed'].indexOf(intimacyStage ?? 'none')
+    const currentStageIndex = ['none', 'affinity', 'attachment', 'committed'].indexOf(intimacyStageStr)
     return currentStageIndex >= requiredStageIndex
   })
 
@@ -55,7 +56,7 @@ export function DateProposalModal({ npcId, npcName, onClose }: DateProposalModal
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '40rem' }}>
         <h2 style={{ marginBottom: '1rem' }}>Propose a Date with {npcName}</h2>
         <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-          Current bond: {INTIMACY_LABELS[intimacyStage] || 'None'}
+          Current bond: {INTIMACY_LABELS[intimacyStageStr] || 'None'}
         </p>
 
         {availableDates.length === 0 ? (

@@ -352,6 +352,8 @@ export function applyOutcomes(
                 npcMemory: [],
                 bondStatus: null,
                 npcArc,
+                currentDirectiveId: null,
+                directiveDeadlineDay: null,
               }
               next = { ...next, roster: [...next.roster, newEntry] }
               const seeded = getSeeded()

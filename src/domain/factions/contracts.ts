@@ -70,3 +70,88 @@ export const factionRuntimeStateSchema = z
 export type FactionDefinition = z.infer<typeof factionDefinitionSchema>
 export type FactionRuntimeState = z.infer<typeof factionRuntimeStateSchema>
 export type PoliticalDials = z.infer<typeof politicalDialsSchema>
+
+/**
+ * Faction Directive types - tasks that faction leaders assign to NPCs.
+ */
+export const FACTION_DIRECTIVE_TYPES = [
+  'scout',
+  'protect',
+  'retrieve',
+  'intercept',
+  'negotiate',
+  'sabotage',
+  'escort',
+  'investigate',
+] as const
+
+export const factionDirectiveTypeSchema = z.enum(FACTION_DIRECTIVE_TYPES)
+
+export type FactionDirectiveType = z.infer<typeof factionDirectiveTypeSchema>
+
+/**
+ * Directive status lifecycle.
+ */
+export const FACTION_DIRECTIVE_STATUS = [
+  'pending',
+  'in-progress',
+  'completed',
+  'failed',
+  'cancelled',
+] as const
+
+export const factionDirectiveStatusSchema = z.enum(FACTION_DIRECTIVE_STATUS)
+
+export type FactionDirectiveStatus = z.infer<typeof factionDirectiveStatusSchema>
+
+/**
+ * Directive target types - what the directive is targeting.
+ */
+export const FACTION_DIRECTIVE_TARGET_TYPES = [
+  'district',
+  'npc',
+  'item',
+  'faction',
+] as const
+
+export const factionDirectiveTargetTypeSchema = z.enum(FACTION_DIRECTIVE_TARGET_TYPES)
+
+export type FactionDirectiveTargetType = z.infer<typeof factionDirectiveTargetTypeSchema>
+
+/**
+ * Faction Directive schema - represents a task assigned by a faction leader to an NPC.
+ */
+export const factionDirectiveSchema = z
+  .object({
+    id: entityIdSchema,
+    factionId: entityIdSchema,
+    targetNpcId: entityIdSchema,
+    directiveType: factionDirectiveTypeSchema,
+    targetId: z.string().min(1), // District ID, NPC ID, Item ID, or Faction ID
+    targetType: factionDirectiveTargetTypeSchema,
+    priority: z.number().min(1).max(5),
+    deadlineDay: z.number().min(0),
+    status: factionDirectiveStatusSchema,
+    rewardMarks: z.number().min(0).default(0),
+    rewardStanding: z.number().min(-100).max(100).default(0),
+    createdAtDay: z.number().min(0),
+    completedAtDay: z.number().min(0).optional().nullable(),
+    description: z.string().min(1).optional(),
+  })
+  .strict()
+
+export type FactionDirective = z.infer<typeof factionDirectiveSchema>
+
+/**
+ * Skill requirements for each directive type.
+ */
+export const directiveSkillRequirements: Record<FactionDirectiveType, Record<string, number>> = {
+  scout: { perception: 60, survival: 40 },
+  protect: { endurance: 60, discipline: 50 },
+  retrieve: { agility: 50, security: 40 },
+  intercept: { might: 60, melee: 50 },
+  negotiate: { presence: 60, negotiation: 70 },
+  sabotage: { intrigue: 70, ruthlessness: 50 },
+  escort: { loyalty: 60, discipline: 50 },
+  investigate: { intellect: 60, curiosity: 50 },
+}

@@ -32,6 +32,8 @@ function bondedNpc(overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
     npcMemory: [],
     npcArc: null,
+    currentDirectiveId: null,
+    directiveDeadlineDay: null,
     bondStatus: {
       holderId: 'player',
       contractValue: 200,

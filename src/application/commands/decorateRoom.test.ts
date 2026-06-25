@@ -96,6 +96,7 @@ const baseState: GameState = {
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],
+  activeDirectives: [],
   pendingDateProposals: [],
   scheduledDates: [],
   npcDateCooldowns: {},

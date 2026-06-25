@@ -8,7 +8,7 @@ import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema
 import { intimacyStageSchema, relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
 import { districtDefinitionSchema } from '../districts/contracts'
 import { eventInstanceSchema, pendingEventSchema } from '../events/contracts'
-import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema } from '../factions/contracts'
+import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema, factionDirectiveSchema } from '../factions/contracts'
 import {
   armorDefinitionSchema,
   installedModuleSchema,
@@ -456,6 +456,7 @@ export const gameStateSchema = z
     npcSitePresences: z.array(npcSitePresenceSchema).default([]),
     bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
     worldEvents: z.array(worldEventSchema).max(100).default([]),
+    activeDirectives: z.array(factionDirectiveSchema).default([]),
   })
   .strict()
 
@@ -482,3 +483,11 @@ export type EquippedItemDurabilities = z.infer<typeof gameStateSchema>['equipped
 
 // Re-export NPC schemas used for playerCharacter for consumer convenience
 export type { Attributes, Skills, Traits } from '../npc/contracts'
+
+// Re-export faction directive types
+export type {
+  FactionDirective,
+  FactionDirectiveType,
+  FactionDirectiveStatus,
+  FactionDirectiveTargetType,
+} from '../factions/contracts'
