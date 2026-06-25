@@ -9,6 +9,7 @@ import { recruitNpc as recruitNpcCommand, dismissNpc as dismissNpcCommand, expir
 import { freeNpc as freeNpcCommand } from '../../commands/bondService'
 import { courtNpc as courtNpcCommand } from '../../commands/courtNpc'
 import { deepConversation as deepConversationCommand } from '../../commands/deepConversation'
+import { engagePhysicalIntimacy as engagePhysicalIntimacyCommand } from '../../commands/engagePhysicalIntimacy'
 import {
   transferBondedNpc as transferBondedNpcCommand,
   rescueBondedNpcLegal,
@@ -59,6 +60,13 @@ export const rosterReducers = {
 
   deepConversation(state: GameState, action: PayloadAction<{ npcId: string }>) {
     return deepConversationCommand(state, action.payload.npcId)
+  },
+
+  engagePhysicalIntimacy(state: GameState, action: PayloadAction<{ npcId: string; contraception: boolean; intent: 'want-pregnancy' | 'avoid-pregnancy' | 'neutral' }>) {
+    return engagePhysicalIntimacyCommand(state, action.payload.npcId, {
+      contraception: action.payload.contraception,
+      intent: action.payload.intent,
+    })
   },
 
   expireHireOffers(state: GameState) {
@@ -174,7 +182,7 @@ export const rosterReducers = {
     if (cap.condition === 'broken' || cap.condition === 'altered') {
       const aftermathRoll = (npcId.charCodeAt(npcId.length - 1) + cap.timeHeldDays) % 100 / 100
       if (aftermathRoll < risk * 0.5) {
-        npc.pregnancyState = { context: 'unknown', daysElapsed: 0, questTag: null }
+        npc.pregnancyState = { context: 'unknown', daysElapsed: 0, questTag: null, wanted: null }
       }
     }
 

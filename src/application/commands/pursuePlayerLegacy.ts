@@ -64,7 +64,7 @@ export function tickLegacyIntent(state: GameState, rng: () => number): GameState
         ...next,
         roster: next.roster.map((n) =>
           n.npcId === npc.npcId
-            ? { ...n, pregnancyState: { context: 'consensual' as const, daysElapsed: 0, questTag: null } }
+            ? { ...n, pregnancyState: { context: 'consensual' as const, daysElapsed: 0, questTag: null, wanted: null } }
             : n,
         ),
         relationships: {

@@ -168,6 +168,18 @@ export const npcLoyaltySchema = z.object({
   visibility: z.enum(['hidden', 'rumored', 'known']).optional(),
 })
 
+export const consentPreferencesSchema = z.object({
+  requiredStage: z.enum(['affinity', 'attachment', 'committed']).default('committed'),
+  requiresExplicitConsent: z.boolean().default(false),
+  opennessLevel: z.enum(['reserved', 'moderate', 'open']).default('moderate'),
+  boundaries: z.array(z.string()).default([]),
+}).default({
+  requiredStage: 'committed',
+  requiresExplicitConsent: false,
+  opennessLevel: 'moderate',
+  boundaries: [],
+})
+
 export const npcDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -192,6 +204,7 @@ export const npcDefinitionSchema = z
     loyalties: z.array(npcLoyaltySchema).default([]),
     dialogueId: entityIdSchema.optional(),
     defaultArcId: z.string().optional(),
+    consentPreferences: consentPreferencesSchema,
     // All NPCs are romance-eligible by default. Relationship depth determines progression, not authoring flags.
     schedule: z.object({
       morning: z.string().optional(),
@@ -246,18 +259,18 @@ export const captivityStateSchema = z.object({
   lastTransferDay: z.number().int().nonnegative().nullable().default(null),
   questTag: z.string().nullable().default(null),
 })
-
 /**
- * pregnancyState is NEVER set by direct player action.
- * It is set only by event resolution logic as a rare world-generated aftermath.
+ * pregnancyState tracks pregnancy status for NPCs.
  * context: 'unknown' = captivity aftermath (coercion linkage never surfaced as player label).
  * context: 'consensual' = freely chosen relationships.
+ * wanted: player's intent at time of conception (null if not set).
  */
 export const pregnancyStateSchema = z.object({
   context: z.enum(['consensual', 'unknown']),
   daysElapsed: z.number().int().nonnegative().default(0),
   questTag: z.string().nullable().default(null),
   partnerNpcId: z.string().nullable().optional(),
+  wanted: z.boolean().nullable().default(null), // true = wanted, false = avoided, null = neutral/unspecified
 })
 
 export const bondEntryReasonSchema = z.enum([
@@ -289,6 +302,7 @@ export type CaptivityBondType = z.infer<typeof captivityBondTypeSchema>
 export type CaptivityRegime = z.infer<typeof captivityRegimeSchema>
 export type CaptivityState = z.infer<typeof captivityStateSchema>
 export type PregnancyState = z.infer<typeof pregnancyStateSchema>
+export type ConsentPreferences = z.infer<typeof consentPreferencesSchema>
 export type BondEntryReason = z.infer<typeof bondEntryReasonSchema>
 export type BondStatus = z.infer<typeof bondStatusSchema>
 

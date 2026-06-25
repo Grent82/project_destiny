@@ -33,7 +33,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
           ? {
               ...npc,
               traits: { ...npc.traits, empathy: 72 },
-              pregnancyState: { context: 'unknown' as const, daysElapsed: 0, questTag: null },
+              pregnancyState: { context: 'unknown' as const, daysElapsed: 0, questTag: null, wanted: null },
             }
           : npc,
       ),
@@ -58,7 +58,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
-              pregnancyState: { context: 'unknown' as const, daysElapsed: 0, questTag: null },
+              pregnancyState: { context: 'unknown' as const, daysElapsed: 0, questTag: null, wanted: null },
             }
           : npc,
       ),
@@ -81,7 +81,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
               ...npc,
               states: { ...npc.states, health: 50, stress: 81 },
               traits: { ...npc.traits, empathy: 20 },
-              pregnancyState: { context: 'unknown' as const, daysElapsed: 0, questTag: null },
+              pregnancyState: { context: 'unknown' as const, daysElapsed: 0, questTag: null, wanted: null },
             }
           : npc,
       ),

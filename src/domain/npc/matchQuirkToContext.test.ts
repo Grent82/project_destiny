@@ -23,6 +23,12 @@ const baseNpc: NpcDefinition = {
   allowedTitleIds: [],
   loyalties: [],
   schedule: {},
+  consentPreferences: {
+    requiredStage: 'committed',
+    requiresExplicitConsent: false,
+    opennessLevel: 'moderate',
+    boundaries: [],
+  },
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

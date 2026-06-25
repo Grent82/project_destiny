@@ -158,6 +158,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
                       daysElapsed: 0,
                       questTag: null,
                       partnerNpcId: partnerId,
+                      wanted: null,
                     },
                   }
                 : n,

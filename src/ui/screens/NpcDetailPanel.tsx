@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
 import { ConfirmationModal } from '../components/ConfirmationModal'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'
+import { IntimacyOptionsModal } from '../components/IntimacyOptionsModal'
 import './roster.css'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
@@ -487,7 +488,9 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [equipSlot, setEquipSlot] = useState<'primaryWeaponId' | 'secondaryWeaponId' | 'armorId' | null>(null)
   const [showAssociates, setShowAssociates] = useState(false)
   const [showGiftList, setShowGiftList] = useState(false)
+  const [showIntimacyModal, setShowIntimacyModal] = useState(false)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
+  const intimacyStage = useAppSelector(selectIntimacyStageWithPlayer(detail.npcId))
   const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
   const giftHistory = useAppSelector(selectGiftHistoryWithPlayer(detail.npcId))
   const courtshipHistory = useAppSelector(selectCourtshipHistoryWithPlayer(detail.npcId))
@@ -604,6 +607,15 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               title={courtUnavailableReason ?? 'Share a meaningful conversation about values, fears, dreams, or past.'}
             >
               Talk Deeply
+            </button>
+            <button
+              className="action-button action-button--secondary"
+              type="button"
+              onClick={() => setShowIntimacyModal(true)}
+              disabled={!canCourt || intimacyStage === 'none'}
+              title={intimacyStage === 'none' ? 'Physical intimacy requires a deeper bond. Build your relationship through courtship and meaningful conversations.' : 'Spend a night together (aftermath-focused, consensual only)'}
+            >
+              Spend Night Together
             </button>
             <TitlePanel detail={detail} />
           </div>
@@ -774,6 +786,23 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           npcId={detail.npcId}
           slot={equipSlot}
           onClose={() => setEquipSlot(null)}
+        />
+      )}
+      {showIntimacyModal && (
+        <IntimacyOptionsModal
+          npcName={detail.name}
+          requiresConsent={false}
+          onConfirm={(options) => {
+            dispatch(
+              gameActions.engagePhysicalIntimacy({
+                npcId: detail.npcId,
+                contraception: options.contraception,
+                intent: options.intent,
+              }),
+            )
+            setShowIntimacyModal(false)
+          }}
+          onCancel={() => setShowIntimacyModal(false)}
         />
       )}
     </div>

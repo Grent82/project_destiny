@@ -1,8 +1,24 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
-import type { RelationshipAxes } from '../../domain/relationships/contracts'
+import type { RelationshipAxes, IntimacyStage } from '../../domain/relationships/contracts'
 import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+
+export const selectIntimacyStageWithPlayer =
+  (npcId: string) => {
+    let selector = intimacyStageSelectorCache.get(npcId)
+    if (!selector) {
+      selector = createSelector(
+        [(state: RootState) => state.game.relationships],
+        (relationships): IntimacyStage => {
+          const rel = getRelationship(relationships, 'player', npcId)
+          return rel?.intimacyStage ?? 'none'
+        },
+      )
+      intimacyStageSelectorCache.set(npcId, selector)
+    }
+    return selector
+  }
 
 export const selectRelationshipWithPlayer =
   (npcId: string) => {
@@ -108,6 +124,7 @@ export const selectSquadCohesion = (state: RootState): number => {
   return Math.round(total / squad.length)
 }
 
+const intimacyStageSelectorCache = new Map<string, (state: RootState) => IntimacyStage>()
 const relationshipWithPlayerSelectorCache = new Map<string, (state: RootState) => RelationshipAxes>()
 const knownAssociatesSelectorCache = new Map<string, (state: RootState) => { npcId: string; name: string; axes: RelationshipAxes }[]>()
 const giftHistorySelectorCache = new Map<string, (state: RootState) => { itemId: string; itemName: string; message: string; day: number }[]>()

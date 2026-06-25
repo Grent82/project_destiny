@@ -144,7 +144,7 @@ describe('tickPregnancyProgress', () => {
       ...initialStateWithIda,
       roster: initialStateWithIda.roster.map((n) =>
         n.npcId === NPC_ID
-          ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 10, questTag: null } }
+          ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 10, questTag: null, wanted: null } }
           : n,
       ),
     }
@@ -168,7 +168,7 @@ describe('tickPregnancyProgress', () => {
       },
       roster: initialStateWithIda.roster.map((n) =>
         n.npcId === NPC_ID
-          ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null } }
+          ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null, wanted: null } }
           : n,
       ),
     }
@@ -188,7 +188,7 @@ describe('tickPregnancyProgress', () => {
       ...initialStateWithIda,
       roster: initialStateWithIda.roster.map((n) =>
         n.npcId === NPC_ID
-          ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null } }
+          ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null, wanted: null } }
           : n,
       ),
     }
@@ -202,7 +202,7 @@ describe('tickPregnancyProgress', () => {
       ...initialStateWithIda,
       roster: initialStateWithIda.roster.map((n) =>
         n.npcId === NPC_ID
-          ? { ...n, pregnancyState: { context: 'unknown', daysElapsed: 269, questTag: null } }
+          ? { ...n, pregnancyState: { context: 'unknown', daysElapsed: 269, questTag: null, wanted: null } }
           : n,
       ),
     }
@@ -223,6 +223,7 @@ describe('tickPregnancyProgress', () => {
                 daysElapsed: 269,
                 questTag: null,
                 partnerNpcId: PLAYER_ID,
+                wanted: null,
               },
             }
           : n,
