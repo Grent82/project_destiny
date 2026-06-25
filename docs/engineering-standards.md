@@ -110,6 +110,23 @@ Refactor only when one of these is true:
 
 Do not perform broad opportunistic refactors inside unrelated tasks.
 
+## Living World Intimacy Principles
+
+Intimacy ist ein **Living World Mechanic**, nicht Player-only:
+
+1. **NPC-NPC Intimacy ist der Kern** — NPCs bilden Beziehungen unabhängig vom Player. Das ist die primäre Simulation; Player-NPC ist sekundär.
+
+2. **Player-NPC Intimacy ist sekundär** — Player kann teilnehmen, aber ist nicht der Auslöser. Neue Intimacy-Features immer zuerst als NPC-NPC Mechanic designen, dann Player-Integration hinzufügen.
+
+3. **Keine globalen Settings** — Pregnancy ist immer ON. Kein Feature-Flag, kein "disable pregnancy" Toggle. Das ist ein Welt-Mechanic, keine Spiel-Einstellung.
+
+4. **Contraception ist abstract** — `boolean` preference auf NPC-Ebene (`consentPreferences.contraception`). Keine Items, keine Shop-Kataloge, keine Crafting-Rezepte, keine Economy-Integration. NPCs haben einfach eine Präferenz, die in der Simulation berücksichtigt wird.
+
+**Warum:** Living World Prinzip — NPCs sind Agenten mit eigenen Leben, nicht nur Player-Tools. Intimacy ist Teil der sozialen Simulation, nicht ein Player-Feature.
+
+**Beads:**
+- `destiny-g094` — NPC-NPC physical intimacy mit pregnancy mechanics (P2)
+
 ## Quality Gates
 
 ### Pre-commit hook

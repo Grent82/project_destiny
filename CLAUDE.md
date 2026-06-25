@@ -226,3 +226,21 @@ Use these as the base for command tests rather than constructing state from scra
 - Tests co-located with their command files (e.g. `combat.ts` → `combat.test.ts`).
 - Content definitions are immutable; mutable save-state is versioned and validated on load.
 - Refactor only when: duplication causes maintenance risk, current structure blocks a feature, tests are hard to write, or domain concepts are leaking across layers.
+
+## Schema-Change Hygiene
+
+Bei `contracts.ts` Schema-Änderungen:
+
+1. **BEFORE schreiben:** `grep -r "fieldName" src --include="*.ts" --include="*.tsx"` für alle Lese-Stellen, `grep -r "fieldName" src --include="*.test.ts"` für Test-Fixtures
+2. **AFTER schreiben:** `pnpm typecheck` IMMER ausführen, VOR commit
+3. **Alle TypeError in einem Batch fixen**, nicht inkrementell — Schema-Drift ohne vollständige Consumer-Analyse führt zu 6-10 Korrektur-Iterationen
+
+**Checklist für pregnancyState-Änderungen:**
+- [ ] Domain schema aktualisiert
+- [ ] Initial game state aktualisiert (`data/runtime/initial-game-state.json`)
+- [ ] Alle command tests aktualisiert
+- [ ] Alle fixture files aktualisiert (`testFixtures.ts`, `initialStateWithIda`, etc.)
+- [ ] `rosterReducers.ts` (wenn pregnancyState geschrieben wird)
+- [ ] `pursuePlayerLegacy.ts/test.ts`
+- [ ] `applyNpcPairing.ts`
+- [ ] `captivityPregnancyDiscovery.ts/test.ts`
