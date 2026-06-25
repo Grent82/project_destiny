@@ -359,7 +359,7 @@ describe('proposeDate', () => {
     })
 
     expect(result.pendingDateProposals).toHaveLength(0)
-    expect(result.activityLog[0].message).toContain('already has plans')
+    expect(result.activityLog[0].message).toContain('already have plans')
   })
 
   it('adds cooldown entry when date is accepted', () => {

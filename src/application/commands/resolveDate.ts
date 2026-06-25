@@ -1,7 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
-
 import { GameState, scheduledDateSchema } from '../../domain/game/contracts'
-import { getRelationship } from '../../domain/shared/contracts'
 
 interface DateOutcome {
   id: string
@@ -400,7 +397,7 @@ export function resolveDate(
 
   const newLog = [...state.activityLog]
   newLog.push({
-    id: uuidv4(),
+    id: crypto.randomUUID(),
     day: state.day,
     timeSlot: state.timeSlot,
     category: 'system',

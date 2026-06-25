@@ -106,7 +106,7 @@ function checkProposalEligibility(
     }
   }
 
-  const relationship = getRelationship(state.relationships, `player→${targetId}`, targetId)
+  const relationship = getRelationship(state.relationships, 'player', targetId)
   const affinityThreshold = requiredStage === 3 ? 70 : requiredStage === 2 ? 50 : 30
   if (relationship.affinity < affinityThreshold) {
     return {
