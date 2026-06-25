@@ -244,7 +244,7 @@ function createRelationshipWithIntimacy(
   npcId: string,
   intimacyStage: 'none' | 'affinity' | 'attachment' | 'committed',
 ) {
-  const axes = {
+  const axes: Record<string, number | string> = {
     affinity: 50,
     respect: 40,
     fear: 10,
@@ -271,6 +271,8 @@ function createRelationshipWithIntimacy(
       axes.trust = 10
       break
   }
+
+  axes.intimacyStage = intimacyStage
 
   return {
     [`player→${npcId}`]: axes,
@@ -412,6 +414,7 @@ describe('proposeDate', () => {
           fear: 10,
           trust: 15,
           loyalty: 40,
+          intimacyStage: 'affinity',
         },
       },
     }

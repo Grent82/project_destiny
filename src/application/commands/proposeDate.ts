@@ -6,9 +6,8 @@ import {
   scheduledDateSchema,
   timeSlotSchema,
 } from '../../domain/game/contracts'
-import { intimacyStageSchema, relationshipAxesSchema } from '../../domain/relationships/contracts'
+import { intimacyStageSchema, relationshipAxesSchema, getRelationship } from '../../domain/relationships/contracts'
 import { NpcRuntimeState } from '../../domain/npc/contracts'
-import { getRelationship } from '../../domain/shared/contracts'
 
 export interface DateProposalParams {
   proposerNpcId: string

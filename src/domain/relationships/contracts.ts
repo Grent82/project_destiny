@@ -31,7 +31,7 @@ export function buildRelationshipKey(fromId: string, toId: string): string {
   return `${fromId}→${toId}`
 }
 
-const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
+const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0, intimacyStage: 'none' }
 
 /**
  * Get the directed relationship from `fromId` to `toId`.
