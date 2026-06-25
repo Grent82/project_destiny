@@ -664,5 +664,8 @@
     "version": 1,
     "entriesByDay": {}
   },
-  "worldEvents": []
+  "worldEvents": [],
+  "pendingDateProposals": [],
+  "scheduledDates": [],
+  "npcDateCooldowns": {}
 }

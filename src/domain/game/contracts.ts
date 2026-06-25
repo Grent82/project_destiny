@@ -88,6 +88,37 @@ export const relationshipMilestoneSchema = z
   .strict()
 export type RelationshipMilestone = z.infer<typeof relationshipMilestoneSchema>
 
+export const dateProposalStateSchema = z.enum(['pending', 'accepted', 'rejected'])
+export const dateRejectionReasonSchema = z.enum(['too-soon', 'wrong-time', 'wrong-location', 'not-ready', 'busy', 'incompatibility'])
+
+export const dateProposalSchema = z
+  .object({
+    proposalId: entityIdSchema,
+    proposerNpcId: entityIdSchema,
+    targetNpcId: entityIdSchema,
+    dateTemplateId: z.string(),
+    proposedDay: positiveIntegerSchema,
+    proposedTimeSlot: timeSlotSchema,
+    proposedLocation: z.string().nullable().default(null),
+    status: dateProposalStateSchema.default('pending'),
+    rejectionReason: dateRejectionReasonSchema.nullable().default(null),
+    proposedAtDay: positiveIntegerSchema,
+  })
+  .strict()
+
+export const scheduledDateSchema = z
+  .object({
+    dateId: entityIdSchema,
+    npcIds: z.array(entityIdSchema).length(2),
+    dateTemplateId: z.string(),
+    scheduledDay: positiveIntegerSchema,
+    scheduledTimeSlot: timeSlotSchema,
+    location: z.string().nullable().default(null),
+    status: z.enum(['scheduled', 'completed', 'cancelled']).default('scheduled'),
+    outcomeId: z.string().nullable().default(null),
+  })
+  .strict()
+
 export const roomFunctionSchema = z.enum([
   'quarters',
   'barracks',
@@ -408,6 +439,9 @@ export const gameStateSchema = z
       lastDomesticRelationshipBeat: null,
       relationshipMilestones: [],
     })),
+    pendingDateProposals: z.array(dateProposalSchema).default([]),
+    scheduledDates: z.array(scheduledDateSchema).default([]),
+    npcDateCooldowns: z.record(z.string(), z.number().int().nonnegative()).default({}),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),
     chronicle: chronicleSchema.default(() => ({
@@ -430,6 +464,9 @@ export type ActivityLogEntry = z.infer<typeof activityLogEntrySchema>
 export type CityDials = z.infer<typeof politicalDialsSchema>
 export type CityResources = z.infer<typeof cityResourcesSchema>
 export type CorridorStatus = z.infer<typeof corridorStatusSchema>
+export type DateProposal = z.infer<typeof dateProposalSchema>
+export type DateProposalState = z.infer<typeof dateProposalStateSchema>
+export type DateRejectionReason = z.infer<typeof dateRejectionReasonSchema>
 export type DistrictRuntimeState = z.infer<typeof districtRuntimeStateSchema>
 export type GameContentCatalog = z.infer<typeof gameContentCatalogSchema>
 export type GameState = z.infer<typeof gameStateSchema>
@@ -439,6 +476,7 @@ export type HouseState = z.infer<typeof houseStateSchema>
 export type PlayerCharacter = z.infer<typeof gameStateSchema>['playerCharacter']
 export type RoomFunction = z.infer<typeof roomFunctionSchema>
 export type RoomState = z.infer<typeof roomStateSchema>
+export type ScheduledDate = z.infer<typeof scheduledDateSchema>
 
 export type EquippedItemDurabilities = z.infer<typeof gameStateSchema>['equippedItemDurabilities']
 
