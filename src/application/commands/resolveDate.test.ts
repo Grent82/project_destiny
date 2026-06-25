@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { GameState } from '../../domain/game/contracts'
+import type { GameState } from '../../domain/game/contracts'
 import { resolveDate } from './resolveDate'
 
 const baseGameState: GameState = {
@@ -11,9 +11,10 @@ const baseGameState: GameState = {
   hasSeenOpening: true,
   isFirstRun: false,
   cityDials: {
-    stability: 60,
+    control: 60,
     prosperity: 50,
-    influence: 40,
+    unrest: 30,
+    corruption: 20,
   },
   factionStandings: {
     'faction-civic-compact': 10,
@@ -163,6 +164,16 @@ const baseGameState: GameState = {
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],
+  houseStorageCapacity: 40,
+  installedHouseModules: [],
+  debtAmount: 800,
+  debtClaimantNpcId: 'npc-enemy-harlen-voss',
+  debtEnforcementFactionId: 'faction-gilded-court',
+  debtBeneficiaryFactionId: 'faction-house-merrow',
+  debtDueDay: 30,
+  debtPaid: false,
+  debtCrisisTriggered: false,
+  houseDistrictId: 'district-the-pale',
 }
 
 describe('resolveDate', () => {

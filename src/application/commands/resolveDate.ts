@@ -1,4 +1,4 @@
-import { GameState, scheduledDateSchema } from '../../domain/game/contracts'
+import type { GameState } from '../../domain/game/contracts'
 
 interface DateOutcome {
   id: string
@@ -44,27 +44,6 @@ function advanceSeed(seed: number): number {
 function pickOutcome(seed: number, outcomes: DateOutcome[]): DateOutcome {
   const index = Math.floor(seededRandom(seed) * outcomes.length)
   return outcomes[index]
-}
-
-function calculateRollWithBonuses(
-  seed: number,
-  baseValue: number,
-  preferences: Record<string, number>,
-  character: { traits?: Record<string, number>; skills?: Record<string, number> },
-): { roll: number; bonus: number; total: number } {
-  const baseRoll = seededRandom(seed) * 100
-  let totalBonus = 0
-
-  for (const [key, multiplier] of Object.entries(preferences)) {
-    const value = character.traits?.[key] ?? character.skills?.[key] ?? 40
-    if (multiplier > 1) {
-      const bonus = (value - 40) * (multiplier - 1) * 0.5
-      totalBonus += bonus
-    }
-  }
-
-  const total = baseRoll + totalBonus
-  return { roll: baseRoll, bonus: totalBonus, total }
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -200,6 +179,7 @@ const DATES: Record<string, DateTemplate> = {
     skillPreferences: { engineering: 1.3, crafting: 1.3, administration: 1.0 },
     relationshipRewards: {
       affinity: { min: 3, max: 6 },
+      trust: { min: 2, max: 4 },
       respect: { min: 4, max: 8 },
       loyalty: { min: 2, max: 4 },
     },
@@ -341,7 +321,6 @@ export function resolveDate(
   }
 
   const npcId = scheduledDate.npcIds.find((id) => id !== 'player') ?? scheduledDate.npcIds[0]
-  const playerCharacter = state.playerCharacter
 
   let seed = state.rngSeed
   seed = advanceSeed(seed)

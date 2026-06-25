@@ -111,6 +111,9 @@ const baseState: GameState = {
   pendingConsumableDecision: null,
   houseWardSeats: 0,
   bondedPersonsRegistry: {},
+  pendingDateProposals: [],
+  scheduledDates: [],
+  npcDateCooldowns: {},
 }
 
 describe('simulateRivalOrgs', () => {

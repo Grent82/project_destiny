@@ -1,13 +1,9 @@
-import {
+import type {
   DateProposal,
-  DateProposalState,
   DateRejectionReason,
   GameState,
-  scheduledDateSchema,
-  timeSlotSchema,
 } from '../../domain/game/contracts'
-import { intimacyStageSchema, relationshipAxesSchema, getRelationship } from '../../domain/relationships/contracts'
-import { NpcRuntimeState } from '../../domain/npc/contracts'
+import { getRelationship } from '../../domain/relationships/contracts'
 
 export interface DateProposalParams {
   proposerNpcId: string
@@ -50,12 +46,14 @@ function getNpcIntimacyStage(state: GameState, npcId: string): string {
 
 function checkProposalEligibility(
   state: GameState,
-  proposerId: string,
+  _proposerId: string,
   targetId: string,
   dateTemplateId: string,
   proposedDay: number,
   proposedTimeSlot: string,
 ): { eligible: boolean; reason?: DateRejectionReason; message?: string } {
+  // proposedTimeSlot reserved for future time-based availability checks
+  void proposedTimeSlot
   const targetIntimacy = getNpcIntimacyStage(state, targetId)
   const requiredStage = MIN_INTIMACY_FOR_PROPOSAL[dateTemplateId] ?? 1
   const currentStageIndex = getIntimacyStageIndex(targetIntimacy)

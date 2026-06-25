@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { GameState } from '../../domain/game/contracts'
-import { relationshipAxesSchema } from '../../domain/relationships/contracts'
-import { proposeDate, proposeDateWithPlayer } from './proposeDate'
-import { npcRuntimeStateSchema } from '../../domain/npc/contracts'
+import type { GameState } from '../../domain/game/contracts'
+import { proposeDateWithPlayer } from './proposeDate'
 
 const baseGameState: GameState = {
   day: 10,
@@ -13,9 +11,10 @@ const baseGameState: GameState = {
   hasSeenOpening: true,
   isFirstRun: false,
   cityDials: {
-    stability: 60,
+    control: 60,
     prosperity: 50,
-    influence: 40,
+    unrest: 30,
+    corruption: 20,
   },
   factionStandings: {
     'faction-civic-compact': 10,
@@ -165,6 +164,16 @@ const baseGameState: GameState = {
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],
+  houseStorageCapacity: 40,
+  installedHouseModules: [],
+  debtAmount: 800,
+  debtClaimantNpcId: 'npc-enemy-harlen-voss',
+  debtEnforcementFactionId: 'faction-gilded-court',
+  debtBeneficiaryFactionId: 'faction-house-merrow',
+  debtDueDay: 30,
+  debtPaid: false,
+  debtCrisisTriggered: false,
+  houseDistrictId: 'district-the-pale',
 }
 
 function createRosterNpc(
@@ -173,6 +182,8 @@ function createRosterNpc(
   intimacyStage: 'none' | 'affinity' | 'attachment' | 'committed' = 'affinity',
   assignment: 'idle' | 'working' | 'deployed' = 'idle',
 ) {
+  // intimacyStage reserved for future NPC intimacy tracking
+  void intimacyStage
   return {
     npcId,
     name,
@@ -231,12 +242,17 @@ function createRosterNpc(
       hygiene: 60,
     },
     loadout: {
-      weapon: null,
-      armor: null,
-      modules: [],
+      primaryWeaponId: null,
+      secondaryWeaponId: null,
+      armorId: null,
+      accessoryIds: [],
+      consumableIds: [],
     },
     npcMemory: [],
     npcArc: null,
+    captivityState: undefined,
+    pregnancyState: undefined,
+    bondStatus: null,
   }
 }
 
@@ -244,12 +260,13 @@ function createRelationshipWithIntimacy(
   npcId: string,
   intimacyStage: 'none' | 'affinity' | 'attachment' | 'committed',
 ) {
-  const axes: Record<string, number | string> = {
+  const axes: { affinity: number; respect: number; fear: number; trust: number; loyalty: number; intimacyStage: 'none' | 'affinity' | 'attachment' | 'committed' } = {
     affinity: 50,
     respect: 40,
     fear: 10,
     trust: 30,
     loyalty: 50,
+    intimacyStage: 'none',
   }
 
   switch (intimacyStage) {
