@@ -22,6 +22,8 @@ const baseRoom = (id: string, state: HouseRoom['state'], roomFunction: HouseRoom
   repairDaysRemaining: 0,
   searched: false,
   roomFunction,
+  upgradeTier: 'basic',
+  decorStyle: null,
 })
 
 describe('computeExteriorTier', () => {

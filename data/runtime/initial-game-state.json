@@ -437,7 +437,9 @@
         "repairCost": 0,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-quarters",
@@ -446,7 +448,9 @@
         "repairCost": 0,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-bureau",
@@ -455,7 +459,9 @@
         "repairCost": 15,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-kitchen",
@@ -464,7 +470,9 @@
         "repairCost": 20,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-study",
@@ -473,7 +481,9 @@
         "repairCost": 35,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-master-chamber",
@@ -482,7 +492,9 @@
         "repairCost": 45,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-vault",
@@ -491,7 +503,9 @@
         "repairCost": 0,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-garret",
@@ -500,7 +514,9 @@
         "repairCost": 130,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-east-wing",
@@ -509,7 +525,9 @@
         "repairCost": 200,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-servant-quarters",
@@ -518,7 +536,9 @@
         "repairCost": 100,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       },
       {
         "roomId": "room-barracks",
@@ -527,7 +547,9 @@
         "repairCost": 150,
         "repairDaysRemaining": 0,
         "searched": false,
-        "roomFunction": null
+        "roomFunction": null,
+        "upgradeTier": "basic",
+        "decorStyle": null
       }
     ],
     "vaultUnlocked": false,
@@ -536,7 +558,8 @@
     "fortificationLevel": 0,
     "houseHeirs": [],
     "npcPairingPolicy": "open",
-    "lastDomesticRelationshipBeat": null
+    "lastDomesticRelationshipBeat": null,
+    "relationshipMilestones": []
   },
   "visitedDialogueNodes": {},
   "saveVersion": 4,

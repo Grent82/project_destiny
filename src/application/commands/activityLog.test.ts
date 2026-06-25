@@ -89,6 +89,7 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
       houseHeirs: [],
       npcPairingPolicy: 'open',
       lastDomesticRelationshipBeat: null,
+      relationshipMilestones: [],
     },
     saveVersion: overrides.saveVersion ?? 3,
     rngSeed: overrides.rngSeed ?? 42,

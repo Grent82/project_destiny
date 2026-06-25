@@ -10,6 +10,9 @@ import { freeNpc as freeNpcCommand } from '../../commands/bondService'
 import { courtNpc as courtNpcCommand } from '../../commands/courtNpc'
 import { deepConversation as deepConversationCommand } from '../../commands/deepConversation'
 import { engagePhysicalIntimacy as engagePhysicalIntimacyCommand } from '../../commands/engagePhysicalIntimacy'
+import { cookMeal as cookMealCommand } from '../../commands/cookMeal'
+import { decorateRoom as decorateRoomCommand } from '../../commands/decorateRoom'
+import { hostGathering as hostGatheringCommand } from '../../commands/hostGathering'
 import {
   transferBondedNpc as transferBondedNpcCommand,
   rescueBondedNpcLegal,
@@ -67,6 +70,18 @@ export const rosterReducers = {
       contraception: action.payload.contraception,
       intent: action.payload.intent,
     })
+  },
+
+  cookMeal(state: GameState, action: PayloadAction<{ npcId: string; mealType: 'simple' | 'hearty' | 'feast' }>) {
+    return cookMealCommand(state, action.payload.npcId, action.payload.mealType)
+  },
+
+  decorateRoom(state: GameState, action: PayloadAction<{ roomId: string; npcId: string; decorStyle: 'minimalist' | 'warm' | 'grand' | 'utilitarian' }>) {
+    return decorateRoomCommand(state, action.payload.roomId, action.payload.npcId, action.payload.decorStyle)
+  },
+
+  hostGathering(state: GameState, action: PayloadAction<{ gatheringType: 'quietConversation' | 'sharedDrink' | 'storytelling' | 'musicNight'; participatingNpcIds: string[] }>) {
+    return hostGatheringCommand(state, action.payload.gatheringType, action.payload.participatingNpcIds)
   },
 
   expireHireOffers(state: GameState) {

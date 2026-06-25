@@ -75,6 +75,19 @@ export const cityResourcesSchema = z
 
 export const roomStateSchema = z.enum(['intact', 'damaged', 'stripped', 'destroyed', 'locked', 'collapsed'])
 
+export const roomUpgradeTierSchema = z.enum(['basic', 'improved', 'refined', 'luxurious'])
+export type RoomUpgradeTier = z.infer<typeof roomUpgradeTierSchema>
+
+export const relationshipMilestoneSchema = z
+  .object({
+    intimacyStage: intimacyStageSchema,
+    unlockedDay: positiveIntegerSchema,
+    roomId: z.string().nullable().default(null),
+    description: z.string().min(1),
+  })
+  .strict()
+export type RelationshipMilestone = z.infer<typeof relationshipMilestoneSchema>
+
 export const roomFunctionSchema = z.enum([
   'quarters',
   'barracks',
@@ -96,6 +109,8 @@ export const houseRoomSchema = z
     repairDaysRemaining: z.number().int().nonnegative().default(0),
     searched: z.boolean().default(false),
     roomFunction: roomFunctionSchema.nullable().default(null),
+    upgradeTier: roomUpgradeTierSchema.default('basic'),
+    decorStyle: z.string().nullable().default(null),
   })
   .strict()
 
@@ -173,6 +188,7 @@ export const houseStateSchema = z
     houseHeirs: z.array(heirSchema).max(2).default([]),
     npcPairingPolicy: npcPairingPolicySchema.default('open'),
     lastDomesticRelationshipBeat: domesticRelationshipBeatSchema.nullable().default(null),
+    relationshipMilestones: z.array(relationshipMilestoneSchema).default([]),
   })
   .strict()
 
@@ -371,17 +387,17 @@ export const gameStateSchema = z
     resolvedDialogueChoices: z.record(z.string(), z.array(z.string())).default({}),
     house: houseStateSchema.default(() => ({
       rooms: [
-        { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-quarters', name: 'Quarters', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-bureau', name: 'Bureau', state: 'damaged' as const, repairCost: 15, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-master-chamber', name: "Master's Chamber", state: 'stripped' as const, repairCost: 45, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-servant-quarters', name: 'Servant Quarters', state: 'collapsed' as const, repairCost: 60, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-barracks', name: 'Barracks', state: 'stripped' as const, repairCost: 80, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-garret', name: 'Garret', state: 'collapsed' as const, repairCost: 130, repairDaysRemaining: 0, searched: false, roomFunction: null },
-        { roomId: 'room-east-wing', name: 'East Wing', state: 'destroyed' as const, repairCost: 200, repairDaysRemaining: 0, searched: false, roomFunction: null },
+        { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-quarters', name: 'Quarters', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-bureau', name: 'Bureau', state: 'damaged' as const, repairCost: 15, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-kitchen', name: 'Kitchen', state: 'damaged' as const, repairCost: 20, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-study', name: 'Study', state: 'stripped' as const, repairCost: 35, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-master-chamber', name: "Master's Chamber", state: 'stripped' as const, repairCost: 45, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-servant-quarters', name: 'Servant Quarters', state: 'collapsed' as const, repairCost: 60, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-barracks', name: 'Barracks', state: 'stripped' as const, repairCost: 80, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-garret', name: 'Garret', state: 'collapsed' as const, repairCost: 130, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
+        { roomId: 'room-east-wing', name: 'East Wing', state: 'destroyed' as const, repairCost: 200, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic' as const, decorStyle: null },
       ],
       vaultUnlocked: false,
       rosterBonus: 0,
@@ -390,6 +406,7 @@ export const gameStateSchema = z
       houseHeirs: [],
       npcPairingPolicy: 'open' as const,
       lastDomesticRelationshipBeat: null,
+      relationshipMilestones: [],
     })),
     saveVersion: z.number().int().min(1).default(2),
     rngSeed: z.number().int().nonnegative().default(42),

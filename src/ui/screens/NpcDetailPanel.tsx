@@ -609,6 +609,24 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               Talk Deeply
             </button>
             <button
+              className="action-button action-button--ghost"
+              type="button"
+              onClick={() => dispatch(gameActions.cookMeal({ npcId: detail.npcId, mealType: 'simple' }))}
+              disabled={!canCourt}
+              title={courtUnavailableReason ?? 'Cook a simple meal together in the kitchen.'}
+            >
+              Cook Together
+            </button>
+            <button
+              className="action-button action-button--secondary"
+              type="button"
+              onClick={() => dispatch(gameActions.decorateRoom({ roomId: 'room-study', npcId: detail.npcId, decorStyle: 'warm' }))}
+              disabled={!canCourt}
+              title={courtUnavailableReason ?? 'Decorate a shared room together.'}
+            >
+              Decorate Room
+            </button>
+            <button
               className="action-button action-button--secondary"
               type="button"
               onClick={() => setShowIntimacyModal(true)}

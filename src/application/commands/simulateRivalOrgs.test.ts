@@ -82,8 +82,8 @@ const baseState: GameState = {
   resolvedDialogueChoices: {},
   house: {
     rooms: [
-      { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
-      { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null },
+      { roomId: 'room-entrance-hall', name: 'Entrance Hall', state: 'intact' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic', decorStyle: null },
+      { roomId: 'room-vault', name: 'Cellar / Vault', state: 'locked' as const, repairCost: 0, repairDaysRemaining: 0, searched: false, roomFunction: null, upgradeTier: 'basic', decorStyle: null },
     ],
     vaultUnlocked: false,
     rosterBonus: 0,
@@ -92,6 +92,7 @@ const baseState: GameState = {
     houseHeirs: [],
     npcPairingPolicy: 'open' as const,
     lastDomesticRelationshipBeat: null,
+    relationshipMilestones: [],
   },
   saveVersion: 1,
   rngSeed: 42,

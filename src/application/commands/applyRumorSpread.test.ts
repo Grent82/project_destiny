@@ -573,10 +573,18 @@ describe('applyRumorSpread', () => {
               repairDaysRemaining: 0,
               searched: false,
               roomFunction: 'archive',
+              upgradeTier: 'basic',
+              decorStyle: null,
             },
           ],
           vaultUnlocked: false,
           rosterBonus: 0,
+          exteriorState: 'ruined',
+          fortificationLevel: 0,
+          houseHeirs: [],
+          npcPairingPolicy: 'open',
+          lastDomesticRelationshipBeat: null,
+          relationshipMilestones: [],
         },
       })
 
