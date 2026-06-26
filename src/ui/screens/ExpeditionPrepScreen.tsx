@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   gameActions,
   selectAllExpeditionDestinations,
   selectExpeditionStatus,
+  selectActiveQuests,
 } from '../../application'
 import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
 import { contentCatalog } from '../../application/content/contentCatalog'
@@ -19,12 +20,18 @@ export function ExpeditionPrepScreen() {
   const expStatus = useAppSelector(selectExpeditionStatus)
   const roster = useAppSelector((state) => state.game.roster)
   const foodSecurity = useAppSelector((state) => state.game.cityResources?.foodSecurity ?? 0)
+  const activeQuests = useAppSelector(selectActiveQuests)
 
   const [selectedDest, setSelectedDest] = useState<string | null>(null)
   const [squadIds, setSquadIds] = useState<string[]>([])
   const [supplies, setSupplies] = useState(4)
 
   const destination = destinations.find((d) => d.id === selectedDest)
+
+  // Filter for active corridor-run quests
+  const corridorRunQuest = useMemo(() => {
+    return activeQuests.find((q) => q.template?.objectiveType === 'corridorRun')
+  }, [activeQuests])
 
   if (expStatus === 'traveling') {
     return (
@@ -72,6 +79,10 @@ export function ExpeditionPrepScreen() {
     return selectedDest !== null && squadIds.length > 0 && supplies <= foodSecurity && supplies > 0
   }
 
+  function canDispatchCorridorRun() {
+    return squadIds.length >= 2 && supplies > 0 && supplies <= foodSecurity
+  }
+
   function handleDepart() {
     if (!canDepart() || !selectedDest) return
     dispatch(
@@ -82,6 +93,13 @@ export function ExpeditionPrepScreen() {
       }),
     )
     navigate('/expedition-travel')
+  }
+
+  function handleDispatchCorridorRun() {
+    if (!canDispatchCorridorRun() || !corridorRunQuest) return
+    // Note: For MVP, we navigate to contracts where the player can dispatch the run
+    // Full implementation: add advanceCorridorRunQuest command to update quest stage
+    navigate('/contracts')
   }
 
   return (
@@ -96,9 +114,92 @@ export function ExpeditionPrepScreen() {
         Food security: <strong>{foodSecurity}</strong>
       </p>
 
+      {corridorRunQuest ? (
+        <article className="detail-panel" style={{ marginBottom: '1rem' }}>
+          <h2>Active Corridor Run</h2>
+          <p className="quest-briefing">
+            <strong>{corridorRunQuest.displayTitle}</strong>
+          </p>
+          {corridorRunQuest.template && (
+            <p className="quest-briefing">{corridorRunQuest.template.briefing}</p>
+          )}
+          {corridorRunQuest.template?.foodImportAmount && (
+            <p className="quest-briefing">
+              <strong>Food Import:</strong> {corridorRunQuest.template.foodImportAmount} rations
+            </p>
+          )}
+          <div className="overview-grid" style={{ marginTop: '1rem' }}>
+            <article>
+              <h3>Squad</h3>
+              {availableRoster.length === 0 ? (
+                <EmptyState message="No idle operatives available." icon="👤" />
+              ) : (
+                <div className="mission-list">
+                  {availableRoster.map((npc) => {
+                    const name =
+                      contentCatalog.npcsById.get(npc.npcId)?.name ??
+                      contentCatalog.enemyNpcsById.get(npc.npcId)?.name ??
+                      npc.npcId
+                    return (
+                      <div key={npc.npcId} className="mission-row">
+                        <label className="expedition-squad-label">
+                          <input
+                            type="checkbox"
+                            checked={squadIds.includes(npc.npcId)}
+                            onChange={() => toggleNpc(npc.npcId)}
+                          />
+                          {' '}{name}
+                        </label>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+              <p className="summary text-muted" style={{ marginTop: '0.5rem' }}>
+                Required: 2+ operatives
+              </p>
+            </article>
+
+            <article>
+              <h3>Supplies</h3>
+              <div className="stat-row">
+                <span className="stat-label">Supply units</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={foodSecurity}
+                  value={supplies}
+                  onChange={(e) => setSupplies(Number(e.target.value))}
+                  className="opening-name-input"
+                  style={{ width: '4rem' }}
+                />
+              </div>
+              <button
+                className="action-button action-button--primary action-button--cta"
+                disabled={!canDispatchCorridorRun()}
+                onClick={handleDispatchCorridorRun}
+                type="button"
+                style={{ marginTop: '1rem' }}
+              >
+                Dispatch Corridor Run →
+              </button>
+              {!canDispatchCorridorRun() && (
+                <p className="text-muted" style={{ marginTop: '0.5rem', fontSize: '0.8rem' }}>
+                  {squadIds.length < 2
+                    ? 'Select at least 2 operatives.'
+                    : supplies > foodSecurity
+                      ? 'Not enough food security.'
+                      : ''}
+                </p>
+              )}
+            </article>
+          </div>
+        </article>
+      ) : null}
+
       <div className="overview-grid">
         <article className="detail-panel">
-          <h2>Destination</h2>
+          <h2>Expedition Destinations</h2>
           <EnvironsMap selectedId={selectedDest} onSelect={setSelectedDest} />
           <div className="mission-list">
             {destinations.map((dest) => (
