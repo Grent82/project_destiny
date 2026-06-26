@@ -180,41 +180,6 @@ export const consentPreferencesSchema = z.object({
   boundaries: [],
 })
 
-export const npcDefinitionSchema = z
-  .object({
-    id: entityIdSchema,
-    name: z.string().min(1),
-    npcType: z.enum(['roster', 'story', 'world', 'enemy']).default('roster'),
-    districtId: entityIdSchema.optional(),
-    description: z.string().optional(),
-    origin: z.string().min(1),
-    background: z.string().min(1),
-    rarity: raritySchema,
-    status: npcStatusSchema,
-    factionAffinityId: entityIdSchema.nullable(),
-    baseAttributes: attributesSchema,
-    startingSkills: skillsSchema,
-    startingTraits: traitsSchema,
-    allowedTitleIds: z.array(entityIdSchema).default([]),
-    motivation: npcMotivationSchema.optional(),
-    ageBand: npcAgeBandSchema.optional(),
-    sex: z.string().optional(),
-    appearanceTags: z.array(z.string()).optional(),
-    quirks: z.array(npcQuirkSchema).default([]),
-    loyalties: z.array(npcLoyaltySchema).default([]),
-    dialogueId: entityIdSchema.optional(),
-    defaultArcId: z.string().optional(),
-    consentPreferences: consentPreferencesSchema,
-    // All NPCs are romance-eligible by default. Relationship depth determines progression, not authoring flags.
-    schedule: z.object({
-      morning: z.string().optional(),
-      afternoon: z.string().optional(),
-      evening: z.string().optional(),
-      night: z.string().optional(),
-    }).default(() => ({})),
-  })
-  .strict()
-
 /**
  * Memory visibility levels - who can see this memory.
  */
@@ -320,6 +285,42 @@ export const authoredMemorySchema = z
   .strict()
 
 export type AuthoredMemory = z.infer<typeof authoredMemorySchema>
+
+export const npcDefinitionSchema = z
+  .object({
+    id: entityIdSchema,
+    name: z.string().min(1),
+    npcType: z.enum(['roster', 'story', 'world', 'enemy']).default('roster'),
+    districtId: entityIdSchema.optional(),
+    description: z.string().optional(),
+    origin: z.string().min(1),
+    background: z.string().min(1),
+    rarity: raritySchema,
+    status: npcStatusSchema,
+    factionAffinityId: entityIdSchema.nullable(),
+    baseAttributes: attributesSchema,
+    startingSkills: skillsSchema,
+    startingTraits: traitsSchema,
+    allowedTitleIds: z.array(entityIdSchema).default([]),
+    motivation: npcMotivationSchema.optional(),
+    ageBand: npcAgeBandSchema.optional(),
+    sex: z.string().optional(),
+    appearanceTags: z.array(z.string()).optional(),
+    quirks: z.array(npcQuirkSchema).default([]),
+    loyalties: z.array(npcLoyaltySchema).default([]),
+    dialogueId: entityIdSchema.optional(),
+    defaultArcId: z.string().optional(),
+    consentPreferences: consentPreferencesSchema,
+    // All NPCs are romance-eligible by default. Relationship depth determines progression, not authoring flags.
+    schedule: z.object({
+      morning: z.string().optional(),
+      afternoon: z.string().optional(),
+      evening: z.string().optional(),
+      night: z.string().optional(),
+    }).default(() => ({})),
+    authoredMemories: z.array(authoredMemorySchema).default([]),
+  })
+  .strict()
 
 /**
  * NPC Intention types - proactive actions NPCs take when idle and not on directive.

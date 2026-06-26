@@ -105,6 +105,47 @@
         "note": "Marion's supply chain runs partly through a noble hand she will not name. The arrangement predates her dock work and keeps certain goods moving without questions.",
         "visibility": "hidden"
       }
+    ],
+    "authoredMemories": [
+      {
+        "dayOffset": -500,
+        "eventType": "house_fall",
+        "description": "Watched the old harbor burn while cargo ships fled without the families they promised to save",
+        "sentiment": "traumatic",
+        "participants": [],
+        "revealsOnTrustLevel": 70,
+        "revealsOnIntimacy": "committed",
+        "influencesTraitDrift": {
+          "prudence": 5,
+          "ruthlessness": -3
+        }
+      },
+      {
+        "dayOffset": -300,
+        "eventType": "loyalty_test",
+        "description": "Held the line when three others ran to the enemy house for coin",
+        "sentiment": "positive",
+        "participants": [],
+        "revealsOnTrustLevel": 30,
+        "revealsOnIntimacy": "affinity",
+        "influencesTraitDrift": {
+          "loyalty": 8,
+          "discipline": 3
+        }
+      },
+      {
+        "dayOffset": -100,
+        "eventType": "failed_mission",
+        "description": "Lost contact with a handler through no fault of her own — the handler was careless",
+        "sentiment": "negative",
+        "participants": ["npc-ghost-valdris-cargo-patron"],
+        "revealsOnTrustLevel": 50,
+        "revealsOnIntimacy": "attachment",
+        "influencesTraitDrift": {
+          "prudence": 4,
+          "empathy": -2
+        }
+      }
     ]
   },
   {
@@ -203,6 +244,47 @@
         "targetId": "npc-marion-vale",
         "note": "Learned everything about not trusting a structure until you have tapped it from Marion. Will not say this directly.",
         "visibility": "hidden"
+      }
+    ],
+    "authoredMemories": [
+      {
+        "dayOffset": -400,
+        "eventType": "first_meeting",
+        "description": "Met Marion in the Ironworks when both were trying to escape a collapsing furnace line",
+        "sentiment": "positive",
+        "participants": ["npc-marion-vale"],
+        "revealsOnTrustLevel": 0,
+        "revealsOnIntimacy": "none",
+        "influencesTraitDrift": {
+          "empathy": 3,
+          "curiosity": 2
+        }
+      },
+      {
+        "dayOffset": -200,
+        "eventType": "victory",
+        "description": "Fixed the main gear press when the Foundry League thought it was beyond repair",
+        "sentiment": "positive",
+        "participants": [],
+        "revealsOnTrustLevel": 20,
+        "revealsOnIntimacy": "affinity",
+        "influencesTraitDrift": {
+          "pride": 5,
+          "discipline": 4
+        }
+      },
+      {
+        "dayOffset": -50,
+        "eventType": "betrayal",
+        "description": "A foreman she trusted sold out the crew to the company guards",
+        "sentiment": "negative",
+        "participants": [],
+        "revealsOnTrustLevel": 40,
+        "revealsOnIntimacy": "attachment",
+        "influencesTraitDrift": {
+          "trust": -10,
+          "prudence": 6
+        }
       }
     ]
   },

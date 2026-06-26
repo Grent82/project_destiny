@@ -29,6 +29,7 @@ const baseNpc: NpcDefinition = {
     opennessLevel: 'moderate',
     boundaries: [],
   },
+  authoredMemories: [],
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

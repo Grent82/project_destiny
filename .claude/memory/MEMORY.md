@@ -15,3 +15,6 @@
 - [Feedback: Schema-Änderungen erfordern vollständige Consumer-Analyse vor Commit](feedback_schema-change%20Hygiene.md) — 86 TypeScript-Fehler über 20+ Dateien nach contracts.ts Änderung
 - [Session Learnings 2026-06-25](session_learnings_2026-06-25.md) — KI-Retro nach Faction Directives Schema Implementation
 - [Feedback: Courtship-Implementation — Schema/Skill-Prüfung vor Writing](feedback_schema-change%20Hygiene.md) — 2026-06-26
+- [Intention System Architecture](intention-system-architecture.md) — 5-stage pipeline, Fuzzy + ML, 35 types
+- [Test Fixture Pattern for Complex State](test-fixture-pattern.md) — minimal mocks, eslint-disable any
+- [Schema Change Hygiene — Intentions](schema-change-hygiene-intentions.md) — read schema before tests

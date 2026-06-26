@@ -7,6 +7,7 @@ import { contentCatalog } from '../content/contentCatalog'
 import { initializeRosterRelationships } from './initializeRosterRelationships'
 import { createRng } from './seededRng'
 import { transferBondedNpc } from './bondTransfer'
+import { convertAuthoredMemoryToEntry } from './initializeNpcAuthoredMemories'
 
 export type OutcomeContext = { npcId?: string | null; contextId?: string | null }
 type OutcomeRngState = ReturnType<typeof createRng>
@@ -334,6 +335,11 @@ export function applyOutcomes(
               const npcArc = outcome.arcId
                 ? { arcId: outcome.arcId, stage: 'early-childhood', stageEnteredDay: next.day, stageFlags: {}, driftHistory: [] }
                 : null
+              // Initialize authored memories from NPC definition
+              const authoredMemories = npcDef.authoredMemories ?? []
+              const initialMemories = authoredMemories.map((authored) =>
+                convertAuthoredMemoryToEntry(authored, next.day)
+              )
               const newEntry = {
                 npcId: addNpcId,
                 name: npcDef.name,
@@ -349,7 +355,7 @@ export function applyOutcomes(
                 traits: { ...npcDef.startingTraits },
                 states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 70 },
                 loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
-                npcMemory: [],
+                npcMemory: initialMemories,
                 bondStatus: null,
                 npcArc,
                 currentDirectiveId: null,
