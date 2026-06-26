@@ -25,6 +25,8 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     traits: { discipline: 50, ambition: 50, empathy: 65, ruthlessness: 20, prudence: 50, curiosity: 50, dominance: 30, loyalty: 60, vanity: 20, zeal: 30 },
     states: { health: 80, fatigue: 10, stress: 10, morale: 70, fear: 5, anger: 5, hunger: 10, injury: 0, intoxication: 0, hygiene: 70 },
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+    equipment: { weapon: null, armor: null, accessory: [] },
+    inventory: [],
     npcMemory: [],
     bondStatus: null,
     npcArc: null,

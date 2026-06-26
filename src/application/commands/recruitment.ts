@@ -82,6 +82,8 @@ function buildRosterEntryFromOffer(
       accessoryIds: [],
       consumableIds: [],
     },
+    equipment: { weapon: null, armor: null, accessory: [] },
+    inventory: [],
     npcMemory: [],
     bondStatus,
     npcArc: npcDef.defaultArcId

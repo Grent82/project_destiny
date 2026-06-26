@@ -55,6 +55,9 @@ export const itemDefinitionSchema = z
     description: z.string().optional(),
     effects: z.array(z.record(z.string(), z.unknown())).optional(),
     typedEffects: z.array(itemEffectSchema).default([]),
+    uniqueId: entityIdSchema.optional(),
+    ownerId: entityIdSchema.optional(),
+    equippedBy: entityIdSchema.optional(),
   })
   .strict()
 

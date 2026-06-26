@@ -5,6 +5,7 @@ import {
   entityIdSchema,
   nonNegativeIntegerSchema,
   percentageSchema,
+  positiveIntegerSchema,
   raritySchema,
   signedStandingSchema,
 } from '../shared/contracts'
@@ -319,6 +320,8 @@ export const npcDefinitionSchema = z
       night: z.string().optional(),
     }).default(() => ({})),
     authoredMemories: z.array(authoredMemorySchema).default([]),
+    isShopOwner: z.boolean().default(false),
+    shopId: entityIdSchema.optional(),
   })
   .strict()
 
@@ -535,6 +538,41 @@ export type NpcArc = z.infer<typeof npcArcSchema>
 export type NpcArcDriftEntry = z.infer<typeof npcArcDriftEntrySchema>
 export type NpcArcDefinition = z.infer<typeof npcArcDefinitionSchema>
 
+export const npcEquipmentSchema = z
+  .object({
+    weapon: entityIdSchema.nullable().default(null),
+    armor: entityIdSchema.nullable().default(null),
+    accessory: z.array(entityIdSchema).max(2).default([]),
+  })
+  .strict()
+
+export type NpcEquipment = z.infer<typeof npcEquipmentSchema>
+
+export const npcInventoryItemSchema = z
+  .object({
+    itemId: entityIdSchema,
+    quantity: positiveIntegerSchema,
+  })
+  .strict()
+
+export type NpcInventoryItem = z.infer<typeof npcInventoryItemSchema>
+
+export const businessStrategySchema = z.enum(['conservative', 'balanced', 'aggressive'])
+export type BusinessStrategy = z.infer<typeof businessStrategySchema>
+
+export const shopOwnerProfileSchema = z
+  .object({
+    shopId: entityIdSchema,
+    businessStrategy: businessStrategySchema,
+    profitMargin: z.number().min(0.1).max(0.5).default(0.2),
+    restockThreshold: positiveIntegerSchema.default(10),
+    restockBudget: nonNegativeIntegerSchema.default(500),
+    specialtyCategories: z.array(z.string().min(1)).default([]),
+  })
+  .strict()
+
+export type ShopOwnerProfile = z.infer<typeof shopOwnerProfileSchema>
+
 export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
@@ -552,6 +590,9 @@ export const npcRuntimeStateSchema = z
     traits: traitsSchema,
     states: statesSchema,
     loadout: loadoutSchema,
+    equipment: npcEquipmentSchema.default({ weapon: null, armor: null, accessory: [] }),
+    inventory: z.array(npcInventoryItemSchema).default([]),
+    shopOwnerProfile: shopOwnerProfileSchema.optional(),
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
     captivityState: captivityStateSchema.optional(),
     pregnancyState: pregnancyStateSchema.optional(),

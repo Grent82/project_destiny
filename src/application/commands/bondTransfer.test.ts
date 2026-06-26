@@ -30,6 +30,8 @@ function bondedNpc(overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
     traits: { discipline: 40, ambition: 40, empathy: 20, ruthlessness: 40, prudence: 40, curiosity: 40, dominance: 40, loyalty: 40, vanity: 40, zeal: 40 },
     states: { health: 80, fatigue: 20, stress: 30, morale: 50, fear: 10, anger: 10, hunger: 0, injury: 0, intoxication: 0, hygiene: 60 },
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+    equipment: { weapon: null, armor: null, accessory: [] },
+    inventory: [],
     npcMemory: [],
     npcArc: null,
     currentDirectiveId: null,

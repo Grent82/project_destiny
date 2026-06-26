@@ -249,6 +249,8 @@ function createRosterNpc(
       accessoryIds: [],
       consumableIds: [],
     },
+    equipment: { weapon: null, armor: null, accessory: [] },
+    inventory: [],
     npcMemory: [],
     npcArc: null,
     currentDirectiveId: null,

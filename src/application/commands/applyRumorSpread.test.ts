@@ -392,6 +392,8 @@ describe('applyRumorSpread', () => {
         attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
         skills: { melee: 30, ranged: 30, medicine: 30, administration: 30, engineering: 30, negotiation: 30, survival: 30, security: 30, crafting: 30, performance: 30, academics: 30, intrigue: 30 },
         traits: { discipline: 50, ambition: 50, empathy: 50, ruthlessness: 50, prudence: 50, curiosity: 50, dominance, loyalty: 50, vanity: 50, zeal: 50 },
+        equipment: { weapon: null, armor: null, accessory: [] },
+        inventory: [],
         states: { health: 100, morale: 80, stress: 20, fatigue: 10, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 80 },
         loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
         npcMemory: [],

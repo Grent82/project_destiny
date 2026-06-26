@@ -30,6 +30,7 @@ const baseNpc: NpcDefinition = {
     boundaries: [],
   },
   authoredMemories: [],
+  isShopOwner: false,
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

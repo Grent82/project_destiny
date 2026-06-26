@@ -355,6 +355,8 @@ export function applyOutcomes(
                 traits: { ...npcDef.startingTraits },
                 states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 70 },
                 loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+                equipment: { weapon: null, armor: null, accessory: [] },
+                inventory: [],
                 npcMemory: initialMemories,
                 bondStatus: null,
                 npcArc,
