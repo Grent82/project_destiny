@@ -19,3 +19,6 @@
 - [Test Fixture Pattern for Complex State](test-fixture-pattern.md) — minimal mocks, eslint-disable any
 - [Schema Change Hygiene — Intentions](schema-change-hygiene-intentions.md) — read schema before tests
 - [Session Learnings 2026-06-26](session_learnings_2026-06-26.md) — Authored NPC Memories: schema ordering, Zod 4 API, trust visibility logic
+- [Schema Change Hygiene — Corridor Run](schema_change_hygiene_corridor.md) — Corridor-run schema change propagation checklist (enemyNpcId nullable, procedural generation updates)
+- [Feedback: Corridor-run Implementation — Schema Change Propagation](feedback_corridor_implementation.md) — 5 Korrektur-Iterationen vermieden durch enemyNpcId nullable, syncFoodSecurityToStock return value, procedural generation updates
+- [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste

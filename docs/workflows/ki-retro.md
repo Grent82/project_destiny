@@ -50,6 +50,37 @@ Every `KI Retro` should produce:
 4. `Priority`
    `now`, `next`, or `later`.
 
+## Verification failures to examine
+
+When running a retro, explicitly check for these verification failure patterns:
+
+### Assumption vs. Verification
+- Did any "assumption vs. verification" errors occur?
+- Were any files written without reading them first?
+- Were any symbols (functions, schemas, fields) used without grepping their existence?
+
+### Schema Change Hygiene
+- Were any schemas changed without full consumer analysis (`grep -r` before writing)?
+- Were test fixtures updated in one batch or incrementally patched?
+- Was `pnpm typecheck` run immediately after schema changes?
+
+### Pipeline Validation
+- Were any pipeline outputs used without validation (destructive `bd update`, file writes)?
+- Was the variable content verified before writing (echo, length check, single-item test)?
+
+### Post-Compaction Facts
+- Were any compaction-summary facts used without re-verification?
+- Were version numbers, symbol names, or paths re-grepped after compaction?
+
+### Entry Point Completeness
+- Were all entry points for a constraint identified and tested?
+- Or was only one path fixed while others remained unguarded?
+
+If any of these patterns appear, the sustainable fix should prefer:
+1. Adding the verification step to `agent-operating-model.md` Task Verification Protocol
+2. Creating a focused memory file with the specific checklist (e.g., `schema_change_hygiene.md`)
+3. Updating the Bead acceptance criteria to require evidence of verification
+
 ## Buckets
 
 Classify findings into these buckets:

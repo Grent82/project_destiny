@@ -144,6 +144,61 @@ Each task follows this sequence:
 8. Verifier reviews if the change crosses role boundaries or changes behavior.
 9. Coordinator integrates and closes the loop.
 
+## Task Verification Protocol
+
+**BEFORE writing any code, file, or Bead description**, the following verifications are mandatory:
+
+### 1. Read the Source
+
+If referencing a function, schema, field, file, or command:
+- Run `grep -r "symbolName" src --include="*.ts"` to find all occurrences
+- Use `Read` tool to verify the actual current state of the file
+- **NEVER** assume versions, signatures, or existence from memory, summaries, or compaction output
+
+### 2. Verify Schema Dependencies
+
+If changing any `contracts.ts` schema:
+- List all schemas that reference the changed field
+- Check for cyclic dependencies before reordering schemas
+- Update `data/runtime/initial-game-state.json` with default values
+- Update **ALL** test fixtures that build GameState or related objects
+- Run `pnpm typecheck` immediately after writing, before commit
+
+### 3. Check Entry Points
+
+If adding constraints ("cannot X", "blocked when Y"):
+- Find all UI entry points that dispatch the command (grep for command name in `src/ui/`)
+- Find all command guards that enforce the constraint (grep in `src/application/commands/`)
+- Write **one test per entry point** to verify the constraint is enforced
+- A Bead that says "working NPCs cannot deploy" but only fixes one of three entry points is incomplete
+
+### 4. Validate Pipeline Outputs
+
+If using shell output or scripts to write data (`bd update`, file writes, JSON edits):
+- Echo the variable first: `echo "$var" | head -1` to verify content
+- Check length/non-empty: `[ -n "$var" ] || exit 1` in bash, `assert` in Python
+- Test with **one item** before batching over multiple IDs/files
+- After each destructive batch, immediately sample-read one item to verify
+
+### 5. Post-Compaction Verification
+
+After any compaction, clear, or new session:
+- Treat all summarized facts as **"suspect, not proven"**
+- Re-grep version numbers (e.g., `saveVersion`), symbol names, and file paths
+- **NEVER** copy-paste code facts, versions, or API signatures from summaries
+- If a summary says "migration v2→v3", verify against `localSaveSnapshot.ts` before writing
+
+### 6. Schema Ordering (Cyclic Dependency Check)
+
+If adding or reordering schemas in `contracts.ts`:
+- Identify which schemas reference which (draw a quick dependency graph)
+- Define dependent schemas **after** their dependencies
+- Test with `pnpm typecheck` immediately — Zod will throw on forward references
+
+### Violation Cost
+
+Each skipped verification step typically costs **2-4 hours** of incremental fixes, multiple edit rounds, or broken test fixtures. Full verification takes **10-15 minutes** upfront and prevents cascading corrections.
+
 ## Task Sizing Rules
 
 Tasks should be:
