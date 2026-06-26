@@ -91,6 +91,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   npcArc: null,
   currentDirectiveId: null,
   directiveDeadlineDay: null,
+    currentIntention: null,
   factionRelationships: [],
 }
 

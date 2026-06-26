@@ -399,6 +399,7 @@ describe('applyRumorSpread', () => {
         npcArc: null,
         currentDirectiveId: null,
         directiveDeadlineDay: null,
+    currentIntention: null,
         factionRelationships: [],
       }
     }

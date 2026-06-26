@@ -354,6 +354,7 @@ export function applyOutcomes(
                 npcArc,
                 currentDirectiveId: null,
                 directiveDeadlineDay: null,
+                currentIntention: null,
                 factionRelationships: [],
               }
               next = { ...next, roster: [...next.roster, newEntry] }

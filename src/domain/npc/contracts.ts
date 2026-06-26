@@ -268,6 +268,50 @@ export const npcMemoryEntrySchema = z.object({
   sentiment: npcMemorySentimentSchema.default('neutral'),
 })
 
+/**
+ * NPC Intention types - proactive actions NPCs take when idle and not on directive.
+ */
+export const NPC_INTENTION_TYPES = [
+  'lead-coalition',
+  'support-coalition',
+  'scout-ahead',
+  'resource-gather',
+  'confront-rival',
+  'protect-house',
+  'investigate-threat',
+  'patrol-district',
+  'seek-employment',
+  'socialize',
+] as const
+
+export const npcIntentionTypeSchema = z.enum(NPC_INTENTION_TYPES)
+export type NpcIntentionType = z.infer<typeof npcIntentionTypeSchema>
+
+/**
+ * NPC Intention target types.
+ */
+export const NPC_INTENTION_TARGET_TYPES = ['district', 'npc', 'item', 'faction', 'poi'] as const
+export const npcIntentionTargetTypeSchema = z.enum(NPC_INTENTION_TARGET_TYPES)
+export type NpcIntentionTargetType = z.infer<typeof npcIntentionTargetTypeSchema>
+
+/**
+ * NPC Intention schema - represents a proactive action an NPC wants to take.
+ */
+export const npcIntentionSchema = z
+  .object({
+    type: npcIntentionTypeSchema,
+    targetId: z.string().min(1),
+    targetType: npcIntentionTargetTypeSchema.default('district'),
+    priority: z.number().min(1).max(5),
+    urgencyDays: z.number().int().positive(),
+    confidence: z.number().min(0).max(100).default(50),
+    createdAtDay: z.number().int().nonnegative(),
+    expiresAtDay: z.number().int().nonnegative(),
+  })
+  .strict()
+
+export type NpcIntention = z.infer<typeof npcIntentionSchema>
+
 export const worldNpcDispositionSchema = z.enum(['neutral', 'friendly', 'hostile', 'afraid', 'unknown'])
 
 export const worldNpcRuntimeStateSchema = z.object({
@@ -421,6 +465,7 @@ export const npcRuntimeStateSchema = z
     npcArc: npcArcSchema,
     currentDirectiveId: entityIdSchema.nullable().default(null),
     directiveDeadlineDay: z.number().int().nonnegative().nullable().default(null),
+    currentIntention: npcIntentionSchema.nullable().default(null),
     factionRelationships: z.array(factionRelationshipSchema).default([]),
   })
   .strict()

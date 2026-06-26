@@ -26,6 +26,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     npcArc: null,
     currentDirectiveId: null,
     directiveDeadlineDay: null,
+    currentIntention: null,
     factionRelationships: [],
     ...overrides,
   }

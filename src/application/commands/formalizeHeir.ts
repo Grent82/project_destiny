@@ -82,6 +82,7 @@ export function formalizeHeir(
     npcArc: null,
     currentDirectiveId: null,
     directiveDeadlineDay: null,
+    currentIntention: null,
     factionRelationships: [],
   }
 

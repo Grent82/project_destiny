@@ -1,0 +1,169 @@
+import { describe, expect, it } from 'vitest'
+import { calculateNpcIntention } from './intentions'
+import type { GameState } from '../../domain'
+import { initialGameStateSnapshot } from '../store/initialGameState'
+import { NPC_IDS } from '../content/ids'
+
+describe('intentions', () => {
+  const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
+    ...initialGameStateSnapshot,
+    roster: [
+      {
+        ...initialGameStateSnapshot.roster[0]!,
+        factionRelationships: [],
+        currentIntention: null,
+      },
+    ],
+    ...overrides,
+  })
+
+  describe('calculateNpcIntention', () => {
+    it('returns null for NPC with player assignment', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'deployed',
+            currentDirectiveId: null,
+            factionRelationships: [],
+            currentIntention: null,
+          },
+        ],
+      })
+
+      const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(intention).toBeNull()
+    })
+
+    it('returns null for NPC with faction directive', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: 'directive-test-123',
+            factionRelationships: [],
+            currentIntention: null,
+          },
+        ],
+      })
+
+      const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(intention).toBeNull()
+    })
+
+    it('returns null for ward NPC', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            status: 'ward',
+            factionRelationships: [],
+            currentIntention: null,
+          },
+        ],
+      })
+
+      const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(intention).toBeNull()
+    })
+
+    it('returns an intention for eligible idle NPC', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            factionRelationships: [],
+            currentIntention: null,
+            // Boost traits to ensure an intention is generated
+            traits: {
+              ...initialGameStateSnapshot.roster[0]!.traits,
+              ambition: 75,
+              discipline: 65,
+            },
+            attributes: {
+              ...initialGameStateSnapshot.roster[0]!.attributes,
+              presence: 70,
+            },
+          },
+        ],
+      })
+
+      const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(intention).not.toBeNull()
+      if (intention) {
+        expect(intention.type).toBeDefined()
+        expect(intention.priority).toBeGreaterThanOrEqual(1)
+        expect(intention.priority).toBeLessThanOrEqual(5)
+        expect(intention.confidence).toBeGreaterThanOrEqual(0)
+        expect(intention.confidence).toBeLessThanOrEqual(100)
+        expect(intention.urgencyDays).toBeGreaterThanOrEqual(1)
+        expect(intention.urgencyDays).toBeLessThanOrEqual(7)
+      }
+    })
+
+    it('returns null for NPC with low trait scores', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            factionRelationships: [],
+            currentIntention: null,
+            // Low trait scores
+            traits: {
+              ambition: 20,
+              empathy: 20,
+              discipline: 20,
+              loyalty: 20,
+              ruthlessness: 20,
+              curiosity: 20,
+              prudence: 20,
+              dominance: 20,
+              zeal: 20,
+              vanity: 20,
+            },
+            attributes: {
+              might: 20,
+              agility: 20,
+              endurance: 20,
+              intellect: 20,
+              perception: 20,
+              presence: 20,
+              resolve: 20,
+            },
+            skills: {
+              melee: 20,
+              ranged: 20,
+              medicine: 20,
+              administration: 20,
+              engineering: 20,
+              negotiation: 20,
+              survival: 20,
+              security: 20,
+              crafting: 20,
+              performance: 20,
+              academics: 20,
+              intrigue: 20,
+            },
+          },
+        ],
+      })
+
+      const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(intention).toBeNull()
+    })
+
+    it('returns null for non-existent NPC', () => {
+      const state = createTestState()
+
+      const intention = calculateNpcIntention(state, 'non-existent-npc')
+      expect(intention).toBeNull()
+    })
+  })
+})
