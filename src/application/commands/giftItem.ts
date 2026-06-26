@@ -4,6 +4,7 @@ import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
+import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
 
 type GiftEffect = Extract<ItemEffect, { type: 'relationship_gift' }>
 
@@ -125,28 +126,19 @@ export function resolveGiftOutcome(item: ItemDefinition, npc: NpcRuntimeState): 
 
 export function giftItemToNpc(state: GameState, payload: { instanceId: string; npcId: string }): GameState {
   const { instanceId, npcId } = payload
-  const owned = state.ownedItems.find((item) => item.instanceId === instanceId)
-  if (!owned) return state
+  const itemInstance = findPlayerItem(state, instanceId)
+  if (!itemInstance) return state
 
-  const item = contentCatalog.itemsById.get(owned.itemId)
+  const item = contentCatalog.itemsById.get(itemInstance.instance.itemId)
   if (!item) return state
   if (item.category !== 'gift') {
-    return {
-      ...state,
-      ownedItems: state.ownedItems.filter((entry) => entry.instanceId !== instanceId),
-    }
+    return removePlayerItem(state, instanceId)
   }
 
   const npc = state.roster.find((entry) => entry.npcId === npcId)
   if (!npc || !isNpcColocatedForGift(state, npc)) return state
 
-  const next: GameState = {
-    ...state,
-    ownedItems: state.ownedItems.filter((entry) => entry.instanceId !== instanceId),
-    relationships: { ...state.relationships },
-    roster: [...state.roster],
-    activityLog: [...state.activityLog],
-  }
+  const next: GameState = removePlayerItem(state, instanceId)
 
   const outcome = resolveGiftOutcome(item, npc)
   if (outcome.affinity !== 0) applyRelationshipDelta(next, 'player', npcId, 'affinity', outcome.affinity)

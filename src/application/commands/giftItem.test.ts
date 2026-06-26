@@ -14,12 +14,33 @@ function withGiftState(
   npcOverrides: Partial<NpcRuntimeState> = {},
   stateOverrides: Partial<GameState> = {},
 ): GameState {
+  // Note: itemInstanceId is used as the key for both inventory lookup AND catalog lookup
+  // So it must match the item definition ID in the catalog
   return {
     ...initialGameStateSnapshot,
     currentDistrictId: initialGameStateSnapshot.houseDistrictId,
-    ownedItems: [
-      { instanceId: `gift-${itemId}`, itemId, location: 'inventory', quantity: 1 },
-    ],
+    inventoryState: {
+      ...initialGameStateSnapshot.inventoryState,
+      player: {
+        ...initialGameStateSnapshot.inventoryState.player,
+        bagContainers: [
+          {
+            containerId: 'bag-main',
+            containerType: 'backpack',
+            ownerId: 'player',
+            maxSlots: 20,
+            slots: [
+              {
+                slotId: `slot-${itemId}`,
+                itemInstanceId: itemId, // Use itemId as instanceId for catalog lookup
+                quantity: 1,
+              },
+            ],
+            locked: false,
+          },
+        ],
+      },
+    },
     roster: initialGameStateSnapshot.roster.map((npc) =>
       npc.npcId === TARGET_NPC_ID
         ? { ...npc, ...npcOverrides }
@@ -64,25 +85,28 @@ describe('resolveGiftOutcome', () => {
 
 describe('giftItemToNpc', () => {
   it('removes the gift, updates relationships, and logs the reaction', () => {
-    const next = giftItemToNpc(
-      withGiftState('item-gift-pressed-flower-fold', {
-        traits: {
-          ...initialGameStateSnapshot.roster.find((npc) => npc.npcId === TARGET_NPC_ID)!.traits,
-          empathy: 82,
-        },
-      }),
-      { instanceId: 'gift-item-gift-pressed-flower-fold', npcId: TARGET_NPC_ID },
-    )
-
-    expect(next.ownedItems).toHaveLength(0)
+    const itemId = 'item-gift-pressed-flower-fold'
     const key = buildRelationshipKey('player', TARGET_NPC_ID)
-    const before = initialGameStateSnapshot.relationships[key] ?? {
+    // Read before value before calling giftItemToNpc to avoid mutation issues
+    const before = withGiftState(itemId).relationships[key] ?? {
       affinity: 0,
       respect: 0,
       fear: 0,
       trust: 0,
       loyalty: 0,
     }
+    const next = giftItemToNpc(
+      withGiftState(itemId, {
+        traits: {
+          ...initialGameStateSnapshot.roster.find((npc) => npc.npcId === TARGET_NPC_ID)!.traits,
+          empathy: 82,
+        },
+      }),
+      { instanceId: itemId, npcId: TARGET_NPC_ID },
+    )
+
+    const slotCount = next.inventoryState.player.bagContainers.reduce((sum, c) => sum + c.slots.length, 0)
+    expect(slotCount).toBe(0)
     const after = next.relationships[key]!
     const totalDelta =
       (after.affinity - before.affinity) +
