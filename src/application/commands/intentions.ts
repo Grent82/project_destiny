@@ -330,3 +330,240 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
     ),
   }
 }
+
+/**
+ * Intention Handler Interface
+ * Each handler implements the logic for executing a specific intention type.
+ * All handlers must check guards first (assignment !== 'idle' or currentDirectiveId !== null).
+ */
+interface IntentionHandler {
+  canExecute: (npc: NpcRuntimeState, state: GameState) => boolean
+  execute: (npc: NpcRuntimeState, state: GameState) => GameState
+}
+
+/**
+ * Base guard check for all intention handlers.
+ * Returns true if the NPC can execute an intention (idle + no directive).
+ */
+function canExecuteIntention(npc: NpcRuntimeState): boolean {
+  // Player assignment takes priority - no intention execution
+  if (npc.assignment !== 'idle') return false
+
+  // Faction directive takes priority over personal intention
+  if (npc.currentDirectiveId !== null) return false
+
+  return true
+}
+
+/**
+ * Lead Coalition Handler
+ * NPC attempts to form or lead a coalition (e.g., for corridor clearance).
+ */
+const leadCoalitionHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires high presence and ambition
+    return npc.attributes.presence >= 60 && npc.traits.ambition >= 50
+  },
+  execute: (_npc, state) => {
+    // For now, this is a placeholder - actual coalition logic would go here
+    // In a full implementation, this would:
+    // - Check if a coalition already exists
+    // - Recruit other NPCs to join
+    // - Start a coalition expedition
+    return state
+  },
+}
+
+/**
+ * Support Coalition Handler
+ * NPC joins an existing coalition as support.
+ */
+const supportCoalitionHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires empathy and loyalty
+    return npc.traits.empathy >= 40 || npc.traits.loyalty >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would join existing coalition
+    return state
+  },
+}
+
+/**
+ * Scout Ahead Handler
+ * NPC scouts ahead to gather intelligence.
+ */
+const scoutAheadHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires perception and survival
+    return npc.attributes.perception >= 50 || npc.skills.survival >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would create scout activity
+    return state
+  },
+}
+
+/**
+ * Resource Gather Handler
+ * NPC gathers resources (food, materials).
+ */
+const resourceGatherHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires survival skill
+    return npc.skills.survival >= 40 || npc.attributes.endurance >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would add resources to stash
+    return state
+  },
+}
+
+/**
+ * Confront Rival Handler
+ * NPC confronts a rival NPC or faction member.
+ */
+const confrontRivalHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires might and ruthlessness
+    return npc.attributes.might >= 50 || npc.traits.ruthlessness >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would initiate confrontation
+    return state
+  },
+}
+
+/**
+ * Protect House Handler
+ * NPC guards the player's house.
+ */
+const protectHouseHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires loyalty and discipline
+    return npc.traits.loyalty >= 50 || npc.traits.discipline >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would set up defense posture
+    return state
+  },
+}
+
+/**
+ * Investigate Threat Handler
+ * NPC investigates a potential threat.
+ */
+const investigateThreatHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires intellect and intrigue
+    return npc.attributes.intellect >= 50 || npc.skills.intrigue >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would start investigation
+    return state
+  },
+}
+
+/**
+ * Patrol District Handler
+ * NPC patrols their assigned district.
+ */
+const patrolDistrictHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires endurance and survival
+    return npc.attributes.endurance >= 40 || npc.skills.survival >= 30
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would create patrol activity
+    return state
+  },
+}
+
+/**
+ * Seek Employment Handler
+ * NPC looks for work if unemployed.
+ */
+const seekEmploymentHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires negotiation skill
+    return npc.skills.negotiation >= 30 || npc.traits.ambition >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would look for hire offers
+    return state
+  },
+}
+
+/**
+ * Socialize Handler
+ * NPC socializes with other NPCs.
+ */
+const socializeHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires presence and empathy
+    return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would create social interaction
+    return state
+  },
+}
+
+/**
+ * All intention handlers mapped by type.
+ */
+export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
+  'lead-coalition': leadCoalitionHandler,
+  'support-coalition': supportCoalitionHandler,
+  'scout-ahead': scoutAheadHandler,
+  'resource-gather': resourceGatherHandler,
+  'confront-rival': confrontRivalHandler,
+  'protect-house': protectHouseHandler,
+  'investigate-threat': investigateThreatHandler,
+  'patrol-district': patrolDistrictHandler,
+  'seek-employment': seekEmploymentHandler,
+  'socialize': socializeHandler,
+}
+
+/**
+ * Executes an NPC's current intention if they have one and can execute it.
+ * Guards are checked inside each handler.
+ */
+export function executeNpcIntention(npc: NpcRuntimeState, state: GameState): GameState {
+  if (!npc.currentIntention) return state
+
+  const handler = intentionHandlers[npc.currentIntention.type]
+  if (!handler) return state
+
+  if (handler.canExecute(npc, state)) {
+    return handler.execute(npc, state)
+  }
+
+  return state
+}
+
+/**
+ * Processes all roster NPCs and executes their intentions.
+ * Called during the agency phase of endDay.
+ */
+export function executeAllNpcIntentions(state: GameState): GameState {
+  let newState = state
+
+  for (const npc of state.roster) {
+    if (npc.currentIntention) {
+      newState = executeNpcIntention(npc, newState)
+    }
+  }
+
+  return newState
+}
