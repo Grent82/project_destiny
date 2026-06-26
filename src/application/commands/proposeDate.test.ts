@@ -28,6 +28,19 @@ const baseGameState: GameState = {
   roster: [],
   inventory: [],
   ownedItems: [],
+  houseStorageCapacity: 40,
+  installedHouseModules: [],
+  inventoryState: {
+    player: {
+      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+      bagContainers: [],
+      totalBagSlots: 40,
+      usedBagSlots: 0,
+    },
+    npcInventories: {},
+    sharedContainers: [],
+    itemRegistry: {},
+  },
   cityResources: {
     foodSecurity: 70,
     foodStock: 100,
@@ -165,8 +178,6 @@ const baseGameState: GameState = {
   bondedPersonsRegistry: {},
   worldEvents: [],
   activeDirectives: [],
-  houseStorageCapacity: 40,
-  installedHouseModules: [],
   debtAmount: 800,
   debtClaimantNpcId: 'npc-enemy-harlen-voss',
   debtEnforcementFactionId: 'faction-gilded-court',

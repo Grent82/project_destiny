@@ -23,6 +23,7 @@ import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
 import { npcSitePresenceSchema, siteRuntimeSchema } from '../world/runtime'
 import { chronicleSchema } from '../chronicle/contracts'
+import { inventoryStateSchema } from '../inventory/contracts'
 
 export const districtRuntimeStateSchema = z
   .object({
@@ -297,6 +298,22 @@ export const gameStateSchema = z
     roster: z.array(npcRuntimeStateSchema),
     inventory: z.array(inventoryEntrySchema).default([]),
     ownedItems: z.array(ownedItemSchema).default([]),
+    inventoryState: inventoryStateSchema.default(() => ({
+      player: {
+        equipmentSlots: {
+          weapon: null,
+          armor: null,
+          accessory_1: null,
+          accessory_2: null,
+        },
+        bagContainers: [],
+        totalBagSlots: 40,
+        usedBagSlots: 0,
+      },
+      npcInventories: {},
+      sharedContainers: [],
+      itemRegistry: {},
+    })),
     houseStorageCapacity: z.number().int().positive().default(40),
     installedHouseModules: z.array(installedModuleSchema).default([]),
     cityResources: cityResourcesSchema,

@@ -24,3 +24,4 @@
 - [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste — Bead-Hygiene + Ticket-Scope-Bewertung vor Claim
 - [Terminology Audit: Coalition ist keine echte Koalition](terminology_audit_group_coalition.md) — Coalition sollte zu group umbenannt werden
 - [Terminology Cleanup 2026-06-26](terminology_cleanup_2026-06-26.md) — coalition→group, Mission→Quest, DateLocation strukturiert
+- [Feedback: Commit ONLY after full quality gates pass](feedback_commit_after_full_tests.md) — destiny-zq9r zu früh gecommitet mit unvollständiger Implementierung
