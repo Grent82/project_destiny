@@ -30,7 +30,7 @@ describe('deriveGriefState', () => {
 
   it('returns active grief when loss memory is recent', () => {
     const npc = npcWith({
-      npcMemory: [{ day: 5, event: 'loss', participants: ['npc-other'] }],
+      npcMemory: [{ day: 5, event: 'loss', eventType: 'custom', visibility: 'open', sentiment: 'negative', participants: ['npc-other'] }],
     })
     const grief = deriveGriefState(npc, 7)
     expect(grief).not.toBeNull()
@@ -41,7 +41,7 @@ describe('deriveGriefState', () => {
 
   it('decays grief intensity over time', () => {
     const npc = npcWith({
-      npcMemory: [{ day: 0, event: 'loss', participants: ['npc-other'] }],
+      npcMemory: [{ day: 0, event: 'loss', eventType: 'custom', visibility: 'open', sentiment: 'negative', participants: ['npc-other'] }],
     })
     const earlyGrief = deriveGriefState(npc, 1)
     const laterGrief = deriveGriefState(npc, 10)
@@ -50,7 +50,7 @@ describe('deriveGriefState', () => {
 
   it('returns null when grief fully decayed', () => {
     const npc = npcWith({
-      npcMemory: [{ day: 0, event: 'loss', participants: ['npc-other'] }],
+      npcMemory: [{ day: 0, event: 'loss', eventType: 'custom', visibility: 'open', sentiment: 'negative', participants: ['npc-other'] }],
     })
     const fadedDays = Math.ceil(GRIEF_INITIAL_INTENSITY / GRIEF_DECAY_PER_DAY) + 1
     expect(deriveGriefState(npc, fadedDays)).toBeNull()
@@ -58,7 +58,7 @@ describe('deriveGriefState', () => {
 
   it('ignores non-loss memory events', () => {
     const npc = npcWith({
-      npcMemory: [{ day: 5, event: 'conversation', participants: ['npc-other'] }],
+      npcMemory: [{ day: 5, event: 'conversation', eventType: 'custom', visibility: 'open', sentiment: 'neutral', participants: ['npc-other'] }],
     })
     expect(deriveGriefState(npc, 7)).toBeNull()
   })
@@ -136,7 +136,7 @@ describe('grief applies morale penalty in state decay', () => {
           ? {
               ...n,
               states: { ...n.states, morale: 80, anger: 0, hygiene: 0 },
-              npcMemory: [{ day: 1, event: 'loss', participants: ['npc-lost'] }],
+              npcMemory: [{ day: 1, event: 'loss', eventType: 'custom', visibility: 'open', sentiment: 'negative', participants: ['npc-lost'] }],
             }
           : n,
       ),

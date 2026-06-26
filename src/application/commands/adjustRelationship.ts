@@ -21,7 +21,15 @@ export function writeNpcMemory(
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return
 
-  const entry = { day: state.day, event, ...(participants ? { participants } : {}), ...(axisDelta ? { axisDelta } : {}) }
+  const entry = {
+    day: state.day,
+    event,
+    eventType: 'custom' as const,
+    visibility: 'open' as const,
+    sentiment: 'neutral' as const,
+    ...(participants ? { participants } : {}),
+    ...(axisDelta ? { axisDelta } : {}),
+  }
   const existing = state.roster[npcIndex]!.npcMemory ?? []
   const updated = [...existing, entry].slice(-MAX_NPC_MEMORY_ENTRIES)
   state.roster[npcIndex] = { ...state.roster[npcIndex]!, npcMemory: updated }

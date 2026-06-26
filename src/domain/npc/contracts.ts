@@ -215,11 +215,57 @@ export const npcDefinitionSchema = z
   })
   .strict()
 
+/**
+ * Memory visibility levels - who can see this memory.
+ */
+export const npcMemoryVisibilitySchema = z.enum(['hidden', 'trusted', 'open', 'public'])
+export type NpcMemoryVisibility = z.infer<typeof npcMemoryVisibilitySchema>
+
+/**
+ * Memory sentiment - emotional coloring of the memory.
+ */
+export const npcMemorySentimentSchema = z.enum(['positive', 'neutral', 'negative', 'traumatic'])
+export type NpcMemorySentiment = z.infer<typeof npcMemorySentimentSchema>
+
+/**
+ * Memory event types - structured categories for memory events.
+ */
+export const NPC_MEMORY_EVENT_TYPES = [
+  'first_meeting',
+  'combat',
+  'quest_completion',
+  'gift_given',
+  'gift_received',
+  'courtship',
+  'intimacy',
+  'betrayal',
+  'help_received',
+  'help_given',
+  'conversation_deep',
+  'conversation_casual',
+  'work_completed',
+  'directive_assigned',
+  'directive_completed',
+  'directive_failed',
+  'wage_paid',
+  'injury_treated',
+  'day_passed',
+  'pairing_formed',
+  'pairing_broken',
+  'custom',
+] as const
+
+export const npcMemoryEventTypeSchema = z.enum(NPC_MEMORY_EVENT_TYPES)
+export type NpcMemoryEventType = z.infer<typeof npcMemoryEventTypeSchema>
+
 export const npcMemoryEntrySchema = z.object({
   day: z.number().int().nonnegative(),
   event: z.string().min(1),
+  eventType: npcMemoryEventTypeSchema.default('custom'),
   participants: z.array(z.string()).optional(),
   axisDelta: z.record(z.string(), z.number()).optional(),
+  visibility: npcMemoryVisibilitySchema.default('open'),
+  sentiment: npcMemorySentimentSchema.default('neutral'),
 })
 
 export const worldNpcDispositionSchema = z.enum(['neutral', 'friendly', 'hostile', 'afraid', 'unknown'])

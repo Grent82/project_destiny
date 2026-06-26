@@ -9,7 +9,7 @@
  * Grief modifier: reduces morale recovery rate in applyStateDecay.
  */
 
-import type { GameState } from '../../domain/game/contracts'
+import type { GameState, NpcMemoryEntry } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 
@@ -81,16 +81,17 @@ export function writeLossMemories(
 
       if (trust < GRIEF_TRUST_THRESHOLD) return npc
 
+      const lossMemory: NpcMemoryEntry = {
+        day: lostOnDay,
+        event: 'loss',
+        eventType: 'custom',
+        visibility: 'open',
+        sentiment: 'negative',
+        participants: [lostNpcId],
+      }
       return {
         ...npc,
-        npcMemory: [
-          ...npc.npcMemory,
-          {
-            day: lostOnDay,
-            event: 'loss',
-            participants: [lostNpcId],
-          },
-        ].slice(-20), // keep max 20 entries (MAX_NPC_MEMORY_ENTRIES)
+        npcMemory: [...npc.npcMemory, lossMemory].slice(-20), // keep max 20 entries (MAX_NPC_MEMORY_ENTRIES)
       }
     }),
   }
