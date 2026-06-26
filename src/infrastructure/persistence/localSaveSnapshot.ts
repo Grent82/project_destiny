@@ -2,6 +2,7 @@ import { gameStateSchema, type GameState } from '../../domain'
 import type { SaveGameStore } from '../../application/ports/saveGameStore'
 import { createEmptyChronicle } from '../../domain/chronicle/contracts'
 import { normalizePendingEventInstances } from '../../application/commands/eventInstances'
+import { migrateLegacyInventoryToNew } from '../../application/commands/inventory/migrateLegacyInventory'
 
 interface StorageLike {
   getItem(key: string): string | null
@@ -116,9 +117,21 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 4) {
-    // v4 is current — just validate and return
+    // v4 → v5: migrate legacy inventory to inventoryState
     const raw4 = raw as Record<string, unknown>
-    return gameStateSchema.safeParse(raw4).data ?? null
+    const stateV4 = gameStateSchema.safeParse(raw4).data
+    if (!stateV4) return null
+
+    // Run inventory migration
+    const migratedState = migrateLegacyInventoryToNew(stateV4, stateV4.day)
+
+    return gameStateSchema.safeParse({ ...migratedState, saveVersion: 5 }).data ?? null
+  }
+
+  if (version === 5) {
+    // v5 is current — just validate and return
+    const raw5 = raw as Record<string, unknown>
+    return gameStateSchema.safeParse(raw5).data ?? null
   }
 
   // Unknown future version — cannot load

@@ -26,7 +26,12 @@ describe('LocalSaveSnapshotStore', () => {
 
     snapshotStore.save(initialGameStateSnapshot)
 
-    expect(snapshotStore.load()).toEqual(initialGameStateSnapshot)
+    const loaded = snapshotStore.load()
+    expect(loaded).not.toBeNull()
+    expect(loaded?.saveVersion).toBe(5)
+    // Check that inventoryState was migrated
+    expect(loaded?.inventoryState.player.bagContainers).toBeDefined()
+    expect(loaded?.inventoryState.npcInventories).toBeDefined()
   })
 
   it('returns null when no snapshot is stored', () => {
