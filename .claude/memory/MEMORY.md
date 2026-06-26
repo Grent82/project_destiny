@@ -18,7 +18,7 @@
 - [Intention System Architecture](intention-system-architecture.md) — 5-stage pipeline, Fuzzy + ML, 35 types
 - [Test Fixture Pattern for Complex State](test-fixture-pattern.md) — minimal mocks, eslint-disable any
 - [Schema Change Hygiene — Intentions](schema-change-hygiene-intentions.md) — read schema before tests
-- [Session Learnings 2026-06-26](session_learnings_2026-06-26.md) — Authored NPC Memories + Contraception Items + Corridor-Run UI: schema ordering, inventory checks, Test-with-contentCatalog patterns, UI-first incremental implementation
+- [Session Learnings 2026-06-26](session_learnings_2026-06-26.md) — Authored NPC Memories + Contraception Items + Corridor-Run UI (Expedition + Contract Board): schema ordering, inventory checks, Test-with-contentCatalog patterns, UI-first incremental implementation, READ-only UI patterns
 - [Schema Change Hygiene — Corridor Run](schema_change_hygiene_corridor.md) — Corridor-run schema change propagation checklist (enemyNpcId nullable, procedural generation updates)
 - [Feedback: Corridor-run Implementation — Schema Change Propagation](feedback_corridor_implementation.md) — 5 Korrektur-Iterationen vermieden durch enemyNpcId nullable, syncFoodSecurityToStock return value, procedural generation updates
 - [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste — Bead-Hygiene + Ticket-Scope-Bewertung vor Claim
