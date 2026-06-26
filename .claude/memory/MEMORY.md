@@ -18,3 +18,4 @@
 - [Intention System Architecture](intention-system-architecture.md) — 5-stage pipeline, Fuzzy + ML, 35 types
 - [Test Fixture Pattern for Complex State](test-fixture-pattern.md) — minimal mocks, eslint-disable any
 - [Schema Change Hygiene — Intentions](schema-change-hygiene-intentions.md) — read schema before tests
+- [Session Learnings 2026-06-26](session_learnings_2026-06-26.md) — Authored NPC Memories: schema ordering, Zod 4 API, trust visibility logic
