@@ -1,6 +1,7 @@
 import type { GameState } from '../../../domain/game/contracts'
 import type { CoalitionMember, CoalitionRole } from '../../../domain/expedition/contracts'
 import { publishEvent } from '../events/publishEvent'
+import { appendActivityLogEntry } from '../activityLog'
 
 /**
  * Eligible NPC criteria for corridor coalition membership.
@@ -14,13 +15,33 @@ interface EligibleNPC {
 }
 
 /**
+ * Checks if an NPC is blocked from participating in a coalition.
+ * Priority order (highest to lowest):
+ * 1. Player Assignment (deployed, working, defense, training)
+ * 2. Faction Directive (active directive)
+ */
+function isNpcBlockedFromCoalition(npc: { assignment: string; currentDirectiveId: string | null }): boolean {
+  // Player assignment takes priority - cannot join coalition
+  if (npc.assignment !== 'idle') return true
+
+  // Faction directive takes priority over coalition participation
+  if (npc.currentDirectiveId !== null) return true
+
+  return false
+}
+
+/**
  * Find NPCs eligible for corridor coalition from world NPCs and roster.
+ * Excludes NPCs with Player Assignments or Faction Directives.
  */
 function findEligibleNPCs(state: GameState): EligibleNPC[] {
   const eligible: EligibleNPC[] = []
 
   // Check roster NPCs
   for (const npc of state.roster) {
+    // Skip NPCs who are blocked (assigned or on directive)
+    if (isNpcBlockedFromCoalition(npc)) continue
+
     const melee = npc.skills.melee ?? 0
     const security = npc.skills.security ?? 0
     const discipline = npc.traits.discipline ?? 0
@@ -143,4 +164,79 @@ export function formCorridorCoalition(
   )
 
   return nextWithEvent
+}
+
+/**
+ * Processes NPCs with lead-coalition intentions and gives them priority for coalition leadership.
+ * This integrates the intention system with corridor coalition formation.
+ */
+export function processLeadCoalitionIntentions(state: GameState): GameState {
+  // Only process if corridor is blocked or disrupted
+  if (state.cityResources.corridorStatus === 'open') {
+    return state
+  }
+
+  // Only process if no active coalition exists
+  if (state.cityResources.activeCoalitions.length > 0) {
+    return state
+  }
+
+  // Find NPCs with lead-coalition intentions
+  const leadIntentions = state.roster.filter(
+    (npc) =>
+      npc.currentIntention?.type === 'lead-coalition' &&
+      npc.assignment === 'idle' &&
+      npc.currentDirectiveId === null,
+  )
+
+  if (leadIntentions.length === 0) {
+    return state
+  }
+
+  // Log the intention
+  let next = state
+  for (const npc of leadIntentions) {
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `${npc.name} begins preparing a coalition to clear the Green Corridor`,
+    )
+  }
+
+  return next
+}
+
+/**
+ * Processes NPCs with support-coalition intentions and adds them to existing coalitions.
+ * This integrates the intention system with corridor coalition formation.
+ */
+export function processSupportCoalitionIntentions(state: GameState): GameState {
+  // Only process if there are active coalitions
+  if (state.cityResources.activeCoalitions.length === 0) {
+    return state
+  }
+
+  // Find NPCs with support-coalition intentions
+  const supportIntentions = state.roster.filter(
+    (npc) =>
+      npc.currentIntention?.type === 'support-coalition' &&
+      npc.assignment === 'idle' &&
+      npc.currentDirectiveId === null,
+  )
+
+  if (supportIntentions.length === 0) {
+    return state
+  }
+
+  // Log the intentions
+  let next = state
+  for (const npc of supportIntentions) {
+    next = appendActivityLogEntry(
+      next,
+      'system',
+      `${npc.name} offers support for the corridor clearance coalition`,
+    )
+  }
+
+  return next
 }
