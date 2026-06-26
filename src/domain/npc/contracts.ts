@@ -252,6 +252,10 @@ export const NPC_MEMORY_EVENT_TYPES = [
   'day_passed',
   'pairing_formed',
   'pairing_broken',
+  'training',
+  'promotion',
+  'loss',
+  'failed_mission',
   'custom',
 ] as const
 
