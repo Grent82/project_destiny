@@ -822,10 +822,12 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           npcName={detail.name}
           requiresConsent={false}
           onConfirm={(options) => {
+            // Map boolean contraception to item ID (simplified - in future, select specific item)
+            const contraceptionItemId = options.contraception ? 'item-contraceptive-tonic' : null
             dispatch(
               gameActions.engagePhysicalIntimacy({
                 npcId: detail.npcId,
-                contraception: options.contraception,
+                contraceptionItemId,
                 intent: options.intent,
               }),
             )

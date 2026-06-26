@@ -66,9 +66,9 @@ export const rosterReducers = {
     return deepConversationCommand(state, action.payload.npcId)
   },
 
-  engagePhysicalIntimacy(state: GameState, action: PayloadAction<{ npcId: string; contraception: boolean; intent: 'want-pregnancy' | 'avoid-pregnancy' | 'neutral' }>) {
+  engagePhysicalIntimacy(state: GameState, action: PayloadAction<{ npcId: string; contraceptionItemId: string | null; intent: 'want-pregnancy' | 'avoid-pregnancy' | 'neutral' }>) {
     return engagePhysicalIntimacyCommand(state, action.payload.npcId, {
-      contraception: action.payload.contraception,
+      contraceptionItemId: action.payload.contraceptionItemId,
       intent: action.payload.intent,
     })
   },

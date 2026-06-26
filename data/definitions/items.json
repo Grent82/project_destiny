@@ -1362,5 +1362,74 @@
         "duration": 1
       }
     ]
+  },
+  {
+    "id": "item-contraceptive-herbal",
+    "name": "Herbal Preventative",
+    "category": "consumable",
+    "tier": 1,
+    "value": 8,
+    "weight": 0.1,
+    "rarity": "common",
+    "tags": [
+      "contraception",
+      "herbal",
+      "discreet"
+    ],
+    "description": "A small pouch of dried moonleaf and bitterroot, brewed as a tea. Basic herbal prevention, unreliable but accessible. Sold in The Pale by market healers without questions.",
+    "shopPrice": 5,
+    "typedEffects": [
+      {
+        "type": "contraception",
+        "efficacy": 0.5,
+        "uses": 1
+      }
+    ]
+  },
+  {
+    "id": "item-contraceptive-tonic",
+    "name": "Vitality Elixir",
+    "category": "consumable",
+    "tier": 2,
+    "value": 25,
+    "weight": 0.3,
+    "rarity": "uncommon",
+    "tags": [
+      "contraception",
+      "tonic",
+      "premium"
+    ],
+    "description": "A vial of clear distillate, labeled only with a wax seal. Apothecary-grade preparation with more reliable efficacy than crude herbs. Available through discreet channels in the Gilded Heights.",
+    "shopPrice": 18,
+    "typedEffects": [
+      {
+        "type": "contraception",
+        "efficacy": 0.75,
+        "uses": 3
+      }
+    ]
+  },
+  {
+    "id": "item-contraceptive-barrier",
+    "name": "Silk Sheath",
+    "category": "consumable",
+    "tier": 3,
+    "value": 45,
+    "weight": 0.05,
+    "rarity": "rare",
+    "tags": [
+      "contraception",
+      "barrier",
+      "premium"
+    ],
+    "description": "A treated silk covering, thin and strong. The most reliable option available, though costly. Black market sources in The Tangle offer cheaper variants of uncertain quality.",
+    "shopPrice": 35,
+    "typedEffects": [
+      {
+        "type": "contraception",
+        "efficacy": 0.9,
+        "uses": 1
+      }
+    ]
   }
 ]

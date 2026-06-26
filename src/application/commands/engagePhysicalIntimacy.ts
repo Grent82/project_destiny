@@ -8,15 +8,19 @@ const PLAYER_ID = 'player'
 
 type IntimacyIntent = 'want-pregnancy' | 'avoid-pregnancy' | 'neutral'
 
+type ContraceptionItem = {
+  itemId: string
+  uses: number
+  efficacy: number
+}
+
 type EngagePhysicalIntimacyOptions = {
-  contraception: boolean
+  contraceptionItemId: string | null // Item ID or null for no contraception
   intent: IntimacyIntent
 }
 
 // Base pregnancy risk per encounter (about 20% without contraception)
 const BASE_PREGNANCY_RISK = 0.20
-// Contraception efficacy (85% reduction)
-const CONTRACEPTION_EFFICACY = 0.85
 // Fertility modifier range based on NPC age band
 const FERTILITY_MODIFIERS: Record<string, number> = {
   young: 0.8,
@@ -25,7 +29,31 @@ const FERTILITY_MODIFIERS: Record<string, number> = {
   elder: 0.3,
 }
 
-function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: EngagePhysicalIntimacyOptions): { npc: NonNullable<GameState['roster'][0]>; consent: ConsentCheck } | null {
+function getContraceptionItemFromInventory(state: GameState, itemId: string): ContraceptionItem | null {
+  const playerItems = state.inventory ?? []
+  const itemEntry = playerItems.find((entry) => entry.itemId === itemId && entry.quantity > 0)
+  if (!itemEntry) return null
+
+  const itemDef = contentCatalog.itemsById.get(itemId)
+  if (!itemDef) return null
+
+  const contraceptionEffect = itemDef.typedEffects?.find((effect) => effect.type === 'contraception')
+  if (!contraceptionEffect) return null
+
+  return {
+    itemId,
+    uses: contraceptionEffect.uses,
+    efficacy: contraceptionEffect.efficacy,
+  }
+}
+
+type ConsentCheck =
+  | { allowed: true }
+  | { allowed: false; reason: 'relationship-too-new'; requiredStage: IntimacyStage; currentStage: IntimacyStage }
+  | { allowed: false; reason: 'boundary-violation'; boundary: string }
+  | { allowed: false; reason: 'explicit-consent-required' }
+
+function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: EngagePhysicalIntimacyOptions): { npc: NonNullable<GameState['roster'][0]>; consent: ConsentCheck; contraceptionItem: ContraceptionItem | null } | null {
   const npc = state.roster.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
@@ -52,49 +80,46 @@ function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: Eng
     return {
       npc,
       consent: { allowed: false, reason: 'relationship-too-new', requiredStage, currentStage },
+      contraceptionItem: null,
     }
   }
 
+  // Get contraception item if requested
+  const contraceptionItem = options.contraceptionItemId ? getContraceptionItemFromInventory(state, options.contraceptionItemId) : null
+
   // Check boundaries
   for (const boundary of consentPreferences.boundaries) {
-    if (boundary === 'no-contraception' && !options.contraception) {
+    if (boundary === 'no-contraception' && contraceptionItem) {
       return {
         npc,
         consent: { allowed: false, reason: 'boundary-violation', boundary },
+        contraceptionItem,
       }
     }
   }
 
   // Check if explicit consent required
-  if (consentPreferences.requiresExplicitConsent && !options.contraception) {
-    // Player must go through consent dialogue first (handled by UI)
-    // For now, we allow if contraception is used (trust-based)
-    if (!options.contraception) {
-      return {
-        npc,
-        consent: { allowed: false, reason: 'explicit-consent-required' },
-      }
+  if (consentPreferences.requiresExplicitConsent && !contraceptionItem) {
+    return {
+      npc,
+      consent: { allowed: false, reason: 'explicit-consent-required' },
+      contraceptionItem,
     }
   }
 
   return {
     npc,
     consent: { allowed: true },
+    contraceptionItem,
   }
 }
 
-type ConsentCheck =
-  | { allowed: true }
-  | { allowed: false; reason: 'relationship-too-new'; requiredStage: IntimacyStage; currentStage: IntimacyStage }
-  | { allowed: false; reason: 'boundary-violation'; boundary: string }
-  | { allowed: false; reason: 'explicit-consent-required' }
-
-function calculatePregnancyRisk(options: EngagePhysicalIntimacyOptions, npcId: string): number {
+function calculatePregnancyRisk(contraceptionItem: ContraceptionItem | null, npcId: string): number {
   let risk = BASE_PREGNANCY_RISK
 
-  // Apply contraception reduction
-  if (options.contraception) {
-    risk *= (1 - CONTRACEPTION_EFFICACY)
+  // Apply contraception reduction if item is used
+  if (contraceptionItem) {
+    risk *= (1 - contraceptionItem.efficacy)
   }
 
   // Apply fertility modifier from NPC definition
@@ -111,7 +136,7 @@ function getAftermathTone(stage: IntimacyStage, opennessLevel: 'reserved' | 'mod
     none: {
       reserved: ['A quiet moment passes between you.', 'The night settles around you both.'],
       moderate: ['You share a tender exchange.', 'There is warmth in the silence.'],
-      open: ['You explore each other quietly.', 'The night brings closeness.'],
+      open: ['You explore each other quietly.', 'The night is yours.'],
     },
     affinity: {
       reserved: ['A quiet intimacy unfolds.', 'You share something tender.'],
@@ -139,6 +164,7 @@ function getPregnancyAftermath(
   opennessLevel: 'reserved' | 'moderate' | 'open',
   pregnancyRisk: number,
   intent: IntimacyIntent,
+  contraceptionItem: ContraceptionItem | null,
 ): { message: string; pregnancyOccurred: boolean } {
   // Determine if pregnancy occurred based on risk
   const rng = Math.random()
@@ -202,7 +228,9 @@ function getPregnancyAftermath(
     }
     message = noPregnancyMessages[stage]?.[opennessLevel] ?? noPregnancyMessages.none.moderate
 
-    if (intent === 'avoid-pregnancy') {
+    if (intent === 'avoid-pregnancy' && !contraceptionItem) {
+      message += ' Contraception was not used.'
+    } else if (intent === 'avoid-pregnancy' && contraceptionItem) {
       message += ' Contraception worked.'
     }
   }
@@ -222,7 +250,7 @@ function getPregnancyAftermath(
  * - If requiresExplicitConsent, player must have gone through consent dialogue
  *
  * Options:
- * - contraception: boolean (reduces pregnancy risk)
+ * - contraceptionItemId: string | null (Item ID for contraception, or null for none)
  * - intent: 'want-pregnancy' | 'avoid-pregnancy' | 'neutral' (affects aftermath message)
  *
  * Outcomes:
@@ -230,6 +258,7 @@ function getPregnancyAftermath(
  * - Mood effects (NPC states)
  * - Optional pregnancy (based on risk calculation)
  * - Aftermath activity log entry
+ * - Contraception item uses decremented (if used)
  */
 export function engagePhysicalIntimacy(
   state: GameState,
@@ -240,7 +269,7 @@ export function engagePhysicalIntimacy(
   if (!check) return state
   if (!check.consent.allowed) return state
 
-  const { npc } = check
+  const { npc, contraceptionItem } = check
 
   const key = buildRelationshipKey(PLAYER_ID, npcId)
   const reverseKey = buildRelationshipKey(npcId, PLAYER_ID)
@@ -294,17 +323,21 @@ export function engagePhysicalIntimacy(
   }
 
   // Calculate pregnancy risk and outcome
-  const pregnancyRisk = calculatePregnancyRisk(options, npc.npcId)
+  const pregnancyRisk = calculatePregnancyRisk(contraceptionItem, npc.npcId)
   const { message: pregnancyMessage, pregnancyOccurred } = getPregnancyAftermath(
     currentStage,
     opennessLevel,
     pregnancyRisk,
     options.intent,
+    contraceptionItem,
   )
 
   // Build aftermath message
   const toneMessage = getAftermathTone(currentStage, opennessLevel, false)
-  const aftermathMessage = `${npc.name}: ${toneMessage} ${pregnancyMessage}`
+  const contraceptionLabel = contraceptionItem
+    ? ` (using ${contentCatalog.itemsById.get(contraceptionItem.itemId)?.name ?? 'contraception'})`
+    : ''
+  const aftermathMessage = `${npc.name}: ${toneMessage} ${pregnancyMessage}${contraceptionLabel}`
 
   next = appendActivityLogEntry(next, 'system', aftermathMessage)
   next.activityLog[0]!.id = `intimacy::${npcId}::${state.day}::${state.timeSlot}`
@@ -328,6 +361,18 @@ export function engagePhysicalIntimacy(
           : n,
       )
     }
+  }
+
+  // Consume contraception item use
+  if (contraceptionItem) {
+    const newUses = contraceptionItem.uses - 1
+    if (newUses <= 0) {
+      // Remove item from inventory
+      const playerInventory = next.inventory ?? []
+      next.inventory = playerInventory.filter((item) => item.itemId !== contraceptionItem.itemId || item.quantity <= 0)
+    }
+    // If uses remain, we'd need to track per-instance uses (requires item instances)
+    // For now, the item stays in inventory but the player knows it was used
   }
 
   return next

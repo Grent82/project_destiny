@@ -38,6 +38,7 @@ export const itemEffectSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('rest_quality_bonus'), value: z.number().int() }),
   z.object({ type: z.literal('tradeValue'), value: z.number().nonnegative() }),
   z.object({ type: z.literal('enableAction'), action: z.string().min(1) }),
+  z.object({ type: z.literal('contraception'), efficacy: z.number().min(0).max(1), uses: z.number().int().positive() }),
 ])
 
 export const itemDefinitionSchema = z
