@@ -21,6 +21,6 @@
 - [Session Learnings 2026-06-26](session_learnings_2026-06-26.md) — Authored NPC Memories: schema ordering, Zod 4 API, trust visibility logic
 - [Schema Change Hygiene — Corridor Run](schema_change_hygiene_corridor.md) — Corridor-run schema change propagation checklist (enemyNpcId nullable, procedural generation updates)
 - [Feedback: Corridor-run Implementation — Schema Change Propagation](feedback_corridor_implementation.md) — 5 Korrektur-Iterationen vermieden durch enemyNpcId nullable, syncFoodSecurityToStock return value, procedural generation updates
-- [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste
+- [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste — Bead-Hygiene: Funktionalität existiert schon? vor "Implementieren"
 - [Terminology Audit: Coalition ist keine echte Koalition](terminology_audit_group_coalition.md) — Coalition sollte zu group umbenannt werden
 - [Terminology Cleanup 2026-06-26](terminology_cleanup_2026-06-26.md) — coalition→group, Mission→Quest, DateLocation strukturiert
