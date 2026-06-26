@@ -2,8 +2,8 @@ import type { GameState } from "../../../../domain"
 import { applyFoodProduction } from "../../applyFoodProduction"
 import { applyFoodConsumption } from "../../applyFoodConsumption"
 import { applyCorridorImport } from "../../applyCorridorImport"
-import { formCorridorCoalition } from "../../expeditions/formCorridorCoalition"
-import { applyCoalitionLifecycle } from "../../expeditions/applyCoalitionLifecycle"
+import { formCorridorGroup } from "../../expeditions/formCorridorGroup"
+import { applyGroupLifecycle } from "../../expeditions/applyGroupLifecycle"
 import { applyWorldCorridorClearance } from "../../applyCorridorImport"
 import type { Rng } from "../../seededRng"
 
@@ -15,9 +15,9 @@ export function handleCorridorPhase(state: GameState, rng: Rng): GameState {
   next = applyCorridorImport(next).state
   next = applyFoodConsumption(next)
 
-  // World-driven corridor clearance (coalition efforts)
-  next = formCorridorCoalition(next, rng)
-  next = applyCoalitionLifecycle(next, rng)
+  // World-driven corridor clearance (group efforts)
+  next = formCorridorGroup(next, rng)
+  next = applyGroupLifecycle(next, rng)
   next = applyWorldCorridorClearance(next, rng)
 
   return next

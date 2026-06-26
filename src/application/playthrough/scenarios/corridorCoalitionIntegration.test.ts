@@ -63,8 +63,8 @@ describe('corridorCoalition integration', () => {
     }
 
     // Coalition arrays should exist and be accessible
-    expect(Array.isArray(state.cityResources.activeCoalitions)).toBe(true)
-    expect(Array.isArray(state.cityResources.coalitionHistory)).toBe(true)
+    expect(Array.isArray(state.cityResources.activeGroups)).toBe(true)
+    expect(Array.isArray(state.cityResources.groupHistory)).toBe(true)
   })
 
   it('determinism: same seed produces same results', () => {
@@ -76,8 +76,8 @@ describe('corridorCoalition integration', () => {
       return {
         day: state.day,
         corridorStatus: state.cityResources.corridorStatus,
-        coalitionCount: state.cityResources.activeCoalitions.length,
-        coalitionHistoryCount: state.cityResources.coalitionHistory.length,
+        coalitionCount: state.cityResources.activeGroups.length,
+        groupHistoryCount: state.cityResources.groupHistory.length,
         eventCount: state.worldEvents.length,
       }
     }

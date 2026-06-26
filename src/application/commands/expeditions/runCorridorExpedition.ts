@@ -12,9 +12,9 @@ function simulateCombatRound(
   rng: () => number
 ): {
   round: number
-  coalitionDamageDealt: number
+  groupDamageDealt: number
   threatDamageDealt: number
-  coalitionCasualties: string[]
+  groupCasualties: string[]
   threatCasualties: string[]
 } {
   // Calculate hit chance based on power ratio
@@ -33,12 +33,12 @@ function simulateCombatRound(
   const threatDamage = threatHits ? Math.floor(10 + threatPower * 0.1 + rng() * 20) : 0
 
   // Determine casualties based on damage thresholds
-  const coalitionCasualties: string[] = []
+  const groupCasualties: string[] = []
   const threatCasualties: string[] = []
 
   // Simplified casualty logic - if damage exceeds threshold, mark casualty
   if (threatDamage > 50 && rng() > 0.5) {
-    coalitionCasualties.push(`npc-casualty-${roundNumber}`)
+    groupCasualties.push(`npc-casualty-${roundNumber}`)
   }
   if (coalitionDamage > 50 && rng() > 0.5) {
     threatCasualties.push(`threat-casualty-${roundNumber}`)
@@ -46,9 +46,9 @@ function simulateCombatRound(
 
   return {
     round: roundNumber,
-    coalitionDamageDealt: coalitionDamage,
+    groupDamageDealt: coalitionDamage,
     threatDamageDealt: threatDamage,
-    coalitionCasualties,
+    groupCasualties,
     threatCasualties,
   }
 }
@@ -56,7 +56,7 @@ function simulateCombatRound(
 /**
  * Calculate total power for a coalition based on member skills.
  */
-function calculateCoalitionPower(coalition: GameState['cityResources']['activeCoalitions'][0]): number {
+function calculateCoalitionPower(coalition: GameState['cityResources']['activeGroups'][0]): number {
   let power = 0
   for (const member of coalition.members) {
     // Find NPC in roster or worldNpcStates
@@ -89,7 +89,7 @@ function calculateThreatPower(threatIds: string[]): number {
  * Generate a random encounter for the expedition.
  */
 function generateEncounter(
-  coalition: GameState['cityResources']['activeCoalitions'][0],
+  coalition: GameState['cityResources']['activeGroups'][0],
   rng: () => number
 ): CorridorExpeditionEncounter {
   const allThreats = getAllThreats()
@@ -115,16 +115,16 @@ function generateEncounter(
  * tracking progress toward corridor clearance.
  *
  * @param state - Current game state
- * @param coalitionId - ID of the coalition to run expedition for
+ * @param groupId - ID of the coalition to run expedition for
  * @param rng - Seeded RNG function
  * @returns Updated game state with expedition results
  */
 export function runCorridorExpedition(
   state: GameState,
-  coalitionId: string,
+  groupId: string,
   rng: () => number
 ): GameState {
-  const coalition = state.cityResources.activeCoalitions.find(c => c.id === coalitionId)
+  const coalition = state.cityResources.activeGroups.find(c => c.id === groupId)
   if (!coalition) {
     return state
   }
@@ -148,7 +148,7 @@ export function runCorridorExpedition(
     roundResults.push(result)
 
     coalitionHealth -= result.threatDamageDealt
-    threatHealth -= result.coalitionDamageDealt
+    threatHealth -= result.groupDamageDealt
   }
 
   // Determine encounter result
@@ -167,15 +167,15 @@ export function runCorridorExpedition(
   const newProgress = Math.min(100, coalition.progress + progressGain)
 
   // Update coalition progress
-  const updatedCoalitions = state.cityResources.activeCoalitions.map(c =>
-    c.id === coalitionId ? { ...c, progress: newProgress } : c
+  const updatedCoalitions = state.cityResources.activeGroups.map(c =>
+    c.id === groupId ? { ...c, progress: newProgress } : c
   )
 
   return {
     ...state,
     cityResources: {
       ...state.cityResources,
-      activeCoalitions: updatedCoalitions,
+      activeGroups: updatedCoalitions,
     },
   }
 }

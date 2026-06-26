@@ -328,8 +328,8 @@ export const npcDefinitionSchema = z
  */
 export const NPC_INTENTION_TYPES = [
   // Original 10 types
-  'lead-coalition',
-  'support-coalition',
+  'lead-group',
+  'support-group',
   'scout-ahead',
   'resource-gather',
   'confront-rival',

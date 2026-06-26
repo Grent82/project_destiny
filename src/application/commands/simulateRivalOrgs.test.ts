@@ -15,7 +15,7 @@ const baseState: GameState = {
   districts: [],
   roster: [],
   inventory: [],
-  cityResources: { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeCoalitions: [], coalitionHistory: [] },
+  cityResources: { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [] },
   activityLog: [],
   selectedSquadNpcIds: [],
   activeCombat: null,

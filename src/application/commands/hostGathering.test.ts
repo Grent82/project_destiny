@@ -45,7 +45,7 @@ const createBaseState = (roster: NpcRuntimeState[] = [idaRhysRosterEntry]): Game
   ownedItems: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
-  cityResources: { foodSecurity: 62, foodStock: 620, foodCapacity: 1000, waterAccess: 70, materialStock: 50, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeCoalitions: [], coalitionHistory: [] },
+  cityResources: { foodSecurity: 62, foodStock: 620, foodCapacity: 1000, waterAccess: 70, materialStock: 50, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [] },
   activityLog: [],
   selectedSquadNpcIds: [],
   activeCombat: null,

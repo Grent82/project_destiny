@@ -102,41 +102,42 @@ export const expeditionStateSchema = z.object({
 export type ExpeditionState = z.infer<typeof expeditionStateSchema>
 
 /**
- * Status of a corridor coalition.
+ * Status of a corridor group.
  */
-export const coalitionStatusSchema = z.enum(['forming', 'departed', 'active', 'returning', 'concluded'])
-export type CoalitionStatus = z.infer<typeof coalitionStatusSchema>
+export const groupStatusSchema = z.enum(['forming', 'departed', 'active', 'returning', 'concluded'])
+export type GroupStatus = z.infer<typeof groupStatusSchema>
 
 /**
- * Role of a member in a corridor coalition.
+ * Role of a member in a corridor group.
  */
-export const coalitionRoleSchema = z.enum(['leader', 'vanguard', 'support', 'scout'])
-export type CoalitionRole = z.infer<typeof coalitionRoleSchema>
+export const groupRoleSchema = z.enum(['leader', 'vanguard', 'support', 'scout'])
+export type GroupRole = z.infer<typeof groupRoleSchema>
 
 /**
- * Membership status in a corridor coalition.
+ * Membership status in a corridor group.
  */
-export const coalitionMemberStatusSchema = z.enum(['committed', 'injured', 'dead', 'withdrew'])
-export type CoalitionMemberStatus = z.infer<typeof coalitionMemberStatusSchema>
+export const groupMemberStatusSchema = z.enum(['committed', 'injured', 'dead', 'withdrew'])
+export type GroupMemberStatus = z.infer<typeof groupMemberStatusSchema>
 
 /**
- * A member of a corridor coalition.
+ * A member of a corridor group.
  */
-export const coalitionMemberSchema = z.object({
+export const groupMemberSchema = z.object({
   npcId: entityIdSchema,
-  role: coalitionRoleSchema,
+  role: groupRoleSchema,
   contribution: nonNegativeIntegerSchema.default(0),
-  status: coalitionMemberStatusSchema.default('committed'),
+  status: groupMemberStatusSchema.default('committed'),
 })
-export type CoalitionMember = z.infer<typeof coalitionMemberSchema>
+export type GroupMember = z.infer<typeof groupMemberSchema>
 
 /**
- * A corridor coalition - a group of NPCs organized to clear the corridor.
+ * A corridor group - a group of NPCs organized to clear the corridor.
+ * Note: This is NOT a factional coalition - just an NPC group without faction structure.
  */
-export const corridorCoalitionSchema = z.object({
+export const corridorGroupSchema = z.object({
   id: entityIdSchema,
-  status: coalitionStatusSchema,
-  members: z.array(coalitionMemberSchema).default([]),
+  status: groupStatusSchema,
+  members: z.array(groupMemberSchema).default([]),
   formedDay: positiveIntegerSchema,
   targetSegment: z.string().min(1).default('main-corridor'),
   difficulty: positiveIntegerSchema.default(5),
@@ -147,7 +148,7 @@ export const corridorCoalitionSchema = z.object({
     rate: z.number().min(0).max(100),
   }).optional(),
 })
-export type CorridorCoalition = z.infer<typeof corridorCoalitionSchema>
+export type CorridorGroup = z.infer<typeof corridorGroupSchema>
 
 /**
  * Status of a corridor expedition.
@@ -160,9 +161,9 @@ export type ExpeditionStatus = z.infer<typeof expeditionStatusSchema>
  */
 export const expeditionCombatRoundSchema = z.object({
   round: positiveIntegerSchema,
-  coalitionDamageDealt: nonNegativeIntegerSchema.default(0),
+  groupDamageDealt: nonNegativeIntegerSchema.default(0),
   threatDamageDealt: nonNegativeIntegerSchema.default(0),
-  coalitionCasualties: z.array(entityIdSchema).default([]),
+  groupCasualties: z.array(entityIdSchema).default([]),
   threatCasualties: z.array(entityIdSchema).default([]),
 })
 export type ExpeditionCombatRound = z.infer<typeof expeditionCombatRoundSchema>
@@ -180,11 +181,11 @@ export const corridorExpeditionEncounterSchema = z.object({
 export type CorridorExpeditionEncounter = z.infer<typeof corridorExpeditionEncounterSchema>
 
 /**
- * A corridor expedition - the actual mission run by a coalition.
+ * A corridor expedition - the actual mission run by a group.
  */
 export const corridorExpeditionSchema = z.object({
   id: entityIdSchema,
-  coalitionId: entityIdSchema,
+  groupId: entityIdSchema,
   status: expeditionStatusSchema,
   segment: z.string().min(1).default('main-corridor'),
   encounters: z.array(corridorExpeditionEncounterSchema).default([]),

@@ -36,14 +36,14 @@ function calculateIntentionConfidence(npc: NpcRuntimeState, intentionType: NpcIn
   let confidence = 50 // Base confidence
 
   switch (intentionType) {
-    case 'lead-coalition':
+    case 'lead-group':
       // Leadership requires presence, ambition, and discipline
       confidence += (npc.attributes.presence - 50) / 2
       confidence += (npc.traits.ambition - 50) / 3
       confidence += (npc.traits.discipline - 50) / 3
       break
 
-    case 'support-coalition':
+    case 'support-group':
       // Support requires empathy, loyalty, and administration
       confidence += (npc.traits.empathy - 50) / 3
       confidence += (npc.traits.loyalty - 50) / 3
@@ -117,8 +117,8 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
   // Base urgency by intention type
   const baseUrgency: Record<NpcIntentionType, number> = {
     // Original 10 types
-    'lead-coalition': 5,
-    'support-coalition': 4,
+    'lead-group': 5,
+    'support-group': 4,
     'scout-ahead': 3,
     'resource-gather': 4,
     'confront-rival': 2,
@@ -196,7 +196,7 @@ function calculateIntentionPriority(npc: NpcRuntimeState, intentionType: NpcInte
 
   // Trait-based priority adjustments
   switch (intentionType) {
-    case 'lead-coalition':
+    case 'lead-group':
       if (npc.traits.ambition >= 70) priority += 1
       if (npc.traits.dominance >= 60) priority += 1
       break
@@ -218,7 +218,7 @@ function calculateIntentionPriority(npc: NpcRuntimeState, intentionType: NpcInte
   }
 
   // World state adjustments
-  if (state.cityResources.corridorStatus === 'blocked' && intentionType === 'lead-coalition') {
+  if (state.cityResources.corridorStatus === 'blocked' && intentionType === 'lead-group') {
     priority += 1
   }
 
@@ -353,37 +353,37 @@ function canExecuteIntention(npc: NpcRuntimeState): boolean {
 }
 
 /**
- * Lead Coalition Handler
- * NPC attempts to form or lead a coalition (e.g., for corridor clearance).
+ * Lead Group Handler
+ * NPC attempts to form or lead a group (e.g., for corridor clearance).
  */
-const leadCoalitionHandler: IntentionHandler = {
+const leadGroupHandler: IntentionHandler = {
   canExecute: (npc) => {
     if (!canExecuteIntention(npc)) return false
     // Requires high presence and ambition
     return npc.attributes.presence >= 60 && npc.traits.ambition >= 50
   },
   execute: (_npc, state) => {
-    // For now, this is a placeholder - actual coalition logic would go here
+    // For now, this is a placeholder - actual group logic would go here
     // In a full implementation, this would:
-    // - Check if a coalition already exists
+    // - Check if a group already exists
     // - Recruit other NPCs to join
-    // - Start a coalition expedition
+    // - Start a group expedition
     return state
   },
 }
 
 /**
- * Support Coalition Handler
- * NPC joins an existing coalition as support.
+ * Support Group Handler
+ * NPC joins an existing group as support.
  */
-const supportCoalitionHandler: IntentionHandler = {
+const supportGroupHandler: IntentionHandler = {
   canExecute: (npc) => {
     if (!canExecuteIntention(npc)) return false
     // Requires empathy and loyalty
     return npc.traits.empathy >= 40 || npc.traits.loyalty >= 50
   },
   execute: (_npc, state) => {
-    // Placeholder - would join existing coalition
+    // Placeholder - would join existing group
     return state
   },
 }
@@ -1047,8 +1047,8 @@ const careForInjuredHandler: IntentionHandler = {
 
 export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   // Original 10 types
-  'lead-coalition': leadCoalitionHandler,
-  'support-coalition': supportCoalitionHandler,
+  'lead-group': leadGroupHandler,
+  'support-group': supportGroupHandler,
   'scout-ahead': scoutAheadHandler,
   'resource-gather': resourceGatherHandler,
   'confront-rival': confrontRivalHandler,

@@ -5,7 +5,7 @@ import { publishEvent } from '../events/publishEvent'
  * Distribute loot to coalition members based on their contribution.
  */
 function distributeLoot(
-  coalition: GameState['cityResources']['activeCoalitions'][number],
+  coalition: GameState['cityResources']['activeGroups'][number],
   lootItems: string[],
   rng: () => number
 ): Record<string, string[]> {
@@ -49,23 +49,23 @@ function distributeLoot(
  * - Publishes events for downstream systems
  *
  * @param state - Current game state
- * @param coalitionId - ID of the coalition whose expedition to conclude
+ * @param groupId - ID of the coalition whose expedition to conclude
  * @param success - Whether the expedition was successful
  * @param rng - Seeded RNG function
  * @returns Updated game state with expedition concluded
  */
 export function concludeCorridorExpedition(
   state: GameState,
-  coalitionId: string,
+  groupId: string,
   success: boolean,
   rng: () => number
 ): GameState {
-  const coalitionIndex = state.cityResources.activeCoalitions.findIndex(c => c.id === coalitionId)
+  const coalitionIndex = state.cityResources.activeGroups.findIndex(c => c.id === groupId)
   if (coalitionIndex === -1) {
     return state
   }
 
-  const coalition = state.cityResources.activeCoalitions[coalitionIndex]
+  const coalition = state.cityResources.activeGroups[coalitionIndex]
   if (!coalition) {
     return state
   }
@@ -102,7 +102,7 @@ export function concludeCorridorExpedition(
       'corridor-disrupted',
       {
         source: 'coalition',
-        coalitionId: coalition.id,
+        groupId: coalition.id,
         expeditionSuccess: true,
       },
       'npc',
@@ -118,7 +118,7 @@ export function concludeCorridorExpedition(
       next,
       'coalition-progress',
       {
-        coalitionId: coalition.id,
+        groupId: coalition.id,
         progress: coalition.progress,
       },
       'npc',
@@ -133,7 +133,7 @@ export function concludeCorridorExpedition(
       next,
       'coalition-dissolved',
       {
-        coalitionId: coalition.id,
+        groupId: coalition.id,
         outcome: 'failure',
         casualties: casualties.length,
       },
@@ -152,7 +152,7 @@ export function concludeCorridorExpedition(
       next,
       'loot-distributed',
       {
-        coalitionId: coalition.id,
+        groupId: coalition.id,
         distribution: lootDistribution,
       },
       'system',
@@ -169,7 +169,7 @@ export function concludeCorridorExpedition(
       next,
       'coalition-casualties',
       {
-        coalitionId: coalition.id,
+        groupId: coalition.id,
         casualties,
       },
       'system',

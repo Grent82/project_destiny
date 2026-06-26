@@ -121,7 +121,7 @@ export function getTraitDrivenIntentions(
   // World state triggers
   if (state.cityResources.corridorStatus === 'blocked') {
     if (npc.attributes.presence >= 60 && npc.traits.ambition >= 50) {
-      intentions.push('lead-coalition')
+      intentions.push('lead-group')
     }
   }
 
@@ -133,8 +133,8 @@ export function getTraitDrivenIntentions(
 
   // Trait-based intention selection using fuzzy logic
   const traitScores: Record<NpcIntentionType, number> = {
-    'lead-coalition': npc.traits.ambition + npc.attributes.presence + npc.traits.discipline,
-    'support-coalition': npc.traits.empathy + npc.traits.loyalty + npc.skills.administration,
+    'lead-group': npc.traits.ambition + npc.attributes.presence + npc.traits.discipline,
+    'support-group': npc.traits.empathy + npc.traits.loyalty + npc.skills.administration,
     'scout-ahead': npc.attributes.perception + npc.skills.survival + npc.traits.curiosity,
     'resource-gather': npc.skills.survival + npc.attributes.endurance + npc.traits.prudence,
     'confront-rival': npc.attributes.might + npc.skills.melee + npc.traits.ruthlessness,

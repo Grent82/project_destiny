@@ -17,7 +17,7 @@ describe('runCorridorExpedition', () => {
     cityResources: {
       ...initialGameStateSnapshot.cityResources,
       corridorStatus: 'blocked' as const,
-      activeCoalitions: [
+      activeGroups: [
         {
           id: 'coalition-test',
           status: 'departed' as const,
@@ -49,7 +49,7 @@ describe('runCorridorExpedition', () => {
     const rng = makeRng(42)
     const result = runCorridorExpedition(state, 'coalition-test', rng)
 
-    const coalition = result.cityResources.activeCoalitions[0]
+    const coalition = result.cityResources.activeGroups[0]
     expect(coalition).toBeDefined()
     expect(coalition!.progress).toBeGreaterThan(0)
   })
@@ -59,9 +59,9 @@ describe('runCorridorExpedition', () => {
       ...makeStateWithCoalition(),
       cityResources: {
         ...makeStateWithCoalition().cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
-            ...makeStateWithCoalition().cityResources.activeCoalitions[0]!,
+            ...makeStateWithCoalition().cityResources.activeGroups[0]!,
             progress: 90,
           },
         ],
@@ -70,7 +70,7 @@ describe('runCorridorExpedition', () => {
     const rng = makeRng(42)
     const result = runCorridorExpedition(state, 'coalition-test', rng)
 
-    const coalition = result.cityResources.activeCoalitions[0]
+    const coalition = result.cityResources.activeGroups[0]
     expect(coalition!.progress).toBeLessThanOrEqual(100)
   })
 
@@ -79,9 +79,9 @@ describe('runCorridorExpedition', () => {
       ...makeStateWithCoalition(),
       cityResources: {
         ...makeStateWithCoalition().cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
-            ...makeStateWithCoalition().cityResources.activeCoalitions[0]!,
+            ...makeStateWithCoalition().cityResources.activeGroups[0]!,
             difficulty: 10,
           },
         ],
@@ -90,7 +90,7 @@ describe('runCorridorExpedition', () => {
     const rng = makeRng(42)
     const result = runCorridorExpedition(state, 'coalition-test', rng)
 
-    const coalition = result.cityResources.activeCoalitions[0]
+    const coalition = result.cityResources.activeGroups[0]
     expect(coalition).toBeDefined()
   })
 
@@ -101,8 +101,8 @@ describe('runCorridorExpedition', () => {
     const result1 = runCorridorExpedition(state, 'coalition-test', rng1)
     const result2 = runCorridorExpedition(state, 'coalition-test', rng2)
 
-    expect(result1.cityResources.activeCoalitions[0]!.progress).toBe(
-      result2.cityResources.activeCoalitions[0]!.progress
+    expect(result1.cityResources.activeGroups[0]!.progress).toBe(
+      result2.cityResources.activeGroups[0]!.progress
     )
   })
 })

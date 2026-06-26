@@ -17,7 +17,7 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     districts: overrides.districts ?? [],
     roster: overrides.roster ?? [],
     inventory: overrides.inventory ?? [],
-    cityResources: overrides.cityResources ?? { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeCoalitions: [], coalitionHistory: [] },
+    cityResources: overrides.cityResources ?? { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [] },
     activityLog: overrides.activityLog ?? [],
     selectedSquadNpcIds: overrides.selectedSquadNpcIds ?? [],
     activeCombat: overrides.activeCombat ?? null,

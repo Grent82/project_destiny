@@ -50,8 +50,8 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
       materialStock: 80,
       corridorStatus: 'open',
       corridorClearanceProgressDays: 0,
-      activeCoalitions: [],
-      coalitionHistory: [],
+      activeGroups: [],
+      groupHistory: [],
     },
     factionStandings: {
       'faction-civic-compact': 10,
@@ -474,13 +474,13 @@ describe('applyOutcomes', () => {
   })
 
   it('adjustCityResource clamps at 0', () => {
-    const state = makeState({ cityResources: { foodSecurity: 5, foodStock: 50, foodCapacity: 1000, waterAccess: 80, materialStock: 80, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeCoalitions: [], coalitionHistory: [] } })
+    const state = makeState({ cityResources: { foodSecurity: 5, foodStock: 50, foodCapacity: 1000, waterAccess: 80, materialStock: 80, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [] } })
     const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: -20 }])
     expect(next.cityResources.foodSecurity).toBe(0)
   })
 
   it('adjustCityResource clamps at 100', () => {
-    const state = makeState({ cityResources: { foodSecurity: 95, foodStock: 950, foodCapacity: 1000, waterAccess: 80, materialStock: 80, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeCoalitions: [], coalitionHistory: [] } })
+    const state = makeState({ cityResources: { foodSecurity: 95, foodStock: 950, foodCapacity: 1000, waterAccess: 80, materialStock: 80, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [] } })
     const next = applyOutcomes(state, [{ type: 'adjustCityResource', target: 'foodSecurity', delta: 20 }])
     expect(next.cityResources.foodSecurity).toBe(100)
   })

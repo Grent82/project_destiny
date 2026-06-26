@@ -22,3 +22,4 @@
 - [Schema Change Hygiene — Corridor Run](schema_change_hygiene_corridor.md) — Corridor-run schema change propagation checklist (enemyNpcId nullable, procedural generation updates)
 - [Feedback: Corridor-run Implementation — Schema Change Propagation](feedback_corridor_implementation.md) — 5 Korrektur-Iterationen vermieden durch enemyNpcId nullable, syncFoodSecurityToStock return value, procedural generation updates
 - [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste
+- [Terminology Audit: Coalition ist keine echte Koalition](terminology_audit_group_coalition.md) — Coalition sollte zu group umbenannt werden

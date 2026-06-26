@@ -14,7 +14,7 @@ describe('ML Weight System', () => {
   describe('DEFAULT_INTENTION_WEIGHTS', () => {
     it('has weights for all 35 intention types', () => {
       const expectedTypes = [
-        'lead-coalition', 'support-coalition', 'scout-ahead', 'resource-gather',
+        'lead-group', 'support-group', 'scout-ahead', 'resource-gather',
         'confront-rival', 'protect-house', 'investigate-threat', 'patrol-district',
         'seek-employment', 'socialize',
         'eat-meal', 'drink', 'sleep', 'rest', 'groom',
@@ -52,7 +52,7 @@ describe('ML Weight System', () => {
         skills: { negotiation: 50, survival: 50, melee: 50 },
         traits: { ambition: 50, empathy: 50, discipline: 50 },
       }
-      const result = calculateWeightedConfidence(npc, 'lead-coalition', DEFAULT_INTENTION_WEIGHTS['lead-coalition'])
+      const result = calculateWeightedConfidence(npc, 'lead-group', DEFAULT_INTENTION_WEIGHTS['lead-group'])
       expect(result).toBe(50) // Base score for average values
     })
 
@@ -62,7 +62,7 @@ describe('ML Weight System', () => {
         skills: { negotiation: 50, survival: 50, melee: 50 },
         traits: { ambition: 75, empathy: 50, discipline: 60 },
       }
-      const result = calculateWeightedConfidence(npc, 'lead-coalition', DEFAULT_INTENTION_WEIGHTS['lead-coalition'])
+      const result = calculateWeightedConfidence(npc, 'lead-group', DEFAULT_INTENTION_WEIGHTS['lead-group'])
       expect(result).toBeGreaterThan(50)
     })
 
@@ -72,7 +72,7 @@ describe('ML Weight System', () => {
         skills: { negotiation: 30, survival: 50, melee: 50 },
         traits: { ambition: 30, empathy: 50, discipline: 40 },
       }
-      const result = calculateWeightedConfidence(npc, 'lead-coalition', DEFAULT_INTENTION_WEIGHTS['lead-coalition'])
+      const result = calculateWeightedConfidence(npc, 'lead-group', DEFAULT_INTENTION_WEIGHTS['lead-group'])
       expect(result).toBeLessThan(50)
     })
 
@@ -82,7 +82,7 @@ describe('ML Weight System', () => {
         skills: { negotiation: 0, survival: 0, melee: 0 },
         traits: { ambition: 0, empathy: 0, discipline: 0 },
       }
-      const result = calculateWeightedConfidence(weakNpc, 'lead-coalition', DEFAULT_INTENTION_WEIGHTS['lead-coalition'])
+      const result = calculateWeightedConfidence(weakNpc, 'lead-group', DEFAULT_INTENTION_WEIGHTS['lead-group'])
       expect(result).toBeGreaterThanOrEqual(0)
       expect(result).toBeLessThanOrEqual(100)
     })

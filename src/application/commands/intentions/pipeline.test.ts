@@ -63,7 +63,7 @@ describe('Intention Generation Pipeline', () => {
     districtTension: { 'district-the-pale': 50 },
     cityResources: {
       foodSecurity: 60, foodStock: 100, foodCapacity: 200, waterAccess: 50, materialStock: 100,
-      corridorStatus: 'open', corridorClearanceProgressDays: 0, activeCoalitions: [], coalitionHistory: [],
+      corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [],
     },
     roster: [],
     relationships: {},
@@ -100,9 +100,9 @@ describe('Intention Generation Pipeline', () => {
   })
 
   describe('getTraitDrivenIntentions', () => {
-    it('returns lead-coalition for high presence and ambition', () => {
+    it('returns lead-group for high presence and ambition', () => {
       const npc = createTestNpc({}, { ambition: 70, discipline: 65 }, { presence: 75 })
-      expect(getTraitDrivenIntentions(npc, createTestState() as unknown as any)).toContain('lead-coalition')
+      expect(getTraitDrivenIntentions(npc, createTestState() as unknown as any)).toContain('lead-group')
     })
     it('returns confront-rival for high might and melee', () => {
       const npc = createTestNpc({}, {}, { might: 70 }, { melee: 70 })

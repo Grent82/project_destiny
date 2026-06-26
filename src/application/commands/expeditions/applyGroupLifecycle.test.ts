@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../../store/initialGameState'
-import { applyCoalitionLifecycle } from './applyCoalitionLifecycle'
+import { applyGroupLifecycle } from './applyGroupLifecycle'
 
-describe('applyCoalitionLifecycle', () => {
+describe('applyGroupLifecycle', () => {
   const makeRng = (seed: number) => {
     let state = seed
     return () => {
@@ -15,9 +15,9 @@ describe('applyCoalitionLifecycle', () => {
   it('does nothing when no active coalitions', () => {
     const state = initialGameStateSnapshot
     const rng = makeRng(42)
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
-    expect(result.cityResources.activeCoalitions).toHaveLength(0)
+    expect(result.cityResources.activeGroups).toHaveLength(0)
   })
 
   it('transitions forming coalition to departed after 2 days', () => {
@@ -26,7 +26,7 @@ describe('applyCoalitionLifecycle', () => {
       day: 5,
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'forming' as const,
@@ -43,9 +43,9 @@ describe('applyCoalitionLifecycle', () => {
       },
     }
     const rng = makeRng(42)
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
-    const coalition = result.cityResources.activeCoalitions[0]!
+    const coalition = result.cityResources.activeGroups[0]!
     expect(coalition.status).toBe('departed')
   })
 
@@ -55,7 +55,7 @@ describe('applyCoalitionLifecycle', () => {
       day: 5,
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'departed' as const,
@@ -72,9 +72,9 @@ describe('applyCoalitionLifecycle', () => {
       },
     }
     const rng = () => 0.5 // Medium progress
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
-    const coalition = result.cityResources.activeCoalitions[0]!
+    const coalition = result.cityResources.activeGroups[0]!
     // Progress should advance but not reach 100
     expect(coalition.progress).toBeGreaterThan(30)
     expect(coalition.progress).toBeLessThan(100)
@@ -86,7 +86,7 @@ describe('applyCoalitionLifecycle', () => {
       day: 5,
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'returning' as const,
@@ -103,10 +103,10 @@ describe('applyCoalitionLifecycle', () => {
       },
     }
     const rng = makeRng(42)
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
-    expect(result.cityResources.activeCoalitions).toHaveLength(0)
-    expect(result.cityResources.coalitionHistory).toHaveLength(1)
+    expect(result.cityResources.activeGroups).toHaveLength(0)
+    expect(result.cityResources.groupHistory).toHaveLength(1)
   })
 
   it('updates corridor status when coalition succeeds', () => {
@@ -116,7 +116,7 @@ describe('applyCoalitionLifecycle', () => {
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
         corridorStatus: 'blocked' as const,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'returning' as const,
@@ -133,7 +133,7 @@ describe('applyCoalitionLifecycle', () => {
       },
     }
     const rng = makeRng(42)
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
     expect(result.cityResources.corridorStatus).toBe('disrupted')
   })
@@ -144,7 +144,7 @@ describe('applyCoalitionLifecycle', () => {
       day: 5,
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'forming' as const,
@@ -161,7 +161,7 @@ describe('applyCoalitionLifecycle', () => {
       },
     }
     const rng = makeRng(42)
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
     const expeditionEvents = result.worldEvents.filter(
       (e: { type: string }) => e.type === 'expedition-started' || e.type === 'expedition-complete'
@@ -176,7 +176,7 @@ describe('applyCoalitionLifecycle', () => {
       day: 5,
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'concluded' as const,
@@ -193,9 +193,9 @@ describe('applyCoalitionLifecycle', () => {
       },
     }
     const rng = makeRng(42)
-    const result = applyCoalitionLifecycle(state, rng)
+    const result = applyGroupLifecycle(state, rng)
 
-    expect(result.cityResources.activeCoalitions).toHaveLength(0)
-    expect(result.cityResources.coalitionHistory).toHaveLength(1)
+    expect(result.cityResources.activeGroups).toHaveLength(0)
+    expect(result.cityResources.groupHistory).toHaveLength(1)
   })
 })

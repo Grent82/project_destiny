@@ -45,12 +45,12 @@ export interface IntentionProfile {
  * Used as baseline for new NPCs or intentions they haven't tried yet.
  */
 export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeightConfig> = {
-  'lead-coalition': {
+  'lead-group': {
     attributeWeights: { presence: 1.2, endurance: 0.8 },
     skillWeights: { negotiation: 1.0 },
     traitWeights: { ambition: 1.3, discipline: 1.0 },
   },
-  'support-coalition': {
+  'support-group': {
     attributeWeights: { presence: 0.8 },
     skillWeights: { administration: 1.0 },
     traitWeights: { empathy: 1.3, loyalty: 1.2 },

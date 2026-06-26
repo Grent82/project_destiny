@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { activeCombatStateSchema } from '../combat/contracts'
 import { rumorSchema, bondVisibilitySchema } from '../rumors/contracts'
-import { expeditionStateSchema, corridorCoalitionSchema } from '../expedition/contracts'
+import { expeditionStateSchema, corridorGroupSchema } from '../expedition/contracts'
 import { worldEventSchema } from '../world/events'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
 import { intimacyStageSchema, relationshipAxesSchema as gameRelationshipAxesSchema } from '../relationships/contracts'
@@ -68,8 +68,8 @@ export const cityResourcesSchema = z
     materialStock: z.number().min(0).max(100),
     corridorStatus: corridorStatusSchema,
     corridorClearanceProgressDays: nonNegativeIntegerSchema.default(0),
-    activeCoalitions: z.array(corridorCoalitionSchema).default([]),
-    coalitionHistory: z.array(corridorCoalitionSchema).default([]),
+    activeGroups: z.array(corridorGroupSchema).default([]),
+    groupHistory: z.array(corridorGroupSchema).default([]),
   })
   .strict()
 

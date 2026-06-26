@@ -1,5 +1,5 @@
 import type { GameState } from '../../../domain/game/contracts'
-import type { CoalitionMember, CoalitionRole } from '../../../domain/expedition/contracts'
+import type { GroupMember, GroupRole } from '../../../domain/expedition/contracts'
 import { publishEvent } from '../events/publishEvent'
 import { appendActivityLogEntry } from '../activityLog'
 
@@ -64,14 +64,14 @@ function findEligibleNPCs(state: GameState): EligibleNPC[] {
 /**
  * Assign roles to coalition members based on their stats.
  */
-function assignRoles(members: EligibleNPC[]): CoalitionMember[] {
+function assignRoles(members: EligibleNPC[]): GroupMember[] {
   const sorted = [...members].sort((a, b) => {
     const aPower = a.melee + a.security + a.discipline
     const bPower = b.melee + b.security + b.discipline
     return bPower - aPower
   })
 
-  const roles: CoalitionRole[] = ['leader', 'vanguard', 'support', 'scout']
+  const roles: GroupRole[] = ['leader', 'vanguard', 'support', 'scout']
 
   return sorted.slice(0, 5).map((npc, index) => ({
     npcId: npc.npcId,
@@ -82,7 +82,7 @@ function assignRoles(members: EligibleNPC[]): CoalitionMember[] {
 }
 
 /**
- * formCorridorCoalition: Creates a new corridor coalition when the corridor is blocked.
+ * formCorridorGroup: Creates a new corridor coalition when the corridor is blocked.
  *
  * This is the core Living World feature - NPCs self-organizing to solve world problems.
  *
@@ -90,7 +90,7 @@ function assignRoles(members: EligibleNPC[]): CoalitionMember[] {
  * @param rng - Seeded RNG function
  * @returns Updated game state with new coalition
  */
-export function formCorridorCoalition(
+export function formCorridorGroup(
   state: GameState,
   rng: () => number
 ): GameState {
@@ -100,7 +100,7 @@ export function formCorridorCoalition(
   }
 
   // Only form one coalition at a time
-  if (state.cityResources.activeCoalitions.length > 0) {
+  if (state.cityResources.activeGroups.length > 0) {
     return state
   }
 
@@ -136,12 +136,12 @@ export function formCorridorCoalition(
     estimatedReturnDay,
   }
 
-  // Add coalition to activeCoalitions
+  // Add coalition to activeGroups
   const next = {
     ...state,
     cityResources: {
       ...state.cityResources,
-      activeCoalitions: [...state.cityResources.activeCoalitions, newCoalition],
+      activeGroups: [...state.cityResources.activeGroups, newCoalition],
     },
   }
 
@@ -150,7 +150,7 @@ export function formCorridorCoalition(
     next,
     'coalition-formed',
     {
-      coalitionId: newCoalition.id,
+      groupId: newCoalition.id,
       memberCount: members.length,
       difficulty,
       estimatedReturnDay,
@@ -167,7 +167,7 @@ export function formCorridorCoalition(
 }
 
 /**
- * Processes NPCs with lead-coalition intentions and gives them priority for coalition leadership.
+ * Processes NPCs with lead-group intentions and gives them priority for coalition leadership.
  * This integrates the intention system with corridor coalition formation.
  */
 export function processLeadCoalitionIntentions(state: GameState): GameState {
@@ -177,14 +177,14 @@ export function processLeadCoalitionIntentions(state: GameState): GameState {
   }
 
   // Only process if no active coalition exists
-  if (state.cityResources.activeCoalitions.length > 0) {
+  if (state.cityResources.activeGroups.length > 0) {
     return state
   }
 
-  // Find NPCs with lead-coalition intentions
+  // Find NPCs with lead-group intentions
   const leadIntentions = state.roster.filter(
     (npc) =>
-      npc.currentIntention?.type === 'lead-coalition' &&
+      npc.currentIntention?.type === 'lead-group' &&
       npc.assignment === 'idle' &&
       npc.currentDirectiveId === null,
   )
@@ -207,19 +207,19 @@ export function processLeadCoalitionIntentions(state: GameState): GameState {
 }
 
 /**
- * Processes NPCs with support-coalition intentions and adds them to existing coalitions.
+ * Processes NPCs with support-group intentions and adds them to existing coalitions.
  * This integrates the intention system with corridor coalition formation.
  */
 export function processSupportCoalitionIntentions(state: GameState): GameState {
   // Only process if there are active coalitions
-  if (state.cityResources.activeCoalitions.length === 0) {
+  if (state.cityResources.activeGroups.length === 0) {
     return state
   }
 
-  // Find NPCs with support-coalition intentions
+  // Find NPCs with support-group intentions
   const supportIntentions = state.roster.filter(
     (npc) =>
-      npc.currentIntention?.type === 'support-coalition' &&
+      npc.currentIntention?.type === 'support-group' &&
       npc.assignment === 'idle' &&
       npc.currentDirectiveId === null,
   )

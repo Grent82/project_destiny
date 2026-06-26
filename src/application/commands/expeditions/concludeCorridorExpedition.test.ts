@@ -17,7 +17,7 @@ describe('concludeCorridorExpedition', () => {
     cityResources: {
       ...initialGameStateSnapshot.cityResources,
       corridorStatus: 'blocked' as const,
-      activeCoalitions: [
+      activeGroups: [
         {
           id: 'coalition-test',
           status: 'active' as const,

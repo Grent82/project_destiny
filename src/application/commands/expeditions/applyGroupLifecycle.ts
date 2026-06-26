@@ -1,14 +1,14 @@
 import type { GameState } from '../../../domain/game/contracts'
-import type { CoalitionStatus } from '../../../domain/expedition/contracts'
+import type { GroupStatus } from '../../../domain/expedition/contracts'
 import { publishEvent } from '../events/publishEvent'
 
 /**
  * Transition a coalition to a new status.
  */
-function transitionCoalitionStatus(
-  coalition: GameState['cityResources']['activeCoalitions'][number],
-  newStatus: CoalitionStatus
-): GameState['cityResources']['activeCoalitions'][number] {
+function transitionGroupStatus(
+  coalition: GameState['cityResources']['activeGroups'][number],
+  newStatus: GroupStatus
+): GameState['cityResources']['activeGroups'][number] {
   return {
     ...coalition,
     status: newStatus,
@@ -19,9 +19,9 @@ function transitionCoalitionStatus(
  * Simulate a day of expedition progress for a coalition.
  */
 function advanceCoalitionProgress(
-  coalition: GameState['cityResources']['activeCoalitions'][number],
+  coalition: GameState['cityResources']['activeGroups'][number],
   rng: () => number
-): GameState['cityResources']['activeCoalitions'][number] {
+): GameState['cityResources']['activeGroups'][number] {
   // Base progress per day: 10-20% depending on difficulty
   const baseProgress = 10 + Math.floor(rng() * 10)
   const difficultyModifier = Math.max(0.3, 1 - coalition.difficulty / 20)
@@ -36,7 +36,7 @@ function advanceCoalitionProgress(
 }
 
 /**
- * applyCoalitionLifecycle: Processes daily coalition state transitions.
+ * applyGroupLifecycle: Processes daily coalition state transitions.
  *
  * Called each day in endDay orchestration.
  *
@@ -50,12 +50,12 @@ function advanceCoalitionProgress(
  * @param rng - Seeded RNG function
  * @returns Updated game state with processed coalitions
  */
-export function applyCoalitionLifecycle(
+export function applyGroupLifecycle(
   state: GameState,
   rng: () => number
 ): GameState {
   let next = state
-  const coalitions = [...state.cityResources.activeCoalitions]
+  const coalitions = [...state.cityResources.activeGroups]
 
   for (let i = 0; i < coalitions.length; i++) {
     const coalition = coalitions[i]
@@ -65,13 +65,13 @@ export function applyCoalitionLifecycle(
       case 'forming':
         // Transition to departed after 2 days
         if (daysSinceFormation >= 2) {
-          coalitions[i] = transitionCoalitionStatus(coalition, 'departed')
+          coalitions[i] = transitionGroupStatus(coalition, 'departed')
 
           next = publishEvent(
             next,
             'expedition-started',
             {
-              coalitionId: coalition.id,
+              groupId: coalition.id,
               targetSegment: coalition.targetSegment,
               difficulty: coalition.difficulty,
             },
@@ -104,14 +104,14 @@ export function applyCoalitionLifecycle(
           }
 
           // Move to history immediately (coalition returns at end of day)
-          const returnedCoalition = transitionCoalitionStatus(updatedCoalition, 'returning')
+          const returnedCoalition = transitionGroupStatus(updatedCoalition, 'returning')
 
           next = {
             ...next,
             cityResources: {
               ...next.cityResources,
-              activeCoalitions: next.cityResources.activeCoalitions.filter((_concluded, idx: number) => idx !== i),
-              coalitionHistory: [...next.cityResources.coalitionHistory, returnedCoalition],
+              activeGroups: next.cityResources.activeGroups.filter((_concluded, idx: number) => idx !== i),
+              groupHistory: [...next.cityResources.groupHistory, returnedCoalition],
             },
           }
 
@@ -119,7 +119,7 @@ export function applyCoalitionLifecycle(
             next,
             'expedition-complete',
             {
-              coalitionId: coalition.id,
+              groupId: coalition.id,
               success: true,
               progress: 100,
             },
@@ -135,7 +135,7 @@ export function applyCoalitionLifecycle(
             'corridor-disrupted',
             {
               source: 'coalition',
-              coalitionId: coalition.id,
+              groupId: coalition.id,
             },
             'npc',
             {
@@ -149,7 +149,7 @@ export function applyCoalitionLifecycle(
             next,
             'coalition-dissolved',
             {
-              coalitionId: coalition.id,
+              groupId: coalition.id,
               outcome: 'success',
             },
             'system',
@@ -182,7 +182,7 @@ export function applyCoalitionLifecycle(
             'corridor-disrupted',
             {
               source: 'coalition',
-              coalitionId: returnedCoalition.id,
+              groupId: returnedCoalition.id,
             },
             'npc',
             {
@@ -201,7 +201,7 @@ export function applyCoalitionLifecycle(
           ...next,
           cityResources: {
             ...next.cityResources,
-            coalitionHistory: [...next.cityResources.coalitionHistory, returnedCoalition],
+            groupHistory: [...next.cityResources.groupHistory, returnedCoalition],
           },
         }
 
@@ -209,7 +209,7 @@ export function applyCoalitionLifecycle(
           next,
           'coalition-dissolved',
           {
-            coalitionId: returnedCoalition.id,
+            groupId: returnedCoalition.id,
             outcome: returnedCoalition.progress >= 100 ? 'success' : 'partial',
           },
           'system',
@@ -228,8 +228,8 @@ export function applyCoalitionLifecycle(
           ...next,
           cityResources: {
             ...next.cityResources,
-            activeCoalitions: next.cityResources.activeCoalitions.filter((_concluded, idx: number) => idx !== i),
-            coalitionHistory: [...next.cityResources.coalitionHistory, concludedCoalition],
+            activeGroups: next.cityResources.activeGroups.filter((_concluded, idx: number) => idx !== i),
+            groupHistory: [...next.cityResources.groupHistory, concludedCoalition],
           },
         }
         break
@@ -243,7 +243,7 @@ export function applyCoalitionLifecycle(
     ...next,
     cityResources: {
       ...next.cityResources,
-      activeCoalitions: coalitions.filter((c) => c.status !== 'concluded'),
+      activeGroups: coalitions.filter((c) => c.status !== 'concluded'),
     },
   }
 

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../../store/initialGameState'
-import { formCorridorCoalition } from './formCorridorCoalition'
+import { formCorridorGroup } from './formCorridorGroup'
 
-describe('formCorridorCoalition', () => {
+describe('formCorridorGroup', () => {
   const makeRng = (seed: number) => {
     let state = seed
     return () => {
@@ -21,9 +21,9 @@ describe('formCorridorCoalition', () => {
       },
     }
     const rng = makeRng(42)
-    const result = formCorridorCoalition(state, rng)
+    const result = formCorridorGroup(state, rng)
 
-    expect(result.cityResources.activeCoalitions).toHaveLength(0)
+    expect(result.cityResources.activeGroups).toHaveLength(0)
   })
 
   it('does not form coalition when one already exists', () => {
@@ -32,7 +32,7 @@ describe('formCorridorCoalition', () => {
       cityResources: {
         ...initialGameStateSnapshot.cityResources,
         corridorStatus: 'blocked' as const,
-        activeCoalitions: [
+        activeGroups: [
           {
             id: 'test-coalition',
             status: 'forming' as const,
@@ -47,9 +47,9 @@ describe('formCorridorCoalition', () => {
       },
     }
     const rng = makeRng(42)
-    const result = formCorridorCoalition(state, rng)
+    const result = formCorridorGroup(state, rng)
 
-    expect(result.cityResources.activeCoalitions).toHaveLength(1)
+    expect(result.cityResources.activeGroups).toHaveLength(1)
   })
 
   it('requires eligible NPCs to form coalition', () => {
@@ -64,10 +64,10 @@ describe('formCorridorCoalition', () => {
       worldNpcStates: [],
     }
     const rng = makeRng(42)
-    const result = formCorridorCoalition(state, rng)
+    const result = formCorridorGroup(state, rng)
 
     // Need at least 2 eligible NPCs
-    expect(result.cityResources.activeCoalitions).toHaveLength(0)
+    expect(result.cityResources.activeGroups).toHaveLength(0)
   })
 
   it('forms coalition when eligible NPCs exist', () => {
@@ -98,10 +98,10 @@ describe('formCorridorCoalition', () => {
       worldNpcStates: [],
     }
     const rng = makeRng(42)
-    const result = formCorridorCoalition(state, rng)
+    const result = formCorridorGroup(state, rng)
 
-    expect(result.cityResources.activeCoalitions).toHaveLength(1)
-    const coalition = result.cityResources.activeCoalitions[0]!
+    expect(result.cityResources.activeGroups).toHaveLength(1)
+    const coalition = result.cityResources.activeGroups[0]!
     expect(coalition.status).toBe('forming')
     expect(coalition.members.length).toBeGreaterThanOrEqual(2)
   })
@@ -126,10 +126,10 @@ describe('formCorridorCoalition', () => {
       worldNpcStates: [],
     }
     const rng = makeRng(42)
-    const result = formCorridorCoalition(state, rng)
+    const result = formCorridorGroup(state, rng)
 
-    if (result.cityResources.activeCoalitions.length > 0) {
-      const coalition = result.cityResources.activeCoalitions[0]!
+    if (result.cityResources.activeGroups.length > 0) {
+      const coalition = result.cityResources.activeGroups[0]!
       const leader = coalition.members.find((m: { role: string }) => m.role === 'leader')
       expect(leader?.npcId).toBe('npc-elite')
     }
@@ -155,12 +155,12 @@ describe('formCorridorCoalition', () => {
 
     const rng1 = makeRng(42)
     const rng2 = makeRng(42)
-    const resultBlocked = formCorridorCoalition(makeState('blocked'), rng1)
-    const resultDisrupted = formCorridorCoalition(makeState('disrupted'), rng2)
+    const resultBlocked = formCorridorGroup(makeState('blocked'), rng1)
+    const resultDisrupted = formCorridorGroup(makeState('disrupted'), rng2)
 
-    if (resultBlocked.cityResources.activeCoalitions.length > 0 && resultDisrupted.cityResources.activeCoalitions.length > 0) {
-      const blockedCoalition = resultBlocked.cityResources.activeCoalitions[0]!
-      const disruptedCoalition = resultDisrupted.cityResources.activeCoalitions[0]!
+    if (resultBlocked.cityResources.activeGroups.length > 0 && resultDisrupted.cityResources.activeGroups.length > 0) {
+      const blockedCoalition = resultBlocked.cityResources.activeGroups[0]!
+      const disruptedCoalition = resultDisrupted.cityResources.activeGroups[0]!
 
       expect(blockedCoalition.difficulty).toBe(8)
       expect(disruptedCoalition.difficulty).toBe(5)
