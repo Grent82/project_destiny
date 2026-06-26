@@ -1,6 +1,7 @@
 import type { GameState, NpcIntention, NpcIntentionType } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { npcIntentionSchema } from '../../domain/npc/contracts'
+import { generateNpcIntention } from './intentions/pipeline'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -229,54 +230,11 @@ function calculateIntentionPriority(npc: NpcRuntimeState, intentionType: NpcInte
 }
 
 /**
- * Determines the most suitable intention type for an NPC based on their profile and world state.
+ * Legacy function - no longer used by the new pipeline-based intention system.
+ * Kept for potential future reference or migration.
+ * TODO: Remove in future refactoring.
  */
-function determineIntentionType(npc: NpcRuntimeState, state: GameState): NpcIntentionType | null {
-  // World state first - some intentions are triggered by world conditions
-  if (state.cityResources.corridorStatus === 'blocked') {
-    // High priority to lead coalition if capable
-    if (npc.attributes.presence >= 60 && npc.traits.ambition >= 50) {
-      return 'lead-coalition'
-    }
-  }
-
-  if (state.cityResources.foodSecurity < 40) {
-    // Resource gathering becomes more important
-    if (npc.skills.survival >= 50) {
-      return 'resource-gather'
-    }
-  }
-
-  // Trait-based intention selection
-  const traitScores = {
-    'lead-coalition': npc.traits.ambition + npc.attributes.presence + npc.traits.discipline,
-    'support-coalition': npc.traits.empathy + npc.traits.loyalty + npc.skills.administration,
-    'scout-ahead': npc.attributes.perception + npc.skills.survival + npc.traits.curiosity,
-    'resource-gather': npc.skills.survival + npc.attributes.endurance + npc.traits.prudence,
-    'confront-rival': npc.attributes.might + npc.skills.melee + npc.traits.ruthlessness,
-    'protect-house': npc.attributes.endurance + npc.traits.discipline + npc.traits.loyalty,
-    'investigate-threat': npc.attributes.intellect + npc.skills.intrigue + npc.traits.curiosity,
-    'patrol-district': npc.attributes.endurance + npc.skills.survival + npc.attributes.perception,
-    'seek-employment': npc.skills.negotiation + npc.traits.ambition + npc.skills.administration,
-    'socialize': npc.attributes.presence + npc.traits.empathy + npc.skills.performance,
-  }
-
-  // Find the highest scoring intention type
-  let bestType: NpcIntentionType | null = null
-  let bestScore = 0
-
-  for (const [type, score] of Object.entries(traitScores)) {
-    if (score > bestScore) {
-      bestScore = score
-      bestType = type as NpcIntentionType
-    }
-  }
-
-  // Only return an intention if the NPC has decent capability (score > 120)
-  if (bestScore > 120 && bestType) {
-    return bestType
-  }
-
+export function _determineIntentionType(): NpcIntentionType | null {
   return null
 }
 
@@ -288,10 +246,10 @@ function determineIntentionType(npc: NpcRuntimeState, state: GameState): NpcInte
  * 2. NPC must not have an active faction directive
  * 3. NPC status must not be 'captive' or 'ward'
  *
- * If guards pass, calculates:
- * - Intention type based on traits/skills/world state
+ * If guards pass, uses the 5-stage pipeline to determine:
+ * - Intention type from state/personality/trait/relationship/urgency
  * - Priority based on traits and urgency
- * - Confidence based on relevant attributes/skills
+ * - Confidence from ML weights and fuzzy logic
  * - Urgency based on intention type and world conditions
  */
 export function calculateNpcIntention(state: GameState, npcId: string): NpcIntention | null {
@@ -301,11 +259,11 @@ export function calculateNpcIntention(state: GameState, npcId: string): NpcInten
   // Check guard conditions
   if (isNpcBlockedFromIntention(npc)) return null
 
-  // Determine the best intention type for this NPC
-  const intentionType = determineIntentionType(npc, state)
+  // Use the new 5-stage pipeline to determine intention type
+  const intentionType = generateNpcIntention(state, npc)
   if (!intentionType) return null
 
-  // Calculate intention parameters
+  // Calculate intention parameters (legacy functions still work for priority/confidence/urgency)
   const priority = calculateIntentionPriority(npc, intentionType, state)
   const confidence = calculateIntentionConfidence(npc, intentionType)
   const urgencyDays = calculateUrgencyDays(intentionType, state)
