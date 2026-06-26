@@ -115,6 +115,9 @@ function LeadCardDisplay({
         {template.questType === 'story' && (
           <span className="badge badge-story">◆ House Obligation</span>
         )}
+        {template.objectiveType === 'corridorRun' && (
+          <span className="badge badge-info">Corridor Run</span>
+        )}
         <span className="badge">{presentation.categoryLabel}</span>
         <span className={`badge ${lead.freshness === 'stale' ? 'badge-warning' : lead.freshness === 'aging' ? 'badge-warning' : 'badge-positive'}`}>
           {formatLeadFreshnessLabel(lead.freshness)}
@@ -141,6 +144,12 @@ function LeadCardDisplay({
           <span className="chip chip-district">
             {contentCatalog.districtsById.get(template.districtId)?.name ?? template.districtId}
           </span>
+        )}
+        {template.objectiveType === 'corridorRun' && template.foodImportAmount && (
+          <span className="chip chip-info">Imports {template.foodImportAmount} rations</span>
+        )}
+        {template.objectiveType === 'corridorRun' && template.corridorTollRate && (
+          <span className="chip chip-info">{Math.round(template.corridorTollRate * 100)}% toll</span>
         )}
       </div>
 
