@@ -269,6 +269,55 @@ export const npcMemoryEntrySchema = z.object({
 })
 
 /**
+ * Authored memory event types - historical events written by game authors.
+ */
+export const AUTHORED_MEMORY_EVENT_TYPES = [
+  'house_fall',
+  'betrayal',
+  'victory',
+  'failure',
+  'loyalty_test',
+  'failed_mission',
+  'rescue',
+  'loss',
+  'first_meeting',
+  'training',
+  'promotion',
+  'exile',
+  'return',
+  'custom',
+] as const
+
+export const authoredMemoryEventTypeSchema = z.enum(AUTHORED_MEMORY_EVENT_TYPES)
+export type AuthoredMemoryEventType = z.infer<typeof authoredMemoryEventTypeSchema>
+
+/**
+ * Intimacy stage for memory visibility.
+ */
+export const MEMORY_INTIMACY_LEVELS = ['none', 'affinity', 'attachment', 'committed'] as const
+export const memoryIntimacyLevelSchema = z.enum(MEMORY_INTIMACY_LEVELS)
+export type MemoryIntimacyLevel = z.infer<typeof memoryIntimacyLevelSchema>
+
+/**
+ * Authored memory schema - pre-written memories for NPCs that give them depth from game start.
+ */
+export const authoredMemorySchema = z
+  .object({
+    dayOffset: z.number().int(), // Days before game start (0 = day 1, -500 = 500 days before)
+    eventType: authoredMemoryEventTypeSchema,
+    description: z.string().min(1),
+    sentiment: npcMemorySentimentSchema,
+    participants: z.array(z.string()).optional(),
+    revealsOnTrustLevel: z.number().min(0).max(100).default(50),
+    revealsOnIntimacy: memoryIntimacyLevelSchema.default('none'),
+    unlocksDialogueTopic: z.string().optional(),
+    influencesTraitDrift: z.record(z.string(), z.number()).optional(),
+  })
+  .strict()
+
+export type AuthoredMemory = z.infer<typeof authoredMemorySchema>
+
+/**
  * NPC Intention types - proactive actions NPCs take when idle and not on directive.
  */
 export const NPC_INTENTION_TYPES = [

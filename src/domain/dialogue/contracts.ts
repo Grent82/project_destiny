@@ -21,7 +21,7 @@ export const dialogueConditionSchema = z
 
 export const dialogueOutcomeSchema = z
   .object({
-    type: z.enum(['loyalty', 'trust', 'respect', 'mainQuestHint', 'questUnlock', 'item', 'factionStanding', 'activityLog']),
+    type: z.enum(['loyalty', 'trust', 'respect', 'affinity', 'mainQuestHint', 'questUnlock', 'item', 'factionStanding', 'activityLog']),
     value: z.union([z.number(), z.string()]),
     targetId: z.string().optional(),
   })

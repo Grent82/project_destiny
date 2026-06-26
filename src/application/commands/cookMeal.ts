@@ -93,6 +93,29 @@ export function cookMeal(state: GameState, npcId: string, mealType: MealType): G
     baseLoyalty += 1
   }
 
+  // Skill-based bonuses
+  const playerSkills = state.playerCharacter.skills
+  const npcSkills = npc.skills
+
+  // Player administration skill: better meal planning and resource management
+  if ((playerSkills.administration ?? 0) >= 40) {
+    baseAffinity += 2
+    baseTrust += 1
+  }
+  if ((playerSkills.administration ?? 0) >= 60) {
+    baseLoyalty += 1
+  }
+
+  // NPC administration skill: appreciates efficient meal preparation
+  if ((npcSkills.administration ?? 0) >= 40) {
+    baseTrust += 1
+  }
+
+  // NPC performance skill: enjoys the presentation and ritual
+  if ((npcSkills.performance ?? 0) >= 40) {
+    baseAffinity += 1
+  }
+
   // Context modifiers
   let gainMultiplier = 1.0
   if (current.respect < -30) {

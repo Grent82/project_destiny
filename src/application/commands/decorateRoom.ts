@@ -13,10 +13,10 @@ const DECOR_COSTS: Record<DecorStyle, number> = {
   utilitarian: 8,
 }
 
-const DECOR_GAINS: Record<DecorStyle, { trust: number; affinity: number; loyalty: number }> = {
+const DECOR_GAINS: Record<DecorStyle, { trust: number; affinity: number; loyalty: number; respect?: number }> = {
   minimalist: { trust: 3, affinity: 2, loyalty: 1 },
   warm: { trust: 4, affinity: 5, loyalty: 2 },
-  grand: { trust: 5, affinity: 4, loyalty: 3 },
+  grand: { trust: 5, affinity: 4, loyalty: 3, respect: 2 },
   utilitarian: { trust: 2, affinity: 1, loyalty: 3 },
 }
 
@@ -83,7 +83,8 @@ export function decorateRoom(state: GameState, roomId: string, npcId: string, de
   const reverse = state.relationships[reverseKey] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
 
   // Base gains from decor style
-  let { trust: baseTrust, affinity: baseAffinity, loyalty: baseLoyalty } = DECOR_GAINS[decorStyle]
+  let { trust: baseTrust, affinity: baseAffinity, loyalty: baseLoyalty, respect: baseRespect } = DECOR_GAINS[decorStyle]
+  baseRespect = baseRespect ?? 0
 
   // Trait-based bonuses
   const playerTraits = state.playerCharacter.traits
@@ -109,6 +110,34 @@ export function decorateRoom(state: GameState, roomId: string, npcId: string, de
     baseAffinity += 2
   }
 
+  // Skill-based bonuses
+  const playerSkills = state.playerCharacter.skills
+  const npcSkills = npc.skills
+
+  // Player crafting skill: better execution of decor choices
+  if ((playerSkills.crafting ?? 0) >= 40) {
+    baseAffinity += 2
+    baseTrust += 1
+  }
+  if ((playerSkills.crafting ?? 0) >= 60) {
+    baseLoyalty += 1
+  }
+
+  // Player academics skill: knowledge of design principles
+  if ((playerSkills.academics ?? 0) >= 50 && decorStyle === 'grand') {
+    baseTrust += 2
+  }
+
+  // NPC crafting skill: appreciates quality workmanship
+  if ((npcSkills.crafting ?? 0) >= 40) {
+    baseRespect = (baseRespect ?? 0) + 1
+  }
+
+  // NPC performance skill: appreciates the social statement of decor
+  if ((npcSkills.performance ?? 0) >= 40 && decorStyle === 'grand') {
+    baseAffinity += 1
+  }
+
   // Context modifiers
   let gainMultiplier = 1.0
   if (current.respect < -30) {
@@ -118,6 +147,7 @@ export function decorateRoom(state: GameState, roomId: string, npcId: string, de
   const trustGain = Math.max(1, Math.round(baseTrust * gainMultiplier))
   const affinityGain = Math.max(1, Math.round(baseAffinity * gainMultiplier))
   const loyaltyGain = Math.max(0, Math.round(baseLoyalty * gainMultiplier))
+  const respectGain = Math.max(0, Math.round(baseRespect * gainMultiplier))
 
   // Update room decor style
   const updatedRooms = state.house.rooms.map((r) =>
@@ -137,6 +167,7 @@ export function decorateRoom(state: GameState, roomId: string, npcId: string, de
         ...current,
         trust: Math.min(100, current.trust + trustGain),
         affinity: Math.min(100, current.affinity + affinityGain),
+        respect: Math.min(100, current.respect + respectGain),
       },
       [reverseKey]: {
         ...reverse,

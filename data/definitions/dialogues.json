@@ -388,6 +388,150 @@
         "npcId": "npc-marion-vale",
         "text": "She considers this for a long moment. \"Most people are where they are because they found themselves there.\" She looks out toward the front door. \"The difference is what they do about it.\" She leaves the question open. You know which side of it she's on.",
         "choices": []
+      },
+      {
+        "id": "marion-node-courtship-intro",
+        "npcId": "npc-marion-vale",
+        "text": "Marion catches your eye across the room. There's something different in her expression today — less duty, more choice.",
+        "choices": [
+          {
+            "id": "marion-choice-court-acknowledge",
+            "label": "You seem thoughtful.",
+            "nextNodeId": "marion-node-court-thoughtful-a",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-marion-vale",
+              "value": 40
+            }
+          },
+          {
+            "id": "marion-choice-court-direct",
+            "label": "What do you want, Marion?",
+            "nextNodeId": "marion-node-court-direct-a",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-marion-vale",
+              "value": 60
+            }
+          },
+          {
+            "id": "marion-choice-court-leave-her-be",
+            "label": "Leave her to her work.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "marion-node-court-thoughtful-a",
+        "npcId": "npc-marion-vale",
+        "text": "She sets down her pen. \"I've been thinking about what we are to each other. Not house and sworn sword. Just... us.\" She hesitates — rare for her. \"Is there nothing between us but duty?\"",
+        "choices": [
+          {
+            "id": "marion-choice-court-honest",
+            "label": "I haven't let myself think about it. But I want to.",
+            "nextNodeId": "marion-node-court-honest-b",
+            "outcome": {
+              "type": "trust",
+              "value": 5
+            }
+          },
+          {
+            "id": "marion-choice-court-deflect",
+            "label": "We have enough to worry about.",
+            "nextNodeId": "marion-node-court-deflect-b"
+          },
+          {
+            "id": "marion-choice-court-reciprocate",
+            "label": "There's more. I've just been... careful.",
+            "nextNodeId": "marion-node-court-careful-b",
+            "outcome": {
+              "type": "affinity",
+              "value": 8
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-court-thoughtful-b",
+        "npcId": "npc-marion-vale",
+        "text": "Marion nods slowly. \"Careful is wise.\" She picks up her pen again, but her hand is less steady than before. \"Just don't let caution become cowardice.\" She doesn't look up, but her voice is softer.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-court-direct-a",
+        "npcId": "npc-marion-vale",
+        "text": "\"I want to know if you see me.\" She sets down her ledger. \"Not the role I play. Not the sword I carry. Just... me.\"",
+        "choices": [
+          {
+            "id": "marion-choice-court-see-her",
+            "label": "I see you. More than I let on.",
+            "nextNodeId": "marion-node-court-see-b",
+            "outcome": {
+              "type": "affinity",
+              "value": 10
+            }
+          },
+          {
+            "id": "marion-choice-court-not-sure",
+            "label": "I'm not sure I know who that is yet.",
+            "nextNodeId": "marion-node-court-honest-b"
+          }
+        ]
+      },
+      {
+        "id": "marion-node-court-see-b",
+        "npcId": "npc-marion-vale",
+        "text": "For the first time, Marion Vale looks uncertain. \"Then tell me something true,\" she says. \"Something you haven't said to anyone else.\" She's not asking for confessions. She's asking for trust.",
+        "choices": [
+          {
+            "id": "marion-choice-court-share-fear",
+            "label": "Share a fear or doubt.",
+            "nextNodeId": "marion-node-court-vulnerability-c",
+            "outcome": {
+              "type": "trust",
+              "value": 8
+            }
+          },
+          {
+            "id": "marion-choice-court-share-hope",
+            "label": "Share something you hope for.",
+            "nextNodeId": "marion-node-court-hope-c",
+            "outcome": {
+              "type": "affinity",
+              "value": 6
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-court-vulnerability-c",
+        "npcId": "npc-marion-vale",
+        "text": "Marion listens without interrupting. When you're done, she exhales slowly. \"I'm afraid too.\" She says it like a confession. \"Not of dying. Of failing you.\" She looks up. \"But I'd rather fail trying than never try at all.\"",
+        "choices": []
+      },
+      {
+        "id": "marion-node-court-hope-c",
+        "npcId": "npc-marion-vale",
+        "text": "Something in Marion's posture softens. \"I hope for this,\" she says quietly. \"Us. Not as house and sword. As... something chosen.\" She pauses. \"When there's time. When it's safe.\"",
+        "choices": []
+      },
+      {
+        "id": "marion-node-court-honest-b",
+        "npcId": "npc-marion-vale",
+        "text": "Marion nods. \"Honesty is a start.\" She doesn't push further today. But she looks at you differently — like she's waiting to see if you'll follow through.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-court-deflect-b",
+        "npcId": "npc-marion-vale",
+        "text": "Marion's expression closes off. \"Of course.\" She picks up her pen again. \"There's always something.\" But the warmth is gone from her voice.",
+        "choices": []
+      },
+      {
+        "id": "marion-node-court-careful-b",
+        "npcId": "npc-marion-vale",
+        "text": "\"Careful is wise,\" Marion says. \"But don't let caution become cowardice.\" She sets down her pen. \"When you're ready to stop being careful, I'll be here.\"",
+        "choices": []
       }
     ]
   },
@@ -874,6 +1018,131 @@
             }
           }
         ]
+      },
+      {
+        "id": "ida-node-court-intro",
+        "npcId": "npc-ida-rhys",
+        "text": "Ida looks up as you approach. She doesn't put down her work, but her gaze lingers a beat longer than professional courtesy requires.",
+        "choices": [
+          {
+            "id": "ida-choice-court-observe",
+            "label": "You're good at what you do.",
+            "nextNodeId": "ida-node-court-compliment-a",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-ida-rhys",
+              "value": 40
+            }
+          },
+          {
+            "id": "ida-choice-court-direct",
+            "label": "Got time for a conversation?",
+            "nextNodeId": "ida-node-court-time-a",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-ida-rhys",
+              "value": 55
+            }
+          },
+          {
+            "id": "ida-choice-court-leave",
+            "label": "Carry on.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "ida-node-court-compliment-a",
+        "npcId": "npc-ida-rhys",
+        "text": "'I know.' No modesty. No false denial. Just acknowledgment. She tests the edge of her blade. 'You're not bad yourself.' There's something almost playful in her tone.",
+        "choices": [
+          {
+            "id": "ida-choice-court-press",
+            "label": "Just 'not bad'?",
+            "nextNodeId": "ida-node-court-press-b"
+          },
+          {
+            "id": "ida-choice-court-agree",
+            "label": "High praise coming from you.",
+            "nextNodeId": "ida-node-court-respect-b",
+            "outcome": {
+              "type": "affinity",
+              "value": 5
+            }
+          }
+        ]
+      },
+      {
+        "id": "ida-node-court-press-b",
+        "npcId": "npc-ida-rhys",
+        "text": "Ida smirks. 'Don't get cocky.' But there's no heat in it. 'I've seen better. You're... promising.' She sheathes her blade. 'That's more than I say to most.'",
+        "choices": []
+      },
+      {
+        "id": "ida-node-court-respect-b",
+        "npcId": "npc-ida-rhys",
+        "text": "'I don't give praise lightly.' She wipes down her kit with deliberate strokes. 'If I'm working with you, I'd better trust you won't get me killed.' She looks up. 'So far, you haven't.'",
+        "choices": []
+      },
+      {
+        "id": "ida-node-court-time-a",
+        "npcId": "npc-ida-rhys",
+        "text": "Ida sets down her work. 'Time's always got somewhere to go. Question is whether it's worth spending.' She watches you. 'What do you want, house lord?'",
+        "choices": [
+          {
+            "id": "ida-choice-court-honest",
+            "label": "I want to know the person behind the contract.",
+            "nextNodeId": "ida-node-court-person-a",
+            "outcome": {
+              "type": "trust",
+              "value": 6
+            }
+          },
+          {
+            "id": "ida-choice-court-practical",
+            "label": "Just checking in. See how you're doing.",
+            "nextNodeId": "ida-node-court-check-b"
+          }
+        ]
+      },
+      {
+        "id": "ida-node-court-person-a",
+        "npcId": "npc-ida-rhys",
+        "text": "Ida goes still. Then: 'That's not a question I get often.' She considers. 'I'm good at my work because I have to be. Not because I chose it.' She meets your gaze. 'There's a difference.'",
+        "choices": [
+          {
+            "id": "ida-choice-court-choose",
+            "label": "What would you choose, if you could?",
+            "nextNodeId": "ida-node-court-choose-b",
+            "outcome": {
+              "type": "affinity",
+              "value": 7
+            }
+          },
+          {
+            "id": "ida-choice-court-understand",
+            "label": "I know what that's like.",
+            "nextNodeId": "ida-node-court-understand-b"
+          }
+        ]
+      },
+      {
+        "id": "ida-node-court-choose-b",
+        "npcId": "npc-ida-rhys",
+        "text": "Ida looks away. 'Something where I don't have to calculate survival every breath.' She looks back. 'But that's a luxury. And luxuries cost.' A pause. 'Maybe I'm starting to think you're worth the cost.'",
+        "choices": []
+      },
+      {
+        "id": "ida-node-court-understand-b",
+        "npcId": "npc-ida-rhys",
+        "text": "'Do you?' Ida studies you. 'Then you know what it's like to have no room for mistakes.' She picks up her work again. 'Good. Then you won't ask me for things I can't give.'",
+        "choices": []
+      },
+      {
+        "id": "ida-node-court-check-b",
+        "npcId": "npc-ida-rhys",
+        "text": "Ida considers this. 'I'm fine.' A beat. 'Better than fine.' She doesn't elaborate, but something in her posture has softened. 'Thanks for asking.'",
+        "choices": []
       }
     ]
   },
