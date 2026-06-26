@@ -109,6 +109,7 @@ function applyOrrenRescueResolution(state: GameState, questId: string) {
 import type { QuestAftermath } from '../../domain/quests/contracts'
 import { createQuestLeadRuntime } from '../../domain/quests/contracts'
 import { DISTRICT_IDS, NPC_IDS, QUEST_IDS } from '../content/ids'
+import { deriveFoodSecurityFromStock } from './foodFlow'
 
 function applyQuestAftermath(state: GameState, aftermath: QuestAftermath | null, questTitle: string): void {
   if (!aftermath) return
@@ -408,6 +409,34 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
 
   // Apply structured aftermath: faction impacts, NPC unlocks, world consequence log
   applyQuestAftermath(state, runtime.aftermath, questTitle)
+
+  // Corridor-run: import food to city stock
+  if (template.objectiveType === 'corridorRun' && template.foodImportAmount > 0) {
+    const importAmount = Math.round(template.foodImportAmount * rewardScale)
+    const oldStock = state.cityResources.foodStock
+    const newStock = oldStock + importAmount
+    const tollIncome = Math.round(importAmount * template.corridorTollRate)
+
+    // Build new state with updated food stock, security, money, and activity log
+    const newFoodSecurity = deriveFoodSecurityFromStock(newStock, state.cityResources.foodCapacity)
+    state.cityResources.foodStock = newStock
+    state.cityResources.foodSecurity = newFoodSecurity
+    if (tollIncome > 0) {
+      state.money += tollIncome
+      pushActivityLog(
+        state,
+        'economy',
+        `Corridor run toll collected: ${formatMarks(tollIncome)}.`,
+        `corridor-toll-${questId}`,
+      )
+    }
+    pushActivityLog(
+      state,
+      'economy',
+      `Corridor run successful: ${importAmount} rations imported to city stock.`,
+      `corridor-import-${questId}`,
+    )
+  }
 
   // Unlock successor quest lead if defined
   if (template?.successorQuestId) {

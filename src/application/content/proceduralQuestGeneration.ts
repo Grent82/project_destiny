@@ -152,7 +152,7 @@ export function generateProceduralCombatQuest(
     executionDurationDays: null,
     executionDurationWatches: null,
     linkedMissionId: null,
-    enemyNpcId: undefined,
+    enemyNpcId: null,
     requiredFactionStanding: null,
     discoverySource: null,
     discoveryDistrictId: null,
@@ -171,6 +171,8 @@ export function generateProceduralCombatQuest(
     successorRumorIds: [],
     complicationRisk: 0,
     retryBehavior: 'fail',
+    foodImportAmount: 0,
+    corridorTollRate: 0.05,
   }
 }
 

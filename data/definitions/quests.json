@@ -1223,7 +1223,7 @@
     "questType": "contract",
     "openingText": null,
     "aftermathText": "The files change hands. The buyer never reveals what was in them, but the payment speaks to the value. Vorn continues his work; someone else sleeps easier tonight.",
-    "prerequisiteQuestId": null,
+    "prerequisiteQuestId": "quest-compact-watch",
     "unlocksNpcId": null,
     "rewardCityDialId": "corruption",
     "rewardCityDialDelta": 2,
@@ -1249,9 +1249,116 @@
         "journalEntry": "The contact brings two guards. They inspect the files carefully before handing over the payment. Whatever is in those pages is worth the protection."
       }
     ],
-    "successorRumorIds": ["rumor-compact-watch-evidence-leaked"],
+    "successorRumorIds": [
+      "rumor-compact-watch-evidence-leaked"
+    ],
     "complicationRisk": 0.2,
-    "retryBehavior": "fail",
-    "prerequisiteQuestId": "quest-compact-watch"
+    "retryBehavior": "fail"
+  },
+  {
+    "id": "quest-corridor-run-green",
+    "title": "Green Corridor Supply Run",
+    "employerFactionId": "faction-civic-compact",
+    "enemyFactionId": null,
+    "districtId": null,
+    "briefing": "The Green Corridor is open enough for a quick run. Take a light squad, move through before the weather turns or bandits regroup. Bring back what you can carry.",
+    "objectiveType": "corridorRun",
+    "rewardMarks": 150,
+    "rewardStandingFactionId": "faction-civic-compact",
+    "rewardStandingDelta": 5,
+    "penaltyStandingDelta": -8,
+    "timeLimitDays": 4,
+    "linkedMissionId": null,
+    "discoverySource": "guild",
+    "discoveryDistrictId": "district-harbor",
+    "requiredFactionStanding": null,
+    "enemyNpcId": null,
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "successorQuestId": null,
+    "successorRumorIds": [],
+    "sourceNpcId": "npc-garet-doyle",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-garet-doyle",
+        "trust": 3,
+        "respect": 2
+      }
+    ],
+    "aftermathText": "The squad returned with supplies. The Corridor held long enough for the run.",
+    "midQuestBeats": [
+      {
+        "atStageId": "pressured",
+        "label": "Bandit scouts spotted on the ridge. They are watching the road.",
+        "journalEntry": "Enemy movement along the corridor edge. The run is no longer clean."
+      },
+      {
+        "atStageId": "on-site-prep",
+        "label": "The road is narrow and exposed. One wrong move and you are pinned.",
+        "journalEntry": "The terrain favors ambush. Move carefully or pay the price."
+      },
+      {
+        "atStageId": "engaged",
+        "label": "Contact with a scavenger party. They want your supplies.",
+        "journalEntry": "The scavengers are well armed. They have been waiting for a convoy."
+      }
+    ],
+    "foodImportAmount": 120,
+    "corridorTollRate": 0.05,
+    "riskLevel": "medium",
+    "retryBehavior": "retryable"
+  },
+  {
+    "id": "quest-corridor-run-ashfields",
+    "title": "Ashfields Border Run",
+    "employerFactionId": "faction-foundry-league",
+    "enemyFactionId": null,
+    "districtId": null,
+    "briefing": "The League needs supplies moved through the Ashfields border. Dangerous territory, but the pay reflects the risk. A heavy squad is recommended.",
+    "objectiveType": "corridorRun",
+    "rewardMarks": 280,
+    "rewardStandingFactionId": "faction-foundry-league",
+    "rewardStandingDelta": 8,
+    "penaltyStandingDelta": -10,
+    "timeLimitDays": 6,
+    "linkedMissionId": null,
+    "discoverySource": "faction_house",
+    "discoveryDistrictId": "district-ironworks",
+    "requiredFactionStanding": null,
+    "enemyNpcId": null,
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "successorQuestId": null,
+    "successorRumorIds": [],
+    "sourceNpcId": "npc-bog",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-bog",
+        "trust": 4,
+        "respect": 3
+      }
+    ],
+    "aftermathText": "The Ashfields run is done. The League counts this as a favor owed.",
+    "midQuestBeats": [
+      {
+        "atStageId": "pressured",
+        "label": "A burned farmhouse yields a clue: someone is running a hidden supply line.",
+        "journalEntry": "The Ashfields hide more than monsters. A covert operation moves through here."
+      },
+      {
+        "atStageId": "on-site-prep",
+        "label": "The border checkpoint is abandoned. Someone cleared it recently.",
+        "journalEntry": "The checkpoint shows signs of a quick departure. Weapons left behind, no bodies."
+      },
+      {
+        "atStageId": "engaged",
+        "label": "A rival convoy spotted. They are armed and looking for trouble.",
+        "journalEntry": "Another house is running the same route. They do not share the road."
+      }
+    ],
+    "foodImportAmount": 200,
+    "corridorTollRate": 0.05,
+    "riskLevel": "high",
+    "retryBehavior": "retryable"
   }
 ]

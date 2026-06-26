@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const questObjectiveTypeSchema = z.enum(['combat', 'delivery', 'investigation', 'survival'])
+export const questObjectiveTypeSchema = z.enum(['combat', 'delivery', 'investigation', 'survival', 'corridorRun'])
 export const questDiscoverySourceSchema = z.enum(['bar', 'guild', 'court', 'event', 'npc', 'notice_board', 'faction_house'])
 export const questLeadFreshnessSchema = z.enum(['fresh', 'aging', 'stale'])
 
@@ -24,7 +24,7 @@ export const questTemplateSchema = z.object({
   executionDurationDays: z.number().int().positive().nullable().default(null),
   executionDurationWatches: z.number().int().positive().nullable().default(null),
   linkedMissionId: z.string().nullable().default(null),
-  enemyNpcId: z.string().optional(),
+  enemyNpcId: z.string().nullable().default(null),
   requiredFactionStanding: z.object({
     factionId: z.string(),
     minStanding: z.number(),
@@ -57,6 +57,8 @@ export const questTemplateSchema = z.object({
   successorRumorIds: z.array(z.string()).default([]),
   complicationRisk: z.number().min(0).max(1).default(0),
   retryBehavior: z.enum(['fail', 'retryable', 'branch']).default('fail'),
+  foodImportAmount: z.number().int().nonnegative().default(0),
+  corridorTollRate: z.number().min(0).max(1).default(0.05),
 }).strict()
 
 export const questClueSchema = z.object({
@@ -152,6 +154,7 @@ const REQUIRED_STEPS_BY_OBJECTIVE: Record<QuestObjectiveType, number> = {
   delivery: 3,
   investigation: 3,
   survival: 3,
+  corridorRun: 3,
 }
 
 function resolveRequiredSteps(template: QuestTemplate): number {
@@ -174,6 +177,7 @@ const INITIAL_OBJECTIVE_LABEL_BY_TYPE: Record<QuestObjectiveType, string> = {
   delivery: 'Reach the district and complete the handoff on-site.',
   investigation: 'Gather operatives, reach the district, and work the lead.',
   survival: 'Reach the district and hold through the job until the danger passes.',
+  corridorRun: 'Assemble a squad and run the Green Corridor to import food supplies.',
 }
 
 export type QuestTemplate = z.infer<typeof questTemplateSchema>

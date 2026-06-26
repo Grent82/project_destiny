@@ -113,3 +113,53 @@ describe('settleQuestSuccess — successorRumorIds', () => {
     expect(matching[0]?.heat).toBe(75)
   })
 })
+
+describe('settleQuestSuccess — corridor-run quests', () => {
+  it('imports food to city stock on success', () => {
+    const state = stateWithQuest('quest-corridor-run-green')
+    const beforeStock = state.cityResources.foodStock
+    settleQuestSuccess(state, 'quest-corridor-run-green')
+    expect(state.cityResources.foodStock).toBe(beforeStock + 120)
+  })
+
+  it('updates foodSecurity based on new stock level', () => {
+    const state = stateWithQuest('quest-corridor-run-green')
+    const beforeSecurity = state.cityResources.foodSecurity
+    settleQuestSuccess(state, 'quest-corridor-run-green')
+    expect(state.cityResources.foodSecurity).toBeGreaterThan(beforeSecurity)
+  })
+
+  it('collects toll income from the corridor run', () => {
+    const state = stateWithQuest('quest-corridor-run-green')
+    const beforeMoney = state.money
+    settleQuestSuccess(state, 'quest-corridor-run-green')
+    const rewardMarks = 150 // From quest template
+    const expectedToll = Math.round(120 * 0.05)
+    expect(state.money).toBe(beforeMoney + rewardMarks + expectedToll)
+  })
+
+  it('logs food import to activity log', () => {
+    const state = stateWithQuest('quest-corridor-run-green')
+    settleQuestSuccess(state, 'quest-corridor-run-green')
+    const hasImportLog = state.activityLog.some((e) =>
+      e.message.includes('rations imported')
+    )
+    expect(hasImportLog).toBe(true)
+  })
+
+  it('logs toll collection to activity log', () => {
+    const state = stateWithQuest('quest-corridor-run-green')
+    settleQuestSuccess(state, 'quest-corridor-run-green')
+    const hasTollLog = state.activityLog.some((e) =>
+      e.message.includes('toll collected')
+    )
+    expect(hasTollLog).toBe(true)
+  })
+
+  it('handles higher import amounts for high-risk runs', () => {
+    const state = stateWithQuest('quest-corridor-run-ashfields')
+    const beforeStock = state.cityResources.foodStock
+    settleQuestSuccess(state, 'quest-corridor-run-ashfields')
+    expect(state.cityResources.foodStock).toBe(beforeStock + 200)
+  })
+})
