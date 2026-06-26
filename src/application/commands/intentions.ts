@@ -115,6 +115,7 @@ function calculateIntentionConfidence(npc: NpcRuntimeState, intentionType: NpcIn
 function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState): number {
   // Base urgency by intention type
   const baseUrgency: Record<NpcIntentionType, number> = {
+    // Original 10 types
     'lead-coalition': 5,
     'support-coalition': 4,
     'scout-ahead': 3,
@@ -125,6 +126,44 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'patrol-district': 5,
     'seek-employment': 6,
     'socialize': 7,
+    // Basis-Bedürfnisse (5) - hohe Dringlichkeit bei Bedarf
+    'eat-meal': 1,
+    'drink': 1,
+    'sleep': 1,
+    'rest': 2,
+    'groom': 3,
+    // Sozial/Romantik (5)
+    'flirt-with': 5,
+    'court-romantically': 6,
+    'visit-lover': 4,
+    'jealousy-check': 2,
+    'spend-time-with': 5,
+    // Alltagsaktivitäten (4)
+    'shop-for-goods': 4,
+    'train-self': 6,
+    'meditate': 3,
+    'practice-skill': 5,
+    // Spezial/Quirky (2)
+    'people-watch': 7,
+    'gossip': 6,
+    // Macht/Kontrolle (5)
+    'assert-dominance': 3,
+    'spy-on': 2,
+    'intercept-communication': 2,
+    'gather-leverage': 3,
+    'consolidate-power': 4,
+    // Gruppen/Dynamik (5)
+    'form-squad': 4,
+    'recruit-member': 5,
+    'host-gathering': 6,
+    'mediate-conflict': 2,
+    'challenge-authority': 3,
+    // Überleben/Existenz (5)
+    'scavenge': 3,
+    'fortify-position': 2,
+    'escape-attempt': 1,
+    'seek-shelter': 1,
+    'care-for-injured': 2,
   }
 
   let urgency = baseUrgency[intentionType]
@@ -519,10 +558,537 @@ const socializeHandler: IntentionHandler = {
   },
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Basis-Bedürfnisse (5)
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
- * All intention handlers mapped by type.
+ * Eat Meal Handler
+ * NPC eats a meal to reduce hunger.
  */
+const eatMealHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires hunger > 40 or basic survival skill
+    return npc.states.hunger > 40 || npc.skills.survival >= 20
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would consume food, reduce hunger
+    return state
+  },
+}
+
+/**
+ * Drink Handler
+ * NPC drinks to quench thirst, possibly at a tavern.
+ */
+const drinkHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Social drinking requires presence
+    return npc.states.hunger > 30 || npc.attributes.presence >= 30
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would reduce thirst, possibly increase intoxication
+    return state
+  },
+}
+
+/**
+ * Sleep Handler
+ * NPC sleeps to reduce fatigue.
+ */
+const sleepHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires high fatigue
+    return npc.states.fatigue > 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would reduce fatigue significantly
+    return state
+  },
+}
+
+/**
+ * Rest Handler
+ * NPC rests for active recovery (lighter than sleep).
+ */
+const restHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires moderate fatigue
+    return npc.states.fatigue > 40 && npc.states.fatigue <= 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would reduce fatigue moderately
+    return state
+  },
+}
+
+/**
+ * Groom Handler
+ * NPC improves hygiene, satisfies vanity.
+ */
+const groomHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires low hygiene or high vanity
+    return npc.states.hygiene < 40 || npc.traits.vanity >= 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would improve hygiene
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sozial/Romantik (5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Flirt With Handler
+ * NPC flirts with a specific NPC (Affinity test).
+ */
+const flirtWithHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires presence, empathy, and some affinity with target
+    return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would attempt flirtation with target NPC
+    return state
+  },
+}
+
+/**
+ * Court Romantically Handler
+ * NPC makes a romantic advance (higher threshold).
+ */
+const courtRomanticallyHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires high presence, empathy, and affinity
+    return npc.attributes.presence >= 50 && npc.traits.empathy >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would attempt romantic courtship
+    return state
+  },
+}
+
+/**
+ * Visit Lover Handler
+ * NPC visits their romantic partner.
+ */
+const visitLoverHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires existing romantic relationship
+    return npc.traits.empathy >= 40 || npc.traits.loyalty >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would visit target NPC
+    return state
+  },
+}
+
+/**
+ * Jealousy Check Handler
+ * NPC checks for rivalry/jealousy situations.
+ */
+const jealousyCheckHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires perception and some insecurity
+    return npc.attributes.perception >= 40 || npc.traits.vanity >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would investigate potential rivals
+    return state
+  },
+}
+
+/**
+ * Spend Time With Handler
+ * NPC spends time with family/friends.
+ */
+const spendTimeWithHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires empathy or loyalty
+    return npc.traits.empathy >= 40 || npc.traits.loyalty >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would spend time with target NPC
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Alltagsaktivitäten (4)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Shop For Goods Handler
+ * NPC shops for items/resources.
+ */
+const shopForGoodsHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires negotiation or administration
+    return npc.skills.negotiation >= 30 || npc.skills.administration >= 30
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would visit shop, potentially buy items
+    return state
+  },
+}
+
+/**
+ * Train Self Handler
+ * NPC trains to improve skills.
+ */
+const trainSelfHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires discipline or ambition
+    return npc.traits.discipline >= 40 || npc.traits.ambition >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would train, potentially gain skill XP
+    return state
+  },
+}
+
+/**
+ * Meditate Handler
+ * NPC meditates to reduce stress, strengthen resolve.
+ */
+const meditateHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires high stress or high intellect
+    return npc.states.stress > 50 || npc.attributes.intellect >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would reduce stress
+    return state
+  },
+}
+
+/**
+ * Practice Skill Handler
+ * NPC practices a specific skill.
+ */
+const practiceSkillHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires curiosity or discipline
+    return npc.traits.curiosity >= 40 || npc.traits.discipline >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would practice skill, gain minor XP
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Spezial/Quirky (2)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * People Watch Handler
+ * NPC observes others (Perception, Intrigue).
+ */
+const peopleWatchHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires perception and curiosity
+    return npc.attributes.perception >= 40 || npc.traits.curiosity >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would observe NPCs, potentially learn rumors
+    return state
+  },
+}
+
+/**
+ * Gossip Handler
+ * NPC gathers/spreads rumors.
+ */
+const gossipHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires performance or intrigue
+    return npc.skills.performance >= 40 || npc.skills.intrigue >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would spread/gather gossip
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Macht/Kontrolle (5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Assert Dominance Handler
+ * NPC shows dominance (Dominance Trait).
+ */
+const assertDominanceHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires high dominance
+    return npc.traits.dominance >= 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would assert dominance over target
+    return state
+  },
+}
+
+/**
+ * Spy On Handler
+ * NPC spies on someone (Intrigue + Stealth).
+ */
+const spyOnHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires intrigue and curiosity
+    return npc.skills.intrigue >= 50 || npc.traits.curiosity >= 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would spy on target NPC
+    return state
+  },
+}
+
+/**
+ * Intercept Communication Handler
+ * NPC intercepts letters/messages.
+ */
+const interceptCommunicationHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires intrigue and prudence
+    return npc.skills.intrigue >= 50 || npc.traits.prudence >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would intercept communication
+    return state
+  },
+}
+
+/**
+ * Gather Leverage Handler
+ * NPC gathers leverage against someone.
+ */
+const gatherLeverageHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires intrigue and ruthlessness
+    return npc.skills.intrigue >= 40 || npc.traits.ruthlessness >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would gather blackmail material
+    return state
+  },
+}
+
+/**
+ * Consolidate Power Handler
+ * NPC consolidates power in a district.
+ */
+const consolidatePowerHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires presence and ambition
+    return npc.attributes.presence >= 50 && npc.traits.ambition >= 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would consolidate influence
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Gruppen/Dynamik (5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Form Squad Handler
+ * NPC forms a group for joint action.
+ */
+const formSquadHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires presence and leadership traits
+    return npc.attributes.presence >= 50 || npc.traits.ambition >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would form squad with other NPCs
+    return state
+  },
+}
+
+/**
+ * Recruit Member Handler
+ * NPC recruits new members for their group.
+ */
+const recruitMemberHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires negotiation and presence
+    return npc.skills.negotiation >= 40 || npc.attributes.presence >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would recruit target NPC
+    return state
+  },
+}
+
+/**
+ * Host Gathering Handler
+ * NPC organizes an event/gathering.
+ */
+const hostGatheringHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires performance and presence
+    return npc.skills.performance >= 50 || npc.attributes.presence >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would host social gathering
+    return state
+  },
+}
+
+/**
+ * Mediate Conflict Handler
+ * NPC mediates a dispute (Empathy + Negotiation).
+ */
+const mediateConflictHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires empathy and negotiation
+    return npc.traits.empathy >= 50 && npc.skills.negotiation >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would mediate between conflicting parties
+    return state
+  },
+}
+
+/**
+ * Challenge Authority Handler
+ * NPC challenges authority figures.
+ */
+const challengeAuthorityHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires dominance and ruthlessness
+    return npc.traits.dominance >= 50 || npc.traits.ruthlessness >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would challenge authority
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Überleben/Existenz (5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Scavenge Handler
+ * NPC scavenges for useful items (Survival).
+ */
+const scavengeHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires survival skill
+    return npc.skills.survival >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would scavenge for resources
+    return state
+  },
+}
+
+/**
+ * Fortify Position Handler
+ * NPC fortifies a position (Security + Engineering).
+ */
+const fortifyPositionHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires security or engineering
+    return npc.skills.security >= 40 || npc.skills.engineering >= 40
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would fortify position
+    return state
+  },
+}
+
+/**
+ * Escape Attempt Handler
+ * Captive NPC attempts to escape.
+ */
+const escapeAttemptHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires captivity and high agility/perception
+    if (npc.captivityState?.status !== 'captive') return false
+    return npc.attributes.agility >= 50 || npc.attributes.perception >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would attempt escape
+    return state
+  },
+}
+
+/**
+ * Seek Shelter Handler
+ * NPC seeks shelter (danger/weather).
+ */
+const seekShelterHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires prudence or high stress
+    return npc.traits.prudence >= 50 || npc.states.stress > 60
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would seek shelter
+    return state
+  },
+}
+
+/**
+ * Care For Injured Handler
+ * NPC cares for injured (Medicine + Empathy).
+ */
+const careForInjuredHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires medicine and empathy
+    return npc.skills.medicine >= 40 || npc.traits.empathy >= 50
+  },
+  execute: (_npc, state) => {
+    // Placeholder - would treat injured NPCs
+    return state
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// All intention handlers mapped by type
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
+  // Original 10 types
   'lead-coalition': leadCoalitionHandler,
   'support-coalition': supportCoalitionHandler,
   'scout-ahead': scoutAheadHandler,
@@ -533,6 +1099,44 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'patrol-district': patrolDistrictHandler,
   'seek-employment': seekEmploymentHandler,
   'socialize': socializeHandler,
+  // Basis-Bedürfnisse (5)
+  'eat-meal': eatMealHandler,
+  'drink': drinkHandler,
+  'sleep': sleepHandler,
+  'rest': restHandler,
+  'groom': groomHandler,
+  // Sozial/Romantik (5)
+  'flirt-with': flirtWithHandler,
+  'court-romantically': courtRomanticallyHandler,
+  'visit-lover': visitLoverHandler,
+  'jealousy-check': jealousyCheckHandler,
+  'spend-time-with': spendTimeWithHandler,
+  // Alltagsaktivitäten (4)
+  'shop-for-goods': shopForGoodsHandler,
+  'train-self': trainSelfHandler,
+  'meditate': meditateHandler,
+  'practice-skill': practiceSkillHandler,
+  // Spezial/Quirky (2)
+  'people-watch': peopleWatchHandler,
+  'gossip': gossipHandler,
+  // Macht/Kontrolle (5)
+  'assert-dominance': assertDominanceHandler,
+  'spy-on': spyOnHandler,
+  'intercept-communication': interceptCommunicationHandler,
+  'gather-leverage': gatherLeverageHandler,
+  'consolidate-power': consolidatePowerHandler,
+  // Gruppen/Dynamik (5)
+  'form-squad': formSquadHandler,
+  'recruit-member': recruitMemberHandler,
+  'host-gathering': hostGatheringHandler,
+  'mediate-conflict': mediateConflictHandler,
+  'challenge-authority': challengeAuthorityHandler,
+  // Überleben/Existenz (5)
+  'scavenge': scavengeHandler,
+  'fortify-position': fortifyPositionHandler,
+  'escape-attempt': escapeAttemptHandler,
+  'seek-shelter': seekShelterHandler,
+  'care-for-injured': careForInjuredHandler,
 }
 
 /**

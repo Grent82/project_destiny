@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { z } from 'zod'
 
 import type { GameState } from '../../domain'
+import { npcMemoryEventTypeSchema } from '../../domain/npc/contracts'
 import {
   startMemoryDialogue,
   createMemoryDialogueNode,
@@ -183,7 +185,7 @@ describe('Memory Dialogue Commands', () => {
         const memory = {
           day: 10,
           event,
-          eventType: event as Parameters<typeof createMemoryDialogueNode>[1]['event'],
+          eventType: event as z.infer<typeof npcMemoryEventTypeSchema>,
           visibility: 'open' as const,
           sentiment: 'neutral' as const,
         }

@@ -323,8 +323,10 @@ export type AuthoredMemory = z.infer<typeof authoredMemorySchema>
 
 /**
  * NPC Intention types - proactive actions NPCs take when idle and not on directive.
+ * Extended with 25 new types for Fuzzy Logic + ML-based intention system.
  */
 export const NPC_INTENTION_TYPES = [
+  // Original 10 types
   'lead-coalition',
   'support-coalition',
   'scout-ahead',
@@ -335,6 +337,44 @@ export const NPC_INTENTION_TYPES = [
   'patrol-district',
   'seek-employment',
   'socialize',
+  // Basis-Bedürfnisse (5)
+  'eat-meal',
+  'drink',
+  'sleep',
+  'rest',
+  'groom',
+  // Sozial/Romantik (5)
+  'flirt-with',
+  'court-romantically',
+  'visit-lover',
+  'jealousy-check',
+  'spend-time-with',
+  // Alltagsaktivitäten (4)
+  'shop-for-goods',
+  'train-self',
+  'meditate',
+  'practice-skill',
+  // Spezial/Quirky (2)
+  'people-watch',
+  'gossip',
+  // Macht/Kontrolle (5)
+  'assert-dominance',
+  'spy-on',
+  'intercept-communication',
+  'gather-leverage',
+  'consolidate-power',
+  // Gruppen/Dynamik (5)
+  'form-squad',
+  'recruit-member',
+  'host-gathering',
+  'mediate-conflict',
+  'challenge-authority',
+  // Überleben/Existenz (5)
+  'scavenge',
+  'fortify-position',
+  'escape-attempt',
+  'seek-shelter',
+  'care-for-injured',
 ] as const
 
 export const npcIntentionTypeSchema = z.enum(NPC_INTENTION_TYPES)
