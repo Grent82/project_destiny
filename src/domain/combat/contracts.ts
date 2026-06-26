@@ -69,7 +69,7 @@ export const combatSourceTypeSchema = z.enum(['quest', 'expedition', 'district',
 export const combatProvenanceSchema = z.object({
   sourceType: combatSourceTypeSchema,
   linkedQuestId: z.string().nullable().default(null),
-  linkedMissionId: z.string().nullable().default(null),
+  linkedExpeditionId: z.string().nullable().default(null),
   linkedFactionId: z.string().nullable().default(null),
   districtId: z.string().nullable().default(null),
   destinationId: z.string().nullable().default(null),

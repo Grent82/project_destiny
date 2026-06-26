@@ -151,7 +151,7 @@ export function generateProceduralCombatQuest(
     timeLimitDays: 4 + (params.seed % 3),
     executionDurationDays: null,
     executionDurationWatches: null,
-    linkedMissionId: null,
+    linkedQuestId: null,
     enemyNpcId: null,
     requiredFactionStanding: null,
     discoverySource: null,

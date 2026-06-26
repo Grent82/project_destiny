@@ -106,6 +106,15 @@ export const dateProposalSchema = z
   })
   .strict()
 
+export const dateLocationSchema = z
+  .object({
+    districtId: entityIdSchema,
+    poiId: z.string().optional(),
+    label: z.string().optional(),
+  })
+  .strict()
+export type DateLocation = z.infer<typeof dateLocationSchema>
+
 export const scheduledDateSchema = z
   .object({
     dateId: entityIdSchema,
@@ -113,7 +122,7 @@ export const scheduledDateSchema = z
     dateTemplateId: z.string(),
     scheduledDay: positiveIntegerSchema,
     scheduledTimeSlot: timeSlotSchema,
-    location: z.string().nullable().default(null),
+    location: dateLocationSchema.nullable().default(null),
     status: z.enum(['scheduled', 'completed', 'cancelled']).default('scheduled'),
     outcomeId: z.string().nullable().default(null),
   })

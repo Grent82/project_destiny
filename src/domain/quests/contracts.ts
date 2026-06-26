@@ -23,7 +23,7 @@ export const questTemplateSchema = z.object({
   timeLimitDays: z.number().nullable().default(null),
   executionDurationDays: z.number().int().positive().nullable().default(null),
   executionDurationWatches: z.number().int().positive().nullable().default(null),
-  linkedMissionId: z.string().nullable().default(null),
+  linkedQuestId: z.string().nullable().default(null),
   enemyNpcId: z.string().nullable().default(null),
   requiredFactionStanding: z.object({
     factionId: z.string(),

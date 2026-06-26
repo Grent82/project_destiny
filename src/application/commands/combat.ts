@@ -103,10 +103,6 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     (left, right) => right.speed - left.speed || right.skill - left.skill,
   )
 
-  const linkedQuestTemplate = linkedQuest
-    ? (contentCatalog.questsById?.get(linkedQuest.questId) ?? null)
-    : null
-
   const encounter: ActiveCombatState = {
     encounterId: `encounter-day-${state.day}-${state.timeSlot}`,
     round: 1,
@@ -126,7 +122,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     provenance: {
       sourceType: linkedQuestId ? 'quest' : 'district',
       linkedQuestId: linkedQuestId ?? null,
-      linkedMissionId: linkedQuestTemplate?.linkedMissionId ?? null,
+      linkedExpeditionId: null,
       linkedFactionId: linkedQuest?.context.issuerFactionId ?? districtFactionId,
       districtId: linkedQuest?.context.incidentDistrictId ?? state.currentDistrictId,
       destinationId: null,
