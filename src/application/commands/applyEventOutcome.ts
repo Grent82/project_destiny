@@ -354,6 +354,7 @@ export function applyOutcomes(
                 npcArc,
                 currentDirectiveId: null,
                 directiveDeadlineDay: null,
+                factionRelationships: [],
               }
               next = { ...next, roster: [...next.roster, newEntry] }
               const seeded = getSeeded()

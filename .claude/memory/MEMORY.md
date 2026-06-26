@@ -12,3 +12,5 @@
 - [Projekt: Tooling-Quirks — vitest schluckt console.log, Playwright-MCP-Screenshots flüchtig](project_test-tooling-quirks.md) — Headless-Sim als Audit-Werkzeug
 - [Test mock strategy](feedback_test-mock-strategy.md) — only mock fields code reads, cast at boundary
 - [Session Learnings 2026-06-24](session_learnings_2026-06-24.md) — KI-Retro after Living World Coalition/Expedition implementation
+- [Feedback: Schema-Änderungen erfordern vollständige Consumer-Analyse vor Commit](feedback_schema-change%20Hygiene.md) — 86 TypeScript-Fehler über 20+ Dateien nach contracts.ts Änderung
+- [Session Learnings 2026-06-25](session_learnings_2026-06-25.md) — KI-Retro nach Faction Directives Schema Implementation

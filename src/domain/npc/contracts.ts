@@ -375,6 +375,7 @@ export const npcRuntimeStateSchema = z
     npcArc: npcArcSchema,
     currentDirectiveId: entityIdSchema.nullable().default(null),
     directiveDeadlineDay: z.number().int().nonnegative().nullable().default(null),
+    factionRelationships: z.array(factionRelationshipSchema).default([]),
   })
   .strict()
 

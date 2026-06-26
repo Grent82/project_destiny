@@ -253,6 +253,7 @@ function createRosterNpc(
     npcArc: null,
     currentDirectiveId: null,
     directiveDeadlineDay: null,
+    factionRelationships: [],
     captivityState: undefined,
     pregnancyState: undefined,
     bondStatus: null,

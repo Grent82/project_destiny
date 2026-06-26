@@ -93,6 +93,7 @@ function buildRosterEntryFromOffer(
       : null,
     currentDirectiveId: null,
     directiveDeadlineDay: null,
+    factionRelationships: [],
   }
 }
 

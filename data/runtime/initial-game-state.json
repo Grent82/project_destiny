@@ -169,9 +169,11 @@
       "bondStatus": null,
       "npcArc": null,
       "currentDirectiveId": null,
-      "directiveDeadlineDay": null
+      "directiveDeadlineDay": null,
+      "factionRelationships": []
     }
   ],
+
   "inventory": [
     {
       "itemId": "item-medkit-field",

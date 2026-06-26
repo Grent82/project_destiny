@@ -20,6 +20,7 @@ export const EndDayPhase = {
   BONDING: "bonding",
   CAPTIVITY: "captivity",
   QUESTS: "quests",
+  FACTION_DIRECTIVES: "faction-directives",
 } as const
 
 export type PhaseHandler = (state: GameState) => GameState

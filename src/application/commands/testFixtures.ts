@@ -91,6 +91,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   npcArc: null,
   currentDirectiveId: null,
   directiveDeadlineDay: null,
+  factionRelationships: [],
 }
 
 /** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */
