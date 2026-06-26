@@ -134,6 +134,14 @@ export type GroupMember = z.infer<typeof groupMemberSchema>
  * A corridor group - a group of NPCs organized to clear the corridor.
  * Note: This is NOT a factional coalition - just an NPC group without faction structure.
  */
+export const playerContributionSchema = z.object({
+  food: nonNegativeIntegerSchema.default(0),
+  money: nonNegativeIntegerSchema.default(0),
+  material: nonNegativeIntegerSchema.default(0),
+  joinedNpcIds: z.array(entityIdSchema).default([]),
+})
+export type PlayerContribution = z.infer<typeof playerContributionSchema>
+
 export const corridorGroupSchema = z.object({
   id: entityIdSchema,
   status: groupStatusSchema,
@@ -147,6 +155,7 @@ export const corridorGroupSchema = z.object({
     holder: z.string().min(1),
     rate: z.number().min(0).max(100),
   }).optional(),
+  playerContribution: playerContributionSchema.optional(),
 })
 export type CorridorGroup = z.infer<typeof corridorGroupSchema>
 
