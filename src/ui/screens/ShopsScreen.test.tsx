@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
+import type { ContainerType } from '../../domain/inventory/contracts'
 
 import { createGameStore } from '../../application'
 import { selectShopOverview } from '../../application/selectors/shops'
@@ -9,11 +10,41 @@ import { gameStateSchema } from '../../domain'
 import { AppProviders } from '../app/AppProviders'
 import { ShopsScreen } from './ShopsScreen'
 
+function createInventoryWithItem(instanceId: string, itemId: string, quantity = 2) {
+  return {
+    ...initialGameStateSnapshot.inventoryState,
+    player: {
+      ...initialGameStateSnapshot.inventoryState.player,
+      bagContainers: [{
+        containerId: 'container-player-bag',
+        containerType: 'backpack' as ContainerType,
+        ownerId: 'player',
+        maxSlots: 20,
+        slots: [{
+          slotId: `slot-${instanceId}`,
+          itemInstanceId: instanceId,
+          quantity,
+        }],
+        locked: false,
+      }],
+      usedBagSlots: 1,
+      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+    },
+    sharedContainers: [],
+    itemRegistry: { [instanceId]: { itemId, uniqueId: instanceId, quantity, locationType: 'player_inventory' as const, acquiredDay: 1, flags: [] } },
+  }
+}
+
 describe('ShopsScreen', () => {
   it('renders seeded shops and updates visible money and owned quantity after purchase', async () => {
     const user = userEvent.setup()
     // Use explicit money=500 and harbor district so purchase test is independent of starting balance/district
-    const richState = gameStateSchema.parse({ ...initialGameStateSnapshot, money: 500, currentDistrictId: 'district-harbor' })
+    const richState = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      money: 500,
+      currentDistrictId: 'district-harbor',
+      inventoryState: createInventoryWithItem('inst-existing-item', 'item-medkit-field'),
+    })
     const store = createGameStore(richState)
 
     render(

@@ -12,19 +12,40 @@ import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import type { GameState } from '../../domain/game/contracts'
+import type { ContainerType } from '../../domain/inventory/contracts'
 
 const SQUAD_NPC = 'npc-marion-vale'
 const DEST_ID = 'dest-ashfields' // must exist in catalog
 
-function stateWithMissionPack(items: Array<{ itemId: string; quantity: number }>): GameState {
+function createInventoryWithMissionPackItems(items: Array<{ instanceId: string; itemId: string; quantity: number }>) {
+  return {
+    ...initialGameStateSnapshot.inventoryState,
+    player: {
+      ...initialGameStateSnapshot.inventoryState.player,
+      bagContainers: [],
+      usedBagSlots: 0,
+      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+    },
+    sharedContainers: items.length > 0 ? [{
+      containerId: 'container-mission-pack',
+      containerType: 'supply_pack' as ContainerType,
+      ownerId: 'mission_pack',
+      maxSlots: 20,
+      slots: items.map((item) => ({
+        slotId: `slot-${item.instanceId}`,
+        itemInstanceId: item.instanceId,
+        quantity: item.quantity,
+      })),
+      locked: false,
+    }] : [],
+    itemRegistry: Object.fromEntries(items.map((item) => [item.instanceId, { itemId: item.itemId }])),
+  }
+}
+
+function stateWithMissionPack(items: Array<{ instanceId: string; itemId: string; quantity: number }>): GameState {
   return {
     ...initialGameStateSnapshot,
-    ownedItems: items.map((i, idx) => ({
-      instanceId: `inst-mp-${idx}`,
-      itemId: i.itemId,
-      location: 'mission_pack' as const,
-      quantity: i.quantity,
-    })),
+    inventoryState: createInventoryWithMissionPackItems(items),
   }
 }
 
@@ -43,8 +64,8 @@ describe('selectExpeditionCarryLoad', () => {
   it('counts document items correctly', () => {
     // item-ledger-bureau is a document category
     const state = stateWithMissionPack([
-      { itemId: 'item-ledger-bureau', quantity: 2 },
-      { itemId: 'item-ledger-bureau', quantity: 1 },
+      { instanceId: 'inst-doc-1', itemId: 'item-ledger-bureau', quantity: 2 },
+      { instanceId: 'inst-doc-2', itemId: 'item-ledger-bureau', quantity: 1 },
     ])
     const store = createGameStore(state)
     const load = selectExpeditionCarryLoad(store.getState())
@@ -56,7 +77,7 @@ describe('selectExpeditionCarryLoad', () => {
 
   it('flags overLimit when document count exceeds 5', () => {
     const state = stateWithMissionPack([
-      { itemId: 'item-ledger-bureau', quantity: 6 },
+      { instanceId: 'inst-doc-over', itemId: 'item-ledger-bureau', quantity: 6 },
     ])
     const store = createGameStore(state)
     const load = selectExpeditionCarryLoad(store.getState())
@@ -79,7 +100,7 @@ describe('selectIsExpeditionOverCarryLimit', () => {
 
   it('returns false when within limits', () => {
     const state = stateWithMissionPack([
-      { itemId: 'item-ledger-bureau', quantity: 3 }, // document: 3/5
+      { instanceId: 'inst-doc-ok', itemId: 'item-ledger-bureau', quantity: 3 }, // document: 3/5
     ])
     const store = createGameStore(state)
     expect(selectIsExpeditionOverCarryLimit(store.getState())).toBe(false)
@@ -87,7 +108,7 @@ describe('selectIsExpeditionOverCarryLimit', () => {
 
   it('returns true when over document limit', () => {
     const state = stateWithMissionPack([
-      { itemId: 'item-ledger-bureau', quantity: 6 }, // document: 6 > 5
+      { instanceId: 'inst-doc-over', itemId: 'item-ledger-bureau', quantity: 6 }, // document: 6 > 5
     ])
     const store = createGameStore(state)
     expect(selectIsExpeditionOverCarryLimit(store.getState())).toBe(true)
@@ -120,9 +141,9 @@ describe('startExpedition carry limit gate', () => {
         n.npcId === SQUAD_NPC ? { ...n, states: { ...n.states, health: 60 } } : n,
       ),
       selectedSquadNpcIds: [SQUAD_NPC],
-      ownedItems: [
-        { instanceId: 'inst-doc-ok', itemId: 'item-ledger-bureau', location: 'mission_pack', quantity: 3 },
-      ],
+      inventoryState: createInventoryWithMissionPackItems([
+        { instanceId: 'inst-doc-ok', itemId: 'item-ledger-bureau', quantity: 3 },
+      ]),
     })
     store.dispatch(
       gameActions.startExpedition({
@@ -141,9 +162,9 @@ describe('startExpedition carry limit gate', () => {
         n.npcId === SQUAD_NPC ? { ...n, states: { ...n.states, health: 60 } } : n,
       ),
       selectedSquadNpcIds: [SQUAD_NPC],
-      ownedItems: [
-        { instanceId: 'inst-doc-over', itemId: 'item-ledger-bureau', location: 'mission_pack', quantity: 6 },
-      ],
+      inventoryState: createInventoryWithMissionPackItems([
+        { instanceId: 'inst-doc-over', itemId: 'item-ledger-bureau', quantity: 6 },
+      ]),
     })
     store.dispatch(
       gameActions.startExpedition({

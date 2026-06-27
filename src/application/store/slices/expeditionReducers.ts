@@ -8,6 +8,80 @@ import { endDay as endDayCommand } from '../../commands/endDay'
 import { EXPEDITION_CARRY_LIMITS } from '../../selectors/expeditionCarry'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
+/** Simple item reference for internal use */
+type ItemRef = {
+  instanceId: string
+  itemId: string
+  quantity: number
+}
+
+/** Helper to get items from mission_pack container */
+function getMissionPackItems(inventoryState: GameState['inventoryState']): ItemRef[] {
+  const items: ItemRef[] = []
+  for (const container of inventoryState.sharedContainers) {
+    if (container.ownerId === 'mission_pack') {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId) {
+          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+          if (instanceDef) {
+            items.push({
+              instanceId: slot.itemInstanceId,
+              itemId: instanceDef.itemId,
+              quantity: slot.quantity,
+            })
+          }
+        }
+      }
+    }
+  }
+  return items
+}
+
+/** Helper to find a consumable item in player inventory with heal effect */
+function findHealConsumable(inventoryState: GameState['inventoryState'], loadout: { consumableIds: string[] }): ItemRef | null {
+  for (const instanceId of loadout.consumableIds) {
+    // Check if it's in player bag
+    for (const container of inventoryState.player.bagContainers) {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId === instanceId) {
+          const instanceDef = inventoryState.itemRegistry[instanceId]
+          if (instanceDef) {
+            const def = contentCatalog.itemsById.get(instanceDef.itemId)
+            if (def?.typedEffects?.some((e) => e.type === 'heal')) {
+              return {
+                instanceId: slot.itemInstanceId,
+                itemId: instanceDef.itemId,
+                quantity: slot.quantity,
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return null
+}
+
+/** Helper to remove an item from player inventory by instanceId */
+function removeItemFromPlayerInventory(inventoryState: GameState['inventoryState'], instanceId: string): GameState['inventoryState'] {
+  const newContainers = inventoryState.player.bagContainers.map((container) => {
+    const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === instanceId)
+    if (slotIndex === -1) return container
+    const newSlots = [...container.slots]
+    newSlots.splice(slotIndex, 1)
+    return { ...container, slots: newSlots }
+  }).filter((c) => c.slots.length > 0)
+  const usedSlots = newContainers.reduce((sum, c) => sum + c.slots.length, 0)
+  return {
+    ...inventoryState,
+    player: {
+      ...inventoryState.player,
+      bagContainers: newContainers,
+      usedBagSlots: usedSlots,
+    },
+  }
+}
+
 export const expeditionReducers = {
   startExpedition(
     state: GameState,
@@ -23,7 +97,7 @@ export const expeditionReducers = {
     if (squadNpcIds.length === 0) return
     if ((state.cityResources?.foodSecurity ?? 0) < supplies) return
 
-    const missionItems = state.ownedItems.filter((i) => i.location === 'mission_pack')
+    const missionItems = getMissionPackItems(state.inventoryState)
     const categoryCounts: Record<string, number> = {}
     for (const item of missionItems) {
       const def = contentCatalog.itemsById.get(item.itemId)
@@ -88,19 +162,13 @@ export const expeditionReducers = {
         const target = squadNpcs[Math.floor(Math.random() * squadNpcs.length)]!
         target.states.health = Math.max(0, target.states.health - 15)
         target.states.injury = Math.min(100, target.states.injury + 10)
-        const healInstanceId = target.loadout.consumableIds
-          .map((id) => state.ownedItems.find((o) => o.instanceId === id))
-          .filter(Boolean)
-          .find((inst) => {
-            const def = contentCatalog.itemsById.get(inst!.itemId)
-            return def?.typedEffects?.some((e) => e.type === 'heal') ?? false
-          })
-        if (healInstanceId) {
-          const def = contentCatalog.itemsById.get(healInstanceId.itemId)!
+        const healInstance = findHealConsumable(state.inventoryState, target.loadout)
+        if (healInstance) {
+          const def = contentCatalog.itemsById.get(healInstance.itemId)!
           state.pendingConsumableDecision = {
             npcId: target.npcId,
             npcName: target.name,
-            instanceId: healInstanceId.instanceId,
+            instanceId: healInstance.instanceId,
             itemName: def.name,
             injuryContext: encounter.label,
           }
@@ -204,9 +272,28 @@ export const expeditionReducers = {
     const decision = state.pendingConsumableDecision
     if (!decision) return
     const { npcId, instanceId, itemName, npcName } = decision
-    const instance = state.ownedItems.find((o) => o.instanceId === instanceId)
-    if (!instance) { state.pendingConsumableDecision = null; return }
-    const def = contentCatalog.itemsById.get(instance.itemId)
+
+    // Check player inventory
+    let foundInstance: ItemRef | null = null
+    for (const container of state.inventoryState.player.bagContainers) {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId === instanceId) {
+          const instanceDef = state.inventoryState.itemRegistry[instanceId]
+          if (instanceDef) {
+            foundInstance = {
+              instanceId: slot.itemInstanceId,
+              itemId: instanceDef.itemId,
+              quantity: slot.quantity,
+            }
+          }
+          break
+        }
+      }
+      if (foundInstance) break
+    }
+
+    if (!foundInstance) { state.pendingConsumableDecision = null; return }
+    const def = contentCatalog.itemsById.get(foundInstance.itemId)
     const healEffect = def?.typedEffects?.find((e) => e.type === 'heal')
     const healValue = typeof healEffect?.value === 'number' ? healEffect.value : 0
     const npc = state.roster.find((n) => n.npcId === npcId)
@@ -214,7 +301,7 @@ export const expeditionReducers = {
       npc.states.health = Math.min(100, npc.states.health + healValue)
       npc.states.injury = Math.max(0, npc.states.injury - Math.floor(healValue / 2))
     }
-    state.ownedItems = state.ownedItems.filter((o) => o.instanceId !== instanceId)
+    state.inventoryState = removeItemFromPlayerInventory(state.inventoryState, instanceId)
     if (npc) {
       npc.loadout.consumableIds = npc.loadout.consumableIds.filter((id) => id !== instanceId)
     }

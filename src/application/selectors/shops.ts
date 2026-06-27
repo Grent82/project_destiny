@@ -11,6 +11,7 @@ import {
 } from '../content/shopPricing'
 import { contentCatalog } from '../content/contentCatalog'
 import type { RootState } from '../store/gameStore'
+import type { GameState } from '../../domain'
 export {
   computeFactionPriceMod,
   computeMarketPressureMod,
@@ -19,7 +20,7 @@ export {
 }
 
 const selectMoney = (state: RootState) => state.game.money
-const selectOwnedItems = (state: RootState) => state.game.ownedItems
+const selectInventoryState = (state: RootState) => state.game.inventoryState
 const selectDistrictStates = (state: RootState) => state.game.districts
 const selectCurrentDistrictId = (state: RootState) => state.game.currentDistrictId
 const selectFactionStandings = (state: RootState) => state.game.factionStandings
@@ -33,12 +34,26 @@ export const selectShopsInCurrentDistrict = (state: RootState) => {
   return contentCatalog.shops.filter((s) => s.districtId === districtId)
 }
 
+/** Helper to build a quantity map from player inventory slots */
+function buildPlayerInventoryQuantityMap(inventoryState: GameState['inventoryState']): Map<string, number> {
+  const quantities = new Map<string, number>()
+  for (const container of inventoryState.player.bagContainers) {
+    for (const slot of container.slots) {
+      if (slot.itemInstanceId) {
+        const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+        if (instanceDef) {
+          quantities.set(instanceDef.itemId, (quantities.get(instanceDef.itemId) ?? 0) + slot.quantity)
+        }
+      }
+    }
+  }
+  return quantities
+}
+
 export const selectShopOverview = createSelector(
-  [selectMoney, selectOwnedItems, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding, selectDistrictTension],
-  (money, ownedItems, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding, districtTension) => {
-    const quantities = new Map(
-      ownedItems.filter((o) => o.location === 'inventory').map((o) => [o.itemId, o.quantity])
-    )
+  [selectMoney, selectInventoryState, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding, selectDistrictTension],
+  (money, inventoryState, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding, districtTension) => {
+    const quantities = buildPlayerInventoryQuantityMap(inventoryState)
     const lowestPriceByItem = new Map<string, number>()
     const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
 

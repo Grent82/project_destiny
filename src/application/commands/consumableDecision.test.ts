@@ -3,7 +3,32 @@ import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import type { GameState } from '../../domain/game/contracts'
+import type { ContainerType } from '../../domain/inventory/contracts'
 
+function createInventoryWithPlayerItem(instanceId: string, itemId: string) {
+  return {
+    ...initialGameStateSnapshot.inventoryState,
+    player: {
+      ...initialGameStateSnapshot.inventoryState.player,
+      bagContainers: [{
+        containerId: 'container-player-bag',
+        containerType: 'backpack' as ContainerType,
+        ownerId: 'player',
+        maxSlots: 20,
+        slots: [{
+          slotId: `slot-${instanceId}`,
+          itemInstanceId: instanceId,
+          quantity: 1,
+        }],
+        locked: false,
+      }],
+      usedBagSlots: 1,
+      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+    },
+    sharedContainers: [],
+    itemRegistry: { [instanceId]: { itemId } },
+  }
+}
 
 describe('consumable mission use', () => {
   describe('pendingConsumableDecision initial state', () => {
@@ -14,7 +39,7 @@ describe('consumable mission use', () => {
   })
 
   describe('resolveConsumableUse', () => {
-    it('applies heal and removes item from ownedItems', () => {
+    it('applies heal and removes item from inventory', () => {
       const store = createGameStore()
       // Manually set a pending decision
       store.dispatch(
@@ -23,7 +48,7 @@ describe('consumable mission use', () => {
       // Directly set state with a pending decision
       const stateWithDecision: GameState = {
         ...initialGameStateSnapshot,
-        ownedItems: [{ instanceId: 'inst-salve-001', itemId: 'item-dressing-league-surplus', quantity: 1, location: 'inventory' as const }],
+        inventoryState: createInventoryWithPlayerItem('inst-salve-001', 'item-dressing-league-surplus'),
         roster: [
           {
             ...initialGameStateSnapshot.roster[0]!,
@@ -51,7 +76,9 @@ describe('consumable mission use', () => {
       store2.dispatch(gameActions.resolveConsumableUse())
       const state = store2.getState().game
       expect(state.pendingConsumableDecision).toBeNull()
-      expect(state.ownedItems.find((o) => o.instanceId === 'inst-salve-001')).toBeUndefined()
+      // Check item is removed from player inventory
+      const playerItems = state.inventoryState.player.bagContainers.flatMap(c => c.slots)
+      expect(playerItems.some(s => s.itemInstanceId === 'inst-salve-001')).toBe(false)
       // NPC health should have increased
       const npc = state.roster.find((n) => n.npcId === 'npc-test')
       expect(npc!.states.health).toBeGreaterThan(60)

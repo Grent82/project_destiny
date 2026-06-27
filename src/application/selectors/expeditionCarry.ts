@@ -1,12 +1,7 @@
-/**
- * Expedition carry limits — slot/category caps enforced at mission departure.
- *
- * Limits are authored constants, not GameState fields.
- * Consumables are governed by NPC loadout slots (not included here).
- */
-
 import { createSelector } from '@reduxjs/toolkit'
+
 import type { RootState } from '../store/gameStore'
+import type { GameState } from '../../domain'
 import { contentCatalog } from '../content/contentCatalog'
 
 export type CarryCategory = 'document' | 'tradeGood' | 'tool' | 'material' | 'consumable' | 'other'
@@ -33,6 +28,28 @@ function toCarryCategory(itemCategory: string): CarryCategory {
   }
 }
 
+/** Helper to get items from mission_pack container */
+function getMissionPackItems(inventoryState: GameState['inventoryState']): { instanceId: string; itemId: string; quantity: number }[] {
+  const items: { instanceId: string; itemId: string; quantity: number }[] = []
+  for (const container of inventoryState.sharedContainers) {
+    if (container.ownerId === 'mission_pack') {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId) {
+          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+          if (instanceDef) {
+            items.push({
+              instanceId: slot.itemInstanceId,
+              itemId: instanceDef.itemId,
+              quantity: slot.quantity,
+            })
+          }
+        }
+      }
+    }
+  }
+  return items
+}
+
 export type CarryCategoryLoad = {
   category: CarryCategory
   used: number
@@ -45,9 +62,9 @@ export type CarryCategoryLoad = {
  * Used to show carry summary on MissionPrepScreen and enforce departure gate.
  */
 export const selectExpeditionCarryLoad = createSelector(
-  (state: RootState) => state.game.ownedItems,
-  (ownedItems): CarryCategoryLoad[] => {
-    const missionItems = ownedItems.filter((i) => i.location === 'mission_pack')
+  (state: RootState) => state.game.inventoryState,
+  (inventoryState): CarryCategoryLoad[] => {
+    const missionItems = getMissionPackItems(inventoryState)
 
     const counts: Partial<Record<CarryCategory, number>> = {}
 

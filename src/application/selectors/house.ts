@@ -1,17 +1,108 @@
 import { createSelector } from '@reduxjs/toolkit'
 
+import rawArmor from '../../../data/definitions/armor.json'
+import rawWeapons from '../../../data/definitions/weapons.json'
 import type { RootState } from '../store/gameStore'
-import type { HouseExteriorTier, HeirLegitimacy, Heir } from '../../domain/game/contracts'
-import {
-  PRESTIGE_TIER_MIN_SCORES,
-  EXTERIOR_TIER_SCORES,
-  DEFENSE_FORTIFICATION_WEIGHT,
-  DEFENSE_GUARD_CREW_WEIGHT,
-  DEFENSE_RENOWN_DETERRENCE_PER_LEVEL,
-  DEFENSE_RENOWN_LEVEL_DIVISOR,
-} from '../../domain/game/gameRules'
+import type { GameState, Heir, HeirLegitimacy, HouseExteriorTier } from '../../domain'
 
 const selectGame = (state: RootState) => state.game
+
+/** @deprecated Use selectOwnedItemsByLocation. Kept for backward compat. */
+export const selectStash = createSelector([selectGame], (game) => game.stash)
+
+/** Helper to get items from house_storage container */
+function getHouseStorageItemIds(inventoryState: GameState['inventoryState']): Set<string> {
+  const ids = new Set<string>()
+  for (const container of inventoryState.sharedContainers) {
+    if (container.ownerId === 'house_storage') {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId) {
+          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+          if (instanceDef) {
+            ids.add(instanceDef.itemId)
+          }
+        }
+      }
+    }
+  }
+  return ids
+}
+
+export const selectStashedWeapons = createSelector([selectGame], (game) => {
+  const stashedIds = getHouseStorageItemIds(game.inventoryState)
+  return (rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number }>)
+    .filter((w) => stashedIds.has(w.id))
+})
+
+export const selectStashedArmors = createSelector([selectGame], (game) => {
+  const stashedIds = getHouseStorageItemIds(game.inventoryState)
+  return (rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number }>)
+    .filter((a) => stashedIds.has(a.id))
+})
+
+export const selectOwnedItemsByLocation = createSelector([selectGame], (game) => {
+  const inventoryState = game.inventoryState
+
+  // Helper to get itemIds from player bag
+  const getPlayerItemIds = (): string[] => {
+    const ids: string[] = []
+    for (const container of inventoryState.player.bagContainers) {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId) {
+          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+          if (instanceDef) {
+            ids.push(instanceDef.itemId)
+          }
+        }
+      }
+    }
+    return ids
+  }
+
+  // Helper to get itemIds from house_storage
+  const getHouseStorageItemIds = (): string[] => {
+    const ids: string[] = []
+    for (const container of inventoryState.sharedContainers) {
+      if (container.ownerId === 'house_storage') {
+        for (const slot of container.slots) {
+          if (slot.itemInstanceId) {
+            const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+            if (instanceDef) {
+              ids.push(instanceDef.itemId)
+            }
+          }
+        }
+      }
+    }
+    return ids
+  }
+
+  // Helper to get itemIds from mission_pack
+  const getMissionPackItemIds = (): string[] => {
+    const ids: string[] = []
+    for (const container of inventoryState.sharedContainers) {
+      if (container.ownerId === 'mission_pack') {
+        for (const slot of container.slots) {
+          if (slot.itemInstanceId) {
+            const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+            if (instanceDef) {
+              ids.push(instanceDef.itemId)
+            }
+          }
+        }
+      }
+    }
+    return ids
+  }
+
+  return {
+    inventory: getPlayerItemIds(),
+    house_storage: getHouseStorageItemIds(),
+    equipped: [], // Not yet migrated
+    mission_pack: getMissionPackItemIds(),
+    archived: [], // Not yet migrated
+  }
+})
 
 export const selectHouseState = createSelector([selectGame], (game) => game.house)
 export const selectLastDomesticRelationshipBeat = createSelector(
@@ -111,11 +202,11 @@ export const PRESTIGE_TIER_LABELS: Record<HousePrestigeTier, string> = {
 
 /** Minimum prestige score for each tier (sourced from gameRules). */
 const PRESTIGE_TIER_THRESHOLDS: Array<{ tier: HousePrestigeTier; min: number }> = [
-  { tier: 'prominent',   min: PRESTIGE_TIER_MIN_SCORES.prominent },
-  { tier: 'recognized',  min: PRESTIGE_TIER_MIN_SCORES.recognized },
-  { tier: 'established', min: PRESTIGE_TIER_MIN_SCORES.established },
-  { tier: 'occupied',    min: PRESTIGE_TIER_MIN_SCORES.occupied },
-  { tier: 'collapsed',   min: PRESTIGE_TIER_MIN_SCORES.collapsed },
+  { tier: 'prominent',   min: 80 },
+  { tier: 'recognized',  min: 60 },
+  { tier: 'established', min: 40 },
+  { tier: 'occupied',    min: 20 },
+  { tier: 'collapsed',   min: 0 },
 ]
 
 function computePrestigeTier(score: number): HousePrestigeTier {
@@ -134,6 +225,13 @@ function computePrestigeTier(score: number): HousePrestigeTier {
  * Max theoretical score: ~120+ (clamped to 100)
  */
 export const selectHousePrestige = createSelector([selectGame], (game) => {
+  const EXTERIOR_TIER_SCORES: Record<HouseExteriorTier, number> = {
+    grand: 80,
+    restored: 60,
+    maintained: 40,
+    patched: 20,
+    ruined: 0,
+  }
   const exteriorScore = EXTERIOR_TIER_SCORES[game.house.exteriorState]
   const roomsWithFunction = game.house.rooms.filter(
     (r) => r.state === 'intact' && r.roomFunction !== null
@@ -200,11 +298,23 @@ export const selectContentGates = createSelector(selectHousePrestige, (prestige)
  * Higher defenseRating → more likely to deter or repel a raid.
  */
 export const selectDefenseRating = createSelector([selectGame], (game): number => {
+  const DEFENSE_FORTIFICATION_WEIGHT = 15
+  const DEFENSE_GUARD_CREW_WEIGHT = 10
+  const DEFENSE_RENOWN_DETERRENCE_PER_LEVEL = 10
+  const DEFENSE_RENOWN_LEVEL_DIVISOR = 20
+
   const fortScore = game.house.fortificationLevel * DEFENSE_FORTIFICATION_WEIGHT
   const guardCount = game.roster.filter((n) => n.assignment === 'defense').length
   const crewScore = guardCount * DEFENSE_GUARD_CREW_WEIGHT
 
   // Renown level from progression (uses getRenownLevel via prestige)
+  const EXTERIOR_TIER_SCORES: Record<HouseExteriorTier, number> = {
+    grand: 80,
+    restored: 60,
+    maintained: 40,
+    patched: 20,
+    ruined: 0,
+  }
   const prestige = EXTERIOR_TIER_SCORES[game.house.exteriorState]
   const renownLevel = Math.floor(prestige / DEFENSE_RENOWN_LEVEL_DIVISOR) // 0–4
   const renownScore = renownLevel * DEFENSE_RENOWN_DETERRENCE_PER_LEVEL
@@ -214,13 +324,15 @@ export const selectDefenseRating = createSelector([selectGame], (game): number =
 
 /**
  * Returns house storage info including base capacity, used slots, and installed modules.
- *
- * The effective capacity = houseStorageCapacity (base) + storage_expand effects applied at install time.
- * Module expansion is applied directly to houseStorageCapacity when installModule runs — this selector
- * reads the already-updated capacity from state (no catalog lookup needed at read time).
  */
 export const selectHouseStorageInfo = createSelector([selectGame], (game) => {
-  const usedSlots = game.ownedItems.filter((i) => i.location === 'house_storage').length
+  // Count items in house_storage container
+  let usedSlots = 0
+  for (const container of game.inventoryState.sharedContainers) {
+    if (container.ownerId === 'house_storage') {
+      usedSlots += container.slots.filter((slot) => slot.itemInstanceId !== null).length
+    }
+  }
 
   return {
     capacity: game.houseStorageCapacity,

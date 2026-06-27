@@ -3,7 +3,7 @@ import { formatMarks } from '../../domain/game/currency'
 import { resolveShopPricingBreakdown } from '../content/shopPricing'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
-import { addOwnedItem } from './inventory'
+import { addPlayerItem } from './inventory/inventoryHelpers'
 
 export function purchaseItemFromShop(
   state: GameState,
@@ -30,9 +30,12 @@ export function purchaseItemFromShop(
   }
 
   const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
-  const afterPurchase = addOwnedItem(
+  // Generate a unique instance ID for the purchased item
+  const instanceId = `inst-${itemId}-${Date.now()}`
+  const afterPurchase = addPlayerItem(
     { ...state, money: state.money - purchasePrice },
-    itemId,
+    instanceId,
+    1,
   )
   return appendActivityLogEntry(
     afterPurchase,
