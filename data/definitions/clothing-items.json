@@ -1,0 +1,688 @@
+[
+  {
+    "id": "cloth-headscarf-ragged",
+    "name": "Ragged Headscarf",
+    "category": "consumable",
+    "tier": 1,
+    "value": 3,
+    "shopPrice": 3,
+    "weight": 0.2,
+    "rarity": "common",
+    "tags": [
+      "head",
+      "street-wear",
+      "concealment"
+    ],
+    "description": "A dirty scrap of cloth wrapped around the head for dust protection or to hide identity.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-cap-workers",
+    "name": "Worker's Cap",
+    "category": "consumable",
+    "tier": 1,
+    "value": 8,
+    "shopPrice": 9,
+    "weight": 0.3,
+    "rarity": "common",
+    "tags": [
+      "head",
+      "worker-wear",
+      "uniform"
+    ],
+    "description": "Standard issue cap for ring workers, faded and oil-stained from long shifts.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-hood-leather",
+    "name": "Leather-Bound Hood",
+    "category": "consumable",
+    "tier": 2,
+    "value": 25,
+    "shopPrice": 30,
+    "weight": 0.5,
+    "rarity": "uncommon",
+    "tags": [
+      "head",
+      "protection",
+      "worker-wear"
+    ],
+    "description": "A reinforced hood with leather trim, favored by those who work in hazardous conditions.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-bandit-mask",
+    "name": "Bandit Half-Mask",
+    "category": "consumable",
+    "tier": 2,
+    "value": 35,
+    "shopPrice": 42,
+    "weight": 0.4,
+    "rarity": "uncommon",
+    "tags": [
+      "head",
+      "concealment",
+      "street-wear"
+    ],
+    "description": "A leather mask covering the lower face, popular with those who prefer anonymity.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-veil-noble",
+    "name": "Silk Veil of the Pale",
+    "category": "consumable",
+    "tier": 3,
+    "value": 120,
+    "shopPrice": 144,
+    "weight": 0.2,
+    "rarity": "rare",
+    "tags": [
+      "head",
+      "noble-wear",
+      "fancy"
+    ],
+    "description": "An elegant silk veil embroidered with silver thread, worn by nobles of the Pale district.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-hat-steward",
+    "name": "Steward's Tricorne",
+    "category": "consumable",
+    "tier": 2,
+    "value": 45,
+    "shopPrice": 54,
+    "weight": 0.4,
+    "rarity": "uncommon",
+    "tags": [
+      "head",
+      "uniform",
+      "formal"
+    ],
+    "description": "A formal three-cornered hat marking the wearer as a house steward or administrator.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-crown-rust",
+    "name": "Rust-Crown circlet",
+    "category": "consumable",
+    "tier": 3,
+    "value": 200,
+    "shopPrice": 240,
+    "weight": 0.3,
+    "rarity": "rare",
+    "tags": [
+      "head",
+      "noble-wear",
+      "relic"
+    ],
+    "description": "A tarnished metal circlet once worn by a minor noble, now a symbol of forgotten authority.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-shirt-burlap",
+    "name": "Burlap Work Shirt",
+    "category": "consumable",
+    "tier": 1,
+    "value": 5,
+    "shopPrice": 6,
+    "weight": 0.8,
+    "rarity": "common",
+    "tags": [
+      "torso",
+      "worker-wear",
+      "basic"
+    ],
+    "description": "A rough-spun shirt for hard labor, already stiff with grime.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-tunic-simple",
+    "name": "Simple Linen Tunic",
+    "category": "consumable",
+    "tier": 1,
+    "value": 12,
+    "shopPrice": 14,
+    "weight": 0.6,
+    "rarity": "common",
+    "tags": [
+      "torso",
+      "basic",
+      "citizen-wear"
+    ],
+    "description": "A plain tunic of undyed linen, serviceable and easily replaced.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-vest-leather",
+    "name": "Patchwork Leather Vest",
+    "category": "consumable",
+    "tier": 2,
+    "value": 30,
+    "shopPrice": 36,
+    "weight": 1.2,
+    "rarity": "uncommon",
+    "tags": [
+      "torso",
+      "salvage",
+      "worker-wear"
+    ],
+    "description": "A vest made from salvaged leather scraps, stitched together with surprising care.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-coat-duster",
+    "name": "Oil-Stained Duster",
+    "category": "consumable",
+    "tier": 2,
+    "value": 45,
+    "shopPrice": 54,
+    "weight": 1.8,
+    "rarity": "uncommon",
+    "tags": [
+      "torso",
+      "worker-wear",
+      "protection"
+    ],
+    "description": "A long coat treated with oil to repel water and grime, essential for ring work.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-blouse-silk",
+    "name": "Faded Silk Blouse",
+    "category": "consumable",
+    "tier": 2,
+    "value": 60,
+    "shopPrice": 72,
+    "weight": 0.5,
+    "rarity": "uncommon",
+    "tags": [
+      "torso",
+      "citizen-wear",
+      "fancy"
+    ],
+    "description": "Once fine silk, now showing its age but still bearing traces of elegance.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-doublet-noble",
+    "name": "Embroidered Noble Doublet",
+    "category": "consumable",
+    "tier": 3,
+    "value": 150,
+    "shopPrice": 180,
+    "weight": 1,
+    "rarity": "rare",
+    "tags": [
+      "torso",
+      "noble-wear",
+      "formal"
+    ],
+    "description": "A richly embroidered doublet displaying the colors and sigil of a noble house.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-robe-acolyte",
+    "name": "Acolyte's Grey Robe",
+    "category": "consumable",
+    "tier": 2,
+    "value": 40,
+    "shopPrice": 48,
+    "weight": 1.5,
+    "rarity": "uncommon",
+    "tags": [
+      "torso",
+      "religious",
+      "uniform"
+    ],
+    "description": "A simple grey robe worn by religious acolytes and seekers of contemplation.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-jacket-officers",
+    "name": "Officer's Service Jacket",
+    "category": "consumable",
+    "tier": 3,
+    "value": 100,
+    "shopPrice": 120,
+    "weight": 1.6,
+    "rarity": "rare",
+    "tags": [
+      "torso",
+      "uniform",
+      "authority"
+    ],
+    "description": "A formal jacket with brass buttons, marking the wearer as a League officer.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-sleeves-rolled",
+    "name": "Rolled Canvas Sleeves",
+    "category": "consumable",
+    "tier": 1,
+    "value": 4,
+    "shopPrice": 4,
+    "weight": 0.2,
+    "rarity": "common",
+    "tags": [
+      "arms",
+      "worker-wear",
+      "practical"
+    ],
+    "description": "Detachable canvas sleeves, rolled up for hot work and tied down for protection.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-gloves-work",
+    "name": "Calloused Work Gloves",
+    "category": "consumable",
+    "tier": 1,
+    "value": 6,
+    "shopPrice": 7,
+    "weight": 0.2,
+    "rarity": "common",
+    "tags": [
+      "arms",
+      "worker-wear",
+      "protection"
+    ],
+    "description": "Thick gloves worn soft at the fingertips, protecting hands without sacrificing dexterity.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-bracers-leather",
+    "name": "Stitched Leather Bracers",
+    "category": "consumable",
+    "tier": 2,
+    "value": 25,
+    "shopPrice": 30,
+    "weight": 0.4,
+    "rarity": "uncommon",
+    "tags": [
+      "arms",
+      "traveler-wear",
+      "protection"
+    ],
+    "description": "Leather bracers with reinforced stitching, offering minor protection for travelers.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-gloves-fine",
+    "name": "Fine Kid Gloves",
+    "category": "consumable",
+    "tier": 2,
+    "value": 50,
+    "shopPrice": 60,
+    "weight": 0.1,
+    "rarity": "uncommon",
+    "tags": [
+      "arms",
+      "noble-wear",
+      "fancy"
+    ],
+    "description": "Soft kid leather gloves, worn by those who value their hands and their appearance.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-sleeve-armband",
+    "name": "House Armband",
+    "category": "consumable",
+    "tier": 2,
+    "value": 15,
+    "shopPrice": 18,
+    "weight": 0.1,
+    "rarity": "common",
+    "tags": [
+      "arms",
+      "uniform",
+      "symbol"
+    ],
+    "description": "A cloth armband displaying house colors, worn to show loyalty or affiliation.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-trousers-burlap",
+    "name": "Burlap Trousers",
+    "category": "consumable",
+    "tier": 1,
+    "value": 6,
+    "shopPrice": 7,
+    "weight": 0.6,
+    "rarity": "common",
+    "tags": [
+      "legs",
+      "worker-wear",
+      "basic"
+    ],
+    "description": "Rough trousers that chafe but are cheap to replace.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-skirt-simple",
+    "name": "Plain Wool Skirt",
+    "category": "consumable",
+    "tier": 1,
+    "value": 10,
+    "shopPrice": 12,
+    "weight": 0.5,
+    "rarity": "common",
+    "tags": [
+      "legs",
+      "citizen-wear",
+      "basic"
+    ],
+    "description": "A simple wool skirt in a neutral color, practical for daily work.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-pants-leather",
+    "name": "Reinforced Leather Pants",
+    "category": "consumable",
+    "tier": 2,
+    "value": 35,
+    "shopPrice": 42,
+    "weight": 1,
+    "rarity": "uncommon",
+    "tags": [
+      "legs",
+      "traveler-wear",
+      "protection"
+    ],
+    "description": "Leather-reinforced trousers for those who climb, crawl, or ride frequently.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-trousers-noble",
+    "name": "Velvet Breeches",
+    "category": "consumable",
+    "tier": 3,
+    "value": 120,
+    "shopPrice": 144,
+    "weight": 0.7,
+    "rarity": "rare",
+    "tags": [
+      "legs",
+      "noble-wear",
+      "fancy"
+    ],
+    "description": "Rich velvet breeches trimmed with gold thread, for formal occasions only.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-skirt-layered",
+    "name": "Layered Merchant Skirt",
+    "category": "consumable",
+    "tier": 2,
+    "value": 40,
+    "shopPrice": 48,
+    "weight": 0.8,
+    "rarity": "uncommon",
+    "tags": [
+      "legs",
+      "merchant-wear",
+      "practical"
+    ],
+    "description": "A multi-layered skirt with hidden pockets, favored by traveling merchants.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-sandals-strapped",
+    "name": "Strapped Leather Sandals",
+    "category": "consumable",
+    "tier": 1,
+    "value": 8,
+    "shopPrice": 9,
+    "weight": 0.4,
+    "rarity": "common",
+    "tags": [
+      "feet",
+      "basic",
+      "summer"
+    ],
+    "description": "Simple sandals with multiple straps, adequate for warm weather.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-boots-work",
+    "name": "Steel-Toed Work Boots",
+    "category": "consumable",
+    "tier": 2,
+    "value": 40,
+    "shopPrice": 48,
+    "weight": 1.2,
+    "rarity": "uncommon",
+    "tags": [
+      "feet",
+      "worker-wear",
+      "protection"
+    ],
+    "description": "Heavy boots with steel reinforcement, essential for ring workers.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-boots-travel",
+    "name": "Worn Travel Boots",
+    "category": "consumable",
+    "tier": 2,
+    "value": 30,
+    "shopPrice": 36,
+    "weight": 1,
+    "rarity": "uncommon",
+    "tags": [
+      "feet",
+      "traveler-wear",
+      "practical"
+    ],
+    "description": "Boots that have seen many miles, broken in and comfortable despite their scars.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-shoes-elegant",
+    "name": "Polished Court Shoes",
+    "category": "consumable",
+    "tier": 3,
+    "value": 90,
+    "shopPrice": 108,
+    "weight": 0.6,
+    "rarity": "rare",
+    "tags": [
+      "feet",
+      "noble-wear",
+      "formal"
+    ],
+    "description": "Immaculately polished shoes with silver buckles, for court appearances.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-boots-rain",
+    "name": "Waterproof Rain Boots",
+    "category": "consumable",
+    "tier": 2,
+    "value": 35,
+    "shopPrice": 42,
+    "weight": 0.9,
+    "rarity": "uncommon",
+    "tags": [
+      "feet",
+      "practical",
+      "protection"
+    ],
+    "description": "Treated leather boots that keep feet dry through the worst of the city's runoff.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-robe-simple",
+    "name": "Simple Grey Robe",
+    "category": "consumable",
+    "tier": 1,
+    "value": 15,
+    "shopPrice": 18,
+    "weight": 1.2,
+    "rarity": "common",
+    "tags": [
+      "full",
+      "basic",
+      "citizen-wear"
+    ],
+    "description": "A full-length robe of undyed wool, worn by laborers and the poor.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-jumpsuit-worker",
+    "name": "League Worker Jumpsuit",
+    "category": "consumable",
+    "tier": 2,
+    "value": 50,
+    "shopPrice": 60,
+    "weight": 1.5,
+    "rarity": "uncommon",
+    "tags": [
+      "full",
+      "uniform",
+      "worker-wear"
+    ],
+    "description": "A one-piece jumpsuit with multiple pockets, standard issue for League maintenance crews.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-robe-noble",
+    "name": "Ceremonial Noble Robe",
+    "category": "consumable",
+    "tier": 3,
+    "value": 250,
+    "shopPrice": 300,
+    "weight": 2,
+    "rarity": "rare",
+    "tags": [
+      "full",
+      "noble-wear",
+      "formal",
+      "ceremonial"
+    ],
+    "description": "An elaborate robe of deep crimson silk, embroidered with family sigils and worn only for state occasions.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-gown-evening",
+    "name": "Evening Gown of the Pale",
+    "category": "consumable",
+    "tier": 3,
+    "value": 300,
+    "shopPrice": 360,
+    "weight": 1.8,
+    "rarity": "rare",
+    "tags": [
+      "full",
+      "noble-wear",
+      "fancy",
+      "evening"
+    ],
+    "description": "An elegant evening gown in pale blue silk, designed for the finest balls of the noble district.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-underclothes-simple",
+    "name": "Simple Underclothes",
+    "category": "consumable",
+    "tier": 1,
+    "value": 4,
+    "shopPrice": 4,
+    "weight": 0.3,
+    "rarity": "common",
+    "tags": [
+      "undergarments",
+      "basic",
+      "essential"
+    ],
+    "description": "Basic linen undergarments, washed regularly and mended when needed.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-shift-linen",
+    "name": "Fine Linen Shift",
+    "category": "consumable",
+    "tier": 2,
+    "value": 15,
+    "shopPrice": 18,
+    "weight": 0.4,
+    "rarity": "common",
+    "tags": [
+      "undergarments",
+      "citizen-wear",
+      "comfort"
+    ],
+    "description": "A well-made shift of fine linen, comfortable against the skin.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-corset-simple",
+    "name": "Light Support Corset",
+    "category": "consumable",
+    "tier": 2,
+    "value": 25,
+    "shopPrice": 30,
+    "weight": 0.5,
+    "rarity": "uncommon",
+    "tags": [
+      "undergarments",
+      "practical",
+      "support"
+    ],
+    "description": "A lightly boned corset for posture support, not for dramatic shaping.",
+    "effects": [],
+    "typedEffects": []
+  },
+  {
+    "id": "cloth-underclothes-silk",
+    "name": "Silk Undergarments",
+    "category": "consumable",
+    "tier": 3,
+    "value": 80,
+    "shopPrice": 96,
+    "weight": 0.2,
+    "rarity": "rare",
+    "tags": [
+      "undergarments",
+      "noble-wear",
+      "luxury"
+    ],
+    "description": "Delicate silk undergarments, a luxury reserved for the wealthy.",
+    "effects": [],
+    "typedEffects": []
+  }
+]

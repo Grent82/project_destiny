@@ -120,10 +120,10 @@ describe('Content Catalog - Items by ID Integration', () => {
       }
     })
 
-    it('armor count matches armor.json', () => {
+    it('armor count matches armor.json + armor-items.json', () => {
       const armorCount = Array.from(contentCatalog.itemsById.values()).filter(isArmorDefinition).length
-      // armor.json has 30 armor pieces
-      expect(armorCount).toBe(30)
+      // armor.json has 30 armor pieces, armor-items.json has 24 more
+      expect(armorCount).toBe(54)
     })
   })
 
@@ -140,9 +140,9 @@ describe('Content Catalog - Items by ID Integration', () => {
     it('item count equals base items + weapons + armor', () => {
       const totalCount = contentCatalog.itemsById.size
       // items.json has ~30 items, weapons.json has 19, armor.json has 30
-      // Total should be around 79
-      expect(totalCount).toBeGreaterThan(70)
-      expect(totalCount).toBeLessThan(100)
+      // clothing-items.json has 34 items, armor-items.json has 24 items
+      // Total should be around 159
+      expect(totalCount).toBeGreaterThan(150)
     })
   })
 

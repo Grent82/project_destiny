@@ -13,6 +13,8 @@ import factions from '../../../data/definitions/factions.json'
 import items from '../../../data/definitions/items.json'
 import weapons from '../../../data/definitions/weapons.json'
 import armor from '../../../data/definitions/armor.json'
+import clothingItems from '../../../data/definitions/clothing-items.json'
+import armorItems from '../../../data/definitions/armor-items.json'
 import npcs from '../../../data/definitions/npcs.json'
 import questsData from '../../../data/definitions/quests.json'
 import rumorsData from '../../../data/definitions/rumors.json'
@@ -128,6 +130,9 @@ function toMap<T extends { id: string }>(entries: T[]) {
  * fixing issues like 'unknown' categories in shops and missing item names
  * in purchase/sell flows.
  */
+const parsedClothingItems = z.array(itemDefinitionSchema).parse(clothingItems)
+const parsedArmorItems = z.array(armorDefinitionSchema).parse(armorItems)
+
 function buildItemsById(): Map<string, WeaponDefinition | ArmorDefinition | typeof parsedItems[number]> {
   const map = new Map<string, WeaponDefinition | ArmorDefinition | typeof parsedItems[number]>()
 
@@ -139,6 +144,12 @@ function buildItemsById(): Map<string, WeaponDefinition | ArmorDefinition | type
   }
   for (const armorPiece of parsedArmor) {
     map.set(armorPiece.id, armorPiece)
+  }
+  for (const clothing of parsedClothingItems) {
+    map.set(clothing.id, clothing)
+  }
+  for (const armorItem of parsedArmorItems) {
+    map.set(armorItem.id, armorItem)
   }
 
   return map
@@ -156,6 +167,8 @@ export const contentCatalog = {
   items: parsedItems,
   weapons: parsedWeapons,
   armor: parsedArmor,
+  clothingItems: parsedClothingItems,
+  armorItems: parsedArmorItems,
   itemsById: buildItemsById(),
   npcs: parsedNpcs,
   npcsById: toMap(parsedNpcs),
