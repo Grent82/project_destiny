@@ -38,7 +38,7 @@ function createInventoryWithMissionPackItems(items: Array<{ instanceId: string; 
       })),
       locked: false,
     }] : [],
-    itemRegistry: Object.fromEntries(items.map((item) => [item.instanceId, { itemId: item.itemId }])),
+    itemRegistry: Object.fromEntries(items.map((item) => [item.instanceId, { itemId: item.itemId, uniqueId: item.instanceId, quantity: item.quantity, locationType: 'container' as const, acquiredDay: 1, flags: [] }])),
   }
 }
 

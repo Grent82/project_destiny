@@ -1,14 +1,27 @@
 import type { GameState } from '../../domain'
 import type { OwnedItemLocation } from '../../domain/items/contracts'
 
+/**
+ * LEGACY INVENTORY FUNCTIONS - DEPRECATED
+ *
+ * These functions operate on the old `ownedItems` array and are kept only for
+ * backward compatibility during the migration to the new `inventoryState` system.
+ *
+ * New code should use the functions in `inventory/inventoryHelpers.ts`:
+ * - addPlayerItem (instead of addOwnedItem)
+ * - removePlayerItem (instead of removeOwnedItem)
+ * - findPlayerItem (instead of searching ownedItems directly)
+ * - hasPlayerItem (instead of checking ownedItems directly)
+ */
+
 let _instanceCounter = 0
 function nextInstanceId(itemId: string): string {
   return `inst-${itemId}-${Date.now()}-${++_instanceCounter}`
 }
 
 /**
- * Add an item to ownedItems (primary model).
- * Stacks quantity on existing inventory-location items; creates new instance otherwise.
+ * @deprecated Use `addPlayerItem` from `inventory/inventoryHelpers.ts` instead.
+ * This function operates on the legacy ownedItems array.
  */
 export function addOwnedItem(
   state: GameState,
@@ -38,7 +51,8 @@ export function addOwnedItem(
 }
 
 /**
- * Remove quantity from ownedItems. Removes the entry when quantity reaches 0.
+ * @deprecated Use `removePlayerItem` from `inventory/inventoryHelpers.ts` instead.
+ * This function operates on the legacy ownedItems array.
  */
 export function removeOwnedItem(
   state: GameState,
@@ -62,7 +76,8 @@ export function removeOwnedItem(
 }
 
 /**
- * Move an owned item instance to a new location.
+ * @deprecated This function operates on the legacy ownedItems array.
+ * Item movement is now handled through the moveItem reducer.
  */
 export function moveOwnedItem(
   state: GameState,
@@ -77,17 +92,16 @@ export function moveOwnedItem(
   }
 }
 
-/** @deprecated Use addOwnedItem. Kept for callers not yet migrated. */
+/**
+ * @deprecated Legacy function no longer used. The inventory array has been
+ * replaced by inventoryState.player.bagContainers.
+ */
 export function addInventoryEntry(
-  inventory: GameState['inventory'],
-  itemId: string,
-  quantity = 1,
+  _inventory: GameState['inventory'],
+  _itemId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _quantity: number = 1,
 ): GameState['inventory'] {
-  const existingEntry = inventory.find((entry) => entry.itemId === itemId)
-  if (!existingEntry) {
-    return [...inventory, { itemId, quantity }]
-  }
-  return inventory.map((entry) =>
-    entry.itemId === itemId ? { ...entry, quantity: entry.quantity + quantity } : entry,
-  )
+  // This function is deprecated and no longer used
+  return []
 }

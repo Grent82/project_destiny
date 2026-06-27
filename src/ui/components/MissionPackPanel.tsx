@@ -27,8 +27,9 @@ export function MissionPackPanel() {
       return
     }
     if (action.type === 'open') {
-      const owned = store.getState().game.ownedItems.find((entry) => entry.instanceId === instanceId)
-      const def = owned ? contentCatalog.itemsById.get(owned.itemId) : null
+      const inventoryState = store.getState().game.inventoryState
+      const instanceDef = inventoryState.itemRegistry[instanceId]
+      const def = instanceDef ? contentCatalog.itemsById.get(instanceDef.itemId) : null
       if (def) {
         setPreviewDocument({
           title: def.name,

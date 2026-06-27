@@ -7,7 +7,6 @@ import { installModule } from './installModule'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import type { GameState } from '../../domain/game/contracts'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MODULE_ITEM_ID = 'item-module-lock-reinforcement'
 const MODULE_INSTANCE_ID = MODULE_ITEM_ID  // For simplicity, instanceId = itemId in tests
 const NON_MODULE_ITEM_ID = 'item-medkit-field'

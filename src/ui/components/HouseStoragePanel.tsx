@@ -35,8 +35,9 @@ export function HouseStoragePanel() {
       return
     }
     if (action.type === 'open') {
-      const owned = store.getState().game.ownedItems.find((entry) => entry.instanceId === instanceId)
-      const def = owned ? contentCatalog.itemsById.get(owned.itemId) : null
+      const inventoryState = store.getState().game.inventoryState
+      const instanceDef = inventoryState.itemRegistry[instanceId]
+      const def = instanceDef ? contentCatalog.itemsById.get(instanceDef.itemId) : null
       if (def) {
         setPreviewDocument({
           title: def.name,
@@ -46,8 +47,9 @@ export function HouseStoragePanel() {
       return
     }
     if (action.type === 'sell') {
-      const owned = store.getState().game.ownedItems.find((entry) => entry.instanceId === instanceId)
-      const def = owned ? contentCatalog.itemsById.get(owned.itemId) : null
+      const inventoryState = store.getState().game.inventoryState
+      const instanceDef = inventoryState.itemRegistry[instanceId]
+      const def = instanceDef ? contentCatalog.itemsById.get(instanceDef.itemId) : null
       const sellPrice = computeSellPrice(store.getState().game, instanceId)
       setPendingSellConfirm({ instanceId, itemName: def?.name ?? 'item', sellPrice })
       return

@@ -2,7 +2,7 @@ import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { formatMarks } from '../../domain/game/currency'
-import { addOwnedItem } from './inventory'
+import { addPlayerItem } from './inventory/inventoryHelpers'
 import type { ExpeditionDiscovery } from '../../domain/expedition/contracts'
 
 /**
@@ -77,7 +77,26 @@ export function applyExpeditionDiscoveries(
         `Expedition return: +${formatMarks(discovery.amount)} recovered.`,
       )
     } else if (discovery.type === 'item' && discovery.itemId) {
-      next = addOwnedItem(next, discovery.itemId)
+      const instanceId = `inst-${discovery.itemId}-${Date.now()}`
+      next = addPlayerItem(next, instanceId, 1)
+      // Add to itemRegistry
+      next = {
+        ...next,
+        inventoryState: {
+          ...next.inventoryState,
+          itemRegistry: {
+            ...next.inventoryState.itemRegistry,
+            [instanceId]: {
+              itemId: discovery.itemId,
+              uniqueId: instanceId,
+              quantity: 1,
+              locationType: 'player_inventory' as const,
+              acquiredDay: next.day,
+              flags: [],
+            },
+          },
+        },
+      }
       const itemDef = contentCatalog.itemsById.get(discovery.itemId)
       next = appendActivityLogEntry(
         next,

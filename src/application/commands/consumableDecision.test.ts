@@ -26,7 +26,7 @@ function createInventoryWithPlayerItem(instanceId: string, itemId: string) {
       equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
     },
     sharedContainers: [],
-    itemRegistry: { [instanceId]: { itemId } },
+    itemRegistry: { [instanceId]: { itemId, uniqueId: instanceId, quantity: 1, locationType: 'player_inventory' as const, acquiredDay: 1, flags: [] } },
   }
 }
 

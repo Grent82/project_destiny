@@ -32,13 +32,28 @@ export function purchaseItemFromShop(
   const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
   // Generate a unique instance ID for the purchased item
   const instanceId = `inst-${itemId}-${Date.now()}`
-  const afterPurchase = addPlayerItem(
-    { ...state, money: state.money - purchasePrice },
-    instanceId,
-    1,
-  )
+  const baseState = { ...state, money: state.money - purchasePrice }
+  const afterPurchase = addPlayerItem(baseState, instanceId, 1)
+  // Add the item to the registry so it can be looked up by the UI
+  const afterRegistry = {
+    ...afterPurchase,
+    inventoryState: {
+      ...afterPurchase.inventoryState,
+      itemRegistry: {
+        ...afterPurchase.inventoryState.itemRegistry,
+        [instanceId]: {
+          itemId,
+          uniqueId: instanceId,
+          quantity: 1,
+          locationType: 'player_inventory' as const,
+          acquiredDay: afterPurchase.day,
+          flags: [],
+        },
+      },
+    },
+  }
   return appendActivityLogEntry(
-    afterPurchase,
+    afterRegistry,
     'economy',
     `Purchased ${itemName} from ${shop.name} for ${formatMarks(purchasePrice)}.`,
   )

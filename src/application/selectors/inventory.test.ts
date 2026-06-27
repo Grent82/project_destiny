@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { selectItemsByLocation, selectItemActions, moveItem } from './inventory'
+import { selectItemsByLocation, selectItemActions } from './inventory'
 import { createGameStore } from '../store/gameStore'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import type { GameState } from '../../domain/game/contracts'
@@ -36,7 +36,7 @@ function createInventoryWithPlayerItems(itemInstances: Array<{ instanceId: strin
       equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
     },
     sharedContainers: [],
-    itemRegistry: Object.fromEntries(itemInstances.map((item) => [item.instanceId, { itemId: item.itemId }])),
+    itemRegistry: Object.fromEntries(itemInstances.map((item) => [item.instanceId, { itemId: item.itemId, uniqueId: item.instanceId, quantity: item.quantity, locationType: 'player_inventory' as const, acquiredDay: 1, flags: [] }])),
   }
 }
 
@@ -61,7 +61,7 @@ function createInventoryWithHouseStorageItems(itemInstances: Array<{ instanceId:
       })),
       locked: false,
     }] : [],
-    itemRegistry: Object.fromEntries(itemInstances.map((item) => [item.instanceId, { itemId: item.itemId }])),
+    itemRegistry: Object.fromEntries(itemInstances.map((item) => [item.instanceId, { itemId: item.itemId, uniqueId: item.instanceId, quantity: item.quantity, locationType: 'container' as const, acquiredDay: 1, flags: [] }])),
   }
 }
 
@@ -86,7 +86,7 @@ function createInventoryWithMissionPackItems(itemInstances: Array<{ instanceId: 
       })),
       locked: false,
     }] : [],
-    itemRegistry: Object.fromEntries(itemInstances.map((item) => [item.instanceId, { itemId: item.itemId }])),
+    itemRegistry: Object.fromEntries(itemInstances.map((item) => [item.instanceId, { itemId: item.itemId, uniqueId: item.instanceId, quantity: item.quantity, locationType: 'container' as const, acquiredDay: 1, flags: [] }])),
   }
 }
 
