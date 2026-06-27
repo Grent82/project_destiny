@@ -42,6 +42,7 @@ function bondedNpc(overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
     currentEmployment: null,
     currentIntention: null,
     factionRelationships: [],
+    wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
     bondStatus: {
       holderId: 'player',
       contractValue: 200,

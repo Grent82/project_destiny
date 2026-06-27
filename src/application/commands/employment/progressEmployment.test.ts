@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest'
+import type { NpcRuntimeState, GameState } from '../../../domain'
 
 import { progressEmployment, calculateTaskProgress, _resetEmploymentProgressTracker } from './progressEmployment'
 import { idaRhysRosterEntry, initialStateWithIda } from '../testFixtures'
@@ -40,7 +41,7 @@ describe('progressEmployment', () => {
 
   it('completes employment when progress reaches 100%', () => {
     // Create an NPC with very high skills to ensure quick completion
-    const highSkillNpc = {
+    const highSkillNpc: NpcRuntimeState = {
       ...idaRhysRosterEntry,
       currentEmployment: null, // Explicitly set to null
       skills: {
@@ -66,7 +67,7 @@ describe('progressEmployment', () => {
       startedAtDay: 1,
     })
 
-    const state = {
+    const state: GameState = {
       ...initialStateWithIda,
       roster: [{ ...highSkillNpc, currentEmployment: employment }],
       rngSeed: 50, // Positive variance

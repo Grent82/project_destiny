@@ -49,6 +49,7 @@ describe('createEmployment', () => {
       employeeId: idaRhysRosterEntry.npcId,
       taskType: 'scout' as const,
       wagePerDay: 5,
+      completionBonus: 0,
     }
 
     const result = createEmployment(state, params)
@@ -66,6 +67,7 @@ describe('createEmployment', () => {
       employeeId: 'non-existent-npc',
       taskType: 'scout' as const,
       wagePerDay: 5,
+      completionBonus: 0,
     }
 
     const result = createEmployment(state, params)
@@ -80,7 +82,9 @@ describe('createEmployment', () => {
       employerId: 'player',
       employerType: 'player' as const,
       employeeId: idaRhysRosterEntry.npcId,
-      taskType: 'guard',
+      taskType: 'guard' as const,
+      wagePerDay: 0,
+      completionBonus: 0,
       description: 'Guard the house',
     }
 
@@ -109,6 +113,10 @@ describe('createEmployment', () => {
             createdAtDay: initialStateWithIda.day - 5,
             wagePerDay: 0,
             completionBonus: 0,
+            autoRenew: false,
+            performanceThreshold: 50,
+            poachProtection: 0,
+            performanceHistory: [],
           },
         },
       ],
@@ -120,6 +128,7 @@ describe('createEmployment', () => {
       employeeId: idaRhysRosterEntry.npcId,
       taskType: 'scout' as const,
       wagePerDay: 10,
+      completionBonus: 0,
     }
 
     const result = createEmployment(state, params)

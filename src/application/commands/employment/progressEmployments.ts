@@ -1,7 +1,6 @@
 import type { GameState } from '../../../domain/game/contracts'
 import { progressEmployment } from './progressEmployment'
 import { failEmployment } from './completeEmployment'
-import { terminateEmployment, type TerminateEmploymentParams } from './terminateEmployment'
 
 /**
  * Processes all active employments for the day.
@@ -71,7 +70,7 @@ function processSingleEmployment(
     } else if (updatedNpc?.currentEmployment?.status === 'completed') {
       // Check for auto-renewal
       if (employment.autoRenew) {
-        newState = handleAutoRenewal(newState, employeeId, updatedNpc.currentEmployment)
+        newState = handleAutoRenewal(newState, employeeId)
       }
     }
   }
@@ -86,13 +85,6 @@ function processSingleEmployment(
 function handleAutoRenewal(
   state: GameState,
   employeeId: string,
-  completedEmployment: {
-    taskType: string
-    target?: string
-    wagePerDay: number
-    completionBonus: number
-    deadlineDay?: number
-  },
 ): GameState {
   const npc = state.roster.find((npc) => npc.npcId === employeeId)
   if (!npc || !npc.currentEmployment) {

@@ -1,7 +1,5 @@
 import type { GameState } from '../../../domain/game/contracts'
 import { createRng } from '../seededRng'
-import { appendActivityLogEntry } from '../activityLog'
-import type { CreateEmploymentParams } from './types'
 
 /**
  * Result of a poaching attempt.

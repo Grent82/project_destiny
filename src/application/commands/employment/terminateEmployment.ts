@@ -35,7 +35,7 @@ export function terminateEmployment(
   state: GameState,
   params: TerminateEmploymentParams,
 ): GameState {
-  const { employeeId, terminationReason, terminatingBy, penaltyPaid = false } = params
+  const { employeeId, terminationReason, penaltyPaid = false } = params
 
   const employee = state.roster.find((npc) => npc.npcId === employeeId)
   if (!employee || !employee.currentEmployment) {

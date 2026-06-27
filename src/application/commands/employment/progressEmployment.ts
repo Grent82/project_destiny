@@ -58,31 +58,32 @@ export function progressEmployment(
   ]
 
   // Update employment or mark as completed/failed
-  let newState = state
-
   if (accumulatedProgress >= 100) {
     // Task completed successfully
     employmentProgressTracker.delete(employmentId)
     // Update history before completing
-    newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
+    let newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
     newState = completeEmployment(newState, employmentNpc.npcId)
+    return newState
   } else if (employment.deadlineDay && state.day >= employment.deadlineDay) {
     // Deadline reached - check if performance threshold is met
     const threshold = employment.performanceThreshold ?? 50
     if (accumulatedProgress < threshold) {
       // Task failed - insufficient progress
       employmentProgressTracker.delete(employmentId)
-      newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
+      let newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
       newState = failEmployment(newState, employmentNpc.npcId, 'insufficient_progress')
+      return newState
     } else {
       // Progress is sufficient, complete the employment
       employmentProgressTracker.delete(employmentId)
-      newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
+      let newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
       newState = completeEmployment(newState, employmentNpc.npcId)
+      return newState
     }
   } else {
     // Progress updated but not complete yet - update history
-    newState = {
+    return {
       ...state,
       roster: state.roster.map((npc) =>
         npc.npcId === employmentNpc.npcId
@@ -91,8 +92,6 @@ export function progressEmployment(
       ),
     }
   }
-
-  return newState
 }
 
 /**

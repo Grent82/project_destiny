@@ -207,7 +207,8 @@
         "lastAllowanceDay": null,
         "allowedItems": [],
         "restrictedItems": []
-      }
+      },
+      "currentEmployment": null
     }
   ],
   "cityResources": {

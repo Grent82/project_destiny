@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest'
+import type { NpcRuntimeState } from '../../../domain'
 
 import { processAllEmployments } from './progressEmployments'
 import { _resetEmploymentProgressTracker } from './progressEmployment'
@@ -52,20 +53,20 @@ describe('processAllEmployments', () => {
       startedAtDay: 1,
     })
 
+    const highSkillNpc: NpcRuntimeState = {
+      ...idaRhysRosterEntry,
+      currentEmployment: employment,
+      skills: {
+        ...idaRhysRosterEntry.skills,
+        administration: 100,
+      },
+    }
+
     const state = {
       ...initialStateWithIda,
       day: 5,
       rngSeed: 50, // Positive variance for consistent progress
-      roster: [
-        {
-          ...idaRhysRosterEntry,
-          currentEmployment: employment,
-          skills: {
-            ...idaRhysRosterEntry.skills,
-            administration: 100,
-          },
-        },
-      ],
+      roster: [highSkillNpc],
     }
 
     // Process multiple days to simulate progress
