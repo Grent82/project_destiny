@@ -1,5 +1,6 @@
 import type { GameState, TimeSlot, NpcIntentionType } from '../../domain'
 import type { Rng } from './seededRng'
+import { createRngForTask } from './seededRng'
 import type { NpcDistanceResult } from './npcDistance'
 import { INTENTION_TIME_SLOT_MAPPING } from '../../domain/npc/intentionTimeSlots'
 
@@ -317,15 +318,3 @@ export class TimeSlotQueue {
   }
 }
 
-/**
- * Erzeugt einen deterministischen RNG fuer einen spezifischen Task.
- */
-export function createRngForTask(seed: number): Rng {
-  let s = seed >>> 0
-  return function rng(): number {
-    s = (s + 0x6D2B79F5) >>> 0
-    let t = Math.imul(s ^ (s >>> 15), 1 | s)
-    t = t + Math.imul(t ^ (t >>> 7), 61 | t) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
