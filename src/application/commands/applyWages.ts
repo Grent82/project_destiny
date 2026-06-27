@@ -58,6 +58,25 @@ export function applyWages(state: GameState): GameState {
 
     if (next.money >= effectiveWage) {
       next = { ...next, money: next.money - effectiveWage }
+      // Pay 50% to savings, 50% to carriedCash
+      const savingsAmount = Math.floor(effectiveWage / 2)
+      const cashAmount = effectiveWage - savingsAmount // Ensure total equals effectiveWage (handles odd numbers)
+      next = {
+        ...next,
+        roster: next.roster.map((r) =>
+          r.npcId === rosterEntry.npcId
+            ? {
+                ...r,
+                personalFunds: {
+                  ...r.personalFunds,
+                  savings: r.personalFunds.savings + savingsAmount,
+                  carriedCash: r.personalFunds.carriedCash + cashAmount,
+                  lastWagePaymentDay: next.day,
+                },
+              }
+            : r,
+        ),
+      }
       // Paid on time → loyalty +2
       applyRelationshipDelta(next, 'player', rosterEntry.npcId, 'loyalty', 2)
     } else {
