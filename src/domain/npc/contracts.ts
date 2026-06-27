@@ -725,6 +725,18 @@ export const npcEmploymentSchema = z
     startedAtDay: z.number().int().nonnegative().optional().nullable(),
     completedAtDay: z.number().int().nonnegative().optional().nullable(),
     description: z.string().min(1).optional(),
+    // Auto-renewal: if true, employment extends when completed and both parties agree
+    autoRenew: z.boolean().default(false),
+    // Performance threshold: minimum progress % required for success at deadline
+    performanceThreshold: z.number().min(0).max(100).default(50),
+    // Poach protection: resistance % against being poached by other employers (0-100)
+    poachProtection: z.number().min(0).max(100).default(0),
+    // Performance history: tracks progress over time for evaluation
+    performanceHistory: z.array(z.object({
+      day: z.number().int().nonnegative(),
+      progressAtDay: z.number().min(0).max(100),
+      stressImpact: z.number().min(-50).max(50).default(0),
+    })).default([]),
   })
   .strict()
 export const npcRuntimeStateSchema = z

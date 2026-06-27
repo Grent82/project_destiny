@@ -1,4 +1,5 @@
 import type { GameState } from '../../../domain/game/contracts'
+import { completeEmployment, failEmployment } from './completeEmployment'
 
 // Internal progress tracking for employments (not persisted in schema)
 const employmentProgressTracker = new Map<string, number>()
@@ -13,7 +14,7 @@ export function _resetEmploymentProgressTracker(): void {
 /**
  * Progresses an active employment task.
  * Calculates completion based on employee skills and task type.
- * Returns the updated state with potential completion/failure outcomes.
+ * Updates performanceHistory and handles completion/failure outcomes.
  */
 export function progressEmployment(
   state: GameState,
@@ -43,30 +44,78 @@ export function progressEmployment(
   accumulatedProgress += dailyProgress
   employmentProgressTracker.set(employmentId, accumulatedProgress)
 
+  // Calculate stress impact based on progress
+  const stressImpact = dailyProgress > 60 ? -5 : dailyProgress < 20 ? 5 : 0
+
+  // Update performance history
+  const updatedHistory = [
+    ...employment.performanceHistory,
+    {
+      day: state.day,
+      progressAtDay: accumulatedProgress,
+      stressImpact,
+    },
+  ]
+
   // Update employment or mark as completed/failed
   let newState = state
 
   if (accumulatedProgress >= 100) {
     // Task completed successfully
     employmentProgressTracker.delete(employmentId)
+    // Update history before completing
+    newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
     newState = completeEmployment(newState, employmentNpc.npcId)
-  } else if (employment.deadlineDay && state.day >= employment.deadlineDay && accumulatedProgress < 50) {
-    // Task failed - missed deadline with insufficient progress
-    employmentProgressTracker.delete(employmentId)
-    newState = failEmployment(newState, employmentNpc.npcId)
+  } else if (employment.deadlineDay && state.day >= employment.deadlineDay) {
+    // Deadline reached - check if performance threshold is met
+    const threshold = employment.performanceThreshold ?? 50
+    if (accumulatedProgress < threshold) {
+      // Task failed - insufficient progress
+      employmentProgressTracker.delete(employmentId)
+      newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
+      newState = failEmployment(newState, employmentNpc.npcId, 'insufficient_progress')
+    } else {
+      // Progress is sufficient, complete the employment
+      employmentProgressTracker.delete(employmentId)
+      newState = updateEmploymentHistory(state, employmentNpc.npcId, updatedHistory)
+      newState = completeEmployment(newState, employmentNpc.npcId)
+    }
   } else {
-    // Progress updated but not complete yet
+    // Progress updated but not complete yet - update history
     newState = {
       ...state,
       roster: state.roster.map((npc) =>
         npc.npcId === employmentNpc.npcId
-          ? { ...npc, currentEmployment: { ...employment } }
+          ? { ...npc, currentEmployment: { ...employment, performanceHistory: updatedHistory } }
           : npc,
       ),
     }
   }
 
   return newState
+}
+
+/**
+ * Updates the performance history for an employment.
+ */
+function updateEmploymentHistory(
+  state: GameState,
+  employeeId: string,
+  history: Array<{ day: number; progressAtDay: number; stressImpact: number }>,
+): GameState {
+  const npc = state.roster.find((npc) => npc.npcId === employeeId)
+  if (!npc || !npc.currentEmployment) {
+    return state
+  }
+
+  return {
+    ...state,
+    roster: state.roster.map((rosterNpc) =>
+      rosterNpc.npcId === employeeId
+        ? { ...rosterNpc, currentEmployment: { ...rosterNpc.currentEmployment!, performanceHistory: history } }
+        : rosterNpc,
+    ),
+  }
 }
 
 /**
@@ -118,57 +167,4 @@ function getSkillValueForTask(
 
   const requiredSkill = skillMap[employment.taskType] || 'administration'
   return employee.skills[requiredSkill] || 0
-}
-
-/**
- * Completes an employment task and distributes rewards.
- * Local import to avoid circular dependencies.
- */
-function completeEmployment(state: GameState, employeeId: string): GameState {
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
-  if (!employee || !employee.currentEmployment) {
-    return state
-  }
-
-  const employment = employee.currentEmployment
-
-  const updatedEmployment = {
-    ...employment,
-    status: 'completed' as const,
-    completedAtDay: state.day,
-  }
-
-  return {
-    ...state,
-    roster: state.roster.map((npc) =>
-      npc.npcId === employeeId
-        ? { ...npc, currentEmployment: updatedEmployment }
-        : npc,
-    ),
-  }
-}
-
-/**
- * Fails an employment task with a specific reason.
- */
-function failEmployment(state: GameState, employeeId: string, _reason?: string): GameState {
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
-  if (!employee || !employee.currentEmployment) {
-    return state
-  }
-
-  const updatedEmployment = {
-    ...employee.currentEmployment,
-    status: 'failed' as const,
-    completedAtDay: state.day,
-  }
-
-  return {
-    ...state,
-    roster: state.roster.map((npc) =>
-      npc.npcId === employeeId
-        ? { ...npc, currentEmployment: updatedEmployment }
-        : npc,
-    ),
-  }
 }

@@ -1,12 +1,14 @@
 import type { GameState } from '../../../domain/game/contracts'
 import { progressEmployment } from './progressEmployment'
 import { failEmployment } from './completeEmployment'
+import { terminateEmployment, type TerminateEmploymentParams } from './terminateEmployment'
 
 /**
  * Processes all active employments for the day.
  * - Starts pending employments
  * - Progresses in-progress employments
  * - Completes or fails employments based on progress and deadlines
+ * - Handles auto-renewal for completed employments
  */
 export function processAllEmployments(state: GameState): GameState {
   let newState = state
@@ -37,6 +39,8 @@ function processSingleEmployment(
     status: string
     deadlineDay?: number
     createdAtDay: number
+    autoRenew?: boolean
+    performanceThreshold?: number
   },
 ): GameState {
   let newState = state
@@ -45,7 +49,7 @@ function processSingleEmployment(
     // Check if deadline already passed before starting
     if (employment.deadlineDay && state.day >= employment.deadlineDay) {
       // Deadline already passed, fail immediately
-      newState = failEmployment(state, employeeId)
+      newState = failEmployment(state, employeeId, 'deadline_missed')
     } else {
       // Start the employment
       newState = startEmployment(state, employeeId)
@@ -62,12 +66,60 @@ function processSingleEmployment(
         employment.deadlineDay &&
         newState.day >= employment.deadlineDay
       ) {
-        newState = failEmployment(newState, employeeId)
+        newState = failEmployment(newState, employeeId, 'deadline_missed')
+      }
+    } else if (updatedNpc?.currentEmployment?.status === 'completed') {
+      // Check for auto-renewal
+      if (employment.autoRenew) {
+        newState = handleAutoRenewal(newState, employeeId, updatedNpc.currentEmployment)
       }
     }
   }
 
   return newState
+}
+
+/**
+ * Handles auto-renewal of a completed employment.
+ * Creates a new employment contract with updated parameters.
+ */
+function handleAutoRenewal(
+  state: GameState,
+  employeeId: string,
+  completedEmployment: {
+    taskType: string
+    target?: string
+    wagePerDay: number
+    completionBonus: number
+    deadlineDay?: number
+  },
+): GameState {
+  const npc = state.roster.find((npc) => npc.npcId === employeeId)
+  if (!npc || !npc.currentEmployment) {
+    return state
+  }
+
+  // Create new employment with same parameters but new ID
+  const newEmploymentId = `employment-${npc.currentEmployment.employerId}-${employeeId}-${state.day}-renew`
+
+  const renewedEmployment = {
+    ...npc.currentEmployment,
+    employmentId: newEmploymentId,
+    status: 'pending' as const,
+    createdAtDay: state.day,
+    startedAtDay: null,
+    completedAtDay: null,
+    performanceHistory: [], // Reset history for new contract
+  }
+
+  return {
+    ...state,
+    roster: state.roster.map((rosterNpc) =>
+      rosterNpc.npcId === employeeId
+        ? { ...rosterNpc, currentEmployment: renewedEmployment }
+        : rosterNpc,
+    ),
+  }
 }
 
 /**
