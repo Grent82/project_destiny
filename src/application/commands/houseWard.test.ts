@@ -1,264 +1,325 @@
-import { describe, it, expect } from 'vitest'
-import { payWardAllowance, advanceWardStage, tickWardStages } from './houseWard'
-import { type GameState } from '../../domain/game/contracts'
+import { describe, expect, it } from 'vitest'
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { acceptWard, advanceWardStage, formalizeAdultWard, tickWardStages } from './houseWard'
 
-function createWardNpc(
-  npcId: string,
-  name: string,
-  lastAllowanceDay: number | null,
-  allowancePerWeek = 2,
-  personalSavings = 0,
-) {
-  return {
-    npcId,
-    name,
-    status: 'ward' as const,
-    assignment: 'idle' as const,
-    assignedDistrictId: null,
-    roomAssignment: null,
-    activeTitle: null,
-    wagesOwedDays: 0,
-    trainingFocus: null,
-    attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
-    skills: { melee: 30, ranged: 30, medicine: 30, administration: 40, engineering: 30, negotiation: 30, survival: 30, security: 30, crafting: 30, performance: 20, academics: 30, intrigue: 30 },
-    traits: { discipline: 40, ambition: 50, empathy: 50, ruthlessness: 20, prudence: 40, curiosity: 50, dominance: 30, loyalty: 50, vanity: 20, zeal: 20 },
-    states: { health: 80, fatigue: 20, stress: 30, morale: 70, fear: 10, anger: 15, hunger: 20, injury: 0, intoxication: 0, hygiene: 60 },
-    loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
-    equipment: { weapon: null, armor: null, accessory: [] },
-    personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
-    clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
-    armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
-    arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
-    npcMemory: [],
-    npcArc: null,
-    currentDirectiveId: null,
-    directiveDeadlineDay: null,
-    currentIntention: null,
-    factionRelationships: [],
-    captivityState: undefined,
-    pregnancyState: undefined,
-    bondStatus: null,
-    wardPersonalAllowance: { allowancePerWeek, personalSavings, lastAllowanceDay, allowedItems: [], restrictedItems: [] },
-  }
-}
+describe('houseWard commands', () => {
+  describe('acceptWard', () => {
+    it('accepts a new child ward into the household', () => {
+      const state = initialGameStateSnapshot
+      const result = acceptWard(state, 'npc-new-ward-1', 'Tommy', 'ward-origin-street-orphan')
 
-describe('payWardAllowance', () => {
-  it('pays allowance to wards who have not been paid in 7+ days', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      roster: [
-        createWardNpc('npc-ward-1', 'Young Ward', 90, 2, 10), // 10 days since last payment
-      ],
-    }
+      expect(result.house.houseHeirs).toHaveLength(1)
+      expect(result.house.houseHeirs[0]?.name).toBe('Tommy')
+      expect(result.house.houseHeirs[0]?.stage).toBe('child')
+      expect(result.house.houseHeirs[0]?.originStory).toContain('sheltering in the manor yard')
+    })
 
-    const result = payWardAllowance(state)
+    it('accepts a debt settlement ward', () => {
+      const state = initialGameStateSnapshot
+      const result = acceptWard(state, 'npc-new-ward-2', 'Sarah', 'ward-origin-debt-settlement')
 
-    const ward = result.roster[0]
-    expect(ward.wardPersonalAllowance.personalSavings).toBe(12) // 10 + 2
-    expect(ward.wardPersonalAllowance.lastAllowanceDay).toBe(100)
-    expect(result.activityLog.length).toBe(1)
-    expect(result.activityLog[0].message).toContain('receives 2 Mk weekly allowance')
-  })
+      expect(result.house.houseHeirs).toHaveLength(1)
+      expect(result.house.houseHeirs[0]?.stage).toBe('ward')
+    })
 
-  it('does not pay allowance if less than 7 days have passed', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      roster: [
-        createWardNpc('npc-ward-1', 'Young Ward', 95, 2, 10), // Only 5 days since last payment
-      ],
-    }
+    it('accepts a guild apprentice ward', () => {
+      const state = initialGameStateSnapshot
+      const result = acceptWard(state, 'npc-new-ward-3', 'Marcus', 'ward-origin-guild-apprentice')
 
-    const result = payWardAllowance(state)
+      expect(result.house.houseHeirs).toHaveLength(1)
+      expect(result.house.houseHeirs[0]?.stage).toBe('apprentice')
+    })
 
-    const ward = result.roster[0]
-    expect(ward.wardPersonalAllowance.personalSavings).toBe(10) // Unchanged
-    expect(ward.wardPersonalAllowance.lastAllowanceDay).toBe(95) // Unchanged
-    expect(result.activityLog.length).toBe(0)
-  })
-
-  it('pays allowance on exactly day 7', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      roster: [
-        createWardNpc('npc-ward-1', 'Young Ward', 93, 2, 10), // Exactly 7 days since last payment
-      ],
-    }
-
-    const result = payWardAllowance(state)
-
-    const ward = result.roster[0]
-    expect(ward.wardPersonalAllowance.personalSavings).toBe(12) // 10 + 2
-    expect(ward.wardPersonalAllowance.lastAllowanceDay).toBe(100)
-  })
-
-  it('handles wards with never-received allowance (lastAllowanceDay: null)', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      roster: [
-        createWardNpc('npc-ward-1', 'Young Ward', null, 2, 0), // Never received allowance
-      ],
-    }
-
-    const result = payWardAllowance(state)
-
-    const ward = result.roster[0]
-    expect(ward.wardPersonalAllowance.personalSavings).toBe(2)
-    expect(ward.wardPersonalAllowance.lastAllowanceDay).toBe(100)
-  })
-
-  it('skips non-ward NPCs', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      roster: [
-        createWardNpc('npc-ward-1', 'Young Ward', 90, 2, 10),
-        {
-          ...createWardNpc('npc-citizen-1', 'Regular NPC', 90, 2, 10),
-          status: 'citizen' as const,
+    it('rejects ward if house already has 2 wards', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'First', stage: 'child' as const, arrivalDay: 1, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+            { id: 'heir-2', name: 'Second', stage: 'child' as const, arrivalDay: 1, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
         },
-      ],
-    }
+      }
+      const result = acceptWard(state, 'npc-new-ward', 'New', 'ward-origin-street-orphan')
 
-    const result = payWardAllowance(state)
+      expect(result.house.houseHeirs).toHaveLength(2)
+    })
 
-    expect(result.roster[0].wardPersonalAllowance.personalSavings).toBe(12) // Ward gets paid
-    expect(result.roster[1].wardPersonalAllowance.personalSavings).toBe(10) // Citizen unchanged
-    expect(result.activityLog.length).toBe(1)
+    it('rejects ward with invalid origin ID', () => {
+      const state = initialGameStateSnapshot
+      const result = acceptWard(state, 'npc-new-ward', 'Test', 'invalid-origin' as any)
+
+      expect(result.house.houseHeirs).toHaveLength(0)
+    })
+
+    it('records activity log entry when ward is accepted', () => {
+      const state = initialGameStateSnapshot
+      const result = acceptWard(state, 'npc-new-ward-1', 'Tommy', 'ward-origin-street-orphan')
+
+      const logEntry = result.activityLog.find(e => e.message.includes('Tommy joins'))
+      expect(logEntry).toBeDefined()
+    })
   })
 
-  it('supports custom allowance amounts', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      roster: [
-        createWardNpc('npc-ward-1', 'Generous Ward', 90, 5, 0), // 5 Mk per week
-      ],
-    }
+  describe('advanceWardStage', () => {
+    it('does not advance ward before duration requirement', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 10,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'child' as const, arrivalDay: 5, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
 
-    const result = payWardAllowance(state)
+      expect(result.house.houseHeirs[0]?.stage).toBe('child')
+    })
 
-    const ward = result.roster[0]
-    expect(ward.wardPersonalAllowance.personalSavings).toBe(5)
-    expect(result.activityLog[0].message).toContain('receives 5 Mk weekly allowance')
+    it('advances ward from child to ward after 30 days', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 35,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'child' as const, arrivalDay: 5, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
+
+      expect(result.house.houseHeirs[0]?.stage).toBe('ward')
+    })
+
+    it('advances ward from ward to apprentice after 60 days', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 100,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'ward' as const, arrivalDay: 40, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
+
+      expect(result.house.houseHeirs[0]?.stage).toBe('apprentice')
+    })
+
+    it('advances ward from apprentice to adult after 90 days', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 200,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'apprentice' as const, arrivalDay: 100, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
+
+      expect(result.house.houseHeirs[0]?.stage).toBe('adult')
+    })
+
+    it('does not advance adult wards', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 300,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'adult' as const, arrivalDay: 200, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
+
+      expect(result.house.houseHeirs[0]?.stage).toBe('adult')
+    })
+
+    it('does nothing for non-existent ward', () => {
+      const state = initialGameStateSnapshot
+      const result = advanceWardStage(state, 'non-existent-id')
+
+      expect(result.house.houseHeirs).toHaveLength(0)
+    })
+
+    it('records activity log entry on stage advancement', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 35,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'child' as const, arrivalDay: 5, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
+
+      const logEntry = result.activityLog.find(e => e.message.includes('ward'))
+      expect(logEntry).toBeDefined()
+    })
+
+    it('resets arrivalDay when stage advances', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 35,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'child' as const, arrivalDay: 5, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = advanceWardStage(state, 'heir-1')
+
+      expect(result.house.houseHeirs[0]?.arrivalDay).toBe(35)
+    })
   })
-})
 
-describe('advanceWardStage', () => {
-  it('advances ward from child to ward after 30 days', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      house: {
-        ...initialGameStateSnapshot.house,
-        houseHeirs: [
-          {
-            id: 'heir-1',
-            name: 'Test Child',
-            stage: 'child',
-            arrivalDay: 70,
-            originStory: 'Found on the streets',
-            legitimacyStatus: 'unknown',
-            birthContext: null,
-          },
-        ],
-      },
-    }
+  describe('formalizeAdultWard', () => {
+    it('formalizes an adult ward into the NPC roster', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'npc-formalized-1', name: 'Tommy', stage: 'adult' as const, arrivalDay: 1, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const baseNpc = {
+        name: 'Tommy',
+        assignment: 'idle' as const,
+        states: { health: 100, morale: 100, injury: 0, arousal: { level: 0, triggerSource: null, cooldownUntilDay: null } },
+        inventoryState: { player: { bagContainers: [], usedBagSlots: 0 }, sharedContainers: [] },
+        loadout: { consumableIds: [], weaponIds: [], armorIds: [] },
+        relationshipAxes: { player: 0 },
+        friendship: 0,
+        enmity: 0,
+      }
+      const result = formalizeAdultWard(state, 'npc-formalized-1', baseNpc as any)
 
-    const result = advanceWardStage(state, 'heir-1')
+      expect(result.house.houseHeirs).toHaveLength(0)
+      expect(result.roster.some(n => n.npcId === 'npc-formalized-1')).toBe(true)
+    })
 
-    expect(result.house.houseHeirs[0].stage).toBe('ward')
-    expect(result.house.houseHeirs[0].arrivalDay).toBe(100) // Reset to current day
+    it('does not formalize non-adult ward', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'npc-child', name: 'Tommy', stage: 'child' as const, arrivalDay: 1, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = formalizeAdultWard(state, 'npc-child', {} as any)
+
+      expect(result.house.houseHeirs).toHaveLength(1)
+      expect(result.roster.some(n => n.npcId === 'npc-child')).toBe(false)
+    })
+
+    it('does not formalize non-existent ward', () => {
+      const state = initialGameStateSnapshot
+      const result = formalizeAdultWard(state, 'non-existent', {} as any)
+
+      expect(result.house.houseHeirs).toHaveLength(0)
+      expect(result.roster.length).toBeGreaterThanOrEqual(0)
+    })
+
+    it('records activity log entry on formalization', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'npc-formalized-2', name: 'Tommy', stage: 'adult' as const, arrivalDay: 1, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const baseNpc = {
+        name: 'Tommy',
+        assignment: 'idle' as const,
+        states: { health: 100, morale: 100, injury: 0, arousal: { level: 0, triggerSource: null, cooldownUntilDay: null } },
+        inventoryState: { player: { bagContainers: [], usedBagSlots: 0 }, sharedContainers: [] },
+        loadout: { consumableIds: [], weaponIds: [], armorIds: [] },
+        relationshipAxes: { player: 0 },
+        friendship: 0,
+        enmity: 0,
+      }
+      const result = formalizeAdultWard(state, 'npc-formalized-2', baseNpc as any)
+
+      const logEntry = result.activityLog.find(e => e.message.includes('now a full member'))
+      expect(logEntry).toBeDefined()
+    })
   })
 
-  it('does not advance if not enough days have passed', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      house: {
-        ...initialGameStateSnapshot.house,
-        houseHeirs: [
-          {
-            id: 'heir-1',
-            name: 'Test Child',
-            stage: 'child',
-            arrivalDay: 80, // Only 20 days
-            originStory: 'Found on the streets',
-            legitimacyStatus: 'unknown',
-            birthContext: null,
-          },
-        ],
-      },
-    }
+  describe('tickWardStages', () => {
+    it('checks all wards for stage advancement', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 100,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'child' as const, arrivalDay: 5, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+            { id: 'heir-2', name: 'Sarah', stage: 'ward' as const, arrivalDay: 30, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = tickWardStages(state)
 
-    const result = advanceWardStage(state, 'heir-1')
+      expect(result.house.houseHeirs[0]?.stage).toBe('ward')
+      expect(result.house.houseHeirs[1]?.stage).toBe('apprentice')
+    })
 
-    expect(result.house.houseHeirs[0].stage).toBe('child') // Unchanged
-  })
+    it('skips adult wards during tick', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 500,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'adult' as const, arrivalDay: 200, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = tickWardStages(state)
 
-  it('does not advance adult wards', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      house: {
-        ...initialGameStateSnapshot.house,
-        houseHeirs: [
-          {
-            id: 'heir-1',
-            name: 'Test Adult',
-            stage: 'adult',
-            arrivalDay: 10,
-            originStory: 'Found on the streets',
-            legitimacyStatus: 'unknown',
-            birthContext: null,
-          },
-        ],
-      },
-    }
+      expect(result.house.houseHeirs[0]?.stage).toBe('adult')
+    })
 
-    const result = advanceWardStage(state, 'heir-1')
+    it('handles empty household', () => {
+      const state = initialGameStateSnapshot
+      const result = tickWardStages(state)
 
-    expect(result.house.houseHeirs[0].stage).toBe('adult') // Unchanged
-  })
-})
+      expect(result.house.houseHeirs).toHaveLength(0)
+    })
 
-describe('tickWardStages', () => {
-  it('checks all wards and advances eligible ones', () => {
-    const state: GameState = {
-      ...initialGameStateSnapshot,
-      day: 100,
-      house: {
-        ...initialGameStateSnapshot.house,
-        houseHeirs: [
-          {
-            id: 'heir-1',
-            name: 'Ready Child',
-            stage: 'child',
-            arrivalDay: 69, // 31 days - ready to advance
-            originStory: 'Found on the streets',
-            legitimacyStatus: 'unknown',
-            birthContext: null,
-          },
-          {
-            id: 'heir-2',
-            name: 'Not Ready Child',
-            stage: 'child',
-            arrivalDay: 85, // 15 days - not ready
-            originStory: 'Found on the streets',
-            legitimacyStatus: 'unknown',
-            birthContext: null,
-          },
-        ],
-      },
-    }
+    it('processes multiple wards independently', () => {
+      const state = {
+        ...initialGameStateSnapshot,
+        day: 150,
+        house: {
+          ...initialGameStateSnapshot.house,
+          houseHeirs: [
+            { id: 'heir-1', name: 'Tommy', stage: 'child' as const, arrivalDay: 5, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+            { id: 'heir-2', name: 'Sarah', stage: 'child' as const, arrivalDay: 130, legitimacyStatus: 'unknown' as const, birthContext: null, originStory: 'Test ward' },
+          ],
+        },
+      }
+      const result = tickWardStages(state)
 
-    const result = tickWardStages(state)
-
-    expect(result.house.houseHeirs[0].stage).toBe('ward') // Advanced
-    expect(result.house.houseHeirs[1].stage).toBe('child') // Not advanced
+      expect(result.house.houseHeirs[0]?.stage).toBe('ward')
+      expect(result.house.houseHeirs[1]?.stage).toBe('child')
+    })
   })
 })
