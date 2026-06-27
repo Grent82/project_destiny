@@ -10,7 +10,7 @@ issue-prefix: "destiny"
 
 # Use no-db mode: JSONL-only, no Dolt database
 # When true, bd will use .beads/issues.jsonl as the source of truth
-no-db: true
+# no-db: true
 
 # Enable JSON output by default
 # json: false
