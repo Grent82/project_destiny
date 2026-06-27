@@ -3,6 +3,7 @@ import type { Rng } from './seededRng'
 import { createRngForTask } from './seededRng'
 import type { NpcDistanceResult } from './npcDistance'
 import { INTENTION_TIME_SLOT_MAPPING } from '../../domain/npc/intentionTimeSlots'
+import { intentionHandlers } from './intentions'
 
 /**
  * Ein Task in der Zeit-Slot-Queue.
@@ -276,16 +277,22 @@ export class TimeSlotQueue {
 
   private applyNpcIntention(
     state: GameState,
-    _npcId: string,
-    _intentionType: NpcIntentionType,
-    _rng: Rng,
+    npcId: string,
+    intentionType: NpcIntentionType,
+    rng: Rng,
   ): GameState {
-    void _npcId // Mark as intentionally unused for now
-    void _intentionType // Mark as intentionally unused for now
-    void _rng // Mark as intentionally unused for now
-    // TODO: Applikation der Intention
-    // Fuer jetzt: State unveraendert zurueckgeben
-    return state
+    void rng // RNG available for future use if handler needs it
+    const npc = state.roster.find((n) => n.npcId === npcId)
+    if (!npc) return state
+
+    const handler = intentionHandlers[intentionType]
+    if (!handler) return state
+
+    // Check if NPC can execute the intention (assignment check)
+    if (npc.assignment !== 'idle') return state
+    if (npc.currentDirectiveId !== null) return state
+
+    return handler.execute(npc, state)
   }
 
   private calculatePriority(
