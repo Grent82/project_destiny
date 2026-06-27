@@ -1,6 +1,6 @@
 import type { GameState } from '../../domain/game/contracts'
 import type { Rng } from './seededRng'
-import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
+import { getRelationship } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import type { NpcDefinition } from '../../domain/npc/contracts'
