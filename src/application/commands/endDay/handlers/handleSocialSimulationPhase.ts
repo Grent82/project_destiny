@@ -12,6 +12,7 @@ import { applyFactionActivity } from "../../applyFactionActivity"
 import { applyWorldNpcSocialSimulation } from "../../applyWorldNpcSocialSimulation"
 import { applyRumorSpread } from "../../applyRumorSpread"
 import { applyMoneyEarningIntentions } from "../../intentions/moneyEarning/applyMoneyEarningIntentions"
+import { createRumorForNakedNpc } from "../../createRumorForNakedNpc"
 
 export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameState {
   let next = state
@@ -33,6 +34,18 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
 
   // Money-earning intentions (NPCs earning extra income)
   next = applyMoneyEarningIntentions(next)
+
+  // Check for naked NPCs in public districts and generate scandal rumors
+  // This runs after all NPC actions have been processed
+  for (const npc of next.roster) {
+    if (npc.assignedDistrictId) {
+      next = createRumorForNakedNpc(next, {
+        npcId: npc.npcId,
+        districtId: npc.assignedDistrictId,
+        day: state.day,
+      })
+    }
+  }
 
   return next
 }
