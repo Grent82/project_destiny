@@ -244,3 +244,100 @@ Bei `contracts.ts` Schema-Änderungen:
 - [ ] `pursuePlayerLegacy.ts/test.ts`
 - [ ] `applyNpcPairing.ts`
 - [ ] `captivityPregnancyDiscovery.ts/test.ts`
+
+## Verification Protocol — Read/Verify Before Write
+
+**Kernregel:** Bevor ANYTHING geschrieben wird (Code, Bead, Datei, Schema), müssen die folgenden Verifikationsschritte durchgeführt werden. Jedes Überspringen kostet typischerweise 2-4 Stunden Nacharbeit.
+
+### ✅ Checkliste (vor jedem Write)
+
+**1. Source lesen**
+- `grep -r "symbolName" src --include="*.ts"` für alle Vorkommnisse
+- `Read` die tatsächliche Datei für aktuellen Stand
+- **NIEMALS** Versionen, Signaturen oder Existenz aus Memory/Summary annehmen
+
+**2. Schema-Abhängigkeiten prüfen (bei contracts.ts Änderungen)**
+- Alle Schemas die das Feld referenzieren auflisten
+- Zyklische Abhängigkeiten vor Umordnung prüfen
+- `data/runtime/initial-game-state.json` mit Default-Werten aktualisieren
+- **data/definitions/*.json** Content-Dateien prüfen (quest templates, etc.)
+- **ALLE** Test-Fixtures die GameState bauen aktualisieren
+- `pnpm typecheck` sofort nach Schreiben, VOR Commit
+
+**3. Entry Points finden (bei Constraints "cannot X")**
+- Alle UI Entry Points greppen die den Command dispatchen
+- Alle Command Guards greppen die die Constraint enforced
+- **Einen Test pro Entry Point** schreiben
+- Bead ist unvollständig wenn nicht alle Entry Points gefixt sind
+
+**4. Pipeline-Outputs validieren (bei destruktiven Writes)**
+- Variable zuerst echo: `echo "$var" | head -1`
+- Länge prüfen: `[ -n "$var" ] || exit 1` (bash) oder `assert` (Python)
+- Mit **einem Item** testen bevor batching über mehrere IDs/Dateien
+- Nach jedem destruktiven Batch sofort eine Probe lesen
+
+**5. Post-Compaction Verifikation**
+- Alle zusammengefassten Fakten als **"verdächtig, nicht bewiesen"** behandeln
+- Versionsnummern neu greppen (z.B. `saveVersion`)
+- Symbol-Namen und Pfade neu greppen
+- **NIEMALS** Code-Fakten, Versionen, API-Signaturen aus Summaries copy-pasten
+
+**6. Schema-Ordnung (zyklische Dependencies)**
+- Welche Schemas referenzieren welche (Dependency Graph zeichnen)
+- Abhängige Schemas **nach** ihren Dependencies definieren
+- Sofort mit `pnpm typecheck` testen — Zod wirft bei Forward-References
+
+### Kosten-Nutzen
+
+| Übersprungener Schritt | Typische Nacharbeit | Vorbeugungsaufwand |
+|------------------------|---------------------|-------------------|
+| Source nicht gelesen | 2-4h iterative Fixes | 5-10min grep + Read |
+| Schema ohne Consumer-Analyse | 86 TypeError, 3h Batch-Fix | 10min grep alle Consumer |
+| Entry Points unvollständig | Blocker in UI, Nachbesserung | 5min grep + 1 Test pro Pfad |
+| Pipeline nicht validiert | 8 gelöschte Beads, manueller Restore | 2min echo + length check |
+| Compaction-Fakten unverifiziert | Phantom-IDs, falsche Versionen | 5min Re-grep |
+
+### Bead-Hygiene
+
+Beads können "verwaist" sein (funktional erledigt, aber nicht geschlossen). Vor jeder Implementation:
+1. `bd show <id>` lesen → Was sagt die Description wirklich?
+2. Code gegen Behauptung prüfen → Existiert die Funktionalität schon?
+3. Tests laufen → Sind sie grün oder rot?
+
+**Kosten verpasster Prüfung**: Ticket als "zu machen" annehmen, dann feststellen es ist schon da → 30min Zeitverschwendung + falscher Epic-Progress
+
+### Ticket-Scope
+
+Bei `/loop` Abarbeitung: **Kleine, fokussierte Tickets priorisieren**. Große Tickets (>3 neue Files, mehrere Commands) sollten:
+1. Erst als "zu groß" markiert werden
+2. In kleinere, unabhängige Teile gesplittet werden
+3. Oder als "Design Required" zurückgestellt werden
+
+**Kosten falscher Scope**: 15-30min pro Ticket für Analysis, dann Verwerfen → Zeitverlust für Loop-Effizienz
+
+## Circular Dependency Prevention
+
+**Schema-Refactoring Rule — Circular Dependency Prevention:**
+
+Bevor du eine Schema-Definition von A nach B verschiebst:
+
+1. **Git history check**: `git log -p --follow -- <file>` um ursprüngliche Location zu finden
+2. **Import graph analysieren**: 
+   - `grep -r "from.*shared/contracts" src/domain --include="*.ts" | wc -l` (wer importiert von shared?)
+   - `grep -r "from.*npc/contracts" src/domain --include="*.ts" | wc -l` (wer importiert von npc?)
+3. **Zirkulärisität prüfen**: Wenn A von B importiert UND B von A → ZIRKULÄR!
+4. **Tests laufen lassen**: Nicht nur `pnpm typecheck` sondern auch `pnpm test:run` - zirkuläre Dependencies zeigen sich oft erst im Runtime-Import (TypeError: Cannot read properties of undefined)
+
+**Warum**: Verschieben von `npcIntentionTypeSchema` von `shared/contracts` nach `npc/contracts` mit Import zurück nach shared → zirkulär → 187 Test-Files failed. Git stash/pattern zeigte dass 2340 Tests vorher grün waren.
+
+**Wie anwenden**: Bei jedem Schema-Refactor:
+```bash
+# 1. Import-Graph visualisieren
+grep -r "from.*contracts" src/domain --include="*.ts" | grep -v "node_modules" | head -20
+
+# 2. Zirkularität prüfen
+# Wenn shared/contracts importiert von npc/contracts UND npc/contracts importiert von shared/contracts → STOP
+
+# 3. After fix, full test run
+pnpm test:run  # nicht nur typecheck!
+```

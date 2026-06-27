@@ -14,6 +14,7 @@
 - [Session Learnings 2026-06-24](session_learnings_2026-06-24.md) — KI-Retro after Living World Coalition/Expedition implementation
 - [Feedback: Schema-Änderungen erfordern vollständige Consumer-Analyse vor Commit](feedback_schema-change%20Hygiene.md) — 86 TypeScript-Fehler über 20+ Dateien nach contracts.ts Änderung
 - [Feedback: Schema-Change Test Hygiene — Batch-Verarbeitung, signatures first, type identity early](schema-change-test-hygiene.md) — testFixtures.ts corruption + 20 typecheck errors 2026-06-27
+- [Feedback: Circular Dependency Check — verify import graph before schema refactors](feedback_circular_dependency_check.md) — 187 test files failed after moving npcIntentionTypeSchema, fixed by moving back to shared/contracts
 - [Session Learnings 2026-06-25](session_learnings_2026-06-25.md) — KI-Retro nach Faction Directives Schema Implementation
 - [Feedback: Courtship-Implementation — Schema/Skill-Prüfung vor Writing](feedback_schema-change%20Hygiene.md) — 2026-06-26
 - [Intention System Architecture](intention-system-architecture.md) — 5-stage pipeline, Fuzzy + ML, 35 types

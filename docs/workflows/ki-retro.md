@@ -63,6 +63,7 @@ When running a retro, explicitly check for these verification failure patterns:
 - Were any schemas changed without full consumer analysis (`grep -r` before writing)?
 - Were test fixtures updated in one batch or incrementally patched?
 - Was `pnpm typecheck` run immediately after schema changes?
+- Were circular dependencies checked before moving schema definitions?
 
 ### Pipeline Validation
 - Were any pipeline outputs used without validation (destructive `bd update`, file writes)?
@@ -76,10 +77,15 @@ When running a retro, explicitly check for these verification failure patterns:
 - Were all entry points for a constraint identified and tested?
 - Or was only one path fixed while others remained unguarded?
 
+### Circular Dependencies
+- Were schema definitions moved without checking the import graph?
+- Was `pnpm test:run` run (not just typecheck) after schema refactors?
+
 If any of these patterns appear, the sustainable fix should prefer:
-1. Adding the verification step to `agent-operating-model.md` Task Verification Protocol
+1. Adding the verification step to `CLAUDE.md` or `AGENTS.md` Verification Protocol section
 2. Creating a focused memory file with the specific checklist (e.g., `schema_change_hygiene.md`)
 3. Updating the Bead acceptance criteria to require evidence of verification
+4. **Consolidate duplicate findings** — if the same pattern appears in multiple memory files, merge them into the central documentation rather than creating another fragment
 
 ## Buckets
 
@@ -115,10 +121,12 @@ Classify findings into these buckets:
 Prefer durable fixes in this order:
 
 1. Tighten Bead acceptance or split the Bead better.
-2. Update a workflow doc.
+2. Update a workflow doc (`CLAUDE.md`, `AGENTS.md`, or `docs/workflows/*`).
 3. Add or tighten a verifier/test/gate.
 4. Update agent instructions.
 5. Only then rely on future memory or reminders in chat.
+
+**Consolidation rule:** When a finding appears in `.claude/memory/` more than once (e.g., multiple `schema_change_*` files, multiple `session_learnings_*` files), **merge them** into the central documentation instead of creating another fragment. The memory folder should contain session-specific learnings, not duplicate patterns.
 
 ## Session pattern to watch for
 
