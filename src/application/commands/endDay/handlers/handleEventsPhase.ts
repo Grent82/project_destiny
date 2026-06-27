@@ -5,6 +5,7 @@ import { generateDistrictHireOffers } from "../../generateHireOffers"
 import { evaluateEvents } from "../../evaluateEvents"
 import { pruneExpiredQuestLeads } from "../legacy"
 import { pruneExpiredEventInstances, compactResolvedEventInstances } from "../../eventInstances"
+import { processMailDelivery } from "../../correspondence"
 
 export function handleEventsPhase(
   state: GameState,
@@ -17,6 +18,10 @@ export function handleEventsPhase(
   next = pruneExpiredEventInstances(next)
   next = compactResolvedEventInstances(next)
   next = pruneExpiredQuestLeads(next)
+
+  // Process mail delivery - mark sent correspondence as delivered
+  next = processMailDelivery(next)
+
   const afterExpiry = expireHireOffers(next)
 
   let afterEvents: GameState

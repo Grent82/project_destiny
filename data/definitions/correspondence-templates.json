@@ -1,0 +1,262 @@
+{
+  "templateFamilies": {
+    "greeting": {
+      "description": "Basic greeting and inquiry about welfare",
+      "baseSensitivity": "mundane",
+      "modules": ["opening-greeting", "inquiry-welfare", "closing-courtesy"]
+    },
+    "political-alliance": {
+      "description": "Political alliance and coordination requests",
+      "baseSensitivity": "political",
+      "modules": ["opening-formal", "political-context", "alliance-request", "closing-formal"]
+    },
+    "intimate-attraction": {
+      "description": "Romantic/sensual attraction expression",
+      "baseSensitivity": "intimate",
+      "modules": ["opening-intimate", "attraction-confession", "desire-expression", "closing-vulnerable"]
+    },
+    "compromise-threat": {
+      "description": "Blackmail or leverage threats",
+      "baseSensitivity": "compromising",
+      "modules": ["opening-menacing", "leverage-statement", "ultimatum", "closing-threat"]
+    },
+    "debt-collection": {
+      "description": "Debt or obligation collection",
+      "baseSensitivity": "political",
+      "modules": ["opening-formal", "debt-statement", "payment-demand", "closing-consequence"]
+    },
+    "captivity-correspondence": {
+      "description": "Letters from/to captured NPCs (coercion context)",
+      "baseSensitivity": "compromising",
+      "modules": ["opening-coerced", "captivity-context", "plea-or-demand", "closing-desperation"]
+    }
+  },
+  "modules": {
+    "opening-greeting": {
+      "variants": [
+        "Meine liebe/r {recipient},",
+        "Es grüßt dich {sender},",
+        "Ich hoffe, dieser Brief findet dich wohlauf,",
+        "Lange habe ich nicht geschrieben, doch..."
+      ],
+      "tags": ["mundane", "greeting"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "opening-formal": {
+      "variants": [
+        "Sehr geehrte/r {recipient},",
+        "Es ist mir eine Pflicht, Ihnen folgendes mitzuteilen,",
+        "Die Umstände erfordern meine unmittelbare Aufmerksamkeit für Sie,",
+        "Ich schreibe Ihnen, weil die Lage es gebietet."
+      ],
+      "tags": ["political", "formal"],
+      "minIntimacyStage": "stranger"
+    },
+    "opening-intimate": {
+      "variants": [
+        "Mein geliebter/e {recipient},",
+        "In der Stille dieser Nacht denke ich an dich,",
+        "Dein Name bleibt auf meinen Lippen, seit wir uns sahen,",
+        "Ich kann den Gedanken an dich nicht vertreiben."
+      ],
+      "tags": ["intimate", "sensual"],
+      "minIntimacyStage": "attachment"
+    },
+    "opening-menacing": {
+      "variants": [
+        "Wir haben einander beobachtet, {recipient}.",
+        "Du denkst, niemand hat es gesehen?",
+        "Ich weiß, was du getan hast.",
+        "Unsere kleine Übereinkunft steht auf dem Spiel."
+      ],
+      "tags": ["compromising", "threat"],
+      "minIntimacyStage": "stranger"
+    },
+    "opening-coerced": {
+      "variants": [
+        "Ich schreibe dies unter Zwang,",
+        "Sie lassen mir keine Wahl,",
+        "Wenn du diesen Brief liest, dann weil sie es erlauben,",
+        "Ich bitte dich im Stillen, höre mir zu."
+      ],
+      "tags": ["captivity", "coerced"],
+      "minIntimacyStage": "stranger"
+    },
+    "inquiry-welfare": {
+      "variants": [
+        "Wie geht es dir in diesen unsicheren Zeiten?",
+        "Hast du von den Gerüchten aus dem Pale gehört?",
+        "Ich hoffe, deine Angelegenheiten gehen voran,",
+        "Gibt es Neuigkeiten, die du mit mir teilen möchtest?"
+      ],
+      "tags": ["mundane", "greeting"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "political-context": {
+      "variants": [
+        "Die Lage im Rat wird zunehmend prekär,",
+        "Unsere gemeinsamen Interessen erfordern ein Handeln,",
+        "Die Gilded Court macht Bewegungen,",
+        "Es wäre klug, wenn wir unsere Positionen abstimmen."
+      ],
+      "tags": ["political", "strategy"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "attraction-confession": {
+      "variants": [
+        "Seit unserem letzten Treffen kann ich nicht schlafen,",
+        "Deine Präsenz hat etwas in mir geweckt,",
+        "Ich habe versucht, meine Gefühle zu verbergen, doch...",
+        "Du hast mich verändert, und ich weiß nicht, ob ich das zurücknehmen will."
+      ],
+      "tags": ["intimate", "vulnerable"],
+      "minIntimacyStage": "attachment"
+    },
+    "desire-expression": {
+      "variants": [
+        "Ich wünsche mir, du wärst hier bei mir,",
+        "Die Vorstellung deiner Berührung verfolgt mich,",
+        "Ich erinnere mich an jede Sekunde unserer Nähe,",
+        "Es ist mehr als nur Begierde - es ist ein Verlangen."
+      ],
+      "tags": ["intimate", "sensual"],
+      "minIntimacyStage": "committed"
+    },
+    "leverage-statement": {
+      "variants": [
+        "Ich habe Beweise für deine Handlungen,",
+        "Unsere gemeinsame Vergangenheit ist mir bekannt,",
+        "Was du getan hast, lässt sich nicht leugnen,",
+        "Ich kenne dein Geheimnis."
+      ],
+      "tags": ["compromising", "threat"],
+      "minIntimacyStage": "stranger"
+    },
+    "ultimatum": {
+      "variants": [
+        "Entweder du tust, was ich verlange, oder...",
+        "Du hast bis zum nächsten Mondzyklus Zeit,",
+        "Ich werde nicht noch einmal fragen,",
+        "Die Wahl liegt bei dir - aber die Konsequenzen auch."
+      ],
+      "tags": ["compromising", "threat"],
+      "minIntimacyStage": "stranger"
+    },
+    "debt-statement": {
+      "variants": [
+        "Die Rechnung ist fällig,",
+        "Unsere Vereinbarung steht außer Frage,",
+        "Ich erinnere an unser Abkommen,",
+        "Der Betrag wurde noch nicht beglichen."
+      ],
+      "tags": ["political", "debt"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "payment-demand": {
+      "variants": [
+        "Erwarte meine Vertreter in den nächsten Tagen,",
+        "Ich erwarte die Zahlung bis zum Ende des Monats,",
+        "Die Summe ist bekannt. Es liegt an dir, sie zu liefern,",
+        "Zögern wird nicht toleriert."
+      ],
+      "tags": ["political", "debt"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "captivity-context": {
+      "variants": [
+        "Sie halten mich fest, doch mein Geist ist frei,",
+        "Ich bin nicht in der Lage, selbst zu handeln,",
+        "Meine Situation ist... prekär,",
+        "Wenn du diesen Brief erhältst, dann weil ich eine Lücke gefunden habe."
+      ],
+      "tags": ["captivity", "desperation"],
+      "minIntimacyStage": "stranger"
+    },
+    "plea-or-demand": {
+      "variants": [
+        "Bitte, musst du nicht helfen?",
+        "Ich verlange, dass du etwas unternehmen musst,",
+        "Mein Schicksal liegt nun auch in deinen Händen,",
+        "Was auch immer du tust - tu es schnell."
+      ],
+      "tags": ["captivity", "plea"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "closing-courtesy": {
+      "variants": [
+        "In Erwartung deiner Antwort,",
+        "Mit freundlichen Grüßen,",
+        "Ich hoffe auf baldige Neuigkeiten,",
+        "Deine Freundschaft ist mir wichtig."
+      ],
+      "tags": ["mundane", "closing"],
+      "minIntimacyStage": "acquaintance"
+    },
+    "closing-formal": {
+      "variants": [
+        "Ich erwarte Ihre unverzügliche Antwort,",
+        "Die Angelegenheit bedarf dringender Klärung,",
+        "Mit geschäftlichen Grüßen,",
+        "Ich verbleibe in Erwartung Ihrer Reaktion."
+      ],
+      "tags": ["political", "closing"],
+      "minIntimacyStage": "stranger"
+    },
+    "closing-vulnerable": {
+      "variants": [
+        "Ich warte auf deine Antwort,",
+        "In Hoffnung und Sehnsucht,",
+        "Deine Entscheidung wird alles verändern,",
+        "Ich hoffe, du fühlst es auch."
+      ],
+      "tags": ["intimate", "closing"],
+      "minIntimacyStage": "attachment"
+    },
+    "closing-threat": {
+      "variants": [
+        "Du weißt, was zu tun ist,",
+        "Ich werde beobachten,",
+        "Die Uhr läuft,",
+        "Zögern wird als Ablehnung gewertet."
+      ],
+      "tags": ["compromising", "closing"],
+      "minIntimacyStage": "stranger"
+    },
+    "closing-consequence": {
+      "variants": [
+        "Die Konsequenzen des Zögerns sind bekannt,",
+        "Ich hoffe, du siehst die Dringlichkeit,",
+        "Es liegt in deinem Interesse, schnell zu handeln,",
+        "Ich werde nicht weiter fragen."
+      ],
+      "tags": ["political", "debt", "closing"],
+      "minIntimacyStage": "acquaintance"
+    }
+  },
+  "seedFamilies": {
+    "mira-captivity": {
+      "description": "Letters related to Mira's captivity situation",
+      "templateFamily": "captivity-correspondence",
+      "allowedSensitivity": ["compromising", "political"],
+      "context": "captivity"
+    },
+    "house-politics": {
+      "description": "Political correspondence between house members",
+      "templateFamily": "political-alliance",
+      "allowedSensitivity": ["political", "mundane"],
+      "context": "household"
+    },
+    "romantic-courtship": {
+      "description": "Courtship and romantic correspondence",
+      "templateFamily": "intimate-attraction",
+      "allowedSensitivity": ["intimate", "mundane"],
+      "context": "romance"
+    },
+    "blackmail-network": {
+      "description": "Compromising correspondence used for leverage",
+      "templateFamily": "compromise-threat",
+      "allowedSensitivity": ["compromising", "political"],
+      "context": "intrigue"
+    }
+  }
+}

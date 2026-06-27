@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { activeCombatStateSchema } from '../combat/contracts'
 import { rumorSchema, bondVisibilitySchema } from '../rumors/contracts'
+import { correspondenceMessageSchema } from '../correspondence/contracts'
 import { expeditionStateSchema, corridorGroupSchema } from '../expedition/contracts'
 import { worldEventSchema } from '../world/events'
 import { councilSeatCountSchema, councilVoteEventSchema, institutionalTierSchema } from '../governance/contracts'
@@ -489,6 +490,7 @@ export const gameStateSchema = z
     bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
     worldEvents: z.array(worldEventSchema).max(100).default([]),
     activeDirectives: z.array(factionDirectiveSchema).default([]),
+    privateCorrespondence: z.array(correspondenceMessageSchema).default([]),
   })
   .strict()
 
