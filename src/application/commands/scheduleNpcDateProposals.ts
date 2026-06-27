@@ -1,7 +1,7 @@
 import type { GameState } from '../../../../domain/game/contracts'
 import type { Rng } from '../seededRng'
-import { contentCatalog } from '../../content/contentCatalog'
-import { appendActivityLogEntry } from '../activityLog'
+import { contentCatalog } from '../content/contentCatalog'
+import { appendActivityLogEntry } from './activityLog'
 
 /**
  * Convert pending NPC-NPC date proposals into scheduled dates.

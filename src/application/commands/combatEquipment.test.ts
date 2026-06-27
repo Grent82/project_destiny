@@ -87,6 +87,23 @@ const BASE_NPC_STATE = {
     consumableIds: [] as string[],
   },
   relationships: {},
+  clothing: {
+    head: null,
+    torso: null,
+    arms: null,
+    legs: null,
+    feet: null,
+    full: null,
+    undergarments: null,
+    accessories: [],
+  },
+  armor: {
+    lightTorso: null,
+    lightLegs: null,
+    heavyTorso: null,
+    heavyLegs: null,
+    shield: null,
+  },
 }
 
 const BASE_GAME_STATE = {
