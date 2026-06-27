@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { calculateNpcIntention } from './intentions'
-import type { GameState } from '../../domain'
+import {
+  calculateNpcIntention,
+  processNpcIntentions,
+  clearNpcIntention,
+  executeNpcIntention,
+  executeAllNpcIntentions,
+} from './intentions'
+import type { GameState, NpcRuntimeState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { NPC_IDS } from '../content/ids'
 
@@ -164,6 +170,305 @@ describe('intentions', () => {
 
       const intention = calculateNpcIntention(state, 'non-existent-npc')
       expect(intention).toBeNull()
+    })
+
+    it('returns null for captive NPC', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            captivityState: {
+              status: 'captive',
+              condition: 'healthy' as const,
+              compliance: 'resistant' as const,
+              bondType: 'none' as const,
+              regime: 'unknown' as const,
+              holderId: null,
+              siteId: null,
+              roomId: null,
+              timeHeldDays: 1,
+              lastTransferDay: null,
+              questTag: null,
+            },
+            factionRelationships: [],
+            currentIntention: null,
+          },
+        ],
+      })
+
+      const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(intention).toBeNull()
+    })
+  })
+
+  describe('executeAllNpcIntentions', () => {
+    it('processes all NPCs with intentions', () => {
+      const intention = {
+        type: 'eat-meal' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+      }
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: intention,
+            states: {
+              ...initialGameStateSnapshot.roster[0]!.states,
+              hunger: 60,
+            },
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = executeAllNpcIntentions(state)
+
+      expect(result).toBeDefined()
+    })
+
+    it('handles empty roster', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [],
+      }
+      const result = executeAllNpcIntentions(state)
+
+      expect(result.roster).toHaveLength(0)
+    })
+
+    it('skips NPCs without intentions', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = executeAllNpcIntentions(state)
+
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+  })
+
+  describe('processNpcIntentions', () => {
+    it('assigns intentions to idle NPCs', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            status: 'citizen',
+            captivityState: undefined,
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = processNpcIntentions(state)
+
+      const npc = result.roster[0]!
+      expect(npc.currentIntention).not.toBeNull()
+    })
+
+    it('skips NPCs with existing intention', () => {
+      const existingIntention = {
+        type: 'socialize' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 5,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 6,
+      }
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: existingIntention,
+            status: 'citizen',
+            captivityState: undefined,
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = processNpcIntentions(state)
+
+      expect(result.roster[0]!.currentIntention).toBe(existingIntention)
+    })
+
+    it('skips NPCs with active directive', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: 'directive-1',
+            currentIntention: null,
+            status: 'citizen',
+            captivityState: undefined,
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = processNpcIntentions(state)
+
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('handles empty roster', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [],
+      }
+      const result = processNpcIntentions(state)
+
+      expect(result.roster).toHaveLength(0)
+    })
+  })
+
+  describe('clearNpcIntention', () => {
+    it('clears intention for NPC with intention', () => {
+      const existingIntention = {
+        type: 'socialize' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 5,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 6,
+      }
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            currentIntention: existingIntention,
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = clearNpcIntention(state, state.roster[0]!.npcId)
+
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('returns state unchanged for NPC without intention', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            currentIntention: null,
+            factionRelationships: [],
+          },
+        ],
+      }
+      const result = clearNpcIntention(state, state.roster[0]!.npcId)
+
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('returns state unchanged for non-existent NPC', () => {
+      const state = initialGameStateSnapshot
+      const result = clearNpcIntention(state, 'non-existent-npc')
+
+      expect(result).toBe(state)
+    })
+  })
+
+  describe('executeNpcIntention', () => {
+    it('executes intention when canExecute returns true', () => {
+      const intention = {
+        type: 'eat-meal' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+      }
+      const npc: NpcRuntimeState = {
+        ...initialGameStateSnapshot.roster[0]!,
+        assignment: 'idle',
+        currentDirectiveId: null,
+        currentIntention: intention,
+        states: {
+          ...initialGameStateSnapshot.roster[0]!.states,
+          hunger: 60,
+        },
+        factionRelationships: [],
+      }
+      const state = initialGameStateSnapshot
+
+      const result = executeNpcIntention(npc, state)
+
+      expect(result).toBeDefined()
+    })
+
+    it('returns state unchanged for NPC without intention', () => {
+      const npc: NpcRuntimeState = {
+        ...initialGameStateSnapshot.roster[0]!,
+        currentIntention: null,
+        factionRelationships: [],
+      }
+      const state = initialGameStateSnapshot
+
+      const result = executeNpcIntention(npc, state)
+
+      expect(result).toBe(state)
+    })
+
+    it('returns state unchanged when canExecute returns false', () => {
+      const intention = {
+        type: 'eat-meal' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+      }
+      const npc: NpcRuntimeState = {
+        ...initialGameStateSnapshot.roster[0]!,
+        assignment: 'deployed',
+        currentDirectiveId: null,
+        currentIntention: intention,
+        states: {
+          ...initialGameStateSnapshot.roster[0]!.states,
+          hunger: 60,
+        },
+        factionRelationships: [],
+      }
+      const state = initialGameStateSnapshot
+
+      const result = executeNpcIntention(npc, state)
+
+      expect(result).toBe(state)
     })
   })
 })
