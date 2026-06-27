@@ -63,7 +63,7 @@ export function transferItem(state: GameState, params: TransferItemParams): Game
   // Log the transfer
   const fromLabel = formatLocationLabel(fromType, fromId)
   const toLabel = formatLocationLabel(toType, toId)
-  appendActivityLogEntry(newState, 'economy', `Transferred ${quantity}x ${itemName} from ${fromLabel} to ${toLabel}`)
+  newState = appendActivityLogEntry(newState, 'economy', `Transferred ${quantity}x ${itemName} from ${fromLabel} to ${toLabel}`)
 
   return newState
 }
@@ -349,20 +349,22 @@ function addToNpcInventory(state: GameState, npcId: string, itemInstanceId: stri
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
-  // Get current NPC containers
-  const updatedContainers = [...(state.inventoryState.npcInventories[npcId] || [])]
+  // Get current NPC containers and create deep copies
+  const sourceContainers = state.inventoryState.npcInventories[npcId] || []
+  const updatedContainers = sourceContainers.map((c) => ({
+    ...c,
+    slots: [...c.slots],
+  }))
 
   // Try to find existing slot for this item instance or space in containers
   let added = false
   for (const container of updatedContainers) {
     const existingSlotIndex = container.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
     if (existingSlotIndex !== -1) {
-      const updatedSlots = [...container.slots]
-      updatedSlots[existingSlotIndex] = {
-        ...updatedSlots[existingSlotIndex],
-        quantity: updatedSlots[existingSlotIndex].quantity + quantity,
+      container.slots[existingSlotIndex] = {
+        ...container.slots[existingSlotIndex],
+        quantity: container.slots[existingSlotIndex].quantity + quantity,
       }
-      container.slots = updatedSlots
       added = true
       break
     }
