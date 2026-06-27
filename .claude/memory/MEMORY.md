@@ -26,3 +26,6 @@
 - [Terminology Cleanup 2026-06-26](terminology_cleanup_2026-06-26.md) — coalition→group, Mission→Quest, DateLocation strukturiert
 - [Feedback: Commit ONLY after full quality gates pass](feedback_commit_after_full_tests.md) — destiny-zq9r zu früh gecommitet mit unvollständiger Implementierung
 - [Feedback: BD-CLI — Vermeide Pipe-Charaktere in Shell-Commands bei komplexen Beschreibungen](docs_bead_creation.md) — zsh-Parsing-Fehler bei Markdown-Tabellen
+
+- [Schema Change Hygiene - Inventory Epic](schema_change_hygiene_inventory.md) — wardPersonalAllowance integration, 15+ files updated, Node.js for JSON
+

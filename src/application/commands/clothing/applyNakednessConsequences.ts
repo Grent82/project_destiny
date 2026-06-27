@@ -1,18 +1,16 @@
 /**
  * Apply daily consequences for naked NPCs.
  *
- * - Naked NPCs in public: -20 morale, +15 stress
+ * - Naked NPCs in public: -20 morale, +15 stress, publish 'npc-naked-public' event
  * - Naked NPCs in private: -2 morale, +3 stress
  *
  * Called from endDay pipeline (consequences phase).
- *
- * Note: Rumor generation for naked NPCs in public is deferred to a future
- * story/rumor system implementation.
  */
 
 import type { GameState } from '../../../domain/game/contracts'
 import { appendActivityLogEntry } from '../activityLog'
 import { isNpcNaked, calculateNakednessPenalty } from './isNpcNaked'
+import { publishEvent } from '../events/publishEvent'
 
 /**
  * Apply daily morale/stress penalties for naked NPCs.
@@ -59,6 +57,20 @@ export function applyNakednessConsequences(state: GameState): GameState {
       'system',
       `${npc.name} is naked ${context}. Morale ${penalty.moraleDelta > 0 ? '+' : ''}${penalty.moraleDelta}, stress ${penalty.stressDelta > 0 ? '+' : ''}${penalty.stressDelta}.`,
     )
+
+    // Publish event for naked NPCs in public
+    if (isInPublic) {
+      next = publishEvent(next, 'npc-naked-public', {
+        npcId: npc.npcId,
+        npcName: npc.name,
+        moraleDelta: penalty.moraleDelta,
+        stressDelta: penalty.stressDelta,
+      }, 'system', {
+        sourceNpcId: npc.npcId,
+        activityLogMessage: `${npc.name} was seen naked in public.`,
+        activityLogCategory: 'system',
+      })
+    }
   }
 
   return next

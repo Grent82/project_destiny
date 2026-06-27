@@ -94,8 +94,10 @@ describe('applyNakednessConsequences', () => {
     const npc = result.roster[0]
     expect(npc.states.morale).toBe(30) // 50 - 20
     expect(npc.states.stress).toBe(45) // 30 + 15
-    expect(result.activityLog.length).toBe(1)
-    expect(result.activityLog[0].message).toContain('in public')
+    // 2 activity log entries: one for consequence, one for public sighting
+    expect(result.activityLog.length).toBe(2)
+    expect(result.activityLog.some((e) => e.message.includes('in public'))).toBe(true)
+    expect(result.activityLog.some((e) => e.message.includes('was seen naked'))).toBe(true)
   })
 
   it('applies private penalty to naked NPCs with room assignment', () => {
@@ -143,7 +145,8 @@ describe('applyNakednessConsequences', () => {
     expect(result.roster[1].states.stress).toBe(33) // Private: +3
     expect(result.roster[2].states.morale).toBe(50) // Cloth: unchanged
     expect(result.roster[2].states.stress).toBe(30) // Cloth: unchanged
-    expect(result.activityLog.length).toBe(2)
+    // 3 activity log entries: 2 consequences + 1 public sighting
+    expect(result.activityLog.length).toBe(3)
   })
 
   it('caps morale at 0 (cannot go negative)', () => {
@@ -185,5 +188,40 @@ describe('applyNakednessConsequences', () => {
     const messages = result.activityLog.map((entry) => entry.message)
     expect(messages.some((m) => m.includes('in public'))).toBe(true)
     expect(messages.some((m) => m.includes('without clothes'))).toBe(true)
+  })
+
+  it('publishes npc-naked-public event for naked NPCs in public', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      day: 42,
+      roster: [createNakedNpc('npc-event-test', 'Event Victim', null, 50, 30)],
+    } as unknown as GameState
+
+    const result = applyNakednessConsequences(state)
+
+    // Check that a world event was published
+    expect(result.worldEvents.length).toBeGreaterThan(0)
+    const nakedEvent = result.worldEvents.find((e) => e.type === 'npc-naked-public')
+    expect(nakedEvent).toBeDefined()
+    expect(nakedEvent?.type).toBe('npc-naked-public')
+    expect(nakedEvent?.source).toBe('system')
+    expect(nakedEvent?.sourceNpcId).toBe('npc-event-test')
+    expect(nakedEvent?.payload.npcName).toBe('Event Victim')
+    expect(nakedEvent?.payload.moraleDelta).toBe(-20)
+    expect(nakedEvent?.payload.stressDelta).toBe(15)
+    expect(nakedEvent?.day).toBe(42)
+  })
+
+  it('does not publish event for naked NPCs in private', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [createNakedNpc('npc-private-no-event', 'Private Only', 'room-quarters', 50, 30)],
+    } as unknown as GameState
+
+    const result = applyNakednessConsequences(state)
+
+    // Should have no npc-naked-public events
+    const nakedEvents = result.worldEvents.filter((e) => e.type === 'npc-naked-public')
+    expect(nakedEvents.length).toBe(0)
   })
 })
