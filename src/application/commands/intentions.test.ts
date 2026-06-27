@@ -214,6 +214,8 @@ describe('intentions', () => {
         confidence: 50,
         createdAtDay: 1,
         expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening'],
+        slotSpecificUrgency: { morning: 5, afternoon: 5, evening: 5, night: 1 },
       }
       const state: GameState = {
         ...initialGameStateSnapshot,
