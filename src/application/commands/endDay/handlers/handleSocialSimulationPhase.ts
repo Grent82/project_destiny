@@ -11,6 +11,7 @@ import { applyInitiativeAgency } from "../../npcAgency/initiativeAgency"
 import { applyFactionActivity } from "../../applyFactionActivity"
 import { applyWorldNpcSocialSimulation } from "../../applyWorldNpcSocialSimulation"
 import { applyRumorSpread } from "../../applyRumorSpread"
+import { applyMoneyEarningIntentions } from "../../intentions/moneyEarning/applyMoneyEarningIntentions"
 
 export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameState {
   let next = state
@@ -29,6 +30,9 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
   next = applyFactionActivity(next)
   next = applyWorldNpcSocialSimulation(next, rng)
   next = applyRumorSpread(next, rng)
+
+  // Money-earning intentions (NPCs earning extra income)
+  next = applyMoneyEarningIntentions(next)
 
   return next
 }
