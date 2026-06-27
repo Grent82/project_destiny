@@ -1,16 +1,53 @@
 import { describe, it, expect } from 'vitest'
 import { useItem } from './useItem'
 import { initialStateWithIda } from './testFixtures'
+import type { GameState } from '../../domain/game/contracts'
 
+/**
+ * Creates a game state with an item in the new inventory system.
+ */
 function stateWithItem(itemId: string, quantity = 1, location = 'inventory' as const) {
   const instanceId = `test-inst-${itemId}`
+
+  // Create inventory state with the item
+  const bagContainer = {
+    containerId: `container-${instanceId}`,
+    containerType: 'backpack',
+    ownerId: 'player',
+    maxSlots: 20,
+    slots: [
+      {
+        slotId: `slot-${instanceId}`,
+        itemInstanceId: instanceId,
+        quantity,
+      },
+    ],
+    locked: false,
+  }
+
   return {
     ...initialStateWithIda,
+    // Keep ownedItems for backward compatibility in tests
     ownedItems: [
       ...initialStateWithIda.ownedItems,
       { instanceId, itemId, location, quantity },
     ],
-  }
+    // Add to new inventory system
+    inventoryState: {
+      ...initialStateWithIda.inventoryState,
+      player: {
+        ...initialStateWithIda.inventoryState.player,
+        bagContainers: [bagContainer],
+        usedBagSlots: 1,
+        equipmentSlots: {
+          weapon: null,
+          armor: null,
+          accessory_1: null,
+          accessory_2: null,
+        },
+      },
+    },
+  } as GameState
 }
 
 describe('useItem — consume heal', () => {
@@ -18,9 +55,8 @@ describe('useItem — consume heal', () => {
     const targetId = 'npc-ida-rhys'
     const state = stateWithItem('item-medkit-field')
     const result = useItem(state, { instanceId: 'test-inst-item-medkit-field', action: 'consume', targetNpcId: targetId })
-    // Instance removed
-    expect(result.ownedItems.find((o) => o.instanceId === 'test-inst-item-medkit-field')).toBeUndefined()
-    // Medkit has no typedEffects — generic log entry
+    // Instance removed from inventory
+    expect(result.inventoryState.player.bagContainers).toHaveLength(0)
     expect(result.activityLog[0]?.message).toContain('Field Medkit')
   })
 
@@ -37,7 +73,7 @@ describe('useItem — consume heal', () => {
     const result = useItem(s, { instanceId: 'test-inst-item-salve-burngrade', action: 'consume', targetNpcId: targetId })
     const npc = result.roster.find((n) => n.npcId === targetId)!
     expect(npc.states.health).toBe(66) // 60 + 6
-    expect(result.ownedItems.find((o) => o.itemId === 'item-salve-burngrade')).toBeUndefined()
+    expect(result.inventoryState.player.bagContainers).toHaveLength(0)
     expect(result.activityLog[0]?.message).toContain('+6 health')
   })
 
@@ -60,14 +96,14 @@ describe('useItem — document disposition', () => {
   it('archives a document (filed) and removes it from inventory', () => {
     const state = stateWithItem('item-ledger-bureau')
     const result = useItem(state, { instanceId: 'test-inst-item-ledger-bureau', action: 'archive' })
-    expect(result.ownedItems.find((o) => o.instanceId === 'test-inst-item-ledger-bureau')).toBeUndefined()
+    expect(result.inventoryState.player.bagContainers).toHaveLength(0)
     expect(result.activityLog[0]?.message).toContain('filed')
   })
 
   it('presents a document and removes it from inventory', () => {
     const state = stateWithItem('item-papers-false-citizen')
     const result = useItem(state, { instanceId: 'test-inst-item-papers-false-citizen', action: 'present' })
-    expect(result.ownedItems.find((o) => o.instanceId === 'test-inst-item-papers-false-citizen')).toBeUndefined()
+    expect(result.inventoryState.player.bagContainers).toHaveLength(0)
     expect(result.activityLog[0]?.message).toContain('presented')
   })
 })
@@ -82,6 +118,6 @@ describe('useItem — invalid / edge cases', () => {
     const state = stateWithItem('item-salve-burngrade')
     const result = useItem(state, { instanceId: 'test-inst-item-salve-burngrade', action: 'equip' })
     // equip is not yet handled — falls through, state unchanged
-    expect(result.ownedItems).toEqual(state.ownedItems)
+    expect(result.inventoryState.player.bagContainers).toHaveLength(1)
   })
 })

@@ -4,7 +4,7 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
-import { addOwnedItem } from './inventory'
+import { addPlayerItem } from './inventory/inventoryHelpers'
 import { addQuestLeadIfNew } from './questLifecycle'
 
 function cloneDialogueState(state: GameState): GameState {
@@ -12,11 +12,10 @@ function cloneDialogueState(state: GameState): GameState {
     ...state,
     relationships: { ...state.relationships },
     factionStandings: { ...state.factionStandings },
-    ownedItems: [...state.ownedItems],
-    availableQuestLeads: [...state.availableQuestLeads],
     activityLog: [...state.activityLog],
     resolvedDialogueChoices: { ...state.resolvedDialogueChoices },
     visitedDialogueNodes: { ...state.visitedDialogueNodes },
+    availableQuestLeads: [...state.availableQuestLeads],
   }
 }
 
@@ -59,7 +58,10 @@ export function meetsDialogueCondition(
     case 'mainQuestStage':
       return state.mainQuest.stage === cond.value
     case 'hasItem':
-      return state.ownedItems.some((o) => o.itemId === cond.value)
+      // Check inventoryState instead of ownedItems
+      return state.inventoryState.player.bagContainers.some((c) =>
+        c.slots.some((s) => s.itemInstanceId === cond.value)
+      )
     case 'choiceTaken':
       return (state.resolvedDialogueChoices[dialogueId] ?? []).includes(cond.value as string)
     case 'choiceNotTaken':
@@ -132,7 +134,7 @@ function applyDialogueOutcome(
     }
     case 'item': {
       if (typeof outcome.value !== 'string') return state
-      const afterItem = addOwnedItem(state, outcome.value)
+      const afterItem = addPlayerItem(state, outcome.value, 1)
       const itemName = contentCatalog.itemsById.get(outcome.value)?.name ?? outcome.value
       const npcName = contentCatalog.npcsById.get(npcId)?.name ?? npcId
       return appendActivityLogEntry(afterItem, 'system', `${npcName} gave you ${itemName}.`)

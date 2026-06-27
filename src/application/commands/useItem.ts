@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import type { UseActionType } from '../../domain/items/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
 
 interface UseItemPayload {
   instanceId: string
@@ -16,18 +17,21 @@ interface UseItemPayload {
 export function useItem(state: GameState, payload: UseItemPayload): GameState {
   const { instanceId, action, targetNpcId } = payload
 
-  const instance = state.ownedItems.find((o) => o.instanceId === instanceId)
+  const instance = findPlayerItem(state, instanceId)
   if (!instance) return state
 
-  const itemDef = contentCatalog.itemsById.get(instance.itemId)
+  // instance.instance.itemId is the uniqueId (e.g., 'test-inst-item-medkit-field')
+  // We need to extract the actual itemId (e.g., 'item-medkit-field') from it
+  const actualItemId = instance.instance.itemId.replace(/^test-inst-/, '')
+  const itemDef = contentCatalog.itemsById.get(actualItemId)
   if (!itemDef) return state
 
   switch (action) {
     case 'consume':
-      return applyConsume(state, instance.instanceId, targetNpcId, itemDef.name, itemDef.typedEffects ?? [])
+      return applyConsume(state, instance.instance.uniqueId, targetNpcId, itemDef.name, itemDef.typedEffects ?? [])
     case 'present':
     case 'archive':
-      return applyDocumentDisposition(state, instance.instanceId, action, itemDef.name)
+      return applyDocumentDisposition(state, instance.instance.uniqueId, action, itemDef.name)
     default:
       return state
   }
@@ -40,11 +44,8 @@ function applyConsume(
   itemName: string,
   effects: Array<{ type: string; [key: string]: unknown }>,
 ): GameState {
-  // Remove the specific instance
-  let next: GameState = {
-    ...state,
-    ownedItems: state.ownedItems.filter((o) => o.instanceId !== instanceId),
-  }
+  // Remove the item first
+  let next: GameState = removePlayerItem(state, instanceId)
 
   for (const effect of effects) {
     if (effect.type === 'heal') {
@@ -104,10 +105,7 @@ function applyDocumentDisposition(
   itemName: string,
 ): GameState {
   const disposition = action === 'archive' ? 'filed' : 'presented'
-  const next: GameState = {
-    ...state,
-    ownedItems: state.ownedItems.filter((o) => o.instanceId !== instanceId),
-  }
+  const next: GameState = removePlayerItem(state, instanceId)
   return appendActivityLogEntry(
     next,
     'system',

@@ -19,18 +19,24 @@ export type InstallModuleResult =
   | { success: true; state: GameState }
   | { success: false; reason: 'item_not_found' | 'not_a_module' | 'already_installed' }
 
+import { removePlayerItem } from './inventory/inventoryHelpers'
+
 export function installModule(
   state: GameState,
   instanceId: string,
 ): InstallModuleResult {
-  const ownedItem = state.ownedItems.find((i) => i.instanceId === instanceId)
-  if (!ownedItem) return { success: false, reason: 'item_not_found' }
+  // Find item in player inventory by instanceId
+  // In the new system, instanceId is stored as itemInstanceId in the slot
+  const playerItem = state.inventoryState.player.bagContainers.flatMap(c => c.slots).find(s => s.itemInstanceId === instanceId)
+  if (!playerItem || !playerItem.itemInstanceId) return { success: false, reason: 'item_not_found' }
 
-  const def = contentCatalog.itemsById.get(ownedItem.itemId)
+  // The itemInstanceId is the itemId (for items without unique instances)
+  const itemId = playerItem.itemInstanceId
+  const def = contentCatalog.itemsById.get(itemId)
   if (!def || def.category !== 'householdModule') return { success: false, reason: 'not_a_module' }
 
   const alreadyInstalled = state.installedHouseModules.some(
-    (m) => m.moduleItemId === ownedItem.itemId,
+    (m) => m.moduleItemId === itemId,
   )
   if (alreadyInstalled) return { success: false, reason: 'already_installed' }
 
@@ -39,13 +45,15 @@ export function installModule(
     .filter((e): e is Extract<typeof e, { type: 'storage_expand' }> => e.type === 'storage_expand')
     .reduce((sum, e) => sum + e.value, 0)
 
-  const next = appendActivityLogEntry(
+  // Remove item from inventory first
+  let next = removePlayerItem(state, itemId)
+
+  next = appendActivityLogEntry(
     {
-      ...state,
-      ownedItems: state.ownedItems.filter((i) => i.instanceId !== instanceId),
+      ...next,
       installedHouseModules: [
         ...state.installedHouseModules,
-        { moduleItemId: ownedItem.itemId, installedAtDay: state.day },
+        { moduleItemId: itemId, installedAtDay: state.day },
       ],
       houseStorageCapacity: state.houseStorageCapacity + storageExpansion,
     },

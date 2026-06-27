@@ -106,11 +106,34 @@ describe('dialogue consequence resolution', () => {
   })
 
   it('consumes Marion one-shot clue topics after the first discussion', () => {
+    // Helper to create inventoryState with items
+    const createInventoryWithItems = () => ({
+      ...initialGameStateSnapshot.inventoryState,
+      player: {
+        ...initialGameStateSnapshot.inventoryState.player,
+        bagContainers: [
+          {
+            containerId: 'container-test',
+            containerType: 'backpack' as const,
+            ownerId: 'player',
+            maxSlots: 20,
+            slots: [
+              { slotId: 'slot-chit', itemInstanceId: 'item-chit-ledger-removal' as string | null, quantity: 1 },
+              { slotId: 'slot-note', itemInstanceId: 'item-note-arrangement-below' as string | null, quantity: 1 },
+            ],
+            locked: false,
+          },
+        ],
+        usedBagSlots: 2,
+        equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+      },
+      npcInventories: {},
+      sharedContainers: [],
+      itemRegistry: {},
+    })
+
     const store = makeStore({
-      ownedItems: [
-        { instanceId: 'test-item-chit-ledger-removal', itemId: 'item-chit-ledger-removal', quantity: 1, location: 'inventory' },
-        { instanceId: 'test-item-note-arrangement-below', itemId: 'item-note-arrangement-below', quantity: 1, location: 'inventory' },
-      ],
+      inventoryState: createInventoryWithItems(),
     })
 
     const visibleChoicesAtRoot = () =>
@@ -159,19 +182,17 @@ describe('dialogue consequence resolution', () => {
   })
 
   it('can grant an item from dialogue through typed outcome handling', () => {
-    const store = makeStore({
-      ownedItems: [],
-    })
+    const store = makeStore({})
 
     store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-the-wren', nodeId: 'wren-node-pale' }))
     store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'wren-choice-thanks' }))
 
     const state = store.getState().game
-    expect(state.ownedItems).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ itemId: 'item-papers-false-citizen', quantity: 1, location: 'inventory' }),
-      ]),
+    // Check in new inventoryState system
+    const hasItem = state.inventoryState.player.bagContainers.some((c) =>
+      c.slots.some((s) => s.itemInstanceId === 'item-papers-false-citizen')
     )
+    expect(hasItem).toBe(true)
     expect(state.activityLog[0]?.message).toContain('The Wren gave you False Citizen Papers')
     expect(state.activeDialogueId).toBeNull()
   })

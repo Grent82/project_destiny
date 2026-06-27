@@ -1,19 +1,20 @@
 import type { GameState } from '../../domain'
 import { appendActivityLogEntry } from './activityLog'
-import { addOwnedItem } from './inventory'
+import { addPlayerItem } from './inventory/inventoryHelpers'
 import { getHouseDiscovery } from '../content/houseDiscoveries'
 import { ROOM_IDS } from '../content/ids'
 
 const VAULT_CLUE_ITEM_IDS = ['item-chit-ledger-removal', 'item-note-arrangement-below'] as const
 
 function hasInventoryItem(state: GameState, itemId: string) {
-  return state.ownedItems.some((o) => o.itemId === itemId && o.location === 'inventory')
+  return state.inventoryState.player.bagContainers.some((container) =>
+    container.slots.some((slot) => slot.itemInstanceId === itemId)
+  )
 }
 
 function cloneHouseState(state: GameState): GameState {
   return {
     ...state,
-    ownedItems: [...state.ownedItems],
     activityLog: [...state.activityLog],
     mainQuest: { ...state.mainQuest },
     house: {
@@ -73,7 +74,7 @@ export function searchHouseRoom(
 
   for (const artifact of discovery.actionableFinds) {
       if (!hasInventoryItem(next, artifact.itemId)) {
-        next = addOwnedItem(next, artifact.itemId)
+        next = addPlayerItem(next, artifact.itemId, 1)
       }
     }
 
