@@ -365,6 +365,7 @@ export function applyOutcomes(
                 npcArc,
                 currentDirectiveId: null,
                 directiveDeadlineDay: null,
+                currentEmployment: null,
                 arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
                 currentIntention: null,
                 factionRelationships: [],

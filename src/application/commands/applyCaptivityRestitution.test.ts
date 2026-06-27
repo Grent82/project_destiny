@@ -33,6 +33,7 @@ const createNpcWithConfiscatedState = (captivityStatus: 'rescued' | 'returned'):
   currentDirectiveId: null,
   directiveDeadlineDay: null,
   currentIntention: null,
+  currentEmployment: null,
   factionRelationships: [],
   wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
   captivityState: {

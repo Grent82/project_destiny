@@ -148,6 +148,12 @@ function createNakedNpc(npcId: string, name: string): NpcRuntimeState {
       shield: null,
     },
     npcMemory: [],
+    bondStatus: null,
+    npcArc: null,
+    currentDirectiveId: null,
+    directiveDeadlineDay: null,
+    currentEmployment: null,
+    currentIntention: null,
     factionRelationships: [],
     wardPersonalAllowance: {
       allowancePerWeek: 2,

@@ -28,6 +28,7 @@ const createNpcWithItems = (captivityStatus?: 'captive' | 'missing' | 'rescued' 
   armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
   arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
   npcMemory: [],
+  currentEmployment: null,
   bondStatus: null,
   npcArc: null,
   currentDirectiveId: null,

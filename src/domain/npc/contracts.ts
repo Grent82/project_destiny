@@ -687,6 +687,46 @@ export const shopOwnerProfileSchema = z
 
 export type ShopOwnerProfile = z.infer<typeof shopOwnerProfileSchema>
 
+export const npcEmploymentTaskTypeSchema = z.enum([
+  'scout',
+  'protect',
+  'retrieve',
+  'deliver',
+  'guard',
+  'negotiate',
+  'sabotage',
+  'escort',
+  'work',
+])
+export type NpcEmploymentTaskType = z.infer<typeof npcEmploymentTaskTypeSchema>
+
+export const npcEmploymentStatusSchema = z.enum([
+  'pending',
+  'in-progress',
+  'completed',
+  'failed',
+  'cancelled',
+])
+export type NpcEmploymentStatus = z.infer<typeof npcEmploymentStatusSchema>
+
+export const npcEmploymentSchema = z
+  .object({
+    employmentId: entityIdSchema,
+    employerId: z.string().min(1), // Player or NPC ID
+    employerType: z.enum(['player', 'npc', 'faction']),
+    employeeId: entityIdSchema,
+    taskType: npcEmploymentTaskTypeSchema,
+    target: z.string().min(1).optional(), // District/NPC/Item ID
+    status: npcEmploymentStatusSchema.default('pending'),
+    deadlineDay: z.number().int().nonnegative().optional(),
+    wagePerDay: z.number().int().nonnegative().default(0),
+    completionBonus: z.number().int().nonnegative().default(0),
+    createdAtDay: z.number().int().nonnegative(),
+    startedAtDay: z.number().int().nonnegative().optional().nullable(),
+    completedAtDay: z.number().int().nonnegative().optional().nullable(),
+    description: z.string().min(1).optional(),
+  })
+  .strict()
 export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
@@ -719,6 +759,7 @@ export const npcRuntimeStateSchema = z
     currentDirectiveId: entityIdSchema.nullable().default(null),
     directiveDeadlineDay: z.number().int().nonnegative().nullable().default(null),
     currentIntention: npcIntentionSchema.nullable().default(null),
+    currentEmployment: npcEmploymentSchema.nullable().default(null),
     factionRelationships: z.array(factionRelationshipSchema).default([]),
     wardPersonalAllowance: wardPersonalAllowanceSchema.default({
       allowancePerWeek: 2,

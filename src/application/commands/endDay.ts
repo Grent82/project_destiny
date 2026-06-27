@@ -17,6 +17,7 @@ import {
   handleCaptivityPhase,
   handleQuestsPhase,
   handleFactionDirectivesPhase,
+  handleEmploymentPhase,
 } from "./endDay/handlers"
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
@@ -43,6 +44,7 @@ export { applyCaptivityDegradation, checkMainQuestProgression } from "./endDay/l
  * 13. CAPTIVITY — Captivity degradation, main quest progression
  * 14. QUESTS — Quest expiry and debt crisis
  * 15. FACTION_DIRECTIVES — Generate faction directives for available NPCs
+ * 16. EMPLOYMENT — Process NPC employment contracts (priority: below faction directives)
  */
 export function endDay(state: GameState): GameState {
   const seeded = createRng(state.rngSeed)
@@ -92,6 +94,9 @@ export function endDay(state: GameState): GameState {
 
   // Phase 15: FACTION_DIRECTIVES
   next = handleFactionDirectivesPhase(next)
+
+  // Phase 16: EMPLOYMENT — Process NPC employment contracts
+  next = handleEmploymentPhase(next)
 
   // Store advanced RNG seed for next day's deterministic run
   return { ...next, rngSeed: seeded.getSeed() }
