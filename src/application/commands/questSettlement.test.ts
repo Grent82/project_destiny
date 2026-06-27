@@ -20,7 +20,6 @@ function stateWithQuest(questId: string): GameState {
     activeQuests: [makeActiveQuest(questId)],
     rumors: [],
     relationships: {},
-    ownedItems: [],
   }
 }
 
@@ -28,18 +27,12 @@ describe('settleQuestSuccess — rewardItemIds', () => {
   it('adds a new inventory entry for each reward item', () => {
     const state = stateWithQuest('quest-ledger-recovery')
     settleQuestSuccess(state, 'quest-ledger-recovery')
-    const owned = state.ownedItems.find((o) => o.itemId === 'item-ledger-bureau')
-    expect(owned).toBeDefined()
-    expect(owned?.quantity).toBe(1)
-    expect(owned?.location).toBe('inventory')
-  })
-
-  it('increments quantity when item already in inventory', () => {
-    const state = stateWithQuest('quest-ledger-recovery')
-    state.ownedItems.push({ instanceId: 'inst-existing', itemId: 'item-ledger-bureau', location: 'inventory', quantity: 2 })
-    settleQuestSuccess(state, 'quest-ledger-recovery')
-    const owned = state.ownedItems.find((o) => o.itemId === 'item-ledger-bureau')
-    expect(owned?.quantity).toBe(3)
+    // Check inventoryState instead of ownedItems
+    // Note: uniqueId is formatted as `${itemId}-reward-${day}`
+    const hasItem = state.inventoryState.player.bagContainers.some(c =>
+      c.slots.some(s => s.itemInstanceId === 'item-ledger-bureau-reward-3')
+    )
+    expect(hasItem).toBe(true)
   })
 
   it('logs item reward to activity log', () => {

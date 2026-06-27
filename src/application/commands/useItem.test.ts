@@ -6,7 +6,7 @@ import type { GameState } from '../../domain/game/contracts'
 /**
  * Creates a game state with an item in the new inventory system.
  */
-function stateWithItem(itemId: string, quantity = 1, location = 'inventory' as const) {
+function stateWithItem(itemId: string, quantity = 1) {
   const instanceId = `test-inst-${itemId}`
 
   // Create inventory state with the item
@@ -27,11 +27,6 @@ function stateWithItem(itemId: string, quantity = 1, location = 'inventory' as c
 
   return {
     ...initialStateWithIda,
-    // Keep ownedItems for backward compatibility in tests
-    ownedItems: [
-      ...initialStateWithIda.ownedItems,
-      { instanceId, itemId, location, quantity },
-    ],
     // Add to new inventory system
     inventoryState: {
       ...initialStateWithIda.inventoryState,

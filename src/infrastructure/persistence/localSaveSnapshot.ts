@@ -2,7 +2,6 @@ import { gameStateSchema, type GameState } from '../../domain'
 import type { SaveGameStore } from '../../application/ports/saveGameStore'
 import { createEmptyChronicle } from '../../domain/chronicle/contracts'
 import { normalizePendingEventInstances } from '../../application/commands/eventInstances'
-import { migrateLegacyInventoryToNew } from '../../application/commands/inventory/migrateLegacyInventory'
 
 interface StorageLike {
   getItem(key: string): string | null
@@ -60,31 +59,8 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 1) {
-    // v1 → v2: add ownedItems from inventory[] + stash (if not already present)
+    // v1 → v2: skip ownedItems migration (legacy system removed)
     const raw1 = raw as Record<string, unknown>
-    if (!raw1['ownedItems']) {
-      const oldInventory = (raw1['inventory'] as Array<{ itemId: string; quantity: number; currentDurability?: number }>) ?? []
-      const oldStash = (raw1['stash'] as { weapons?: string[]; armors?: string[] }) ?? {}
-      const ownedItems: Array<{
-        instanceId: string; itemId: string; location: string; quantity: number; currentDurability?: number
-      }> = []
-      oldInventory.forEach((entry, i) => {
-        ownedItems.push({
-          instanceId: `migrated-${entry.itemId}-${i}`,
-          itemId: entry.itemId,
-          location: 'inventory',
-          quantity: entry.quantity,
-          ...(entry.currentDurability !== undefined ? { currentDurability: entry.currentDurability } : {}),
-        })
-      })
-      ;(oldStash.weapons ?? []).forEach((id, i) => {
-        ownedItems.push({ instanceId: `migrated-stash-w-${id}-${i}`, itemId: id, location: 'house_storage', quantity: 1 })
-      })
-      ;(oldStash.armors ?? []).forEach((id, i) => {
-        ownedItems.push({ instanceId: `migrated-stash-a-${id}-${i}`, itemId: id, location: 'house_storage', quantity: 1 })
-      })
-      return gameStateSchema.safeParse({ ...raw1, saveVersion: 2, ownedItems }).data ?? null
-    }
     return gameStateSchema.safeParse({ ...raw1, saveVersion: 2 }).data ?? null
   }
 
@@ -117,21 +93,9 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 4) {
-    // v4 → v5: migrate legacy inventory to inventoryState
+    // v4 is now the current version — just validate and return
     const raw4 = raw as Record<string, unknown>
-    const stateV4 = gameStateSchema.safeParse(raw4).data
-    if (!stateV4) return null
-
-    // Run inventory migration
-    const migratedState = migrateLegacyInventoryToNew(stateV4, stateV4.day)
-
-    return gameStateSchema.safeParse({ ...migratedState, saveVersion: 5 }).data ?? null
-  }
-
-  if (version === 5) {
-    // v5 is current — just validate and return
-    const raw5 = raw as Record<string, unknown>
-    return gameStateSchema.safeParse(raw5).data ?? null
+    return gameStateSchema.safeParse(raw4).data ?? null
   }
 
   // Unknown future version — cannot load

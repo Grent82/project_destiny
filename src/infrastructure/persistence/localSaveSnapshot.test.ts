@@ -28,8 +28,7 @@ describe('LocalSaveSnapshotStore', () => {
 
     const loaded = snapshotStore.load()
     expect(loaded).not.toBeNull()
-    expect(loaded?.saveVersion).toBe(5)
-    // Check that inventoryState was migrated
+    expect(loaded?.saveVersion).toBe(4)
     expect(loaded?.inventoryState.player.bagContainers).toBeDefined()
     expect(loaded?.inventoryState.npcInventories).toBeDefined()
   })

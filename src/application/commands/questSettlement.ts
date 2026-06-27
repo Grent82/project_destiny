@@ -351,20 +351,38 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   )
 
   // Add inventory items authored in the quest template
-  for (const itemId of template.rewardItemIds) {
+  for (const itemId of template.rewardItemIds ?? []) {
     const itemDef = contentCatalog.itemsById.get(itemId)
     if (!itemDef) continue
-    const existingOwned = state.ownedItems.find((o) => o.itemId === itemId && o.location === 'inventory')
-    if (existingOwned) {
-      existingOwned.quantity += 1
-    } else {
-      state.ownedItems.push({
-        instanceId: `inst-${itemId}-${state.day}-reward`,
-        itemId,
-        location: 'inventory',
-        quantity: 1,
+
+    // Directly write to inventoryState (pragmatic inline migration)
+    const uniqueId = `${itemId}-reward-${state.day}`
+
+    // Ensure we have at least one bag container
+    if (state.inventoryState.player.bagContainers.length === 0) {
+      state.inventoryState.player.bagContainers.push({
+        containerId: `bag-player-start`,
+        containerType: 'backpack',
+        ownerId: 'player',
+        maxSlots: 20,
+        slots: [],
+        locked: false,
       })
     }
+
+    const container = state.inventoryState.player.bagContainers[0]
+    if (container && container.slots.length < container.maxSlots) {
+      container.slots.push({
+        slotId: `slot-${uniqueId}`,
+        itemInstanceId: uniqueId,
+        quantity: 1,
+      })
+      state.inventoryState.player.usedBagSlots = state.inventoryState.player.bagContainers.reduce(
+        (sum, c) => sum + c.slots.length,
+        0,
+      )
+    }
+
     pushActivityLog(state, 'system', `${itemDef.name} added to inventory.`, `reward-item-${itemId}`)
   }
 

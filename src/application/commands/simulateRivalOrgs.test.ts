@@ -15,7 +15,6 @@ const baseState: GameState = {
   districts: [],
   roster: [],
   inventory: [],
-  ownedItems: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {

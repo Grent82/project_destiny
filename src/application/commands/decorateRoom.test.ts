@@ -42,7 +42,6 @@ const baseState: GameState = {
   districts: [],
   roster: [idaRhysRosterEntry],
   inventory: [],
-  ownedItems: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {

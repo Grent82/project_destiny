@@ -695,18 +695,38 @@ function grantInvestigationItem(state: GameState, itemId: string, questId: strin
   const itemDef = contentCatalog.itemsById.get(itemId)
   if (!itemDef) return
 
-  const existingOwned = state.ownedItems.find(
-    (entry) => entry.itemId === itemId && entry.location === 'inventory',
-  )
-  if (existingOwned) {
-    existingOwned.quantity += 1
-  } else {
-    state.ownedItems.push({
-      instanceId: `inst-${itemId}-${state.day}-${questId}`,
-      itemId,
-      location: 'inventory',
-      quantity: 1,
+  // Directly write to inventoryState (pragmatic inline migration)
+  const uniqueId = `${itemId}-${questId}-${state.day}`
+
+  // Ensure we have at least one bag container
+  if (state.inventoryState.player.bagContainers.length === 0) {
+    state.inventoryState.player.bagContainers.push({
+      containerId: `bag-player-start`,
+      containerType: 'backpack',
+      ownerId: 'player',
+      maxSlots: 20,
+      slots: [],
+      locked: false,
     })
+  }
+
+  const container = state.inventoryState.player.bagContainers[0]
+  if (container && container.slots.length < container.maxSlots) {
+    // Check if item already exists
+    const existingSlot = container.slots.find((s) => s.itemInstanceId === uniqueId)
+    if (existingSlot) {
+      existingSlot.quantity += 1
+    } else {
+      container.slots.push({
+        slotId: `slot-${uniqueId}-${state.day}`,
+        itemInstanceId: uniqueId,
+        quantity: 1,
+      })
+    }
+    state.inventoryState.player.usedBagSlots = state.inventoryState.player.bagContainers.reduce(
+      (sum, c) => sum + c.slots.length,
+      0,
+    )
   }
 
   pushSystemLog(

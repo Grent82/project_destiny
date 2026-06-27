@@ -675,7 +675,12 @@ describe('resolveInvestigation', () => {
 
     const state = store.getState().game
     expect(state.completedQuestIds).toContain('quest-hollows-ledger')
-    expect(state.ownedItems.some((item) => item.itemId === 'item-chit-ledger-removal')).toBe(true)
+    // Check inventoryState instead of ownedItems
+    // Note: uniqueId is formatted as `${itemId}-${questId}-${day}`
+    const hasItem = state.inventoryState.player.bagContainers.some(c =>
+      c.slots.some(s => s.itemInstanceId === 'item-chit-ledger-removal-quest-hollows-ledger-1')
+    )
+    expect(hasItem).toBe(true)
     expect(
       state.activityLog.some((entry) =>
         entry.message.includes('Ledger Removal Chit') || entry.message.includes('added to inventory'),
@@ -701,7 +706,11 @@ describe('resolveInvestigation', () => {
     expect(runtime?.journalEntries.some((entry) => entry.includes('ledger itself stayed inside'))).toBe(
       true,
     )
-    expect(state.ownedItems.some((item) => item.itemId === 'item-chit-ledger-removal')).toBe(false)
+    // Check inventoryState instead of ownedItems
+    const hasItem = state.inventoryState.player.bagContainers.some(c =>
+      c.slots.some(s => s.itemInstanceId === 'item-chit-ledger-removal-quest-hollows-ledger-1')
+    )
+    expect(hasItem).toBe(false)
   })
 
   it('keeps Soot Lane active on failure so the house can try another route', () => {

@@ -570,26 +570,17 @@
   "saveVersion": 4,
   "rumors": [],
   "bondVisibility": {},
-  "ownedItems": [
-    {
-      "instanceId": "inst-item-medkit-field-18ef14bc",
-      "itemId": "item-medkit-field",
-      "location": "inventory",
-      "quantity": 2
+  "inventoryState": {
+    "player": {
+      "equipmentSlots": { "weapon": null, "armor": null, "accessory_1": null, "accessory_2": null },
+      "bagContainers": [],
+      "totalBagSlots": 40,
+      "usedBagSlots": 0
     },
-    {
-      "instanceId": "inst-item-ledger-house-debt-de5c4e28",
-      "itemId": "item-ledger-house-debt",
-      "location": "inventory",
-      "quantity": 1
-    },
-    {
-      "instanceId": "inst-item-spare-parts-8a488cdf",
-      "itemId": "item-spare-parts",
-      "location": "inventory",
-      "quantity": 3
-    }
-  ],
+    "npcInventories": {},
+    "sharedContainers": [],
+    "itemRegistry": {}
+  },
   "eventInstances": [],
   "worldNpcStates": [
     {

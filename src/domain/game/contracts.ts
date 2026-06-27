@@ -14,7 +14,6 @@ import {
   installedModuleSchema,
   inventoryEntrySchema,
   itemDefinitionSchema,
-  ownedItemSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
 import { attributesSchema, bondStatusSchema, captivityStateSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
@@ -297,7 +296,7 @@ export const gameStateSchema = z
     districts: z.array(districtRuntimeStateSchema),
     roster: z.array(npcRuntimeStateSchema),
     inventory: z.array(inventoryEntrySchema).default([]),
-    ownedItems: z.array(ownedItemSchema).default([]),
+    // ownedItems removed - migrated to inventoryState.player.bagContainers
     inventoryState: inventoryStateSchema.default(() => ({
       player: {
         equipmentSlots: {
