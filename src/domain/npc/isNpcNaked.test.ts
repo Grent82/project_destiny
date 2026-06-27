@@ -66,52 +66,58 @@ describe('isNpcNaked', () => {
     expect(isNpcNaked(npc)).toBe(false)
   })
 
-  it('returns false when NPC has accessories', () => {
+  it('returns true when NPC has only accessories (no clothing)', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: ['ring-001'] },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Accessories alone do not prevent nakedness
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
-  it('returns false when NPC has light armor torso', () => {
+  it('returns true when NPC has only light armor torso (no clothing)', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       armor: { lightTorso: 'leather-chest-001', lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Armor alone does not prevent nakedness
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
-  it('returns false when NPC has heavy armor torso', () => {
+  it('returns true when NPC has only heavy armor torso (no clothing)', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       armor: { lightTorso: null, lightLegs: null, heavyTorso: 'plate-chest-001', heavyLegs: null, shield: null },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Armor alone does not prevent nakedness
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
-  it('returns false when NPC has light armor legs', () => {
+  it('returns true when NPC has only light armor legs (no clothing)', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       armor: { lightTorso: null, lightLegs: 'leather-legs-001', heavyTorso: null, heavyLegs: null, shield: null },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Armor alone does not prevent nakedness
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
-  it('returns false when NPC has heavy armor legs', () => {
+  it('returns true when NPC has only heavy armor legs (no clothing)', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: 'plate-legs-001', shield: null },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Armor alone does not prevent nakedness
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
-  it('returns false when NPC has shield', () => {
+  it('returns true when NPC has only shield (no clothing)', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: 'tower-shield-001' },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Shield alone does not prevent nakedness
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
   it('returns false when NPC has full clothing outfit', () => {
@@ -123,13 +129,14 @@ describe('isNpcNaked', () => {
     expect(isNpcNaked(npc)).toBe(false)
   })
 
-  it('returns false when NPC has full armor set', () => {
+  it('returns true when NPC has full armor set but no clothing', () => {
     const npc: NpcRuntimeState = createNpcRuntimeState('test-npc', 'Test NPC', {
       clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
       armor: { lightTorso: null, lightLegs: null, heavyTorso: 'plate-chest-001', heavyLegs: 'plate-legs-001', shield: 'tower-shield-001' },
     })
 
-    expect(isNpcNaked(npc)).toBe(false)
+    // Full armor without clothing is still naked
+    expect(isNpcNaked(npc)).toBe(true)
   })
 
   it('returns true when NPC only has weapon equipped', () => {
@@ -163,11 +170,12 @@ describe('hasNpcClothing', () => {
     expect(hasNpcClothing(npc)).toBe(true)
   })
 
-  it('returns true when NPC has accessories', () => {
+  it('returns false when NPC has only accessories (not clothing)', () => {
     const npc = createNpcRuntimeState('test-npc', 'Test NPC', {
       clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: ['ring-001'] },
     })
-    expect(hasNpcClothing(npc)).toBe(true)
+    // Accessories are not considered clothing
+    expect(hasNpcClothing(npc)).toBe(false)
   })
 })
 

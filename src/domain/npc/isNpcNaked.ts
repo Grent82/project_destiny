@@ -1,7 +1,7 @@
 import type { NpcRuntimeState } from '../npc/contracts'
 
 /**
- * Checks if an NPC has any clothing equipped (excluding armor).
+ * Checks if an NPC has any clothing equipped (excluding armor and accessories).
  *
  * @param npc - The NPC runtime state to check
  * @returns true if the NPC has any clothing item equipped, false otherwise
@@ -16,8 +16,7 @@ export function hasNpcClothing(npc: NpcRuntimeState): boolean {
     clothing.legs !== null ||
     clothing.feet !== null ||
     clothing.full !== null ||
-    clothing.undergarments !== null ||
-    (clothing.accessories && clothing.accessories.length > 0)
+    clothing.undergarments !== null
   )
 }
 
@@ -40,18 +39,19 @@ export function hasNpcArmor(npc: NpcRuntimeState): boolean {
 }
 
 /**
- * Checks if an NPC is currently naked (wearing no clothing or armor).
+ * Checks if an NPC is currently naked (wearing no clothing).
  *
- * An NPC is considered naked when:
- * - No clothing items are equipped (head, torso, arms, legs, feet, full, undergarments all null)
- * - No armor pieces are equipped (lightTorso, heavyTorso, lightLegs, heavyLegs, shield all null)
- * - No accessories are worn
+ * An NPC is considered naked when no clothing items are equipped.
+ * Armor pieces (including shield) and accessories do NOT affect nakedness:
+ * - A naked NPC with a shield is still naked
+ * - A naked NPC with jewelry/accessories is still naked
+ * - Undergarments COUNT as clothing (not naked)
  *
  * @param npc - The NPC runtime state to check
  * @returns true if the NPC is naked, false otherwise
  */
 export function isNpcNaked(npc: NpcRuntimeState): boolean {
-  return !hasNpcClothing(npc) && !hasNpcArmor(npc)
+  return !hasNpcClothing(npc)
 }
 
 /**
