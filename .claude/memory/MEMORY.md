@@ -35,3 +35,4 @@
 - [Feedback: NPC-NPC dating implementation](feedback_npc_npc_dating_implementation.md) — Reuse existing date templates, integrate into endDay phases, bidirectional relationship tracking
 - [Session Learnings 2026-06-27-tdo4](session_learnings_2026-06-27-tdo4.md) — destiny-tdo4: NPC-NPC autonomous dating system implemented and committed
 - [Session Learnings 2026-06-27-naked-npc](session_learnings_2026-06-27-naked-npc.md) — destiny-yqay + destiny-7531: Naked NPC system, Worktree sync pattern learnings
+- [Session Learnings 2026-06-27-naked-npc-fix](session_learnings_2026-06-27-naked-npc-fix.md) — destiny-7531 correction: accessories/shield not clothing
