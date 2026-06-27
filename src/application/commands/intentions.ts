@@ -2,6 +2,8 @@ import type { GameState, NpcIntention, NpcIntentionType } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { npcIntentionSchema } from '../../domain/npc/contracts'
 import { generateNpcIntention } from './intentions/pipeline'
+import { tryNpcNpcFlirtation, tryNpcNpcCourtship } from './npcNpcRomance'
+import { createRng } from './seededRng'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -623,9 +625,23 @@ const flirtWithHandler: IntentionHandler = {
     // Requires presence, empathy, and some affinity with target
     return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would attempt flirtation with target NPC
-    return state
+  execute: (npc, state) => {
+    // Find a target NPC to flirt with (prefer high affinity targets)
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]?.affinity ?? 0
+        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]?.affinity ?? 0
+        return relB - relA
+      })[0]
+
+    if (!targetEntry) return state
+
+    const rng = createRng(state.rngSeed)
+    const newState = tryNpcNpcFlirtation(state, npc.npcId, targetEntry.npcId, rng)
+
+    // Advance RNG seed
+    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -639,9 +655,25 @@ const courtRomanticallyHandler: IntentionHandler = {
     // Requires high presence, empathy, and affinity
     return npc.attributes.presence >= 50 && npc.traits.empathy >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would attempt romantic courtship
-    return state
+  execute: (npc, state) => {
+    // Find a target NPC to court (prefer high affinity/trust targets)
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]
+        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]
+        const scoreA = (relA?.affinity ?? 0) + (relA?.trust ?? 0)
+        const scoreB = (relB?.affinity ?? 0) + (relB?.trust ?? 0)
+        return scoreB - scoreA
+      })[0]
+
+    if (!targetEntry) return state
+
+    const rng = createRng(state.rngSeed)
+    const newState = tryNpcNpcCourtship(state, npc.npcId, targetEntry.npcId, rng)
+
+    // Advance RNG seed
+    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -655,9 +687,33 @@ const visitLoverHandler: IntentionHandler = {
     // Requires existing romantic relationship
     return npc.traits.empathy >= 40 || npc.traits.loyalty >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would visit target NPC
-    return state
+  execute: (npc, state) => {
+    // Find romantic partner (highest intimacy stage)
+    const partnerEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]?.intimacyStage ?? 'none'
+        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]?.intimacyStage ?? 'none'
+        const stages = ['none', 'affinity', 'attachment', 'committed']
+        return stages.indexOf(relB) - stages.indexOf(relA)
+      })[0]
+
+    if (!partnerEntry) return state
+
+    // For now, just apply a small affinity boost (could be expanded to travel logic)
+    const key = `${npc.npcId}→${partnerEntry.npcId}`
+    const reverseKey = `${partnerEntry.npcId}→${npc.npcId}`
+    const rel = state.relationships[key] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
+    const reverseRel = state.relationships[reverseKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
+
+    return {
+      ...state,
+      relationships: {
+        ...state.relationships,
+        [key]: { ...rel, affinity: Math.min(100, rel.affinity + 1) },
+        [reverseKey]: { ...reverseRel, affinity: Math.min(100, reverseRel.affinity + 1) },
+      },
+    }
   },
 }
 
@@ -671,9 +727,42 @@ const jealousyCheckHandler: IntentionHandler = {
     // Requires perception and some insecurity
     return npc.attributes.perception >= 40 || npc.traits.vanity >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would investigate potential rivals
-    return state
+  execute: (npc, state) => {
+    // Check for potential rivals (other NPCs with high affinity to targets this NPC likes)
+    const rng = createRng(state.rngSeed)
+
+    // Simple implementation: just run the jealousy check for this NPC
+    // Full implementation would identify specific rivals and adjust relationships
+    let newState = state
+
+    for (const target of state.roster.filter((r) => r.npcId !== npc.npcId)) {
+      const targetRel = state.relationships[`${npc.npcId}→${target.npcId}`]
+      if (!targetRel || targetRel.affinity < 50) continue
+
+      // Look for rivals
+      for (const rival of state.roster.filter((r) => r.npcId !== npc.npcId && r.npcId !== target.npcId)) {
+        const rivalRel = state.relationships[`${target.npcId}→${rival.npcId}`]
+        if (!rivalRel || rivalRel.affinity < targetRel.affinity) continue
+
+        // Rival detected - increase fear/decrease affinity toward rival
+        const jealousKey = `${npc.npcId}→${rival.npcId}`
+        const currentJealous = state.relationships[jealousKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
+
+        newState = {
+          ...newState,
+          relationships: {
+            ...newState.relationships,
+            [jealousKey]: {
+              ...currentJealous,
+              fear: Math.min(100, (currentJealous.fear ?? 0) + 2),
+              affinity: Math.max(-100, currentJealous.affinity - 1),
+            },
+          },
+        }
+      }
+    }
+
+    return newState
   },
 }
 
@@ -687,9 +776,39 @@ const spendTimeWithHandler: IntentionHandler = {
     // Requires empathy or loyalty
     return npc.traits.empathy >= 40 || npc.traits.loyalty >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would spend time with target NPC
-    return state
+  execute: (npc, state) => {
+    // Find a friend/companion to spend time with (high affinity, any intimacy stage)
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]?.affinity ?? 0
+        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]?.affinity ?? 0
+        return relB - relA
+      })[0]
+
+    if (!targetEntry) return state
+
+    // Small affinity and trust boost
+    const key = `${npc.npcId}→${targetEntry.npcId}`
+    const reverseKey = `${targetEntry.npcId}→${npc.npcId}`
+    const rel = state.relationships[key] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
+    const reverseRel = state.relationships[reverseKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
+
+    return {
+      ...state,
+      relationships: {
+        ...state.relationships,
+        [key]: {
+          ...rel,
+          affinity: Math.min(100, rel.affinity + 1),
+          trust: Math.min(100, (rel.trust ?? 0) + 1),
+        },
+        [reverseKey]: {
+          ...reverseRel,
+          affinity: Math.min(100, reverseRel.affinity + 1),
+        },
+      },
+    }
   },
 }
 
