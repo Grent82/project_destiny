@@ -247,7 +247,7 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
   // Handle accessories (can have multiple)
   if (slot === 'accessory') {
     const currentAccessories = updatedNpc.equipment.accessory || []
-    let containersToUpdate = [...npcContainers]
+    const containersToUpdate = [...npcContainers]
 
     if (currentAccessories.length >= 2) {
       // Remove the first accessory to make room
