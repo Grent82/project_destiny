@@ -88,9 +88,10 @@ describe('processAllEmployments', () => {
       employerType: 'player',
       employeeId: idaRhysRosterEntry.npcId,
       taskType: 'scout',
-      status: 'pending',
-      deadlineDay: 3,
+      status: 'in-progress', // Start already in-progress to test deadline failure during progression
       createdAtDay: 1,
+      startedAtDay: 1,
+      deadlineDay: 3,
     })
 
     const state = {
@@ -109,15 +110,12 @@ describe('processAllEmployments', () => {
       ],
     }
 
-    // First call starts the employment (pending -> in-progress)
-    // Second call would progress, but deadline is met with low progress
+    // Process employment - should fail because deadline is met with insufficient progress
     const result = processAllEmployments(state)
 
     const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
-    // Employment starts first (status becomes in-progress), but since day >= deadline and low progress, it should fail
-    // Actually, the logic is: start -> progress -> check deadline
     // With survival 10: progress = 10/100 * 50 + (0 % 20 - 10) = 5 - 10 = -5 -> clamped to 0
-    // So progress is 0, which is < 50, and deadline is met -> should fail
+    // Progress is 0, which is < 50, and deadline is met -> should fail
     expect(employee?.currentEmployment?.status).toBe('failed')
   })
 

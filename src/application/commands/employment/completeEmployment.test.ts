@@ -124,7 +124,7 @@ describe('failEmployment', () => {
       ],
     }
 
-    const result = failEmployment(state, idaRhysRosterEntry.npcId, 'deadline_missed')
+    const result = failEmployment(state, idaRhysRosterEntry.npcId)
 
     const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('failed')

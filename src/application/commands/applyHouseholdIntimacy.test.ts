@@ -31,6 +31,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     npcArc: null,
     currentDirectiveId: null,
     directiveDeadlineDay: null,
+    currentEmployment: null,
     currentIntention: null,
     factionRelationships: [],
     wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },

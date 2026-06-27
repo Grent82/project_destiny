@@ -151,7 +151,7 @@ function completeEmployment(state: GameState, employeeId: string): GameState {
 /**
  * Fails an employment task with a specific reason.
  */
-function failEmployment(state: GameState, employeeId: string): GameState {
+function failEmployment(state: GameState, employeeId: string, _reason?: string): GameState {
   const employee = state.roster.find((npc) => npc.npcId === employeeId)
   if (!employee || !employee.currentEmployment) {
     return state

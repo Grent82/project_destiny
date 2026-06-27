@@ -41,3 +41,6 @@
 - [Projekt: destiny-jed7 Epic complete](project_destiny-jed7-epic-complete.md) — Intimacy pillar courtship/household implementation finished 2026-06-27
 - [Feedback: NPC-NPC romance fullstack](feedback_npc_npc_romance_fullstack.md) — Flirtation + Courtship + Dating + Jealousy layers, not just dating proposals
 - [Session Learnings 2026-06-27-tdo4-final](session_learnings_2026-06-27-tdo4-final.md) — destiny-tdo4: 3 iterations, intentions handlers checked, complete romance stack
+
+- [Session Learnings Consolidation](session_learnings_log.md) — 11 session_learnings_*.md zu einem Log konsolidiert (2026-06-27)
+- [Schema Change Hygiene Consolidation](schema_change_hygiene.md) — 5 schema_change_*.md zu einem File konsolidiert (2026-06-27)

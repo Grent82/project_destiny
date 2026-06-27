@@ -10,7 +10,7 @@ describe('createEmployment', () => {
       employerId: 'player',
       employerType: 'player' as const,
       employeeId: idaRhysRosterEntry.npcId,
-      taskType: 'scout',
+      taskType: 'scout' as const,
       target: 'district-the-tangle',
       wagePerDay: 5,
       completionBonus: 50,
@@ -47,7 +47,7 @@ describe('createEmployment', () => {
       employerId: 'player',
       employerType: 'player' as const,
       employeeId: idaRhysRosterEntry.npcId,
-      taskType: 'scout',
+      taskType: 'scout' as const,
       wagePerDay: 5,
     }
 
@@ -64,7 +64,7 @@ describe('createEmployment', () => {
       employerId: 'player',
       employerType: 'player' as const,
       employeeId: 'non-existent-npc',
-      taskType: 'scout',
+      taskType: 'scout' as const,
       wagePerDay: 5,
     }
 

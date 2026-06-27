@@ -68,7 +68,7 @@ describe('progressEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [{ ...highSkillNpc, currentEmployment: employment, currentEmployment: employment }],
+      roster: [{ ...highSkillNpc, currentEmployment: employment }],
       rngSeed: 50, // Positive variance
     }
 

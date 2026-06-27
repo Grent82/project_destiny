@@ -45,7 +45,7 @@ function processSingleEmployment(
     // Check if deadline already passed before starting
     if (employment.deadlineDay && state.day >= employment.deadlineDay) {
       // Deadline already passed, fail immediately
-      newState = failEmployment(state, employeeId, 'deadline_missed')
+      newState = failEmployment(state, employeeId)
     } else {
       // Start the employment
       newState = startEmployment(state, employeeId)

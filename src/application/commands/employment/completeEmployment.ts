@@ -94,7 +94,7 @@ function payEmploymentBonus(
 export function failEmployment(
   state: GameState,
   employeeId: string,
-  reason: string,
+  reason: string = 'unknown',
 ): GameState {
   return completeEmployment(state, employeeId, reason)
 }
