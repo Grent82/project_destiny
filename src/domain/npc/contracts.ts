@@ -365,6 +365,11 @@ export const NPC_INTENTION_TYPES = [
   // Spezial/Quirky (2)
   'people-watch',
   'gossip',
+  // Geld verdienen (4)
+  'seek-tips',
+  'black-market-trade',
+  'beg-for-coin',
+  'scavenge-for-sell',
   // Macht/Kontrolle (5)
   'assert-dominance',
   'spy-on',

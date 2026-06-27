@@ -273,6 +273,27 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: {},
     traitWeights: { loyalty: 1.2, empathy: 1.1 },
   },
+  // Geld verdienen (4)
+  'seek-tips': {
+    attributeWeights: { presence: 1.3 },
+    skillWeights: { performance: 1.3 },
+    traitWeights: {},
+  },
+  'black-market-trade': {
+    attributeWeights: { intellect: 0.8 },
+    skillWeights: { intrigue: 1.5, security: 1.3 },
+    traitWeights: { ruthlessness: 0.8, prudence: 1.2 },
+  },
+  'beg-for-coin': {
+    attributeWeights: { presence: 1.0 },
+    skillWeights: {},
+    traitWeights: { empathy: 0.8 },
+  },
+  'scavenge-for-sell': {
+    attributeWeights: { perception: 1.3, endurance: 0.8 },
+    skillWeights: { survival: 1.5 },
+    traitWeights: { curiosity: 1.0 },
+  },
 }
 
 /**

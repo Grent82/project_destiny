@@ -178,6 +178,11 @@ export function getTraitDrivenIntentions(
     'seek-intimacy': npc.attributes.presence + npc.traits.empathy + npc.skills.performance,
     'flirt-aggressively': npc.attributes.presence + npc.traits.dominance + npc.skills.intrigue,
     'visit-romantic-partner': npc.traits.loyalty + npc.traits.empathy,
+    // Geld verdienen (4)
+    'seek-tips': npc.attributes.presence + npc.skills.performance,
+    'black-market-trade': npc.skills.intrigue + npc.skills.security,
+    'beg-for-coin': npc.attributes.presence + (npc.states.stress > 60 ? 30 : 0),
+    'scavenge-for-sell': npc.skills.survival + npc.attributes.perception,
   }
 
   // Find intentions where NPC has decent capability (score > 130)

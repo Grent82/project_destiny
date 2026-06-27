@@ -151,6 +151,11 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     // Spezial/Quirky (2)
     'people-watch': 7,
     'gossip': 6,
+    // Geld verdienen (4)
+    'seek-tips': 3,
+    'black-market-trade': 2,
+    'beg-for-coin': 1,
+    'scavenge-for-sell': 3,
     // Macht/Kontrolle (5)
     'assert-dominance': 3,
     'spy-on': 2,
@@ -1103,6 +1108,11 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'seek-intimacy': careForInjuredHandler, // Placeholder - will be implemented later
   'flirt-aggressively': careForInjuredHandler, // Placeholder - will be implemented later
   'visit-romantic-partner': visitLoverHandler,
+  // Geld verdienen (4)
+  'seek-tips': careForInjuredHandler, // Placeholder - will be implemented later
+  'black-market-trade': careForInjuredHandler, // Placeholder - will be implemented later
+  'beg-for-coin': careForInjuredHandler, // Placeholder - will be implemented later
+  'scavenge-for-sell': careForInjuredHandler, // Placeholder - will be implemented later
 }
 
 /**
