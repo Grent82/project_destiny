@@ -163,3 +163,46 @@ export function tickWardStages(state: GameState): GameState {
   }
   return next
 }
+
+/**
+ * Pay weekly allowance to all wards (status='ward') whose last payment was 7+ days ago.
+ * Allowance goes to personalSavings. Logs payment to activity log.
+ * Called from endDay pipeline (wages phase).
+ */
+export function payWardAllowance(state: GameState): GameState {
+  let next = state
+  const today = state.day
+
+  for (const npc of state.roster) {
+    if (npc.status !== 'ward') continue
+
+    const lastPayment = npc.wardPersonalAllowance.lastAllowanceDay
+    if (lastPayment !== null && today - lastPayment < 7) continue
+
+    const allowance = npc.wardPersonalAllowance.allowancePerWeek
+
+    next = {
+      ...next,
+      roster: next.roster.map((r) =>
+        r.npcId === npc.npcId
+          ? {
+              ...r,
+              wardPersonalAllowance: {
+                ...r.wardPersonalAllowance,
+                personalSavings: r.wardPersonalAllowance.personalSavings + allowance,
+                lastAllowanceDay: today,
+              },
+            }
+          : r,
+      ),
+    }
+
+    next = appendActivityLogEntry(
+      next,
+      'economy',
+      `${npc.name} receives ${allowance} Mk weekly allowance.`,
+    )
+  }
+
+  return next
+}

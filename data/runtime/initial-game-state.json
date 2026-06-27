@@ -171,7 +171,43 @@
       "currentDirectiveId": null,
       "directiveDeadlineDay": null,
       "currentIntention": null,
-      "factionRelationships": []
+      "factionRelationships": [],
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": null,
+        "arms": null,
+        "legs": null,
+        "feet": null,
+        "full": null,
+        "undergarments": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
     }
   ],
   "cityResources": {
@@ -557,7 +593,12 @@
   "bondVisibility": {},
   "inventoryState": {
     "player": {
-      "equipmentSlots": { "weapon": null, "armor": null, "accessory_1": null, "accessory_2": null },
+      "equipmentSlots": {
+        "weapon": null,
+        "armor": null,
+        "accessory_1": null,
+        "accessory_2": null
+      },
       "bagContainers": [],
       "totalBagSlots": 40,
       "usedBagSlots": 0
@@ -573,21 +614,30 @@
       "lastContactDay": null,
       "disposition": "unknown",
       "locationOverride": null,
-      "flags": ["mira-custody-handler", "mira-custody-site:site-poi-pale-old-tannery"]
+      "flags": [
+        "mira-custody-handler",
+        "mira-custody-site:site-poi-pale-old-tannery"
+      ]
     },
     {
       "npcId": "npc-enemy-tomas-rell",
       "lastContactDay": null,
       "disposition": "hostile",
       "locationOverride": null,
-      "flags": ["mira-custody-guard", "mira-custody-site:site-poi-pale-old-tannery"]
+      "flags": [
+        "mira-custody-guard",
+        "mira-custody-site:site-poi-pale-old-tannery"
+      ]
     },
     {
       "npcId": "npc-enemy-catrin-hale",
       "lastContactDay": null,
       "disposition": "hostile",
       "locationOverride": null,
-      "flags": ["mira-custody-guard", "mira-custody-site:site-poi-pale-old-tannery"]
+      "flags": [
+        "mira-custody-guard",
+        "mira-custody-site:site-poi-pale-old-tannery"
+      ]
     }
   ],
   "siteRuntimes": {},

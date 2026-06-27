@@ -99,6 +99,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   directiveDeadlineDay: null,
     currentIntention: null,
   factionRelationships: [],
+  wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
 }
 
 /** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */

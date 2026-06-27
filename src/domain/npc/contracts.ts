@@ -758,6 +758,13 @@ export const npcRuntimeStateSchema = z
     directiveDeadlineDay: z.number().int().nonnegative().nullable().default(null),
     currentIntention: npcIntentionSchema.nullable().default(null),
     factionRelationships: z.array(factionRelationshipSchema).default([]),
+    wardPersonalAllowance: wardPersonalAllowanceSchema.default({
+      allowancePerWeek: 2,
+      personalSavings: 0,
+      lastAllowanceDay: null,
+      allowedItems: [],
+      restrictedItems: [],
+    }),
   })
   .strict()
 

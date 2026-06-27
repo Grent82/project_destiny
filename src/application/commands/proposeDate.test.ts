@@ -272,6 +272,7 @@ function createRosterNpc(
     captivityState: undefined,
     pregnancyState: undefined,
     bondStatus: null,
+    wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
   }
 }
 

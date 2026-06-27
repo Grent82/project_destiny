@@ -368,6 +368,7 @@ export function applyOutcomes(
                 arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
                 currentIntention: null,
                 factionRelationships: [],
+                wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
               }
               next = { ...next, roster: [...next.roster, newEntry] }
               const seeded = getSeeded()
