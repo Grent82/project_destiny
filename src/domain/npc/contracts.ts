@@ -442,6 +442,13 @@ export const captivityComplianceSchema = z.enum(['resistant', 'conflicted', 'com
 export const captivityBondTypeSchema = z.enum(['none', 'fear', 'dependency', 'affection', 'coercion'])
 export const captivityRegimeSchema = z.enum(['unknown', 'hidden', 'guarded', 'penal', 'commercial', 'protective', 'medical'])
 
+export const confiscatedItemSchema = z.object({
+  uniqueId: z.string(),
+  itemId: z.string(),
+  quantity: z.number().int().positive(),
+  confiscatedDay: z.number().int().nonnegative(),
+})
+
 export const captivityStateSchema = z.object({
   status: captivityStatusSchema,
   holderId: z.string().nullable().default(null),
@@ -454,6 +461,16 @@ export const captivityStateSchema = z.object({
   timeHeldDays: z.number().int().nonnegative().default(0),
   lastTransferDay: z.number().int().nonnegative().nullable().default(null),
   questTag: z.string().nullable().default(null),
+  confiscatedItems: z.array(confiscatedItemSchema).optional().default([]),
+  confiscatedMoney: z.object({
+    savings: z.number().int().nonnegative(),
+    carriedCash: z.number().int().nonnegative(),
+  }).nullable().optional().default(null),
+  confiscatedEquipment: z.object({
+    weapon: z.string().nullable().default(null),
+    armor: z.string().nullable().default(null),
+    accessory: z.array(z.string()).default([]),
+  }).optional().default({ weapon: null, armor: null, accessory: [] }),
 })
 /**
  * pregnancyState tracks pregnancy status for NPCs.
