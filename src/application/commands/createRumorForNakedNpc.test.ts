@@ -163,11 +163,6 @@ function createNakedNpc(npcId: string, name: string): NpcRuntimeState {
       restrictedItems: [],
     },
     arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
-    bondStatus: null,
-    npcArc: null,
-    currentDirectiveId: null,
-    directiveDeadlineDay: null,
-    currentIntention: null,
     captivityState: undefined,
     pregnancyState: undefined,
   }
