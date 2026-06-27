@@ -36,3 +36,4 @@
 - [Session Learnings 2026-06-27-tdo4](session_learnings_2026-06-27-tdo4.md) — destiny-tdo4: NPC-NPC autonomous dating system implemented and committed
 - [Session Learnings 2026-06-27-naked-npc](session_learnings_2026-06-27-naked-npc.md) — destiny-yqay + destiny-7531: Naked NPC system, Worktree sync pattern learnings
 - [Session Learnings 2026-06-27-naked-npc-fix](session_learnings_2026-06-27-naked-npc-fix.md) — destiny-7531 correction: accessories/shield not clothing
+- [Projekt: destiny-jed7 Epic complete](project_destiny-jed7-epic-complete.md) — Intimacy pillar courtship/household implementation finished 2026-06-27
