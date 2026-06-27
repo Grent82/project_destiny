@@ -180,12 +180,12 @@
       },
       "clothing": {
         "head": null,
-        "torso": null,
+        "torso": "item-tunic-simple",
         "arms": null,
-        "legs": null,
+        "legs": "item-trousers-simple",
         "feet": null,
         "full": null,
-        "undergarments": null,
+        "undergarments": "item-undergarments-basic",
         "accessories": []
       },
       "armor": {
