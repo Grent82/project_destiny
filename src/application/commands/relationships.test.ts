@@ -21,7 +21,6 @@ function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
     factionStates: [],
     districts: [],
     roster: [],
-    inventory: [],
     cityResources: {
       foodSecurity: 60,
       foodStock: 600,

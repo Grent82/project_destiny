@@ -26,7 +26,6 @@ const baseGameState: GameState = {
   factionStates: [],
   districts: [],
   roster: [],
-  inventory: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {

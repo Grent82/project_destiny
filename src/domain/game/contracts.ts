@@ -12,7 +12,6 @@ import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchem
 import {
   armorDefinitionSchema,
   installedModuleSchema,
-  inventoryEntrySchema,
   itemDefinitionSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
@@ -295,7 +294,7 @@ export const gameStateSchema = z
     factionStates: z.array(factionRuntimeStateSchema),
     districts: z.array(districtRuntimeStateSchema),
     roster: z.array(npcRuntimeStateSchema),
-    inventory: z.array(inventoryEntrySchema).default([]),
+    // inventory removed - legacy ownedItems system fully deprecated
     // ownedItems removed - migrated to inventoryState.player.bagContainers
     inventoryState: inventoryStateSchema.default(() => ({
       player: {

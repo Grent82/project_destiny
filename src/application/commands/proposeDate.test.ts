@@ -26,7 +26,6 @@ const baseGameState: GameState = {
   factionStates: [],
   districts: [],
   roster: [],
-  inventory: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {
@@ -260,7 +259,6 @@ function createRosterNpc(
       consumableIds: [],
     },
     equipment: { weapon: null, armor: null, accessory: [] },
-    inventory: [],
     npcMemory: [],
     npcArc: null,
     currentDirectiveId: null,

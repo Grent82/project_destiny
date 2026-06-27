@@ -48,7 +48,6 @@ describe('Intention Generation Pipeline', () => {
     },
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
     equipment: { weapon: null, armor: null, accessory: [] },
-    inventory: [],
     npcMemory: [],
     captivityState: undefined,
     bondStatus: null,

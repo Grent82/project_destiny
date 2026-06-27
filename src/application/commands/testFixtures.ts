@@ -87,7 +87,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
     consumableIds: [],
   },
   equipment: { weapon: null, armor: null, accessory: [] },
-  inventory: [],
+  // inventory removed - NPCs use inventoryState.npcInventories
   npcMemory: [],
   bondStatus: null,
   npcArc: null,

@@ -78,7 +78,6 @@ export function formalizeHeir(
       consumableIds: [],
     },
     equipment: { weapon: null, armor: null, accessory: [] },
-    inventory: [],
     npcMemory: [],
     bondStatus: null,
     npcArc: null,

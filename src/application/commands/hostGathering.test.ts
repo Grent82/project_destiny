@@ -41,7 +41,6 @@ const createBaseState = (roster: NpcRuntimeState[] = [idaRhysRosterEntry]): Game
   factionStates: [],
   districts: [],
   roster,
-  inventory: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {

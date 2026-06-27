@@ -174,21 +174,6 @@
       "factionRelationships": []
     }
   ],
-
-  "inventory": [
-    {
-      "itemId": "item-medkit-field",
-      "quantity": 2
-    },
-    {
-      "itemId": "item-ledger-house-debt",
-      "quantity": 1
-    },
-    {
-      "itemId": "item-spare-parts",
-      "quantity": 3
-    }
-  ],
   "cityResources": {
     "foodSecurity": 62,
     "foodStock": 620,

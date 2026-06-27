@@ -219,7 +219,7 @@ describe('gameStateSchema', () => {
         },
       ],
       roster: [],
-      inventory: [],
+      // inventory removed - migrated to inventoryState
       cityResources: {
         foodSecurity: 62,
         foodStock: 620,
@@ -256,7 +256,7 @@ describe('gameStateSchema', () => {
       factionStates: [],
       districts: [],
       roster: [],
-      inventory: [],
+      // inventory removed - migrated to inventoryState
       cityResources: {
         foodSecurity: 62,
         foodStock: 620,
@@ -312,7 +312,7 @@ describe('gameStateSchema', () => {
       factionStates: [],
       districts: [],
       roster: [],
-      inventory: [],
+      // inventory removed - migrated to inventoryState
       cityResources: {
         foodSecurity: 62,
         foodStock: 620,

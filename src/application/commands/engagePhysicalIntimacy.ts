@@ -30,21 +30,25 @@ const FERTILITY_MODIFIERS: Record<string, number> = {
 }
 
 function getContraceptionItemFromInventory(state: GameState, itemId: string): ContraceptionItem | null {
-  const playerItems = state.inventory ?? []
-  const itemEntry = playerItems.find((entry) => entry.itemId === itemId && entry.quantity > 0)
-  if (!itemEntry) return null
+  // Search in player's bag containers (new inventory system)
+  for (const container of state.inventoryState.player.bagContainers) {
+    for (const slot of container.slots) {
+      if (slot.itemInstanceId === itemId && slot.quantity > 0) {
+        const itemDef = contentCatalog.itemsById.get(itemId)
+        if (!itemDef) return null
 
-  const itemDef = contentCatalog.itemsById.get(itemId)
-  if (!itemDef) return null
+        const contraceptionEffect = itemDef.typedEffects?.find((effect) => effect.type === 'contraception')
+        if (!contraceptionEffect) return null
 
-  const contraceptionEffect = itemDef.typedEffects?.find((effect) => effect.type === 'contraception')
-  if (!contraceptionEffect) return null
-
-  return {
-    itemId,
-    uses: contraceptionEffect.uses,
-    efficacy: contraceptionEffect.efficacy,
+        return {
+          itemId,
+          uses: contraceptionEffect.uses,
+          efficacy: contraceptionEffect.efficacy,
+        }
+      }
+    }
   }
+  return null
 }
 
 type ConsentCheck =
@@ -367,9 +371,29 @@ export function engagePhysicalIntimacy(
   if (contraceptionItem) {
     const newUses = contraceptionItem.uses - 1
     if (newUses <= 0) {
-      // Remove item from inventory
-      const playerInventory = next.inventory ?? []
-      next.inventory = playerInventory.filter((item) => item.itemId !== contraceptionItem.itemId || item.quantity <= 0)
+      // Remove item from player inventory (new system)
+      const updatedContainers = next.inventoryState.player.bagContainers.map((container) => {
+        const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === contraceptionItem.itemId)
+        if (slotIndex === -1) return container
+
+        const updatedSlots = [...container.slots]
+        updatedSlots.splice(slotIndex, 1)
+        return { ...container, slots: updatedSlots }
+      })
+
+      const usedSlots = updatedContainers.reduce((sum, c) => sum + c.slots.length, 0)
+
+      next = {
+        ...next,
+        inventoryState: {
+          ...next.inventoryState,
+          player: {
+            ...next.inventoryState.player,
+            bagContainers: updatedContainers,
+            usedBagSlots: usedSlots,
+          },
+        },
+      }
     }
     // If uses remain, we'd need to track per-instance uses (requires item instances)
     // For now, the item stays in inventory but the player knows it was used

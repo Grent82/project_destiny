@@ -548,14 +548,8 @@ export const npcEquipmentSchema = z
 
 export type NpcEquipment = z.infer<typeof npcEquipmentSchema>
 
-export const npcInventoryItemSchema = z
-  .object({
-    itemId: entityIdSchema,
-    quantity: positiveIntegerSchema,
-  })
-  .strict()
-
-export type NpcInventoryItem = z.infer<typeof npcInventoryItemSchema>
+// NPC inventory migrated to inventoryState.npcInventories - removed from npcRuntimeState
+// Legacy schema removed: npcInventoryItemSchema
 
 export const businessStrategySchema = z.enum(['conservative', 'balanced', 'aggressive'])
 export type BusinessStrategy = z.infer<typeof businessStrategySchema>
@@ -591,7 +585,7 @@ export const npcRuntimeStateSchema = z
     states: statesSchema,
     loadout: loadoutSchema,
     equipment: npcEquipmentSchema.default({ weapon: null, armor: null, accessory: [] }),
-    inventory: z.array(npcInventoryItemSchema).default([]),
+    // inventory removed - migrated to inventoryState.npcInventories
     shopOwnerProfile: shopOwnerProfileSchema.optional(),
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
     captivityState: captivityStateSchema.optional(),

@@ -86,20 +86,13 @@ function findItemInSource(state: GameState, type: ItemLocationType, id: string, 
     const npc = state.roster.find((n) => n.npcId === id)
     if (!npc) return null
 
-    // Check NPC's inventory array (legacy format)
-    const itemEntry = npc.inventory.find((inv) => inv.itemId === itemInstanceId)
-    if (itemEntry && itemEntry.quantity >= requiredQuantity) {
-      return { sourceType: 'npc_inventory', itemInstanceId, itemId: itemEntry.itemId, quantity: itemEntry.quantity }
-    }
-
-    // Check NPC's containers (new format)
+    // Check NPC's containers (new format - inventoryState.npcInventories)
     const npcContainers = state.inventoryState.npcInventories[id]
     if (npcContainers) {
       for (const container of npcContainers) {
         const slot = container.slots.find((s) => s.itemInstanceId === itemInstanceId)
         if (slot && slot.quantity >= requiredQuantity) {
-          // For containers, itemInstanceId is the unique ID; itemId would be looked up from registry
-          return { sourceType: 'container', itemInstanceId, itemId: itemInstanceId, quantity: slot.quantity }
+          return { sourceType: 'npc_inventory', itemInstanceId, itemId: itemInstanceId, quantity: slot.quantity }
         }
       }
     }
@@ -203,27 +196,50 @@ function removeFromNpcInventory(state: GameState, npcId: string, itemInstanceId:
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
-  const npc = state.roster[npcIndex]
-  const inventoryIndex = npc.inventory.findIndex((inv) => inv.itemId === itemInstanceId)
+  const npcContainers = state.inventoryState.npcInventories[npcId] || []
 
-  if (inventoryIndex === -1) return state
+  // Find the item in NPC's containers
+  let foundContainerIndex = -1
+  let foundSlotIndex = -1
+  let foundQuantity = 0
 
-  const updatedInventory = [...npc.inventory]
-  const currentQty = updatedInventory[inventoryIndex].quantity
-
-  if (currentQty <= quantity) {
-    updatedInventory.splice(inventoryIndex, 1)
-  } else {
-    updatedInventory[inventoryIndex] = {
-      ...updatedInventory[inventoryIndex],
-      quantity: currentQty - quantity,
+  for (const [containerIndex, container] of npcContainers.entries()) {
+    const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
+    if (slotIndex !== -1) {
+      foundContainerIndex = containerIndex
+      foundSlotIndex = slotIndex
+      foundQuantity = container.slots[slotIndex].quantity
+      break
     }
   }
 
-  const updatedRoster = [...state.roster]
-  updatedRoster[npcIndex] = { ...npc, inventory: updatedInventory }
+  if (foundContainerIndex === -1) return state
 
-  return { ...state, roster: updatedRoster }
+  const updatedContainers = [...npcContainers]
+  const container = updatedContainers[foundContainerIndex]
+  const updatedSlots = [...container.slots]
+
+  if (foundQuantity <= quantity) {
+    updatedSlots.splice(foundSlotIndex, 1)
+  } else {
+    updatedSlots[foundSlotIndex] = {
+      ...updatedSlots[foundSlotIndex],
+      quantity: foundQuantity - quantity,
+    }
+  }
+
+  updatedContainers[foundContainerIndex] = { ...container, slots: updatedSlots }
+
+  return {
+    ...state,
+    inventoryState: {
+      ...state.inventoryState,
+      npcInventories: {
+        ...state.inventoryState.npcInventories,
+        [npcId]: updatedContainers,
+      },
+    },
+  }
 }
 
 /**
@@ -329,28 +345,62 @@ function removeFromContainer(state: GameState, containerId: string, itemInstance
 /**
  * Add items to NPC inventory.
  */
-function addToNpcInventory(state: GameState, npcId: string, _itemInstanceId: string, itemId: string, quantity: number): GameState {
+function addToNpcInventory(state: GameState, npcId: string, itemInstanceId: string, _itemId: string, quantity: number): GameState {
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
-  const npc = state.roster[npcIndex]
-  const inventoryIndex = npc.inventory.findIndex((inv) => inv.itemId === itemId)
+  // Get current NPC containers
+  const updatedContainers = [...(state.inventoryState.npcInventories[npcId] || [])]
 
-  const updatedInventory = [...npc.inventory]
+  // Try to find existing slot for this item instance or space in containers
+  let added = false
+  for (const container of updatedContainers) {
+    const existingSlotIndex = container.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
+    if (existingSlotIndex !== -1) {
+      const updatedSlots = [...container.slots]
+      updatedSlots[existingSlotIndex] = {
+        ...updatedSlots[existingSlotIndex],
+        quantity: updatedSlots[existingSlotIndex].quantity + quantity,
+      }
+      container.slots = updatedSlots
+      added = true
+      break
+    }
 
-  if (inventoryIndex === -1) {
-    updatedInventory.push({ itemId, quantity })
-  } else {
-    updatedInventory[inventoryIndex] = {
-      ...updatedInventory[inventoryIndex],
-      quantity: updatedInventory[inventoryIndex].quantity + quantity,
+    // Check for space in this container
+    if (container.slots.length < container.maxSlots) {
+      container.slots.push({
+        slotId: `slot-${itemInstanceId}-${Date.now()}`,
+        itemInstanceId,
+        quantity,
+      })
+      added = true
+      break
     }
   }
 
-  const updatedRoster = [...state.roster]
-  updatedRoster[npcIndex] = { ...npc, inventory: updatedInventory }
+  // No space in existing containers, create new one
+  if (!added) {
+    updatedContainers.push({
+      containerId: `npc-container-${Date.now()}`,
+      containerType: 'backpack',
+      ownerId: npcId,
+      maxSlots: 20,
+      slots: [{ slotId: `slot-${itemInstanceId}-new`, itemInstanceId, quantity }],
+      locked: false,
+    })
+  }
 
-  return { ...state, roster: updatedRoster }
+  return {
+    ...state,
+    inventoryState: {
+      ...state.inventoryState,
+      npcInventories: {
+        ...state.inventoryState.npcInventories,
+        [npcId]: updatedContainers,
+      },
+    },
+  }
 }
 
 /**

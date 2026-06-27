@@ -26,7 +26,6 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     states: { health: 80, fatigue: 10, stress: 10, morale: 70, fear: 5, anger: 5, hunger: 10, injury: 0, intoxication: 0, hygiene: 70 },
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
     equipment: { weapon: null, armor: null, accessory: [] },
-    inventory: [],
     npcMemory: [],
     bondStatus: null,
     npcArc: null,

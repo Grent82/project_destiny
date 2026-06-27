@@ -21,16 +21,11 @@ function stateWithRelationship(overrides: {
   const playerToNpc = buildRelationshipKey(PLAYER_ID, NPC_ID)
   const npcToPlayer = buildRelationshipKey(NPC_ID, PLAYER_ID)
 
-  // Build inventory with contraception item if requested
-  const inventory = overrides.contraceptionItemId ? [
-    { itemId: overrides.contraceptionItemId, quantity: 1 }
-  ] : []
-
   return {
     ...initialStateWithIda,
     currentDistrictId: 'district-the-pale',
     houseDistrictId: 'district-the-pale',
-    inventory,
+    // inventory removed - use inventoryState.player.bagContainers
     relationships: {
       ...initialStateWithIda.relationships,
       [playerToNpc]: {

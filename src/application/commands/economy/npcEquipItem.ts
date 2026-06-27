@@ -2,7 +2,7 @@
  * Equip an item on an NPC.
  *
  * This command handles:
- * 1. Verifying the NPC owns the item (in inventory)
+ * 1. Verifying the NPC owns the item (in inventoryState.npcInventories)
  * 2. Validating the item is appropriate for the slot
  * 3. Unequipping any current item in that slot
  * 4. Equipping the new item
@@ -13,6 +13,7 @@ import { type GameState } from '../../../domain/game/contracts'
 import { type NpcRuntimeState } from '../../../domain/npc/contracts'
 import { type ItemDefinition, type WeaponDefinition, type ArmorDefinition } from '../../../domain/items/contracts'
 import { contentCatalog } from '../../content/contentCatalog'
+import { appendActivityLogEntry } from '../activityLog'
 
 export type EquipmentSlot = 'weapon' | 'armor' | 'accessory'
 
@@ -34,7 +35,6 @@ function canEquipInSlot(item: ItemDefinition, slot: EquipmentSlot): boolean {
   }
   if (slot === 'accessory') {
     // For now, allow any item that's not weapon/armor to be equipped as accessory
-    // This allows flexibility while proper accessory items are being defined
     return item.category !== 'weapon' && item.category !== 'armor'
   }
   return false
@@ -46,18 +46,14 @@ function canEquipInSlot(item: ItemDefinition, slot: EquipmentSlot): boolean {
 function calculateStatBonuses(item: ItemDefinition): Partial<NpcRuntimeState['attributes']> {
   const bonuses: Partial<NpcRuntimeState['attributes']> = {}
 
-  // Weapon bonuses
   if (item.category === 'weapon') {
     const weapon = item as WeaponDefinition
-    // Weapons primarily affect might (damage) and agility (speed/accuracy)
     bonuses.might = Math.floor((weapon.damageMin + weapon.damageMax) / 2 / 10)
     bonuses.agility = Math.floor(weapon.accuracy / 10)
   }
 
-  // Armor bonuses
   if (item.category === 'armor') {
     const armor = item as ArmorDefinition
-    // Armor affects endurance (survivability)
     bonuses.endurance = Math.floor(armor.soak / 10)
   }
 
@@ -66,8 +62,6 @@ function calculateStatBonuses(item: ItemDefinition): Partial<NpcRuntimeState['at
 
 /**
  * Apply equipment stat bonuses to an NPC.
- * Note: This is a simplified implementation - in a full system, you'd want
- * to track base stats separately from equipment bonuses.
  */
 function applyEquipmentBonuses(npc: NpcRuntimeState, item: ItemDefinition): NpcRuntimeState {
   const bonuses = calculateStatBonuses(item)
@@ -99,18 +93,33 @@ function removeEquipmentBonuses(npc: NpcRuntimeState, item: ItemDefinition): Npc
 }
 
 /**
+ * Find an item in an NPC's inventory containers.
+ */
+function findItemInNpcInventory(containers: import('../../../domain/inventory/contracts').InventoryContainer[], itemId: string): { containerIndex: number; slotIndex: number; quantity: number } | null {
+  if (!containers) return null
+
+  for (const [containerIndex, container] of containers.entries()) {
+    for (const [slotIndex, slot] of container.slots.entries()) {
+      if (slot.itemInstanceId === itemId && slot.quantity > 0) {
+        return { containerIndex, slotIndex, quantity: slot.quantity }
+      }
+    }
+  }
+  return null
+}
+
+/**
  * Equip an item on an NPC.
  *
  * @param state - Current game state
  * @param params.npcId - ID of the NPC to equip
- * @param params.itemId - ID of the item to equip
+ * @param params.itemId - ID of the item to equip (itemInstanceId)
  * @param params.slot - Slot to equip the item in
  * @returns Updated game state
  */
 export function npcEquipItem(state: GameState, params: EquipItemParams): GameState {
   const { npcId, itemId, slot } = params
 
-  // Find the NPC
   const npcIndex = state.roster.findIndex((r) => r.npcId === npcId)
   if (npcIndex === -1) {
     return state
@@ -118,20 +127,21 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
 
   const npc = state.roster[npcIndex]
 
-  // Get the item definition
   const itemDef = contentCatalog.itemsById.get(itemId)
   if (!itemDef) {
     return state
   }
 
-  // Check if the item can be equipped in this slot
   if (!canEquipInSlot(itemDef, slot)) {
     return state
   }
 
+  // Get NPC's inventory containers from inventoryState
+  const npcContainers = state.inventoryState.npcInventories[npcId] || []
+
   // Check if the NPC owns this item
-  const inventoryIndex = npc.inventory.findIndex((inv) => inv.itemId === itemId)
-  if (inventoryIndex === -1) {
+  const itemLocation = findItemInNpcInventory(npcContainers, itemId)
+  if (!itemLocation) {
     return state
   }
 
@@ -143,79 +153,222 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
     },
   }
 
-  // If there's a current item in this slot, unequip it
-  const currentItemId = updatedNpc.equipment[slot] as string | null
+  // If there's a current item in this slot, unequip it first
+  const currentItemId = updatedNpc.equipment[slot as 'weapon' | 'armor'] as string | null
   if (currentItemId) {
+    // Return unequipped item to inventory
+    const existingContainers = state.inventoryState.npcInventories[npcId] || []
+    const updatedContainers = [...existingContainers]
+
+    // Find a container with space or create new one
+    let added = false
+    for (const container of updatedContainers) {
+      if (container.slots.length < container.maxSlots) {
+        container.slots.push({
+          slotId: `slot-${currentItemId}-${Date.now()}`,
+          itemInstanceId: currentItemId,
+          quantity: 1,
+        })
+        added = true
+        break
+      }
+    }
+
+    if (!added) {
+      // Create new container
+      updatedContainers.push({
+        containerId: `npc-container-${Date.now()}`,
+        containerType: 'backpack',
+        ownerId: npcId,
+        maxSlots: 20,
+        slots: [{ slotId: `slot-${currentItemId}-new`, itemInstanceId: currentItemId, quantity: 1 }],
+        locked: false,
+      })
+    }
+
+    const newState = {
+      ...state,
+      inventoryState: {
+        ...state.inventoryState,
+        npcInventories: {
+          ...state.inventoryState.npcInventories,
+          [npcId]: updatedContainers,
+        },
+      },
+    }
+
+    // Remove stat bonuses from unequipped item
     const currentItemDef = contentCatalog.itemsById.get(currentItemId)
     if (currentItemDef) {
-      updatedNpc.inventory.push({
-        itemId: currentItemId,
-        quantity: 1,
-      })
-      // Remove stat bonuses from unequipped item
       updatedNpc.attributes = removeEquipmentBonuses(updatedNpc, currentItemDef).attributes
     }
+
+    // Equip the new item
+    updatedNpc.equipment[slot as 'weapon' | 'armor'] = itemId
+
+    // Remove item from inventory
+    const container = updatedContainers[itemLocation.containerIndex]
+    if (container) {
+      const updatedSlots = [...container.slots]
+      if (itemLocation.quantity <= 1) {
+        updatedSlots.splice(itemLocation.slotIndex, 1)
+      } else {
+        updatedSlots[itemLocation.slotIndex] = {
+          ...updatedSlots[itemLocation.slotIndex],
+          quantity: itemLocation.quantity - 1,
+        }
+      }
+      updatedContainers[itemLocation.containerIndex] = { ...container, slots: updatedSlots }
+    }
+
+    // Apply stat bonuses from new equipment
+    updatedNpc.attributes = applyEquipmentBonuses(updatedNpc, itemDef).attributes
+
+    // Update roster and inventoryState
+    const updatedRoster = [...state.roster]
+    updatedRoster[npcIndex] = updatedNpc
+
+    const result = {
+      ...newState,
+      roster: updatedRoster,
+      inventoryState: {
+        ...newState.inventoryState,
+        npcInventories: {
+          ...newState.inventoryState.npcInventories,
+          [npcId]: updatedContainers,
+        },
+      },
+    }
+
+    appendActivityLogEntry(result, 'system', `${npc.name} equipped ${itemDef.name} in ${slot} slot`)
+    return result
   }
 
-  // Equip the new item
+  // Handle accessories (can have multiple)
   if (slot === 'accessory') {
-    // Accessories can have multiple slots (up to 2)
     const currentAccessories = updatedNpc.equipment.accessory || []
+    let containersToUpdate = [...npcContainers]
+
     if (currentAccessories.length >= 2) {
       // Remove the first accessory to make room
       const removedAccessoryId = currentAccessories[0]
       if (removedAccessoryId) {
-        const removedItemDef = contentCatalog.itemsById.get(removedAccessoryId)
-        if (removedItemDef) {
-          updatedNpc.inventory.push({
-            itemId: removedAccessoryId,
-            quantity: 1,
+        // Return removed accessory to inventory
+        let added = false
+        for (const container of containersToUpdate) {
+          if (container.slots.length < container.maxSlots) {
+            container.slots.push({
+              slotId: `slot-${removedAccessoryId}-${Date.now()}`,
+              itemInstanceId: removedAccessoryId,
+              quantity: 1,
+            })
+            added = true
+            break
+          }
+        }
+
+        if (!added) {
+          containersToUpdate.push({
+            containerId: `npc-container-${Date.now()}`,
+            containerType: 'backpack',
+            ownerId: npcId,
+            maxSlots: 20,
+            slots: [{ slotId: `slot-${removedAccessoryId}-new`, itemInstanceId: removedAccessoryId, quantity: 1 }],
+            locked: false,
           })
-          updatedNpc.attributes = removeEquipmentBonuses(updatedNpc, removedItemDef).attributes
+        }
+
+        const currentItemDef = contentCatalog.itemsById.get(removedAccessoryId)
+        if (currentItemDef) {
+          updatedNpc.attributes = removeEquipmentBonuses(updatedNpc, currentItemDef).attributes
         }
       }
+
+      // Shift accessories: [1] becomes [0], new item becomes [1]
       updatedNpc.equipment.accessory = [...currentAccessories.slice(1), itemId]
     } else {
+      // Just add to available slot
       updatedNpc.equipment.accessory = [...currentAccessories, itemId]
     }
-  } else {
-    updatedNpc.equipment[slot] = itemId
+
+    // Remove the newly equipped item from inventory
+    const container = containersToUpdate[itemLocation.containerIndex]
+    if (container) {
+      const updatedSlots = [...container.slots]
+      if (itemLocation.quantity <= 1) {
+        updatedSlots.splice(itemLocation.slotIndex, 1)
+      } else {
+        updatedSlots[itemLocation.slotIndex] = {
+          ...updatedSlots[itemLocation.slotIndex],
+          quantity: itemLocation.quantity - 1,
+        }
+      }
+      containersToUpdate[itemLocation.containerIndex] = { ...container, slots: updatedSlots }
+    }
+
+    // Apply stat bonuses from new equipment
+    updatedNpc.attributes = applyEquipmentBonuses(updatedNpc, itemDef).attributes
+
+    // Update roster and inventoryState
+    const updatedRoster = [...state.roster]
+    updatedRoster[npcIndex] = updatedNpc
+
+    const result = {
+      ...state,
+      roster: updatedRoster,
+      inventoryState: {
+        ...state.inventoryState,
+        npcInventories: {
+          ...state.inventoryState.npcInventories,
+          [npcId]: containersToUpdate,
+        },
+      },
+    }
+
+    appendActivityLogEntry(result, 'system', `${npc.name} equipped ${itemDef.name} in accessory slot`)
+    return result
   }
+
+  // For weapon/armor slots
+  updatedNpc.equipment[slot as 'weapon' | 'armor'] = itemId
 
   // Remove from inventory
-  if (slot !== 'accessory') {
-    // For weapon/armor, remove one instance
-    updatedNpc.inventory = [
-      ...updatedNpc.inventory.slice(0, inventoryIndex),
-      ...updatedNpc.inventory.slice(inventoryIndex + 1),
-    ]
-  } else {
-    // For accessories, we need to handle it differently since we might have multiple
-    const qty = updatedNpc.inventory[inventoryIndex]?.quantity || 1
-    if (qty > 1) {
-      updatedNpc.inventory[inventoryIndex] = {
-        itemId,
-        quantity: qty - 1,
-      }
+  const updatedContainers = [...npcContainers]
+  const container = updatedContainers[itemLocation.containerIndex]
+  if (container) {
+    const updatedSlots = [...container.slots]
+    if (itemLocation.quantity <= 1) {
+      updatedSlots.splice(itemLocation.slotIndex, 1)
     } else {
-      updatedNpc.inventory = [
-        ...updatedNpc.inventory.slice(0, inventoryIndex),
-        ...updatedNpc.inventory.slice(inventoryIndex + 1),
-      ]
+      updatedSlots[itemLocation.slotIndex] = {
+        ...updatedSlots[itemLocation.slotIndex],
+        quantity: itemLocation.quantity - 1,
+      }
     }
+    updatedContainers[itemLocation.containerIndex] = { ...container, slots: updatedSlots }
   }
 
-  // Apply stat bonuses from the new equipment
+  // Apply stat bonuses from new equipment
   updatedNpc.attributes = applyEquipmentBonuses(updatedNpc, itemDef).attributes
 
-  // Update the roster
+  // Update roster and inventoryState
   const updatedRoster = [...state.roster]
   updatedRoster[npcIndex] = updatedNpc
 
-  return {
+  const result = {
     ...state,
     roster: updatedRoster,
+    inventoryState: {
+      ...state.inventoryState,
+      npcInventories: {
+        ...state.inventoryState.npcInventories,
+        [npcId]: updatedContainers,
+      },
+    },
   }
+
+  appendActivityLogEntry(result, 'system', `${npc.name} equipped ${itemDef.name} in ${slot} slot`)
+  return result
 }
 
 /**
@@ -236,12 +389,12 @@ export function npcUnequipItem(state: GameState, params: { npcId: string; slot: 
 
   const npc = state.roster[npcIndex]
 
-  // Get the current item(s) for this slot
+  // Get current item(s) for this slot
   let currentItemIds: string[] = []
   if (slot === 'accessory') {
     currentItemIds = npc.equipment?.accessory || []
   } else {
-    const currentItemId = npc.equipment?.[slot] as string | null
+    const currentItemId = npc.equipment?.[slot as 'weapon' | 'armor'] as string | null
     if (currentItemId) {
       currentItemIds = [currentItemId]
     }
@@ -256,33 +409,69 @@ export function npcUnequipItem(state: GameState, params: { npcId: string; slot: 
     equipment: {
       ...npc.equipment,
     },
-    inventory: [...npc.inventory],
     attributes: { ...npc.attributes },
   }
+
+  // Get current NPC containers
+  const updatedContainers = [...(state.inventoryState.npcInventories[npcId] || [])]
 
   // Unequip each item and return to inventory
   for (const itemId of currentItemIds) {
     const itemDef = contentCatalog.itemsById.get(itemId)
     if (itemDef) {
-      updatedNpc.inventory.push({
-        itemId,
-        quantity: 1,
-      })
+      // Add to inventory
+      let added = false
+      for (const container of updatedContainers) {
+        if (container.slots.length < container.maxSlots) {
+          container.slots.push({
+            slotId: `slot-${itemId}-${Date.now()}`,
+            itemInstanceId: itemId,
+            quantity: 1,
+          })
+          added = true
+          break
+        }
+      }
+
+      if (!added) {
+        updatedContainers.push({
+          containerId: `npc-container-${Date.now()}`,
+          containerType: 'backpack',
+          ownerId: npcId,
+          maxSlots: 20,
+          slots: [{ slotId: `slot-${itemId}-new`, itemInstanceId: itemId, quantity: 1 }],
+          locked: false,
+        })
+      }
+
+      // Remove stat bonuses
       updatedNpc.attributes = removeEquipmentBonuses(updatedNpc, itemDef).attributes
     }
   }
 
+  // Update equipment
   if (slot === 'accessory') {
     updatedNpc.equipment.accessory = []
   } else {
-    updatedNpc.equipment[slot] = null
+    updatedNpc.equipment[slot as 'weapon' | 'armor'] = null
   }
 
   const updatedRoster = [...state.roster]
   updatedRoster[npcIndex] = updatedNpc
 
-  return {
+  const result = {
     ...state,
     roster: updatedRoster,
+    inventoryState: {
+      ...state.inventoryState,
+      npcInventories: {
+        ...state.inventoryState.npcInventories,
+        [npcId]: updatedContainers,
+      },
+    },
   }
+
+  const itemName = currentItemIds.map((id) => contentCatalog.itemsById.get(id)?.name || id).join(', ')
+  appendActivityLogEntry(result, 'system', `${npc.name} unequipped ${itemName} from ${slot} slot`)
+  return result
 }
