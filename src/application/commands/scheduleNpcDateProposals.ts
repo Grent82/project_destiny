@@ -9,7 +9,7 @@ import { appendActivityLogEntry } from './activityLog'
  * This runs during the time slot processing phase, converting accepted proposals
  * into actual scheduled dates for the proposed day/time.
  */
-export function scheduleAcceptedNpcDateProposals(state: GameState, rng: Rng): GameState {
+export function scheduleAcceptedNpcDateProposals(state: GameState): GameState {
   const today = state.day
   const acceptedProposals = state.pendingDateProposals.filter(
     (p) => p.status === 'accepted' && p.proposedDay === today + 1,
