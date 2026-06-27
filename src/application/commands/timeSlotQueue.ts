@@ -228,8 +228,8 @@ export class TimeSlotQueue {
   private async processBatch(
     batch: TimeSlotTask[],
     state: GameState,
-    _rng: Rng,
-    _slot: TimeSlot
+    _rng: Rng, // Used for task-specific RNG derivation
+    _slot: TimeSlot // Reserved for future slot-specific logic
   ): Promise<GameState> {
     let next = state
 
@@ -260,9 +260,9 @@ export class TimeSlotQueue {
   }
 
   private generateIntentionsForNpc(
-    _npcId: string,
-    _state: GameState,
-    _rng: Rng
+    npcId: string, // Reserved for NPC-specific intention generation
+    _state: GameState, // Reserved for state-based intention drivers
+    _rng: Rng // Reserved for deterministic intention selection
   ): NpcIntentionType[] {
     // TODO: Intention-Generierung aus intentions/pipeline.ts
     // Fuer jetzt: leeres Array (wird spaeter implementiert)
@@ -271,9 +271,9 @@ export class TimeSlotQueue {
 
   private applyNpcIntention(
     state: GameState,
-    _npcId: string,
-    _intention: NpcIntentionType,
-    _rng: Rng
+    npcId: string, // Reserved for NPC-specific state updates
+    intention: NpcIntentionType, // Reserved for intention-specific handlers
+    rng: Rng // Reserved for deterministic intention resolution
   ): GameState {
     // TODO: Applikation der Intention
     // Fuer jetzt: State unveraendert zurueckgeben
