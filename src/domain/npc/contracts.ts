@@ -353,6 +353,10 @@ export const NPC_INTENTION_TYPES = [
   'visit-lover',
   'jealousy-check',
   'spend-time-with',
+  // Romantik/Sexualität (3)
+  'seek-intimacy',
+  'flirt-aggressively',
+  'visit-romantic-partner',
   // Alltagsaktivitäten (4)
   'shop-for-goods',
   'train-self',
@@ -460,6 +464,19 @@ export const pregnancyStateSchema = z.object({
   wanted: z.boolean().nullable().default(null), // true = wanted, false = avoided, null = neutral/unspecified
 })
 
+/**
+ * arousalState tracks an NPC's arousal level and related state.
+ * Used for romantic/sexual mechanics and NPC-to-NPC interactions.
+ */
+export const arousalStateSchema = z
+  .object({
+    level: z.number().int().min(0).max(100).default(0), // 0-100 arousal level
+    lastTriggerDay: z.number().int().nonnegative().nullable().default(null), // Day of last arousal trigger
+    triggerSource: z.enum(['visual', 'dialogue', 'gift', 'proximity']).nullable().default(null), // What triggered arousal
+    cooldownUntilDay: z.number().int().nonnegative().nullable().default(null), // Day when cooldown ends
+  })
+  .strict()
+
 export const bondEntryReasonSchema = z.enum([
   'compact-assessment',
   'debt-settlement',
@@ -489,6 +506,7 @@ export type CaptivityBondType = z.infer<typeof captivityBondTypeSchema>
 export type CaptivityRegime = z.infer<typeof captivityRegimeSchema>
 export type CaptivityState = z.infer<typeof captivityStateSchema>
 export type PregnancyState = z.infer<typeof pregnancyStateSchema>
+export type ArousalState = z.infer<typeof arousalStateSchema>
 export type ConsentPreferences = z.infer<typeof consentPreferencesSchema>
 export type BondEntryReason = z.infer<typeof bondEntryReasonSchema>
 export type BondStatus = z.infer<typeof bondStatusSchema>
@@ -728,6 +746,7 @@ export const npcRuntimeStateSchema = z
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
     captivityState: captivityStateSchema.optional(),
     pregnancyState: pregnancyStateSchema.optional(),
+    arousalState: arousalStateSchema.default({ level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null }),
     bondStatus: bondStatusSchema.nullable().default(null),
     npcArc: npcArcSchema,
     currentDirectiveId: entityIdSchema.nullable().default(null),

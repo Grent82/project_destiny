@@ -257,6 +257,22 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: { medicine: 1.5 },
     traitWeights: { empathy: 1.3 },
   },
+  // Romantik/Sexualität (3)
+  'seek-intimacy': {
+    attributeWeights: { presence: 1.2, resolve: 0.8 },
+    skillWeights: { negotiation: 1.0, performance: 1.2 },
+    traitWeights: { empathy: 1.2, vanity: 1.0 },
+  },
+  'flirt-aggressively': {
+    attributeWeights: { presence: 1.3, might: 0.8 },
+    skillWeights: { intrigue: 1.2 },
+    traitWeights: { dominance: 1.3, ruthlessness: 1.0 },
+  },
+  'visit-romantic-partner': {
+    attributeWeights: { presence: 1.0 },
+    skillWeights: {},
+    traitWeights: { loyalty: 1.2, empathy: 1.1 },
+  },
 }
 
 /**

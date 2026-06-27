@@ -139,6 +139,10 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'visit-lover': 4,
     'jealousy-check': 2,
     'spend-time-with': 5,
+    // Romantik/Sexualität (3)
+    'seek-intimacy': 4,
+    'flirt-aggressively': 3,
+    'visit-romantic-partner': 4,
     // Alltagsaktivitäten (4)
     'shop-for-goods': 4,
     'train-self': 6,
@@ -1095,6 +1099,10 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'escape-attempt': escapeAttemptHandler,
   'seek-shelter': seekShelterHandler,
   'care-for-injured': careForInjuredHandler,
+  // Romantik/Sexualität (3)
+  'seek-intimacy': careForInjuredHandler, // Placeholder - will be implemented later
+  'flirt-aggressively': careForInjuredHandler, // Placeholder - will be implemented later
+  'visit-romantic-partner': visitLoverHandler,
 }
 
 /**

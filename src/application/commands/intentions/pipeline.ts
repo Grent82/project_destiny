@@ -174,6 +174,10 @@ export function getTraitDrivenIntentions(
     'escape-attempt': npc.attributes.agility + npc.attributes.perception,
     'seek-shelter': npc.traits.prudence,
     'care-for-injured': npc.skills.medicine + npc.traits.empathy,
+    // Romantik/Sexualität (3)
+    'seek-intimacy': npc.attributes.presence + npc.traits.empathy + npc.skills.performance,
+    'flirt-aggressively': npc.attributes.presence + npc.traits.dominance + npc.skills.intrigue,
+    'visit-romantic-partner': npc.traits.loyalty + npc.traits.empathy,
   }
 
   // Find intentions where NPC has decent capability (score > 130)

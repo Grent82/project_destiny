@@ -34,6 +34,7 @@ function bondedNpc(overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
     personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
     clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
     armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+    arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
     npcMemory: [],
     npcArc: null,
     currentDirectiveId: null,
