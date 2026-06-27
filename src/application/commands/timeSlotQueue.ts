@@ -4,6 +4,7 @@ import { createRngForTask } from './seededRng'
 import type { NpcDistanceResult } from './npcDistance'
 import { INTENTION_TIME_SLOT_MAPPING } from '../../domain/npc/intentionTimeSlots'
 import { intentionHandlers } from './intentions'
+import { generateNpcIntention } from './intentions/pipeline'
 
 /**
  * Ein Task in der Zeit-Slot-Queue.
@@ -263,16 +264,17 @@ export class TimeSlotQueue {
   }
 
   private generateIntentionsForNpc(
-    _npcId: string,
-    _state: GameState,
-    _rng: Rng,
+    npcId: string,
+    state: GameState,
+    rng: Rng,
   ): NpcIntentionType[] {
-    void _npcId // Mark as intentionally unused for now
-    void _state // Mark as intentionally unused for now
-    void _rng // Mark as intentionally unused for now
-    // TODO: Intention-Generierung aus intentions/pipeline.ts
-    // Fuer jetzt: leeres Array (wird spaeter implementiert)
-    return []
+    void rng // RNG available for future use if needed
+
+    const npc = state.roster.find((n) => n.npcId === npcId)
+    if (!npc) return []
+
+    const intentionType = generateNpcIntention(state, npc)
+    return intentionType ? [intentionType] : []
   }
 
   private applyNpcIntention(
