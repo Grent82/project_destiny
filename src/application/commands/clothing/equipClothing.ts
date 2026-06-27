@@ -14,6 +14,55 @@
 import type { GameState } from '../../../domain'
 import { appendActivityLogEntry } from '../activityLog'
 import { contentCatalog } from '../../content/contentCatalog'
+import { createRng } from '../seededRng'
+
+/**
+ * Adds an item to an NPC's inventory container.
+ * Creates a new container if no space is available.
+ */
+function addItemToNpcInventory(
+  state: GameState,
+  npcId: string,
+  itemInstanceId: string,
+  quantity: number,
+): GameState {
+  const npcContainers = [...(state.inventoryState.npcInventories[npcId] || [])]
+  let added = false
+
+  for (const container of npcContainers) {
+    if (container.slots.length < container.maxSlots) {
+      container.slots.push({
+        slotId: `slot-${itemInstanceId}-${state.day}`,
+        itemInstanceId,
+        quantity,
+      })
+      added = true
+      break
+    }
+  }
+
+  if (!added) {
+    npcContainers.push({
+      containerId: `npc-container-${createRng(state.rngSeed).getSeed?.()}`,
+      containerType: 'backpack',
+      ownerId: npcId,
+      maxSlots: 20,
+      slots: [{ slotId: `slot-${itemInstanceId}-new`, itemInstanceId, quantity }],
+      locked: false,
+    })
+  }
+
+  return {
+    ...state,
+    inventoryState: {
+      ...state.inventoryState,
+      npcInventories: {
+        ...state.inventoryState.npcInventories,
+        [npcId]: npcContainers,
+      },
+    },
+  }
+}
 
 export interface EquipClothingParams {
   npcId: string
@@ -64,8 +113,10 @@ export function equipClothing(state: GameState, params: EquipClothingParams): Ga
   // Unequip current item if any (return to inventory if NPC has one)
   let newState = state
   if (currentItemId) {
-    // TODO: Add item back to NPC's inventory when unequipping
-    // For now, we just clear the slot
+    // Add the unequipped item back to NPC's inventory
+    const itemInstanceId = `clothing-${currentItemId}-${npcId}-${layer}-${state.day}`
+    newState = addItemToNpcInventory(newState, npcId, itemInstanceId, 1)
+
     newState = {
       ...newState,
       roster: newState.roster.map((n) =>
@@ -132,10 +183,13 @@ export function unequipClothing(state: GameState, params: UnequipClothingParams)
   const item = contentCatalog.itemsById.get(currentItemId)
   const itemName = item?.name || currentItemId
 
-  // Remove from clothing
-  const newState = {
-    ...state,
-    roster: state.roster.map((n) =>
+  // Add the unequipped item back to NPC's inventory
+  const itemInstanceId = `clothing-${currentItemId}-${npcId}-${layer}-${state.day}`
+  let newState = addItemToNpcInventory(state, npcId, itemInstanceId, 1)
+
+  newState = {
+    ...newState,
+    roster: newState.roster.map((n) =>
       n.npcId === npcId
         ? {
             ...n,
