@@ -212,3 +212,40 @@ export function selectItemActions(state: RootState, instanceId: string): ItemAct
 
   return actions
 }
+
+// ─── Player Equipment Selectors ─────────────────────────────────────────────
+
+export const selectPlayerEquipment = createSelector(
+  [(state: RootState) => state.game.inventoryState.player.equipmentSlots],
+  (equipmentSlots) => ({
+    weapon: equipmentSlots.weapon,
+    armor: equipmentSlots.armor,
+    accessory_1: equipmentSlots.accessory_1,
+    accessory_2: equipmentSlots.accessory_2,
+  }),
+)
+
+export const selectPlayerBagContainers = createSelector(
+  [(state: RootState) => state.game.inventoryState.player.bagContainers],
+  (bagContainers) => bagContainers,
+)
+
+export const selectPlayerUsedBagSlots = createSelector(
+  [(state: RootState) => state.game.inventoryState.player.usedBagSlots],
+  (usedBagSlots) => usedBagSlots,
+)
+
+export const selectPlayerTotalBagSlots = createSelector(
+  [(state: RootState) => state.game.inventoryState.player.totalBagSlots],
+  (totalBagSlots) => totalBagSlots,
+)
+
+export const selectItemDefinition = createSelector(
+  [(state: RootState, instanceId: string) => instanceId, (state: RootState) => state.game.inventoryState.itemRegistry, (state: RootState) => contentCatalog.itemsById],
+  (instanceId, itemRegistry, itemsById) => {
+    if (!instanceId) return null
+    const instance = itemRegistry[instanceId]
+    if (!instance) return null
+    return itemsById.get(instance.itemId) ?? null
+  },
+)
