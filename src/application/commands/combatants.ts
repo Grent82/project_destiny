@@ -13,6 +13,7 @@ import {
 import { buildRelationshipKey, type RelationshipAxes } from '../../domain/relationships/contracts'
 import { contentCatalog, type EncounterEntry } from '../content/contentCatalog'
 import { getDurabilityAccuracyModifier, getDurabilityArmorModifier } from './durability'
+import { hasNpcClothing } from '../../domain/npc/isNpcNaked'
 
 export const FALLBACK_ENCOUNTER_POOL: EncounterEntry[] = [
   { name: 'Ash Raider', lore: 'A hard-eyed opportunist with nothing left to lose.' },
@@ -118,7 +119,8 @@ export function buildAllyCombatant(
     damageMin: Math.max(8, Math.floor((npc.attributes.might + skill) / 12)),
     damageMax: Math.max(12, Math.floor((npc.attributes.might + skill) / 9)),
     effectiveRange,
-    soak: Math.floor(Math.floor(npc.attributes.endurance / 4) * armorDurMod),
+    // NPCs without clothing receive no armor protection, even if armor is equipped
+    soak: hasNpcClothing(npc) ? Math.floor(Math.floor(npc.attributes.endurance / 4) * armorDurMod) : 0,
     speed: Math.max(1, Math.floor((npc.attributes.agility + npc.attributes.resolve) / 18)),
     guarding: false,
     staggered: false,

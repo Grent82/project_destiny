@@ -1,5 +1,6 @@
 import type { GameState, TimeSlot, NpcIntentionType } from '../../domain'
 import type { Rng } from './seededRng'
+import { createRngForTask } from './seededRng'
 import type { NpcDistanceResult } from './npcDistance'
 import { INTENTION_TIME_SLOT_MAPPING } from '../../domain/npc/intentionTimeSlots'
 
@@ -227,8 +228,8 @@ export class TimeSlotQueue {
   private async processBatch(
     batch: TimeSlotTask[],
     state: GameState,
-    _rng: Rng,
-    _slot: TimeSlot
+    _rng: Rng, // Used for task-specific RNG derivation
+    _slot: TimeSlot // Reserved for future slot-specific logic
   ): Promise<GameState> {
     let next = state
 
@@ -259,9 +260,9 @@ export class TimeSlotQueue {
   }
 
   private generateIntentionsForNpc(
-    _npcId: string,
-    _state: GameState,
-    _rng: Rng
+    npcId: string, // Reserved for NPC-specific intention generation
+    _state: GameState, // Reserved for state-based intention drivers
+    _rng: Rng // Reserved for deterministic intention selection
   ): NpcIntentionType[] {
     // TODO: Intention-Generierung aus intentions/pipeline.ts
     // Fuer jetzt: leeres Array (wird spaeter implementiert)
@@ -270,9 +271,9 @@ export class TimeSlotQueue {
 
   private applyNpcIntention(
     state: GameState,
-    _npcId: string,
-    _intention: NpcIntentionType,
-    _rng: Rng
+    npcId: string, // Reserved for NPC-specific state updates
+    intention: NpcIntentionType, // Reserved for intention-specific handlers
+    rng: Rng // Reserved for deterministic intention resolution
   ): GameState {
     // TODO: Applikation der Intention
     // Fuer jetzt: State unveraendert zurueckgeben
@@ -317,15 +318,3 @@ export class TimeSlotQueue {
   }
 }
 
-/**
- * Erzeugt einen deterministischen RNG fuer einen spezifischen Task.
- */
-export function createRngForTask(seed: number): Rng {
-  let s = seed >>> 0
-  return function rng(): number {
-    s = (s + 0x6D2B79F5) >>> 0
-    let t = Math.imul(s ^ (s >>> 15), 1 | s)
-    t = t + Math.imul(t ^ (t >>> 7), 61 | t) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}

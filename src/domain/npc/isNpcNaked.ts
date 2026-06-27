@@ -1,41 +1,68 @@
 import type { NpcRuntimeState } from '../npc/contracts'
 
 /**
- * Checks if an NPC is currently naked (wearing no clothing or armor).
- *
- * An NPC is considered naked when:
- * - No clothing items are equipped (head, torso, arms, legs, feet, full, undergarments all null)
- * - No armor pieces are equipped (lightTorso, heavyTorso, lightLegs, heavyLegs, shield all null)
- * - No accessories are worn
+ * Checks if an NPC has any clothing equipped (excluding armor and accessories).
  *
  * @param npc - The NPC runtime state to check
- * @returns true if the NPC is naked, false otherwise
+ * @returns true if the NPC has any clothing item equipped, false otherwise
  */
-export function isNpcNaked(npc: NpcRuntimeState): boolean {
-  const { clothing, armor } = npc
+export function hasNpcClothing(npc: NpcRuntimeState): boolean {
+  const { clothing } = npc
 
-  // Check if any clothing layer is equipped
-  const hasClothing =
+  return (
     clothing.head !== null ||
     clothing.torso !== null ||
     clothing.arms !== null ||
     clothing.legs !== null ||
     clothing.feet !== null ||
     clothing.full !== null ||
-    clothing.undergarments !== null ||
-    (clothing.accessories && clothing.accessories.length > 0)
+    clothing.undergarments !== null
+  )
+}
 
-  // Check if any armor piece is equipped
-  const hasArmor =
+/**
+ * Checks if an NPC has any armor equipped.
+ *
+ * @param npc - The NPC runtime state to check
+ * @returns true if the NPC has any armor piece equipped, false otherwise
+ */
+export function hasNpcArmor(npc: NpcRuntimeState): boolean {
+  const { armor } = npc
+
+  return (
     armor.lightTorso !== null ||
     armor.heavyTorso !== null ||
     armor.lightLegs !== null ||
     armor.heavyLegs !== null ||
     armor.shield !== null
+  )
+}
 
-  // Note: equipment.weapon doesn't affect nakedness - an NPC can be naked but armed
+/**
+ * Checks if an NPC is currently naked (wearing no clothing).
+ *
+ * An NPC is considered naked when no clothing items are equipped.
+ * Armor pieces (including shield) and accessories do NOT affect nakedness:
+ * - A naked NPC with a shield is still naked
+ * - A naked NPC with jewelry/accessories is still naked
+ * - Undergarments COUNT as clothing (not naked)
+ *
+ * @param npc - The NPC runtime state to check
+ * @returns true if the NPC is naked, false otherwise
+ */
+export function isNpcNaked(npc: NpcRuntimeState): boolean {
+  return !hasNpcClothing(npc)
+}
 
-  // NPC is naked if they have no clothing AND no armor
-  // (weapon doesn't affect nakedness)
-  return !hasClothing && !hasArmor
+/**
+ * Checks if an NPC should receive no armor protection in combat.
+ * NPCs without any clothing (undergarments count as clothing) receive no armor soak,
+ * even if they have armor equipped. This represents the social stigma and
+ * lack of proper underlayers for armor to function correctly.
+ *
+ * @param npc - The NPC runtime state to check
+ * @returns true if the NPC should receive no armor protection, false otherwise
+ */
+export function shouldNpcReceiveNoArmorProtection(npc: NpcRuntimeState): boolean {
+  return !hasNpcClothing(npc)
 }

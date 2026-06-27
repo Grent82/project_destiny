@@ -699,5 +699,6 @@
   "pendingDateProposals": [],
   "scheduledDates": [],
   "npcDateCooldowns": {},
-  "activeDirectives": []
+  "activeDirectives": [],
+  "privateCorrespondence": []
 }
