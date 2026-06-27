@@ -617,7 +617,9 @@
       "flags": [
         "mira-custody-handler",
         "mira-custody-site:site-poi-pale-old-tannery"
-      ]
+      ],
+      "intimacyStage": "none",
+      "pregnancyState": null
     },
     {
       "npcId": "npc-enemy-tomas-rell",
@@ -627,7 +629,9 @@
       "flags": [
         "mira-custody-guard",
         "mira-custody-site:site-poi-pale-old-tannery"
-      ]
+      ],
+      "intimacyStage": "none",
+      "pregnancyState": null
     },
     {
       "npcId": "npc-enemy-catrin-hale",
@@ -637,7 +641,9 @@
       "flags": [
         "mira-custody-guard",
         "mira-custody-site:site-poi-pale-old-tannery"
-      ]
+      ],
+      "intimacyStage": "none",
+      "pregnancyState": null
     }
   ],
   "siteRuntimes": {},

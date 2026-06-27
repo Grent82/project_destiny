@@ -1,4 +1,5 @@
 import type { GameState } from '../../domain/game/contracts'
+import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
 
 interface DateOutcome {
   id: string
@@ -43,7 +44,7 @@ function advanceSeed(seed: number): number {
 
 function pickOutcome(seed: number, outcomes: DateOutcome[]): DateOutcome {
   const index = Math.floor(seededRandom(seed) * outcomes.length)
-  return outcomes[index]
+  return outcomes[index]!
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -302,6 +303,11 @@ const DATES: Record<string, DateTemplate> = {
   },
 }
 
+/**
+ * Resolves a scheduled date between two NPCs (Roster, World, or cross-type).
+ * Updates relationship axes for both NPCs.
+ * Handles pregnancy for Roster NPCs at committed stage.
+ */
 export function resolveDate(
   state: GameState,
   params: ResolveDateParams,
@@ -320,19 +326,11 @@ export function resolveDate(
     return state
   }
 
-  const npcId = scheduledDate.npcIds.find((id) => id !== 'player') ?? scheduledDate.npcIds[0]
+  const npcAId = scheduledDate.npcIds[0]!
+  const npcBId = scheduledDate.npcIds[1]!
 
   let seed = state.rngSeed
   seed = advanceSeed(seed)
-
-  const relationshipKey = `player→${npcId}`
-  const relationship = state.relationships[relationshipKey] ?? {
-    affinity: 0,
-    respect: 0,
-    fear: 0,
-    trust: 0,
-    loyalty: 0,
-  }
 
   let outcome: DateOutcome
   if (outcomeIndex !== undefined) {
@@ -342,39 +340,46 @@ export function resolveDate(
     seed = advanceSeed(seed)
   }
 
-  const newAffinity = clamp(
-    relationship.affinity + (outcome.axesDeltas.affinity ?? 0),
-    0,
-    100,
-  )
-  const newTrust = clamp(
-    (relationship.trust ?? 0) + (outcome.axesDeltas.trust ?? 0),
-    0,
-    100,
-  )
-  const newRespect = clamp(
-    (relationship.respect ?? 0) + (outcome.axesDeltas.respect ?? 0),
-    0,
-    100,
-  )
-  const newLoyalty = clamp(
-    (relationship.loyalty ?? 0) + (outcome.axesDeltas.loyalty ?? 0),
-    0,
-    100,
-  )
+  // Update relationships for both directions (works for any NPC type)
+  const abKey = buildRelationshipKey(npcAId, npcBId)
+  const baKey = buildRelationshipKey(npcBId, npcAId)
 
-  const newRelationships = {
-    ...state.relationships,
-    [relationshipKey]: {
-      ...relationship,
-      affinity: newAffinity,
-      trust: newTrust,
-      respect: newRespect,
-      loyalty: newLoyalty,
+  const abRel = getRelationship(state.relationships, npcAId, npcBId)
+  const baRel = getRelationship(state.relationships, npcBId, npcAId)
+
+  const newAffinityAB = clamp(abRel.affinity + (outcome.axesDeltas.affinity ?? 0), 0, 100)
+  const newTrustAB = clamp((abRel.trust ?? 0) + (outcome.axesDeltas.trust ?? 0), 0, 100)
+  const newRespectAB = clamp((abRel.respect ?? 0) + (outcome.axesDeltas.respect ?? 0), 0, 100)
+  const newLoyaltyAB = clamp((abRel.loyalty ?? 0) + (outcome.axesDeltas.loyalty ?? 0), 0, 100)
+
+  const newAffinityBA = clamp(baRel.affinity + (outcome.axesDeltas.affinity ?? 0), 0, 100)
+  const newTrustBA = clamp((baRel.trust ?? 0) + (outcome.axesDeltas.trust ?? 0), 0, 100)
+  const newRespectBA = clamp((baRel.respect ?? 0) + (outcome.axesDeltas.respect ?? 0), 0, 100)
+  const newLoyaltyBA = clamp((baRel.loyalty ?? 0) + (outcome.axesDeltas.loyalty ?? 0), 0, 100)
+
+  let nextState: GameState = {
+    ...state,
+    relationships: {
+      ...state.relationships,
+      [abKey]: {
+        ...abRel,
+        affinity: newAffinityAB,
+        trust: newTrustAB,
+        respect: newRespectAB,
+        loyalty: newLoyaltyAB,
+      },
+      [baKey]: {
+        ...baRel,
+        affinity: newAffinityBA,
+        trust: newTrustBA,
+        respect: newRespectBA,
+        loyalty: newLoyaltyBA,
+      },
     },
   }
 
-  const newLog = [...state.activityLog]
+  // Add activity log entry
+  const newLog = [...nextState.activityLog]
   newLog.push({
     id: crypto.randomUUID(),
     day: state.day,
@@ -382,20 +387,66 @@ export function resolveDate(
     category: 'system',
     message: outcome.text,
   })
+  nextState = {
+    ...nextState,
+    activityLog: newLog.slice(-100),
+  }
 
-  const updatedScheduledDates = state.scheduledDates.map((d) =>
+  // Update scheduled date status
+  const updatedScheduledDates = nextState.scheduledDates.map((d) =>
     d.dateId === dateId
       ? { ...d, status: 'completed' as const, outcomeId: outcome.id }
       : d,
   )
+  nextState = {
+    ...nextState,
+    scheduledDates: updatedScheduledDates,
+  }
+
+  // Handle pregnancy for Roster NPCs at committed stage
+  const abIntimacy = nextState.relationships[abKey]?.intimacyStage ?? 'none'
+  if (abIntimacy === 'committed') {
+    const npcA = nextState.roster.find((n) => n.npcId === npcAId)
+    const npcB = nextState.roster.find((n) => n.npcId === npcBId)
+
+    if (npcA && npcB && !npcA.pregnancyState && !npcB.pregnancyState) {
+      const pregnancyKey = `date-pregnancy-${npcAId}-${npcBId}`
+      if (!isOnCooldown(nextState.lastFiredDay, pregnancyKey, state.day, 30) && seed < 0.02) {
+        // Pick bearer (deterministic by sort order)
+        const chooseA = npcAId < npcBId
+        const [bearerId, partnerId] = chooseA ? [npcAId, npcBId] : [npcBId, npcAId]
+
+        nextState = {
+          ...nextState,
+          roster: nextState.roster.map((n) =>
+            n.npcId === bearerId
+              ? {
+                  ...n,
+                  pregnancyState: {
+                    context: 'consensual' as const,
+                    daysElapsed: 0,
+                    questTag: null,
+                    partnerNpcId: partnerId,
+                    wanted: null,
+                  },
+                }
+              : n,
+          ),
+          lastFiredDay: { ...nextState.lastFiredDay, [pregnancyKey]: state.day },
+        }
+      }
+    }
+  }
 
   return {
-    ...state,
-    relationships: newRelationships,
-    activityLog: newLog.slice(-100),
-    scheduledDates: updatedScheduledDates,
+    ...nextState,
     rngSeed: seed,
   }
+}
+
+function isOnCooldown(lastFiredDay: Record<string, number>, key: string, _currentDay: number, cooldownDays: number): boolean {
+  const last = lastFiredDay[key]
+  return last !== undefined && _currentDay - last < cooldownDays
 }
 
 export function resolveDateWithOutcome(

@@ -1,7 +1,8 @@
 import type { GameState } from '../../domain/game/contracts'
+import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
-import { getSymmetricRelationship, intimacyStageSchema } from '../../domain/relationships/contracts'
+import { getSymmetricRelationship } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import type { NpcDefinition } from '../../domain/npc/contracts'
 
@@ -14,6 +15,7 @@ interface DateTemplate {
   requiredIntimacyStage: string
   cost: number
   preferredTimeSlot: string
+  traitPreferences?: Record<string, number>
 }
 
 const DATES: DateTemplate[] = [
@@ -44,10 +46,10 @@ function isDateTemplateEligible(template: DateTemplate, intimacyStage: IntimacyS
 }
 
 /**
- * Check if an NPC is eligible to propose a date.
+ * Check if a Roster NPC is eligible to propose a date.
  * Idle NPCs (not deployed, not captive, not ward) are eligible.
  */
-function isDateEligible(npc: { assignment: string; captivityState?: { status: string } | undefined; status: string }): boolean {
+function isRosterNpcDateEligible(npc: { assignment: string; captivityState?: { status: string } | undefined; status: string }): boolean {
   if (npc.assignment === 'deployed') return false
   if (npc.captivityState?.status === 'captive') return false
   if (npc.captivityState?.status === 'missing') return false
@@ -56,22 +58,34 @@ function isDateEligible(npc: { assignment: string; captivityState?: { status: st
 }
 
 /**
+ * World NPCs are always eligible for dating.
+ * No assignment/captivity/ward concepts for World NPCs.
+ */
+function isWorldNpcDateEligible(_worldNpc: WorldNpcRuntimeState): boolean {
+  return true
+}
+
+/**
  * Calculate date compatibility score between two NPCs.
  * Considers trait preferences from the date template.
+ * Returns 0 for World NPC pairs (no traits available).
  */
 function calculateDateCompatibility(
-  proposer: NpcDefinition,
-  target: NpcDefinition,
+  proposer: NpcDefinition | null,
+  target: NpcDefinition | null,
   template: DateTemplate,
 ): number {
+  // If either NPC is a World NPC (no definition), skip compatibility check
+  if (!proposer || !target) return 0
+
   let score = 0
 
   // Check trait preferences
-  for (const [traitName, multiplier] of Object.entries(template.traitPreferences ?? {})) {
+  for (const [traitName, multiplier] of Object.entries(template.traitPreferences || {})) {
     const proposerTrait = proposer.startingTraits[traitName as keyof typeof proposer.startingTraits] ?? 50
     const targetTrait = target.startingTraits[traitName as keyof typeof target.startingTraits] ?? 50
     const avgTrait = (proposerTrait + targetTrait) / 2
-    score += (avgTrait / 100) * (multiplier - 1) * 10
+    score += (avgTrait / 100) * ((multiplier as number) - 1) * 10
   }
 
   // Bonus for similar dominance levels (reduces conflict)
@@ -101,30 +115,45 @@ function advanceSeed(seed: number): number {
   return (seed * 1103515245 + 12345) & 0x7fffffff
 }
 
+
 /**
  * Generate NPC-NPC date proposals during endDay processing.
- * Each idle NPC pair has a 1-2% chance to propose a date based on:
+ * Each eligible NPC pair has a 1-2% chance to propose a date based on:
  * - Shared intimacy stage (must be at least 'affinity')
- * - Compatibility score
+ * - Compatibility score (for roster-roster pairs)
  * - RNG roll
+ *
+ * Supports three pairing types:
+ * 1. Roster ↔ Roster
+ * 2. World ↔ World
+ * 3. Roster ↔ World (cross-type)
  *
  * Returns GameState with new pendingDateProposals added.
  */
 export function generateNpcDateProposals(state: GameState, rng: Rng): GameState {
   let nextState = state
 
-  // Get all eligible NPCs on roster
-  const eligible = state.roster.filter(isDateEligible)
+  // Collect all eligible NPCs (Roster + World)
+  const rosterEligible = state.roster
+    .filter(isRosterNpcDateEligible)
+    .map((npc) => ({ npcId: npc.npcId, name: npc.name, isWorldNpc: false }))
 
-  if (eligible.length < 2) return state
+  const worldEligible = state.worldNpcStates
+    .filter(isWorldNpcDateEligible)
+    .map((npc) => ({ npcId: npc.npcId, name: npc.name ?? 'An NPC', isWorldNpc: true }))
+
+  // Combine into single pool for cross-type pairing
+  const allEligible = [...rosterEligible, ...worldEligible]
+
+  if (allEligible.length < 2) return state
 
   // Track which NPCs have already proposed today (one proposal per NPC per day)
   const proposedBy = new Set<string>()
 
-  for (let i = 0; i < eligible.length; i++) {
-    for (let j = i + 1; j < eligible.length; j++) {
-      const npcA = eligible[i]!
-      const npcB = eligible[j]!
+  for (let i = 0; i < allEligible.length; i++) {
+    for (let j = i + 1; j < allEligible.length; j++) {
+      const npcA = allEligible[i]!
+      const npcB = allEligible[j]!
 
       // Skip if either already proposed today
       if (proposedBy.has(npcA.npcId) || proposedBy.has(npcB.npcId)) continue
@@ -152,25 +181,29 @@ export function generateNpcDateProposals(state: GameState, rng: Rng): GameState 
 
       if (roll > proposalThreshold) continue
 
-      // Get NPC definitions for compatibility check
+      // Get NPC definitions for compatibility check (only for roster-roster pairs)
       const defA = contentCatalog.npcsById.get(npcA.npcId)
       const defB = contentCatalog.npcsById.get(npcB.npcId)
-
-      if (!defA || !defB) continue
 
       // Pick a date template based on intimacy stage
       const seed = advanceSeed(state.rngSeed)
       const template = pickDateTemplate(seed, sharedStage)
 
-      // Compatibility check - skip if too incompatible
-      const compatScore = calculateDateCompatibility(defA, defB, template)
-      if (compatScore < -15) continue
+      // Compatibility check - skip if too incompatible (only for roster-roster)
+      if (defA && defB) {
+        const compatScore = calculateDateCompatibility(defA, defB, template)
+        if (compatScore < -15) continue
+      }
 
       // Determine proposed time slot based on template preference
       const proposedTimeSlot = template.preferredTimeSlot as 'morning' | 'afternoon' | 'evening' | 'night'
 
       // Create proposal ID
       const proposalId = `date-proposal-${npcA.npcId}-${npcB.npcId}-${state.day}`
+
+      // Get names for activity log (use definition names if available, otherwise fallback)
+      const nameA = defA?.name ?? npcA.name
+      const nameB = defB?.name ?? npcB.name
 
       // Add to pending proposals
       const newProposal = {
@@ -203,7 +236,7 @@ export function generateNpcDateProposals(state: GameState, rng: Rng): GameState 
       nextState = appendActivityLogEntry(
         nextState,
         'system',
-        `${defA.name} and ${defB.name} seem to be making plans together.`,
+        `${nameA} and ${nameB} seem to be making plans together.`,
       )
     }
   }

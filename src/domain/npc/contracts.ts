@@ -10,6 +10,7 @@ import {
   signedStandingSchema,
   timeSlotSchema,
 } from '../shared/contracts'
+import { intimacyStageSchema } from '../relationships/contracts'
 
 export const npcStatusSchema = z.enum([
   'citizen',
@@ -423,18 +424,8 @@ export type NpcIntention = z.infer<typeof npcIntentionSchema>
 
 export const worldNpcDispositionSchema = z.enum(['neutral', 'friendly', 'hostile', 'afraid', 'unknown'])
 
-export const worldNpcRuntimeStateSchema = z.object({
-  npcId: entityIdSchema,
-  lastContactDay: z.number().int().nonnegative().nullable().default(null),
-  disposition: worldNpcDispositionSchema.default('neutral'),
-  locationOverride: z.string().nullable().default(null),
-  flags: z.array(z.string()).default([]),
-}).strict()
-
-export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>
-export type WorldNpcRuntimeState = z.infer<typeof worldNpcRuntimeStateSchema>
-
 // ─── Captivity and pregnancy schemas ─────────────────────────────────────────
+// Moved before worldNpcRuntimeStateSchema to avoid initialization order issues
 
 export const captivityStatusSchema = z.enum(['missing', 'captive', 'rescued', 'returned', 'dead'])
 
@@ -475,6 +466,7 @@ export const captivityStateSchema = z.object({
     accessory: z.array(z.string()).default([]),
   }).optional().default({ weapon: null, armor: null, accessory: [] }),
 })
+
 /**
  * pregnancyState tracks pregnancy status for NPCs.
  * context: 'unknown' = captivity aftermath (coercion linkage never surfaced as player label).
@@ -488,6 +480,21 @@ export const pregnancyStateSchema = z.object({
   partnerNpcId: z.string().nullable().optional(),
   wanted: z.boolean().nullable().default(null), // true = wanted, false = avoided, null = neutral/unspecified
 })
+
+export const worldNpcRuntimeStateSchema = z.object({
+  npcId: entityIdSchema,
+  lastContactDay: z.number().int().nonnegative().nullable().default(null),
+  disposition: worldNpcDispositionSchema.default('neutral'),
+  locationOverride: z.string().nullable().default(null),
+  flags: z.array(z.string()).default([]),
+  // Relationship intimacy tracking for World NPCs
+  intimacyStage: intimacyStageSchema.default('none'),
+  // Pregnancy tracking for World NPCs
+  pregnancyState: pregnancyStateSchema.nullable().default(null),
+}).strict()
+
+export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>
+export type WorldNpcRuntimeState = z.infer<typeof worldNpcRuntimeStateSchema>
 
 /**
  * arousalState tracks an NPC's arousal level and related state.
