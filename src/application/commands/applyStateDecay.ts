@@ -3,6 +3,7 @@ import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { deriveGriefState, deriveGriefMoraleModifier } from './grief'
 import { ROOM_IDS, TITLE_IDS } from '../content/ids'
+import { isNpcNaked } from '../../domain/npc/isNpcNaked'
 
 function hasIntactRoom(state: GameState, fn: RoomFunction): boolean {
   return state.house.rooms.some((r) => r.state === 'intact' && r.roomFunction === fn)
@@ -69,7 +70,8 @@ export function applyStateDecay(state: GameState): GameState {
       // Morale penalty from poor conditions + grief
       const grief = deriveGriefState(npc, state.day)
       const griefMoraleMod = deriveGriefMoraleModifier(grief)
-      const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0) + (-griefMoraleMod)
+      const nakedMoralePenalty = isNpcNaked(npc) ? 20 : 0
+      const moralePenalty = (highAnger ? 3 : 0) + (highHygiene ? 2 : 0) + (waterScarcity ? 2 : 0) + (-griefMoraleMod) + nakedMoralePenalty
 
       // Fatigue: resting recovery is boosted by ageMod.recovery; deployed accumulation scaled by ageMod.accum
       const barracksBonus = isResting && npc.assignment === 'idle' && hasBarracks ? 2 : 0
@@ -82,6 +84,9 @@ export function applyStateDecay(state: GameState): GameState {
       const quartersFatigueBonus = isResting && hasResidentQuarters(state, npc.roomAssignment) ? 2 : 0
       const quartersMoraleBonus = isResting && hasResidentQuarters(state, npc.roomAssignment) ? 1 : 0
 
+      // Naked NPCs suffer additional stress from exposure and social stigma
+      const nakedStressPenalty = isNpcNaked(npc) ? 5 : 0
+
       return {
         ...npc,
         states: {
@@ -89,8 +94,8 @@ export function applyStateDecay(state: GameState): GameState {
           hunger: Math.max(0, Math.min(100, npc.states.hunger + Math.round(8 * ageMod.accum) - kitchenBonus)),
           fatigue: Math.max(0, Math.min(100, npc.states.fatigue + fatigueDelta - quartersFatigueBonus)),
           stress: isResting
-            ? Math.max(0, npc.states.stress - Math.round(3 * ageMod.recovery) - studyBonus)
-            : npc.states.stress,
+            ? Math.max(0, npc.states.stress - Math.round(3 * ageMod.recovery) - studyBonus + nakedStressPenalty)
+            : npc.states.stress + nakedStressPenalty,
           morale: Math.max(0, Math.min(100, npc.states.morale - moralePenalty + quartersMoraleBonus)),
           anger: newAnger,
           hygiene: newHygiene,
