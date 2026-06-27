@@ -88,6 +88,9 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   },
   equipment: { weapon: null, armor: null, accessory: [] },
   // inventory removed - NPCs use inventoryState.npcInventories
+  personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
+  clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+  armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
   npcMemory: [],
   bondStatus: null,
   npcArc: null,

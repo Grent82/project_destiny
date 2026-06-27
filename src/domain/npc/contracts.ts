@@ -493,6 +493,141 @@ export type ConsentPreferences = z.infer<typeof consentPreferencesSchema>
 export type BondEntryReason = z.infer<typeof bondEntryReasonSchema>
 export type BondStatus = z.infer<typeof bondStatusSchema>
 
+// ─── NPC Personal Funds Schema ──────────────────────────────────────────────
+
+/**
+ * npcPersonalFunds tracks an NPC's personal wealth separate from house/organization funds.
+ * This enables NPCs to save, spend, and accumulate wealth independently.
+ */
+export const npcPersonalFundsSchema = z
+  .object({
+    savings: z.number().int().nonnegative().default(0), // Saved wealth (banked/stashed)
+    carriedCash: z.number().int().nonnegative().default(0), // Cash on person
+    lastWagePaymentDay: z.number().int().nonnegative().nullable().default(null),
+    lastTipAmount: z.number().int().nonnegative().default(0), // Last tip received
+  })
+  .strict()
+
+export type NpcPersonalFunds = z.infer<typeof npcPersonalFundsSchema>
+
+// ─── NPC Clothing Schema ────────────────────────────────────────────────────
+
+/**
+ * Clothing layer types for NPC equipment.
+ * Each layer represents a distinct body area that can be clothed.
+ */
+export const CLOTHING_LAYERS = ['head', 'torso', 'arms', 'legs', 'feet', 'full', 'undergarments'] as const
+export type ClothingLayer = typeof CLOTHING_LAYERS[number]
+
+/**
+ * npcClothing tracks what clothing items an NPC is wearing, organized by layer.
+ * Allows multiple items per layer (e.g., undergarments + outerwear on torso).
+ */
+export const npcClothingSchema = z
+  .object({
+    head: entityIdSchema.nullable().default(null),
+    torso: entityIdSchema.nullable().default(null),
+    arms: entityIdSchema.nullable().default(null),
+    legs: entityIdSchema.nullable().default(null),
+    feet: entityIdSchema.nullable().default(null),
+    full: entityIdSchema.nullable().default(null), // Full-body garments override other layers
+    undergarments: entityIdSchema.nullable().default(null),
+    accessories: z.array(entityIdSchema).default([]),
+  })
+  .strict()
+
+export type NpcClothing = z.infer<typeof npcClothingSchema>
+
+// ─── NPC Armor Schema ───────────────────────────────────────────────────────
+
+/**
+ * Armor layer types for NPC equipment.
+ * Separates light and heavy armor by body area.
+ */
+export const ARMOR_LAYERS = ['light-torso', 'light-legs', 'heavy-torso', 'heavy-legs', 'shield'] as const
+export type ArmorLayer = typeof ARMOR_LAYERS[number]
+
+/**
+ * npcArmor tracks what armor items an NPC is wearing.
+ * Light and heavy armor are tracked separately as they may have different penalties/bonuses.
+ */
+export const npcArmorSchema = z
+  .object({
+    lightTorso: entityIdSchema.nullable().default(null),
+    lightLegs: entityIdSchema.nullable().default(null),
+    heavyTorso: entityIdSchema.nullable().default(null),
+    heavyLegs: entityIdSchema.nullable().default(null),
+    shield: entityIdSchema.nullable().default(null),
+  })
+  .strict()
+
+export type NpcArmor = z.infer<typeof npcArmorSchema>
+
+// ─── Ward Personal Allowance Schema ─────────────────────────────────────────
+
+/**
+ * wardPersonalAllowance tracks the weekly allowance and spending rules for ward NPCs.
+ * Wards are NPCs under the player's guardianship who receive regular stipends.
+ */
+export const wardPersonalAllowanceSchema = z
+  .object({
+    allowancePerWeek: z.number().int().nonnegative().default(2),
+    personalSavings: z.number().int().nonnegative().default(0),
+    lastAllowanceDay: z.number().int().nonnegative().nullable().default(null),
+    allowedItems: z.array(entityIdSchema).default([]), // Item IDs ward can purchase
+    restrictedItems: z.array(entityIdSchema).default([]), // Item IDs ward cannot purchase
+  })
+  .strict()
+
+export type WardPersonalAllowance = z.infer<typeof wardPersonalAllowanceSchema>
+
+// ─── Captivity Inventory Rules Schema ───────────────────────────────────────
+
+/**
+ * Confiscation types for captivity scenarios.
+ * Determines what items are taken when an NPC is captured.
+ */
+export const confiscationTypeSchema = z.enum(['kidnap', 'imprisonment', 'arrest', 'search'])
+export type ConfiscationType = z.infer<typeof confiscationTypeSchema>
+
+/**
+ * Confiscation rules for a specific captivity scenario.
+ */
+export const confiscationRulesSchema = z
+  .object({
+    confiscateAll: z.boolean().default(false),
+    allowedCategories: z.array(z.string()).default([]), // Categories that are never taken
+    confiscateWeapons: z.boolean().default(true),
+    confiscateMoney: z.boolean().default(true),
+    confiscateSentimental: z.boolean().default(false),
+  })
+  .strict()
+
+/**
+ * captivityInventoryRules defines what happens to an NPC's inventory when captured.
+ * Different regimes have different confiscation/restitution policies.
+ */
+export const captivityInventoryRulesSchema = z
+  .object({
+    confiscationRules: z.record(z.string(), confiscationRulesSchema).default({}),
+    restitutionRules: z
+      .object({
+        returnOnRelease: z.boolean().default(true),
+        returnOnEscape: z.boolean().default(false),
+        returnOnAcquittal: z.boolean().default(true),
+        retainedByCaptors: z.boolean().default(false),
+      })
+      .default({
+        returnOnRelease: true,
+        returnOnEscape: false,
+        returnOnAcquittal: true,
+        retainedByCaptors: false,
+      }),
+  })
+  .strict()
+
+export type CaptivityInventoryRules = z.infer<typeof captivityInventoryRulesSchema>
+
 export const MAX_NPC_MEMORY_ENTRIES = 20
 
 export const npcArcDriftEntrySchema = z.object({
@@ -586,6 +721,9 @@ export const npcRuntimeStateSchema = z
     loadout: loadoutSchema,
     equipment: npcEquipmentSchema.default({ weapon: null, armor: null, accessory: [] }),
     // inventory removed - migrated to inventoryState.npcInventories
+    personalFunds: npcPersonalFundsSchema.default({ savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 }),
+    clothing: npcClothingSchema.default({ head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] }),
+    armor: npcArmorSchema.default({ lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }),
     shopOwnerProfile: shopOwnerProfileSchema.optional(),
     npcMemory: z.array(npcMemoryEntrySchema).default([]),
     captivityState: captivityStateSchema.optional(),
