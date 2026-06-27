@@ -241,7 +241,7 @@ export const selectPlayerTotalBagSlots = createSelector(
 )
 
 export const selectItemDefinition = createSelector(
-  [(state: RootState, instanceId: string) => instanceId, (state: RootState) => state.game.inventoryState.itemRegistry, (state: RootState) => contentCatalog.itemsById],
+  [(_state: RootState, instanceId: string) => instanceId, (state: RootState) => state.game.inventoryState.itemRegistry, () => contentCatalog.itemsById],
   (instanceId, itemRegistry, itemsById) => {
     if (!instanceId) return null
     const instance = itemRegistry[instanceId]

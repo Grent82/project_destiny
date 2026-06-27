@@ -7,6 +7,7 @@
 
 import { useState } from 'react'
 import { useAppSelector } from '../app/hooks'
+import type { RootState } from '../../application'
 import { selectPlayerBagContainers, selectPlayerUsedBagSlots, selectPlayerTotalBagSlots, selectPlayerEquipment, selectItemDefinition } from '../../application/selectors/inventory'
 
 /**
@@ -50,7 +51,7 @@ function ItemSlot({
   onClick: () => void
 }) {
   const itemDef = useAppSelector(
-    slot.itemInstanceId ? (state: ReturnType<typeof useAppSelector>) => selectItemDefinition(state, slot.itemInstanceId!) : () => null
+    slot.itemInstanceId ? (state: RootState) => selectItemDefinition(state, slot.itemInstanceId!) : () => null
   )
 
   return (
@@ -87,7 +88,7 @@ function ItemDetailModal({
   itemInstanceId: string
   onClose: () => void
 }) {
-  const itemDef = useAppSelector((state: ReturnType<typeof useAppSelector>) => selectItemDefinition(state, itemInstanceId))
+  const itemDef = useAppSelector((state: RootState) => selectItemDefinition(state, itemInstanceId))
 
   return (
     <div className="item-detail-modal" onClick={onClose}>
@@ -98,14 +99,12 @@ function ItemDetailModal({
 
         {itemDef?.category === 'weapon' && (
           <div className="item-stats">
-            <span>Damage: {itemDef.damageMin}-{itemDef.damageMax}</span>
-            <span>Accuracy: {itemDef.accuracy}</span>
+            <span>Weapon (details TBD)</span>
           </div>
         )}
         {itemDef?.category === 'armor' && (
           <div className="item-stats">
-            <span>Soak: {itemDef.soak}</span>
-            <span>Weight: {itemDef.weight}</span>
+            <span>Armor (details TBD)</span>
           </div>
         )}
 
