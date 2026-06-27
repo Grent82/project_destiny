@@ -129,13 +129,13 @@ export function proposeNpcDate(
 
   if (!proposer || !target) return state
 
-  // Check eligibility
-  const eligibility = checkNpcDateEligibility(state, proposer, target, '')
-  if (!eligibility.eligible) return state
-
-  // Select appropriate date template
+  // Select appropriate date template first
   const dateTemplateId = selectDateTemplateForNpcPair(state, proposer, target, rng)
   if (!dateTemplateId) return state
+
+  // Check eligibility with the selected date template
+  const eligibility = checkNpcDateEligibility(state, proposer, target, dateTemplateId)
+  if (!eligibility.eligible) return state
 
   // Create the proposal
   const proposal = {

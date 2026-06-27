@@ -14,14 +14,16 @@ function createTestRng(seedLines: number[]): () => number {
   }
 }
 
-function createTestState(): GameState {
+function createTestState(overrides?: Partial<GameState>): GameState {
   return {
     ...INITIAL_GAME_STATE,
     day: 10,
+    timeSlot: 'evening' as const,
     relationships: {},
     pendingDateProposals: [],
     scheduledDates: [],
     npcDateCooldowns: {},
+    ...overrides,
     roster: [
       {
         npcId: 'npc-ida-rhys',
