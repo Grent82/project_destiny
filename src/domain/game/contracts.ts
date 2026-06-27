@@ -18,7 +18,7 @@ import {
 import { attributesSchema, bondStatusSchema, captivityStateSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
-import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema } from '../shared/contracts'
+import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema, timeSlotStateSchema } from '../shared/contracts'
 import { npcSitePresenceSchema, siteRuntimeSchema } from '../world/runtime'
 import { chronicleSchema } from '../chronicle/contracts'
 import { inventoryStateSchema } from '../inventory/contracts'
@@ -466,7 +466,15 @@ export const gameStateSchema = z
     pendingDateProposals: z.array(dateProposalSchema).default([]),
     scheduledDates: z.array(scheduledDateSchema).default([]),
     npcDateCooldowns: z.record(z.string(), z.number().int().nonnegative()).default({}),
-    saveVersion: z.number().int().min(1).default(5),
+    saveVersion: z.number().int().min(1).default(6),
+    timeSlotState: timeSlotStateSchema.default(() => ({
+      currentSlot: 'morning',
+      slotQueue: [],
+      completedTasks: [],
+      skippedTasks: [],
+      slotHistory: [],
+      lastProcessedSeed: 42,
+    })),
     rngSeed: z.number().int().nonnegative().default(42),
     chronicle: chronicleSchema.default(() => ({
       entriesByDay: {},
