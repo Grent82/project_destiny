@@ -162,6 +162,14 @@ const baseGameState: GameState = {
   scheduledDates: [],
   npcDateCooldowns: {},
   saveVersion: 2,
+  timeSlotState: {
+    currentSlot: 'morning',
+    slotQueue: [],
+    completedTasks: [],
+    skippedTasks: [],
+    slotHistory: [],
+    lastProcessedSeed: 42,
+  },
   rngSeed: 42,
   chronicle: {
     entriesByDay: {},
