@@ -177,6 +177,9 @@ describe('applyWorldNpcSocialSimulation', () => {
         timeHeldDays: 4,
         lastTransferDay: 1,
         questTag: null,
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
       },
     }
 

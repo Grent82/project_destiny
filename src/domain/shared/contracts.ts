@@ -2,22 +2,6 @@ import { z } from 'zod'
 
 export const entityIdSchema = z.string().min(1)
 
-export const percentageSchema = z.number().finite().min(0).max(100)
-
-export const signedStandingSchema = z.number().int().min(-100).max(100)
-
-export const nonNegativeIntegerSchema = z.number().int().min(0)
-
-export const positiveIntegerSchema = z.number().int().positive()
-
-export const nonNegativeNumberSchema = z.number().finite().min(0)
-
-export const raritySchema = z.enum(['common', 'uncommon', 'rare', 'elite', 'legendary'])
-
-export const combatRangeSchema = z.enum(['close', 'medium', 'distant'])
-
-export const timeSlotSchema = z.enum(['morning', 'afternoon', 'evening', 'night'])
-
 export const npcIntentionTypeSchema = z.enum([
   'lead-group',
   'support-group',
@@ -68,6 +52,22 @@ export const npcIntentionTypeSchema = z.enum([
   'seek-shelter',
   'care-for-injured',
 ] as const)
+
+export const percentageSchema = z.number().finite().min(0).max(100)
+
+export const signedStandingSchema = z.number().int().min(-100).max(100)
+
+export const nonNegativeIntegerSchema = z.number().int().min(0)
+
+export const positiveIntegerSchema = z.number().int().positive()
+
+export const nonNegativeNumberSchema = z.number().finite().min(0)
+
+export const raritySchema = z.enum(['common', 'uncommon', 'rare', 'elite', 'legendary'])
+
+export const combatRangeSchema = z.enum(['close', 'medium', 'distant'])
+
+export const timeSlotSchema = z.enum(['morning', 'afternoon', 'evening', 'night'])
 
 export const timeSlotSimulationTaskStatusSchema = z.enum(['pending', 'queued', 'processing', 'completed', 'skipped'])
 

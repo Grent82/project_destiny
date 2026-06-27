@@ -288,6 +288,7 @@ export function calculateNpcIntention(state: GameState, npcId: string): NpcInten
     confidence,
     createdAtDay: state.day,
     expiresAtDay: state.day + urgencyDays,
+    validTimeSlots: ['morning', 'afternoon', 'evening', 'night'],
   }
 
   // Validate the schema before returning
@@ -638,7 +639,7 @@ const flirtWithHandler: IntentionHandler = {
     if (!targetEntry) return state
 
     const rng = createRng(state.rngSeed)
-    const newState = tryNpcNpcFlirtation(state, npc.npcId, targetEntry.npcId, rng)
+    const newState = tryNpcNpcFlirtation(state, npc.npcId, targetEntry.npcId, rng.rng)
 
     // Advance RNG seed
     return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
@@ -670,7 +671,7 @@ const courtRomanticallyHandler: IntentionHandler = {
     if (!targetEntry) return state
 
     const rng = createRng(state.rngSeed)
-    const newState = tryNpcNpcCourtship(state, npc.npcId, targetEntry.npcId, rng)
+    const newState = tryNpcNpcCourtship(state, npc.npcId, targetEntry.npcId, rng.rng)
 
     // Advance RNG seed
     return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
@@ -729,8 +730,6 @@ const jealousyCheckHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     // Check for potential rivals (other NPCs with high affinity to targets this NPC likes)
-    const rng = createRng(state.rngSeed)
-
     // Simple implementation: just run the jealousy check for this NPC
     // Full implementation would identify specific rivals and adjust relationships
     let newState = state

@@ -71,6 +71,9 @@ describe('applyAbstractCustodySimulation', () => {
             timeHeldDays: 6,
             lastTransferDay: 2,
             questTag: 'quest-mira-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
         npcSitePresences: [
@@ -122,6 +125,9 @@ describe('applyAbstractCustodySimulation', () => {
             timeHeldDays: 5,
             lastTransferDay: 2,
             questTag: null,
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
         npcSitePresences: [
@@ -169,6 +175,9 @@ describe('applyAbstractCustodySimulation', () => {
             timeHeldDays: 6,
             lastTransferDay: 2,
             questTag: null,
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
         npcSitePresences: [

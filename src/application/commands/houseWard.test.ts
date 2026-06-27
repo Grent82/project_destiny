@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { acceptWard, advanceWardStage, formalizeAdultWard, tickWardStages } from './houseWard'
+import type { WardOriginId } from './houseWard'
+type WardOrigin = WardOriginId
 
 describe('houseWard commands', () => {
   describe('acceptWard', () => {
@@ -48,7 +50,7 @@ describe('houseWard commands', () => {
 
     it('rejects ward with invalid origin ID', () => {
       const state = initialGameStateSnapshot
-      const result = acceptWard(state, 'npc-new-ward', 'Test', 'invalid-origin' as any)
+      const result = acceptWard(state, 'npc-new-ward', 'Test', 'invalid-origin' as unknown as WardOrigin)
 
       expect(result.house.houseHeirs).toHaveLength(0)
     })
@@ -197,15 +199,35 @@ describe('houseWard commands', () => {
       }
       const baseNpc = {
         name: 'Tommy',
+        status: 'citizen' as const,
         assignment: 'idle' as const,
-        states: { health: 100, morale: 100, injury: 0, arousal: { level: 0, triggerSource: null, cooldownUntilDay: null } },
-        inventoryState: { player: { bagContainers: [], usedBagSlots: 0 }, sharedContainers: [] },
-        loadout: { consumableIds: [], weaponIds: [], armorIds: [] },
-        relationshipAxes: { player: 0 },
-        friendship: 0,
-        enmity: 0,
+        assignedDistrictId: null,
+        roomAssignment: null,
+        activeTitle: null,
+        wagesOwedDays: 0,
+        trainingFocus: null,
+        attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
+        skills: { melee: 50, ranged: 50, medicine: 50, administration: 50, engineering: 50, negotiation: 50, survival: 50, security: 50, crafting: 50, performance: 50, academics: 50, intrigue: 50 },
+        traits: { discipline: 50, ambition: 50, empathy: 50, ruthlessness: 50, prudence: 50, curiosity: 50, dominance: 50, loyalty: 50, vanity: 50, zeal: 50 },
+        states: { health: 100, fatigue: 0, stress: 0, morale: 100, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 0 },
+        loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+        equipment: { weapon: null, armor: null, accessory: [] },
+        personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
+        clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+        armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+        npcMemory: [],
+        factionRelationships: [],
+        wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
+        arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
+        bondStatus: null,
+        npcArc: null,
+        currentDirectiveId: null,
+        directiveDeadlineDay: null,
+        currentIntention: null,
+        captivityState: undefined,
+        pregnancyState: undefined,
       }
-      const result = formalizeAdultWard(state, 'npc-formalized-1', baseNpc as any)
+      const result = formalizeAdultWard(state, 'npc-formalized-1', baseNpc)
 
       expect(result.house.houseHeirs).toHaveLength(0)
       expect(result.roster.some(n => n.npcId === 'npc-formalized-1')).toBe(true)
@@ -221,7 +243,36 @@ describe('houseWard commands', () => {
           ],
         },
       }
-      const result = formalizeAdultWard(state, 'npc-child', {} as any)
+      const result = formalizeAdultWard(state, 'npc-child', {
+        name: 'Tommy',
+        status: 'ward' as const,
+        assignment: 'idle' as const,
+        assignedDistrictId: null,
+        roomAssignment: null,
+        activeTitle: null,
+        wagesOwedDays: 0,
+        trainingFocus: null,
+        attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
+        skills: { melee: 50, ranged: 50, medicine: 50, administration: 50, engineering: 50, negotiation: 50, survival: 50, security: 50, crafting: 50, performance: 50, academics: 50, intrigue: 50 },
+        traits: { discipline: 50, ambition: 50, empathy: 50, ruthlessness: 50, prudence: 50, curiosity: 50, dominance: 50, loyalty: 50, vanity: 50, zeal: 50 },
+        states: { health: 100, fatigue: 0, stress: 0, morale: 100, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 0 },
+        loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+        equipment: { weapon: null, armor: null, accessory: [] },
+        personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
+        clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+        armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+        npcMemory: [],
+        factionRelationships: [],
+        wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
+        arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
+        bondStatus: null,
+        npcArc: null,
+        currentDirectiveId: null,
+        directiveDeadlineDay: null,
+        currentIntention: null,
+        captivityState: undefined,
+        pregnancyState: undefined,
+      })
 
       expect(result.house.houseHeirs).toHaveLength(1)
       expect(result.roster.some(n => n.npcId === 'npc-child')).toBe(false)
@@ -229,7 +280,36 @@ describe('houseWard commands', () => {
 
     it('does not formalize non-existent ward', () => {
       const state = initialGameStateSnapshot
-      const result = formalizeAdultWard(state, 'non-existent', {} as any)
+      const result = formalizeAdultWard(state, 'non-existent', {
+        name: 'Test',
+        status: 'citizen' as const,
+        assignment: 'idle' as const,
+        assignedDistrictId: null,
+        roomAssignment: null,
+        activeTitle: null,
+        wagesOwedDays: 0,
+        trainingFocus: null,
+        attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
+        skills: { melee: 50, ranged: 50, medicine: 50, administration: 50, engineering: 50, negotiation: 50, survival: 50, security: 50, crafting: 50, performance: 50, academics: 50, intrigue: 50 },
+        traits: { discipline: 50, ambition: 50, empathy: 50, ruthlessness: 50, prudence: 50, curiosity: 50, dominance: 50, loyalty: 50, vanity: 50, zeal: 50 },
+        states: { health: 100, fatigue: 0, stress: 0, morale: 100, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 0 },
+        loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+        equipment: { weapon: null, armor: null, accessory: [] },
+        personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
+        clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+        armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+        npcMemory: [],
+        factionRelationships: [],
+        wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
+        arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
+        bondStatus: null,
+        npcArc: null,
+        currentDirectiveId: null,
+        directiveDeadlineDay: null,
+        currentIntention: null,
+        captivityState: undefined,
+        pregnancyState: undefined,
+      })
 
       expect(result.house.houseHeirs).toHaveLength(0)
       expect(result.roster.length).toBeGreaterThanOrEqual(0)
@@ -247,15 +327,35 @@ describe('houseWard commands', () => {
       }
       const baseNpc = {
         name: 'Tommy',
+        status: 'citizen' as const,
         assignment: 'idle' as const,
-        states: { health: 100, morale: 100, injury: 0, arousal: { level: 0, triggerSource: null, cooldownUntilDay: null } },
-        inventoryState: { player: { bagContainers: [], usedBagSlots: 0 }, sharedContainers: [] },
-        loadout: { consumableIds: [], weaponIds: [], armorIds: [] },
-        relationshipAxes: { player: 0 },
-        friendship: 0,
-        enmity: 0,
+        assignedDistrictId: null,
+        roomAssignment: null,
+        activeTitle: null,
+        wagesOwedDays: 0,
+        trainingFocus: null,
+        attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
+        skills: { melee: 50, ranged: 50, medicine: 50, administration: 50, engineering: 50, negotiation: 50, survival: 50, security: 50, crafting: 50, performance: 50, academics: 50, intrigue: 50 },
+        traits: { discipline: 50, ambition: 50, empathy: 50, ruthlessness: 50, prudence: 50, curiosity: 50, dominance: 50, loyalty: 50, vanity: 50, zeal: 50 },
+        states: { health: 100, fatigue: 0, stress: 0, morale: 100, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 0 },
+        loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
+        equipment: { weapon: null, armor: null, accessory: [] },
+        personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
+        clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+        armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+        npcMemory: [],
+        factionRelationships: [],
+        wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
+        arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
+        bondStatus: null,
+        npcArc: null,
+        currentDirectiveId: null,
+        directiveDeadlineDay: null,
+        currentIntention: null,
+        captivityState: undefined,
+        pregnancyState: undefined,
       }
-      const result = formalizeAdultWard(state, 'npc-formalized-2', baseNpc as any)
+      const result = formalizeAdultWard(state, 'npc-formalized-2', baseNpc)
 
       const logEntry = result.activityLog.find(e => e.message.includes('now a full member'))
       expect(logEntry).toBeDefined()

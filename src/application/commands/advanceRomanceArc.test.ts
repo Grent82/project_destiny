@@ -60,6 +60,9 @@ function stateWithRelationship(overrides: {
               timeHeldDays: 0,
               lastTransferDay: null,
               questTag: null,
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
             }
           : undefined,
       },

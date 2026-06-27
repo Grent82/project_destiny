@@ -228,6 +228,8 @@ function ensureWorldNpcState(state: GameState, npcId: string) {
     disposition: 'neutral',
     locationOverride: null,
     flags: [],
+    intimacyStage: 'none',
+    pregnancyState: null,
   }
   state.worldNpcStates = [...state.worldNpcStates, entry]
   return entry

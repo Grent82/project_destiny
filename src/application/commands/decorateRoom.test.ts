@@ -70,6 +70,7 @@ const baseState: GameState = {
   completedQuestIds: [],
   failedQuestIds: [],
   questHistory: [],
+  privateCorrespondence: [],
   councilSeats: { 'faction-civic-compact': 3, 'faction-gilded-court': 2, 'faction-foundry-league': 2, 'faction-tallow-ring': 0, 'faction-restored': 0 },
   houseWardSeats: 0,
   institutionalStanding: {},

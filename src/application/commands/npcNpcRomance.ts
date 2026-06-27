@@ -3,7 +3,6 @@ import type { Rng } from './seededRng'
 import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
-import type { NpcDefinition } from '../../domain/npc/contracts'
 
 /**
  * NPC-NPC Romance and Flirtation System
@@ -91,8 +90,8 @@ export function tryNpcNpcFlirtation(
 
   // Calculate flirtation success based on traits
   const successChance = 0.4 +
-    (npcA.traits.empathy - 50) / 200 +
-    (npcA.attributes.presence - 50) / 200 +
+    (npcA.startingTraits.empathy - 50) / 200 +
+    (npcA.baseAttributes.presence - 50) / 200 +
     (rel.trust / 200)
 
   if (rng() >= successChance) {
@@ -159,9 +158,9 @@ export function tryNpcNpcCourtship(
 
   // Calculate courtship success based on traits and relationship
   const successChance = 0.35 +
-    (npcA.traits.empathy - 50) / 150 +
-    (npcA.traits.loyalty - 50) / 200 +
-    (npcA.attributes.presence - 50) / 200 +
+    (npcA.startingTraits.empathy - 50) / 150 +
+    (npcA.startingTraits.loyalty - 50) / 200 +
+    (npcA.baseAttributes.presence - 50) / 200 +
     (rel.trust / 150)
 
   if (rng() >= successChance) {

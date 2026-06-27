@@ -1,5 +1,4 @@
-import type { GameState } from '../../../../domain/game/contracts'
-import type { Rng } from '../seededRng'
+import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 
@@ -72,11 +71,11 @@ export function scheduleAcceptedNpcDateProposals(state: GameState): GameState {
 /**
  * Process NPC-NPC date proposals: schedule accepted ones and reject those that can't happen.
  */
-export function processNpcDateProposals(state: GameState, rng: Rng): GameState {
+export function processNpcDateProposals(state: GameState): GameState {
   let nextState = state
 
   // First, schedule accepted proposals for tomorrow
-  nextState = scheduleAcceptedNpcDateProposals(nextState, rng)
+  nextState = scheduleAcceptedNpcDateProposals(nextState)
 
   // Reject proposals that are now too old (older than 3 days)
   const staleProposals = nextState.pendingDateProposals.filter(

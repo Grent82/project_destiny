@@ -12,8 +12,8 @@ export function createNpcRuntimeState(
   return {
     npcId,
     name,
-    status: 'citizen',
-    assignment: 'idle',
+    status: 'citizen' as const,
+    assignment: 'idle' as const,
     assignedDistrictId: null,
     roomAssignment: null,
     activeTitle: null,
@@ -110,6 +110,14 @@ export function createNpcRuntimeState(
       allowedItems: [],
       restrictedItems: [],
     },
+    arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
+    bondStatus: null,
+    npcArc: null,
+    captivityState: undefined,
+    pregnancyState: undefined,
+    currentDirectiveId: null,
+    directiveDeadlineDay: null,
+    currentIntention: null,
     ...overrides,
-  }
+  } as unknown as NpcRuntimeState
 }

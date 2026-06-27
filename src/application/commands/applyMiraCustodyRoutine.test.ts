@@ -119,6 +119,9 @@ describe('applyMiraCustodyRoutine', () => {
           timeHeldDays: overrides.timeHeldDays ?? 0,
           lastTransferDay: overrides.lastTransferDay ?? null,
           questTag: 'quest-mira-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
         },
       },
     }
@@ -280,6 +283,9 @@ describe('getMiraCustodySchedule', () => {
           timeHeldDays: overrides.timeHeldDays ?? 0,
           lastTransferDay: overrides.lastTransferDay ?? null,
           questTag: 'quest-mira-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
         },
       },
     }

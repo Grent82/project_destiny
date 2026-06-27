@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { loadoutSchema } from '../items/contracts'
+import { npcIntentionTypeSchema } from '../shared/contracts'
 import {
   entityIdSchema,
   nonNegativeIntegerSchema,
@@ -327,72 +328,6 @@ export const npcDefinitionSchema = z
   })
   .strict()
 
-/**
- * NPC Intention types - proactive actions NPCs take when idle and not on directive.
- * Extended with 25 new types for Fuzzy Logic + ML-based intention system.
- */
-export const NPC_INTENTION_TYPES = [
-  // Original 10 types
-  'lead-group',
-  'support-group',
-  'scout-ahead',
-  'resource-gather',
-  'confront-rival',
-  'protect-house',
-  'investigate-threat',
-  'patrol-district',
-  'seek-employment',
-  'socialize',
-  // Basis-Bedürfnisse (5)
-  'eat-meal',
-  'drink',
-  'sleep',
-  'rest',
-  'groom',
-  // Sozial/Romantik (5)
-  'flirt-with',
-  'court-romantically',
-  'visit-lover',
-  'jealousy-check',
-  'spend-time-with',
-  // Romantik/Sexualität (3)
-  'seek-intimacy',
-  'flirt-aggressively',
-  'visit-romantic-partner',
-  // Alltagsaktivitäten (4)
-  'shop-for-goods',
-  'train-self',
-  'meditate',
-  'practice-skill',
-  // Spezial/Quirky (2)
-  'people-watch',
-  'gossip',
-  // Geld verdienen (4)
-  'seek-tips',
-  'black-market-trade',
-  'beg-for-coin',
-  'scavenge-for-sell',
-  // Macht/Kontrolle (5)
-  'assert-dominance',
-  'spy-on',
-  'intercept-communication',
-  'gather-leverage',
-  'consolidate-power',
-  // Gruppen/Dynamik (5)
-  'form-squad',
-  'recruit-member',
-  'host-gathering',
-  'mediate-conflict',
-  'challenge-authority',
-  // Überleben/Existenz (5)
-  'scavenge',
-  'fortify-position',
-  'escape-attempt',
-  'seek-shelter',
-  'care-for-injured',
-] as const
-
-export const npcIntentionTypeSchema = z.enum(NPC_INTENTION_TYPES)
 export type NpcIntentionType = z.infer<typeof npcIntentionTypeSchema>
 
 /**

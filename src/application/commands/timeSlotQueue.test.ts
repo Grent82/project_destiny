@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { TimeSlotQueue } from './timeSlotQueue'
 import type { GameState, TimeSlot, NpcIntentionType } from '../../domain'
-import type { NpcDistanceResult } from './npcDistance'
 import type { Rng } from './seededRng'
 
 interface TimeSlotTask {
@@ -91,11 +90,11 @@ function createMockTask(overrides?: Partial<TimeSlotTask>): TimeSlotTask {
   return {
     taskId: 'task-1',
     npcId: 'npc-1',
-    intentionType: 'seek-work',
+    intentionType: 'seek-employment',
     timeSlot: 'morning',
     priority: 3,
     dependencies: [],
-    handler: (s) => s,
+    handler: (_s: GameState, _rng: Rng) => _s, // eslint-disable-line @typescript-eslint/no-unused-vars
     createdAtDay: 1,
     ...overrides,
   }
@@ -113,7 +112,7 @@ describe('TimeSlotQueue', () => {
       const task = createMockTask({ taskId: 'task-1', timeSlot: 'morning' })
       queue.enqueue(task)
 
-      const slots = (queue as any).slots as Map<TimeSlot, TimeSlotTask[]>
+      const slots = (queue as unknown as { slots: Map<TimeSlot, TimeSlotTask[]> }).slots
       const morningTasks = slots.get('morning')
       expect(morningTasks).toHaveLength(1)
       expect(morningTasks![0].taskId).toBe('task-1')
@@ -126,10 +125,10 @@ describe('TimeSlotQueue', () => {
 
     it('skips already completed tasks', () => {
       const task = createMockTask({ taskId: 'task-1' })
-      ;(queue as any).completedTaskIds.add('task-1')
+      ;(queue as unknown as { completedTaskIds: Set<string> }).completedTaskIds.add('task-1')
       queue.enqueue(task)
 
-      const slots = (queue as any).slots as Map<TimeSlot, TimeSlotTask[]>
+      const slots = (queue as unknown as { slots: Map<TimeSlot, TimeSlotTask[]> }).slots
       const morningTasks = slots.get('morning')
       expect(morningTasks).toHaveLength(0)
     })
@@ -139,7 +138,7 @@ describe('TimeSlotQueue', () => {
       queue.enqueue(createMockTask({ taskId: 'task-2', priority: 5 }))
       queue.enqueue(createMockTask({ taskId: 'task-3', priority: 3 }))
 
-      const slots = (queue as any).slots as Map<TimeSlot, TimeSlotTask[]>
+      const slots = (queue as unknown as { slots: Map<TimeSlot, TimeSlotTask[]> }).slots
       const morningTasks = slots.get('morning')
       expect(morningTasks![0].priority).toBe(5)
       expect(morningTasks![1].priority).toBe(3)
@@ -153,6 +152,7 @@ describe('TimeSlotQueue', () => {
 
       const createHandler = (taskId: string) => (_s: GameState, _rng: Rng) => {
         executionOrder.push(taskId)
+        void _rng
         return _s
       }
 
@@ -176,6 +176,7 @@ describe('TimeSlotQueue', () => {
 
       const createHandler = (taskId: string) => (_s: GameState, _rng: Rng) => {
         executionOrder.push(taskId)
+        void _rng
         return _s
       }
 
@@ -183,7 +184,7 @@ describe('TimeSlotQueue', () => {
       const taskA: TimeSlotTask = {
         taskId: 'task-A',
         npcId: 'npc-A',
-        intentionType: 'seek-work',
+        intentionType: 'seek-employment',
         timeSlot: 'morning',
         priority: 3,
         dependencies: [],
@@ -195,7 +196,7 @@ describe('TimeSlotQueue', () => {
       const taskB: TimeSlotTask = {
         taskId: 'task-B',
         npcId: 'npc-B',
-        intentionType: 'seek-work',
+        intentionType: 'seek-employment',
         timeSlot: 'morning',
         priority: 5,
         dependencies: ['task-A'],
@@ -222,17 +223,18 @@ describe('TimeSlotQueue', () => {
 
       const createHandler = (taskId: string) => (_s: GameState, _rng: Rng) => {
         executionOrder.push(taskId)
+        void _rng
         return _s
       }
 
       // Pre-complete task-X
-      ;(queue as any).completedTaskIds.add('task-X')
+      ;(queue as unknown as { slots: Map<string, TimeSlotTask[]>; completedTaskIds: Set<string> }).completedTaskIds.add('task-X')
 
       // Task-C depends on already-completed task-X
       const taskC: TimeSlotTask = {
         taskId: 'task-C',
         npcId: 'npc-C',
-        intentionType: 'seek-work',
+        intentionType: 'seek-employment',
         timeSlot: 'afternoon',
         priority: 3,
         dependencies: ['task-X'],
@@ -255,6 +257,7 @@ describe('TimeSlotQueue', () => {
 
       const createHandler = (taskId: string) => (_s: GameState, _rng: Rng) => {
         executionOrder.push(taskId)
+        void _rng
         return _s
       }
 
@@ -275,7 +278,7 @@ describe('TimeSlotQueue', () => {
     })
 
     it('returns updated state after processing', async () => {
-      const modifyState = (s: GameState, _rng: Rng): GameState => ({ ...s, day: s.day + 1 })
+      const modifyState = (s: GameState, _rng: Rng): GameState => { void _rng; return { ...s, day: s.day + 1 } }
 
       queue.enqueue(createMockTask({ handler: modifyState }))
 
@@ -296,7 +299,7 @@ describe('TimeSlotQueue', () => {
         createMockTask({ taskId: 'task-3', npcId: 'npc-A' }),
       ]
 
-      const batches = (queue as any).createBatches(tasks) as TimeSlotTask[][]
+      const batches = (queue as unknown as { createBatches: (tasks: TimeSlotTask[]) => TimeSlotTask[][] }).createBatches(tasks) as TimeSlotTask[][]
 
       batches.forEach((batch) => {
         const npcIds = batch.map((t) => t.npcId)
@@ -310,7 +313,7 @@ describe('TimeSlotQueue', () => {
         createMockTask({ taskId: `task-${i}`, npcId: `npc-${i}` })
       )
 
-      const batches = (queue as any).createBatches(tasks) as TimeSlotTask[][]
+      const batches = (queue as unknown as { createBatches: (tasks: TimeSlotTask[]) => TimeSlotTask[][] }).createBatches(tasks) as TimeSlotTask[][]
 
       expect(batches.length).toBeLessThanOrEqual(4)
     })
@@ -318,7 +321,7 @@ describe('TimeSlotQueue', () => {
 
   describe('calculatePriority', () => {
     it('returns base priority for non-urgent intentions', () => {
-      const priority = (queue as any).calculatePriority('medium', 'seek-work')
+      const priority = (queue as unknown as { calculatePriority: (tier: string, intention: string) => number }).calculatePriority('medium', 'seek-employment')
       expect(priority).toBe(3)
     })
 
@@ -326,22 +329,23 @@ describe('TimeSlotQueue', () => {
       const urgentIntentions = ['escape-attempt', 'seek-shelter', 'fortify-position', 'care-for-injured']
 
       urgentIntentions.forEach((intention) => {
-        const priority = (queue as any).calculatePriority('medium', intention)
+        const priority = (queue as unknown as { calculatePriority: (tier: string, intention: string) => number }).calculatePriority('medium', intention)
         expect(priority).toBe(4)
       })
     })
 
     it('caps priority at 5', () => {
-      const priority = (queue as any).calculatePriority('immediate', 'escape-attempt')
+      const priority = (queue as unknown as { calculatePriority: (tier: string, intention: string) => number }).calculatePriority('immediate', 'escape-attempt')
       expect(priority).toBe(5)
     })
 
     it('returns correct base priorities for each tier', () => {
-      expect((queue as any).calculatePriority('immediate', 'seek-work')).toBe(5)
-      expect((queue as any).calculatePriority('high', 'seek-work')).toBe(4)
-      expect((queue as any).calculatePriority('medium', 'seek-work')).toBe(3)
-      expect((queue as any).calculatePriority('low', 'seek-work')).toBe(2)
-      expect((queue as any).calculatePriority('background', 'seek-work')).toBe(1)
+      const calcPriority = (queue as unknown as { calculatePriority: (tier: string, intention: string) => number }).calculatePriority.bind(queue)
+      expect(calcPriority('immediate', 'seek-employment')).toBe(5)
+      expect(calcPriority('high', 'seek-employment')).toBe(4)
+      expect(calcPriority('medium', 'seek-employment')).toBe(3)
+      expect(calcPriority('low', 'seek-employment')).toBe(2)
+      expect(calcPriority('background', 'seek-employment')).toBe(1)
     })
   })
 
@@ -350,7 +354,7 @@ describe('TimeSlotQueue', () => {
       queue.enqueue(createMockTask())
       queue.clear()
 
-      const slots = (queue as any).slots as Map<TimeSlot, TimeSlotTask[]>
+      const slots = (queue as unknown as { slots: Map<string, TimeSlotTask[]>; completedTaskIds: Set<string> }).slots as Map<TimeSlot, TimeSlotTask[]>
       slots.forEach((tasks) => {
         expect(tasks).toHaveLength(0)
       })
@@ -358,32 +362,35 @@ describe('TimeSlotQueue', () => {
 
     it('resets completed task IDs', () => {
       queue.enqueue(createMockTask({ taskId: 'task-1' }))
-      ;(queue as any).completedTaskIds.add('task-1')
+      ;(queue as unknown as { slots: Map<string, TimeSlotTask[]>; completedTaskIds: Set<string> }).completedTaskIds.add('task-1')
 
-      expect((queue as any).completedTaskIds.has('task-1')).toBe(true)
+      expect((queue as unknown as { slots: Map<string, TimeSlotTask[]>; completedTaskIds: Set<string> }).completedTaskIds.has('task-1')).toBe(true)
 
       queue.clear()
 
-      expect((queue as any).completedTaskIds.has('task-1')).toBe(false)
+      expect((queue as unknown as { slots: Map<string, TimeSlotTask[]>; completedTaskIds: Set<string> }).completedTaskIds.has('task-1')).toBe(false)
     })
   })
 
   describe('hashTaskId', () => {
     it('produces deterministic hash for same task ID and seed', () => {
-      const hash1 = (queue as any).hashTaskId('task-1', 12345)
-      const hash2 = (queue as any).hashTaskId('task-1', 12345)
+      const hashTaskId = (queue as unknown as { hashTaskId: (taskId: string, seed: number) => number }).hashTaskId
+      const hash1 = hashTaskId('task-1', 12345)
+      const hash2 = hashTaskId('task-1', 12345)
       expect(hash1).toBe(hash2)
     })
 
     it('produces different hash for different task IDs', () => {
-      const hash1 = (queue as any).hashTaskId('task-1', 12345)
-      const hash2 = (queue as any).hashTaskId('task-2', 12345)
+      const hashTaskId = (queue as unknown as { hashTaskId: (taskId: string, seed: number) => number }).hashTaskId
+      const hash1 = hashTaskId('task-1', 12345)
+      const hash2 = hashTaskId('task-2', 12345)
       expect(hash1).not.toBe(hash2)
     })
 
     it('produces different hash for different seeds', () => {
-      const hash1 = (queue as any).hashTaskId('task-1', 12345)
-      const hash2 = (queue as any).hashTaskId('task-1', 67890)
+      const hashTaskId = (queue as unknown as { hashTaskId: (taskId: string, seed: number) => number }).hashTaskId
+      const hash1 = hashTaskId('task-1', 12345)
+      const hash2 = hashTaskId('task-1', 67890)
       expect(hash1).not.toBe(hash2)
     })
   })

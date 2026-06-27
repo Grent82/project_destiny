@@ -168,9 +168,7 @@ export function applyReadLetter(
 export function applyBlackmailLeverage(
   state: GameState,
   messageId: string,
-  _holderId: string,
-  _targetId: string,
-  _relationshipDelta: number
+  // Reserved for future blackmail logic
 ): GameState {
   const updatedCorrespondence = state.privateCorrespondence.map((msg) => {
     if (msg.id === messageId) {

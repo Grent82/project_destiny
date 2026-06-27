@@ -22,6 +22,9 @@ describe('applySiteStateHooks', () => {
           timeHeldDays: 3,
           lastTransferDay: 1,
           questTag: 'quest-orren-wex-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
         },
       },
     }
@@ -53,6 +56,9 @@ describe('applySiteStateHooks', () => {
             timeHeldDays: 5,
             lastTransferDay: 2,
             questTag: 'quest-orren-wex-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
       },

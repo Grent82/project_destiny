@@ -287,7 +287,7 @@ export const rosterReducers = {
     const { npcId, lastContactDay, disposition, locationOverride, addFlags, removeFlags } = action.payload
     let entry = state.worldNpcStates.find((s) => s.npcId === npcId)
     if (!entry) {
-      state.worldNpcStates.push({ npcId, lastContactDay: null, disposition: 'neutral', locationOverride: null, flags: [] })
+      state.worldNpcStates.push({ npcId, lastContactDay: null, disposition: 'neutral', locationOverride: null, flags: [], intimacyStage: 'none', pregnancyState: null })
       entry = state.worldNpcStates[state.worldNpcStates.length - 1]
     }
     if (lastContactDay !== undefined) entry.lastContactDay = lastContactDay

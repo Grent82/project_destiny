@@ -5,7 +5,7 @@ import { resolveDate } from './resolveDate'
 
 const baseGameState: GameState = {
   day: 10,
-  timeSlot: 'evening',
+  timeSlot: 'evening' as const,
   money: 500,
   protagonistName: 'Test Player',
   hasSeenOpening: true,
@@ -192,6 +192,7 @@ const baseGameState: GameState = {
   debtPaid: false,
   debtCrisisTriggered: false,
   houseDistrictId: 'district-the-pale',
+  privateCorrespondence: [],
 }
 
 describe('resolveDate', () => {

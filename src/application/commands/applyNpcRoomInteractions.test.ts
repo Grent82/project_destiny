@@ -85,6 +85,9 @@ describe('applyNpcRoomInteractions', () => {
             timeHeldDays: 4,
             lastTransferDay: 2,
             questTag: null,
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
         npcSitePresences: [
@@ -135,6 +138,9 @@ describe('applyNpcRoomInteractions', () => {
             timeHeldDays: 6,
             lastTransferDay: 2,
             questTag: null,
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
         npcSitePresences: [
@@ -183,6 +189,9 @@ describe('applyNpcRoomInteractions', () => {
             timeHeldDays: 5,
             lastTransferDay: 2,
             questTag: 'quest-orren-wex-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
           },
         },
         npcSitePresences: [

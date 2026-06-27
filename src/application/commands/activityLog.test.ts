@@ -132,6 +132,7 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     houseWardSeats: overrides.houseWardSeats ?? 0,
     failedQuestIds: overrides.failedQuestIds ?? [],
     questHistory: overrides.questHistory ?? [],
+    privateCorrespondence: overrides.privateCorrespondence ?? [],
   }
 }
 

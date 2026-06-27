@@ -11,7 +11,7 @@ const createTestState = (overrides?: Partial<GameState>): GameState => ({
   money: 1000,
   protagonistName: 'Test Player',
   hasSeenOpening: false,
-  cityDials: { influence: 50, stability: 60, unrest: 20 },
+  cityDials: { control: 50, prosperity: 60, unrest: 20, corruption: 0 },
   factionStandings: {},
   factionStates: [],
   districts: [],
@@ -121,34 +121,11 @@ const createTestState = (overrides?: Partial<GameState>): GameState => ({
 const createTestNpc = (id: string, name: string, overrides?: Partial<NpcRuntimeState>): NpcRuntimeState => ({
   npcId: id,
   name,
-  status: 'retainer',
-  assignment: 'idle',
-  assignedDistrictId: null,
-  roomAssignment: null,
-  activeTitle: null,
-  wagesOwedDays: 0,
-  attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
-  skills: { melee: 30, ranged: 30, medicine: 30, administration: 30, engineering: 30, negotiation: 30, survival: 30, security: 30, crafting: 30, performance: 30, academics: 30, intrigue: 30 },
-  traits: { discipline: 50, ambition: 50, empathy: 60, ruthlessness: 40, prudence: 50, curiosity: 55, dominance: 45, loyalty: 65, vanity: 40, zeal: 30 },
-  states: { health: 100, fatigue: 20, stress: 15, morale: 80, fear: 10, anger: 5, hunger: 20, injury: 0, hygiene: 80 },
-  loadout: { weapon: null, armor: null, accessories: [] },
-  equipment: { weapon: null, armor: null, accessory: [] },
-  personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
-  clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
-  armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
-  npcMemory: [],
-  captivityState: undefined,
-  pregnancyState: undefined,
-  arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
-  bondStatus: null,
-  npcArc: null,
-  currentDirectiveId: null,
-  directiveDeadlineDay: null,
-  currentIntention: null,
-  factionRelationships: [],
-  wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
+  status: 'retainer' as const,
+  assignment: 'idle' as const,
   ...overrides,
-})
+} as unknown as NpcRuntimeState)
+
 
 describe('generateNpcDateProposals', () => {
   it('returns state unchanged if fewer than 2 eligible NPCs', () => {
@@ -245,7 +222,7 @@ describe('generateNpcDateProposals', () => {
   it('skips NPCs who are captive', () => {
     const state = createTestState({
       roster: [
-        createTestNpc('npc-1', 'NPC One', { captivityState: { status: 'captive', holderId: 'npc-enemy', regime: 'unknown', condition: 'healthy', compliance: 'resistant', bondType: 'none', timeHeldDays: 5 } }),
+        createTestNpc('npc-1', 'NPC One', { captivityState: { status: 'captive', holderId: 'npc-enemy', siteId: null, roomId: null, regime: 'unknown', condition: 'healthy', compliance: 'resistant', bondType: 'none', timeHeldDays: 5, lastTransferDay: null, questTag: null, confiscatedItems: [], confiscatedMoney: null, confiscatedEquipment: { weapon: null, armor: null, accessory: [] } } }),
         createTestNpc('npc-2', 'NPC Two'),
       ],
       relationships: {

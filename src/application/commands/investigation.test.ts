@@ -500,6 +500,9 @@ describe('resolveInvestigation', () => {
           timeHeldDays: 6,
           lastTransferDay: 1,
           questTag: 'quest-orren-wex-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
         },
       },
       npcSitePresences: [
@@ -544,6 +547,9 @@ describe('resolveInvestigation', () => {
           timeHeldDays: 6,
           lastTransferDay: 1,
           questTag: 'quest-orren-wex-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
         },
       },
     })
@@ -578,6 +584,9 @@ describe('resolveInvestigation', () => {
           timeHeldDays: 6,
           lastTransferDay: 1,
           questTag: 'quest-orren-wex-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
         },
       },
     })

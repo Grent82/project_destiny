@@ -191,6 +191,9 @@ describe('intentions', () => {
               timeHeldDays: 1,
               lastTransferDay: null,
               questTag: null,
+              confiscatedItems: [],
+              confiscatedMoney: null,
+              confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
             },
             factionRelationships: [],
             currentIntention: null,
@@ -214,7 +217,7 @@ describe('intentions', () => {
         confidence: 50,
         createdAtDay: 1,
         expiresAtDay: 2,
-        validTimeSlots: ['morning', 'afternoon', 'evening'],
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
         slotSpecificUrgency: { morning: 5, afternoon: 5, evening: 5, night: 1 },
       }
       const state: GameState = {
@@ -299,6 +302,7 @@ describe('intentions', () => {
         confidence: 50,
         createdAtDay: 1,
         expiresAtDay: 6,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const state: GameState = {
         ...initialGameStateSnapshot,
@@ -361,6 +365,7 @@ describe('intentions', () => {
         confidence: 50,
         createdAtDay: 1,
         expiresAtDay: 6,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const state: GameState = {
         ...initialGameStateSnapshot,
@@ -412,6 +417,7 @@ describe('intentions', () => {
         confidence: 50,
         createdAtDay: 1,
         expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const npc: NpcRuntimeState = {
         ...initialGameStateSnapshot.roster[0]!,
@@ -454,6 +460,7 @@ describe('intentions', () => {
         confidence: 50,
         createdAtDay: 1,
         expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const npc: NpcRuntimeState = {
         ...initialGameStateSnapshot.roster[0]!,

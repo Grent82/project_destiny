@@ -132,6 +132,7 @@ const baseState: GameState = {
   pendingDateProposals: [],
   scheduledDates: [],
   npcDateCooldowns: {},
+  privateCorrespondence: [],
 }
 
 describe('simulateRivalOrgs', () => {

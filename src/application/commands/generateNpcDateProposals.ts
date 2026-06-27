@@ -1,5 +1,4 @@
 import type { GameState } from '../../domain/game/contracts'
-import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
 import { getSymmetricRelationship } from '../../domain/relationships/contracts'
@@ -61,7 +60,8 @@ function isRosterNpcDateEligible(npc: { assignment: string; captivityState?: { s
  * World NPCs are always eligible for dating.
  * No assignment/captivity/ward concepts for World NPCs.
  */
-function isWorldNpcDateEligible(_worldNpc: WorldNpcRuntimeState): boolean {
+function isWorldNpcDateEligible(): boolean {
+  // World NPCs are always eligible for dating
   return true
 }
 
@@ -139,8 +139,11 @@ export function generateNpcDateProposals(state: GameState, rng: Rng): GameState 
     .map((npc) => ({ npcId: npc.npcId, name: npc.name, isWorldNpc: false }))
 
   const worldEligible = state.worldNpcStates
-    .filter(isWorldNpcDateEligible)
-    .map((npc) => ({ npcId: npc.npcId, name: npc.name ?? 'An NPC', isWorldNpc: true }))
+    .filter(() => isWorldNpcDateEligible())
+    .map((npc) => {
+      const def = contentCatalog.npcsById.get(npc.npcId)
+      return { npcId: npc.npcId, name: def?.name ?? 'An NPC', isWorldNpc: true }
+    })
 
   // Combine into single pool for cross-type pairing
   const allEligible = [...rosterEligible, ...worldEligible]

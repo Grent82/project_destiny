@@ -41,6 +41,9 @@ describe('site lifecycle', () => {
           timeHeldDays: 5,
           lastTransferDay: 2,
           questTag: 'quest-mira-rescue',
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
         },
       },
     }

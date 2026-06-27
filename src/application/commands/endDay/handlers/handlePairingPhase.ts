@@ -16,7 +16,7 @@ export function handlePairingPhase(state: GameState, rng: Rng): GameState {
   next = generateNpcDateProposals(next, rng)
 
   // Process NPC-NPC date proposals (schedule accepted ones, reject stale ones)
-  next = processNpcDateProposals(next, rng)
+  next = processNpcDateProposals(next)
 
   return next
 }

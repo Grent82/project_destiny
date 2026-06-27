@@ -16,40 +16,34 @@ function createTestRng(seedLines: number[]): () => number {
 
 function createTestState(overrides?: Partial<GameState>): GameState {
   return {
-    ...INITIAL_GAME_STATE,
+    ...(INITIAL_GAME_STATE as unknown as GameState),
     day: 10,
     timeSlot: 'evening' as const,
     relationships: {},
     pendingDateProposals: [],
     scheduledDates: [],
     npcDateCooldowns: {},
-    ...overrides,
     roster: [
       {
         npcId: 'npc-ida-rhys',
-        assignment: 'idle',
-        status: 'roster',
-        captivityState: null,
+        assignment: 'idle' as const,
+        status: 'citizen' as const,
         traits: { discipline: 50, ambition: 40, empathy: 70, ruthlessness: 20, prudence: 60, curiosity: 55, dominance: 35, loyalty: 65, vanity: 30, zeal: 25 },
-        pregnancyState: null,
-      },
+      } as unknown as GameState['roster'][number],
       {
         npcId: 'npc-mira',
-        assignment: 'idle',
-        status: 'roster',
-        captivityState: null,
+        assignment: 'idle' as const,
+        status: 'citizen' as const,
         traits: { discipline: 60, ambition: 55, empathy: 50, ruthlessness: 45, prudence: 50, curiosity: 40, dominance: 50, loyalty: 55, vanity: 45, zeal: 60 },
-        pregnancyState: null,
-      },
+      } as unknown as GameState['roster'][number],
       {
         npcId: 'npc-deployed-test',
-        assignment: 'deployed',
-        status: 'roster',
-        captivityState: null,
+        assignment: 'deployed' as const,
+        status: 'citizen' as const,
         traits: { discipline: 50, ambition: 40, empathy: 70, ruthlessness: 20, prudence: 60, curiosity: 55, dominance: 35, loyalty: 65, vanity: 30, zeal: 25 },
-        pregnancyState: null,
-      },
+      } as unknown as GameState['roster'][number],
     ],
+    ...overrides,
   }
 }
 

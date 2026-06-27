@@ -211,10 +211,7 @@ describe('Correspondence Commands', () => {
 
       const result = applyBlackmailLeverage(
         stateWithLetter,
-        letterId,
-        'npc-holder',
-        'npc-target',
-        -20
+        letterId
       )
       const letter = result.privateCorrespondence[0]
 
@@ -241,10 +238,7 @@ describe('Correspondence Commands', () => {
       const letterId = stateWithTwoLetters.privateCorrespondence[1].id
       const result = applyBlackmailLeverage(
         stateWithTwoLetters,
-        letterId,
-        'npc-holder',
-        'npc-target',
-        -20
+        letterId
       )
 
       expect(result.privateCorrespondence[0].consequenceApplied).toBe(false)
@@ -480,7 +474,7 @@ describe('Correspondence Commands', () => {
         'compromising'
       )
       const letterId = state1.privateCorrespondence[0].id
-      const state2 = applyBlackmailLeverage(state1, letterId, 'npc-holder', 'npc-target', -20)
+      const state2 = applyBlackmailLeverage(state1, letterId)
 
       const result = findBlackmailableCorrespondence(
         state2.privateCorrespondence,

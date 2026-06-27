@@ -468,14 +468,14 @@ export const gameStateSchema = z
     scheduledDates: z.array(scheduledDateSchema).default([]),
     npcDateCooldowns: z.record(z.string(), z.number().int().nonnegative()).default({}),
     saveVersion: z.number().int().min(1).default(6),
-    timeSlotState: timeSlotStateSchema.default(() => ({
+    timeSlotState: timeSlotStateSchema.default({
       currentSlot: 'morning',
       slotQueue: [],
       completedTasks: [],
       skippedTasks: [],
       slotHistory: [],
       lastProcessedSeed: 42,
-    })),
+    }),
     rngSeed: z.number().int().nonnegative().default(42),
     chronicle: chronicleSchema.default(() => ({
       entriesByDay: {},

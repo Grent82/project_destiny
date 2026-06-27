@@ -1,9 +1,7 @@
 import type { GameState } from '../../domain/game/contracts'
-import type { Rng } from './seededRng'
 import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
-import { appendActivityLogEntry } from './activityLog'
+import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
-import type { NpcDefinition } from '../../domain/npc/contracts'
 
 interface DateOutcome {
   id: string
@@ -16,25 +14,6 @@ interface DateOutcome {
     fear?: number
     anger?: number
   }
-}
-
-interface DateTemplate {
-  id: string
-  name: string
-  description: string
-  cost: number
-  durationHours: number
-  preferredTimeSlot: string
-  requiredIntimacyStage: string
-  traitPreferences: Record<string, number>
-  skillPreferences: Record<string, number>
-  relationshipRewards: {
-    affinity: { min: number; max: number }
-    trust?: { min: number; max: number }
-    respect?: { min: number; max: number }
-    loyalty?: { min: number; max: number }
-  }
-  outcomes: DateOutcome[]
 }
 
 function clamp(value: number, min: number, max: number): number {
