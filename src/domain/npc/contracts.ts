@@ -8,6 +8,7 @@ import {
   positiveIntegerSchema,
   raritySchema,
   signedStandingSchema,
+  timeSlotSchema,
 } from '../shared/contracts'
 
 export const npcStatusSchema = z.enum([
@@ -413,6 +414,8 @@ export const npcIntentionSchema = z
     confidence: z.number().min(0).max(100).default(50),
     createdAtDay: z.number().int().nonnegative(),
     expiresAtDay: z.number().int().nonnegative(),
+    validTimeSlots: z.array(timeSlotSchema).default(['morning', 'afternoon', 'evening', 'night']),
+    slotSpecificUrgency: z.record(timeSlotSchema, z.number().min(1).max(5)).optional(),
   })
   .strict()
 
