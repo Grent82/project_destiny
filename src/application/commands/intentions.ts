@@ -241,15 +241,6 @@ function calculateIntentionPriority(npc: NpcRuntimeState, intentionType: NpcInte
 }
 
 /**
- * Legacy function - no longer used by the new pipeline-based intention system.
- * Kept for potential future reference or migration.
- * TODO: Remove in future refactoring.
- */
-export function _determineIntentionType(): NpcIntentionType | null {
-  return null
-}
-
-/**
  * Calculates an NPC's personal intention if they are free to act.
  *
  * Guard conditions (must ALL pass):

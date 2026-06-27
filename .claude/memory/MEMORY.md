@@ -44,3 +44,5 @@
 
 - [Session Learnings Consolidation](session_learnings_log.md) — 11 session_learnings_*.md zu einem Log konsolidiert (2026-06-27)
 - [Schema Change Hygiene Consolidation](schema_change_hygiene.md) — 5 schema_change_*.md zu einem File konsolidiert (2026-06-27)
+- [Feedback: Schema-Change Consumer-Analyse VOR schreiben](feedback_schema-change-consumer-analysis.md) — 86+ TypeError vermieden durch grep-Workflow vor Schema-Änderungen (2026-06-27 Employment)
+- [Projekt: NPC Employment System](project_employment-system-implementation.md) — Complete implementation with auto-renewal, poaching, performance tracking (2026-06-27)
