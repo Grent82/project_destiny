@@ -51,14 +51,16 @@ describe('selectEventPresentation', () => {
   })
 
   it('classifies first-run events as guidance', () => {
+    // Tutorial events disabled — use a different event for this test
     const game = makeState({
       day: 1,
-      pendingEvents: [{ eventId: 'event-tutorial-house-debt', firedOnDay: 1 }],
+      pendingEvents: [{ eventId: 'event-npc-marion-warning', firedOnDay: 1 }],
     })
 
     const presentation = selectEventPresentation({ game } as { game: GameState })
 
-    expect(presentation?.kicker).toBe('Guidance')
+    // Marion warning is a character scene, not guidance
+    expect(presentation?.kicker).toBe('A Scene')
   })
 
   it('routes one-choice household/world notices into morning report items', () => {

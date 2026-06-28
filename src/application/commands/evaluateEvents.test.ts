@@ -1027,14 +1027,13 @@ describe('event budget — day-1 burst guardrail', () => {
 })
 
 describe('isFirstRun tutorial events', () => {
-  it('fires tutorial events on the first endDay (isFirstRun=true, day=2)', () => {
+  it('tutorial events are disabled (probability=0)', () => {
     const state = makeState({ day: 2, isFirstRun: true })
     const next = evaluateEvents(state, alwaysFire)
     const tutorialIds = next.pendingEvents
       .map((e) => e.eventId)
       .filter((id) => id.startsWith('event-tutorial-'))
-    expect(tutorialIds.length).toBeGreaterThanOrEqual(3)
-    expect(tutorialIds).not.toContain('event-tutorial-end-day-rhythm')
+    expect(tutorialIds.length).toBe(0)
   })
 
   it('does not fire tutorial events after isFirstRun is false', () => {
