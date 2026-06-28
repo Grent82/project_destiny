@@ -456,6 +456,45 @@ export function applyOutcomes(
         next = appendActivityLogEntry(next, 'system', resolvedMessage)
         break
       }
+      case 'setFactionLeader': {
+        // Required fields: npcId (new leader), target (factionId)
+        if (!hasRequiredFields(outcome, ['npcId', 'target'])) break
+        {
+          const newLeaderId = outcome.npcId!
+          const factionId = outcome.target!
+
+          // Validate new leader exists
+          if (!contentCatalog.npcsById.has(newLeaderId)) {
+            warnAndSkip(outcome.type, 'npcId', newLeaderId)
+            break
+          }
+
+          // Validate faction exists
+          const factionState = next.factionStates.find((fs) => fs.factionId === factionId)
+          if (!factionState) {
+            console.warn(`applyEventOutcome: setFactionLeader could not find faction "${factionId}" — outcome skipped`)
+            break
+          }
+
+          const newLeaderName = contentCatalog.npcsById.get(newLeaderId)?.name ?? newLeaderId
+          const factionName = contentCatalog.factionsById.get(factionId)?.name ?? factionId.replace('faction-', '').replace(/-/g, ' ')
+
+          // Update faction leader
+          next = {
+            ...next,
+            factionStates: next.factionStates.map((fs) =>
+              fs.factionId === factionId
+                ? { ...fs, leaderNpcId: newLeaderId }
+                : fs
+            ),
+          }
+
+          // Log the leadership change
+          const logMessage = outcome.message ?? `A change in the ${factionName}'s inner chamber. The old voice is gone. ${newLeaderName} speaks now.`
+          next = appendActivityLogEntry(next, 'system', logMessage)
+        }
+        break
+      }
     }
   }
   return next

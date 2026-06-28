@@ -5799,5 +5799,172 @@
     "sourceNpcId": null,
     "presentationFlavour": null,
     "firingMode": "world"
+  },
+  {
+    "id": "event-compact-leadership-coup",
+    "title": "Coup in the Civic Compact",
+    "description": "Internal tensions within the Civic Compact have come to a head. Verek Holst's hardline approach has alienated key allies. A faction within the faction is making moves.",
+    "triggerConditions": {
+      "factionStandingAbove": {
+        "factionId": "faction-civic-compact",
+        "threshold": 50
+      },
+      "dayMin": 25,
+      "probability": 0.15
+    },
+    "choices": [
+      {
+        "id": "choice-back-coup",
+        "label": "Support the challenger (npc-sable-wrent)",
+        "outcomes": [
+          {
+            "type": "setFactionLeader",
+            "npcId": "npc-sable-wrent",
+            "target": "faction-civic-compact",
+            "message": "The Civic Compact undergoes a quiet revolution. Sable Wrent emerges as the new voice, promising pragmatism over dogma."
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-civic-compact",
+            "delta": 10
+          }
+        ]
+      },
+      {
+        "id": "choice-remain-neutral",
+        "label": "Stay out of internal faction business",
+        "outcomes": [
+          {
+            "type": "setFactionLeader",
+            "npcId": "npc-sable-wrent",
+            "target": "faction-civic-compact",
+            "message": "The Civic Compact's leadership changes hands. Verek Holst steps aside; Sable Wrent takes the chair."
+          },
+          {
+            "type": "addActivityLogEntry",
+            "message": "The Compact's internal affairs are none of your concern — but the outcome affects everyone."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "intrigue",
+      "faction-leadership",
+      "civic-compact"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "firingMode": "system"
+  },
+  {
+    "id": "event-gilded-leadership-succession",
+    "title": "Succession in the Gilded Court",
+    "description": "Lady Lirien Ashcroft's health has been a subject of whispered speculation. Now the question is no longer theoretical. The Court prepares for a new era.",
+    "triggerConditions": {
+      "dayMin": 30,
+      "probability": 0.2
+    },
+    "choices": [
+      {
+        "id": "choice-endorse-enemy",
+        "label": "Endorse Lady Sorn's faction",
+        "outcomes": [
+          {
+            "type": "setFactionLeader",
+            "npcId": "npc-enemy-lady-sorn",
+            "target": "faction-gilded-court",
+            "message": "The Gilded Court selects a new voice. Lady Sorn's pragmatism wins over the assembled nobles."
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": 5
+          }
+        ]
+      },
+      {
+        "id": "choice-endorse-ally",
+        "label": "Support a moderate candidate (npc-oswin-farr)",
+        "outcomes": [
+          {
+            "type": "setFactionLeader",
+            "npcId": "npc-oswin-farr",
+            "target": "faction-gilded-court",
+            "message": "The Gilded Court chooses a new direction. Oswin Farr brings a conciliatory tone to the faction."
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-gilded-court",
+            "delta": 8
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "intrigue",
+      "faction-leadership",
+      "gilded-court"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "firingMode": "system"
+  },
+  {
+    "id": "event-foundry-leadership-discrediting",
+    "title": "Scandal in the Foundry League",
+    "description": "Sable Wrent's management of the ironworks has come under scrutiny. Whispers of corruption and mismanagement are spreading through the workshops.",
+    "triggerConditions": {
+      "factionStandingBelow": {
+        "factionId": "faction-foundry-league",
+        "threshold": -30
+      },
+      "dayMin": 20,
+      "probability": 0.18
+    },
+    "choices": [
+      {
+        "id": "choice-expose-corruption",
+        "label": "Push the scandal forward",
+        "outcomes": [
+          {
+            "type": "setFactionLeader",
+            "npcId": "npc-enemy-harlen-voss",
+            "target": "faction-foundry-league",
+            "message": "The Foundry League replaces its leadership amid scandal. Harlen Voss promises transparency and reform."
+          },
+          {
+            "type": "adjustFactionStanding",
+            "target": "faction-foundry-league",
+            "delta": -5
+          }
+        ]
+      },
+      {
+        "id": "choice-quiet-observation",
+        "label": "Wait and see how it plays out",
+        "outcomes": [
+          {
+            "type": "setFactionLeader",
+            "npcId": "npc-enemy-harlen-voss",
+            "target": "faction-foundry-league",
+            "message": "The Foundry League's leadership changes. Sable Wrent steps down; Harlen Voss takes the floor."
+          }
+        ]
+      }
+    ],
+    "isAutoResolved": false,
+    "tags": [
+      "intrigue",
+      "faction-leadership",
+      "foundry-league"
+    ],
+    "repeatable": false,
+    "sourceDistrictId": null,
+    "sourceNpcId": null,
+    "firingMode": "system"
   }
 ]

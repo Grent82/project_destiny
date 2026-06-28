@@ -16,6 +16,7 @@ export const eventOutcomeTypeSchema = z.enum([
   'addNpcToRoster',
   'transferBondedNpc',
   'createBond',
+  'setFactionLeader',
 ])
 
 export const eventOutcomeSchema = z
