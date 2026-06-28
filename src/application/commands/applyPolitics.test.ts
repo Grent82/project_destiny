@@ -710,3 +710,92 @@ describe('leader trait modifiers', () => {
     ;(contentCatalog as Partial<typeof contentCatalog>).npcsById = new Map(originalNpcs.map((n) => [n.id, n]))
   })
 })
+
+// ── Agenda Tree Progress Tracking Tests ───────────────────────────────────────
+
+describe('updateAgendaTreeProgress voteTemplateId mapping', () => {
+  it('tracks agenda node progress by voteTemplateId, not vote.id', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      day: 20, // Day 20 > expiresOnDay 17, so vote will expire
+      activeCouncilVotes: [
+        {
+          id: 'cvote-compact-patrol-expansion-day-13',
+          title: 'Patrol Expansion',
+          description: 'Test vote',
+          proposingFactionId: 'faction-civic-compact',
+          targetFactionId: null,
+          effect: 'Test',
+          mechanicalEffects: [],
+          tags: ['order'],
+          playerInfluenceThreshold: 30,
+          expiresOnDay: 17, // Already expired on day 17
+          outcome: 'pending' as const,
+          playerVote: null,
+        },
+      ],
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) =>
+        fs.factionId === 'faction-civic-compact'
+          ? {
+              ...fs,
+              leaderNpcId: 'npc-ida-rhys',
+              agendaProgress: [
+                {
+                  treeId: 'agenda-compact-security',
+                  nodeProgress: {},
+                  completed: false,
+                  blocked: false,
+                },
+              ],
+            }
+          : fs,
+      ),
+    })
+
+    // rng = 0 → vote passes (0 < 0.5 = true)
+    const after = applyPolitics(state, () => 0)
+
+    // Check that agenda progress was updated for node-1-patrol-expansion
+    const compactFaction = after.factionStates.find((f) => f.factionId === 'faction-civic-compact')
+    const agendaProgress = compactFaction?.agendaProgress.find((a) => a.treeId === 'agenda-compact-security')
+    expect(agendaProgress?.nodeProgress['node-1-patrol-expansion']).toBe('completed')
+  })
+
+  it('returns unchanged state when no agenda trees exist for faction', () => {
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      day: 20, // Day 20 > expiresOnDay 17, so vote will expire
+      activeCouncilVotes: [
+        {
+          id: 'cvote-compact-patrol-expansion-day-13',
+          title: 'Patrol Expansion',
+          description: 'Test vote',
+          proposingFactionId: 'faction-civic-compact',
+          targetFactionId: null,
+          effect: 'Test',
+          mechanicalEffects: [],
+          tags: ['order'],
+          playerInfluenceThreshold: 30,
+          expiresOnDay: 17, // Already expired on day 17
+          outcome: 'pending' as const,
+          playerVote: null,
+        },
+      ],
+      factionStates: initialGameStateSnapshot.factionStates.map((fs) =>
+        fs.factionId === 'faction-civic-compact'
+          ? {
+              ...fs,
+              leaderNpcId: 'npc-ida-rhys',
+              agendaProgress: [], // No agenda trees
+            }
+          : fs,
+      ),
+    })
+
+    const before = state.factionStates.find((f) => f.factionId === 'faction-civic-compact')?.agendaProgress
+    const after = applyPolitics(state, () => 0)
+    const afterFaction = after.factionStates.find((f) => f.factionId === 'faction-civic-compact')
+
+    expect(afterFaction?.agendaProgress).toEqual(before)
+  })
+})

@@ -48,7 +48,7 @@ export const agendaTreeNodeSchema = z
   .object({
     id: z.string().min(1),
     title: z.string().min(1),
-    voteTemplateId: z.string().min(1),
+    voteTemplateId: z.string().min(1).optional(),
     unlockedByNodeId: z.string().min(1).optional(),
     requiredOutcome: z.enum(['pass', 'fail']).default('pass'),
     description: z.string().optional(),

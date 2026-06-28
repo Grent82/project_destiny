@@ -5,6 +5,7 @@ import encounterTablesData from '../../../data/definitions/encounter-tables.json
 import districts from '../../../data/definitions/districts.json'
 import poisData from '../../../data/definitions/pois.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
+import factionAgendasData from '../../../data/definitions/faction-agendas.json'
 import dialoguesData from '../../../data/definitions/dialogues.json'
 import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import events from '../../../data/definitions/events.json'
@@ -43,6 +44,7 @@ import {
 import { titleDefinitionSchema, type TitleDefinition } from '../../domain/titles/contracts'
 import { questTemplateSchema, type QuestTemplate } from '../../domain/quests/contracts'
 import { councilVoteEventSchema, type CouncilVoteEvent } from '../../domain/governance/contracts'
+import { agendaTreeSchema } from '../../domain/factions/contracts'
 import { expeditionDestinationSchema } from '../../domain/expedition/contracts'
 import { dialogueTreeSchema, type DialogueTree } from '../../domain/dialogue/contracts'
 import { rumorTemplateSchema, eventRumorTemplateSchema, type RumorTemplate } from '../../domain/rumors/contracts'
@@ -87,6 +89,7 @@ export type PoiDefinition = z.infer<typeof poiSchema>
 const parsedTitles = titleDefinitionSchema.array().parse(titlesData)
 const parsedQuests = questTemplateSchema.array().parse(questsData)
 const parsedCouncilVotes = councilVoteEventSchema.array().parse(councilVotesData)
+const parsedAgendaTrees = agendaTreeSchema.array().parse(factionAgendasData)
 const parsedDialogues = dialogueTreeSchema.array().parse(dialoguesData)
 const parsedNpcs = npcDefinitionSchema.array().parse(npcs)
 const parsedDistricts = districtDefinitionSchema.array().parse(districts)
@@ -180,6 +183,8 @@ export const contentCatalog = {
   events: parsedEvents,
   eventsById: toMap(parsedEvents),
   councilVotes: parsedCouncilVotes,
+  agendaTrees: parsedAgendaTrees,
+  agendaTreesById: toMap(parsedAgendaTrees),
   expeditionDestinations: parsedDestinations,
   expeditionDestinationsById: new Map(parsedDestinations.map((d) => [d.id, d])),
   dialogues: parsedDialogues,

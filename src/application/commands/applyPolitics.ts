@@ -32,6 +32,19 @@ function updateAgendaTreeProgress(
   const factionDef = contentCatalog.factions.find((f) => f.id === factionId)
   if (!factionDef?.agendaTreeIds?.length) return next
 
+  // Extract base template ID from vote ID (vote.id = `${template.id}-day-${currentDay}`)
+  const voteIdPattern = /^(.+)-day-\d+$/
+  const match = vote.id.match(voteIdPattern)
+  const baseTemplateId = match ? match[1] : vote.id
+
+  // Find the agenda tree node that matches this vote template
+  const matchingNode = contentCatalog.agendaTrees
+    .flatMap((tree) => tree.nodes)
+    .find((node) => node.voteTemplateId === baseTemplateId)
+
+  // If no matching node found, nothing to update
+  if (!matchingNode) return next
+
   // Update progress for each faction's agenda trees
   const updatedFactionStates = next.factionStates.map((fs) => {
     if (fs.factionId !== factionId) return fs
@@ -39,18 +52,14 @@ function updateAgendaTreeProgress(
     const updatedProgress = fs.agendaProgress.map((progress) => {
       if (!factionDef.agendaTreeIds.includes(progress.treeId)) return progress
 
-      // Check if this vote matches any node in this tree
-      // For now, we use a simplified approach: if the vote ID contains the tree ID, advance progress
-      const matchingNode = progress.nodeProgress[vote.id]
-      if (matchingNode === undefined) {
-        // No matching node found, return unchanged
-        return progress
-      }
+      // Check if this vote matches any node in this tree by voteTemplateId
+      // The key in nodeProgress is the node ID, not the voteTemplateId
+      const nodeKey = matchingNode.id
 
-      // Update node progress
+      // Update node progress using node ID as the key
       const newNodeProgress = {
         ...progress.nodeProgress,
-        [vote.id]: outcome,
+        [nodeKey]: outcome,
       }
 
       // Check if tree is complete (all nodes resolved)

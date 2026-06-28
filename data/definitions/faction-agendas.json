@@ -23,6 +23,7 @@
       {
         "id": "node-3-suppression-act",
         "title": "Public Order Act",
+        "voteTemplateId": "cvote-compact-public-order-act",
         "unlockedByNodeId": "node-2-checkpoint-funding",
         "requiredOutcome": "pass",
         "description": "Final legislation for expanded enforcement powers."
@@ -73,6 +74,7 @@
       {
         "id": "node-3-monopoly",
         "title": "Trade Monopoly Charter",
+        "voteTemplateId": "cvote-gilded-trade-monopoly",
         "unlockedByNodeId": "node-2-titles",
         "requiredOutcome": "pass",
         "description": "Grant exclusive trade rights to Court allies."
@@ -122,6 +124,7 @@
       {
         "id": "node-3-autonomy",
         "title": "Industrial Autonomy Charter",
+        "voteTemplateId": "cvote-league-industrial-autonomy",
         "unlockedByNodeId": "node-2-wages",
         "requiredOutcome": "pass",
         "description": "Grant self-governance to industrial districts."
