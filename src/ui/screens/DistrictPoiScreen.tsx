@@ -8,6 +8,7 @@ import {
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { buildVenueSearch } from './locationContext'
+import { PoiPlaceholder } from '../components/PoiPlaceholder'
 
 const POI_TYPE_LABELS: Record<string, string> = {
   guild: 'Guild Hall',
@@ -154,15 +155,28 @@ export function DistrictPoiScreen() {
         </article>
 
         <article className="detail-panel">
-          {npc && (
-            <>
-              <h3 style={{ marginTop: '1rem' }}>Known presence</h3>
-              <p className="summary" style={{ marginBottom: '0.5rem' }}>
-                {npc.name}
-              </p>
-              <p className="summary">{npc.description ?? npc.background}</p>
-            </>
-          )}
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+            <PoiPlaceholder
+              poiType={poi.type}
+              poiName={poi.name}
+              factionId={poi.factionId}
+              size="small"
+              showLabel={false}
+            />
+            <div style={{ flex: 1 }}>
+              <h3 style={{ marginTop: '0.5rem' }}>About this venue</h3>
+              <p className="summary">{poi.description}</p>
+              {npc && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  <strong style={{ fontSize: '0.9rem' }}>Known presence:</strong>
+                  <p className="summary" style={{ marginBottom: '0.5rem' }}>
+                    {npc.name}
+                  </p>
+                  <p className="summary">{npc.description ?? npc.background}</p>
+                </div>
+              )}
+            </div>
+          </div>
           {poi.dialogueId && (
             <button
               className="action-button action-button--secondary"
