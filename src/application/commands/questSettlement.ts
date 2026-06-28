@@ -180,9 +180,9 @@ function deriveQuestOutcomeType(questId: string): QuestEventParams['questOutcome
   return 'quest-resolved'
 }
 
-export function settleQuestSuccess(state: GameState, questId: string, options: QuestSuccessOptions = {}) {
+export function settleQuestSuccess(state: GameState, questId: string, options: QuestSuccessOptions = {}): GameState {
   const settlementTarget = findQuestSettlementTarget(state, questId)
-  if (!settlementTarget) return false
+  if (!settlementTarget) return state
 
   const { questIndex, runtime, template } = settlementTarget
   const rewardScale = options.rewardScale ?? 1
@@ -227,7 +227,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
       `complete-${questId}`,
     )
     applyQuestAftermath(state, runtime.aftermath, questTitle)
-    return true
+    return state
   }
 
   const corruption = state.cityDials.corruption
@@ -473,7 +473,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
     state.rumors.push(eventRumor)
   }
 
-  return true
+  return state
 }
 
 /**
@@ -532,12 +532,12 @@ export function settleQuestPartialSuccess(state: GameState, questId: string, opt
     `partial-${questId}`,
   )
 
-  return true
+  return state
 }
 
-export function settleQuestFailure(state: GameState, questId: string, options: QuestFailureOptions = {}) {
+export function settleQuestFailure(state: GameState, questId: string, options: QuestFailureOptions = {}): GameState {
   const settlementTarget = findQuestSettlementTarget(state, questId)
-  if (!settlementTarget) return false
+  if (!settlementTarget) return state
 
   const { questIndex, runtime, template } = settlementTarget
   runtime.status = 'failed'
@@ -583,5 +583,5 @@ export function settleQuestFailure(state: GameState, questId: string, options: Q
     activateSuccessorQuestLead(state, template.successorOnFailQuestId, questTitle)
   }
 
-  return true
+  return state
 }

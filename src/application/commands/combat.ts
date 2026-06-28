@@ -425,7 +425,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
     }
 
     if (combat.linkedQuestId) {
-      settleQuestSuccess(nextState, combat.linkedQuestId, {
+      nextState = settleQuestSuccess(nextState, combat.linkedQuestId, {
         objectiveLabel: 'The on-site clash is settled. Return to house business.',
         journalEntry: 'The contract was settled in live combat at the incident site.',
         completionMessage: `Contract fulfilled in the field.`,
@@ -511,13 +511,14 @@ export function concludeCombatEncounter(state: GameState): GameState {
             break
           case 'fail':
           default:
-            handledLinkedQuestFailure = settleQuestFailure(nextState, combat.linkedQuestId, {
+            nextState = settleQuestFailure(nextState, combat.linkedQuestId, {
               failureMessage: `The squad was driven back. ${runtime.acceptedTitle} fails unless the house can bargain for another chance.`,
               failureCategory: 'combat',
               journalEntry:
                 'The squad was beaten back at the incident site and the contract collapsed.',
               objectiveLabel: 'The incident ended in defeat. The contract is lost.',
             })
+            handledLinkedQuestFailure = true
             break
         }
       }
