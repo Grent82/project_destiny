@@ -97,8 +97,10 @@ export function ExpeditionPrepScreen() {
 
   function handleDispatchCorridorRun() {
     if (!canDispatchCorridorRun() || !corridorRunQuest) return
-    // Note: For MVP, we navigate to contracts where the player can dispatch the run
-    // Full implementation: add advanceCorridorRunQuest command to update quest stage
+    dispatch(gameActions.advanceCorridorRunQuest({
+      questId: corridorRunQuest.runtime.questId,
+      squadNpcIds: squadIds,
+    }))
     navigate('/contracts')
   }
 

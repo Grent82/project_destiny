@@ -16,6 +16,7 @@ import { resourcesReducers } from './slices/resourcesReducers'
 import { rosterReducers } from './slices/rosterReducers'
 import { timeReducers } from './slices/timeReducers'
 import { worldReducers } from './slices/worldReducers'
+import { advanceCorridorRunQuest as advanceCorridorRunQuestCommand } from '../../application/commands/advanceCorridorRunQuest'
 
 const gameSlice = createSlice({
   name: 'game',
@@ -101,6 +102,10 @@ const gameSlice = createSlice({
         message: action.payload.message,
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+    },
+
+    advanceCorridorRunQuest(state: GameState, action: PayloadAction<{ questId: string; squadNpcIds: string[] }>) {
+      return advanceCorridorRunQuestCommand(state, action.payload.questId, action.payload.squadNpcIds)
     },
   },
 })
