@@ -128,6 +128,7 @@ const baseState: GameState = {
   npcSitePresences: [],
   pendingConsumableDecision: null,
   houseWardSeats: 0,
+  houseProposalCooldown: 0,
   bondedPersonsRegistry: {},
   pendingDateProposals: [],
   scheduledDates: [],

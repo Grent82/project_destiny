@@ -306,6 +306,7 @@
     "faction-restored": 0
   },
   "houseWardSeats": 0,
+  "houseProposalCooldown": 0,
   "institutionalStanding": {
     "faction-civic-compact": "neutral",
     "faction-gilded-court": "watched",

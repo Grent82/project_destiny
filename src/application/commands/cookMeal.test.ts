@@ -117,6 +117,7 @@ const baseState: GameState = {
   scheduledDates: [],
   npcDateCooldowns: {},
   houseWardSeats: 0,
+  houseProposalCooldown: 0,
   debtAmount: 800,
   debtClaimantNpcId: 'npc-enemy-harlen-voss',
   debtEnforcementFactionId: 'faction-gilded-court',

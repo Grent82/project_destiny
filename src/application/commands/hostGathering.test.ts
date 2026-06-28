@@ -73,6 +73,7 @@ const createBaseState = (roster: NpcRuntimeState[] = [idaRhysRosterEntry]): Game
   privateCorrespondence: [],
   councilSeats: { 'faction-civic-compact': 3, 'faction-gilded-court': 2, 'faction-foundry-league': 2, 'faction-tallow-ring': 0, 'faction-restored': 0 },
   houseWardSeats: 0,
+  houseProposalCooldown: 0,
   institutionalStanding: {},
   activeCouncilVotes: [],
   relationships: {},

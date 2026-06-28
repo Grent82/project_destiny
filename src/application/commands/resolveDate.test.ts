@@ -66,6 +66,7 @@ const baseGameState: GameState = {
   questHistory: [],
   councilSeats: {},
   houseWardSeats: 0,
+  houseProposalCooldown: 0,
   institutionalStanding: {},
   activeCouncilVotes: [],
   relationships: {},

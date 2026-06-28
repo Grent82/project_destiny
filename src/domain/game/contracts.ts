@@ -341,6 +341,7 @@ export const gameStateSchema = z
     houseWardSeats: z.number().min(0).default(0),
     institutionalStanding: z.record(z.string(), institutionalTierSchema).default({}),
     activeCouncilVotes: z.array(councilVoteEventSchema).default([]),
+    houseProposalCooldown: z.number().min(0).default(0),
     relationships: z.record(z.string(), gameRelationshipAxesSchema).default({}),
     equippedItemDurabilities: z.record(
       z.string(),

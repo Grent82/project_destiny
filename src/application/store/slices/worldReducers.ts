@@ -15,6 +15,7 @@ import { buildEventRumorEntry } from '../../commands/spawnEventRumor'
 import { contentCatalog, getNpcDefinitions } from '../../content/contentCatalog'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 import { applyVoteEffects } from '../../commands/applyPolitics'
+import { proposeCouncilVote as proposeCouncilVoteCommand } from '../../commands/proposeCouncilVote'
 import { createRng } from '../../commands/seededRng'
 
 export const worldReducers = {
@@ -311,5 +312,17 @@ export const worldReducers = {
           : `House Valdris leans on chamber sponsors to ${stance} "${vote.title}".`,
     })
     if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+  },
+
+  proposeCouncilVote(
+    state: GameState,
+    action: PayloadAction<{
+      voteTemplate: CouncilVoteEvent
+      mode: 'direct' | 'sponsored'
+      sponsorFactionId?: string
+    }>,
+  ) {
+    const { voteTemplate, mode, sponsorFactionId } = action.payload
+    return proposeCouncilVoteCommand(state, voteTemplate, mode, sponsorFactionId, () => state.rngSeed / 1000000)
   },
 }
