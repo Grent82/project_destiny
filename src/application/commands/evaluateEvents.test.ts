@@ -557,6 +557,87 @@ describe('applyOutcomes', () => {
     expect(next.rngSeed).not.toBe(state.rngSeed)
   })
 
+  it('createBond adds bondStatus to NPC with correct entry reason', () => {
+    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const next = applyOutcomes(state, [
+      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'debt-settlement', delta: 100 },
+    ])
+    const npc = next.roster.find((r) => r.npcId === state.roster[0]!.npcId)
+    expect(npc?.bondStatus).toBeDefined()
+    expect(npc?.bondStatus?.entryReason).toBe('debt-settlement')
+    expect(npc?.bondStatus?.contractValue).toBe(100)
+    expect(npc?.bondStatus?.ownerType).toBe('player')
+  })
+
+  it('createBond with termDays sets the term correctly', () => {
+    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const next = applyOutcomes(state, [
+      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'compact-assessment', target: '30', delta: 50 },
+    ])
+    const npc = next.roster.find((r) => r.npcId === state.roster[0]!.npcId)
+    expect(npc?.bondStatus?.termDays).toBe(30)
+  })
+
+  it('createBond uses default contractValue when delta not provided', () => {
+    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const next = applyOutcomes(state, [
+      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'voluntary' },
+    ])
+    const npc = next.roster.find((r) => r.npcId === state.roster[0]!.npcId)
+    expect(npc?.bondStatus?.contractValue).toBe(50) // default
+  })
+
+  it('createBond warns and skips when npcId is missing', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'createBond', value: 'debt-settlement' }])
+
+    expect(next).toEqual(state)
+    expect(warn).toHaveBeenCalledWith('applyEventOutcome: outcome type "createBond" is missing required field(s): npcId')
+  })
+
+  it('createBond warns and skips when entry reason is missing', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const next = applyOutcomes(state, [{ type: 'createBond', npcId: state.roster[0]!.npcId }])
+
+    expect(next).toEqual(state)
+    expect(warn).toHaveBeenCalledWith('applyEventOutcome: outcome type "createBond" is missing required field(s): value (entryReason)')
+  })
+
+  it('createBond warns and skips when entry reason is invalid', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const next = applyOutcomes(state, [
+      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'invalid-reason' as any },
+    ])
+
+    expect(next).toEqual(state)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('invalid entry reason'))
+  })
+
+  it('createBond warns and skips when NPC not found in roster', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const state = makeState()
+    const next = applyOutcomes(state, [
+      { type: 'createBond', npcId: 'npc-nonexistent', value: 'debt-settlement' },
+    ])
+
+    expect(next).toEqual(state)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('could not find NPC'))
+  })
+
+  it('createBond appends activity log entry with message', () => {
+    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const npcName = state.roster[0]!.name
+    const next = applyOutcomes(state, [
+      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'combat-capture', message: '{npcName} was captured in battle.' },
+    ])
+    const logEntry = next.activityLog.find((e) => e.message.includes(npcName))
+    expect(logEntry).toBeDefined()
+    expect(logEntry?.message).toContain('captured in battle')
+  })
+
   it('addNpcToRoster is idempotent — does not duplicate if already on roster', () => {
     const state = makeState()
     const once = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])

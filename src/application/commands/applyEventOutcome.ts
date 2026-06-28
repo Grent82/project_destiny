@@ -394,6 +394,68 @@ export function applyOutcomes(
         next = transferBondedNpc(next, npcId, buyerId)
         break
       }
+      case 'createBond': {
+        // Required fields: npcId (from context or outcome), entryReason
+        // Optional: contractValue, termDays, marketValue
+        const npcId = outcome.npcId ?? context?.npcId
+        if (!npcId) {
+          warnMissingFields(outcome.type, ['npcId'])
+          break
+        }
+        // entryReason must be provided via outcome.value or a dedicated field
+        // For now, we'll use outcome.value to carry the entry reason string
+        const entryReasonRaw = outcome.value
+        if (!entryReasonRaw) {
+          warnMissingFields(outcome.type, ['value (entryReason)'])
+          break
+        }
+        // Validate entry reason against bondEntryReasonSchema
+        const validEntryReasons = ['compact-assessment', 'debt-settlement', 'voluntary', 'combat-capture', 'inherited'] as const
+        if (!validEntryReasons.includes(entryReasonRaw as typeof validEntryReasons[number])) {
+          console.warn(`applyEventOutcome: invalid entry reason "${entryReasonRaw}" — must be one of: ${validEntryReasons.join(', ')}`)
+          break
+        }
+        const entryReason = entryReasonRaw as 'compact-assessment' | 'debt-settlement' | 'voluntary' | 'combat-capture' | 'inherited'
+
+        // Find the NPC in the roster
+        const npcIndex = next.roster.findIndex((r) => r.npcId === npcId)
+        if (npcIndex === -1) {
+          console.warn(`applyEventOutcome: createBond could not find NPC "${npcId}" in roster — outcome skipped`)
+          break
+        }
+
+        const npc = next.roster[npcIndex]
+        const contractValue = outcome.delta ?? 50  // Default contract value if not specified
+        const termDays = outcome.target ? parseInt(outcome.target, 10) : null  // Use target for term days
+        const marketValue = outcome.marketValue ?? contractValue
+
+        // Create bond status
+        const bondStatus = {
+          holderId: 'player' as const,
+          contractValue,
+          termDays,
+          entryReason,
+          alongsideFreeAssignmentDays: 0,
+          lastEqualityNoticeDay: null,
+          forSale: false,
+          lastOfferDay: null,
+          marketValue,
+          ownerType: 'player' as const,
+          bondStartDay: next.day,
+        }
+
+        // Update the NPC with bond status
+        next = {
+          ...next,
+          roster: next.roster.map((entry, idx) =>
+            idx === npcIndex ? { ...entry, bondStatus } : entry
+          ),
+        }
+
+        const resolvedMessage = outcome.message?.replaceAll('{npcName}', npc.name) ?? `${npc.name} is now bound to the house (${entryReason}).`
+        next = appendActivityLogEntry(next, 'system', resolvedMessage)
+        break
+      }
     }
   }
   return next

@@ -15,6 +15,7 @@ export const eventOutcomeTypeSchema = z.enum([
   'unlockNpc',
   'addNpcToRoster',
   'transferBondedNpc',
+  'createBond',
 ])
 
 export const eventOutcomeSchema = z
@@ -49,6 +50,7 @@ export const eventOutcomeSchema = z
     objectiveLabel: z.string().optional(),
     arcId: z.string().optional(),
     buyerId: z.string().optional(),
+    marketValue: z.number().optional(),
   })
   .strict()
 
