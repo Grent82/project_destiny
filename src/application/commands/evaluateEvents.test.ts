@@ -609,7 +609,7 @@ describe('applyOutcomes', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
     const next = applyOutcomes(state, [
-      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'invalid-reason' as any },
+      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'invalid-reason' as string },
     ])
 
     expect(next).toEqual(state)
