@@ -44,6 +44,7 @@ export interface NpcBondSurface {
   marketValue: number | null
   forSale: boolean
   ransomCost: number | null
+  canAffordRelease: boolean
   rosterSummary: string | null
   rosterBadges: string[]
 }
@@ -150,7 +151,7 @@ export interface BrokerageRiskOverview {
   heavyHoldActive: boolean
 }
 
-export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSurface {
+export function describeNpcBondSurface(bondStatus: BondStatus | null, playerMoney: number = 0): NpcBondSurface {
   if (!bondStatus) {
     return {
       status: 'free',
@@ -161,6 +162,7 @@ export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSu
       marketValue: null,
       forSale: false,
       ransomCost: null,
+      canAffordRelease: true,
       rosterSummary: null,
       rosterBadges: [],
     }
@@ -170,6 +172,7 @@ export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSu
   const entryReasonLabel = formatBondEntryReason(bondStatus.entryReason)
 
   if (bondStatus.ownerType === 'player') {
+    const canAfford = playerMoney >= (bondStatus.contractValue ?? 0)
     return {
       status: 'player-held',
       holderName,
@@ -179,11 +182,14 @@ export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSu
       marketValue: bondStatus.marketValue,
       forSale: bondStatus.forSale,
       ransomCost: null,
+      canAffordRelease: canAfford,
       rosterSummary: 'Bound to the house',
       rosterBadges: bondStatus.forSale ? ['Marked for transfer'] : [],
     }
   }
 
+  const ransomCost = Math.ceil(bondStatus.marketValue * 1.5)
+  const canAfford = playerMoney >= ransomCost
   return {
     status: 'npc-held',
     holderName,
@@ -192,7 +198,8 @@ export function describeNpcBondSurface(bondStatus: BondStatus | null): NpcBondSu
     termDays: bondStatus.termDays,
     marketValue: bondStatus.marketValue,
     forSale: false,
-    ransomCost: Math.ceil(bondStatus.marketValue * 1.5),
+    ransomCost,
+    canAffordRelease: canAfford,
     rosterSummary: `Held by ${holderName}`,
     rosterBadges: [],
   }
@@ -370,10 +377,10 @@ export function selectNpcBondSurface(state: RootState, npcId: string): NpcBondSu
   let selector = npcBondSurfaceSelectorCache.get(npcId)
   if (!selector) {
     selector = createSelector(
-      [(root: RootState) => root.game.roster],
-      (roster) => {
+      [(root: RootState) => root.game.roster, (root: RootState) => root.game.money],
+      (roster, money) => {
         const npc = roster.find((entry) => entry.npcId === npcId)
-        return describeNpcBondSurface(npc?.bondStatus ?? null)
+        return describeNpcBondSurface(npc?.bondStatus ?? null, money)
       },
     )
     npcBondSurfaceSelectorCache.set(npcId, selector)

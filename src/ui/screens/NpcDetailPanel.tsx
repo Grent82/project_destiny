@@ -197,6 +197,8 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
               className="action-button action-button--secondary"
               type="button"
               onClick={() => dispatch(gameActions.freeNpc({ npcId: detail.npcId }))}
+              disabled={!bondSurface.canAffordRelease}
+              title={!bondSurface.canAffordRelease ? `Need ${bondSurface.contractValue} Marks to release from bond.` : 'Release this NPC from their bond contract.'}
             >
               Release from bond
             </button>
@@ -261,6 +263,8 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
               className="action-button action-button--secondary"
               type="button"
               onClick={() => dispatch(gameActions.rescueBondedNpcLegal({ npcId: detail.npcId }))}
+              disabled={!bondSurface.canAffordRelease}
+              title={!bondSurface.canAffordRelease ? `Need ${bondSurface.ransomCost} Marks for legal buyout.` : 'Buy the NPC\'s freedom through legal channels.'}
             >
               Buy freedom
             </button>
@@ -268,6 +272,7 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
               className="action-button"
               type="button"
               onClick={() => dispatch(gameActions.rescueBondedNpcExtraction({ npcId: detail.npcId }))}
+              title="Stealthily extract the NPC without alerting the holder."
             >
               Extract quietly
             </button>
@@ -275,6 +280,7 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
               className="action-button action-button--danger"
               type="button"
               onClick={() => dispatch(gameActions.rescueBondedNpcForce({ npcId: detail.npcId }))}
+              title="Use force to seize the NPC from the holder."
             >
               Seize by force
             </button>
