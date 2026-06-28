@@ -108,4 +108,105 @@ describe('RosterScreen', () => {
     expect(within(marionRow).getByText(/Marked for transfer/i)).toBeInTheDocument()
     expect(within(idaRow).getByText(/Held by Compact Registrar/i)).toBeInTheDocument()
   })
+
+  it('shows empty state when roster has no members', () => {
+    const store = createGameStore({
+      ...initialStateWithIda,
+      roster: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText(/The Roster/i)).toBeInTheDocument()
+    expect(screen.getByText(/No operatives/i)).toBeInTheDocument()
+  })
+
+  it('displays idle NPCs with At liberty status', () => {
+    const store = createGameStore({
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, assignment: 'idle' as const } : npc
+      ),
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    const marionButton = screen.getByRole('button', { name: /Marion Vale/i })
+    expect(marionButton).toBeInTheDocument()
+  })
+
+  it('displays working NPCs with job assignment', () => {
+    const store = createGameStore({
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale'
+          ? { ...npc, assignment: 'working' as const, roomAssignment: 'room-kitchen' }
+          : npc
+      ),
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    const marionButton = screen.getByRole('button', { name: /Marion Vale/i })
+    expect(marionButton).toBeInTheDocument()
+  })
+
+  it('displays NPC title badge when active title is assigned', () => {
+    const store = createGameStore({
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-house-lord' } : npc
+      ),
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    const marionButton = screen.getByRole('button', { name: /Marion Vale/i })
+    expect(marionButton).toBeInTheDocument()
+  })
+
+  it('allows filtering by assignment state', () => {
+    const store = createGameStore({
+      ...initialStateWithIda,
+      roster: [
+        { ...initialStateWithIda.roster[0], assignment: 'idle' as const },
+        { ...initialStateWithIda.roster[1], assignment: 'working' as const, roomAssignment: 'room-kitchen' },
+      ],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <RosterScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('button', { name: /Marion Vale/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Ida Rhys/i })).toBeInTheDocument()
+  })
 })
