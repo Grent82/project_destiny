@@ -1,0 +1,106 @@
+/* PortraitFallback Component Styles */
+
+.portrait-fallback {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-md);
+  background: linear-gradient(175deg, #1e160d 0%, #0d0a07 100%);
+  border: 2px solid var(--portrait-accent, rgba(201, 168, 76, 0.25));
+  border-left: 4px solid var(--portrait-accent, rgba(201, 168, 76, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  color: var(--portrait-accent, rgba(201, 168, 76, 0.6));
+}
+
+/* Size variants */
+.portrait-fallback--small {
+  aspect-ratio: 1 / 1;
+  width: 48px;
+}
+
+.portrait-fallback--medium {
+  /* Default - uses parent width */
+}
+
+.portrait-fallback--large {
+  aspect-ratio: 3 / 4;
+  max-width: 200px;
+}
+
+/* Primary variant - special styling for story NPCs */
+.portrait-fallback--primary {
+  border-left-width: 6px;
+  box-shadow: 0 0 20px rgba(var(--portrait-accent-rgb, 201, 168, 76), 0.2) inset;
+}
+
+/* Faction accent colors */
+.portrait-fallback--compact {
+  --portrait-accent: #4a7fb5;
+}
+
+.portrait-fallback--gilded {
+  --portrait-accent: #c9a84c;
+}
+
+.portrait-fallback--foundry {
+  --portrait-accent: #8b6914;
+}
+
+.portrait-fallback--tallow {
+  --portrait-accent: #7a3a2a;
+}
+
+.portrait-fallback--restored {
+  --portrait-accent: #4a7a5a;
+}
+
+.portrait-fallback--neutral {
+  --portrait-accent: rgba(201, 168, 76, 0.35);
+}
+
+/* Initials display */
+.portrait-fallback-initials {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--portrait-accent, rgba(201, 168, 76, 0.8));
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  position: relative;
+  letter-spacing: 0.05em;
+}
+
+.portrait-fallback--small .portrait-fallback-initials {
+  font-size: 0.9rem;
+}
+
+.portrait-fallback--large .portrait-fallback-initials {
+  font-size: 3rem;
+}
+
+/* Silhouette background */
+.portrait-fallback-silhouette {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--portrait-accent, rgba(201, 168, 76, 0.15));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.portrait-fallback--small .portrait-fallback-silhouette {
+  width: 50%;
+  height: 50%;
+  opacity: 0.5;
+}
+
+.portrait-fallback--large .portrait-fallback-silhouette {
+  width: 80%;
+  height: 80%;
+}

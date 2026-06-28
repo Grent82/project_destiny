@@ -20,6 +20,7 @@ export type ActiveDialoguePresentation = {
   npcId: string
   npcName: string
   portraitSrc: string | null
+  factionId: string | null
   sceneLocation: string
   stageDirection: string
   lineText: string
@@ -161,6 +162,7 @@ export function selectActiveDialoguePresentation(state: RootState): ActiveDialog
     npcId: tree.npcId,
     npcName: npcDef?.name ?? tree.npcId,
     portraitSrc: `/portraits/${portraitId}.jpg`,
+    factionId: npcDef?.factionAffinityId ?? null,
     sceneLocation: resolveDialogueSceneLocation(state.game, tree.id, tree.npcId),
     stageDirection: resolveStageDirection(visibleChoices.length, node.stageDirection),
     lineText: node.text,

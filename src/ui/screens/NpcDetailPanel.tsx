@@ -15,6 +15,8 @@ import { ConfirmationModal } from '../components/ConfirmationModal'
 import { ItemSelectionModal } from '../components/ItemSelectionModal'
 import { IntimacyOptionsModal } from '../components/IntimacyOptionsModal'
 import { DateProposalModal } from '../components/DateProposalModal'
+import { PortraitFallback } from '../components/PortraitFallback'
+import { hasPortraitAvailable } from '../components/portraitUtils'
 import './roster.css'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
@@ -536,23 +538,32 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           className={`muster-portrait-frame npc-portrait-placeholder--${factionClass(detail.factionAffinityId)}`}
           aria-hidden="true"
         >
-          {(() => {
-            const portraitId = detail.npcId.replace('npc-', '');
-            const src = `/portraits/${portraitId}.jpg`;
-            return (
+          {hasPortraitAvailable(detail.npcId) ? (
+            <>
               <img
-                src={src}
+                src={`/portraits/${detail.npcId.replace('npc-', '')}.jpg`}
                 alt=""
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; (e.currentTarget.nextElementSibling as HTMLElement | null)?.style.setProperty('display', 'block'); }}
+                className="npc-portrait-img"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none'
+                  ;(e.currentTarget.nextElementSibling as HTMLElement | null)?.style.setProperty('display', 'block')
+                }}
               />
-            );
-          })()}
-          <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" className="npc-silhouette" style={{ display: 'none' }}>
-            <ellipse cx="50" cy="28" rx="16" ry="18" fill="currentColor" opacity="0.6"/>
-            <path d="M28 32 Q50 15 72 32 Q68 50 50 52 Q32 50 28 32Z" fill="currentColor" opacity="0.5"/>
-            <path d="M22 55 Q50 48 78 55 L85 130 H15 Z" fill="currentColor" opacity="0.45"/>
-            <path d="M18 58 Q30 52 50 50 Q70 52 82 58 L80 72 Q65 65 50 64 Q35 65 20 72Z" fill="currentColor" opacity="0.55"/>
-          </svg>
+              <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" className="npc-silhouette" style={{ display: 'none' }}>
+                <ellipse cx="50" cy="28" rx="16" ry="18" fill="currentColor" opacity="0.6"/>
+                <path d="M28 32 Q50 15 72 32 Q68 50 50 52 Q32 50 28 32Z" fill="currentColor" opacity="0.5"/>
+                <path d="M22 55 Q50 48 78 55 L85 130 H15 Z" fill="currentColor" opacity="0.45"/>
+                <path d="M18 58 Q30 52 50 50 Q70 52 82 58 L80 72 Q65 65 50 64 Q35 65 20 72Z" fill="currentColor" opacity="0.55"/>
+              </svg>
+            </>
+          ) : (
+            <PortraitFallback
+              npcId={detail.npcId}
+              factionId={detail.factionAffinityId}
+              nameOverride={detail.name}
+              isPrimary={detail.npcId === 'npc-marion-vale'}
+            />
+          )}
           {detail.npcId === 'npc-marion-vale' && <span className="muster-portrait-seal" title="Sworn to the house" />}
         </div>
 

@@ -17,6 +17,8 @@ import { checkLineTheyWontCross } from '../../application/npc/checkLineTheyWontC
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
+import { PortraitFallback } from '../components/PortraitFallback'
+import { hasPortraitAvailable } from '../components/portraitUtils'
 
 export function MissionPrepScreen() {
   const { questId = null } = useParams<{ questId: string }>()
@@ -104,14 +106,23 @@ export function MissionPrepScreen() {
         <div className="threat-panel">
           <p className="threat-panel__label">Known Threat</p>
           <div className="threat-panel__body">
-            <div className="threat-panel__portrait npc-portrait-placeholder">
-              <img
-                alt={threatNpc.name}
-                className="npc-portrait-img"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                src={`/portraits/${threatNpc.id.replace('npc-', '')}.jpg`}
+            {hasPortraitAvailable(threatNpc.id) ? (
+              <div className="threat-panel__portrait npc-portrait-placeholder">
+                <img
+                  alt={threatNpc.name}
+                  className="npc-portrait-img"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                  src={`/portraits/${threatNpc.id.replace('npc-', '')}.jpg`}
+                />
+              </div>
+            ) : (
+              <PortraitFallback
+                npcId={threatNpc.id}
+                factionId={threatNpc.factionId ?? null}
+                nameOverride={threatNpc.name}
+                size="medium"
               />
-            </div>
+            )}
             <div className="threat-panel__info">
               <strong className="threat-panel__name">{threatNpc.name}</strong>
               {threatNpc.factionName && (

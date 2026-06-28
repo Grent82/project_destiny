@@ -258,6 +258,7 @@ export const selectThreatNpcForQuest = (state: RootState, questId: string | null
     name: npcDef.name,
     motivation: npcDef.motivation ?? null,
     factionName: faction,
+    factionId: npcDef.factionAffinityId ?? null,
   }
 }
 
