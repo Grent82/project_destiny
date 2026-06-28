@@ -4323,10 +4323,10 @@
     "title": "The Debt",
     "description": "Marion sets a folded paper on the table. The numbers are neat. The margin is not.\n\n800 Marks due at month's end. The house's accounts are near empty. Contracts, work orders, expedition returns — these are the only paths forward. The districts post public work. Start there.",
     "triggerConditions": {
-      "isFirstRun": true,
+      "isFirstRun": false,
       "dayMin": 2,
       "dayMax": 2,
-      "probability": 1
+      "probability": 0
     },
     "choices": [
       {
@@ -4357,10 +4357,10 @@
     "title": "Where the Work Is",
     "description": "Contracts come from two places: district POIs post public work orders, and the Contract Board collects them. The Harbor Ward asks fewer questions about new operators. The Compact issues public leads. It is a place to start.\n\nNavigate to a district from the District Map, then visit a POI to pick up posted work.",
     "triggerConditions": {
-      "isFirstRun": true,
+      "isFirstRun": false,
       "dayMin": 2,
       "dayMax": 2,
-      "probability": 1
+      "probability": 0
     },
     "choices": [
       {
@@ -4391,11 +4391,11 @@
     "title": "Ready Your People",
     "description": "Ida Rhys arrived capable but unequipped. Before any field deployment, visit the Roster screen and assign a weapon and armor through the Loadout tab.\n\nAn unequipped operative fights at a significant disadvantage. The shops carry weapons and armor — buy before you send anyone into the field.",
     "triggerConditions": {
-      "isFirstRun": true,
+      "isFirstRun": false,
       "dayMin": 2,
       "dayMax": 2,
       "requiredRosterNpcId": "npc-ida-rhys",
-      "probability": 1
+      "probability": 0
     },
     "choices": [
       {
@@ -4426,10 +4426,10 @@
     "title": "What a Title Means",
     "description": "Your roster can earn while idle. From the Roster screen, assign a title to an NPC — each unlocks a passive bonus or income stream. A Fence generates marks from black-market contacts. A Quartermaster reduces supply costs. A Medic accelerates recovery.\n\nTitles do not require deployment. They work in the background.",
     "triggerConditions": {
-      "isFirstRun": true,
+      "isFirstRun": false,
       "dayMin": 2,
       "dayMax": 2,
-      "probability": 1
+      "probability": 0
     },
     "choices": [
       {
