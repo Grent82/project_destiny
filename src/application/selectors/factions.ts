@@ -70,3 +70,22 @@ export const selectAllFactionLeaders = createSelector(
       })
       .filter((x): x is NonNullable<typeof x> => x !== null),
 )
+
+/**
+ * Select faction agenda values for display.
+ */
+export const selectFactionAgendas = createSelector(
+  (state: RootState) => state.game.factionStates,
+  (factionStates) =>
+    factionStates
+      .map((faction) => {
+        const factionDef = contentCatalog.factionsById.get(faction.factionId)
+        return {
+          factionId: faction.factionId,
+          factionName: factionDef?.name ?? faction.factionId,
+          agendaValues: factionDef?.agendaAxes?.values ?? [],
+          proposesWhen: factionDef?.agendaAxes?.proposesWhen,
+        }
+      })
+      .filter((f) => f.agendaValues.length > 0),
+)
