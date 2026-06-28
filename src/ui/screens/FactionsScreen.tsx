@@ -1,7 +1,8 @@
 import type React from 'react'
+import { useState } from 'react'
 import { EmptyState } from '../components/EmptyState'
 
-import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions } from '../../application'
+import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions, selectFactionAgendas, getCouncilVoteTemplates } from '../../application'
 import type { InstitutionalTier } from '../../domain'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -66,6 +67,9 @@ export function FactionsScreen() {
   const renownLevel = useAppSelector(selectRenownLevel)
   const restoredWardSeats = useAppSelector((s) => s.game.houseWardSeats)
   const chamberSponsors = renownLevel.councilSeats
+  const factionAgendas = useAppSelector(selectFactionAgendas)
+  const currentDay = useAppSelector((s) => s.game.day)
+  const houseProposalCooldown = useAppSelector((s) => s.game.houseProposalCooldown ?? 0)
   const canInfluenceVotes = restoredWardSeats > 0 || chamberSponsors > 0
   const voteAccessSummary =
     restoredWardSeats > 0
@@ -73,6 +77,26 @@ export function FactionsScreen() {
       : chamberSponsors > 0
         ? `House Valdris holds no restored ward seat, but its name carries enough weight for ${chamberSponsors} sponsor channel${chamberSponsors !== 1 ? 's' : ''} inside council committees.`
         : 'House Valdris currently holds no restored ward seat and no sponsor channel into the chamber.'
+
+  // Player proposal state
+  const [showProposalModal, setShowProposalModal] = useState(false)
+  const [selectedMode, setSelectedMode] = useState<'direct' | 'sponsored'>('direct')
+  const [selectedSponsor, setSelectedSponsor] = useState<string>('')
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('')
+
+  // Check if player can propose
+  const canProposeDirect = restoredWardSeats >= 1
+  // For sponsored proposals, check faction standing (not institutional standing)
+  const sponsorFactions = factions.filter((f) => f.standing >= 50)
+  const canProposeSponsored = sponsorFactions.length > 0
+  const canPropose = canProposeDirect || canProposeSponsored
+  const isOnCooldown = houseProposalCooldown > currentDay
+  const cooldownDaysRemaining = Math.max(0, houseProposalCooldown - currentDay)
+
+  // Get available vote templates for player proposals
+  const availableTemplates = getCouncilVoteTemplates().filter(
+    (t) => t.proposingFactionId === 'house-valdric' || t.tags.includes('house-proposal')
+  )
 
   return (
     <section className="screen-panel">
@@ -99,6 +123,7 @@ export function FactionsScreen() {
       <div className="overview-grid">
         {factions.map((faction) => {
           const tier = standingTier(faction.standing)
+          const agendaData = factionAgendas.find((a) => a.factionId === faction.factionId)
           return (
             <article key={faction.factionId}>
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -124,6 +149,18 @@ export function FactionsScreen() {
                 </div>
                 <span className="badge">{tier}</span>
               </div>
+              {agendaData && agendaData.agendaValues.length > 0 && (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <span className="stat-label" style={{ fontSize: '0.75em' }}>Agenda focuses:</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.25rem' }}>
+                    {agendaData.agendaValues.map((tag) => (
+                      <span key={tag} className="badge" style={{ fontSize: '0.65em', background: 'rgba(148, 163, 184, 0.3)', textTransform: 'lowercase' }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               {faction.standing < -50 && (
                 <p className="summary" style={{ color: 'rgba(239,68,68,0.9)', fontSize: '0.85em', marginTop: '0.25rem' }}>
                   ⛔ Blacklisted — shops closed
@@ -177,13 +214,36 @@ export function FactionsScreen() {
             Literal representation under House Valdris's control.
           </span>
         </div>
-        <div className="stat-row" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div className="stat-row" style={{ flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
           <span className="stat-label" style={{ minWidth: '10rem' }}>Sponsor channels</span>
           <span className="stat-value">{chamberSponsors}</span>
           <span style={{ fontSize: '0.8em', color: 'var(--color-text-secondary, #999)', flexBasis: '100%' }}>
             Renown-based access to lobby, pressure, and steer a vote without conjuring literal seats.
           </span>
         </div>
+        {canPropose && (
+          <div style={{ marginTop: '1rem' }}>
+            <button
+              className="action-button"
+              onClick={() => setShowProposalModal(true)}
+              disabled={isOnCooldown}
+              type="button"
+              style={{ opacity: isOnCooldown ? 0.5 : 1 }}
+            >
+              {isOnCooldown ? `Cooldown (${cooldownDaysRemaining} days)` : 'Propose a Vote'}
+            </button>
+            {isOnCooldown && (
+              <p style={{ fontSize: '0.75em', color: 'var(--color-text-muted, #666)', marginTop: '0.25rem' }}>
+                House can only propose once every 10 days.
+              </p>
+            )}
+          </div>
+        )}
+        {!canPropose && (
+          <p style={{ fontSize: '0.8em', color: 'var(--color-text-muted, #666)', marginTop: '0.5rem' }}>
+            Restore ward seats or build faction standing to gain proposal access.
+          </p>
+        )}
       </article>
 
       <article className="detail-panel" style={{ marginTop: '2rem' }}>
@@ -254,6 +314,148 @@ export function FactionsScreen() {
           </div>
         ))}
       </article>
+
+      {/* Proposal Modal */}
+      {showProposalModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+        }} onClick={() => setShowProposalModal(false)}>
+          <div style={{
+            background: 'var(--color-bg-panel, #1e293b)',
+            padding: '2rem',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            maxHeight: '80vh',
+            overflow: 'auto',
+          }} onClick={(e) => e.stopPropagation()}>
+            <h3>Propose Council Vote</h3>
+            <p style={{ fontSize: '0.85em', color: 'var(--color-text-muted, #666)', marginBottom: '1rem' }}>
+              Choose a proposal method and template.
+            </p>
+
+            {/* Mode Selection */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Proposal Method</label>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <input
+                    type="radio"
+                    name="proposalMode"
+                    value="direct"
+                    checked={selectedMode === 'direct'}
+                    onChange={() => setSelectedMode('direct')}
+                    disabled={!canProposeDirect}
+                  />
+                  <span style={{ fontSize: '0.85em' }}>Direct (Ward Seat)</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <input
+                    type="radio"
+                    name="proposalMode"
+                    value="sponsored"
+                    checked={selectedMode === 'sponsored'}
+                    onChange={() => setSelectedMode('sponsored')}
+                    disabled={!canProposeSponsored}
+                  />
+                  <span style={{ fontSize: '0.85em' }}>Sponsored</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Sponsor Selection (for sponsored mode) */}
+            {selectedMode === 'sponsored' && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Sponsoring Faction</label>
+                <select
+                  value={selectedSponsor}
+                  onChange={(e) => setSelectedSponsor(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'var(--color-bg-input, #334155)',
+                    color: 'var(--color-text, #e2e8f0)',
+                    border: '1px solid var(--color-border, #475569)',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <option value="">Select a faction...</option>
+                  {sponsorFactions.map((f) => (
+                    <option key={f.factionId} value={f.factionId}>
+                      {f.name} (Standing: {f.standing})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Template Selection */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Proposal</label>
+              <select
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  background: 'var(--color-bg-input, #334155)',
+                  color: 'var(--color-text, #e2e8f0)',
+                  border: '1px solid var(--color-border, #475569)',
+                  borderRadius: '4px',
+                }}
+              >
+                <option value="">Select a proposal...</option>
+                {availableTemplates.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <button
+                className="action-button"
+                onClick={() => setShowProposalModal(false)}
+                type="button"
+                style={{ background: 'var(--color-muted, #64748b)' }}
+              >
+                Cancel
+              </button>
+              <button
+                className="action-button"
+                onClick={() => {
+                  if (!selectedTemplate) return
+                  const template = availableTemplates.find((t) => t.id === selectedTemplate)
+                  if (!template) return
+                  dispatch(gameActions.proposeCouncilVote({
+                    voteTemplate: template,
+                    mode: selectedMode,
+                    sponsorFactionId: selectedMode === 'sponsored' ? selectedSponsor : undefined,
+                  }))
+                  setShowProposalModal(false)
+                  setSelectedTemplate('')
+                  setSelectedSponsor('')
+                }}
+                type="button"
+                disabled={!selectedTemplate || (selectedMode === 'sponsored' && !selectedSponsor)}
+                style={{ opacity: (!selectedTemplate || (selectedMode === 'sponsored' && !selectedSponsor)) ? 0.5 : 1 }}
+              >
+                Submit Proposal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
