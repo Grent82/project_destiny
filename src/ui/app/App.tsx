@@ -6,6 +6,7 @@ import { useAppSelector } from './hooks'
 import { CombatScreen } from '../screens/CombatScreen'
 import { ContractBoardScreen } from '../screens/ContractBoardScreen'
 import { ContractExecutionScreen } from '../screens/ContractExecutionScreen'
+import { CorridorScreen } from '../screens/CorridorScreen'
 import { DashboardScreen } from '../screens/DashboardScreen'
 import { DialogueScreen } from '../screens/DialogueScreen'
 import { DistrictMapScreen } from '../screens/DistrictMapScreen'
@@ -111,6 +112,7 @@ export function App() {
             <Route path="/expedition-travel" element={<ExpeditionTravelScreen />} />
             <Route path="/expedition-return" element={<ExpeditionReturnScreen />} />
             <Route path="/dialogue" element={<DialogueScreen />} />
+            <Route path="/corridor" element={<CorridorScreen />} />
             {screenCatalog
               .filter(
                 (screen) =>
@@ -129,6 +131,7 @@ export function App() {
                     '/ledger',
                     '/expedition',
                     '/dialogue',
+                    '/corridor',
                   ].includes(screen.path),
               )
               .map((screen) => (

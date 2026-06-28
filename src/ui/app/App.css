@@ -3013,3 +3013,267 @@ a:focus-visible,
 
 /* Status bar renown */
 .status-renown { font-size: 0.78rem; color: #c9a84c; letter-spacing: 0.04em; opacity: 0.85; }
+
+/* ── Corridor Screen ──────────────────────────────────────── */
+.corridor-status-panel {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.corridor-status-panel h2 {
+  margin: 0 0 1rem;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.status-description {
+  margin: 0 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: var(--size-sm);
+}
+
+.progress-section {
+  margin-top: 1rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.progress-label span:first-child {
+  color: var(--text-secondary);
+  font-size: var(--size-sm);
+}
+
+.progress-label span:last-child {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: var(--size-sm);
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  transition: width 300ms ease;
+}
+
+.progress-message {
+  margin: 0.5rem 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--size-xs);
+  font-style: italic;
+}
+
+.corridor-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 1.25rem 0;
+}
+
+.corridor-actions .action-button {
+  justify-self: auto;
+  margin-top: 0;
+}
+
+.corridor-actions .action-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.active-expeditions-panel {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.active-expeditions-panel h2 {
+  margin: 0 0 1rem;
+}
+
+.expedition-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.expedition-item {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+}
+
+.expedition-item:hover {
+  border-color: rgba(201, 168, 76, 0.25);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.expedition-item.selected {
+  border-color: rgba(215, 191, 130, 0.45);
+  background: rgba(215, 191, 130, 0.08);
+}
+
+.expedition-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.expedition-status {
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.expedition-progress {
+  font-size: var(--size-sm);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.expedition-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.expedition-leader,
+.expedition-members,
+.expedition-return,
+.expedition-difficulty {
+  font-size: var(--size-xs);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.expedition-leader strong,
+.expedition-members strong,
+.expedition-return strong,
+.expedition-difficulty strong {
+  color: var(--text-secondary);
+}
+
+.expedition-history-panel {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.toggle-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: transparent;
+  border: none;
+  color: var(--text-accent);
+  font-family: var(--font-display);
+  font-size: var(--size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: color 150ms;
+}
+
+.toggle-button:hover {
+  color: var(--text-primary);
+}
+
+.history-content {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+}
+
+.history-list {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-sm);
+  font-size: var(--size-xs);
+}
+
+.history-status {
+  color: var(--text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.history-progress {
+  color: var(--text-secondary);
+}
+
+.history-meta {
+  color: var(--text-tertiary);
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .expedition-details {
+    grid-template-columns: 1fr;
+  }
+
+  .corridor-actions {
+    flex-direction: column;
+  }
+
+  .corridor-actions .action-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .history-item {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .history-meta {
+    margin-left: 0;
+  }
+}
