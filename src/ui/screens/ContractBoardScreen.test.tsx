@@ -273,4 +273,135 @@ describe('ContractBoardScreen', () => {
     expect(screen.getByText(/Regroup the squad on the Work Board/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Regroup and redeploy →/i })).toBeInTheDocument()
   })
+
+  it('shows investigation contract with execution duration and surveillance tracking', () => {
+    const investigationQuest = getQuestTemplates().find((quest) => quest.id === 'quest-compact-watch')
+    if (!investigationQuest) {
+      throw new Error('Expected compact watch quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 1,
+      currentDistrictId: 'district-the-pale',
+      activeQuests: [createQuestRuntime(investigationQuest, 1)],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText(/Three Days on Assessor Vorn/i)).toBeInTheDocument()
+    expect(screen.getByText(/Execution duration:/i)).toBeInTheDocument()
+    expect(screen.getByText(/3 days of fieldwork/i)).toBeInTheDocument()
+    expect(screen.getByText(/Time limit:/i)).toBeInTheDocument()
+  })
+
+  it('shows survival contract with on-site watch button', () => {
+    const survivalQuest = getQuestTemplates().find((quest) => quest.id === 'quest-pale-wagon-escort')
+    if (!survivalQuest) {
+      throw new Error('Expected pale wagon escort quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 1,
+      currentDistrictId: 'district-the-pale',
+      activeQuests: [createQuestRuntime(survivalQuest, 1)],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('button', { name: /Open on-site watch/i })).toBeInTheDocument()
+    expect(screen.getByText(/Safe Passage Through the Pale/i)).toBeInTheDocument()
+  })
+
+  it('handles multiple active quests simultaneously', () => {
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    const nightbloom = getQuestTemplates().find((quest) => quest.id === 'quest-nightbloom-extract')
+    if (!harborwatch || !nightbloom) {
+      throw new Error('Expected quest fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 2,
+      currentDistrictId: 'district-harbor',
+      activeQuests: [createQuestRuntime(harborwatch, 1), createQuestRuntime(nightbloom, 1)],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText(/Harborwatch/i)).toBeInTheDocument()
+    expect(screen.getByText(/Nightbloom Required/i)).toBeInTheDocument()
+  })
+
+  it('shows time limit warning when deadline approaches', () => {
+    const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+    if (!harborwatch) {
+      throw new Error('Expected harborwatch quest in fixtures.')
+    }
+
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 4,
+      currentDistrictId: 'district-the-warrens',
+      activeQuests: [createQuestRuntime(harborwatch, 1)],
+      availableQuestLeads: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText(/Days remaining:/i)).toBeInTheDocument()
+  })
+
+  it('hides quest leads when prerequisite is not completed', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      availableQuestLeads: [makeLead('quest-harborwatch-followup')],
+      activeQuests: [],
+      completedQuestIds: [],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <ContractBoardScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    // Quest should be filtered out due to missing prerequisite
+    expect(screen.queryByText(/Harborwatch Reckoning/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Accept contract/i)).not.toBeInTheDocument()
+  })
 })
