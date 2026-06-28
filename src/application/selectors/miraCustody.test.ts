@@ -8,6 +8,7 @@ import {
   getMiraRoomRouteDescription,
   getMiraHandlerName,
   getMiraConditionDescription,
+  getMiraQuestBeats,
 } from './miraCustody'
 
 import type { QuestRuntime } from '../../domain/quests/contracts'
@@ -196,5 +197,81 @@ describe('getMiraConditionDescription', () => {
 
     const description = getMiraConditionDescription(state)
     expect(description).toContain('physically intact')
+  })
+})
+
+describe('getMiraQuestBeats', () => {
+  it('returns empty array for non-Mira quests', () => {
+    const state = createBaseState({ completedQuestIds: ['quest-mira-act1-wren-favor'] })
+    const beats = getMiraQuestBeats(state, 'quest-generic-contract')
+
+    expect(beats).toEqual([])
+  })
+
+  it('returns empty array when Mira is not in captivity', () => {
+    const state = createBaseState()
+    state.npcCaptivityStates['npc-mira']!.status = 'rescued'
+
+    const beats = getMiraQuestBeats(state, 'quest-mira-rescue')
+    expect(beats).toEqual([])
+  })
+
+  it('returns empty array on fresh save (no quest progression)', () => {
+    const state = createBaseState()
+    const beats = getMiraQuestBeats(state, 'quest-mira-act2-tannery-watch')
+
+    expect(beats).toEqual([])
+  })
+
+  it('returns act2 beats when act1 is completed', () => {
+    const state = createBaseState({ completedQuestIds: ['quest-mira-act1-wren-favor'] })
+    const beats = getMiraQuestBeats(state, 'quest-mira-act2-tannery-watch')
+
+    // Should have investigating beat with site info
+    const investigatingBeat = beats.find((b) => b.atStageId === 'investigating')
+    expect(investigatingBeat).toBeDefined()
+    expect(investigatingBeat?.journalEntry).toContain('tannery')
+  })
+
+  it('returns act2 beats with handler info when act2 is completed', () => {
+    const state = createBaseState({ completedQuestIds: ['quest-mira-act2-tannery-watch'] })
+    const beats = getMiraQuestBeats(state, 'quest-mira-act2-tannery-watch')
+
+    // Should have on-site beat with handler name
+    const onSiteBeat = beats.find((b) => b.atStageId === 'on-site')
+    expect(onSiteBeat).toBeDefined()
+    expect(onSiteBeat?.journalEntry).toContain('Dalen Morke')
+    expect(onSiteBeat?.journalEntry).toContain('holding floor')
+  })
+
+  it('returns rescue beats with handler info when act2 is completed', () => {
+    const state = createBaseState({ completedQuestIds: ['quest-mira-act2-tannery-watch'] })
+    const beats = getMiraQuestBeats(state, 'quest-mira-rescue')
+
+    // Should have pressured beat with handler name and site
+    const pressuredBeat = beats.find((b) => b.atStageId === 'pressured')
+    expect(pressuredBeat).toBeDefined()
+    expect(pressuredBeat?.journalEntry).toContain('Dalen Morke')
+    expect(pressuredBeat?.journalEntry).toContain('tannery')
+  })
+
+  it('returns rescue beats with condition info when rescue is active', () => {
+    const state = createBaseState({
+      activeQuests: [{ questId: 'quest-mira-rescue', acceptedOnDay: 1, status: 'active', acceptedTitle: 'Test', stageId: 'stage1' } as QuestRuntime],
+    })
+    const beats = getMiraQuestBeats(state, 'quest-mira-rescue')
+
+    // Should have setback beat with condition description
+    const setbackBeat = beats.find((b) => b.atStageId === 'setback')
+    expect(setbackBeat).toBeDefined()
+    expect(setbackBeat?.journalEntry).toContain('strain') // hurt condition
+  })
+
+  it('does not leak custody info for Mira quests on fresh save', () => {
+    const state = createBaseState() // No completed quests, no active quests
+    const beats = getMiraQuestBeats(state, 'quest-mira-rescue')
+
+    // Should return empty array - no truth earned yet
+    expect(beats).toEqual([])
   })
 })

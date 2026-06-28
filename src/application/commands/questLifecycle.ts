@@ -7,6 +7,7 @@ import { isQuestExpired } from './questUtils'
 import { formatMarks } from '../../domain/game/currency'
 import { QUEST_IDS } from '../content/ids'
 import { createRng } from './seededRng'
+import { getMiraQuestBeats } from '../selectors/miraCustody'
 
 type QuestLeadOverrides = Parameters<typeof createQuestLeadRuntime>[2]
 
@@ -24,17 +25,35 @@ function pushSystemLog(state: GameState, message: string) {
 /**
  * Applies mid-quest beats when transitioning to a new stage.
  * Shared helper used by all stage transitions to ensure beats fire consistently.
+ * For Mira quests, uses runtime-backed beats from captivity state.
+ * For other quests, uses template hard-coded beats.
  */
 export function applyMidQuestBeats(
-  runtime: { stageId: string; journalEntries: string[]; currentObjectiveLabel: string | null },
+  state: Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests' | 'day' | 'timeSlot' | 'activityLog'>,
+  runtime: { questId: string; stageId: string; journalEntries: string[]; currentObjectiveLabel: string | null },
   template: { midQuestBeats?: Array<{ atStageId: string; label: string; journalEntry: string }> } | null,
   newStageId: string,
 ): void {
+  // For Mira quests, use runtime-backed beats from captivity state
+  if (runtime.questId.startsWith('quest-mira-')) {
+    const miraBeats = getMiraQuestBeats(state, runtime.questId)
+    for (const beat of miraBeats) {
+      if (beat.atStageId === newStageId) {
+        const beatAlreadyApplied = runtime.journalEntries.includes(beat.journalEntry)
+        if (!beatAlreadyApplied) {
+          runtime.currentObjectiveLabel = beat.label
+          runtime.journalEntries.push(beat.journalEntry)
+        }
+      }
+    }
+    return
+  }
+
+  // For non-Mira quests, use template hard-coded beats
   if (!template?.midQuestBeats) return
 
   for (const beat of template.midQuestBeats) {
     if (beat.atStageId === newStageId) {
-      // Only apply if this beat hasn't been applied yet (check journal entries)
       const beatAlreadyApplied = runtime.journalEntries.includes(beat.journalEntry)
       if (!beatAlreadyApplied) {
         runtime.currentObjectiveLabel = beat.label
@@ -166,7 +185,20 @@ export function advanceToOnSiteStep(state: GameState, questId: string): boolean 
   runtime.journalEntries.push(stepLabel)
 
   // Apply mid-quest beats for the 'on-site' stage
-  applyMidQuestBeats(runtime, template, 'on-site')
+  applyMidQuestBeats(
+    {
+      npcCaptivityStates: state.npcCaptivityStates,
+      roster: state.roster,
+      completedQuestIds: state.completedQuestIds,
+      activeQuests: state.activeQuests,
+      day: state.day,
+      timeSlot: state.timeSlot,
+      activityLog: state.activityLog,
+    },
+    { questId: runtime.questId, stageId: runtime.stageId, journalEntries: runtime.journalEntries, currentObjectiveLabel: runtime.currentObjectiveLabel },
+    template,
+    'on-site',
+  )
 
   return true
 }

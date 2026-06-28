@@ -254,8 +254,19 @@ describe('failed quest archiving and rediscovery prevention', () => {
 })
 
 describe('applyMidQuestBeats', () => {
+  const mockState = {
+    npcCaptivityStates: {},
+    roster: [],
+    completedQuestIds: [],
+    activeQuests: [],
+    day: 1,
+    timeSlot: 'morning' as const,
+    activityLog: [],
+  }
+
   it('applies beat label and journal entry when transitioning to beat stage', () => {
     const runtime = {
+      questId: 'quest-generic-test',
       stageId: 'accepted',
       journalEntries: ['Initial briefing'],
       currentObjectiveLabel: 'Default objective',
@@ -267,7 +278,7 @@ describe('applyMidQuestBeats', () => {
       ],
     }
 
-    applyMidQuestBeats(runtime, template, 'investigating')
+    applyMidQuestBeats(mockState, runtime, template, 'investigating')
 
     expect(runtime.currentObjectiveLabel).toBe('Investigation beat label')
     expect(runtime.journalEntries).toContain('Investigation beat journal')
@@ -276,6 +287,7 @@ describe('applyMidQuestBeats', () => {
 
   it('does not duplicate beat on repeated calls', () => {
     const runtime = {
+      questId: 'quest-generic-test',
       stageId: 'accepted',
       journalEntries: ['Initial briefing'],
       currentObjectiveLabel: 'Default objective',
@@ -286,14 +298,15 @@ describe('applyMidQuestBeats', () => {
       ],
     }
 
-    applyMidQuestBeats(runtime, template, 'investigating')
-    applyMidQuestBeats(runtime, template, 'investigating')
+    applyMidQuestBeats(mockState, runtime, template, 'investigating')
+    applyMidQuestBeats(mockState, runtime, template, 'investigating')
 
     expect(runtime.journalEntries.filter((e) => e === 'Beat journal')).toHaveLength(1)
   })
 
   it('does nothing if no beat matches the stage', () => {
     const runtime = {
+      questId: 'quest-generic-test',
       stageId: 'accepted',
       journalEntries: ['Initial briefing'],
       currentObjectiveLabel: 'Default objective',
@@ -304,7 +317,7 @@ describe('applyMidQuestBeats', () => {
       ],
     }
 
-    applyMidQuestBeats(runtime, template, 'unknown-stage')
+    applyMidQuestBeats(mockState, runtime, template, 'unknown-stage')
 
     expect(runtime.currentObjectiveLabel).toBe('Default objective')
     expect(runtime.journalEntries).toHaveLength(1)
@@ -312,14 +325,122 @@ describe('applyMidQuestBeats', () => {
 
   it('handles null template gracefully', () => {
     const runtime = {
+      questId: 'quest-generic-test',
       stageId: 'accepted',
       journalEntries: ['Initial briefing'],
       currentObjectiveLabel: 'Default objective',
     }
 
-    applyMidQuestBeats(runtime, null, 'investigating')
+    applyMidQuestBeats(mockState, runtime, null, 'investigating')
 
     expect(runtime.currentObjectiveLabel).toBe('Default objective')
     expect(runtime.journalEntries).toHaveLength(1)
+  })
+
+  it('uses runtime-backed beats for Mira quests instead of template beats', () => {
+    const runtime = {
+      questId: 'quest-mira-rescue',
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+    const template = {
+      midQuestBeats: [
+        { atStageId: 'pressured', label: 'Template beat', journalEntry: 'Template journal entry' },
+      ],
+    }
+
+    // With no captivity state, Mira beats should not apply
+    applyMidQuestBeats(mockState, runtime, template, 'pressured')
+
+    // Template beats should not be applied for Mira quests
+    expect(runtime.journalEntries).not.toContain('Template journal entry')
+    expect(runtime.currentObjectiveLabel).toBe('Default objective')
+  })
+
+  it('applies runtime-backed Mira beats when captivity state is present and quest truth is earned', () => {
+    const stateWithCaptivity = {
+      ...mockState,
+      npcCaptivityStates: {
+        'npc-mira': {
+          status: 'captive' as const,
+          holderId: 'faction-gilded-court',
+          siteId: 'site-poi-pale-old-tannery',
+          roomId: 'tannery-inner-ring',
+          regime: 'guarded' as const,
+          condition: 'hurt' as const,
+          compliance: 'resistant' as const,
+          bondType: 'fear' as const,
+          timeHeldDays: 21,
+          lastTransferDay: null,
+          questTag: 'quest-mira-rescue',
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      },
+      completedQuestIds: ['quest-mira-act2-tannery-watch'], // Act 2 completed = handler and room-route known
+    }
+
+    const runtime = {
+      questId: 'quest-mira-rescue',
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+    const template = {
+      midQuestBeats: [
+        { atStageId: 'pressured', label: 'Template beat', journalEntry: 'Template journal entry' },
+      ],
+    }
+
+    // Apply the pressured beat - should use runtime-backed content
+    applyMidQuestBeats(stateWithCaptivity, runtime, template, 'pressured')
+
+    // Should have runtime-backed content, not template content
+    expect(runtime.journalEntries).not.toContain('Template journal entry')
+    expect(runtime.journalEntries.some((e) => e.includes('Dalen Morke'))).toBe(true) // Handler name revealed
+    expect(runtime.journalEntries.some((e) => e.includes('tannery'))).toBe(true) // Site description
+  })
+
+  it('does not leak Mira custody info on fresh save (no active/completed quests)', () => {
+    const stateFreshSave = {
+      ...mockState,
+      npcCaptivityStates: {
+        'npc-mira': {
+          status: 'captive' as const,
+          holderId: 'faction-gilded-court',
+          siteId: 'site-poi-pale-old-tannery',
+          roomId: 'tannery-inner-ring',
+          regime: 'guarded' as const,
+          condition: 'hurt' as const,
+          compliance: 'resistant' as const,
+          bondType: 'fear' as const,
+          timeHeldDays: 21,
+          lastTransferDay: null,
+          questTag: 'quest-mira-rescue',
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      },
+      completedQuestIds: [], // No quests completed
+      activeQuests: [], // No quests active
+    }
+
+    const runtime = {
+      questId: 'quest-mira-act2-tannery-watch',
+      stageId: 'accepted',
+      journalEntries: ['Initial briefing'],
+      currentObjectiveLabel: 'Default objective',
+    }
+
+    // Apply beats - should NOT reveal any custody info on fresh save
+    applyMidQuestBeats(stateFreshSave, runtime, null, 'investigating')
+
+    // No custody info should be revealed
+    expect(runtime.journalEntries).toHaveLength(1) // Only initial briefing
+    expect(runtime.journalEntries.some((e) => e.includes('Dalen Morke'))).toBe(false)
+    expect(runtime.journalEntries.some((e) => e.includes('tannery'))).toBe(false)
   })
 })

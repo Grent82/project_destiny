@@ -120,3 +120,87 @@ export function getMiraConditionDescription(
       return 'captivity has left its mark'
   }
 }
+
+/**
+ * MidQuestBeat represents a dynamic journal entry for Mira quests.
+ * Used for runtime-backed custody clues.
+ */
+export type MidQuestBeat = {
+  atStageId: string
+  label: string
+  journalEntry: string
+}
+
+/**
+ * Returns runtime-backed mid-quest beats for Mira quests.
+ * These beats read actual captivity state instead of using hard-coded prose.
+ * Returns empty array if no Mira-specific beats are earned yet.
+ */
+export function getMiraQuestBeats(
+  state: Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests'>,
+  questId: string,
+): MidQuestBeat[] {
+  // Only generate beats for Mira quests
+  if (!questId.startsWith('quest-mira-')) return []
+
+  const truth = getMiraCustodyTruthForPlayer(state)
+  if (!truth) return []
+
+  const captivity = getAllNpcCaptivityStates(state)['npc-mira']
+  if (!captivity) return []
+
+  const beats: MidQuestBeat[] = []
+
+  // Act 2: Tannery Watch beats - reveal site and handler info
+  if (questId === 'quest-mira-act2-tannery-watch') {
+    if (truth.siteKnown && captivity.siteId) {
+      beats.push({
+        atStageId: 'investigating',
+        label: 'The watch rotates early. Someone tightened security after the courier incident.',
+        journalEntry: `The guard pattern changed — the courier must have been more important than expected. The lead points to ${getMiraSiteDescription(state) ?? 'an unknown location'}.`,
+      })
+    }
+
+    if (truth.roomRouteKnown && truth.handlerKnown) {
+      const handlerName = getMiraHandlerName(state)
+      const roomRoute = getMiraRoomRouteDescription(state)
+      beats.push({
+        atStageId: 'on-site',
+        label: `The schedule is signed by ${handlerName}. This is not a holding — it is a transfer.`,
+        journalEntry: `Mira is being moved soon. ${handlerName}'s name is on the order, which means someone inside the Court's transport chain is managing this personally. The route goes through ${roomRoute ?? 'the inner holding areas'}.`,
+      })
+    }
+  }
+
+  // Rescue quest beats - reveal handler, guards, and condition
+  if (questId === 'quest-mira-rescue') {
+    if (truth.handlerKnown) {
+      const handlerName = getMiraHandlerName(state)
+      beats.push({
+        atStageId: 'pressured',
+        label: 'The Court has doubled the guard rotation. They know you are coming.',
+        journalEntry: `A runner from ${getMiraSiteDescription(state) ?? 'the site'} reported back: the Gilded Court has increased the guard count. ${handlerName} has tightened security — someone tipped them off.`,
+      })
+    }
+
+    if (truth.roomRouteKnown) {
+      const roomRoute = getMiraRoomRouteDescription(state)
+      beats.push({
+        atStageId: 'engaged',
+        label: 'Inside the tannery. Enemy handlers hold the yard while guards keep the holding floor.',
+        journalEntry: `The outer route and ${roomRoute ?? 'the holding areas'} are heavily guarded. Mira is somewhere past them in the inner ring, which means going through.`,
+      })
+    }
+
+    if (truth.conditionKnown) {
+      const conditionDesc = getMiraConditionDescription(state)
+      beats.push({
+        atStageId: 'setback',
+        label: 'One guard called for relief. The extraction window is closing.',
+        journalEntry: `A runner slipped out before the squad could cut the route. They know someone is inside. Time is now the primary enemy — Mira ${conditionDesc ?? 'shows the marks of captivity'}.`,
+      })
+    }
+  }
+
+  return beats
+}

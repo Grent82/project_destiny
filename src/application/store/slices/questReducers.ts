@@ -58,7 +58,20 @@ export const questReducers = {
       quest.stageId = action.payload.stageId
       const template = getQuestTemplates().find((t) => t.id === quest.questId) ?? null
       // Use shared helper for consistent beat application
-      applyMidQuestBeats(quest, template, action.payload.stageId)
+      applyMidQuestBeats(
+        {
+          npcCaptivityStates: state.npcCaptivityStates,
+          roster: state.roster,
+          completedQuestIds: state.completedQuestIds,
+          activeQuests: state.activeQuests,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          activityLog: state.activityLog,
+        },
+        { questId: quest.questId, stageId: quest.stageId, journalEntries: quest.journalEntries, currentObjectiveLabel: quest.currentObjectiveLabel },
+        template,
+        action.payload.stageId,
+      )
     }
     if (action.payload.currentObjectiveLabel !== undefined) {
       quest.currentObjectiveLabel = action.payload.currentObjectiveLabel
@@ -166,7 +179,20 @@ export const questReducers = {
       runtime.progress.lastAdvancedDay = state.day
 
       // Apply mid-quest beats FIRST (for generic quests)
-      applyMidQuestBeats(runtime, quest ?? null, 'investigating')
+      applyMidQuestBeats(
+        {
+          npcCaptivityStates: state.npcCaptivityStates,
+          roster: state.roster,
+          completedQuestIds: state.completedQuestIds,
+          activeQuests: state.activeQuests,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          activityLog: state.activityLog,
+        },
+        { questId: runtime.questId, stageId: runtime.stageId, journalEntries: runtime.journalEntries, currentObjectiveLabel: runtime.currentObjectiveLabel },
+        quest ?? null,
+        'investigating',
+      )
 
       // Then apply start copy (overrides beat for story quests with custom setup)
       const startCopy = getInvestigationStartCopy(action.payload.questId)
