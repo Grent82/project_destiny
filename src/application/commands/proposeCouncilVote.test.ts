@@ -102,6 +102,7 @@ describe('proposeCouncilVote', () => {
             wealth: 50,
             security: 50,
             standingWithPlayer: 0,
+            agendaProgress: [],
           },
         ],
       }
@@ -141,6 +142,7 @@ describe('proposeCouncilVote', () => {
             wealth: 50,
             security: 50,
             standingWithPlayer: 0,
+            agendaProgress: [],
           },
         ],
       }
@@ -166,6 +168,7 @@ describe('proposeCouncilVote', () => {
             wealth: 50,
             security: 50,
             standingWithPlayer: 0,
+            agendaProgress: [],
           },
         ],
       }
@@ -202,6 +205,7 @@ describe('proposeCouncilVote', () => {
             wealth: 50,
             security: 50,
             standingWithPlayer: 0,
+            agendaProgress: [],
           },
         ],
       }
@@ -224,6 +228,7 @@ describe('proposeCouncilVote', () => {
             wealth: 50,
             security: 50,
             standingWithPlayer: 0,
+            agendaProgress: [],
           },
         ],
       }

@@ -41,6 +41,61 @@ export const agendaAxesSchema = z
 
 export type AgendaAxes = z.infer<typeof agendaAxesSchema>
 
+/**
+ * Agenda tree node - represents a step in a faction's multi-step political agenda.
+ */
+export const agendaTreeNodeSchema = z
+  .object({
+    id: z.string().min(1),
+    title: z.string().min(1),
+    voteTemplateId: z.string().min(1),
+    unlockedByNodeId: z.string().min(1).optional(),
+    requiredOutcome: z.enum(['pass', 'fail']).default('pass'),
+    description: z.string().optional(),
+  })
+  .strict()
+
+export type AgendaTreeNode = z.infer<typeof agendaTreeNodeSchema>
+
+/**
+ * Agenda tree - a multi-step political agenda for a faction.
+ */
+export const agendaTreeSchema = z
+  .object({
+    id: z.string().min(1),
+    factionId: entityIdSchema,
+    title: z.string().min(1),
+    description: z.string().min(1),
+    nodes: z.array(agendaTreeNodeSchema).min(1),
+    finalOutcome: z.object({
+      description: z.string().min(1),
+      effects: z.array(z.record(z.string(), z.unknown())),
+    }),
+  })
+  .strict()
+
+export type AgendaTree = z.infer<typeof agendaTreeSchema>
+
+/**
+ * Progress tracking for an agenda tree node.
+ */
+export const agendaNodeProgressSchema = z.enum(['pending', 'completed', 'blocked'])
+export type AgendaNodeProgress = z.infer<typeof agendaNodeProgressSchema>
+
+/**
+ * Agenda progress tracking for a faction's agenda trees.
+ */
+export const agendaProgressSchema = z
+  .object({
+    treeId: z.string().min(1),
+    nodeProgress: z.record(z.string().min(1), agendaNodeProgressSchema),
+    completed: z.boolean().default(false),
+    blocked: z.boolean().default(false),
+  })
+  .strict()
+
+export type AgendaProgress = z.infer<typeof agendaProgressSchema>
+
 export const factionDefinitionSchema = z
   .object({
     id: entityIdSchema,
@@ -52,6 +107,7 @@ export const factionDefinitionSchema = z
     tags: z.array(z.string().min(1)).default([]),
     dailyAgendaHook: z.string().optional(),
     agendaAxes: agendaAxesSchema.optional(),
+    agendaTreeIds: z.array(z.string().min(1)).default([]),
   })
   .strict()
 
@@ -64,6 +120,7 @@ export const factionRuntimeStateSchema = z
     standingWithPlayer: signedStandingSchema,
     activePressure: percentageSchema,
     leaderNpcId: z.string().min(1).optional().nullable(),
+    agendaProgress: z.array(agendaProgressSchema).default([]),
   })
   .strict()
 

@@ -13,7 +13,8 @@
       "security": 72,
       "standingWithPlayer": 5,
       "activePressure": 18,
-      "leaderNpcId": "npc-verek-holst"
+      "leaderNpcId": "npc-verek-holst",
+      "agendaProgress": []
     },
     {
       "factionId": "faction-gilded-court",
@@ -22,7 +23,8 @@
       "security": 44,
       "standingWithPlayer": 0,
       "activePressure": 26,
-      "leaderNpcId": "npc-lirien-ashcroft"
+      "leaderNpcId": "npc-lirien-ashcroft",
+      "agendaProgress": []
     },
     {
       "factionId": "faction-foundry-league",
@@ -31,7 +33,8 @@
       "security": 52,
       "standingWithPlayer": 10,
       "activePressure": 21,
-      "leaderNpcId": "npc-sable-wrent"
+      "leaderNpcId": "npc-sable-wrent",
+      "agendaProgress": []
     },
     {
       "factionId": "faction-tallow-ring",
@@ -40,7 +43,8 @@
       "security": 50,
       "standingWithPlayer": 0,
       "activePressure": 5,
-      "leaderNpcId": "npc-enemy-harlen-voss"
+      "leaderNpcId": "npc-enemy-harlen-voss",
+      "agendaProgress": []
     },
     {
       "factionId": "faction-house-merrow",
@@ -49,7 +53,8 @@
       "security": 60,
       "standingWithPlayer": -15,
       "activePressure": 30,
-      "leaderNpcId": "npc-enemy-lady-sorn"
+      "leaderNpcId": "npc-enemy-lady-sorn",
+      "agendaProgress": []
     },
     {
       "factionId": "faction-restored",
@@ -58,7 +63,8 @@
       "security": 35,
       "standingWithPlayer": 0,
       "activePressure": 0,
-      "leaderNpcId": "npc-oswin-farr"
+      "leaderNpcId": "npc-oswin-farr",
+      "agendaProgress": []
     }
   ],
   "districts": [

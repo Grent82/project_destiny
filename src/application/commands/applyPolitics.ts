@@ -9,9 +9,91 @@ import { EVENT_IDS, FACTION_IDS, QUEST_IDS } from '../content/ids'
 import { adjustCityDial, adjustDistrictTension } from './economicConsequences'
 import { getRelationshipPoliticalCapital } from './politicalLeverage'
 import { enqueueTemplateEvent } from './eventInstances'
+import type { AgendaNodeProgress } from '../../domain/factions/contracts'
 
 const MIRA_LOCATION_REMINDER_KEY = 'main-quest-mira-location-reminder'
 const MIRA_PRESSURE_REMINDER_KEY = 'main-quest-mira-pressure-reminder'
+
+
+/**
+ * Update agenda tree progress when a vote resolves.
+ * Tracks node completion and checks for tree completion.
+ */
+function updateAgendaTreeProgress(
+  state: GameState,
+  vote: CouncilVoteEvent,
+  passes: boolean,
+): GameState {
+  let next = state
+  const outcome: AgendaNodeProgress = passes ? 'completed' : 'blocked'
+  const factionId = vote.proposingFactionId
+
+  // Find matching agenda tree node
+  const factionDef = contentCatalog.factions.find((f) => f.id === factionId)
+  if (!factionDef?.agendaTreeIds?.length) return next
+
+  // Update progress for each faction's agenda trees
+  const updatedFactionStates = next.factionStates.map((fs) => {
+    if (fs.factionId !== factionId) return fs
+
+    const updatedProgress = fs.agendaProgress.map((progress) => {
+      if (!factionDef.agendaTreeIds.includes(progress.treeId)) return progress
+
+      // Check if this vote matches any node in this tree
+      // For now, we use a simplified approach: if the vote ID contains the tree ID, advance progress
+      const matchingNode = progress.nodeProgress[vote.id]
+      if (matchingNode === undefined) {
+        // No matching node found, return unchanged
+        return progress
+      }
+
+      // Update node progress
+      const newNodeProgress = {
+        ...progress.nodeProgress,
+        [vote.id]: outcome,
+      }
+
+      // Check if tree is complete (all nodes resolved)
+      const allResolved = Object.values(newNodeProgress).every(
+        (p) => p === 'completed' || p === 'blocked'
+      )
+      const allCompleted = Object.values(newNodeProgress).every((p) => p === 'completed')
+
+      return {
+        ...progress,
+        nodeProgress: newNodeProgress,
+        completed: allCompleted,
+        blocked: !allCompleted && allResolved,
+      }
+    })
+
+    return { ...fs, agendaProgress: updatedProgress }
+  })
+
+  next = { ...next, factionStates: updatedFactionStates }
+
+  // Log agenda progress updates
+  for (const fs of updatedFactionStates) {
+    if (fs.factionId !== factionId) continue
+    for (const progress of fs.agendaProgress) {
+      if (progress.completed) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `The ${factionId.replace('faction-', '')} has completed a major political agenda.`,
+        )
+      } else if (progress.blocked) {
+        next = appendActivityLogEntry(
+          next,
+          'system',
+          `The ${factionId.replace('faction-', '')} agenda has been blocked.`,
+        )
+      }
+    }
+  }
+
+  return next
+}
 
 /**
  * Score a faction's propensity to propose a vote on this day.
@@ -239,6 +321,8 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
     if (passes) {
       next = applyVoteEffects(next, vote)
     }
+    // Update agenda tree progress if this vote is part of a faction's agenda tree
+    next = updateAgendaTreeProgress(next, vote, passes)
     // Standing consequence for having influenced the vote
     if (vote.playerVote) {
       const standingDelta = passes ? 5 : -3

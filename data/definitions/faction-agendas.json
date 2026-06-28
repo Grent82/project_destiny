@@ -1,0 +1,151 @@
+[
+  {
+    "id": "agenda-compact-security",
+    "factionId": "faction-civic-compact",
+    "title": "Strengthening City Security",
+    "description": "A multi-phase campaign to expand the Compact's influence over civic security and trade.",
+    "nodes": [
+      {
+        "id": "node-1-patrol-expansion",
+        "title": "Patrol Expansion",
+        "voteTemplateId": "cvote-compact-patrol-expansion",
+        "requiredOutcome": "pass",
+        "description": "Double patrol frequency in the Warrens and Hollows."
+      },
+      {
+        "id": "node-2-checkpoint-funding",
+        "title": "Checkpoint Funding",
+        "voteTemplateId": "cvote-register-fee-increase",
+        "unlockedByNodeId": "node-1-patrol-expansion",
+        "requiredOutcome": "pass",
+        "description": "Fund new checkpoints at district borders."
+      },
+      {
+        "id": "node-3-suppression-act",
+        "title": "Public Order Act",
+        "unlockedByNodeId": "node-2-checkpoint-funding",
+        "requiredOutcome": "pass",
+        "description": "Final legislation for expanded enforcement powers."
+      }
+    ],
+    "finalOutcome": {
+      "description": "The Compact has secured comprehensive control over city security.",
+      "effects": [
+        {
+          "type": "factionStanding",
+          "factionId": "faction-civic-compact",
+          "delta": 15
+        },
+        {
+          "type": "cityDial",
+          "dial": "control",
+          "delta": 10
+        },
+        {
+          "type": "cityDial",
+          "dial": "unrest",
+          "delta": -10
+        }
+      ]
+    }
+  },
+  {
+    "id": "agenda-court-prestige",
+    "factionId": "faction-gilded-court",
+    "title": "Elite Patronage Network",
+    "description": "Building a web of influence through patronage, debt, and ceremonial prestige.",
+    "nodes": [
+      {
+        "id": "node-1-licensing",
+        "title": "Licensing Reform",
+        "voteTemplateId": "cvote-register-fee-increase",
+        "requiredOutcome": "pass",
+        "description": "Raise Register fees to fund elite programs."
+      },
+      {
+        "id": "node-2-titles",
+        "title": "Honorary Titles Act",
+        "voteTemplateId": "cvote-merrow-customs-seal-authority",
+        "unlockedByNodeId": "node-1-licensing",
+        "requiredOutcome": "pass",
+        "description": "Create new honorary titles for loyal patrons."
+      },
+      {
+        "id": "node-3-monopoly",
+        "title": "Trade Monopoly Charter",
+        "unlockedByNodeId": "node-2-titles",
+        "requiredOutcome": "pass",
+        "description": "Grant exclusive trade rights to Court allies."
+      }
+    ],
+    "finalOutcome": {
+      "description": "The Gilded Court has established a dominant patronage network.",
+      "effects": [
+        {
+          "type": "factionStanding",
+          "factionId": "faction-gilded-court",
+          "delta": 15
+        },
+        {
+          "type": "cityDial",
+          "dial": "prosperity",
+          "delta": 5
+        },
+        {
+          "type": "cityDial",
+          "dial": "corruption",
+          "delta": 10
+        }
+      ]
+    }
+  },
+  {
+    "id": "agenda-league-workers",
+    "factionId": "faction-foundry-league",
+    "title": "Industrial Workers' Rights",
+    "description": "Advancing labor protections and industrial autonomy.",
+    "nodes": [
+      {
+        "id": "node-1-safety",
+        "title": "Workplace Safety Standards",
+        "voteTemplateId": "cvote-expanded-field-licenses",
+        "requiredOutcome": "pass",
+        "description": "Expand licensed operator privileges."
+      },
+      {
+        "id": "node-2-wages",
+        "title": "Minimum Wage Ordinance",
+        "unlockedByNodeId": "node-1-safety",
+        "requiredOutcome": "pass",
+        "description": "Establish district-wide wage floors."
+      },
+      {
+        "id": "node-3-autonomy",
+        "title": "Industrial Autonomy Charter",
+        "unlockedByNodeId": "node-2-wages",
+        "requiredOutcome": "pass",
+        "description": "Grant self-governance to industrial districts."
+      }
+    ],
+    "finalOutcome": {
+      "description": "The Foundry League has secured industrial autonomy.",
+      "effects": [
+        {
+          "type": "factionStanding",
+          "factionId": "faction-foundry-league",
+          "delta": 15
+        },
+        {
+          "type": "cityDial",
+          "dial": "prosperity",
+          "delta": 5
+        },
+        {
+          "type": "districtTension",
+          "districtId": "district-ironworks",
+          "delta": -15
+        }
+      ]
+    }
+  }
+]

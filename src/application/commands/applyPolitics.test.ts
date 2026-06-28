@@ -464,6 +464,7 @@ describe('leader trait modifiers', () => {
           standingWithPlayer: 0,
           activePressure: 50,
           leaderNpcId: 'npc-test-leader',
+          agendaProgress: [],
         },
       ],
       factionStandings: { ...initialGameStateSnapshot.factionStandings },
@@ -491,6 +492,7 @@ describe('leader trait modifiers', () => {
       description: 'Test',
       territory: [],
       tags: [],
+      agendaTreeIds: [],
     }
 
     const mockLeader = {
@@ -544,6 +546,7 @@ describe('leader trait modifiers', () => {
           standingWithPlayer: 0,
           activePressure: 80,
           leaderNpcId: 'npc-prudent-leader',
+          agendaProgress: [],
         },
       ],
       factionStandings: { ...initialGameStateSnapshot.factionStandings },
@@ -571,6 +574,7 @@ describe('leader trait modifiers', () => {
       description: 'Test',
       territory: [],
       tags: [],
+      agendaTreeIds: [],
     }
 
     const mockLeader = {
@@ -617,6 +621,7 @@ describe('leader trait modifiers', () => {
           standingWithPlayer: 0,
           activePressure: 50,
           leaderNpcId: 'npc-ruthless-leader',
+          agendaProgress: [],
         },
       ],
       factionStandings: {
@@ -645,6 +650,7 @@ describe('leader trait modifiers', () => {
       description: 'Test',
       territory: [],
       tags: [],
+      agendaTreeIds: [],
     }
 
     const mockLeader = {
@@ -691,6 +697,7 @@ describe('leader trait modifiers', () => {
           standingWithPlayer: 0,
           activePressure: 70,
           leaderNpcId: 'npc-corrupt-leader',
+          agendaProgress: [],
         },
       ],
       factionStandings: { ...initialGameStateSnapshot.factionStandings },

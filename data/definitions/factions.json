@@ -27,7 +27,8 @@
       "blocksWhen": {
         "cityUnrestAbove": 60
       }
-    }
+    },
+    "agendaTreeIds": ["agenda-compact-security"]
   },
   {
     "id": "faction-gilded-court",
@@ -57,7 +58,8 @@
       "blocksWhen": {
         "standingWithPlayerBelow": -20
       }
-    }
+    },
+    "agendaTreeIds": ["agenda-court-prestige"]
   },
   {
     "id": "faction-foundry-league",
@@ -84,7 +86,8 @@
         "factionPressureAbove": 35
       },
       "blocksWhen": {}
-    }
+    },
+    "agendaTreeIds": ["agenda-league-workers"]
   },
   {
     "id": "faction-tallow-ring",
