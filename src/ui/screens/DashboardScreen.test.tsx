@@ -275,4 +275,83 @@ describe('DashboardScreen', () => {
 
     expect(screen.getByTestId('route')).toHaveTextContent('/districts/district-the-pale')
   })
+
+  it('renders without errors with high money value', () => {
+    render(
+      <AppProviders store={createGameStore({ ...initialGameStateSnapshot, money: 5000000 })}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: /Lord Valdris/i })).toBeInTheDocument()
+  })
+
+  it('renders without errors with custom city dials', () => {
+    render(
+      <AppProviders store={createGameStore({
+        ...initialGameStateSnapshot,
+        cityDials: { control: 45, prosperity: 60, unrest: 30, corruption: 25 },
+      })}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: /Lord Valdris/i })).toBeInTheDocument()
+  })
+
+  it('renders without errors with custom faction standings', () => {
+    render(
+      <AppProviders store={createGameStore({
+        ...initialGameStateSnapshot,
+        factionStandings: {
+          ...initialGameStateSnapshot.factionStandings,
+          'faction-civic-compact': 25,
+          'faction-gilded-court': -10,
+        },
+      })}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: /Lord Valdris/i })).toBeInTheDocument()
+  })
+
+  it('renders without errors with activity log entries', () => {
+    render(
+      <AppProviders store={createGameStore({
+        ...initialGameStateSnapshot,
+        activityLog: [
+          { id: 'log-1', day: 1, timeSlot: 'morning', category: 'system' as const, message: 'Test activity entry' },
+        ],
+      })}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: /Lord Valdris/i })).toBeInTheDocument()
+  })
+
+  it('renders without errors when no active quests', () => {
+    render(
+      <AppProviders store={createGameStore({
+        ...initialGameStateSnapshot,
+        activeQuests: [],
+        availableQuestLeads: [],
+      })}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: /Lord Valdris/i })).toBeInTheDocument()
+  })
 })
