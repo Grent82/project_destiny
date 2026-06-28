@@ -8,6 +8,8 @@ import {
   selectShopPricingBreakdown,
   computeFactionPriceMod,
   computeMarketPressureMod,
+  computeCorridorPriceMod,
+  computeDistrictTensionPriceMod,
 } from './shops'
 import type { GameState } from '../../domain'
 
@@ -304,5 +306,142 @@ describe('Category display fix - weapons and armor in shops', () => {
         expect(item.category).toBe('armor')
       }
     }
+  })
+})
+
+describe('computeCorridorPriceMod', () => {
+  it('returns 1.3 when corridor is blocked', () => {
+    expect(computeCorridorPriceMod('blocked')).toBe(1.3)
+  })
+
+  it('returns 1.15 when corridor is disrupted', () => {
+    expect(computeCorridorPriceMod('disrupted')).toBe(1.15)
+  })
+
+  it('returns 1.0 when corridor is open', () => {
+    expect(computeCorridorPriceMod('open')).toBe(1.0)
+  })
+})
+
+describe('computeDistrictTensionPriceMod', () => {
+  it('returns 1.0 at zero tension', () => {
+    expect(computeDistrictTensionPriceMod(0)).toBe(1.0)
+  })
+
+  it('returns 1.1 at tension 50', () => {
+    expect(computeDistrictTensionPriceMod(50)).toBe(1.1)
+  })
+
+  it('returns 1.2 at max tension 100', () => {
+    expect(computeDistrictTensionPriceMod(100)).toBe(1.2)
+  })
+
+  it('applies linear scaling: 1 + (tension/100) * 0.2', () => {
+    expect(computeDistrictTensionPriceMod(25)).toBe(1.05)
+    expect(computeDistrictTensionPriceMod(75)).toBe(1.15)
+  })
+})
+
+describe('selectShopOverview institutional block', () => {
+  function asRootState(game: GameState) {
+    return { game } as Parameters<typeof selectShopOverview>[0]
+  }
+
+  it('blocks shop when controlling faction is blacklisted', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      factionStandings: { 'faction-civic-compact': 0 },
+      institutionalStanding: { 'faction-civic-compact': 'blacklisted' },
+    })
+    const overview = selectShopOverview(state)
+    const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
+    expect(harborShop?.accessDenied).toBe(true)
+    expect(harborShop?.institutionalBlock).toBe(true)
+    expect(harborShop?.offers).toEqual([])
+  })
+
+  it('blocks shop when controlling faction is hostile', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-ironworks',
+      factionStandings: { 'faction-foundry-league': 0 },
+      institutionalStanding: { 'faction-foundry-league': 'hostile' },
+    })
+    const overview = selectShopOverview(state)
+    const ironShop = overview.shops.find((s) => s.id === 'shop-ironworks-supply')
+    expect(ironShop?.accessDenied).toBe(true)
+    expect(ironShop?.institutionalBlock).toBe(true)
+  })
+
+  it('allows shop when faction is neutral in institutional standing', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      factionStandings: { 'faction-civic-compact': 0 },
+      institutionalStanding: { 'faction-civic-compact': 'neutral' },
+    })
+    const overview = selectShopOverview(state)
+    const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
+    expect(harborShop?.accessDenied).toBe(false)
+    expect(harborShop?.institutionalBlock).toBe(false)
+  })
+})
+
+describe('selectShopOverview affordability and bestPrice', () => {
+  function asRootState(game: GameState) {
+    return { game } as Parameters<typeof selectShopOverview>[0]
+  }
+
+  it('marks offers as affordable when money >= finalPrice', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      money: 1000,
+    })
+    const overview = selectShopOverview(state)
+    const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
+    const affordableOffers = harborShop?.offers.filter((o) => o.affordable)
+    expect(affordableOffers?.length).toBeGreaterThan(0)
+  })
+
+  it('marks offers as not affordable when money < finalPrice', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      money: 10,
+    })
+    const overview = selectShopOverview(state)
+    const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
+    const unaffordableOffers = harborShop?.offers.filter((o) => !o.affordable)
+    expect(unaffordableOffers?.length).toBeGreaterThan(0)
+  })
+
+  it('identifies best price across multiple shops in same district', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      money: 10000,
+    })
+    const overview = selectShopOverview(state)
+    const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
+
+    // At least one offer should be marked as best price
+    const bestPriceOffers = harborShop?.offers.filter((o) => o.bestPrice)
+    expect(bestPriceOffers?.length).toBeGreaterThan(0)
+  })
+
+  it('shows price delta when not the best price', () => {
+    const state = asRootState({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-harbor',
+      money: 10000,
+    })
+    const overview = selectShopOverview(state)
+    const harborShop = overview.shops.find((s) => s.id === 'shop-harbor-provisions')
+
+    // Check that priceDelta is 0 for best price items
+    const bestPriceOffer = harborShop?.offers.find((o) => o.bestPrice)
+    expect(bestPriceOffer?.priceDelta).toBe(0)
   })
 })

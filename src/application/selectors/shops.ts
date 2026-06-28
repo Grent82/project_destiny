@@ -15,6 +15,8 @@ import type { GameState } from '../../domain'
 export {
   computeFactionPriceMod,
   computeMarketPressureMod,
+  computeCorridorPriceMod,
+  computeDistrictTensionPriceMod,
   describeFactionPriceModifier,
   describeMarketPressureModifier,
 }

@@ -288,4 +288,113 @@ describe('BrokerageScreen', () => {
     expect(screen.getByText(/Equal-work notice in about 8 days/i)).toBeInTheDocument()
     expect(screen.getByText(/Every 28 days: corruption \+2, prosperity -1, unrest \+1/i)).toBeInTheDocument()
   })
+
+  it('shows extraction rescue button for transferred bonded NPCs', () => {
+    renderBrokerageScreen()
+
+    expect(
+      screen.getByRole('button', {
+        name: /Extract quietly \(health -20, Ring -15\)/i,
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows legal rescue button with correct buyout amount', () => {
+    renderBrokerageScreen()
+
+    const legalRescueBtn = screen.getByRole('button', {
+      name: /Buy freedom \(180 Marks\)/i,
+    })
+    expect(legalRescueBtn).toBeInTheDocument()
+  })
+
+  it('disables legal rescue when player cannot afford the buyout', () => {
+    renderBrokerageScreen({
+      ...stateWithBrokerageActivity(),
+      money: 100,
+    })
+
+    const legalRescueBtn = screen.getByRole('button', {
+      name: /Buy freedom \(180 Marks\)/i,
+    })
+    expect(legalRescueBtn).toBeDisabled()
+    expect(
+      screen.getByText(/Need 80 more Marks to meet the Compact Registrar bid/i),
+    ).toBeInTheDocument()
+  })
+
+  it('shows health drift when NPC has negative health trend', () => {
+    renderBrokerageScreen({
+      ...stateWithBrokerageActivity(),
+      roster: stateWithBrokerageActivity().roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys'
+          ? {
+              ...npc,
+              states: { health: 60, fatigue: 20, stress: 30, morale: 50, fear: 10, anger: 15, hunger: 30, injury: 0, intoxication: 0, hygiene: 70 },
+              bondStatus: npc.bondStatus
+                ? { ...npc.bondStatus, contractValue: 90, marketValue: 120 }
+                : npc.bondStatus,
+            }
+          : npc,
+      ),
+    })
+
+    expect(screen.getByText(/Condition: strained/i)).toBeInTheDocument()
+    expect(screen.getByText(/Daily drift/i)).toBeInTheDocument()
+  })
+
+  it('handles multiple house-held bonded NPCs simultaneously', async () => {
+    const user = userEvent.setup()
+    const store = renderBrokerageScreen({
+      ...withKitchenState(initialGameStateSnapshot, 'intact'),
+      roster: [
+        {
+          ...initialGameStateSnapshot.roster[0],
+          npcId: 'npc-marion-vale',
+          states: { health: 80, fatigue: 10, stress: 15, morale: 60, fear: 5, anger: 10, hunger: 20, injury: 0, intoxication: 0, hygiene: 80 },
+          bondStatus: {
+            holderId: 'player',
+            contractValue: 40,
+            termDays: 30,
+            entryReason: 'debt-settlement' as const,
+            alongsideFreeAssignmentDays: 0,
+            lastEqualityNoticeDay: null,
+            forSale: false,
+            lastOfferDay: null,
+            marketValue: 120,
+            ownerType: 'player' as const,
+            bondStartDay: 0,
+          },
+        },
+        {
+          ...initialGameStateSnapshot.roster[1],
+          npcId: 'npc-ida-rhys',
+          states: { health: 75, fatigue: 15, stress: 20, morale: 55, fear: 8, anger: 12, hunger: 25, injury: 0, intoxication: 0, hygiene: 75 },
+          bondStatus: {
+            holderId: 'player',
+            contractValue: 50,
+            termDays: 45,
+            entryReason: 'debt-settlement' as const,
+            alongsideFreeAssignmentDays: 0,
+            lastEqualityNoticeDay: null,
+            forSale: false,
+            lastOfferDay: null,
+            marketValue: 100,
+            ownerType: 'player' as const,
+            bondStartDay: 0,
+          },
+        },
+      ],
+    })
+
+    expect(screen.getByText(/Marion Vale/i)).toBeInTheDocument()
+    expect(screen.getByText(/Ida Rhys/i)).toBeInTheDocument()
+    expect(screen.getByText(/2 coercive contract/i)).toBeInTheDocument()
+
+    const transferButtons = screen.getAllByRole('button', { name: /Offer for transfer/i })
+    await user.click(transferButtons[0])
+
+    const marion = store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')
+    expect(marion?.bondStatus?.forSale).toBe(true)
+  })
 })
