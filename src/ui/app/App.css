@@ -896,7 +896,8 @@ strong { color: var(--text-secondary); }
 .npc-silhouette {
   width: 72%;
   height: 72%;
-  color: var(--portrait-accent, rgba(201,168,76,0.4));
+  color: var(--portrait-accent, rgba(201,168,76,0.5));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
 .npc-portrait-img {
@@ -918,7 +919,25 @@ strong { color: var(--text-secondary); }
 /* Marion Vale — primary character distinction */
 .npc-portrait-placeholder--primary {
   border-left-width: 6px;
-  box-shadow: 0 0 18px rgba(var(--portrait-accent-rgb, 201,168,76), 0.15) inset;
+  box-shadow:
+    0 0 24px rgba(201,168,76, 0.25) inset,
+    0 0 12px rgba(201,168,76, 0.15);
+}
+
+/* Opening screen Marion portrait - enhanced visibility */
+.opening-marion-portrait {
+  flex-shrink: 0;
+  width: 80px;
+  --portrait-accent: var(--gold-warm);
+  border-width: 3px;
+  border-left-width: 6px;
+  box-shadow:
+    0 0 20px rgba(201,168,76, 0.3) inset,
+    0 4px 12px rgba(0,0,0,0.4);
+}
+
+.opening-marion-portrait .npc-silhouette {
+  color: rgba(201,168,76, 0.55);
 }
 
 .npc-identity-name {
