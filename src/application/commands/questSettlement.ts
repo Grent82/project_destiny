@@ -87,7 +87,7 @@ function applyMiraRescueResolution(state: GameState, questId: string): GameState
   if (questId !== QUEST_IDS.MIRA_RESCUE) return state
   if (state.mainQuest.stage === 'rescued' || state.mainQuest.stage === 'epilogue') return state
 
-  let nextState: GameState = {
+  const nextState: GameState = {
     ...state,
     mainQuest: {
       ...state.mainQuest,
@@ -128,8 +128,9 @@ function applyOrrenRescueResolution(state: GameState, questId: string): GameStat
   const rosterIndex = nextState.roster.findIndex((npc) => npc.npcId === NPC_IDS.ORREN_WEX)
   if (rosterIndex >= 0) {
     const updatedRoster = [...nextState.roster]
-    updatedRoster[rosterIndex] = { ...updatedRoster[rosterIndex] }
-    delete (updatedRoster[rosterIndex] as any).captivityState
+    const updatedNpc = { ...updatedRoster[rosterIndex] }
+    delete (updatedNpc as { captivityState?: unknown }).captivityState
+    updatedRoster[rosterIndex] = updatedNpc
     nextState = { ...nextState, roster: updatedRoster }
   }
 
@@ -528,7 +529,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   }
 
   // Apply relationship deltas authored in the quest template
-  let relationships = { ...nextState.relationships }
+  const relationships = { ...nextState.relationships }
   for (const delta of template.rewardRelationshipDeltas) {
     const key = `player→${delta.npcId}`
     const existing = relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
@@ -544,7 +545,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
 
   // Spawn successor rumors authored in the quest template
   const activeTemplateIds = new Set(nextState.rumors.map((r) => r.templateId).filter(Boolean))
-  let rumors = [...nextState.rumors]
+  const rumors = [...nextState.rumors]
   for (const rumorTemplateId of template.successorRumorIds) {
     if (activeTemplateIds.has(rumorTemplateId)) continue
     const rumorTemplate = contentCatalog.rumors.find((r) => r.id === rumorTemplateId)

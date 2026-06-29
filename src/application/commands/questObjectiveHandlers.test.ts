@@ -8,18 +8,18 @@ import type { GameState } from '../../domain/game/contracts'
 /** Build a game state with a delivery or survival quest already accepted */
 function stateWithActiveQuest(questId: string): GameState {
   // Deep clone mutable arrays
-  const cloned: GameState = JSON.parse(JSON.stringify(initialGameStateSnapshot))
-  addQuestLeadIfNew(cloned, questId)
-  acceptQuestFromLead(cloned, questId)
-  return cloned
+  let state: GameState = JSON.parse(JSON.stringify(initialGameStateSnapshot))
+  state = addQuestLeadIfNew(state, questId)
+  state = acceptQuestFromLead(state, questId)
+  return state
 }
 
 describe('advanceToOnSiteStep', () => {
   it('advances a delivery quest from step 0 to step 2', () => {
     const state = stateWithActiveQuest('quest-nightbloom-extract')
     const result = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
-    expect(result).toBe(true)
-    const runtime = state.activeQuests.find((q) => q.questId === 'quest-nightbloom-extract')!
+    expect(result).not.toBe(state) // Should return new state
+    const runtime = result.activeQuests.find((q) => q.questId === 'quest-nightbloom-extract')!
     expect(runtime.progress.completedSteps).toBe(2)
     expect(runtime.stageId).toBe('on-site')
   })
@@ -27,28 +27,27 @@ describe('advanceToOnSiteStep', () => {
   it('advances a survival quest from step 0 to step 2', () => {
     const state = stateWithActiveQuest('quest-pale-wagon-escort')
     const result = advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
-    expect(result).toBe(true)
-    const runtime = state.activeQuests.find((q) => q.questId === 'quest-pale-wagon-escort')!
+    const runtime = result.activeQuests.find((q) => q.questId === 'quest-pale-wagon-escort')!
     expect(runtime.progress.completedSteps).toBe(2)
   })
 
-  it('returns false when already at step 2', () => {
+  it('returns same state when already at step 2', () => {
     const state = stateWithActiveQuest('quest-nightbloom-extract')
-    advanceToOnSiteStep(state, 'quest-nightbloom-extract')
-    const result = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
-    expect(result).toBe(false)
+    const nextState = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
+    const result = advanceToOnSiteStep(nextState, 'quest-nightbloom-extract')
+    expect(result).toBe(nextState) // Should return same state (no change)
   })
 
-  it('returns false for unknown quest', () => {
+  it('returns same state for unknown quest', () => {
     const state = stateWithActiveQuest('quest-nightbloom-extract')
     const result = advanceToOnSiteStep(state, 'quest-unknown')
-    expect(result).toBe(false)
+    expect(result).toBe(state) // Should return same state (no change)
   })
 
   it('updates the objective label in the journal', () => {
     const state = stateWithActiveQuest('quest-nightbloom-extract')
-    advanceToOnSiteStep(state, 'quest-nightbloom-extract')
-    const runtime = state.activeQuests.find((q) => q.questId === 'quest-nightbloom-extract')!
+    const result = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
+    const runtime = result.activeQuests.find((q) => q.questId === 'quest-nightbloom-extract')!
     expect(runtime.journalEntries.length).toBeGreaterThan(0)
     expect(runtime.currentObjectiveLabel).toContain('exchange')
   })
@@ -64,41 +63,42 @@ describe('resolveSimpleContractObjective - step guard', () => {
   })
 
   it('resolves after step 2 is reached', () => {
-    const state = stateWithActiveQuest('quest-nightbloom-extract')
+    let state = stateWithActiveQuest('quest-nightbloom-extract')
+    state = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
     const store = createGameStore(state)
-    store.dispatch(gameActions.advanceToOnSiteStep({ questId: 'quest-nightbloom-extract' }))
     store.dispatch(gameActions.resolveSimpleContract({ questId: 'quest-nightbloom-extract' }))
     expect(store.getState().game.completedQuestIds).toContain('quest-nightbloom-extract')
   })
 })
 
 describe('resolveWithComplicationCheck', () => {
-  it('returns success when complicationRisk is 0', () => {
-    const state = stateWithActiveQuest('quest-nightbloom-extract')
-    advanceToOnSiteStep(state, 'quest-nightbloom-extract')
-    const result = resolveWithComplicationCheck(state, 'quest-nightbloom-extract', 0)
-    expect(result).toBe('success')
+  it('completes quest when complicationRisk is 0', () => {
+    let state = stateWithActiveQuest('quest-nightbloom-extract')
+    state = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
+    state = resolveWithComplicationCheck(state, 'quest-nightbloom-extract', 0)
     expect(state.completedQuestIds).toContain('quest-nightbloom-extract')
   })
 
-  it('returns not_ready when completedSteps < 2', () => {
+  it('returns unchanged state when completedSteps < 2', () => {
     const state = stateWithActiveQuest('quest-nightbloom-extract')
-    const result = resolveWithComplicationCheck(state, 'quest-nightbloom-extract', 0)
-    expect(result).toBe('not_ready')
+    const beforeSteps = state.activeQuests.find((q) => q.questId === 'quest-nightbloom-extract')?.progress.completedSteps
+    const nextState = resolveWithComplicationCheck(state, 'quest-nightbloom-extract', 0)
+    const afterSteps = nextState.activeQuests.find((q) => q.questId === 'quest-nightbloom-extract')?.progress.completedSteps
+    expect(beforeSteps).toBe(afterSteps)
   })
 
-  it('returns not_applicable for unknown quest', () => {
+  it('returns unchanged state for unknown quest', () => {
     const state = stateWithActiveQuest('quest-nightbloom-extract')
-    const result = resolveWithComplicationCheck(state, 'quest-unknown', 0)
-    expect(result).toBe('not_applicable')
+    const beforeQuests = state.activeQuests.length
+    const nextState = resolveWithComplicationCheck(state, 'quest-unknown', 0)
+    expect(nextState.activeQuests.length).toBe(beforeQuests)
   })
 
   it('can fail a delivery with high complication risk', () => {
     // complicationRisk = 1 means always fail
-    const state = stateWithActiveQuest('quest-nightbloom-extract')
-    advanceToOnSiteStep(state, 'quest-nightbloom-extract')
-    const result = resolveWithComplicationCheck(state, 'quest-nightbloom-extract', 1)
-    expect(result).toBe('failed')
+    let state = stateWithActiveQuest('quest-nightbloom-extract')
+    state = advanceToOnSiteStep(state, 'quest-nightbloom-extract')
+    state = resolveWithComplicationCheck(state, 'quest-nightbloom-extract', 1)
     // Quest should be gone from activeQuests
     expect(state.activeQuests.some((q) => q.questId === 'quest-nightbloom-extract')).toBe(false)
     // And not in completed (it failed)
@@ -106,19 +106,18 @@ describe('resolveWithComplicationCheck', () => {
   })
 
   it('runs survival quest through full progression', () => {
-    const state = stateWithActiveQuest('quest-pale-wagon-escort')
-    advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
-    const result = resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)
-    expect(result).toBe('in_progress')
+    let state = stateWithActiveQuest('quest-pale-wagon-escort')
+    state = advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
+    state = resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)
     expect(state.completedQuestIds).not.toContain('quest-pale-wagon-escort')
     expect(state.activeQuests.some((q) => q.questId === 'quest-pale-wagon-escort')).toBe(true)
   })
 
   it('completes a multi-watch survival quest on the final watch', () => {
-    const state = stateWithActiveQuest('quest-pale-wagon-escort')
-    advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
-    expect(resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)).toBe('in_progress')
-    expect(resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)).toBe('success')
+    let state = stateWithActiveQuest('quest-pale-wagon-escort')
+    state = advanceToOnSiteStep(state, 'quest-pale-wagon-escort')
+    state = resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)
+    state = resolveWithComplicationCheck(state, 'quest-pale-wagon-escort', 0)
     expect(state.completedQuestIds).toContain('quest-pale-wagon-escort')
   })
 })

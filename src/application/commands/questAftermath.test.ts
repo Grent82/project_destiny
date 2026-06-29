@@ -50,7 +50,7 @@ describe('settleQuestSuccess — aftermath application', () => {
       unlockNpcIds: [],
       narrativeSummary: null,
     })
-    settleQuestSuccess(state, 'quest-test-aftermath')
+    state = settleQuestSuccess(state, 'quest-test-aftermath')
     expect(state.factionStandings['faction-test']).toBe(25) // 10 + 15
   })
 
@@ -62,7 +62,7 @@ describe('settleQuestSuccess — aftermath application', () => {
       unlockNpcIds: [],
       narrativeSummary: 'The district grew quieter after the raid.',
     })
-    settleQuestSuccess(state, 'quest-test-aftermath')
+    state = settleQuestSuccess(state, 'quest-test-aftermath')
     const hasNarrative = state.activityLog.some((e) => e.message.includes('quieter after the raid'))
     expect(hasNarrative).toBe(true)
   })
@@ -75,7 +75,7 @@ describe('settleQuestSuccess — aftermath application', () => {
       unlockNpcIds: [],
       narrativeSummary: null,
     })
-    settleQuestSuccess(state, 'quest-test-aftermath')
+    state = settleQuestSuccess(state, 'quest-test-aftermath')
     const hasConsequence = state.activityLog.some((e) => e.message.includes('district-lockdown'))
     expect(hasConsequence).toBe(true)
   })
@@ -83,8 +83,8 @@ describe('settleQuestSuccess — aftermath application', () => {
 
 describe('settleQuestPartialSuccess', () => {
   it('marks quest completed with partial stage', () => {
-    const state = makeQuestState()
-    settleQuestPartialSuccess(state, 'quest-test-aftermath', {
+    let state = makeQuestState()
+    state = settleQuestPartialSuccess(state, 'quest-test-aftermath', {
       partialReason: 'Half the job done, guard alerted.',
     })
     expect(state.completedQuestIds).toContain('quest-test-aftermath')
@@ -92,18 +92,18 @@ describe('settleQuestPartialSuccess', () => {
   })
 
   it('logs partial completion message', () => {
-    const state = makeQuestState()
-    settleQuestPartialSuccess(state, 'quest-test-aftermath')
+    let state = makeQuestState()
+    state = settleQuestPartialSuccess(state, 'quest-test-aftermath')
     const hasPartial = state.activityLog.some((e) => e.message.includes('partial resolution'))
     expect(hasPartial).toBe(true)
   })
 
   it('is distinct from full failure — partial marks as completed', () => {
-    const successState = makeQuestState()
-    const failState = makeQuestState({ questId: 'quest-test-aftermath-2' })
+    let successState = makeQuestState()
+    let failState = makeQuestState({ questId: 'quest-test-aftermath-2' })
 
-    settleQuestPartialSuccess(successState, 'quest-test-aftermath')
-    settleQuestFailure(failState, 'quest-test-aftermath-2')
+    successState = settleQuestPartialSuccess(successState, 'quest-test-aftermath')
+    failState = settleQuestFailure(failState, 'quest-test-aftermath-2')
 
     expect(successState.completedQuestIds).toContain('quest-test-aftermath')
     expect(failState.completedQuestIds).not.toContain('quest-test-aftermath-2')
@@ -119,7 +119,7 @@ describe('settleQuestFailure — aftermath application', () => {
       unlockNpcIds: [],
       narrativeSummary: 'The failure left a stain.',
     })
-    settleQuestFailure(state, 'quest-test-aftermath')
+    state = settleQuestFailure(state, 'quest-test-aftermath')
     expect(state.factionStandings['faction-test']).toBe(-10) // 10 - 20
   })
 })

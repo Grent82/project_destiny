@@ -89,7 +89,7 @@ export const questReducers = {
   },
 
   acceptQuest(state: GameState, action: PayloadAction<{ questId: string }>) {
-    acceptQuestFromLead(state, action.payload.questId)
+    return acceptQuestFromLead(state, action.payload.questId)
   },
 
   discoverQuestLeadsAtPoi(
@@ -98,16 +98,18 @@ export const questReducers = {
   ) {
     const { districtId, poiId } = action.payload
     const poi = contentCatalog.poisById.get(poiId)
-    if (!poi || poi.districtId !== districtId) return
+    if (!poi || poi.districtId !== districtId) return state
+    let nextState: GameState = state
     for (const template of getQuestTemplates()) {
       if (!matchesQuestDiscoveryAtPoi(template, poi)) continue
-      addQuestLeadIfNew(state, template.id, {
+      nextState = addQuestLeadIfNew(nextState, template.id, {
         discoverySource: template.discoverySource,
         discoveryDistrictId: districtId,
         sourcePoiId: poi.id,
         issuerFactionId: poi.factionId ?? template.employerFactionId,
       })
     }
+    return nextState
   },
 
   discoverQuestLeadsFromNpc(
@@ -115,12 +117,13 @@ export const questReducers = {
     action: PayloadAction<{ districtId: string; npcId: string; poiId?: string | null }>,
   ) {
     const { districtId, npcId, poiId = null } = action.payload
+    let nextState: GameState = state
     for (const template of getQuestTemplates()) {
       if (template.discoverySource !== 'npc') continue
       if (template.sourceNpcId !== npcId) continue
       if (template.discoveryDistrictId !== districtId) continue
       const npc = contentCatalog.npcsById.get(npcId)
-      addQuestLeadIfNew(state, template.id, {
+      nextState = addQuestLeadIfNew(nextState, template.id, {
         discoverySource: 'npc',
         discoveryDistrictId: districtId,
         sourceNpcId: npcId,
@@ -128,6 +131,7 @@ export const questReducers = {
         issuerFactionId: npc?.factionAffinityId ?? template.employerFactionId,
       })
     }
+    return nextState
   },
 
   completeQuest(state: GameState, action: PayloadAction<{ questId: string }>) {
@@ -137,18 +141,23 @@ export const questReducers = {
   },
 
   resolveSimpleContract(state: GameState, action: PayloadAction<{ questId: string }>) {
-    resolveSimpleContractObjective(state, action.payload.questId)
+    return resolveSimpleContractObjective(state, action.payload.questId)
   },
 
   advanceToOnSiteStep(state: GameState, action: PayloadAction<{ questId: string }>) {
-    advanceToOnSiteStep(state, action.payload.questId)
+    return advanceToOnSiteStep(state, action.payload.questId)
   },
 
   resolveContractWithComplicationCheck(
     state: GameState,
     action: PayloadAction<{ questId: string }>,
   ) {
-    resolveWithComplicationCheck(state, action.payload.questId)
+    const result = resolveWithComplicationCheck(state, action.payload.questId)
+    // If the command returned the same state (no change), advance time slot
+    if (result === state) {
+      return state
+    }
+    return result
   },
 
   failQuest(state: GameState, action: PayloadAction<{ questId: string }>) {
@@ -156,7 +165,7 @@ export const questReducers = {
   },
 
   expireTimedQuests(state: GameState) {
-    expireTimedQuestsOnState(state)
+    return expireTimedQuestsOnState(state)
   },
 
   startInvestigation(state: GameState, action: PayloadAction<{ questId: string }>) {

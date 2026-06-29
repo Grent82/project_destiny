@@ -723,7 +723,7 @@ function grantInvestigationItem(state: GameState, itemId: string, questId: strin
   if (container && container.slots.length < container.maxSlots) {
     // Check if item already exists
     const existingSlotIndex = container.slots.findIndex((s) => s.itemInstanceId === uniqueId)
-    let newSlots = [...container.slots]
+    const newSlots = [...container.slots]
     if (existingSlotIndex >= 0) {
       newSlots[existingSlotIndex] = {
         ...newSlots[existingSlotIndex],

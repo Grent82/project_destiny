@@ -11,15 +11,19 @@ import { getMiraQuestBeats } from '../selectors/miraCustody'
 
 type QuestLeadOverrides = Parameters<typeof createQuestLeadRuntime>[2]
 
-function pushSystemLog(state: GameState, message: string) {
-  state.activityLog.unshift({
+function pushSystemLog(state: GameState, message: string): GameState {
+  const newEntry = {
     id: `log-${state.day}-${state.timeSlot}-${state.activityLog.length + 1}`,
     day: state.day,
     timeSlot: state.timeSlot,
-    category: 'system',
+    category: 'system' as const,
     message,
-  })
-  if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+  }
+  let newLog = [newEntry, ...state.activityLog]
+  if (newLog.length >= MAX_ACTIVITY_ENTRIES) {
+    newLog = newLog.slice(0, MAX_ACTIVITY_ENTRIES)
+  }
+  return { ...state, activityLog: newLog }
 }
 
 /**
@@ -93,39 +97,58 @@ export function addQuestLeadIfNew(
   state: GameState,
   questId: string,
   overrides: QuestLeadOverrides = {},
-): boolean {
+): GameState {
   const template = getQuestTemplates().find((q) => q.id === questId)
-  if (!template || !canDiscoverQuest(state, questId)) return false
+  if (!template || !canDiscoverQuest(state, questId)) return state
   if (template.requiredFactionStanding) {
     const standing = state.factionStandings[template.requiredFactionStanding.factionId] ?? 0
-    if (standing < template.requiredFactionStanding.minStanding) return false
+    if (standing < template.requiredFactionStanding.minStanding) return state
   }
-  state.availableQuestLeads.push(createQuestLeadRuntime(template, state.day, overrides))
-  pushSystemLog(state, `New lead discovered: ${template.title}.`)
-  return true
+  let nextState: GameState = {
+    ...state,
+    availableQuestLeads: [...state.availableQuestLeads, createQuestLeadRuntime(template, state.day, overrides)],
+  }
+  nextState = pushSystemLog(nextState, `New lead discovered: ${template.title}.`)
+  return nextState
 }
 
-export function acceptQuestFromLead(state: GameState, questId: string): boolean {
+export function acceptQuestFromLead(state: GameState, questId: string): GameState {
   const leadIndex = state.availableQuestLeads.findIndex(
     (lead) => lead.questId === questId && (lead.expiresOnDay == null || state.day <= lead.expiresOnDay),
   )
-  if (leadIndex === -1) return false
+  if (leadIndex === -1) return state
   const template = getQuestTemplates().find((q) => q.id === questId)
-  if (!template) return false
+  if (!template) return state
 
-  const [lead] = state.availableQuestLeads.splice(leadIndex, 1)
-  state.activeQuests.push(createQuestRuntime(template, state.day, lead))
-  pushSystemLog(state, `Contract accepted: ${template.title}.`)
+  const lead = state.availableQuestLeads[leadIndex]
+  const newActiveQuests = [...state.activeQuests, createQuestRuntime(template, state.day, lead)]
+  const newAvailableLeads = [
+    ...state.availableQuestLeads.slice(0, leadIndex),
+    ...state.availableQuestLeads.slice(leadIndex + 1),
+  ]
 
-  if (questId === QUEST_IDS.MIRA_RESCUE && state.mainQuest.stage === 'lead-found') {
-    state.mainQuest.stage = 'location-known'
-    state.mainQuest.lastClue =
-      "Tessaly Ash confirms it: Mira is in the old tannery on the Pale's eastern edge. You know where she is. Now you need a way in."
+  let nextState: GameState = {
+    ...state,
+    availableQuestLeads: newAvailableLeads,
+    activeQuests: newActiveQuests,
   }
-  return true
+
+  nextState = pushSystemLog(nextState, `Contract accepted: ${template.title}.`)
+
+  if (questId === QUEST_IDS.MIRA_RESCUE && state.mainQuest?.stage === 'lead-found') {
+    nextState = {
+      ...nextState,
+      mainQuest: {
+        stage: 'location-known',
+        lastClue:
+          "Tessaly Ash confirms it: Mira is in the old tannery on the Pale's eastern edge. You know where she is. Now you need a way in.",
+      },
+    }
+  }
+  return nextState
 }
 
-export function expireTimedQuestsOnState(state: GameState): void {
+export function expireTimedQuestsOnState(state: GameState): GameState {
   const toExpire = state.activeQuests
     .filter((q) => {
       const template = getQuestTemplates().find((t) => t.id === q.questId)
@@ -133,56 +156,64 @@ export function expireTimedQuestsOnState(state: GameState): void {
     })
     .map((q) => q.questId)
 
+  let nextState: GameState = state
   for (const questId of toExpire) {
-    settleQuestFailure(state, questId, {
+    nextState = settleQuestFailure(nextState, questId, {
       objectiveLabel: 'The contract expired before the house acted.',
       journalEntry: 'Time ran out before the contract could be completed.',
       failureMessage: `Contract failed: "${getQuestTemplates().find((t) => t.id === questId)?.title ?? questId}". The house bears the cost.`,
     })
   }
+  return nextState
 }
 
-export function resolveSimpleContractObjective(state: GameState, questId: string): boolean {
+export function resolveSimpleContractObjective(state: GameState, questId: string): GameState {
   const hasRuntime = state.activeQuests.some((entry) => entry.questId === questId)
-  if (!hasRuntime) return false
+  if (!hasRuntime) return state
   const template = getQuestTemplates().find((q) => q.id === questId)
-  if (!template) return false
-  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return false
+  if (!template) return state
+  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return state
 
   const runtime = state.activeQuests.find((q) => q.questId === questId)!
-  if (runtime.progress.completedSteps < 2) return false
+  if (runtime.progress.completedSteps < 2) return state
 
   const label = template.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
-  settleQuestSuccess(state, questId, {
+  return settleQuestSuccess(state, questId, {
     objectiveLabel: 'The on-site work is done. Return and settle accounts.',
     journalEntry: 'The contract was completed on-site.',
     completionMessage: `${label}: "${template.title}". ${formatMarks(template.rewardMarks)} received.`,
   })
-  return true
 }
 
 /**
  * Advances a delivery or survival quest from its initial state to the 'on-site' step.
  * Represents transit to the district and initial contact / position-taking.
- * Returns true if advancement succeeded.
+ * Returns the updated GameState.
  */
-export function advanceToOnSiteStep(state: GameState, questId: string): boolean {
+export function advanceToOnSiteStep(state: GameState, questId: string): GameState {
   const runtime = state.activeQuests.find((q) => q.questId === questId)
-  if (!runtime) return false
+  if (!runtime) return state
   const template = getQuestTemplates().find((q) => q.id === questId)
-  if (!template) return false
-  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return false
-  if (runtime.progress.completedSteps >= 2) return false
+  if (!template) return state
+  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return state
+  if (runtime.progress.completedSteps >= 2) return state
 
   const stepLabel = template.objectiveType === 'delivery'
     ? 'Contact reached. Confirm terms and wait for the exchange window.'
     : 'Position established. Hold through the watch until the job is marked clear.'
 
-  runtime.stageId = 'on-site'
-  runtime.progress.completedSteps = 2
-  runtime.progress.lastAdvancedDay = state.day
-  runtime.currentObjectiveLabel = stepLabel
-  runtime.journalEntries.push(stepLabel)
+  // Create new runtime with updated properties
+  const updatedRuntime = {
+    ...runtime,
+    stageId: 'on-site' as const,
+    progress: {
+      ...runtime.progress,
+      completedSteps: 2,
+      lastAdvancedDay: state.day,
+    },
+    currentObjectiveLabel: stepLabel,
+    journalEntries: [...runtime.journalEntries, stepLabel],
+  }
 
   // Apply mid-quest beats for the 'on-site' stage
   applyMidQuestBeats(
@@ -195,30 +226,39 @@ export function advanceToOnSiteStep(state: GameState, questId: string): boolean 
       timeSlot: state.timeSlot,
       activityLog: state.activityLog,
     },
-    { questId: runtime.questId, stageId: runtime.stageId, journalEntries: runtime.journalEntries, currentObjectiveLabel: runtime.currentObjectiveLabel },
+    { questId: updatedRuntime.questId, stageId: updatedRuntime.stageId, journalEntries: updatedRuntime.journalEntries, currentObjectiveLabel: updatedRuntime.currentObjectiveLabel },
     template,
     'on-site',
   )
 
-  return true
+  // Return new state with updated runtime
+  const questIndex = state.activeQuests.findIndex((q) => q.questId === questId)
+  return {
+    ...state,
+    activeQuests: [
+      ...state.activeQuests.slice(0, questIndex),
+      updatedRuntime,
+      ...state.activeQuests.slice(questIndex + 1),
+    ],
+  }
 }
 
 /**
  * Resolves a delivery or survival quest with a complication check.
  * Uses the template's complicationRisk field and state.rngSeed for deterministic RNG.
- * Returns 'success' | 'failed' | 'in_progress' | 'not_ready' | 'not_applicable'.
+ * Returns the updated GameState.
  */
 export function resolveWithComplicationCheck(
   state: GameState,
   questId: string,
   complicationRiskOverride?: number,
-): 'success' | 'failed' | 'in_progress' | 'not_ready' | 'not_applicable' {
+): GameState {
   const runtime = state.activeQuests.find((q) => q.questId === questId)
-  if (!runtime) return 'not_applicable'
+  if (!runtime) return state
   const template = getQuestTemplates().find((q) => q.id === questId)
-  if (!template) return 'not_applicable'
-  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return 'not_applicable'
-  if (runtime.progress.completedSteps < 2) return 'not_ready'
+  if (!template) return state
+  if (template.objectiveType !== 'delivery' && template.objectiveType !== 'survival') return state
+  if (runtime.progress.completedSteps < 2) return state
 
   // Use override if provided (for tests), otherwise fall back to template default
   const complicationRisk = complicationRiskOverride ?? template.complicationRisk ?? 0
@@ -229,12 +269,11 @@ export function resolveWithComplicationCheck(
       const reason = template.objectiveType === 'delivery'
         ? 'The exchange was intercepted. The delivery failed.'
         : 'The squad could not hold the position. The job is forfeit.'
-      settleQuestFailure(state, questId, {
+      return settleQuestFailure(state, questId, {
         objectiveLabel: reason,
         journalEntry: reason,
         failureMessage: `Contract failed: "${template.title}". ${reason}`,
       })
-      return 'failed'
     }
     // Advance RNG seed for next use
     // Note: We don't update state.rngSeed here since this is called from a reducer
@@ -253,21 +292,17 @@ export function resolveWithComplicationCheck(
     runtime.progress.lastAdvancedDay = state.day
 
     if (nextWatchesLogged < requiredWatches) {
-      const remainingWatches = requiredWatches - nextWatchesLogged
       const watchEntry = `Watch ${nextWatchesLogged} of ${requiredWatches} logged on-site.`
-      runtime.currentObjectiveLabel =
-        `Hold for another watch. ${remainingWatches} ${remainingWatches === 1 ? 'watch' : 'watches'} remaining.`
       runtime.journalEntries.push(watchEntry)
-      return 'in_progress'
+      return state
     }
   }
 
   const label = template.objectiveType === 'delivery' ? 'Delivery complete' : 'Job done'
-  settleQuestSuccess(state, questId, {
+  return settleQuestSuccess(state, questId, {
     objectiveLabel: 'The on-site work is done. Return and settle accounts.',
     journalEntry: 'The contract was completed on-site.',
     completionMessage: `${label}: "${template.title}". ${formatMarks(template.rewardMarks)} received.`,
   })
-  return 'success'
 }
 
