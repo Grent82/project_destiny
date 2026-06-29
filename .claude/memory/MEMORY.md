@@ -48,3 +48,5 @@
 - [Feedback: Schema-Change Consumer-Analyse VOR schreiben](feedback_schema-change-consumer-analysis.md) — 86+ TypeError vermieden durch grep-Workflow vor Schema-Änderungen (2026-06-27 Employment)
 - [Projekt: NPC Employment System](project_employment-system-implementation.md) — Complete implementation with auto-renewal, poaching, performance tracking (2026-06-27)
 - [Feedback: Schema-Change — Verify source data before writing](feedback_schema_change_verify_data.md) — voteTemplateId required vs optional in agenda nodes (2026-06-28 politics fix)
+- [Immer current() does not fix nested mutations](immer-current-does-not-fix-nested-mutations.md) — current() creates shallow plain object, nested refs still same
+- [questSettlement architecture inconsistency](questsettlement-architecture-inconsistency.md) — functions mutate but callers expect immutable returns
