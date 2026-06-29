@@ -633,16 +633,23 @@ export function getInvestigationOutcomeCopy(
   }
 }
 
-function pushSystemLog(state: GameState, message: string, key: string) {
-  state.activityLog.unshift({
+function pushSystemLog(state: GameState, message: string, key: string): GameState {
+  const newEntry = {
     id: `log-${state.day}-${state.timeSlot}-${key}`,
     day: state.day,
     timeSlot: state.timeSlot,
-    category: 'system',
+    category: 'system' as const,
     message,
-  })
-  if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) {
-    state.activityLog.pop()
+  }
+
+  let newLog = [newEntry, ...state.activityLog]
+  if (newLog.length >= MAX_ACTIVITY_ENTRIES) {
+    newLog = newLog.slice(0, MAX_ACTIVITY_ENTRIES)
+  }
+
+  return {
+    ...state,
+    activityLog: newLog,
   }
 }
 
@@ -691,45 +698,61 @@ export function applyInvestigationApproachQuestState(
   runtime.journalEntries = [...runtime.journalEntries, `Clue uncovered: ${runtimeClue.label}`]
 }
 
-function grantInvestigationItem(state: GameState, itemId: string, questId: string) {
+function grantInvestigationItem(state: GameState, itemId: string, questId: string): GameState {
   const itemDef = contentCatalog.itemsById.get(itemId)
-  if (!itemDef) return
+  if (!itemDef) return state
 
-  // Directly write to inventoryState (pragmatic inline migration)
   const uniqueId = `${itemId}-${questId}-${state.day}`
 
   // Ensure we have at least one bag container
-  if (state.inventoryState.player.bagContainers.length === 0) {
-    state.inventoryState.player.bagContainers.push({
-      containerId: `bag-player-start`,
-      containerType: 'backpack',
-      ownerId: 'player',
-      maxSlots: 20,
-      slots: [],
-      locked: false,
-    })
+  let bagContainers = [...state.inventoryState.player.bagContainers]
+  if (bagContainers.length === 0) {
+    bagContainers = [
+      {
+        containerId: `bag-player-start`,
+        containerType: 'backpack',
+        ownerId: 'player',
+        maxSlots: 20,
+        slots: [],
+        locked: false,
+      },
+    ]
   }
 
-  const container = state.inventoryState.player.bagContainers[0]
+  const container = bagContainers[0]
   if (container && container.slots.length < container.maxSlots) {
     // Check if item already exists
-    const existingSlot = container.slots.find((s) => s.itemInstanceId === uniqueId)
-    if (existingSlot) {
-      existingSlot.quantity += 1
+    const existingSlotIndex = container.slots.findIndex((s) => s.itemInstanceId === uniqueId)
+    let newSlots = [...container.slots]
+    if (existingSlotIndex >= 0) {
+      newSlots[existingSlotIndex] = {
+        ...newSlots[existingSlotIndex],
+        quantity: newSlots[existingSlotIndex].quantity + 1,
+      }
     } else {
-      container.slots.push({
+      newSlots.push({
         slotId: `slot-${uniqueId}-${state.day}`,
         itemInstanceId: uniqueId,
         quantity: 1,
       })
     }
-    state.inventoryState.player.usedBagSlots = state.inventoryState.player.bagContainers.reduce(
-      (sum, c) => sum + c.slots.length,
-      0,
-    )
+    bagContainers = [{ ...container, slots: newSlots }]
+    const usedBagSlots = bagContainers.reduce((sum, c) => sum + c.slots.length, 0)
+
+    state = {
+      ...state,
+      inventoryState: {
+        ...state.inventoryState,
+        player: {
+          ...state.inventoryState.player,
+          bagContainers,
+          usedBagSlots,
+        },
+      },
+    }
   }
 
-  pushSystemLog(
+  return pushSystemLog(
     state,
     `${itemDef.name} was secured during the investigation and added to inventory.`,
     `investigation-item-${itemId}`,
