@@ -386,3 +386,99 @@
   gap: 0.5rem;
   margin-top: 0.75rem;
 }
+
+/* ── Captivity Status Section ────────────────────────────────────────────── */
+.captivity-status-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.captivity-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.4rem 0.8rem;
+  margin: 0.5rem 0;
+  padding: 0.6rem;
+  background: rgba(26, 20, 14, 0.6);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 2px;
+}
+
+.captivity-fact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+}
+
+.captivity-fact-row:last-child {
+  border-bottom: none;
+}
+
+.captivity-label {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.captivity-value {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.captivity-confiscation {
+  margin-top: 0.75rem;
+  padding: 0.6rem;
+  background: rgba(122, 32, 32, 0.08);
+  border: 1px solid rgba(122, 32, 32, 0.25);
+  border-radius: 2px;
+}
+
+.captivity-confiscation-title {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b04a3a;
+  margin: 0 0 0.5rem;
+}
+
+.confiscation-section {
+  margin: 0.4rem 0;
+}
+
+.confiscation-label {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.confiscation-value {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.confiscation-list {
+  margin: 0.2rem 0 0 0;
+  padding-left: 1rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.confiscation-item {
+  margin: 0.15rem 0;
+  line-height: 1.4;
+}
+
+.badge-danger {
+  background: rgba(122, 32, 32, 0.3);
+  color: #d7bf82;
+  border: 1px solid rgba(122, 32, 32, 0.5);
+}

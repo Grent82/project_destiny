@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -286,6 +286,175 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
             </button>
           </div>
         </>
+      )}
+    </>
+  )
+}
+
+function CaptivitySection({ detail }: { detail: NpcDetail }) {
+  const captivity = useAppSelector((state) => selectNpcCaptivityState(state, detail.npcId))
+
+  // No captivity state to display
+  if (!captivity || captivity.status === 'missing') {
+    return null
+  }
+
+  // Format condition with color coding
+  const getConditionClass = (condition: string) => {
+    switch (condition) {
+      case 'healthy': return 'badge-positive'
+      case 'hurt': return 'badge-warning'
+      case 'altered': return 'badge-danger'
+      default: return ''
+    }
+  }
+
+  // Format compliance for display
+  const complianceLabels: Record<string, string> = {
+    resistant: 'Resistant',
+    compliant: 'Compliant',
+    broken: 'Broken',
+  }
+
+  // Format condition for display
+  const conditionLabels: Record<string, string> = {
+    healthy: 'Healthy',
+    hurt: 'Hurt',
+    altered: 'Altered',
+  }
+
+  // Format regime for display
+  const regimeLabels: Record<string, string> = {
+    unknown: 'Unknown',
+    hidden: 'Hidden',
+    guarded: 'Guarded',
+    imprisoned: 'Imprisoned',
+  }
+
+  // Get holder name from faction catalog or use ID
+  const holderName = captivity.holderId
+    ? contentCatalog.factionsById.get(captivity.holderId)?.name ?? captivity.holderId
+    : 'Unknown holder'
+
+  // Get site name if available
+  const siteLabel = captivity.siteId
+    ? captivity.roomId
+      ? `${captivity.siteId} — ${captivity.roomId}`
+      : captivity.siteId
+    : null
+
+  return (
+    <>
+      <h3 className="muster-section-title">Captivity Status</h3>
+      <div className="captivity-status-header">
+        <span className={`badge badge-${captivity.status === 'captive' ? 'warning' : 'positive'}`}>
+          {captivity.status.charAt(0).toUpperCase() + captivity.status.slice(1)}
+        </span>
+        {captivity.timeHeldDays > 0 && (
+          <span className="badge">Held: {captivity.timeHeldDays} days</span>
+        )}
+      </div>
+
+      <div className="captivity-details">
+        <div className="captivity-fact-row">
+          <span className="captivity-label">Holder:</span>
+          <span className="captivity-value">{holderName}</span>
+        </div>
+
+        {siteLabel && (
+          <div className="captivity-fact-row">
+            <span className="captivity-label">Location:</span>
+            <span className="captivity-value">{siteLabel}</span>
+          </div>
+        )}
+
+        <div className="captivity-fact-row">
+          <span className="captivity-label">Regime:</span>
+          <span className="captivity-value">{regimeLabels[captivity.regime] ?? captivity.regime}</span>
+        </div>
+
+        <div className="captivity-fact-row">
+          <span className="captivity-label">Condition:</span>
+          <span className={`badge ${getConditionClass(captivity.condition)}`}>
+            {conditionLabels[captivity.condition] ?? captivity.condition}
+          </span>
+        </div>
+
+        <div className="captivity-fact-row">
+          <span className="captivity-label">Compliance:</span>
+          <span className="captivity-value">{complianceLabels[captivity.compliance] ?? captivity.compliance}</span>
+        </div>
+
+        {captivity.bondType && captivity.bondType !== 'none' && (
+          <div className="captivity-fact-row">
+            <span className="captivity-label">Bond Type:</span>
+            <span className="captivity-value">{captivity.bondType}</span>
+          </div>
+        )}
+
+        {captivity.lastTransferDay && (
+          <div className="captivity-fact-row">
+            <span className="captivity-label">Last Transfer:</span>
+            <span className="captivity-value">Day {captivity.lastTransferDay}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Confiscated Items */}
+      {(captivity.confiscatedItems?.length > 0 ||
+        captivity.confiscatedMoney ||
+        captivity.confiscatedEquipment?.weapon ||
+        captivity.confiscatedEquipment?.armor ||
+        (captivity.confiscatedEquipment?.accessory?.length ?? 0) > 0) && (
+        <div className="captivity-confiscation">
+          <h4 className="captivity-confiscation-title">Confiscated Belongings</h4>
+
+          {captivity.confiscatedItems?.length > 0 && (
+            <div className="confiscation-section">
+              <span className="confiscation-label">Items:</span>
+              <ul className="confiscation-list">
+                {captivity.confiscatedItems.map((item, idx) => (
+                  <li key={idx} className="confiscation-item">
+                    {contentCatalog.itemsById.get(item.itemId)?.name ?? item.itemId}
+                    {item.confiscatedDay && ` (Day ${item.confiscatedDay})`}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {captivity.confiscatedMoney && (
+            <div className="confiscation-section">
+              <span className="confiscation-label">Money:</span>
+              <span className="confiscation-value">
+                {captivity.confiscatedMoney.carriedCash} Mk carried, {captivity.confiscatedMoney.savings} Mk saved
+              </span>
+            </div>
+          )}
+
+          {(captivity.confiscatedEquipment?.weapon || captivity.confiscatedEquipment?.armor) && (
+            <div className="confiscation-section">
+              <span className="confiscation-label">Equipment:</span>
+              <ul className="confiscation-list">
+                {captivity.confiscatedEquipment.weapon && (
+                  <li className="confiscation-item">
+                    Weapon: {contentCatalog.itemsById.get(captivity.confiscatedEquipment.weapon)?.name ?? captivity.confiscatedEquipment.weapon}
+                  </li>
+                )}
+                {captivity.confiscatedEquipment.armor && (
+                  <li className="confiscation-item">
+                    Armor: {contentCatalog.itemsById.get(captivity.confiscatedEquipment.armor)?.name ?? captivity.confiscatedEquipment.armor}
+                  </li>
+                )}
+                {captivity.confiscatedEquipment.accessory?.map((acc, idx) => (
+                  <li key={idx} className="confiscation-item">
+                    Accessory: {contentCatalog.itemsById.get(acc)?.name ?? acc}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
     </>
   )
@@ -826,6 +995,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
 
       <DutySection detail={detail} />
       <BondStatusSection detail={detail} />
+      <CaptivitySection detail={detail} />
       <EquipmentSection detail={detail} onOpenSlot={setEquipSlot} />
       {equipSlot && (
         <ItemSelectionModal

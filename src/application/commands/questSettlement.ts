@@ -6,7 +6,6 @@ import { contentCatalog, getNpcDefinitions, getQuestTemplates } from '../content
 import { MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { buildEventRumorEntry } from './spawnEventRumor'
 import type { QuestEventParams } from './spawnEventRumor'
-import { setNpcCaptivityState } from './captivityRegistry'
 import type { QuestAftermath } from '../../domain/quests/contracts'
 import { createQuestLeadRuntime } from '../../domain/quests/contracts'
 import { DISTRICT_IDS, NPC_IDS, QUEST_IDS } from '../content/ids'
