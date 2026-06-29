@@ -62,10 +62,10 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
             const key = bondingKey(npcA.npcId, npcB.npcId, 'late-conversation')
             if (!isOnCooldown(next, key, BONDING_COOLDOWN)) {
               next = { ...next, relationships: { ...next.relationships } }
-              applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'affinity', 3)
-              applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'affinity', 3)
-              applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'trust', 2)
-              applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'trust', 2)
+              const r1 = applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'affinity', 3); next = r1.state
+              const r2 = applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'affinity', 3); next = r2.state
+              const r3 = applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'trust', 2); next = r3.state
+              const r4 = applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'trust', 2); next = r4.state
               next = appendActivityLogEntry(
                 next,
                 'system',
@@ -82,8 +82,8 @@ export function applyPersonalityFriction(state: GameState, _rng?: () => number):
             const key = bondingKey(npcA.npcId, npcB.npcId, 'quiet-respect')
             if (!isOnCooldown(next, key, BONDING_COOLDOWN)) {
               next = { ...next, relationships: { ...next.relationships } }
-              applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'respect', 4)
-              applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'respect', 4)
+              const r1 = applyRelationshipDelta(next, npcA.npcId, npcB.npcId, 'respect', 4); next = r1.state
+              const r2 = applyRelationshipDelta(next, npcB.npcId, npcA.npcId, 'respect', 4); next = r2.state
               next = appendActivityLogEntry(
                 next,
                 'system',

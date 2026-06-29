@@ -32,7 +32,8 @@ export function applySpendingAgency(state: GameState, rng: Rng): GameState {
         'economy',
         `${npcName} spent ${cost} marks on personal business while working in ${district}. Deducted from house funds, but the local market benefits.`,
       )
-      applyRelationshipDelta(next, 'player', npc.npcId, 'loyalty', 1)
+      const r = applyRelationshipDelta(next, 'player', npc.npcId, 'loyalty', 1)
+      next = r.state
     }
   }
 

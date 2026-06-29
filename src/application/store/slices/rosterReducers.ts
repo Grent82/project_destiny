@@ -42,8 +42,8 @@ export const rosterReducers = {
 
   recruitNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {
     const nextState = recruitNpcCommand(state, action.payload.npcId)
-    applyRelationshipDelta(nextState, 'player', action.payload.npcId, 'trust', 5)
-    return nextState
+    const relResult = applyRelationshipDelta(nextState, 'player', action.payload.npcId, 'trust', 5)
+    return relResult.state
   },
 
   acquireBoundHireOffer(state: GameState, action: PayloadAction<{ npcId: string }>) {
@@ -149,7 +149,10 @@ export const rosterReducers = {
       message: `A title conferred. The house has a new ${roleLabel}.`,
     })
     if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-    applyRelationshipDelta(state, 'player', npcId, 'respect', 8)
+    // Direct mutation for Immer compatibility
+    const key = `${'player'}→${npcId}`
+    const existing = state.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
+    state.relationships[key] = { ...existing, respect: Math.max(-100, Math.min(100, existing.respect + 8)) }
   },
 
   revokeTitle(state: GameState, action: PayloadAction<{ npcId: string }>) {
@@ -165,7 +168,10 @@ export const rosterReducers = {
       message: `The title is revoked. The role sits empty.`,
     })
     if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-    applyRelationshipDelta(state, 'player', npcId, 'respect', -5)
+    // Direct mutation for Immer compatibility
+    const key = `${'player'}→${npcId}`
+    const existing = state.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
+    state.relationships[key] = { ...existing, respect: Math.max(-100, Math.min(100, existing.respect - 5)) }
   },
 
   setCaptivityState(

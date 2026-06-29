@@ -214,6 +214,7 @@ export const worldReducers = {
   ) {
     const { fromId, toId, axis, delta, reason } = action.payload
     const result = applyRelationshipDelta(state, fromId, toId, axis, delta)
+    // Don't return result.state - that breaks Immer. Just let the mutations happen on the draft.
     if (result.significant && reason) {
       state.activityLog.unshift({
         id: `log-${state.day}-${state.timeSlot}-rel-${state.activityLog.length + 1}`,
@@ -222,8 +223,11 @@ export const worldReducers = {
         category: 'system',
         message: reason,
       })
-      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+      if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) {
+        state.activityLog.pop()
+      }
     }
+    // Don't return anything - Immer handles the draft
   },
 
   setInstitutionalStanding(

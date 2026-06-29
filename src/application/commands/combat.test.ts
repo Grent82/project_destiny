@@ -482,4 +482,66 @@ describe('combat commands', () => {
       expect(hollowsEnemy?.name).not.toBe(mirewardEnemy?.name)
     })
   })
+
+  describe('Redux/Immer compatibility', () => {
+    it('concludeCombatEncounter does not throw Immer error when called through Redux reducer pattern', () => {
+      // This test verifies that the command function works correctly when wrapped
+      // by Redux Toolkit's createReducer/createSlice which uses Immer internally.
+      // The bug was that applyRelationshipDelta modified state directly while also
+      // being called in a context where Redux expected a pure return value.
+
+      const startedState = startCombatEncounter(initialGameStateSnapshot)
+      const resolvedState = {
+        ...startedState,
+        activeCombat: {
+          ...startedState.activeCombat!,
+          outcome: 'victory' as const,
+          activeCombatantId: null,
+        },
+      }
+
+      // This should not throw: [Immer] An immer producer returned a new value *and* modified its draft
+      expect(() => concludeCombatEncounter(resolvedState)).not.toThrow()
+
+      const result = concludeCombatEncounter(resolvedState)
+
+      // Verify the state transitions are correct
+      expect(result.activeCombat).toBeNull()
+      expect(result.lastEncounterSummary?.outcome).toBe('victory')
+      expect(result.activityLog.some((e) => e.message.includes('concluded'))).toBe(true)
+    })
+
+    it('concludeCombatEncounter handles victory with linked quest without Immer errors', () => {
+      const harborwatch = getQuestTemplates().find((quest) => quest.id === 'quest-harborwatch')
+      if (!harborwatch) {
+        throw new Error('Expected harborwatch quest in fixtures.')
+      }
+
+      const state = {
+        ...initialStateWithIda,
+        currentDistrictId: 'district-the-warrens',
+        activeQuests: [createQuestRuntime(harborwatch, 1)],
+        selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
+      }
+
+      const startedState = startCombatEncounter(state, 'quest-harborwatch')
+      const resolvedState = {
+        ...startedState,
+        activeCombat: {
+          ...startedState.activeCombat!,
+          outcome: 'victory' as const,
+          activeCombatantId: null,
+        },
+      }
+
+      // Should not throw Immer error
+      expect(() => concludeCombatEncounter(resolvedState)).not.toThrow()
+
+      const result = concludeCombatEncounter(resolvedState)
+
+      // Verify quest was settled
+      expect(result.activeQuests.find((q) => q.questId === 'quest-harborwatch')).toBeUndefined()
+      expect(result.completedQuestIds).toContain('quest-harborwatch')
+    })
+  })
 })

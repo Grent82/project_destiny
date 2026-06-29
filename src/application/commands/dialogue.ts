@@ -102,8 +102,8 @@ function applyDialogueOutcome(
     case 'trust':
     case 'respect': {
       if (typeof outcome.value !== 'number') return state
-      applyRelationshipDelta(state, 'player', outcome.targetId ?? npcId, outcome.type, outcome.value)
-      return state
+      const result = applyRelationshipDelta(state, 'player', outcome.targetId ?? npcId, outcome.type, outcome.value)
+      return result.state
     }
     case 'factionStanding': {
       if (typeof outcome.value !== 'number' || !outcome.targetId) return state

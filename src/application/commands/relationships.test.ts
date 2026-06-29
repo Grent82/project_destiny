@@ -42,7 +42,7 @@ describe('applyRelationshipDelta', () => {
     const result = applyRelationshipDelta(state, 'player', 'npc-test', 'affinity', 10)
     expect(result.oldValue).toBe(0)
     expect(result.newValue).toBe(10)
-    expect(state.relationships['player→npc-test']?.affinity).toBe(10)
+    expect(result.state.relationships['player→npc-test']?.affinity).toBe(10)
   })
 
   it('clamps positive values to 100', () => {
@@ -71,9 +71,9 @@ describe('applyRelationshipDelta', () => {
 
   it('builds directed NPC→NPC key (no sorting)', () => {
     const state = makeMinimalState()
-    applyRelationshipDelta(state, 'npc-b', 'npc-a', 'affinity', 5)
-    expect(state.relationships['npc-b→npc-a']?.affinity).toBe(5)
-    expect(state.relationships['npc-a→npc-b']).toBeUndefined()
+    const result = applyRelationshipDelta(state, 'npc-b', 'npc-a', 'affinity', 5)
+    expect(result.state.relationships['npc-b→npc-a']?.affinity).toBe(5)
+    expect(result.state.relationships['npc-a→npc-b']).toBeUndefined()
   })
 })
 

@@ -41,18 +41,17 @@ export function applyRelationshipDelta(
   toId: string,
   axis: Axis,
   delta: number,
-): { key: string; oldValue: number; newValue: number; significant: boolean } {
+): { state: GameState; key: string; oldValue: number; newValue: number; significant: boolean } {
   const key = buildRelationshipKey(fromId, toId)
   const existing = state.relationships[key] ?? EMPTY_AXES
   const oldValue = existing[axis]
   const newValue = Math.max(-100, Math.min(100, oldValue + delta))
-  state.relationships[key] = { ...existing, [axis]: newValue }
 
   // Significant = crosses a threshold (every 25 points)
   const crossedThreshold =
     Math.floor(Math.abs(oldValue) / 25) !== Math.floor(Math.abs(newValue) / 25)
 
-  // Write memory when delta is meaningful
+  // Write memory when delta is meaningful (mutates state.roster in place)
   if (Math.abs(delta) > 5) {
     const description = `${axis} ${delta > 0 ? '+' : ''}${delta} with ${toId}`
     writeNpcMemory(state, fromId, description, [toId], { [axis]: delta })
@@ -61,7 +60,19 @@ export function applyRelationshipDelta(
     }
   }
 
-  return { key, oldValue, newValue, significant: crossedThreshold }
+  // Build new state with updated relationship
+  const nextRelationships = {
+    ...state.relationships,
+    [key]: { ...existing, [axis]: newValue },
+  }
+
+  return {
+    state: { ...state, relationships: nextRelationships },
+    key,
+    oldValue,
+    newValue,
+    significant: crossedThreshold
+  }
 }
 
 const DEFAULT_LOYALTY = 50
@@ -124,7 +135,7 @@ export function applyProximityGains(state: GameState, npcIds: string[]): GameSta
       .map((n) => [n.npcId, n.traits]),
   )
 
-  const next = state
+  let next = state
 
   for (let i = 0; i < npcIds.length; i++) {
     for (let j = i + 1; j < npcIds.length; j++) {
@@ -146,11 +157,14 @@ export function applyProximityGains(state: GameState, npcIds: string[]): GameSta
       const gainMultiplier = 1.0 + compatScore / 50
       const gain = Math.max(BASE_AFFINITY_GAIN, Math.round(BASE_AFFINITY_GAIN * gainMultiplier)) + curiosityBonus
 
-      applyRelationshipDelta(next, idA, idB, 'affinity', gain)
-      applyRelationshipDelta(next, idB, idA, 'affinity', gain)
+      const resultA = applyRelationshipDelta(next, idA, idB, 'affinity', gain)
+      next = resultA.state
+      const resultB = applyRelationshipDelta(next, idB, idA, 'affinity', gain)
+      next = resultB.state
     }
 
-    applyRelationshipDelta(next, 'player', npcIds[i]!, 'respect', BASE_RESPECT_GAIN)
+    const result = applyRelationshipDelta(next, 'player', npcIds[i]!, 'respect', BASE_RESPECT_GAIN)
+    next = result.state
   }
 
   return next

@@ -25,7 +25,8 @@ export function applyBondAgency(state: GameState, rng: Rng): GameState {
       if (!existing || existing.loyalty < 30) {
         const delta = 5 + Math.floor(rng() * 10)
         next = { ...next, relationships: { ...next.relationships } }
-        applyRelationshipDelta(next, npc.npcId, other.npcId, 'loyalty', delta)
+        const r = applyRelationshipDelta(next, npc.npcId, other.npcId, 'loyalty', delta)
+        next = r.state
         next = appendActivityLogEntry(
           next,
           'system',

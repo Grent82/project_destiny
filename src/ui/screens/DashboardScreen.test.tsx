@@ -265,7 +265,7 @@ describe('DashboardScreen', () => {
         <MemoryRouter initialEntries={['/dashboard']}>
           <Routes>
             <Route path="/dashboard" element={<DashboardScreen saveStore={createMemorySaveStore()} />} />
-            <Route path="/districts/district-the-pale" element={<LocationProbe />} />
+            <Route path="/district/district-the-pale" element={<LocationProbe />} />
           </Routes>
         </MemoryRouter>
       </AppProviders>,
@@ -273,7 +273,7 @@ describe('DashboardScreen', () => {
 
     await user.click(screen.getByRole('button', { name: '→ Visit the Pale' }))
 
-    expect(screen.getByTestId('route')).toHaveTextContent('/districts/district-the-pale')
+    expect(screen.getByTestId('route')).toHaveTextContent('/district/district-the-pale')
   })
 
   it('renders without errors with high money value', () => {

@@ -258,16 +258,16 @@ function preserveArchiveRumor(state: GameState, rumors: Rumor[]): Rumor[] {
 /**
  * Apply relationship effects from a set of rumor templates to the player.
  * Fires only effects matching `trigger` and only when not already applied.
- * Mutates `state.relationships` and updates `rumorsWithApplied` in-place by
- * tagging the matching rumor entries with the applied trigger.
+ * Returns updated state with relationship deltas applied and updated rumors.
  */
 function applyRumorRelationshipEffects(
   state: GameState,
   rumors: Rumor[],
   trigger: 'onAcquire' | 'onVerify',
-): Rumor[] {
+): { state: GameState; rumors: Rumor[] } {
   const templateMap = new Map(contentCatalog.rumors.map((t) => [t.id, t]))
-  return rumors.map((rumor) => {
+  let nextState = state
+  const updatedRumors = rumors.map((rumor) => {
     if (!rumor.templateId) return rumor
     const template = templateMap.get(rumor.templateId)
     if (!template?.relationshipEffects?.length) return rumor
@@ -280,20 +280,16 @@ function applyRumorRelationshipEffects(
 
     for (const effect of matching) {
       const { axes, npcId } = effect
-      if (axes.affinity !== undefined && axes.affinity !== 0)
-        applyRelationshipDelta(state, 'player', npcId, 'affinity', axes.affinity)
-      if (axes.respect !== undefined && axes.respect !== 0)
-        applyRelationshipDelta(state, 'player', npcId, 'respect', axes.respect)
-      if (axes.fear !== undefined && axes.fear !== 0)
-        applyRelationshipDelta(state, 'player', npcId, 'fear', axes.fear)
-      if (axes.trust !== undefined && axes.trust !== 0)
-        applyRelationshipDelta(state, 'player', npcId, 'trust', axes.trust)
-      if (axes.loyalty !== undefined && axes.loyalty !== 0)
-        applyRelationshipDelta(state, 'player', npcId, 'loyalty', axes.loyalty)
+      if (axes.affinity !== undefined && axes.affinity !== 0) { const r = applyRelationshipDelta(nextState, 'player', npcId, 'affinity', axes.affinity); nextState = r.state }
+      if (axes.respect !== undefined && axes.respect !== 0) { const r = applyRelationshipDelta(nextState, 'player', npcId, 'respect', axes.respect); nextState = r.state }
+      if (axes.fear !== undefined && axes.fear !== 0) { const r = applyRelationshipDelta(nextState, 'player', npcId, 'fear', axes.fear); nextState = r.state }
+      if (axes.trust !== undefined && axes.trust !== 0) { const r = applyRelationshipDelta(nextState, 'player', npcId, 'trust', axes.trust); nextState = r.state }
+      if (axes.loyalty !== undefined && axes.loyalty !== 0) { const r = applyRelationshipDelta(nextState, 'player', npcId, 'loyalty', axes.loyalty); nextState = r.state }
     }
 
     return { ...rumor, appliedRelationshipTriggers: [...alreadyApplied, trigger] }
   })
+  return { state: nextState, rumors: updatedRumors }
 }
 
 /**
@@ -350,7 +346,7 @@ export function applyRumorSpread(state: GameState, rng: Rng): GameState {
   const pruned = pruneRumors(archived, next.day)
 
   // Build the returning state and apply consequence + relationship mutations
-  const result: GameState = {
+  let result: GameState = {
     ...next,
     rumors: pruned,
     bondVisibility: newBondVisibility,
@@ -363,12 +359,16 @@ export function applyRumorSpread(state: GameState, rng: Rng): GameState {
 
   // Apply onAcquire relationship effects for newly spawned rumors
   if (newlyAdded.length > 0) {
-    result.rumors = applyRumorRelationshipEffects(result, result.rumors, 'onAcquire')
+    const r = applyRumorRelationshipEffects(result, result.rumors, 'onAcquire')
+    result = r.state
+    result.rumors = r.rumors
   }
 
   // Apply onVerify relationship effects for rumors newly crossing heat ≥ 60
   if (verified.length > 0) {
-    result.rumors = applyRumorRelationshipEffects(result, result.rumors, 'onVerify')
+    const r = applyRumorRelationshipEffects(result, result.rumors, 'onVerify')
+    result = r.state
+    result.rumors = r.rumors
   }
 
   return result

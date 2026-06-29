@@ -78,7 +78,8 @@ export function applyWages(state: GameState): GameState {
         ),
       }
       // Paid on time → loyalty +2
-      applyRelationshipDelta(next, 'player', rosterEntry.npcId, 'loyalty', 2)
+      const relResult = applyRelationshipDelta(next, 'player', rosterEntry.npcId, 'loyalty', 2)
+      next = relResult.state
     } else {
       next = {
         ...next,
@@ -110,6 +111,7 @@ export function applyWages(state: GameState): GameState {
         ),
       }
       const relResult = applyRelationshipDelta(next, 'player', npc.npcId, 'loyalty', -5)
+      next = relResult.state
       if (newLoyalty < 20) {
         next = appendActivityLogEntry(
           next,

@@ -138,13 +138,13 @@ export function giftItemToNpc(state: GameState, payload: { instanceId: string; n
   const npc = state.roster.find((entry) => entry.npcId === npcId)
   if (!npc || !isNpcColocatedForGift(state, npc)) return state
 
-  const next: GameState = removePlayerItem(state, instanceId)
+  let next: GameState = removePlayerItem(state, instanceId)
 
   const outcome = resolveGiftOutcome(item, npc)
-  if (outcome.affinity !== 0) applyRelationshipDelta(next, 'player', npcId, 'affinity', outcome.affinity)
-  if (outcome.respect !== 0) applyRelationshipDelta(next, 'player', npcId, 'respect', outcome.respect)
-  if (outcome.trust !== 0) applyRelationshipDelta(next, 'player', npcId, 'trust', outcome.trust)
-  if (outcome.loyalty !== 0) applyRelationshipDelta(next, 'player', npcId, 'loyalty', outcome.loyalty)
+  if (outcome.affinity !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'affinity', outcome.affinity); next = r.state }
+  if (outcome.respect !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'respect', outcome.respect); next = r.state }
+  if (outcome.trust !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'trust', outcome.trust); next = r.state }
+  if (outcome.loyalty !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'loyalty', outcome.loyalty); next = r.state }
 
   next.activityLog.unshift({
     id: `gift::${npcId}::${item.id}::${state.day}::${state.timeSlot}`,

@@ -267,16 +267,20 @@ export function performCombatAction(state: GameState, action: CombatAction): Gam
   if (activeCombatant.side === 'allies' && activeCombatant.sourceNpcId) {
     const npcId = activeCombatant.sourceNpcId
     const durabilities = { ...nextState.equippedItemDurabilities }
-    const npcDur = { ...(durabilities[npcId] ?? {}) } as Record<'weapon' | 'armor', number>
+    // Ensure npcDur has default values to prevent Zod validation errors
+    const npcDur: Record<'weapon' | 'armor', number> = {
+      weapon: typeof (durabilities[npcId]?.weapon) === 'number' ? durabilities[npcId].weapon : 100,
+      armor: typeof (durabilities[npcId]?.armor) === 'number' ? durabilities[npcId].armor : 100,
+    }
 
     if (action === 'attack' && activeCombatant.equippedWeaponId && rng() < 0.05) {
       const amount = 3 + Math.floor(rng() * 3)
-      npcDur['weapon'] = Math.max(0, (npcDur['weapon'] ?? 100) - amount)
+      npcDur['weapon'] = Math.max(0, npcDur['weapon'] - amount)
     }
 
     if (activeCombatant.equippedArmorId && rng() < 0.05) {
       const amount = 2 + Math.floor(rng() * 3)
-      npcDur['armor'] = Math.max(0, (npcDur['armor'] ?? 100) - amount)
+      npcDur['armor'] = Math.max(0, npcDur['armor'] - amount)
     }
 
     // Auto-switch to secondary weapon if primary breaks
@@ -358,17 +362,19 @@ export function concludeCombatEncounter(state: GameState): GameState {
 
     // Relationship gains for victory + bridge rule: near-death allies gain relationship fear
     const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
-    nextState = { ...nextState, relationships: { ...nextState.relationships } }
     for (const ally of allyCombatants) {
-      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 3)
-      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 2)
+      const trustResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 3)
+      nextState = trustResult.state
+      const loyaltyResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 2)
+      nextState = loyaltyResult.state
 
       // Bridge rule: near-death → relationship fear increase (reduced on victory)
       const rosterEntry = nextState.roster.find((e) => e.npcId === ally.sourceNpcId)
       const currentFear = rosterEntry?.states.fear ?? 0
       const fearDelta = computePostCombatFearDelta(ally.health, ally.maxHealth, 'victory', currentFear)
       if (fearDelta > 0) {
-        applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
+        const fearResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
+        nextState = fearResult.state
       }
     }
 
@@ -453,10 +459,10 @@ export function concludeCombatEncounter(state: GameState): GameState {
   if (combat.outcome === 'defeat') {
     // Relationship penalties for defeat + bridge rule: full fear delta applies
     const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
-    nextState = { ...nextState, relationships: { ...nextState.relationships } }
     for (const ally of allyCombatants) {
-      const result = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', -2)
-      if (result.significant) {
+      const trustResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', -2)
+      nextState = trustResult.state
+      if (trustResult.significant) {
         nextState = appendActivityLogEntry(
           nextState,
           'system',
@@ -468,7 +474,8 @@ export function concludeCombatEncounter(state: GameState): GameState {
       const currentFear = rosterEntry?.states.fear ?? 0
       const fearDelta = computePostCombatFearDelta(ally.health, ally.maxHealth, 'defeat', currentFear)
       if (fearDelta > 0) {
-        applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
+        const fearResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
+        nextState = fearResult.state
       }
     }
 
@@ -557,13 +564,15 @@ export function concludeCombatEncounter(state: GameState): GameState {
   const allyCombatants = combat.combatants.filter((c) => c.side === 'allies' && c.sourceNpcId)
 
   // Post-combat relationship boosts for surviving allies (shared experience)
-  nextState = { ...nextState, relationships: { ...nextState.relationships } }
   for (const ally of allyCombatants) {
     if (ally.health > 0) {
-      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'affinity', 2)
-      applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 1)
+      const affinityResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'affinity', 2)
+      nextState = affinityResult.state
+      const trustResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'trust', 1)
+      nextState = trustResult.state
       if (isVictory) {
-        applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 3)
+        const loyaltyResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'loyalty', 3)
+        nextState = loyaltyResult.state
       }
     }
   }
@@ -578,20 +587,28 @@ export function concludeCombatEncounter(state: GameState): GameState {
       const nameB = survivingNpcAllies[j]!.name
 
       if (isVictory) {
-        applyRelationshipDelta(nextState, idA, idB, 'affinity', 8)
-        applyRelationshipDelta(nextState, idA, idB, 'respect', 5)
-        applyRelationshipDelta(nextState, idB, idA, 'affinity', 8)
-        applyRelationshipDelta(nextState, idB, idA, 'respect', 5)
+        const affinityResultA = applyRelationshipDelta(nextState, idA, idB, 'affinity', 8)
+        nextState = affinityResultA.state
+        const respectResultA = applyRelationshipDelta(nextState, idA, idB, 'respect', 5)
+        nextState = respectResultA.state
+        const affinityResultB = applyRelationshipDelta(nextState, idB, idA, 'affinity', 8)
+        nextState = affinityResultB.state
+        const respectResultB = applyRelationshipDelta(nextState, idB, idA, 'respect', 5)
+        nextState = respectResultB.state
         nextState = appendActivityLogEntry(
           nextState,
           'combat',
           `${nameA} and ${nameB} came through it together.`,
         )
       } else {
-        applyRelationshipDelta(nextState, idA, idB, 'affinity', 4)
-        applyRelationshipDelta(nextState, idA, idB, 'trust', 5)
-        applyRelationshipDelta(nextState, idB, idA, 'affinity', 4)
-        applyRelationshipDelta(nextState, idB, idA, 'trust', 5)
+        const affinityResult1 = applyRelationshipDelta(nextState, idA, idB, 'affinity', 4)
+        nextState = affinityResult1.state
+        const trustResult1 = applyRelationshipDelta(nextState, idA, idB, 'trust', 5)
+        nextState = trustResult1.state
+        const affinityResult2 = applyRelationshipDelta(nextState, idB, idA, 'affinity', 4)
+        nextState = affinityResult2.state
+        const trustResult2 = applyRelationshipDelta(nextState, idB, idA, 'trust', 5)
+        nextState = trustResult2.state
         nextState = appendActivityLogEntry(
           nextState,
           'combat',
