@@ -131,7 +131,7 @@ export const questReducers = {
   },
 
   completeQuest(state: GameState, action: PayloadAction<{ questId: string }>) {
-    settleQuestSuccess(state, action.payload.questId, {
+    return settleQuestSuccess(state, action.payload.questId, {
       journalEntry: 'The contract was resolved in the house ledger.',
     })
   },
@@ -152,7 +152,7 @@ export const questReducers = {
   },
 
   failQuest(state: GameState, action: PayloadAction<{ questId: string }>) {
-    settleQuestFailure(state, action.payload.questId)
+    return settleQuestFailure(state, action.payload.questId)
   },
 
   expireTimedQuests(state: GameState) {

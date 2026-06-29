@@ -23,14 +23,20 @@ function recordResolvedChoice(
   state: GameState,
   dialogueId: string,
   choiceId: string,
-) {
+): GameState {
   const existingChoiceIds = state.resolvedDialogueChoices[dialogueId] ?? []
 
   if (existingChoiceIds.includes(choiceId)) {
-    return
+    return state
   }
 
-  state.resolvedDialogueChoices[dialogueId] = [...existingChoiceIds, choiceId]
+  return {
+    ...state,
+    resolvedDialogueChoices: {
+      ...state.resolvedDialogueChoices,
+      [dialogueId]: [...existingChoiceIds, choiceId],
+    },
+  }
 }
 
 export function meetsDialogueCondition(
@@ -108,9 +114,16 @@ function applyDialogueOutcome(
     case 'factionStanding': {
       if (typeof outcome.value !== 'number' || !outcome.targetId) return state
       const existingStanding = state.factionStandings[outcome.targetId] ?? 0
-      state.factionStandings[outcome.targetId] = existingStanding + outcome.value
+      const newStanding = Math.max(-100, Math.min(100, existingStanding + outcome.value))
+      const afterStanding = {
+        ...state,
+        factionStandings: {
+          ...state.factionStandings,
+          [outcome.targetId]: newStanding,
+        },
+      }
       return appendActivityLogEntry(
-        state,
+        afterStanding,
         'system',
         `Standing shifted with ${contentCatalog.factionsById.get(outcome.targetId)?.name ?? outcome.targetId}.`,
       )
@@ -159,7 +172,7 @@ export function resolveDialogueChoice(
   }
 
   let next = cloneDialogueState(state)
-  recordResolvedChoice(next, tree.id, choice.id)
+  next = recordResolvedChoice(next, tree.id, choice.id)
 
   if (choice.outcome) {
     next = applyDialogueOutcome(next, tree.npcId, choice.outcome)
