@@ -347,6 +347,13 @@ The first useful asset direction outputs should be:
 
 Portrait sets follow the style guide. Decorative illustrations come after the visual system is stable.
 
+## UI/UX Design Principles
+
+**WICHTIG:** Für UI/UX Design-Prinzipien, Screen-Vorlagen, und konkrete Implementierungs-Regeln siehe:
+- [`ui-ux-design-principles.md`](./ui-ux-design-principles.md) — Ausführliche Anleitung für UI/UX Arbeit
+
+Die Art Direction in diesem Dokument ergänzt die UI-Prinzipien, ersetzt sie aber nicht.
+
 ## Expected Future Content
 
 - type direction

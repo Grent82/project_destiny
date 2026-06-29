@@ -3,7 +3,26 @@
     "playwright": {
       "command": "npx",
       "args": ["@playwright/mcp@latest", "--headless"],
-      "type": "stdio"
+      "type": "stdio",
+      "description": "Browser automation for UI screenshots, navigation, and interaction. Use for all UI/UX beads to verify visual changes."
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "type": "stdio",
+      "description": "File system access for searching, reading, and batch operations. Use for finding all portrait references, batch file changes in STEP tickets."
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "type": "stdio",
+      "description": "Alternative browser automation. Use for element-specific screenshots, network error logging (404 portrait detection), PDF generation."
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "type": "stdio",
+      "description": "Git operations for diff views, branch management, conflict detection. Use for Quality Gate verification, pre-commit reviews."
     }
   }
 }

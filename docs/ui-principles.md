@@ -6,6 +6,13 @@ This document is the UI and UX source of truth for Project Destiny.
 
 Its purpose is to guide information architecture, readability, interaction density, and screen composition for a systems-heavy browser RPG.
 
+## Detailed Implementation Guide
+
+**WICHTIG:** Für konkrete Implementierungs-Details, Code-Vorlagen, und kindgerechte Erklärungen siehe:
+- [`docs/ui-ux-design-principles.md`](./ui-ux-design-principles.md) — Ausführliche Anleitung mit Beispielen, ASCII-Mockups, und Code-Templates für Juniors
+
+Dieses Dokument hier ist die kurze Zusammenfassung der Prinzipien.
+
 ## Core UI Goal
 
 The UI must make a complex simulation understandable without flattening it into bland admin screens.
@@ -299,3 +306,22 @@ When reviewing a management screen, ask:
 - component composition rules
 - typography and spacing system
 - accessibility checklist specific to game screens
+
+## Quick Reference
+
+**Für schnelle Nachschlage-Fragen:**
+- [`ui-ux-cheat-sheet.md`](./ui-ux-cheat-sheet.md) — Code-Snippets, MCP Commands, Checklisten (1 Seite)
+
+## Related Documentation
+
+**Hauptdokumente:**
+- [`ui-ux-design-principles.md`](./ui-ux-design-principles.md) — Ausführliche Anleitung mit Beispielen
+- [`workflows/ui-ux-with-mcp.md`](./workflows/ui-ux-with-mcp.md) — MCP Workflow Schritt-für-Schritt
+
+**Richtlinien:**
+- [`art-direction.md`](./art-direction.md) — Visuelle Richtung und Asset-Regeln
+- [`workflows/game-ui.md`](./workflows/game-ui.md) — Workflow für UI-Arbeit
+
+**Rollen:**
+- [`roles/ui-ux.md`](./roles/ui-ux.md) — Rolle und Verantwortung UI/UX
+- [`roles/ui.md`](./roles/ui.md) — Rolle und Verantwortung UI Developer
