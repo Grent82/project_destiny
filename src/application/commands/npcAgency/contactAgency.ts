@@ -34,7 +34,7 @@ export function applyContactAgency(state: GameState, rng: Rng): GameState {
       'system',
       `${npcName} made a useful contact in ${district}. Local trade friction eases and new business may follow.`,
     )
-    writeNpcMemory(next, npc.npcId, `Made a contact in ${district}`)
+    next = writeNpcMemory(next, npc.npcId, `Made a contact in ${district}`)
   }
 
   return next

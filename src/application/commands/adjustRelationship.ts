@@ -9,7 +9,7 @@ const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 
 
 /**
  * Write a memory entry to an NPC's npcMemory array (capped at MAX_NPC_MEMORY_ENTRIES).
- * Silently no-ops if the NPC is not in the roster.
+ * Returns the updated state. Silently returns state unchanged if the NPC is not in the roster.
  */
 export function writeNpcMemory(
   state: GameState,
@@ -17,9 +17,9 @@ export function writeNpcMemory(
   event: string,
   participants?: string[],
   axisDelta?: Record<string, number>,
-): void {
+): GameState {
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
-  if (npcIndex === -1) return
+  if (npcIndex === -1) return state
 
   const entry = {
     day: state.day,
@@ -32,7 +32,14 @@ export function writeNpcMemory(
   }
   const existing = state.roster[npcIndex]!.npcMemory ?? []
   const updated = [...existing, entry].slice(-MAX_NPC_MEMORY_ENTRIES)
-  state.roster[npcIndex] = { ...state.roster[npcIndex]!, npcMemory: updated }
+  return {
+    ...state,
+    roster: [
+      ...state.roster.slice(0, npcIndex),
+      { ...state.roster[npcIndex]!, npcMemory: updated },
+      ...state.roster.slice(npcIndex + 1),
+    ],
+  }
 }
 
 export function applyRelationshipDelta(
@@ -51,23 +58,26 @@ export function applyRelationshipDelta(
   const crossedThreshold =
     Math.floor(Math.abs(oldValue) / 25) !== Math.floor(Math.abs(newValue) / 25)
 
-  // Write memory when delta is meaningful (mutates state.roster in place)
+  // Build new state with updated relationship
+  let nextState: GameState = {
+    ...state,
+    relationships: {
+      ...state.relationships,
+      [key]: { ...existing, [axis]: newValue },
+    },
+  }
+
+  // Write memory when delta is meaningful (functional, returns updated state)
   if (Math.abs(delta) > 5) {
     const description = `${axis} ${delta > 0 ? '+' : ''}${delta} with ${toId}`
-    writeNpcMemory(state, fromId, description, [toId], { [axis]: delta })
+    nextState = writeNpcMemory(nextState, fromId, description, [toId], { [axis]: delta })
     if (toId !== 'player' && toId !== fromId) {
-      writeNpcMemory(state, toId, `${axis} ${delta > 0 ? '+' : ''}${delta} with ${fromId}`, [fromId], { [axis]: delta })
+      nextState = writeNpcMemory(nextState, toId, `${axis} ${delta > 0 ? '+' : ''}${delta} with ${fromId}`, [fromId], { [axis]: delta })
     }
   }
 
-  // Build new state with updated relationship
-  const nextRelationships = {
-    ...state.relationships,
-    [key]: { ...existing, [axis]: newValue },
-  }
-
   return {
-    state: { ...state, relationships: nextRelationships },
+    state: nextState,
     key,
     oldValue,
     newValue,

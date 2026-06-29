@@ -41,14 +41,14 @@ export function applyIncidentAgency(state: GameState, rng: Rng): GameState {
         'system',
         `${npcName} sensed trouble in ${district} early and stepped back. ${cautionQuirk.text.charAt(0).toUpperCase() + cautionQuirk.text.slice(1)}.`,
       )
-      writeNpcMemory(next, npc.npcId, `Sensed trouble in ${district} and withdrew`, [districtId])
+      next = writeNpcMemory(next, npc.npcId, `Sensed trouble in ${district} and withdrew`, [districtId])
     } else {
       next = appendActivityLogEntry(
         next,
         'system',
         `${npcName} got into a confrontation at ${district}. Tension is running higher there.`,
       )
-      writeNpcMemory(next, npc.npcId, `Got into a confrontation in ${district}`, [districtId])
+      next = writeNpcMemory(next, npc.npcId, `Got into a confrontation in ${district}`, [districtId])
     }
 
     if (next.districtTension[districtId] !== undefined) {

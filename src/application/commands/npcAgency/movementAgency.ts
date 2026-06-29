@@ -37,7 +37,7 @@ export function applyMovementAgency(state: GameState, rng: Rng): GameState {
       'system',
       `${npcName} moved from ${district} to ${newDistrictName} for new business opportunities.`,
     )
-    writeNpcMemory(next, npc.npcId, `Moved business from ${district} to ${newDistrictName}`, [currentDistrictId, newDistrictId])
+    next = writeNpcMemory(next, npc.npcId, `Moved business from ${district} to ${newDistrictName}`, [currentDistrictId, newDistrictId])
   }
 
   return next

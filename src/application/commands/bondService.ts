@@ -202,7 +202,7 @@ function applyBondHolderPowerDynamics(state: GameState): GameState {
         bond.entryReason === 'combat-capture'
           ? 'The contract is a chain. I feel it every morning.'
           : 'The weight of the contract sits between us.'
-      writeNpcMemory(next, npc.npcId, memoryLine, ['player'])
+      next = writeNpcMemory(next, npc.npcId, memoryLine, ['player'])
     }
 
     // Affinity tension: player grows cooler toward conscience-burdened NPCs or when ruthless
