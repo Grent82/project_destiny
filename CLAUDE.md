@@ -44,6 +44,15 @@ bd label add <id> art-direction # icons, images, visual identity
 
 A UI bead without a label is a gap. This rule applies to all agents.
 
+**Edit Tool Hygiene:**
+
+BEFORE using Edit tool:
+1. **Read the file** — Never assume content, always verify exact string
+2. **Copy exact string** — Include indentation, line breaks, special characters
+3. **Test with small change first** — Verify Edit works before large refactors
+
+Edit tool fails if `old_string` doesn't match exactly. Reading first prevents wasted attempts.
+
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
 
