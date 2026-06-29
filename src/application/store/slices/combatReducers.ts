@@ -1,4 +1,5 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { current } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../../domain'
 import {
@@ -9,15 +10,19 @@ import {
 
 export const combatReducers = {
   startCombatEncounter(state: GameState, action: PayloadAction<{ questId?: string } | undefined>) {
-    return startCombatEncounter(state, action.payload?.questId)
+    // Use current() to get a plain object, then pass to command which returns new state
+    const plainState = current(state) as GameState
+    return startCombatEncounter(plainState, action.payload?.questId)
   },
   performCombatAction(
     state: GameState,
     action: PayloadAction<'attack' | 'advance' | 'retreat' | 'guard'>,
   ) {
-    return performCombatAction(state, action.payload)
+    const plainState = current(state) as GameState
+    return performCombatAction(plainState, action.payload)
   },
   concludeCombatEncounter(state: GameState) {
-    return concludeCombatEncounter(state)
+    const plainState = current(state) as GameState
+    return concludeCombatEncounter(plainState)
   },
 }
