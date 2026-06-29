@@ -173,20 +173,68 @@ The central aggregate is `GameState` (defined in `src/domain/game/contracts.ts`)
 
 ### Key Patterns
 
-**Command (pure state transformer):**
+**Command (immutable state transformer - REQUIRED PATTERN):**
+
+ALL Commands in `src/application/commands/` MUST follow this pattern:
+
 ```ts
 export function commandName(state: GameState, params: ...): GameState {
-  // return new state, never mutate
+  // 1. Create new state reference
+  let nextState: GameState = { ...state }
+  
+  // 2. For nested objects, create new references (NEVER mutate)
+  if (someCondition) {
+    nextState = {
+      ...nextState,
+      playerCharacter: {
+        ...nextState.playerCharacter,
+        renown: nextState.playerCharacter.renown + delta,
+      },
+      factionStandings: {
+        ...nextState.factionStandings,
+        [factionId]: Math.max(-100, Math.min(100, (nextState.factionStandings[factionId] ?? 0) + delta)),
+      },
+    }
+  }
+  
+  // 3. For arrays, use immutable operations:
+  //    - push → [...array, newItem]
+  //    - splice → array.filter() or array.slice()
+  //    - unshift → [newItem, ...array]
+  //    - pop → array.slice(0, -1) or array.slice(0, MAX)
+  
+  // 4. Return the new state
+  return nextState
+}
+```
+
+**CRITICAL RULES - Never do this:**
+```ts
+// ❌ WRONG - causes Immer errors:
+export function badCommand(state: GameState): GameState {
+  state.playerCharacter.renown += 10        // Mutation!
+  state.factionStandings[id] = newValue     // Mutation!
+  state.activeQuests.splice(0, 1)           // Mutation!
+  state.activityLog.unshift(entry)          // Mutation!
+  return state                              // Returns same reference!
 }
 ```
 
 **Reducer (thin wrapper in gameSlice.ts):**
+Reducers call commands and return their result:
+
 ```ts
-actionName(state, action: PayloadAction<...>) {
-  const snapshot = current(state) as GameState
-  return commandFn(snapshot, action.payload)
+actionName(state: GameState, action: PayloadAction<...>) {
+  // Command returns new state - return it directly
+  return commandFn(state, action.payload)
 }
 ```
+
+**Why this matters:**
+- Redux Toolkit uses Immer to enable "mutable-like" syntax in reducers
+- BUT Commands are pure functions that should return new state
+- Mixing patterns (Command mutates while Reducer expects return) causes Immer errors
+- Example error: "A state mutation was detected inside a dispatch, in the path: game.playerCharacter.renown"
 
 **Selector (view model composer):**
 ```ts
@@ -206,6 +254,101 @@ Always use `import type { Foo }` when the import is type-only (`verbatimModuleSy
 ### Determinism and RNG
 
 All randomness flows through `state.rngSeed`. Commands that need randomness derive a seeded RNG from it and advance the seed in the returned state. Tests rely on the deterministic seed — do not introduce `Math.random()`.
+
+### Redux/Immer Architecture Guardrails
+
+**The Golden Rule: Commands must be pure, immutable state transformers**
+
+Every Command function follows the signature: `(state: GameState, params) => GameState`
+
+**What this means:**
+
+1. **Never mutate nested state** - Always create new object references:
+   ```ts
+   // ❌ WRONG
+   state.playerCharacter.renown += 10
+   state.factionStandings[id] = newValue
+   state.relationships[key] = { ... }
+   
+   // ✅ CORRECT
+   nextState = {
+     ...nextState,
+     playerCharacter: { ...nextState.playerCharacter, renown: newValue },
+     factionStandings: { ...nextState.factionStandings, [id]: newValue },
+     relationships: { ...nextState.relationships, [key]: { ... } }
+   }
+   ```
+
+2. **Never mutate arrays** - Use immutable operations:
+   ```ts
+   // ❌ WRONG
+   state.activeQuests.splice(questIndex, 1)
+   state.activityLog.unshift(entry)
+   state.rumors.push(newRumor)
+   
+   // ✅ CORRECT
+   nextState = {
+     ...nextState,
+     activeQuests: nextState.activeQuests.filter((q, i) => i !== questIndex),
+     activityLog: [entry, ...nextState.activityLog].slice(0, MAX),
+     rumors: [...nextState.rumors, newRumor]
+   }
+   ```
+
+3. **Helper functions must also be immutable** - Functions like `pushActivityLog`, `applyQuestAftermath`, etc. must return new state, not mutate:
+   ```ts
+   // ❌ WRONG
+   function pushActivityLog(state, category, message) {
+     state.activityLog.unshift({ ... })  // Mutation!
+   }
+   
+   // ✅ CORRECT
+   function pushActivityLog(state, category, message): GameState {
+     const newLog = [{ ... }, ...state.activityLog].slice(0, MAX)
+     return { ...state, activityLog: newLog }
+   }
+   ```
+
+4. **Reducers must use the return value** - Don't ignore the Command's return:
+   ```ts
+   // ❌ WRONG - ignores return value
+   completeQuest(state, action) {
+     settleQuestSuccess(state, action.payload.questId)  // State mutated!
+   }
+   
+   // ✅ CORRECT - uses return value
+   completeQuest(state, action) {
+     return settleQuestSuccess(state, action.payload.questId)
+   }
+   ```
+
+**Common Anti-Patterns That Cause Immer Errors:**
+
+| Anti-Pattern | Why It Breaks | Fix |
+|--------------|---------------|-----|
+| `state.field += value` | Direct mutation | `state = { ...state, field: newValue }` |
+| `state.nested.field = value` | Nested mutation | `state = { ...state, nested: { ...state.nested, field: value } }` |
+| `state.array.push(item)` | Array mutation | `state = { ...state, array: [...state.array, item] }` |
+| `state.array.splice(i, 1)` | Array mutation | `state = { ...state, array: state.array.filter(...) }` |
+| Calling mutable Command from immutable context | Pattern mismatch | Refactor Command to be immutable |
+
+**How to Spot a Mutable Command:**
+
+A Command is suspicious if it contains any of these patterns:
+- `state.X +=` or `state.X -=` (arithmetic mutation)
+- `state.X = ...` (direct assignment to nested object)
+- `state.X.push(`, `state.X.splice(`, `state.X.unshift(`, `state.X.pop(` (array mutation)
+- No `return` statement or `return state` at the end
+
+**Testing for Immutability:**
+
+After writing a Command, verify:
+1. Does it create new object references for all nested state it modifies?
+2. Does it return a new GameState (or chain returns through helper calls)?
+3. Would it work correctly when called from a Redux reducer that expects a return value?
+4. Would it work correctly when called from another Command that chains state?
+
+If any answer is "no", refactor to immutable pattern.
 
 ### Activity Log
 
