@@ -106,7 +106,7 @@ export function MissionPrepScreen() {
         <div className="threat-panel">
           <p className="threat-panel__label">Known Threat</p>
           <div className="threat-panel__body">
-            {hasPortraitAvailable(threatNpc.id) ? (
+            {hasPortraitAvailable() ? (
               <div className="threat-panel__portrait npc-portrait-placeholder">
                 <img
                   alt={threatNpc.name}

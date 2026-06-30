@@ -111,7 +111,7 @@ export function DialogueScreen() {
       <div className="dialogue-scene-shell">
         <div className="dialogue-scene-column">
           <div className="dialogue-scene-card">
-            {hasPortraitAvailable(presentation.npcId) ? (
+            {hasPortraitAvailable() ? (
               <div className="dialogue-scene-portrait npc-portrait-placeholder" aria-hidden="true">
                 <img
                   src={presentation.portraitSrc ?? ''}

@@ -713,7 +713,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           className={`muster-portrait-frame npc-portrait-placeholder--${factionClass(detail.factionAffinityId)}`}
           aria-hidden="true"
         >
-          {hasPortraitAvailable(detail.npcId) ? (
+          {hasPortraitAvailable() ? (
             <>
               <img
                 src={`/portraits/${detail.npcId.replace('npc-', '')}.jpg`}

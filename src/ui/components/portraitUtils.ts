@@ -56,6 +56,6 @@ export function getFactionClass(factionId: string | null): string {
  * For now, we assume all NPCs have portraits available - the onError handler
  * will show initials as fallback if the image fails to load.
  */
-export function hasPortraitAvailable(_npcId: string): boolean {
+export function hasPortraitAvailable(): boolean {
   return true
 }
