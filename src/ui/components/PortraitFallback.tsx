@@ -16,6 +16,8 @@ export interface PortraitFallbackProps {
   isPrimary?: boolean
   /** Small size variant (for compact layouts) */
   size?: 'small' | 'medium' | 'large'
+  /** Optional style override (e.g., for conditional display) */
+  style?: React.CSSProperties
 }
 
 /**
@@ -31,6 +33,7 @@ export function PortraitFallback({
   nameOverride,
   isPrimary = false,
   size = 'medium',
+  style,
 }: PortraitFallbackProps) {
   const initials = useMemo(() => extractInitials(npcId, nameOverride), [npcId, nameOverride])
   const factionClass = getFactionClass(factionId)
@@ -45,6 +48,7 @@ export function PortraitFallback({
     <div
       className={`portrait-fallback ${sizeClass}${primaryClass} portrait-fallback--${factionClass}`}
       aria-label={`Portrait placeholder for ${nameOverride ?? npcId}`}
+      style={style}
     >
       <span className="portrait-fallback-initials">{initials}</span>
       <svg className="portrait-fallback-silhouette" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

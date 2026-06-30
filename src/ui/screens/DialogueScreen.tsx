@@ -51,13 +51,26 @@ export function DialogueScreen() {
       <div className="dialogue-scene-shell">
         <div className="dialogue-scene-column">
           <div className="dialogue-scene-card">
-            <PortraitFallback
-              npcId={presentation.npcId}
-              factionId={presentation.factionId}
-              nameOverride={presentation.npcName}
-              isPrimary={presentation.npcId === 'npc-marion-vale'}
-              size="large"
-            />
+            <div className="dialogue-scene-portrait npc-portrait-placeholder" aria-hidden="true">
+              <img
+                src={presentation.portraitSrc ?? ''}
+                alt={presentation.npcName}
+                className="npc-portrait-img"
+                onError={(e) => {
+                  ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement | null
+                  if (fallback) fallback.style.setProperty('display', 'flex')
+                }}
+              />
+              <PortraitFallback
+                npcId={presentation.npcId}
+                factionId={presentation.factionId}
+                nameOverride={presentation.npcName}
+                isPrimary={presentation.npcId === 'npc-marion-vale'}
+                size="large"
+                style={{ display: 'none' }}
+              />
+            </div>
 
             <div className="dialogue-scene-copy">
               <p className="dialogue-scene-location">{presentation.sceneLocation}</p>

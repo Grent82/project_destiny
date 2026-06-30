@@ -712,11 +712,22 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
           className={`muster-portrait-frame npc-portrait-placeholder--${factionClass(detail.factionAffinityId)}`}
           aria-hidden="true"
         >
+          <img
+            src={`/portraits/${detail.npcId.replace('npc-', '')}.jpg`}
+            alt=""
+            className="npc-portrait-img"
+            onError={(e) => {
+              ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+              const fallback = e.currentTarget.nextElementSibling as HTMLElement | null
+              if (fallback) fallback.style.setProperty('display', 'flex')
+            }}
+          />
           <PortraitFallback
             npcId={detail.npcId}
             factionId={detail.factionAffinityId}
             nameOverride={detail.name}
             isPrimary={detail.npcId === 'npc-marion-vale'}
+            style={{ display: 'none' }}
           />
           {detail.npcId === 'npc-marion-vale' && <span className="muster-portrait-seal" title="Sworn to the house" />}
         </div>
