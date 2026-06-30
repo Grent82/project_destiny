@@ -17,8 +17,6 @@ import { checkLineTheyWontCross } from '../../application/npc/checkLineTheyWontC
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { formatNpcAssignmentLabel } from '../../application/content/assignmentDisplay'
-import { PortraitFallback } from '../components/PortraitFallback'
-import { hasPortraitAvailable } from '../components/portraitUtils'
 
 export function MissionPrepScreen() {
   const { questId = null } = useParams<{ questId: string }>()
@@ -106,23 +104,24 @@ export function MissionPrepScreen() {
         <div className="threat-panel">
           <p className="threat-panel__label">Known Threat</p>
           <div className="threat-panel__body">
-            {hasPortraitAvailable() ? (
-              <div className="threat-panel__portrait npc-portrait-placeholder">
-                <img
-                  alt={threatNpc.name}
-                  className="npc-portrait-img"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                  src={`/portraits/${threatNpc.id.replace('npc-', '')}.jpg`}
-                />
-              </div>
-            ) : (
-              <PortraitFallback
-                npcId={threatNpc.id}
-                factionId={threatNpc.factionId ?? null}
-                nameOverride={threatNpc.name}
-                size="medium"
+            <div className="threat-panel__portrait npc-portrait-placeholder">
+              <img
+                alt={threatNpc.name}
+                className="npc-portrait-img"
+                onError={(e) => {
+                  ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                  const svg = e.currentTarget.nextElementSibling as HTMLElement | null
+                  if (svg) svg.style.display = 'block'
+                }}
+                src={`/portraits/${threatNpc.id.replace('npc-', '')}.jpg`}
               />
-            )}
+              <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" className="npc-silhouette" style={{ display: 'none' }}>
+                <ellipse cx="50" cy="28" rx="16" ry="18" fill="currentColor" opacity="0.6"/>
+                <path d="M28 32 Q50 15 72 32 Q68 50 50 52 Q32 50 28 32Z" fill="currentColor" opacity="0.5"/>
+                <path d="M22 55 Q50 48 78 55 L85 130 H15 Z" fill="currentColor" opacity="0.45"/>
+                <path d="M18 58 Q30 52 50 50 Q70 52 82 58 L80 72 Q65 65 50 64 Q35 65 20 72Z" fill="currentColor" opacity="0.55"/>
+              </svg>
+            </div>
             <div className="threat-panel__info">
               <strong className="threat-panel__name">{threatNpc.name}</strong>
               {threatNpc.factionName && (

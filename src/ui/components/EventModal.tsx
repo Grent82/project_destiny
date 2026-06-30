@@ -77,6 +77,9 @@ export function EventModal() {
                     src={presentation.actorPortraitSrc}
                     alt={`${presentation.actorName} portrait`}
                     className="event-modal-actor-portrait"
+                    onError={(e) => {
+                      ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                    }}
                   />
                 )}
                 <span>{presentation.actorName}</span>
