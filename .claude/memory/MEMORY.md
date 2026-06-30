@@ -50,3 +50,4 @@
 - [Feedback: Schema-Change — Verify source data before writing](feedback_schema_change_verify_data.md) — voteTemplateId required vs optional in agenda nodes (2026-06-28 politics fix)
 - [Immer current() does not fix nested mutations](immer-current-does-not-fix-nested-mutations.md) — current() creates shallow plain object, nested refs still same
 - [questSettlement architecture inconsistency](questsettlement-architecture-inconsistency.md) — functions mutate but callers expect immutable returns
+- [Feedback: Quest Discovery Debugging — Read data flow before Playwright](feedback_quest_discovery_debugging.md) — 30+ Playwright clicks wasted investigating "missing quests" that were actually data/trigger issues
