@@ -50,12 +50,3 @@ export function getFactionClass(factionId: string | null): string {
   return factionClassMap[factionId] ?? 'neutral'
 }
 
-/**
- * Helper to check if an NPC has a custom portrait available.
- * Returns true if the portrait file exists in /portraits/.
- * For now, we assume all NPCs have portraits available - the onError handler
- * will show initials as fallback if the image fails to load.
- */
-export function hasPortraitAvailable(): boolean {
-  return true
-}
