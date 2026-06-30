@@ -171,9 +171,6 @@ export function DialogueScreen() {
                   type="button"
                   onClick={() => handleChoice(choice)}
                 >
-                  <span className={`dialogue-choice-kind-badge dialogue-choice-kind-badge--${choice.kind}`}>
-                    {choice.kind}
-                  </span>
                   <span className="dialogue-choice-label">{choice.label}</span>
                   <span className="dialogue-choice-preview">{choice.effectNotes[0]}</span>
                 </button>
