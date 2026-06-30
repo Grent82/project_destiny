@@ -47,13 +47,6 @@ export function RecruitmentScreen() {
         ? 'text-warning'
         : 'text-muted'
 
-  const qualityBands = [
-    'common',
-    'uncommon',
-    'rare',
-    'elite',
-    'legendary',
-  ] as const
 
   return (
     <section className="screen-panel">
@@ -86,28 +79,6 @@ export function RecruitmentScreen() {
           Roster: {rosterSize}/{totalSlots}{houseBonus > 0 ? ` (+${houseBonus} house)` : ''}
         </span>
       </div>
-
-      <article className="detail-panel" style={{ margin: '1rem 0' }}>
-        <h2>Quality Bands</h2>
-        <p className="summary" style={{ marginBottom: '0.75rem' }}>
-          Rare, uncommon, and similar labels are not flavour only. They tell you how high an operative can be trained before their growth hardens into diminishing returns.
-        </p>
-        <div className="mission-list">
-          {qualityBands.map((rarity) => (
-            <div key={rarity} className="mission-row">
-              <div className="mission-row-header">
-                <strong style={{ textTransform: 'capitalize' }}>{rarity}</strong>
-                <span className={`badge hire-badge--rarity hire-badge--rarity-${rarity}`}>
-                  Cap {RARITY_SKILL_CAPS[rarity]}
-                </span>
-              </div>
-              <p className="summary" style={{ marginBottom: 0 }}>
-                {RARITY_DESCRIPTIONS[rarity]}
-              </p>
-            </div>
-          ))}
-        </div>
-      </article>
 
       {lastRecruitedName && (
         <p className="recruit-confirmation">{lastRecruitedName} has joined the house.</p>
