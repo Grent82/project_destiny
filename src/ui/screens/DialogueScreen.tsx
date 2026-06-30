@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { gameActions } from '../../application/store/gameSlice'
@@ -11,60 +11,18 @@ import { VenueContextBanner } from './VenueContextBanner'
 import { PortraitFallback } from '../components/PortraitFallback'
 import { hasPortraitAvailable } from '../components/portraitUtils'
 
-type DialogueBeat = {
-  choiceLabel: string
-  effectNotes: string[]
-  kind: DialogueChoicePresentation['kind']
-}
-
-function DialogueBeatPanel(props: { beat: DialogueBeat; title: string }) {
-  const { beat, title } = props
-
-  return (
-    <aside className="dialogue-shift-panel" aria-label={title}>
-      <p className="dialogue-shift-eyebrow">{title}</p>
-      <p className="dialogue-shift-choice">{beat.choiceLabel}</p>
-      <ul className="dialogue-shift-list">
-        {beat.effectNotes.map((note) => (
-          <li key={note}>{note}</li>
-        ))}
-      </ul>
-      <span className={`dialogue-choice-kind-badge dialogue-choice-kind-badge--${beat.kind}`}>
-        {beat.kind}
-      </span>
-    </aside>
-  )
-}
 
 export function DialogueScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const presentation = useAppSelector(selectActiveDialoguePresentation)
-  const [recentBeat, setRecentBeat] = useState<DialogueBeat | null>(null)
-  const [closingBeat, setClosingBeat] = useState<DialogueBeat | null>(null)
 
   function handleLeave() {
-    setRecentBeat(null)
-    setClosingBeat(null)
     dispatch(gameActions.endDialogue())
     navigate(-1)
   }
 
   function handleChoice(choice: DialogueChoicePresentation) {
-    const beat = {
-      choiceLabel: choice.label,
-      effectNotes: choice.effectNotes,
-      kind: choice.kind,
-    }
-
-    if (choice.nextNodeId === null) {
-      setClosingBeat(beat)
-      setRecentBeat(null)
-    } else {
-      setRecentBeat(beat)
-      setClosingBeat(null)
-    }
-
     dispatch(gameActions.selectDialogueChoice({ choiceId: choice.id }))
   }
 
@@ -74,22 +32,6 @@ export function DialogueScreen() {
   )
 
   if (!presentation) {
-    if (closingBeat) {
-      return (
-        <section className="screen-panel">
-          <p className="eyebrow">Dialogue</p>
-          <h1>The exchange closes.</h1>
-          <p className="summary">
-            The room settles after the last answer. What changed is entered below before you step away.
-          </p>
-          <DialogueBeatPanel beat={closingBeat} title="Conversation shift" />
-          <button className="action-button" type="button" onClick={handleLeave}>
-            Leave
-          </button>
-        </section>
-      )
-    }
-
     return (
       <section className="screen-panel">
         <p className="eyebrow">Dialogue</p>
@@ -159,8 +101,6 @@ export function DialogueScreen() {
               <p className="dialogue-scene-line">{presentation.lineText}</p>
             </div>
           </div>
-
-          {recentBeat && <DialogueBeatPanel beat={recentBeat} title="Conversation shift" />}
 
           <div className="dialogue-choice-list">
             {!isEndNode &&
