@@ -50,3 +50,90 @@ export function getFactionClass(factionId: string | null): string {
   return factionClassMap[factionId] ?? 'neutral'
 }
 
+/**
+ * List of NPCs that have custom portrait images in /portraits/.
+ * All 49 NPCs have portraits generated (June 2026).
+ */
+const CUSTOM_PORTRAITS = new Set([
+  'aldric-vane',
+  'alis-vey',
+  'bog',
+  'brand',
+  'brannic-thule',
+  'bren-aldoth',
+  'cessa-rill',
+  'cress-aldmoor',
+  'cutter',
+  'dael-morw',
+  'dalen-morke',
+  'dara-slink',
+  'elyn',
+  'enemy-catrin-hale',
+  'enemy-harlen-voss',
+  'enemy-lady-sorn',
+  'enemy-the-dockmaster',
+  'enemy-tomas-rell',
+  'evar-koss',
+  'fenwick-pale',
+  'garet-doyle',
+  'halvard-senn',
+  'ida-rhys',
+  'irenne-brek',
+  'lira-ashcroft',
+  'lirien-ashcroft',
+  'lissel-crane',
+  'maret-sunne',
+  'marion-vale',
+  'mira',
+  'nessa-vain',
+  'old-maret',
+  'orren-wex',
+  'orven-pell',
+  'osanna-cray',
+  'oswin-farr',
+  'petra-sunn',
+  'player',
+  'rutha-kael',
+  'sable-cairn-head',
+  'sable-wrent',
+  'sanna-veld',
+  'sister-vael',
+  'tav',
+  'tessaly-ash',
+  'tessaly-wode',
+  'the-wren',
+  'torvald-messe',
+  'verek-holst',
+  'verek-sorn',
+  'veyran-malk',
+])
+
+/**
+ * Check if an NPC has a custom portrait image available.
+ * Returns true if the NPC has a custom portrait, false if the fallback should be used.
+ *
+ * Usage:
+ *   hasPortraitAvailable('npc-ida-rhys') → true (has custom portrait)
+ *   hasPortraitAvailable('npc-unknown-npc') → false (show fallback with initials)
+ */
+export function hasPortraitAvailable(npcId: string): boolean {
+  const portraitId = npcId.replace(/^npc-/, '').replace(/^enemy-/, '')
+  return CUSTOM_PORTRAITS.has(portraitId)
+}
+
+/**
+ * Get the portrait URL for an NPC. Returns the path to the custom portrait
+ * if available, or null if the fallback should be used.
+ *
+ * Usage:
+ *   getPortraitUrl('npc-ida-rhys') → '/portraits/ida-rhys.jpg'
+ *   getPortraitUrl('npc-unknown') → null (use fallback)
+ */
+export function getPortraitUrl(npcId: string): string | null {
+  const portraitId = npcId.replace(/^npc-/, '').replace(/^enemy-/, '')
+  if (CUSTOM_PORTRAITS.has(portraitId)) {
+    return `/portraits/${portraitId}.jpg`
+  }
+  return null
+}
+

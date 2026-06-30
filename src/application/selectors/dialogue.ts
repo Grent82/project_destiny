@@ -5,6 +5,70 @@ import { meetsDialogueCondition, isDialogueChoiceAvailable } from '../commands/d
 import type { DialogueChoice } from '../../domain/dialogue/contracts'
 import type { GameState } from '../../domain'
 
+/**
+ * List of NPCs that have custom portrait images in /portraits/.
+ * Central definition to avoid UI layer dependencies in selectors.
+ * All 49 NPCs have portraits generated (June 2026).
+ */
+const CUSTOM_PORTRAITS = new Set([
+  'aldric-vane',
+  'alis-vey',
+  'bog',
+  'brand',
+  'brannic-thule',
+  'bren-aldoth',
+  'cessa-rill',
+  'cress-aldmoor',
+  'cutter',
+  'dael-morw',
+  'dalen-morke',
+  'dara-slink',
+  'elyn',
+  'enemy-catrin-hale',
+  'enemy-harlen-voss',
+  'enemy-lady-sorn',
+  'enemy-the-dockmaster',
+  'enemy-tomas-rell',
+  'evar-koss',
+  'fenwick-pale',
+  'garet-doyle',
+  'halvard-senn',
+  'ida-rhys',
+  'irenne-brek',
+  'lira-ashcroft',
+  'lirien-ashcroft',
+  'lissel-crane',
+  'maret-sunne',
+  'marion-vale',
+  'mira',
+  'nessa-vain',
+  'old-maret',
+  'orren-wex',
+  'orven-pell',
+  'osanna-cray',
+  'oswin-farr',
+  'petra-sunn',
+  'player',
+  'rutha-kael',
+  'sable-cairn-head',
+  'sable-wrent',
+  'sanna-veld',
+  'sister-vael',
+  'tav',
+  'tessaly-ash',
+  'tessaly-wode',
+  'the-wren',
+  'torvald-messe',
+  'verek-holst',
+  'verek-sorn',
+  'veyran-malk',
+])
+
+function hasPortraitAvailable(npcId: string): boolean {
+  const portraitId = npcId.replace(/^npc-/, '').replace(/^enemy-/, '')
+  return CUSTOM_PORTRAITS.has(portraitId)
+}
+
 export type DialogueChoiceKind = 'ask' | 'push' | 'commit' | 'leave'
 
 export type DialogueChoicePresentation = {
@@ -161,7 +225,7 @@ export function selectActiveDialoguePresentation(state: RootState): ActiveDialog
     dialogueId: tree.id,
     npcId: tree.npcId,
     npcName: npcDef?.name ?? tree.npcId,
-    portraitSrc: `/portraits/${portraitId}.jpg`,
+    portraitSrc: hasPortraitAvailable(tree.npcId) ? `/portraits/${portraitId}.jpg` : null,
     factionId: npcDef?.factionAffinityId ?? null,
     sceneLocation: resolveDialogueSceneLocation(state.game, tree.id, tree.npcId),
     stageDirection: resolveStageDirection(visibleChoices.length, node.stageDirection),
