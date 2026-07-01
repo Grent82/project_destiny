@@ -761,21 +761,37 @@ function grantInvestigationItem(state: GameState, itemId: string, questId: strin
 
 export function applyInvestigationOutcomeQuestState(
   state: GameState,
-  runtime: QuestRuntime,
   questId: string,
   outcome: InvestigationOutcome,
-) {
+): GameState {
   const profile = INVESTIGATION_QUEST_PROFILES[questId]
   const effects = profile?.outcomeEffects?.[outcome]
-  if (!effects) return
+  if (!effects) return state
+
+  let nextState = state
+  const questIndex = nextState.activeQuests.findIndex((quest) => quest.questId === questId)
+  if (questIndex === -1) return nextState
 
   if (effects.aftermath) {
-    runtime.aftermath = effects.aftermath
+    const runtime = nextState.activeQuests[questIndex]
+    nextState = {
+      ...nextState,
+      activeQuests: [
+        ...nextState.activeQuests.slice(0, questIndex),
+        {
+          ...runtime,
+          aftermath: effects.aftermath,
+        },
+        ...nextState.activeQuests.slice(questIndex + 1),
+      ],
+    }
   }
 
   for (const itemId of effects.grantItemIds ?? []) {
-    grantInvestigationItem(state, itemId, questId)
+    nextState = grantInvestigationItem(nextState, itemId, questId)
   }
+
+  return nextState
 }
 
 export function getInvestigationOutcomeHandling(

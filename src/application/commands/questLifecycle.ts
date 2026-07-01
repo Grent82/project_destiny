@@ -285,16 +285,42 @@ export function resolveWithComplicationCheck(
     const setupSteps = 2
     const watchesLogged = Math.max(0, runtime.progress.completedSteps - setupSteps)
     const nextWatchesLogged = Math.min(requiredWatches, watchesLogged + 1)
-    runtime.progress.completedSteps = Math.max(
-      runtime.progress.completedSteps,
-      setupSteps + nextWatchesLogged,
-    )
-    runtime.progress.lastAdvancedDay = state.day
+    const updatedRuntime = {
+      ...runtime,
+      progress: {
+        ...runtime.progress,
+        completedSteps: Math.max(
+          runtime.progress.completedSteps,
+          setupSteps + nextWatchesLogged,
+        ),
+        lastAdvancedDay: state.day,
+      },
+      journalEntries:
+        nextWatchesLogged < requiredWatches
+          ? [...runtime.journalEntries, `Watch ${nextWatchesLogged} of ${requiredWatches} logged on-site.`]
+          : runtime.journalEntries,
+    }
 
     if (nextWatchesLogged < requiredWatches) {
-      const watchEntry = `Watch ${nextWatchesLogged} of ${requiredWatches} logged on-site.`
-      runtime.journalEntries.push(watchEntry)
-      return state
+      const questIndex = state.activeQuests.findIndex((q) => q.questId === questId)
+      return {
+        ...state,
+        activeQuests: [
+          ...state.activeQuests.slice(0, questIndex),
+          updatedRuntime,
+          ...state.activeQuests.slice(questIndex + 1),
+        ],
+      }
+    }
+
+    const questIndex = state.activeQuests.findIndex((q) => q.questId === questId)
+    state = {
+      ...state,
+      activeQuests: [
+        ...state.activeQuests.slice(0, questIndex),
+        updatedRuntime,
+        ...state.activeQuests.slice(questIndex + 1),
+      ],
     }
   }
 
@@ -305,4 +331,3 @@ export function resolveWithComplicationCheck(
     completionMessage: `${label}: "${template.title}". ${formatMarks(template.rewardMarks)} received.`,
   })
 }
-

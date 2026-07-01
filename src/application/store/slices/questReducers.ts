@@ -1,4 +1,4 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../../domain'
 import { contentCatalog, getQuestTemplates } from '../../content/contentCatalog'
@@ -145,19 +145,16 @@ export const questReducers = {
   },
 
   advanceToOnSiteStep(state: GameState, action: PayloadAction<{ questId: string }>) {
-    return advanceToOnSiteStep(state, action.payload.questId)
+    const snapshot = current(state) as GameState
+    return advanceToOnSiteStep(snapshot, action.payload.questId)
   },
 
   resolveContractWithComplicationCheck(
     state: GameState,
     action: PayloadAction<{ questId: string }>,
   ) {
-    const result = resolveWithComplicationCheck(state, action.payload.questId)
-    // If the command returned the same state (no change), advance time slot
-    if (result === state) {
-      return state
-    }
-    return result
+    const snapshot = current(state) as GameState
+    return resolveWithComplicationCheck(snapshot, action.payload.questId)
   },
 
   failQuest(state: GameState, action: PayloadAction<{ questId: string }>) {
@@ -324,13 +321,21 @@ export const questReducers = {
     const failureCopy = getInvestigationOutcomeCopy(questId, 'failure')
     const outcomeHandling = getInvestigationOutcomeHandling(questId, outcome)
 
-    applyInvestigationOutcomeQuestState(state, runtime, questId, outcome)
+    const stateSnapshot = current(state) as GameState
+    const stateWithOutcomeEffects = applyInvestigationOutcomeQuestState(
+      stateSnapshot,
+      questId,
+      outcome,
+    )
+    Object.assign(state, stateWithOutcomeEffects)
+    const activeRuntime = state.activeQuests.find((q) => q.questId === questId)
 
     if (outcomeHandling?.keepQuestActive) {
-      runtime.stageId = outcomeHandling.stageId
-      runtime.currentObjectiveLabel = outcomeHandling.objectiveLabel
-      runtime.progress.lastAdvancedDay = state.day
-      runtime.journalEntries = [...runtime.journalEntries, outcomeHandling.journalEntry]
+      if (!activeRuntime) return
+      activeRuntime.stageId = outcomeHandling.stageId
+      activeRuntime.currentObjectiveLabel = outcomeHandling.objectiveLabel
+      activeRuntime.progress.lastAdvancedDay = state.day
+      activeRuntime.journalEntries = [...activeRuntime.journalEntries, outcomeHandling.journalEntry]
       pushQuestLog(state, outcomeHandling.activityLogMessage)
       state.activeInvestigation = null
       return
@@ -339,16 +344,17 @@ export const questReducers = {
     if (outcome === 'success') {
       const rewardScale = bonusType === 'extra_marks' ? 1.25 : 1.0
       const effectiveReward = Math.floor(quest.rewardMarks * rewardScale)
-      settleQuestSuccess(state, questId, {
+      const settledState = settleQuestSuccess(current(state) as GameState, questId, {
         rewardScale,
         journalEntry: successCopy.journalEntry,
         completionMessage:
           successCopy.completionMessage ??
           `The investigation concludes. ${effectiveReward} Marks received.`,
       })
+      Object.assign(state, settledState)
     } else if (outcome === 'partial') {
       const halfReward = Math.floor(quest.rewardMarks / 2)
-      settleQuestSuccess(state, questId, {
+      const settledState = settleQuestSuccess(current(state) as GameState, questId, {
         rewardScale: 0.5,
         applyStanding: false,
         applyCityDial: false,
@@ -360,13 +366,15 @@ export const questReducers = {
           partialCopy.completionMessage ??
           `The investigation yields something, though not everything. ${halfReward} Marks.`,
       })
+      Object.assign(state, settledState)
     } else {
-      settleQuestFailure(state, questId, {
+      const settledState = settleQuestFailure(current(state) as GameState, questId, {
         applyStanding: bonusType !== 'reduce_penalty',
         failureMessage:
           failureCopy.failureMessage ?? 'The investigation goes nowhere. The opportunity is lost.',
         journalEntry: failureCopy.journalEntry,
       })
+      Object.assign(state, settledState)
     }
     state.activeInvestigation = null
   },

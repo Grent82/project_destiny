@@ -1,4 +1,4 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { current, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../../domain'
 import {
@@ -9,18 +9,18 @@ import {
 
 export const combatReducers = {
   startCombatEncounter(state: GameState, action: PayloadAction<{ questId?: string } | undefined>) {
-    // Command mutates the Immer draft directly - don't return value
-    startCombatEncounter(state, action.payload?.questId)
+    const snapshot = current(state) as GameState
+    return startCombatEncounter(snapshot, action.payload?.questId)
   },
   performCombatAction(
     state: GameState,
     action: PayloadAction<'attack' | 'advance' | 'retreat' | 'guard'>,
   ) {
-    // Command mutates the Immer draft directly - don't return value
-    performCombatAction(state, action.payload)
+    const snapshot = current(state) as GameState
+    return performCombatAction(snapshot, action.payload)
   },
   concludeCombatEncounter(state: GameState) {
-    // Command mutates the Immer draft directly - don't return value
-    concludeCombatEncounter(state)
+    const snapshot = current(state) as GameState
+    return concludeCombatEncounter(snapshot)
   },
 }
