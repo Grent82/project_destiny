@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
@@ -240,7 +240,52 @@ describe('NpcDetailPanel — courtship loop', () => {
   it('shows a player-facing courtship action for romance-eligible NPCs at the house', () => {
     renderIdaPanel()
 
-    expect(screen.getByRole('button', { name: 'Court' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Talk' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Spend Time' })).toBeInTheDocument()
+  })
+
+  it('reveals conversation and activity actions only after choosing Talk or Spend Time', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel()
+
+    expect(screen.queryByRole('button', { name: 'Talk Deeply' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Court' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Offer Gift' })).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+
+    const talkMenu = screen.getByRole('group', { name: 'Talk options' })
+    expect(within(talkMenu).getByRole('button', { name: 'Speak' })).toBeInTheDocument()
+    expect(within(talkMenu).getByRole('button', { name: 'Talk Deeply' })).toBeInTheDocument()
+    expect(within(talkMenu).getByRole('button', { name: 'Court' })).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Spend Time options' })).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+
+    const timeMenu = screen.getByRole('group', { name: 'Spend Time options' })
+    expect(within(timeMenu).getByRole('button', { name: 'Offer Gift' })).toBeInTheDocument()
+    expect(within(timeMenu).getByRole('button', { name: 'Propose Date' })).toBeInTheDocument()
+    expect(within(timeMenu).getByRole('button', { name: 'Cook Together' })).toBeInTheDocument()
+    expect(within(timeMenu).getByRole('button', { name: 'Decorate Room' })).toBeInTheDocument()
+    expect(within(timeMenu).getByRole('button', { name: 'Spend Night Together' })).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Talk options' })).toBeNull()
+  })
+
+  it('closes Talk and Spend Time when the same menu button is clicked twice', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.getByRole('group', { name: 'Talk options' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.queryByRole('group', { name: 'Talk options' })).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+    expect(screen.getByRole('group', { name: 'Spend Time options' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+    expect(screen.queryByRole('group', { name: 'Spend Time options' })).toBeNull()
   })
 
   it('records visible courtship aftermath after the player courts an NPC', async () => {
@@ -266,6 +311,7 @@ describe('NpcDetailPanel — courtship loop', () => {
       },
     })
 
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
     await user.click(screen.getByRole('button', { name: 'Court' }))
     await user.click(screen.getByRole('tab', { name: 'Relations' }))
 

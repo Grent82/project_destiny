@@ -20,6 +20,7 @@ import { hasPortraitAvailable } from '../components/portraitUtils'
 import './roster.css'
 
 type NpcDetail = NonNullable<ReturnType<typeof selectRosterDetail>>
+type NpcActionMenu = 'talk' | 'time'
 
 const TABS = ['Attributes', 'Skills', 'States', 'Traits', 'Relations'] as const
 type Tab = (typeof TABS)[number]
@@ -668,6 +669,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const [showGiftList, setShowGiftList] = useState(false)
   const [showIntimacyModal, setShowIntimacyModal] = useState(false)
   const [showDateProposalModal, setShowDateProposalModal] = useState(false)
+  const [activeActionMenu, setActiveActionMenu] = useState<NpcActionMenu | null>(null)
   const relationship = useAppSelector(selectRelationshipWithPlayer(detail.npcId))
   const intimacyStage = useAppSelector(selectIntimacyStageWithPlayer(detail.npcId))
   const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
@@ -699,11 +701,23 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
 
   const wants = detail.motivation?.publicGoal
   const needs = detail.motivation?.privateNeed
+  const hasTalkOptions = Boolean(dialogueTree) || canCourt
+  const hasSpendTimeOptions = canOfferGift || canCourt || intimacyStage !== 'none'
 
   function handleTalk() {
     if (!dialogueTree) return
     dispatch(gameActions.startDialogue({ dialogueId: dialogueTree.id, nodeId: dialogueTree.openingNodeId }))
     navigate('/dialogue')
+  }
+
+  function toggleActionMenu(menu: NpcActionMenu) {
+    setActiveActionMenu((current) => {
+      const nextMenu = current === menu ? null : menu
+      if (nextMenu !== 'time') {
+        setShowGiftList(false)
+      }
+      return nextMenu
+    })
   }
 
   return (
@@ -765,76 +779,110 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               {needs && <>Needs: {needs}</>}
             </p>
           )}
-          <div className="muster-action-row">
-            {dialogueTree && (
-              <button className="action-button action-button--primary" type="button" onClick={handleTalk}>
-                Talk
-              </button>
+          <div className="muster-action-groups">
+            <div className="muster-action-intents">
+              {hasTalkOptions && (
+                <button
+                  className={`action-button ${activeActionMenu === 'talk' ? 'action-button--primary' : 'action-button--secondary'}`}
+                  type="button"
+                  onClick={() => toggleActionMenu('talk')}
+                >
+                  Talk
+                </button>
+              )}
+              {hasSpendTimeOptions && (
+                <button
+                  className={`action-button ${activeActionMenu === 'time' ? 'action-button--primary' : 'action-button--secondary'}`}
+                  type="button"
+                  onClick={() => toggleActionMenu('time')}
+                >
+                  Spend Time
+                </button>
+              )}
+            </div>
+            {activeActionMenu === 'talk' && hasTalkOptions && (
+              <section className="muster-action-menu" role="group" aria-label="Talk options">
+                <div className="muster-action-row">
+                  {dialogueTree && (
+                    <button className="action-button action-button--primary" type="button" onClick={handleTalk}>
+                      Speak
+                    </button>
+                  )}
+                  <button
+                    className="action-button action-button--secondary"
+                    type="button"
+                    onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
+                    disabled={!canCourt}
+                    title={courtUnavailableReason ?? 'Share a meaningful conversation about values, fears, dreams, or past.'}
+                  >
+                    Talk Deeply
+                  </button>
+                  <button
+                    className="action-button action-button--primary"
+                    type="button"
+                    onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
+                    disabled={!canCourt}
+                    title={courtUnavailableReason ?? 'Spend time courting this NPC directly.'}
+                  >
+                    Court
+                  </button>
+                </div>
+              </section>
             )}
-            <button
-              className="action-button"
-              type="button"
-              onClick={() => setShowGiftList((value) => !value)}
-              disabled={!canOfferGift || giftItems.length === 0}
-              title={giftUnavailableReason ?? 'Offer a gift from inventory'}
-            >
-              {showGiftList ? 'Hide Gifts' : 'Offer Gift'}
-            </button>
-            <button
-              className="action-button"
-              type="button"
-              onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
-              disabled={!canCourt}
-              title={courtUnavailableReason ?? 'Spend time courting this NPC directly.'}
-            >
-              Court
-            </button>
-            <button
-              className="action-button"
-              type="button"
-              onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
-              disabled={!canCourt}
-              title={courtUnavailableReason ?? 'Share a meaningful conversation about values, fears, dreams, or past.'}
-            >
-              Talk Deeply
-            </button>
-            <button
-              className="action-button action-button--ghost"
-              type="button"
-              onClick={() => setShowDateProposalModal(true)}
-              disabled={!canCourt || intimacyStage === 'none'}
-              title={intimacyStage === 'none' ? 'Build your relationship first before proposing a date.' : 'Propose a scheduled date with this NPC'}
-            >
-              Propose Date
-            </button>
-            <button
-              className="action-button action-button--ghost"
-              type="button"
-              onClick={() => dispatch(gameActions.cookMeal({ npcId: detail.npcId, mealType: 'simple' }))}
-              disabled={!canCourt}
-              title={courtUnavailableReason ?? 'Cook a simple meal together in the kitchen.'}
-            >
-              Cook Together
-            </button>
-            <button
-              className="action-button action-button--secondary"
-              type="button"
-              onClick={() => dispatch(gameActions.decorateRoom({ roomId: 'room-study', npcId: detail.npcId, decorStyle: 'warm' }))}
-              disabled={!canCourt}
-              title={courtUnavailableReason ?? 'Decorate a shared room together.'}
-            >
-              Decorate Room
-            </button>
-            <button
-              className="action-button action-button--secondary"
-              type="button"
-              onClick={() => setShowIntimacyModal(true)}
-              disabled={!canCourt || intimacyStage === 'none'}
-              title={intimacyStage === 'none' ? 'Physical intimacy requires a deeper bond. Build your relationship through courtship and meaningful conversations.' : 'Spend a night together (aftermath-focused, consensual only)'}
-            >
-              Spend Night Together
-            </button>
-            <TitlePanel detail={detail} />
+            {activeActionMenu === 'time' && hasSpendTimeOptions && (
+              <section className="muster-action-menu" role="group" aria-label="Spend Time options">
+                <div className="muster-action-row">
+                  <button
+                    className="action-button action-button--secondary"
+                    type="button"
+                    onClick={() => setShowGiftList((value) => !value)}
+                    disabled={!canOfferGift || giftItems.length === 0}
+                    title={giftUnavailableReason ?? 'Offer a gift from inventory'}
+                  >
+                    {showGiftList ? 'Hide Gifts' : 'Offer Gift'}
+                  </button>
+                  <button
+                    className="action-button action-button--ghost"
+                    type="button"
+                    onClick={() => setShowDateProposalModal(true)}
+                    disabled={!canCourt || intimacyStage === 'none'}
+                    title={intimacyStage === 'none' ? 'Build your relationship first before proposing a date.' : 'Propose a scheduled date with this NPC'}
+                  >
+                    Propose Date
+                  </button>
+                  <button
+                    className="action-button action-button--ghost"
+                    type="button"
+                    onClick={() => dispatch(gameActions.cookMeal({ npcId: detail.npcId, mealType: 'simple' }))}
+                    disabled={!canCourt}
+                    title={courtUnavailableReason ?? 'Cook a simple meal together in the kitchen.'}
+                  >
+                    Cook Together
+                  </button>
+                  <button
+                    className="action-button action-button--secondary"
+                    type="button"
+                    onClick={() => dispatch(gameActions.decorateRoom({ roomId: 'room-study', npcId: detail.npcId, decorStyle: 'warm' }))}
+                    disabled={!canCourt}
+                    title={courtUnavailableReason ?? 'Decorate a shared room together.'}
+                  >
+                    Decorate Room
+                  </button>
+                  <button
+                    className="action-button action-button--primary"
+                    type="button"
+                    onClick={() => setShowIntimacyModal(true)}
+                    disabled={!canCourt || intimacyStage === 'none'}
+                    title={intimacyStage === 'none' ? 'Physical intimacy requires a deeper bond. Build your relationship through courtship and meaningful conversations.' : 'Spend a night together (aftermath-focused, consensual only)'}
+                  >
+                    Spend Night Together
+                  </button>
+                </div>
+              </section>
+            )}
+            <div className="muster-action-tools">
+              <TitlePanel detail={detail} />
+            </div>
           </div>
           {hasNewTopics && dialogueTree && (
             <p className="npc-new-topic-hint">Something on your mind worth raising.</p>

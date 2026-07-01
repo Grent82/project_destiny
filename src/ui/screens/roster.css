@@ -255,11 +255,33 @@
   padding-left: 0.55rem;
 }
 
+.muster-action-groups {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+.muster-action-intents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .muster-action-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.7rem;
+}
+
+.muster-action-menu {
+  border-left: 2px solid rgba(201, 168, 76, 0.28);
+  padding-left: 0.7rem;
+}
+
+.muster-action-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .muster-section-title {
