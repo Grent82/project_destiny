@@ -1,5 +1,7 @@
 import type { GameState } from '../../domain'
 import { endDay } from './endDay'
+import { PLAYER_MAX_HEALTH } from './combatants'
+import { getPlayerOvernightHealthGain, getPlayerRecoverySupport } from './recovery'
 
 export const SLOT_SEQUENCE = ['morning', 'afternoon', 'evening', 'night'] as const
 export type TimeSlot = (typeof SLOT_SEQUENCE)[number]
@@ -82,6 +84,22 @@ export function sleepToMorning(state: GameState): GameState {
         health: Math.min(100, npc.states.health + 5),
       },
     })),
+  }
+  if (next.playerCharacter.combatState) {
+    const supportTier = getPlayerRecoverySupport(next, next.playerCharacter.combatState.injury)
+    next = {
+      ...next,
+      playerCharacter: {
+        ...next.playerCharacter,
+        combatState: {
+          ...next.playerCharacter.combatState,
+          health: Math.min(
+            PLAYER_MAX_HEALTH,
+            next.playerCharacter.combatState.health + getPlayerOvernightHealthGain(supportTier),
+          ),
+        },
+      },
+    }
   }
   return next
 }

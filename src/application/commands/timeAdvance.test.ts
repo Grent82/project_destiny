@@ -126,4 +126,41 @@ describe('sleepToMorning', () => {
       expect(npc.states.health).toBeGreaterThan(initialHealth)
     }
   })
+
+  it('restores player combat health overnight without implicitly curing injury', () => {
+    const s = {
+      ...stateAtSlot('night'),
+      playerCharacter: {
+        ...stateAtSlot('night').playerCharacter,
+        combatState: {
+          health: 32,
+          morale: 64,
+          injury: 28,
+        },
+      },
+    }
+
+    const result = sleepToMorning(s)
+
+    expect(result.playerCharacter.combatState?.health).toBeGreaterThan(32)
+    expect(result.playerCharacter.combatState?.injury).toBe(28)
+  })
+
+  it('does not restore player combat health above the player maximum', () => {
+    const s = {
+      ...stateAtSlot('night'),
+      playerCharacter: {
+        ...stateAtSlot('night').playerCharacter,
+        combatState: {
+          health: 79,
+          morale: 64,
+          injury: 0,
+        },
+      },
+    }
+
+    const result = sleepToMorning(s)
+
+    expect(result.playerCharacter.combatState?.health).toBe(80)
+  })
 })

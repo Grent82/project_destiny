@@ -30,6 +30,7 @@ export {
 } from './combatants'
 export { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
 import { isDeployable } from './isDeployable'
+import { isSeriousInjury } from './recovery'
 import {
   advanceTurn,
   appendLog,
@@ -647,17 +648,19 @@ export function concludeCombatEncounter(state: GameState): GameState {
         newStress = Math.min(100, newStress + 5)
       }
 
+      const newInjury = isKO
+        ? Math.min(100, npc.states.injury + 30)
+        : Math.min(100, npc.states.injury + Math.max(0, npc.states.health - newHealth))
+
       return {
         ...npc,
-        assignment: isKO ? 'recovering' : 'idle',
+        assignment: isKO || isSeriousInjury(newInjury) ? 'recovering' : 'idle',
         states: {
           ...npc.states,
           health: isKO ? 10 : newHealth,
           morale: newMorale,
           stress: newStress,
-          injury: isKO
-            ? Math.min(100, npc.states.injury + 30)
-            : Math.min(100, npc.states.injury + Math.max(0, npc.states.health - newHealth)),
+          injury: newInjury,
         },
       }
     }),

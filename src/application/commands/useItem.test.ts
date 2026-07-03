@@ -85,6 +85,28 @@ describe('useItem — consume heal', () => {
     const npc = result.roster.find((n) => n.npcId === targetId)!
     expect(npc.states.health).toBe(100)
   })
+
+  it('caps self-healing at the player maximum', () => {
+    const state = stateWithItem('item-salve-burngrade')
+    const s = {
+      ...state,
+      playerCharacter: {
+        ...state.playerCharacter,
+        combatState: {
+          health: 79,
+          morale: 64,
+          injury: 0,
+        },
+      },
+    }
+
+    const result = useItem(s, {
+      instanceId: 'test-inst-item-salve-burngrade',
+      action: 'consume',
+    })
+
+    expect(result.playerCharacter.combatState?.health).toBe(80)
+  })
 })
 
 describe('useItem — document disposition', () => {

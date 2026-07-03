@@ -2,6 +2,7 @@ import type { GameState } from '../../domain'
 import type { UseActionType } from '../../domain/items/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { PLAYER_MAX_HEALTH } from './combatants'
 import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
 
 interface UseItemPayload {
@@ -57,6 +58,20 @@ function applyConsume(
           const newHealth = Math.min(100, npc.states.health + value)
           const updatedNpc = { ...npc, states: { ...npc.states, health: newHealth } }
           next = { ...next, roster: next.roster.map((n, i) => i === npcIndex ? updatedNpc : n) }
+        }
+      } else if (next.playerCharacter.combatState) {
+        next = {
+          ...next,
+          playerCharacter: {
+            ...next.playerCharacter,
+            combatState: {
+              ...next.playerCharacter.combatState,
+              health: Math.min(
+                PLAYER_MAX_HEALTH,
+                next.playerCharacter.combatState.health + value,
+              ),
+            },
+          },
         }
       }
       const targetName = targetNpcId

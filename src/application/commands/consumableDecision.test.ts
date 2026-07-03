@@ -85,6 +85,41 @@ describe('consumable mission use', () => {
       expect(state.activityLog[0]?.message).toContain('Mara')
     })
 
+    it('does not reduce injury through generic heal consumables', () => {
+      const stateWithDecision: GameState = {
+        ...initialGameStateSnapshot,
+        inventoryState: createInventoryWithPlayerItem('inst-salve-001', 'item-dressing-league-surplus'),
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            npcId: 'npc-test',
+            name: 'Mara',
+            states: { ...initialGameStateSnapshot.roster[0]!.states, health: 60, injury: 20 },
+            loadout: {
+              primaryWeaponId: null,
+              secondaryWeaponId: null,
+              armorId: null,
+              accessoryIds: [],
+              consumableIds: ['inst-salve-001'],
+            },
+          },
+        ],
+        pendingConsumableDecision: {
+          npcId: 'npc-test',
+          npcName: 'Mara',
+          instanceId: 'inst-salve-001',
+          itemName: 'Field Medkit',
+          injuryContext: 'Combat encounter',
+        },
+      }
+
+      const store = createGameStore(stateWithDecision)
+      store.dispatch(gameActions.resolveConsumableUse())
+
+      const npc = store.getState().game.roster.find((n) => n.npcId === 'npc-test')
+      expect(npc!.states.injury).toBe(20)
+    })
+
     it('does nothing if pendingConsumableDecision is null', () => {
       const store = createGameStore()
       const before = store.getState().game.activityLog.length

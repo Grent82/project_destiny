@@ -299,7 +299,6 @@ export const expeditionReducers = {
     const npc = state.roster.find((n) => n.npcId === npcId)
     if (npc) {
       npc.states.health = Math.min(100, npc.states.health + healValue)
-      npc.states.injury = Math.max(0, npc.states.injury - Math.floor(healValue / 2))
     }
     state.inventoryState = removeItemFromPlayerInventory(state.inventoryState, instanceId)
     if (npc) {

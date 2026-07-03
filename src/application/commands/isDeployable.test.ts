@@ -41,4 +41,22 @@ describe('isDeployable', () => {
     const npc = { ...baseNpc, assignment: 'idle' as const, states: { ...baseNpc.states, health: MIN_DEPLOYABLE_HEALTH - 1 } }
     expect(isDeployable(npc)).toBe(false)
   })
+
+  it('returns false for an idle npc with serious injury even when health is sufficient', () => {
+    const npc = {
+      ...baseNpc,
+      assignment: 'idle' as const,
+      states: { ...baseNpc.states, health: MIN_DEPLOYABLE_HEALTH + 10, injury: 30 },
+    }
+    expect(isDeployable(npc)).toBe(false)
+  })
+
+  it('returns true for an idle npc with moderate injury when health is sufficient', () => {
+    const npc = {
+      ...baseNpc,
+      assignment: 'idle' as const,
+      states: { ...baseNpc.states, health: MIN_DEPLOYABLE_HEALTH + 10, injury: 29 },
+    }
+    expect(isDeployable(npc)).toBe(true)
+  })
 })

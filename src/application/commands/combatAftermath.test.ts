@@ -78,6 +78,28 @@ describe('concludeCombatEncounter — injury persistence', () => {
     }
   })
 
+  it('surviving NPC with serious injury remains recovering', () => {
+    const resolvedState = makeResolvedState('defeat')
+    if (!resolvedState.activeCombat) throw new Error('No active combat')
+
+    const ally = resolvedState.activeCombat.combatants.find((c) => c.side === 'allies' && c.sourceNpcId)!
+    const badlyHurtState = {
+      ...resolvedState,
+      activeCombat: {
+        ...resolvedState.activeCombat,
+        combatants: resolvedState.activeCombat.combatants.map((c) =>
+          c.combatantId === ally.combatantId ? { ...c, health: 35 } : c,
+        ),
+      },
+    }
+
+    const nextState = concludeCombatEncounter(badlyHurtState)
+    const rosterEntry = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+
+    expect(rosterEntry.assignment).toBe('recovering')
+    expect(rosterEntry.states.injury).toBeGreaterThanOrEqual(30)
+  })
+
   it('clears selectedSquadNpcIds after combat resolves', () => {
     const resolvedState = makeResolvedState('victory')
     expect(resolvedState.selectedSquadNpcIds.length).toBeGreaterThan(0)
@@ -251,6 +273,27 @@ describe('endDay — recovering NPC health recovery', () => {
     const npcAfter = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
     expect(npcAfter.states.health).toBe(85) // 70 + 15 = 85
     expect(npcAfter.assignment).toBe('idle')
+  })
+
+  it('recovering NPC does not return to idle on health alone while injury stays serious', () => {
+    const stateWithRecovering = {
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((r) =>
+        r.npcId === 'npc-ida-rhys'
+          ? {
+              ...r,
+              assignment: 'recovering' as const,
+              states: { ...r.states, health: 70, injury: 30 },
+            }
+          : r,
+      ),
+    }
+
+    const nextState = endDay(stateWithRecovering)
+    const npcAfter = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+
+    expect(npcAfter.states.health).toBeGreaterThan(70)
+    expect(npcAfter.assignment).toBe('recovering')
   })
 
   it('recovery bonus applies with medic on roster (not deployed)', () => {
