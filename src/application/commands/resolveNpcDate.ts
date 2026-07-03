@@ -2,6 +2,7 @@ import type { GameState } from '../../domain/game/contracts'
 import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
+import { NPC_INTIMACY_ADVANCE_CONDITIONS } from './applyNpcPairing'
 
 interface DateOutcome {
   id: string
@@ -195,13 +196,7 @@ function maybeAdvanceNpcNpcIntimacy(
   const avgLoyalty = ((ab.loyalty ?? 0) + (ba.loyalty ?? 0)) / 2
 
   // Check thresholds for advancement
-  const thresholds: Record<string, { affinity: number; trust: number; loyalty?: number }> = {
-    affinity: { affinity: 45, trust: 40 },
-    attachment: { affinity: 60, trust: 55, loyalty: 35 },
-    committed: { affinity: 70, trust: 60 },
-  }
-
-  const required = thresholds[nextStage]
+  const required = NPC_INTIMACY_ADVANCE_CONDITIONS[nextStage]
   if (!required) return currentStage
 
   if (avgAffinity >= required.affinity &&

@@ -2,6 +2,27 @@ import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 
+interface DateParticipant {
+  assignment?: string
+  captivityStatus?: string
+}
+
+/**
+ * Resolve a date-proposal participant to their eligibility-relevant state.
+ * Recognizes the player (always eligible), Roster NPCs (assignment/captivity gated),
+ * and World NPCs (always eligible, no assignment/captivity concept) — the same three
+ * participant kinds generateNpcDateProposals.ts already supports. Returns null if the
+ * participant no longer exists in any of those pools.
+ */
+function findDateParticipant(state: GameState, npcId: string): DateParticipant | null {
+  if (npcId === 'player') return {}
+  const roster = state.roster.find((r) => r.npcId === npcId)
+  if (roster) return { assignment: roster.assignment, captivityStatus: roster.captivityState?.status }
+  const world = state.worldNpcStates.find((w) => w.npcId === npcId)
+  if (world) return {}
+  return null
+}
+
 /**
  * Convert pending NPC-NPC date proposals into scheduled dates.
  *
@@ -19,12 +40,12 @@ export function scheduleAcceptedNpcDateProposals(state: GameState): GameState {
   let nextState = state
 
   for (const proposal of acceptedProposals) {
-    // Verify both NPCs are still eligible
-    const proposer = state.roster.find((r) => r.npcId === proposal.proposerNpcId)
-    const target = state.roster.find((r) => r.npcId === proposal.targetNpcId)
+    // Verify both participants are still eligible (player, Roster NPC, or World NPC)
+    const proposer = findDateParticipant(state, proposal.proposerNpcId)
+    const target = findDateParticipant(state, proposal.targetNpcId)
 
     if (!proposer || !target) {
-      // NPCs no longer on roster - skip this proposal
+      // Participant no longer exists - skip this proposal
       continue
     }
 
@@ -32,7 +53,7 @@ export function scheduleAcceptedNpcDateProposals(state: GameState): GameState {
     if (proposer.assignment === 'deployed' || target.assignment === 'deployed') {
       continue
     }
-    if (proposer.captivityState?.status === 'captive' || target.captivityState?.status === 'captive') {
+    if (proposer.captivityStatus === 'captive' || target.captivityStatus === 'captive') {
       continue
     }
 

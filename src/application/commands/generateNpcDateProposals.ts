@@ -4,28 +4,9 @@ import { contentCatalog } from '../content/contentCatalog'
 import { getSymmetricRelationship } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import type { NpcDefinition } from '../../domain/npc/contracts'
+import type { DateDefinition } from '../../domain/dates/contracts'
 
-/**
- * Date template reference (mirrors dates.json structure).
- * Used for eligibility checks without importing the full date definitions.
- */
-interface DateTemplate {
-  id: string
-  requiredIntimacyStage: string
-  cost: number
-  preferredTimeSlot: string
-  traitPreferences?: Record<string, number>
-}
-
-const DATES: DateTemplate[] = [
-  { id: 'date-quiet-walk', requiredIntimacyStage: 'affinity', cost: 0, preferredTimeSlot: 'evening' },
-  { id: 'date-shared-meal', requiredIntimacyStage: 'affinity', cost: 15, preferredTimeSlot: 'evening' },
-  { id: 'date-music-night', requiredIntimacyStage: 'attachment', cost: 5, preferredTimeSlot: 'night' },
-  { id: 'date-workshop-project', requiredIntimacyStage: 'affinity', cost: 10, preferredTimeSlot: 'afternoon' },
-  { id: 'date-private-ritual', requiredIntimacyStage: 'committed', cost: 0, preferredTimeSlot: 'night' },
-  { id: 'date-district-exploration', requiredIntimacyStage: 'attachment', cost: 8, preferredTimeSlot: 'afternoon' },
-  { id: 'date-quiet-morning', requiredIntimacyStage: 'attachment', cost: 3, preferredTimeSlot: 'morning' },
-]
+type DateTemplate = DateDefinition
 
 const INTIMACY_ORDER = ['none', 'affinity', 'attachment', 'committed'] as const
 
@@ -99,8 +80,8 @@ function calculateDateCompatibility(
  * Pick a random date template based on intimacy stage and RNG.
  */
 function pickDateTemplate(seed: number, intimacyStage: IntimacyStage): DateTemplate {
-  const eligible = DATES.filter((d) => isDateTemplateEligible(d, intimacyStage))
-  if (eligible.length === 0) return DATES[0]!
+  const eligible = contentCatalog.dates.filter((d) => isDateTemplateEligible(d, intimacyStage))
+  if (eligible.length === 0) return contentCatalog.dates[0]!
 
   const index = Math.floor(seededRandom(seed) * eligible.length)
   return eligible[index]!
@@ -217,7 +198,7 @@ export function generateNpcDateProposals(state: GameState, rng: Rng): GameState 
         proposedDay: state.day + 1, // Propose for tomorrow
         proposedTimeSlot: proposedTimeSlot,
         proposedLocation: null, // Will be decided during acceptance (defaults to house)
-        status: 'pending' as const,
+        status: 'accepted' as const, // NPC-NPC proposals are always auto-accepted
         rejectionReason: null,
         proposedAtDay: state.day,
       }

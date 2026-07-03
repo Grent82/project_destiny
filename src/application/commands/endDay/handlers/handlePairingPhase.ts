@@ -5,6 +5,10 @@ import { applyHouseholdIntimacy } from "../../applyHouseholdIntimacy"
 import { processNpcDateProposals } from "../../scheduleNpcDateProposals"
 import { generateNpcDateProposals } from "../../generateNpcDateProposals"
 
+/**
+ * Owns: NPC-NPC intimacy-stage progression (applyNpcPairing) and date proposal
+ * generation + scheduling (generateNpcDateProposals/processNpcDateProposals).
+ */
 export function handlePairingPhase(state: GameState, rng: Rng): GameState {
   let next = state
 

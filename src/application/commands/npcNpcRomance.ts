@@ -3,6 +3,7 @@ import type { Rng } from './seededRng'
 import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
+import { NPC_INTIMACY_ADVANCE_CONDITIONS } from './applyNpcPairing'
 
 /**
  * NPC-NPC Romance and Flirtation System
@@ -127,8 +128,8 @@ export function tryNpcNpcFlirtation(
 /**
  * Try a romantic courtship attempt between two NPCs.
  *
- * Courtship is a more serious romantic advance that can progress intimacy
- * stages when conditions are met.
+ * Not called from simulateNpcNpcRomance (applyNpcPairing.ts owns daily stage progression).
+ * Kept exported because intentions.ts's courtRomanticallyHandler still references it.
  */
 export function tryNpcNpcCourtship(
   state: GameState,
@@ -174,13 +175,7 @@ export function tryNpcNpcCourtship(
   if (!nextStage) return state // Already at committed
 
   // Check thresholds for advancement
-  const thresholds: Record<string, { affinity: number; trust: number; loyalty?: number }> = {
-    affinity: { affinity: 45, trust: 40 },
-    attachment: { affinity: 60, trust: 55, loyalty: 35 },
-    committed: { affinity: 70, trust: 60 },
-  }
-
-  const required = thresholds[nextStage]
+  const required = NPC_INTIMACY_ADVANCE_CONDITIONS[nextStage]
   if (!required) return state
 
   if (rel.affinity >= required.affinity &&
@@ -357,14 +352,6 @@ export function simulateNpcNpcRomance(
       const flirtChance = 0.08 + (rel.affinity / 500)
       if (rng() < flirtChance) {
         nextState = tryNpcNpcFlirtation(nextState, npcAId, npcBId, rng)
-      }
-
-      // Try courtship (lower chance, higher impact) - only if already in intimacy
-      if (rel.intimacyStage !== 'none') {
-        const courtshipChance = 0.04 + (rel.trust / 400)
-        if (rng() < courtshipChance) {
-          nextState = tryNpcNpcCourtship(nextState, npcAId, npcBId, rng)
-        }
       }
     }
   }

@@ -14,9 +14,12 @@ import { applyRumorSpread } from "../../applyRumorSpread"
 import { applyMoneyEarningIntentions } from "../../intentions/moneyEarning/applyMoneyEarningIntentions"
 import { createRumorForNakedNpc } from "../../createRumorForNakedNpc"
 import { simulateNpcNpcRomance } from "../../npcNpcRomance"
-import { proposeNpcDatesForAllEligiblePairs } from "../../proposeNpcDate"
 import { resolveAllNpcDatesForCurrentSlot } from "../../resolveNpcDate"
 
+/**
+ * Owns: NPC-NPC flirtation/jealousy flavor (simulateNpcNpcRomance) and resolving dates
+ * scheduled by yesterday's Pairing phase (resolveAllNpcDatesForCurrentSlot).
+ */
 export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameState {
   let next = state
 
@@ -38,11 +41,8 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
   // Money-earning intentions (NPCs earning extra income)
   next = applyMoneyEarningIntentions(next)
 
-  // NPC-NPC romance simulation: flirtation, courtship, jealousy
+  // NPC-NPC romance simulation: flirtation, jealousy
   next = simulateNpcNpcRomance(next, rng)
-
-  // NPC-NPC dating: propose dates for eligible pairs (1-2% chance per pair)
-  next = proposeNpcDatesForAllEligiblePairs(next, rng)
 
   // Resolve any scheduled NPC-NPC dates for the current time slot
   next = resolveAllNpcDatesForCurrentSlot(next, rng)

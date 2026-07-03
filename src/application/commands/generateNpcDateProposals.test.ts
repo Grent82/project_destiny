@@ -195,7 +195,7 @@ describe('generateNpcDateProposals', () => {
       const proposal = result.pendingDateProposals[0]!
       expect(proposal.proposerNpcId).toBeDefined()
       expect(proposal.targetNpcId).toBeDefined()
-      expect(proposal.status).toBe('pending')
+      expect(proposal.status).toBe('accepted')
       expect(proposal.proposedDay).toBe(11) // Tomorrow
       expect(proposal.dateTemplateId).toMatch(/^date-/)
     }

@@ -16,8 +16,10 @@ const PREGNANCY_DAILY_PROBABILITY = 0.02
 
 const STAGE_ORDER: IntimacyStage[] = ['none', 'affinity', 'attachment', 'committed']
 
-// Relationship thresholds required to advance from current stage
-const ADVANCE_CONDITIONS: Record<IntimacyStage, { affinity: number; trust: number; loyalty?: number }> = {
+// Relationship thresholds required to advance from current stage.
+// This is the single canonical copy — resolveNpcDate.ts and npcNpcRomance.ts import it
+// rather than keeping their own (previously drifted) local tables.
+export const NPC_INTIMACY_ADVANCE_CONDITIONS: Record<IntimacyStage, { affinity: number; trust: number; loyalty?: number }> = {
   none:       { affinity: 30, trust: 20 },
   affinity:   { affinity: 45, trust: 40 },
   attachment: { affinity: 60, trust: 55, loyalty: 35 },
@@ -61,7 +63,7 @@ function meetsAdvanceCondition(
   bId: string,
   current: IntimacyStage,
 ): boolean {
-  const cond = ADVANCE_CONDITIONS[current]
+  const cond = NPC_INTIMACY_ADVANCE_CONDITIONS[current]
   const ab = getRelationship(state.relationships, aId, bId)
   const ba = getRelationship(state.relationships, bId, aId)
   const avgAffinity = (ab.affinity + ba.affinity) / 2
