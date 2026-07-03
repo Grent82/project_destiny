@@ -39,16 +39,20 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
   next = applyWorldNpcSocialSimulation(next, rng)
   next = applyRumorSpread(next, rng)
 
-  // NPC Intention system: generation gated to the wired allowlist (visit-lover, spend-time-with
-  // only — see destiny-7ekd/destiny-mbju). Generation runs before the money-earning check below
-  // but can never produce a money-earning type, so it stays inert for that system as before.
+  // NPC Intention system: generation gated to the wired allowlist (destiny-7ekd/destiny-mbju and
+  // follow-ups). Generation runs before the money-earning check below so a freshly-generated
+  // money-earning intention gets processed the same day.
   next = processAllowlistedNpcIntentions(next)
 
-  // Money-earning intentions (NPCs earning extra income)
+  // Money-earning intentions: applyMoneyEarningIntentions is the real execution path for these 4
+  // types (reads currentIntention directly, not via the registry) and clears the intention itself
+  // once resolved — see destiny-w29v/n42o/wtpx/4msw.
   next = applyMoneyEarningIntentions(next)
 
-  // Execute any wired intentions generated above (flirt-with, court-romantically, jealousy-check,
-  // visit-lover, spend-time-with)
+  // Execute any other wired intentions generated above (flirt-with, court-romantically,
+  // jealousy-check, visit-lover, visit-romantic-partner, spend-time-with, seek-intimacy,
+  // flirt-aggressively). Money-earning types are already cleared by this point, so this is a no-op
+  // for them.
   next = executeAllowlistedNpcIntentions(next)
 
   // Resolve any scheduled NPC-NPC dates for the current time slot

@@ -14,6 +14,7 @@
 import type { GameState } from '../../../../domain/game/contracts'
 import type { NpcIntentionType } from '../../../../domain/npc/contracts'
 import { createRng } from '../../seededRng'
+import { clearNpcIntention } from '../../intentions'
 import { seekTips } from './seekTips'
 import { blackMarketTrade } from './blackMarketTrade'
 import { begForCoin } from './begForCoin'
@@ -76,15 +77,19 @@ export function applyMoneyEarningIntentions(state: GameState): GameState {
 
     if (!isMoneyEarningIntention(intentionType)) continue
 
-    // Determine district (assigned district or player location)
-    const districtId = npc.assignedDistrictId ?? state.cityResources.corridorStatus === 'open' ? 'district-the-pale' : 'district-the-pale'
+    // Determine district (assigned district, falling back to The Pale)
+    const districtId = npc.assignedDistrictId ?? 'district-the-pale'
 
     // Random chance to attempt (70% base chance)
     const attemptChance = 0.7
-    if (rng() > attemptChance) continue
+    if (rng() <= attemptChance) {
+      // Execute the intention (each sub-command has its own internal success/failure roll)
+      next = executeMoneyEarningIntention(next, npc.npcId, intentionType, districtId)
+    }
 
-    // Execute the intention
-    next = executeMoneyEarningIntention(next, npc.npcId, intentionType, districtId)
+    // The intention is spent for today either way — clear it so generation can produce a new
+    // one tomorrow, matching every other intention handler's one-attempt-per-day pattern.
+    next = clearNpcIntention(next, npc.npcId)
   }
 
   return { ...next, rngSeed: getSeed() }

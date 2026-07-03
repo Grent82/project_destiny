@@ -344,6 +344,14 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
  * and mlWeights.ts) that resolves to the same visitLoverHandler as visit-lover in the registry —
  * without being in this allowlist too, that candidate could never actually fire even though the
  * registry looks wired for it.
+ * The 4 money-earning types (destiny-w29v/n42o/wtpx/4msw) are complete, tested commands in
+ * intentions/moneyEarning/ that were already being called by applyMoneyEarningIntentions
+ * (handleSocialSimulationPhase.ts) — but were never fed a currentIntention to react to. Verified
+ * non-duplicate against npcAgency/spendingAgency.ts (opposite direction: house money, working
+ * NPCs only), applyWages.ts (working/assigned_title only, never idle), and houseSearch.ts
+ * (player-initiated, house items, not NPC personal funds). Their registry entries stay mapped to
+ * careForInjuredHandler (a harmless no-op) since the real execution path is
+ * applyMoneyEarningIntentions, which now also clears the intention itself once resolved.
  * All other placeholder handlers stay excluded — see destiny-7ekd's classification.
  */
 export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
@@ -355,6 +363,10 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'jealousy-check',
   'seek-intimacy',
   'flirt-aggressively',
+  'seek-tips',
+  'black-market-trade',
+  'beg-for-coin',
+  'scavenge-for-sell',
 ])
 
 /**

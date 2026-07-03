@@ -547,7 +547,17 @@ describe('intentions', () => {
     })
 
     it('every intention type that aliases an already-wired handler is also in the allowlist (regression: visit-romantic-partner aliased visitLoverHandler but was missing from WIRED_INTENTION_TYPES, so it could never actually fire even though the registry looked wired)', () => {
-      const wiredHandlerRefs = new Set([...WIRED_INTENTION_TYPES].map((type) => intentionHandlers[type]))
+      // careForInjuredHandler is excluded from this check — it's deliberately reused as a generic
+      // no-op stand-in for many still-unbuilt types (and, separately, for the 4 money-earning
+      // types whose real execution lives outside the registry in applyMoneyEarningIntentions), so
+      // "shares a handler with a wired type" isn't a meaningful signal for it the way it is for a
+      // real, single-purpose handler like visitLoverHandler.
+      const placeholderHandler = intentionHandlers['care-for-injured']
+      const wiredHandlerRefs = new Set(
+        [...WIRED_INTENTION_TYPES]
+          .map((type) => intentionHandlers[type])
+          .filter((handler) => handler !== placeholderHandler),
+      )
       const missingAliases: string[] = []
 
       for (const [type, handler] of Object.entries(intentionHandlers)) {
@@ -558,6 +568,13 @@ describe('intentions', () => {
       }
 
       expect(missingAliases).toEqual([])
+    })
+
+    it('money-earning types are wired in the allowlist even though their registry entry is the placeholder stand-in (real execution lives in applyMoneyEarningIntentions, outside the registry)', () => {
+      const moneyEarningTypes: NpcIntentionType[] = ['seek-tips', 'black-market-trade', 'beg-for-coin', 'scavenge-for-sell']
+      for (const type of moneyEarningTypes) {
+        expect(WIRED_INTENTION_TYPES.has(type)).toBe(true)
+      }
     })
 
     it('does not overwrite an NPC that already has an intention', () => {

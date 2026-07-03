@@ -178,4 +178,55 @@ describe('applyMoneyEarningIntentions', () => {
     expect(performer!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
     expect(scavenger!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
   })
+
+  it('clears the intention after processing so generation can produce a new one tomorrow (regression: this used to never clear, permanently blocking re-generation)', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [
+        createNpcWithIntention('npc-tips', 'Street Performer', 'seek-tips', 60, 60),
+      ],
+    } as unknown as GameState
+
+    const result = applyMoneyEarningIntentions(state)
+
+    const npc = result.roster.find((n) => n.npcId === 'npc-tips')
+    expect(npc!.currentIntention).toBeNull()
+  })
+
+  it('does not clear intentions belonging to other NPCs or non-money-earning types', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [
+        createNpcWithIntention('npc-tips', 'Street Performer', 'seek-tips', 60, 60),
+        {
+          ...createNpcWithIntention('npc-other', 'Other NPC', 'seek-tips', 60, 60),
+          currentIntention: { type: 'eat-meal', target: null, targetType: 'district' as const },
+        },
+      ],
+    } as unknown as GameState
+
+    const result = applyMoneyEarningIntentions(state)
+
+    const other = result.roster.find((n) => n.npcId === 'npc-other')
+    expect(other!.currentIntention).toEqual({ type: 'eat-meal', target: null, targetType: 'district' })
+  })
+
+  it('resolves the district from the NPC\'s own assignedDistrictId, not always The Pale (regression: an operator-precedence bug made this always evaluate to district-the-pale regardless of the NPC\'s real district)', () => {
+    // district-gilded-heights has no black_market POI (district-the-pale does) — if the old
+    // hardcoded-to-The-Pale bug were still present, this NPC could still trade successfully
+    // despite being assigned to a district with no black market at all.
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [
+        {
+          ...createNpcWithIntention('npc-blackmarket', 'Smuggler', 'black-market-trade', 50, 50, 90, 90),
+          assignedDistrictId: 'district-gilded-heights',
+        },
+      ],
+    } as unknown as GameState
+
+    const result = applyMoneyEarningIntentions(state)
+    const npc = result.roster.find((n) => n.npcId === 'npc-blackmarket')
+    expect(npc!.personalFunds.carriedCash).toBe(0)
+  })
 })
