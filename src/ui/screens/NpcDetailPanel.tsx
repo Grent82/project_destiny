@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -152,6 +152,11 @@ interface NpcDetailPanelProps {
 }
 
 const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as const
+
+function formatDistrictName(districtId: string | null | undefined): string {
+  if (!districtId) return 'an unknown district'
+  return contentCatalog.districtsById.get(districtId)?.name ?? districtId.replace('district-', '').replace(/-/g, ' ')
+}
 
 function BondStatusSection({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
@@ -675,53 +680,73 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const knownAssociates = useAppSelector(selectKnownAssociates(detail.npcId))
   const giftHistory = useAppSelector(selectGiftHistoryWithPlayer(detail.npcId))
   const courtshipHistory = useAppSelector(selectCourtshipHistoryWithPlayer(detail.npcId))
+  const deepConversationHistory = useAppSelector(selectDeepConversationHistoryWithPlayer(detail.npcId))
   const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
   const houseDistrictId = useAppSelector((state) => state.game.houseDistrictId)
   const giftItems = useAppSelector(selectGiftInventoryItems)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const isAtHouse = currentDistrictId === houseDistrictId
+  const playerDistrictLabel = formatDistrictName(currentDistrictId)
+  const houseDistrictLabel = formatDistrictName(houseDistrictId)
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
   const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
+  const deploymentDistrictLabel = detail.assignedDistrictId ? formatDistrictName(detail.assignedDistrictId) : null
+  const socialPresenceReason =
+    detail.assignment === 'deployed'
+      ? `${detail.name} is currently deployed${deploymentDistrictLabel ? ` in ${deploymentDistrictLabel}` : ' in the field'}. Deeper conversations and shared time have to wait until they return.`
+      : detail.assignment === 'transferred'
+        ? `${detail.name} has been transferred away and is no longer available for private time with the house.`
+        : detail.assignedDistrictId && detail.assignedDistrictId !== houseDistrictId
+          ? `${detail.name} is currently occupied in ${formatDistrictName(detail.assignedDistrictId)}. You are in ${playerDistrictLabel}. Meet in person before asking for private time.`
+          : !isAtHouse
+            ? `You are in ${playerDistrictLabel}. ${detail.name} is at House Valdris in ${houseDistrictLabel}. Return to the house before asking for private time together.`
+            : null
+  const canUsePrivateSocialActions = socialPresenceReason === null
   const canOfferGift =
-    isAtHouse &&
+    canUsePrivateSocialActions &&
     detail.assignment !== 'deployed'
   const giftUnavailableReason =
     detail.assignment === 'deployed'
-      ? 'Offer Gift requires the recipient to be present, not away on deployment.'
-      : !isAtHouse
-        ? 'Offer Gift currently requires meeting at the house with the recipient close at hand.'
+      ? `${detail.name} is away on deployment. Bring the gift once they return.`
+      : socialPresenceReason
+        ? socialPresenceReason
       : giftItems.length === 0
         ? 'Carry a gift item in player inventory to offer one here.'
         : null
 
-  const canUseTalkActions = isAtHouse
-  const talkUnavailableReason = !isAtHouse
-    ? 'Talk Deeply and Court currently require meeting at the house.'
-    : null
-  const deepConversationTitle = canUseTalkActions
+  const deepConversationTitle = canUsePrivateSocialActions
     ? 'Share a meaningful conversation about values, fears, dreams, or past. This action does not consume time slots.'
-    : talkUnavailableReason ?? 'Talk Deeply is unavailable right now.'
-  const courtTitle = canUseTalkActions
+    : socialPresenceReason ?? 'Talk Deeply is unavailable right now.'
+  const courtTitle = canUsePrivateSocialActions
     ? 'Spend time courting this NPC directly. No time slot cost.'
-    : talkUnavailableReason ?? 'Court is unavailable right now.'
-  const proposeDateTitle = intimacyStage === 'none'
+    : socialPresenceReason ?? 'Court is unavailable right now.'
+  const proposeDateTitle = !canUsePrivateSocialActions
+    ? socialPresenceReason ?? 'Propose Date is unavailable right now.'
+    : intimacyStage === 'none'
     ? 'Build your relationship first before proposing a date.'
     : 'Propose a scheduled date with this NPC. Date-specific costs and duration are shown in the proposal list.'
-  const spendNightTitle = intimacyStage === 'none'
+  const spendNightTitle = !canUsePrivateSocialActions
+    ? socialPresenceReason ?? 'Spend Night Together is unavailable right now.'
+    : intimacyStage === 'none'
     ? 'Build a deeper bond first before spending the night together.'
     : 'Spend a night together. Consent and final options are confirmed in the next step.'
 
   const wants = detail.motivation?.publicGoal
   const needs = detail.motivation?.privateNeed
-  const hasTalkOptions = Boolean(dialogueTree) || canUseTalkActions
-  const hasSpendTimeOptions = canOfferGift || canUseTalkActions || intimacyStage !== 'none'
+  const hasTalkOptions = true
+  const hasSpendTimeOptions = true
 
   function handleTalk() {
     if (!dialogueTree) return
     dispatch(gameActions.startDialogue({ dialogueId: dialogueTree.id, nodeId: dialogueTree.openingNodeId }))
     navigate('/dialogue')
+  }
+
+  function handleSocialAftermath(action: () => void) {
+    action()
+    setActiveTab('Relations')
   }
 
   function toggleActionMenu(menu: NpcActionMenu) {
@@ -814,6 +839,11 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 </button>
               )}
             </div>
+            {socialPresenceReason && (
+              <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                {socialPresenceReason}
+              </p>
+            )}
             {activeActionMenu === 'talk' && hasTalkOptions && (
               <section className="muster-action-menu" role="group" aria-label="Talk options">
                 <div className="muster-action-row">
@@ -825,8 +855,8 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                   <button
                     className="action-button action-button--secondary"
                     type="button"
-                    onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
-                    disabled={!canUseTalkActions}
+                    onClick={() => handleSocialAftermath(() => dispatch(gameActions.deepConversation({ npcId: detail.npcId })))}
+                    disabled={!canUsePrivateSocialActions}
                     title={deepConversationTitle}
                   >
                     Talk Deeply
@@ -834,17 +864,17 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                   <button
                     className="action-button action-button--primary"
                     type="button"
-                    onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
-                    disabled={!canUseTalkActions}
+                    onClick={() => handleSocialAftermath(() => dispatch(gameActions.courtNpc({ npcId: detail.npcId })))}
+                    disabled={!canUsePrivateSocialActions}
                     title={courtTitle}
                   >
                     Court
                   </button>
                 </div>
                 <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
-                  {canUseTalkActions
+                  {canUsePrivateSocialActions
                     ? 'Talk Deeply and Court do not consume time slots.'
-                    : (talkUnavailableReason ?? 'Talk Deeply and Court are unavailable right now.')}
+                    : 'Speak still works from here. Deeper talk and courtship require meeting in person.'}
                 </p>
               </section>
             )}
@@ -864,35 +894,17 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--ghost"
                     type="button"
                     onClick={() => setShowDateProposalModal(true)}
-                    disabled={!canUseTalkActions || intimacyStage === 'none'}
-                    title={!canUseTalkActions ? (talkUnavailableReason ?? proposeDateTitle) : proposeDateTitle}
+                    disabled={!canUsePrivateSocialActions || intimacyStage === 'none'}
+                    title={proposeDateTitle}
                   >
                     Propose Date
-                  </button>
-                  <button
-                    className="action-button action-button--ghost"
-                    type="button"
-                    onClick={() => dispatch(gameActions.cookMeal({ npcId: detail.npcId, mealType: 'simple' }))}
-                    disabled={!canUseTalkActions}
-                    title={talkUnavailableReason ?? 'Cook a simple meal together in the kitchen.'}
-                  >
-                    Cook Together
-                  </button>
-                  <button
-                    className="action-button action-button--secondary"
-                    type="button"
-                    onClick={() => dispatch(gameActions.decorateRoom({ roomId: 'room-study', npcId: detail.npcId, decorStyle: 'warm' }))}
-                    disabled={!canUseTalkActions}
-                    title={talkUnavailableReason ?? 'Decorate a shared room together.'}
-                  >
-                    Decorate Room
                   </button>
                   <button
                     className="action-button action-button--primary"
                     type="button"
                     onClick={() => setShowIntimacyModal(true)}
-                    disabled={!canUseTalkActions || intimacyStage === 'none'}
-                    title={!canUseTalkActions ? (talkUnavailableReason ?? spendNightTitle) : spendNightTitle}
+                    disabled={!canUsePrivateSocialActions || intimacyStage === 'none'}
+                    title={spendNightTitle}
                   >
                     Spend Night Together
                   </button>
@@ -1033,6 +1045,21 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 <h4 style={{ marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Courtship History</h4>
                 <div className="associates-list">
                   {courtshipHistory.slice(0, 3).map((entry) => (
+                    <div key={`${entry.day}-${entry.message}`} className="associate-entry">
+                      <strong className="associate-name">Day {entry.day}</strong>
+                      <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                        {entry.message}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {deepConversationHistory.length > 0 && (
+              <div style={{ marginTop: '1rem' }}>
+                <h4 style={{ marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Deep Conversation History</h4>
+                <div className="associates-list">
+                  {deepConversationHistory.slice(0, 3).map((entry) => (
                     <div key={`${entry.day}-${entry.message}`} className="associate-entry">
                       <strong className="associate-name">Day {entry.day}</strong>
                       <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>

@@ -266,8 +266,6 @@ describe('NpcDetailPanel — courtship loop', () => {
     const timeMenu = screen.getByRole('group', { name: 'Spend Time options' })
     expect(within(timeMenu).getByRole('button', { name: 'Offer Gift' })).toBeInTheDocument()
     expect(within(timeMenu).getByRole('button', { name: 'Propose Date' })).toBeInTheDocument()
-    expect(within(timeMenu).getByRole('button', { name: 'Cook Together' })).toBeInTheDocument()
-    expect(within(timeMenu).getByRole('button', { name: 'Decorate Room' })).toBeInTheDocument()
     expect(within(timeMenu).getByRole('button', { name: 'Spend Night Together' })).toBeInTheDocument()
     expect(within(timeMenu).getByText(/Date-specific costs and duration are shown in the proposal list/i)).toBeInTheDocument()
     expect(screen.queryByRole('group', { name: 'Talk options' })).toBeNull()
@@ -306,6 +304,42 @@ describe('NpcDetailPanel — courtship loop', () => {
       expect.stringMatching(/Build a deeper bond first/i),
     )
     expect(screen.getByText(/Consent and final options are confirmed in the next step/i)).toBeInTheDocument()
+  })
+
+  it('explains location blockers honestly when the player is away from the house', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel({
+      ...initialStateWithIda,
+      currentDistrictId: 'district-harbor',
+      relationships: {
+        ...initialStateWithIda.relationships,
+        'player→npc-ida-rhys': {
+          affinity: 26,
+          trust: 32,
+          fear: 0,
+          respect: 8,
+          loyalty: 3,
+          intimacyStage: 'affinity',
+        },
+      },
+    })
+
+    expect(screen.getByText(/Ida Rhys is at House Valdris/i)).toBeInTheDocument()
+    expect(screen.getByText(/Return to the house before asking for private time together/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.getByRole('button', { name: 'Speak' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Talk Deeply' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Court' })).toBeDisabled()
+    expect(screen.getByText(/Speak still works from here/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+    expect(screen.getByRole('button', { name: 'Propose Date' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Spend Night Together' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Propose Date' })).toHaveAttribute(
+      'title',
+      expect.stringMatching(/Return to the house before asking for private time together/i),
+    )
   })
 
   it('closes Talk and Spend Time when the same menu button is clicked twice', async () => {
@@ -350,11 +384,91 @@ describe('NpcDetailPanel — courtship loop', () => {
 
     await user.click(screen.getByRole('button', { name: 'Talk' }))
     await user.click(screen.getByRole('button', { name: 'Court' }))
-    await user.click(screen.getByRole('tab', { name: 'Relations' }))
 
+    expect(screen.getByRole('tab', { name: 'Relations', selected: true })).toBeInTheDocument()
     expect(screen.getByText(/Courtship History/i)).toBeInTheDocument()
     expect(screen.getByText(/You make time to court Ida Rhys/i)).toBeInTheDocument()
     expect(store.getState().game.relationships['player→npc-ida-rhys']?.intimacyStage).toBe('affinity')
+  })
+
+  it('opens Relations and shows deep-conversation aftermath after Talk Deeply', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel({
+      ...initialStateWithIda,
+      relationships: {
+        ...initialStateWithIda.relationships,
+        'player→npc-ida-rhys': {
+          affinity: 12,
+          trust: 22,
+          fear: 4,
+          respect: 3,
+          loyalty: 0,
+        },
+        'npc-ida-rhys→player': {
+          affinity: 4,
+          trust: 6,
+          fear: 0,
+          respect: 0,
+          loyalty: 12,
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    await user.click(screen.getByRole('button', { name: 'Talk Deeply' }))
+
+    expect(screen.getByRole('tab', { name: 'Relations', selected: true })).toBeInTheDocument()
+    expect(screen.getByText(/Deep Conversation History/i)).toBeInTheDocument()
+    expect(screen.getByText(/You sit down with Ida Rhys to talk about/i)).toBeInTheDocument()
+    expect(store.getState().game.relationships['player→npc-ida-rhys']?.trust).toBeGreaterThan(22)
+  })
+
+  it('opens the date proposal modal from Spend Time when the bond is established', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel({
+      ...initialStateWithIda,
+      relationships: {
+        ...initialStateWithIda.relationships,
+        'player→npc-ida-rhys': {
+          affinity: 26,
+          trust: 32,
+          fear: 0,
+          respect: 8,
+          loyalty: 3,
+          intimacyStage: 'affinity',
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+    await user.click(screen.getByRole('button', { name: 'Propose Date' }))
+
+    expect(screen.getByRole('heading', { name: /Propose a Date with Ida Rhys/i })).toBeInTheDocument()
+    expect(screen.getByText(/Current bond: Affinity/i)).toBeInTheDocument()
+  })
+
+  it('opens the intimacy modal from Spend Time when the bond is established', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel({
+      ...initialStateWithIda,
+      relationships: {
+        ...initialStateWithIda.relationships,
+        'player→npc-ida-rhys': {
+          affinity: 31,
+          trust: 38,
+          fear: 0,
+          respect: 10,
+          loyalty: 4,
+          intimacyStage: 'affinity',
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+    await user.click(screen.getByRole('button', { name: 'Spend Night Together' }))
+
+    expect(screen.getByRole('heading', { name: /Spend the Night with Ida Rhys/i })).toBeInTheDocument()
+    expect(screen.getByText(/Pregnancy Intent/i)).toBeInTheDocument()
   })
 })
 

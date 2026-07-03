@@ -131,6 +131,8 @@ function buildRosterDetail(root: RootState, npcId: string) {
     background: definition?.background ?? 'Unknown',
     status: definition?.status ?? 'citizen',
     assignment: runtime.assignment,
+    assignedDistrictId: runtime.assignedDistrictId,
+    roomAssignment: runtime.roomAssignment,
     activeTitle: runtime.activeTitle,
     factionAffinity,
     factionAffinityId: definition?.factionAffinityId ?? null,

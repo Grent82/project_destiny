@@ -107,6 +107,25 @@ export const selectCourtshipHistoryWithPlayer =
     return selector
   }
 
+export const selectDeepConversationHistoryWithPlayer =
+  (npcId: string) => {
+    let selector = deepConversationHistorySelectorCache.get(npcId)
+    if (!selector) {
+      selector = createSelector(
+        [(state: RootState) => state.game.activityLog],
+        (activityLog): { message: string; day: number }[] =>
+          activityLog
+            .filter((entry) => entry.id.startsWith(`deep-conv::${npcId}::`))
+            .map((entry) => ({
+              message: entry.message,
+              day: entry.day,
+            })),
+      )
+      deepConversationHistorySelectorCache.set(npcId, selector)
+    }
+    return selector
+  }
+
 /**
  * Average loyalty across selected squad members' relationships.
  * Used to show squad cohesion in MissionPrepScreen.
@@ -129,3 +148,4 @@ const relationshipWithPlayerSelectorCache = new Map<string, (state: RootState) =
 const knownAssociatesSelectorCache = new Map<string, (state: RootState) => { npcId: string; name: string; axes: RelationshipAxes }[]>()
 const giftHistorySelectorCache = new Map<string, (state: RootState) => { itemId: string; itemName: string; message: string; day: number }[]>()
 const courtshipHistorySelectorCache = new Map<string, (state: RootState) => { message: string; day: number }[]>()
+const deepConversationHistorySelectorCache = new Map<string, (state: RootState) => { message: string; day: number }[]>()
