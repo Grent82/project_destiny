@@ -14,6 +14,7 @@ import { applyRumorSpread } from "../../applyRumorSpread"
 import { applyMoneyEarningIntentions } from "../../intentions/moneyEarning/applyMoneyEarningIntentions"
 import { createRumorForNakedNpc } from "../../createRumorForNakedNpc"
 import { simulateNpcNpcRomance } from "../../npcNpcRomance"
+import { processAllowlistedNpcIntentions, executeAllowlistedNpcIntentions } from "../../intentions"
 import { resolveAllNpcDatesForCurrentSlot } from "../../resolveNpcDate"
 
 /**
@@ -38,8 +39,16 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
   next = applyWorldNpcSocialSimulation(next, rng)
   next = applyRumorSpread(next, rng)
 
+  // NPC Intention system: generation gated to the wired allowlist (visit-lover, spend-time-with
+  // only — see destiny-7ekd/destiny-mbju). Generation runs before the money-earning check below
+  // but can never produce a money-earning type, so it stays inert for that system as before.
+  next = processAllowlistedNpcIntentions(next)
+
   // Money-earning intentions (NPCs earning extra income)
   next = applyMoneyEarningIntentions(next)
+
+  // Execute any wired intentions generated above (visit-lover, spend-time-with)
+  next = executeAllowlistedNpcIntentions(next)
 
   // NPC-NPC romance simulation: flirtation, jealousy
   next = simulateNpcNpcRomance(next, rng)

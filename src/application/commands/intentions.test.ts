@@ -5,10 +5,13 @@ import {
   clearNpcIntention,
   executeNpcIntention,
   executeAllNpcIntentions,
+  processAllowlistedNpcIntentions,
+  executeAllowlistedNpcIntentions,
 } from './intentions'
 import type { GameState, NpcRuntimeState } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { NPC_IDS } from '../content/ids'
+import { idaRhysRosterEntry } from './testFixtures'
 
 describe('intentions', () => {
   const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -478,6 +481,196 @@ describe('intentions', () => {
       const result = executeNpcIntention(npc, state)
 
       expect(result).toBe(state)
+    })
+  })
+
+  describe('processAllowlistedNpcIntentions (destiny-mbju)', () => {
+    it('discards a naturally-generated intention outside the wired allowlist', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+            states: {
+              ...initialGameStateSnapshot.roster[0]!.states,
+              hunger: 80, // pushes a strong state-driven (survival) candidate that outranks visit-lover/spend-time-with
+            },
+          },
+        ],
+      })
+
+      // Sanity check: this state really does produce a non-allowlisted intention via the real pipeline.
+      const natural = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(natural).not.toBeNull()
+      expect(['visit-lover', 'spend-time-with']).not.toContain(natural?.type)
+
+      const result = processAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('never assigns a currentIntention outside the wired allowlist, across a varied roster', () => {
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+            traits: {
+              ...initialGameStateSnapshot.roster[0]!.traits,
+              ambition: 75,
+              discipline: 65,
+              empathy: 70,
+              loyalty: 70,
+            },
+            attributes: {
+              ...initialGameStateSnapshot.roster[0]!.attributes,
+              presence: 70,
+            },
+          },
+        ],
+      })
+
+      const result = processAllowlistedNpcIntentions(state)
+      const assigned = result.roster[0]!.currentIntention
+
+      if (assigned) {
+        expect(['visit-lover', 'spend-time-with']).toContain(assigned.type)
+      }
+    })
+
+    it('does not overwrite an NPC that already has an intention', () => {
+      const existing = {
+        type: 'spend-time-with' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 2,
+        urgencyDays: 1,
+        confidence: 40,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      const state = createTestState({
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: existing,
+            factionRelationships: [],
+          },
+        ],
+      })
+
+      const result = processAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.currentIntention).toEqual(existing)
+    })
+  })
+
+  describe('executeAllowlistedNpcIntentions (destiny-mbju)', () => {
+    function stateWithMarionAndIda(marionIntention: NpcRuntimeState['currentIntention']) {
+      return {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...initialGameStateSnapshot.roster[0]!,
+            assignment: 'idle' as const,
+            currentDirectiveId: null,
+            currentIntention: marionIntention,
+            factionRelationships: [],
+          },
+          { ...idaRhysRosterEntry, assignment: 'idle' as const, currentDirectiveId: null, currentIntention: null },
+        ],
+      }
+    }
+
+    it('executes visit-lover and clears the intention afterward', () => {
+      const intention = {
+        type: 'visit-lover' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        relationships: {
+          ...state.relationships,
+          [`${marionId}-to-${idaId}`]: { affinity: 60, trust: 50, respect: 0, fear: 0, loyalty: 0, intimacyStage: 'attachment' },
+          [`${idaId}-to-${marionId}`]: { affinity: 60, trust: 50, respect: 0, fear: 0, loyalty: 0, intimacyStage: 'attachment' },
+        },
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.relationships[`${marionId}-to-${idaId}`]!.affinity).toBe(61)
+      expect(result.relationships[`${idaId}-to-${marionId}`]!.affinity).toBe(61)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes spend-time-with and clears the intention afterward', () => {
+      const intention = {
+        type: 'spend-time-with' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 2,
+        urgencyDays: 1,
+        confidence: 40,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        relationships: {
+          ...state.relationships,
+          [`${marionId}-to-${idaId}`]: { affinity: 40, trust: 20, respect: 0, fear: 0, loyalty: 0 },
+          [`${idaId}-to-${marionId}`]: { affinity: 40, trust: 20, respect: 0, fear: 0, loyalty: 0 },
+        },
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.relationships[`${marionId}-to-${idaId}`]!.affinity).toBe(41)
+      expect(result.relationships[`${marionId}-to-${idaId}`]!.trust).toBe(21)
+      expect(result.relationships[`${idaId}-to-${marionId}`]!.affinity).toBe(41)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('does not execute or clear an intention outside the wired allowlist', () => {
+      const intention = {
+        type: 'eat-meal' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      const state = stateWithMarionAndIda(intention)
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.currentIntention).toEqual(intention)
     })
   })
 })

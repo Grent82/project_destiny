@@ -332,6 +332,61 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
 }
 
 /**
+ * Intention types wired into endDay (destiny-mbju). Only these two of the ~47 catalogued types
+ * are both real and verified safe to enable — see destiny-7ekd's classification for why the
+ * other relationship-mutating handlers (flirt-with, court-romantically, jealousy-check) and all
+ * placeholder handlers stay excluded.
+ */
+const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>(['visit-lover', 'spend-time-with'])
+
+/**
+ * Generation, gated to the wired allowlist.
+ *
+ * calculateNpcIntention/generateNpcIntention can produce any of ~47 intention types, including
+ * money-earning ones that applyMoneyEarningIntentions (already called from
+ * handleSocialSimulationPhase) is waiting to react to. Writing an unrestricted intention here
+ * would silently reactivate that system too — well outside this bead's "exactly 2 handlers"
+ * scope. Any computed type outside the allowlist is discarded rather than written to state.
+ */
+export function processAllowlistedNpcIntentions(state: GameState): GameState {
+  let next = state
+
+  for (const npc of state.roster) {
+    if (npc.currentIntention) continue
+    if (npc.currentDirectiveId) continue
+
+    const intention = calculateNpcIntention(next, npc.npcId)
+    if (!intention || !WIRED_INTENTION_TYPES.has(intention.type)) continue
+
+    next = {
+      ...next,
+      roster: next.roster.map((n) =>
+        n.npcId === npc.npcId ? { ...n, currentIntention: intention } : n,
+      ),
+    }
+  }
+
+  return next
+}
+
+/**
+ * Execution, gated to the wired allowlist, clearing the intention afterward so the NPC can
+ * generate a new one on a later day.
+ */
+export function executeAllowlistedNpcIntentions(state: GameState): GameState {
+  let next = state
+
+  for (const npc of next.roster) {
+    if (!npc.currentIntention || !WIRED_INTENTION_TYPES.has(npc.currentIntention.type)) continue
+
+    next = executeNpcIntention(npc, next)
+    next = clearNpcIntention(next, npc.npcId)
+  }
+
+  return next
+}
+
+/**
  * Intention Handler Interface
  * Each handler implements the logic for executing a specific intention type.
  * All handlers must check guards first (assignment !== 'idle' or currentDirectiveId !== null).
