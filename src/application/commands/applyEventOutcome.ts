@@ -259,8 +259,7 @@ export function applyOutcomes(
             availableQuestLeads: [...next.availableQuestLeads],
             activityLog: [...next.activityLog],
           }
-          addQuestLeadIfNew(mutable, questId, { discoverySource: 'event' })
-          next = mutable
+          next = addQuestLeadIfNew(mutable, questId, { discoverySource: 'event' })
         }
         break
       case 'updateQuestStage':

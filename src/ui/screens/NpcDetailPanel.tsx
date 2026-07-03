@@ -680,29 +680,43 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const giftItems = useAppSelector(selectGiftInventoryItems)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const isAtHouse = currentDistrictId === houseDistrictId
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
   const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
   const canOfferGift =
-    currentDistrictId === houseDistrictId &&
+    isAtHouse &&
     detail.assignment !== 'deployed'
   const giftUnavailableReason =
-    !canOfferGift
-      ? 'Gifts can currently only be offered while you are at the house with the recipient close at hand.'
+    detail.assignment === 'deployed'
+      ? 'Offer Gift requires the recipient to be present, not away on deployment.'
+      : !isAtHouse
+        ? 'Offer Gift currently requires meeting at the house with the recipient close at hand.'
       : giftItems.length === 0
-        ? 'Carry a gift item in inventory to offer one here.'
+        ? 'Carry a gift item in player inventory to offer one here.'
         : null
 
-  // All NPCs are romance-eligible. Context (deployment, captivity, ward) affects outcomes, not access.
-  const canCourt = currentDistrictId === houseDistrictId && detail.assignment !== 'deployed'
-  const courtUnavailableReason = currentDistrictId !== houseDistrictId
-    ? 'Courtship actions currently require the house as private ground.'
+  const canUseTalkActions = isAtHouse
+  const talkUnavailableReason = !isAtHouse
+    ? 'Talk Deeply and Court currently require meeting at the house.'
     : null
+  const deepConversationTitle = canUseTalkActions
+    ? 'Share a meaningful conversation about values, fears, dreams, or past. This action does not consume time slots.'
+    : talkUnavailableReason ?? 'Talk Deeply is unavailable right now.'
+  const courtTitle = canUseTalkActions
+    ? 'Spend time courting this NPC directly. No time slot cost.'
+    : talkUnavailableReason ?? 'Court is unavailable right now.'
+  const proposeDateTitle = intimacyStage === 'none'
+    ? 'Build your relationship first before proposing a date.'
+    : 'Propose a scheduled date with this NPC. Date-specific costs and duration are shown in the proposal list.'
+  const spendNightTitle = intimacyStage === 'none'
+    ? 'Build a deeper bond first before spending the night together.'
+    : 'Spend a night together. Consent and final options are confirmed in the next step.'
 
   const wants = detail.motivation?.publicGoal
   const needs = detail.motivation?.privateNeed
-  const hasTalkOptions = Boolean(dialogueTree) || canCourt
-  const hasSpendTimeOptions = canOfferGift || canCourt || intimacyStage !== 'none'
+  const hasTalkOptions = Boolean(dialogueTree) || canUseTalkActions
+  const hasSpendTimeOptions = canOfferGift || canUseTalkActions || intimacyStage !== 'none'
 
   function handleTalk() {
     if (!dialogueTree) return
@@ -812,8 +826,8 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--secondary"
                     type="button"
                     onClick={() => dispatch(gameActions.deepConversation({ npcId: detail.npcId }))}
-                    disabled={!canCourt}
-                    title={courtUnavailableReason ?? 'Share a meaningful conversation about values, fears, dreams, or past.'}
+                    disabled={!canUseTalkActions}
+                    title={deepConversationTitle}
                   >
                     Talk Deeply
                   </button>
@@ -821,12 +835,17 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--primary"
                     type="button"
                     onClick={() => dispatch(gameActions.courtNpc({ npcId: detail.npcId }))}
-                    disabled={!canCourt}
-                    title={courtUnavailableReason ?? 'Spend time courting this NPC directly.'}
+                    disabled={!canUseTalkActions}
+                    title={courtTitle}
                   >
                     Court
                   </button>
                 </div>
+                <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                  {canUseTalkActions
+                    ? 'Talk Deeply and Court do not consume time slots.'
+                    : (talkUnavailableReason ?? 'Talk Deeply and Court are unavailable right now.')}
+                </p>
               </section>
             )}
             {activeActionMenu === 'time' && hasSpendTimeOptions && (
@@ -845,8 +864,8 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--ghost"
                     type="button"
                     onClick={() => setShowDateProposalModal(true)}
-                    disabled={!canCourt || intimacyStage === 'none'}
-                    title={intimacyStage === 'none' ? 'Build your relationship first before proposing a date.' : 'Propose a scheduled date with this NPC'}
+                    disabled={!canUseTalkActions || intimacyStage === 'none'}
+                    title={!canUseTalkActions ? (talkUnavailableReason ?? proposeDateTitle) : proposeDateTitle}
                   >
                     Propose Date
                   </button>
@@ -854,8 +873,8 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--ghost"
                     type="button"
                     onClick={() => dispatch(gameActions.cookMeal({ npcId: detail.npcId, mealType: 'simple' }))}
-                    disabled={!canCourt}
-                    title={courtUnavailableReason ?? 'Cook a simple meal together in the kitchen.'}
+                    disabled={!canUseTalkActions}
+                    title={talkUnavailableReason ?? 'Cook a simple meal together in the kitchen.'}
                   >
                     Cook Together
                   </button>
@@ -863,8 +882,8 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--secondary"
                     type="button"
                     onClick={() => dispatch(gameActions.decorateRoom({ roomId: 'room-study', npcId: detail.npcId, decorStyle: 'warm' }))}
-                    disabled={!canCourt}
-                    title={courtUnavailableReason ?? 'Decorate a shared room together.'}
+                    disabled={!canUseTalkActions}
+                    title={talkUnavailableReason ?? 'Decorate a shared room together.'}
                   >
                     Decorate Room
                   </button>
@@ -872,12 +891,23 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--primary"
                     type="button"
                     onClick={() => setShowIntimacyModal(true)}
-                    disabled={!canCourt || intimacyStage === 'none'}
-                    title={intimacyStage === 'none' ? 'Physical intimacy requires a deeper bond. Build your relationship through courtship and meaningful conversations.' : 'Spend a night together (aftermath-focused, consensual only)'}
+                    disabled={!canUseTalkActions || intimacyStage === 'none'}
+                    title={!canUseTalkActions ? (talkUnavailableReason ?? spendNightTitle) : spendNightTitle}
                   >
                     Spend Night Together
                   </button>
                 </div>
+                {giftUnavailableReason && (
+                  <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                    {giftUnavailableReason}
+                  </p>
+                )}
+                <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                  Date-specific costs and duration are shown in the proposal list.
+                </p>
+                <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                  Consent and final options are confirmed in the next step.
+                </p>
               </section>
             )}
             <div className="muster-action-tools">

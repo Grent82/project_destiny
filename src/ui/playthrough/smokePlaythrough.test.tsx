@@ -125,9 +125,9 @@ describe('Browser smoke — contract execution route (delivery)', () => {
   const DISTRICT_ID = 'district-the-hollows'
 
   function makeDeliveryState(): GameState {
-    const state = cloneState(initialGameStateSnapshot)
-    addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
-    acceptQuestFromLead(state, QUEST_ID)
+    let state = cloneState(initialGameStateSnapshot)
+    state = addQuestLeadIfNew(state, QUEST_ID, { discoveryDistrictId: DISTRICT_ID })
+    state = acceptQuestFromLead(state, QUEST_ID)
     return { ...state, currentDistrictId: DISTRICT_ID }
   }
 

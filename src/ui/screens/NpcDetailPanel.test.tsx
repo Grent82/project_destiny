@@ -258,6 +258,7 @@ describe('NpcDetailPanel — courtship loop', () => {
     expect(within(talkMenu).getByRole('button', { name: 'Speak' })).toBeInTheDocument()
     expect(within(talkMenu).getByRole('button', { name: 'Talk Deeply' })).toBeInTheDocument()
     expect(within(talkMenu).getByRole('button', { name: 'Court' })).toBeInTheDocument()
+    expect(within(talkMenu).getByText(/Talk Deeply and Court do not consume time slots/i)).toBeInTheDocument()
     expect(screen.queryByRole('group', { name: 'Spend Time options' })).toBeNull()
 
     await user.click(screen.getByRole('button', { name: 'Spend Time' }))
@@ -268,7 +269,43 @@ describe('NpcDetailPanel — courtship loop', () => {
     expect(within(timeMenu).getByRole('button', { name: 'Cook Together' })).toBeInTheDocument()
     expect(within(timeMenu).getByRole('button', { name: 'Decorate Room' })).toBeInTheDocument()
     expect(within(timeMenu).getByRole('button', { name: 'Spend Night Together' })).toBeInTheDocument()
+    expect(within(timeMenu).getByText(/Date-specific costs and duration are shown in the proposal list/i)).toBeInTheDocument()
     expect(screen.queryByRole('group', { name: 'Talk options' })).toBeNull()
+  })
+
+  it('shows truthful disabled reasons and next-step guidance for social actions', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+
+    expect(screen.getByRole('button', { name: 'Talk Deeply' })).toHaveAttribute(
+      'title',
+      expect.stringMatching(/meaningful conversation.*consume time slots/i),
+    )
+    expect(screen.getByRole('button', { name: 'Court' })).toHaveAttribute(
+      'title',
+      expect.stringMatching(/no time slot cost/i),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Spend Time' }))
+
+    expect(screen.getByRole('button', { name: 'Offer Gift' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Offer Gift' })).toHaveAttribute(
+      'title',
+      expect.stringMatching(/Carry a gift item in player inventory/i),
+    )
+    expect(screen.getByRole('button', { name: 'Propose Date' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Propose Date' })).toHaveAttribute(
+      'title',
+      expect.stringMatching(/Build your relationship first/i),
+    )
+    expect(screen.getByRole('button', { name: 'Spend Night Together' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Spend Night Together' })).toHaveAttribute(
+      'title',
+      expect.stringMatching(/Build a deeper bond first/i),
+    )
+    expect(screen.getByText(/Consent and final options are confirmed in the next step/i)).toBeInTheDocument()
   })
 
   it('closes Talk and Spend Time when the same menu button is clicked twice', async () => {

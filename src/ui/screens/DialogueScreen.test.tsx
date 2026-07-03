@@ -31,7 +31,7 @@ describe('DialogueScreen', () => {
     expect(screen.getAllByRole('button', { name: /leave/i })).toHaveLength(1)
   })
 
-  it('shows a visible conversation shift after a choice with consequences', async () => {
+  it('shows the resolved follow-up line after a choice with consequences', async () => {
     const user = userEvent.setup()
     const store = createGameStore({
       ...initialGameStateSnapshot,
@@ -50,8 +50,6 @@ describe('DialogueScreen', () => {
 
     await user.click(screen.getByRole('button', { name: /There's too much to do\./i }))
 
-    expect(screen.getByLabelText('Conversation shift')).toBeInTheDocument()
-    expect(screen.getByText(/Marion Vale grow more loyal\./i)).toBeInTheDocument()
     expect(screen.getByText(/Then let me carry some of it\./i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument()
   })

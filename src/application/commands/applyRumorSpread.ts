@@ -295,10 +295,10 @@ function applyRumorRelationshipEffects(
 /**
  * Check if any rumor crossed its template's heatThreshold this tick.
  * On first crossing, add the linked quest lead to availableQuestLeads.
- * Mutates the passed state (availableQuestLeads + activityLog).
  */
-function applyRumorConsequences(state: GameState, preSpread: Rumor[], afterSpread: Rumor[]): void {
+function applyRumorConsequences(state: GameState, preSpread: Rumor[], afterSpread: Rumor[]): GameState {
   const templates = contentCatalog.rumors
+  let next = state
   for (const after of afterSpread) {
     if (!after.templateId) continue
     const template = templates.find((t) => t.id === after.templateId)
@@ -309,9 +309,10 @@ function applyRumorConsequences(state: GameState, preSpread: Rumor[], afterSprea
     const heatBefore = before?.heat ?? 0
 
     if (heatBefore < heatThreshold && after.heat >= heatThreshold) {
-      addQuestLeadIfNew(state, unlocksQuestId)
+      next = addQuestLeadIfNew(next, unlocksQuestId)
     }
   }
+  return next
 }
 
 /**
@@ -355,7 +356,7 @@ export function applyRumorSpread(state: GameState, rng: Rng): GameState {
     relationships: { ...next.relationships },
   }
 
-  applyRumorConsequences(result, preSpread, afterSpread)
+  result = applyRumorConsequences(result, preSpread, afterSpread)
 
   // Apply onAcquire relationship effects for newly spawned rumors
   if (newlyAdded.length > 0) {

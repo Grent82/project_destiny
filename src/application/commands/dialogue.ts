@@ -138,12 +138,11 @@ function applyDialogueOutcome(
     }
     case 'questUnlock': {
       if (typeof outcome.value !== 'string') return state
-      addQuestLeadIfNew(state, outcome.value, {
+      return addQuestLeadIfNew(state, outcome.value, {
         discoverySource: 'npc',
         discoveryDistrictId: state.currentDistrictId,
         sourceNpcId: npcId,
       })
-      return state
     }
     case 'item': {
       if (typeof outcome.value !== 'string') return state

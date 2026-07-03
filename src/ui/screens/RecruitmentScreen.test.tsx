@@ -7,7 +7,7 @@ import { AppProviders } from '../app/AppProviders'
 import { RecruitmentScreen } from './RecruitmentScreen'
 
 describe('RecruitmentScreen', () => {
-  it('explains rarity as a gameplay-facing quality band instead of a bare label', () => {
+  it('shows rarity guidance inline on offers instead of a disconnected explainer panel', () => {
     const store = createGameStore(initialGameStateSnapshot)
 
     render(
@@ -18,8 +18,7 @@ describe('RecruitmentScreen', () => {
       </AppProviders>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Quality Bands' })).toBeInTheDocument()
-    expect(screen.getByText(/They tell you how high an operative can be trained/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Available for Service' })).toBeInTheDocument()
     expect(screen.getAllByText(/Rare hands reach elite ceilings/i).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/Skill cap: 90/i).length).toBeGreaterThan(0)
     expect(screen.getByText(/Treasury: 100 Marks/i)).toBeInTheDocument()

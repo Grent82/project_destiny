@@ -205,8 +205,10 @@ function resolveStageDirection(choiceCount: number, rawStageDirection?: string) 
   return 'The room stays tight and attentive while each of you tests what can be said aloud.'
 }
 
-export function selectActiveDialoguePresentation(state: RootState): ActiveDialoguePresentation | null {
-  const { activeDialogueId, activeDialogueNodeId } = state.game
+export const selectActiveDialoguePresentation = createSelector(
+  [(state: RootState) => state.game],
+  (game): ActiveDialoguePresentation | null => {
+  const { activeDialogueId, activeDialogueNodeId } = game
   if (!activeDialogueId || !activeDialogueNodeId) return null
 
   const tree = contentCatalog.dialoguesById.get(activeDialogueId)
@@ -218,7 +220,7 @@ export function selectActiveDialoguePresentation(state: RootState): ActiveDialog
   const npcDef = contentCatalog.npcsById.get(tree.npcId)
   const portraitId = tree.npcId.replace('npc-', '')
   const visibleChoices = node.choices.filter((choice) =>
-    isDialogueChoiceAvailable(state.game, tree.id, choice),
+    isDialogueChoiceAvailable(game, tree.id, choice),
   )
 
   return {
@@ -227,7 +229,7 @@ export function selectActiveDialoguePresentation(state: RootState): ActiveDialog
     npcName: npcDef?.name ?? tree.npcId,
     portraitSrc: hasPortraitAvailable(tree.npcId) ? `/portraits/${portraitId}.jpg` : null,
     factionId: npcDef?.factionAffinityId ?? null,
-    sceneLocation: resolveDialogueSceneLocation(state.game, tree.id, tree.npcId),
+    sceneLocation: resolveDialogueSceneLocation(game, tree.id, tree.npcId),
     stageDirection: resolveStageDirection(visibleChoices.length, node.stageDirection),
     lineText: node.text,
     choices: visibleChoices.map((choice) => ({
@@ -238,7 +240,7 @@ export function selectActiveDialoguePresentation(state: RootState): ActiveDialog
       effectNotes: formatDialogueOutcomeNote(tree.npcId, choice),
     })),
   }
-}
+})
 
 /**
  * Returns true when an NPC's dialogue tree has at least one hasItem-conditioned

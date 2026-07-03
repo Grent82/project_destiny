@@ -133,7 +133,7 @@ function maybeAddCustodyLead(next: GameState, site: SiteRuntime, captivity: Capt
   if (!captivity.questTag) return next
   if (!roomSupportsCustodyLead(site, captivity)) return next
 
-  const added = addQuestLeadIfNew(next, captivity.questTag, {
+  const updated = addQuestLeadIfNew(next, captivity.questTag, {
     discoverySource: 'event',
     discoveryDistrictId: site.districtId,
     sourceNpcId: site.ownerNpcId ?? null,
@@ -141,10 +141,10 @@ function maybeAddCustodyLead(next: GameState, site: SiteRuntime, captivity: Capt
     issuerFactionId: site.controllingFactionId ?? captivity.holderId ?? null,
   })
 
-  if (!added) return next
+  if (updated === next) return next
 
   return appendActivityLogEntry(
-    next,
+    updated,
     'system',
     `A usable lead forms around ${site.name}. There is now enough room-truth and custody detail to act instead of speculate.`,
   )

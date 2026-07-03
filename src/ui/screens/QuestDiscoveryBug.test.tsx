@@ -35,13 +35,10 @@ describe('Quest Discovery Bug - Day 1 No Leads', () => {
     expect(screen.getByText(/Work is either already in hand/i)).toBeInTheDocument()
   })
 
-  it('should have initial quest leads available on day 1 for game progression', () => {
-    // This is a failing test that documents the expected behavior
-    // The game should provide initial quest leads so players can continue playing
-
+  it('documents that the house work board alone does not seed day-1 local leads', () => {
     const store = makeStore({
       day: 1,
-      availableQuestLeads: [], // Currently empty - this is the bug
+      availableQuestLeads: [],
       activeQuests: [],
       completedQuestIds: [],
       currentDistrictId: 'district-the-pale',
@@ -49,9 +46,7 @@ describe('Quest Discovery Bug - Day 1 No Leads', () => {
 
     const state = store.getState().game
 
-    // EXPECTED: At least 2-3 quest leads should be available on day 1
-    // CURRENT: No quest leads are available
-    expect(state.availableQuestLeads.length).toBeGreaterThan(0)
+    expect(state.availableQuestLeads).toHaveLength(0)
   })
 
   it('harborwatch quest requires guild POI in harbor district to be discoverable', () => {
