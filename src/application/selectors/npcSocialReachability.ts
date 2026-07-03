@@ -6,7 +6,8 @@
  * the actual blocker instead of a generic "unavailable" message.
  *
  * See docs/analysis/roster-npc-spatial-contract-2026-07-03.md for the underlying presence
- * precedence rule (captive/missing > deployed > out-of-house district > house).
+ * precedence rule (captive/missing > out-of-house district > house). A deployed NPC's
+ * assignedDistrictId falls through to the 'assigned-other-district' reason below.
  */
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
@@ -18,7 +19,6 @@ export type NpcReachabilityReason =
   | 'eligible'
   | 'captive'
   | 'missing'
-  | 'deployed'
   | 'transferred'
   | 'assigned-other-district'
   | 'player-away-from-house'
@@ -67,16 +67,6 @@ function computeReachability(
       canConverseRemotely: false,
       canUsePrivateActions: false,
       blockerMessage: `${npcName} is missing. Their whereabouts are unknown.`,
-    }
-  }
-
-  if (npc.assignment === 'deployed') {
-    const districtLabel = npc.assignedDistrictId ? formatDistrictName(npc.assignedDistrictId) : null
-    return {
-      reason: 'deployed',
-      canConverseRemotely: true,
-      canUsePrivateActions: false,
-      blockerMessage: `${npcName} is currently deployed${districtLabel ? ` in ${districtLabel}` : ' in the field'}. Deeper conversations and shared time have to wait until they return.`,
     }
   }
 

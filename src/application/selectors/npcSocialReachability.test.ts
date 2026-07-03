@@ -23,14 +23,13 @@ describe('selectNpcSocialReachability', () => {
     expect(result.blockerMessage).toBeNull()
   })
 
-  it('blocks private actions but allows conversation for a deployed NPC', () => {
+  it('blocks private actions but allows conversation for a deployed NPC assigned to another district', () => {
     const store = storeWithIda({ assignment: 'deployed', assignedDistrictId: 'district-harbor' })
     const result = selectNpcSocialReachability(idaRhysRosterEntry.npcId)(store.getState())
 
-    expect(result.reason).toBe('deployed')
+    expect(result.reason).toBe('assigned-other-district')
     expect(result.canConverseRemotely).toBe(true)
     expect(result.canUsePrivateActions).toBe(false)
-    expect(result.blockerMessage).toMatch(/deployed/i)
     expect(result.blockerMessage).toMatch(/Harbor/i)
   })
 
