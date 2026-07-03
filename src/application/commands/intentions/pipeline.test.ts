@@ -88,8 +88,11 @@ describe('Intention Generation Pipeline', () => {
     it('returns meditate when stress > 55', () => {
       expect(getStateDrivenIntentions(createTestNpc({ stress: 70 }))).toContain('meditate')
     })
-    it('returns groom when hygiene < 40', () => {
-      expect(getStateDrivenIntentions(createTestNpc({ hygiene: 30 }))).toContain('groom')
+    it('returns groom when hygiene > 60 (hygiene tracks accumulated grime, not cleanliness)', () => {
+      expect(getStateDrivenIntentions(createTestNpc({ hygiene: 70 }))).toContain('groom')
+    })
+    it('does not return groom for a low (clean) hygiene value absent high vanity', () => {
+      expect(getStateDrivenIntentions(createTestNpc({ hygiene: 30 }))).not.toContain('groom')
     })
     it('returns groom when vanity >= 65', () => {
       expect(getStateDrivenIntentions(createTestNpc({ hygiene: 80 }, { vanity: 70 }))).toContain('groom')

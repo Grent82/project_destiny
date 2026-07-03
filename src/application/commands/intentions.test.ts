@@ -689,7 +689,7 @@ describe('intentions', () => {
 
     it('does not execute or clear an intention outside the wired allowlist', () => {
       const intention = {
-        type: 'eat-meal' as const,
+        type: 'lead-group' as const,
         targetId: 'district-the-pale',
         targetType: 'district' as const,
         priority: 3,
@@ -878,6 +878,138 @@ describe('intentions', () => {
       const idaAnger = result.roster.find((n) => n.npcId === idaId)!.states.anger
       const somethingHappened = abAffinity > 0 || idaAnger > idaRhysRosterEntry.states.anger
       expect(somethingHappened).toBe(true)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes eat-meal (via npcEatMeal) and clears the intention afterward', () => {
+      const intention = {
+        type: 'eat-meal' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, hunger: 60 } }, state.roster[1]!] }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.states.hunger).toBeLessThan(60)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes drink (via npcDrink) and clears the intention afterward', () => {
+      const intention = {
+        type: 'drink' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = {
+        ...state,
+        roster: [
+          { ...state.roster[0]!, states: { ...state.roster[0]!.states, hunger: 50, intoxication: 40 } },
+          state.roster[1]!,
+        ],
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.states.intoxication).toBeLessThan(40)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes sleep (via npcSleep) and clears the intention afterward', () => {
+      const intention = {
+        type: 'sleep' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, fatigue: 80 } }, state.roster[1]!] }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.states.fatigue).toBeLessThan(80)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes rest (via npcRest) and clears the intention afterward', () => {
+      const intention = {
+        type: 'rest' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, fatigue: 50 } }, state.roster[1]!] }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.states.fatigue).toBeLessThan(50)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes groom (via npcGroom) and clears the intention afterward', () => {
+      const intention = {
+        type: 'groom' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, hygiene: 70 } }, state.roster[1]!] }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.states.hygiene).toBeLessThan(70)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes meditate (via npcMeditate) and clears the intention afterward', () => {
+      const intention = {
+        type: 'meditate' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, stress: 70 } }, state.roster[1]!] }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.roster[0]!.states.stress).toBeLessThan(70)
       expect(result.roster[0]!.currentIntention).toBeNull()
     })
   })

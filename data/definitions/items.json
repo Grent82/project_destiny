@@ -1431,5 +1431,75 @@
         "uses": 1
       }
     ]
+  },
+  {
+    "id": "item-waterskin-filled",
+    "name": "Filled Waterskin",
+    "category": "consumable",
+    "tier": 1,
+    "value": 4,
+    "weight": 0.6,
+    "rarity": "common",
+    "tags": [
+      "drink",
+      "water",
+      "hydration"
+    ],
+    "effects": [
+      {
+        "type": "reduceStat",
+        "stat": "hunger",
+        "value": -10
+      },
+      {
+        "type": "reduceStat",
+        "stat": "intoxication",
+        "value": -20
+      }
+    ],
+    "description": "A boiled-leather skin of clean water, drawn from the house cistern before the day's work begins.",
+    "shopPrice": 2,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "hunger",
+        "value": -10
+      },
+      {
+        "type": "stat_mod",
+        "stat": "intoxication",
+        "value": -20
+      }
+    ]
+  },
+  {
+    "id": "item-soap-bar-plain",
+    "name": "Plain Soap Bar",
+    "category": "consumable",
+    "tier": 1,
+    "value": 3,
+    "weight": 0.1,
+    "rarity": "common",
+    "tags": [
+      "grooming",
+      "soap",
+      "hygiene"
+    ],
+    "effects": [
+      {
+        "type": "reduceStat",
+        "stat": "hygiene",
+        "value": -30
+      }
+    ],
+    "description": "A block of plain tallow soap, harsh on the skin but effective against the grime of a day's work.",
+    "shopPrice": 3,
+    "typedEffects": [
+      {
+        "type": "stat_mod",
+        "stat": "hygiene",
+        "value": -30
+      }
+    ]
   }
 ]

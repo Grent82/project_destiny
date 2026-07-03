@@ -4,6 +4,7 @@ import { npcIntentionSchema } from '../../domain/npc/contracts'
 import { generateNpcIntention } from './intentions/pipeline'
 import { tryNpcNpcFlirtation, checkJealousyForNpc, tryNpcNpcSeekIntimacy, tryNpcNpcFlirtAggressively } from './npcNpcRomance'
 import { tryAdvanceIntimacyStage } from './applyNpcPairing'
+import { npcEatMeal, npcDrink, npcSleep, npcRest, npcGroom, npcMeditate } from './npcSurvivalActions'
 import { createRng } from './seededRng'
 
 /**
@@ -352,6 +353,14 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
  * (player-initiated, house items, not NPC personal funds). Their registry entries stay mapped to
  * careForInjuredHandler (a harmless no-op) since the real execution path is
  * applyMoneyEarningIntentions, which now also clears the intention itself once resolved.
+ * The 5 Survival types (destiny-rjwy: eat-meal/drink/sleep/rest/groom) plus meditate are real,
+ * non-duplicate implementations in npcSurvivalActions.ts. Verified non-duplicate against
+ * applyStateDecay.ts, which only accumulates hunger/fatigue/hygiene passively (and gives a small
+ * kitchen/quarters bonus) — these commands are the NPC's own active resolution of those needs,
+ * not a second copy of the passive decay. groom's hygiene direction was found inverted in both
+ * the generation pipeline and this handler's guard (hygiene is a dirtiness measure — see
+ * applyStateDecay.ts's HYGIENE_PENALTY_THRESHOLD — not a cleanliness one) and was fixed alongside
+ * the real implementation.
  * All other placeholder handlers stay excluded — see destiny-7ekd's classification.
  */
 export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
@@ -367,6 +376,12 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'black-market-trade',
   'beg-for-coin',
   'scavenge-for-sell',
+  'eat-meal',
+  'drink',
+  'sleep',
+  'rest',
+  'groom',
+  'meditate',
 ])
 
 /**
@@ -618,10 +633,7 @@ const eatMealHandler: IntentionHandler = {
     // Requires hunger > 40 or basic survival skill
     return npc.states.hunger > 40 || npc.skills.survival >= 20
   },
-  execute: (_npc, state) => {
-    // Placeholder - would consume food, reduce hunger
-    return state
-  },
+  execute: (npc, state) => npcEatMeal(state, npc.npcId),
 }
 
 /**
@@ -634,10 +646,7 @@ const drinkHandler: IntentionHandler = {
     // Social drinking requires presence
     return npc.states.hunger > 30 || npc.attributes.presence >= 30
   },
-  execute: (_npc, state) => {
-    // Placeholder - would reduce thirst, possibly increase intoxication
-    return state
-  },
+  execute: (npc, state) => npcDrink(state, npc.npcId),
 }
 
 /**
@@ -650,10 +659,7 @@ const sleepHandler: IntentionHandler = {
     // Requires high fatigue
     return npc.states.fatigue > 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would reduce fatigue significantly
-    return state
-  },
+  execute: (npc, state) => npcSleep(state, npc.npcId),
 }
 
 /**
@@ -666,10 +672,7 @@ const restHandler: IntentionHandler = {
     // Requires moderate fatigue
     return npc.states.fatigue > 40 && npc.states.fatigue <= 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would reduce fatigue moderately
-    return state
-  },
+  execute: (npc, state) => npcRest(state, npc.npcId),
 }
 
 /**
@@ -679,13 +682,11 @@ const restHandler: IntentionHandler = {
 const groomHandler: IntentionHandler = {
   canExecute: (npc) => {
     if (!canExecuteIntention(npc)) return false
-    // Requires low hygiene or high vanity
-    return npc.states.hygiene < 40 || npc.traits.vanity >= 60
+    // Requires accumulated grime (hygiene is a dirtiness measure, not cleanliness — see
+    // applyStateDecay.ts's HYGIENE_PENALTY_THRESHOLD) or high vanity
+    return npc.states.hygiene > 60 || npc.traits.vanity >= 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would improve hygiene
-    return state
-  },
+  execute: (npc, state) => npcGroom(state, npc.npcId),
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -961,10 +962,7 @@ const meditateHandler: IntentionHandler = {
     // Requires high stress or high intellect
     return npc.states.stress > 50 || npc.attributes.intellect >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would reduce stress
-    return state
-  },
+  execute: (npc, state) => npcMeditate(state, npc.npcId),
 }
 
 /**

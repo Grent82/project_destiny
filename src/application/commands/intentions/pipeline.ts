@@ -57,8 +57,11 @@ export function getStateDrivenIntentions(npc: NpcRuntimeState): NpcIntentionType
     intentions.push('meditate')
   }
 
-  // Hygiene -> groom
-  if (npc.states.hygiene < 40 || npc.traits.vanity >= 65) {
+  // Hygiene -> groom. Note: hygiene tracks accumulated grime, not cleanliness — a HIGH value is
+  // the bad/dirty direction (see applyStateDecay.ts's HYGIENE_PENALTY_THRESHOLD, which penalizes
+  // morale above 80). This previously read `< 40`, which triggered grooming when an NPC was
+  // already clean and never when they were actually filthy — fixed as part of destiny-2s3f.
+  if (npc.states.hygiene > 60 || npc.traits.vanity >= 65) {
     intentions.push('groom')
   }
 
