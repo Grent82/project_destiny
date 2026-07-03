@@ -248,3 +248,89 @@ describe('house room function bonuses', () => {
     })
   })
 })
+
+describe('player rest', () => {
+  function stateWithPlayerInjury(health: number, injury: number) {
+    return {
+      ...initialStateWithIda,
+      playerCharacter: {
+        ...initialStateWithIda.playerCharacter,
+        combatState: { health, morale: 64, injury },
+      },
+    }
+  }
+
+  function withNoResidentialRooms(state: typeof initialStateWithIda) {
+    return {
+      ...state,
+      house: {
+        ...state.house,
+        rooms: state.house.rooms.map((room) => ({ ...room, state: 'stripped' as const })),
+      },
+    }
+  }
+
+  it('gives a small health gain with no lodging or treatment support', () => {
+    const state = withNoResidentialRooms(stateWithPlayerInjury(50, 0))
+    const result = applyStateDecay(state)
+
+    expect(result.playerCharacter.combatState?.health).toBe(53)
+    expect(result.playerCharacter.combatState?.injury).toBe(0)
+  })
+
+  it('gives a larger health gain when intact quarters are available', () => {
+    const state = stateWithPlayerInjury(50, 0) // initialStateWithIda has intact room-quarters by default
+    const result = applyStateDecay(state)
+
+    expect(result.playerCharacter.combatState?.health).toBe(55)
+    expect(result.playerCharacter.combatState?.injury).toBe(0)
+  })
+
+  it('reduces injury and gives the largest health gain with infirmary and medic support while seriously injured', () => {
+    const state = withRoom(stateWithPlayerInjury(50, 32), 'room-bureau', 'infirmary')
+    const withMedic = {
+      ...state,
+      roster: state.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-medic' } : npc,
+      ),
+    }
+    const result = applyStateDecay(withMedic)
+
+    expect(result.playerCharacter.combatState?.health).toBe(60)
+    expect(result.playerCharacter.combatState?.injury).toBe(27)
+  })
+
+  it('does not reduce injury from infirmary/medic support when the player is not seriously injured', () => {
+    const state = withRoom(stateWithPlayerInjury(50, 10), 'room-bureau', 'infirmary')
+    const withMedic = {
+      ...state,
+      roster: state.roster.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-medic' } : npc,
+      ),
+    }
+    const result = applyStateDecay(withMedic)
+
+    expect(result.playerCharacter.combatState?.injury).toBe(10)
+  })
+
+  it('does not restore health above the player maximum', () => {
+    const state = stateWithPlayerInjury(79, 0)
+    const result = applyStateDecay(state)
+
+    expect(result.playerCharacter.combatState?.health).toBe(80)
+  })
+
+  it('logs a player-facing rest message describing the house support received', () => {
+    const state = stateWithPlayerInjury(50, 0)
+    const result = applyStateDecay(state)
+
+    expect(result.activityLog[0]?.message).toMatch(/quarters/i)
+  })
+
+  it('does not log or change anything when the player is already fully healthy', () => {
+    const state = stateWithPlayerInjury(80, 0)
+    const result = applyStateDecay(state)
+
+    expect(result.activityLog).toEqual(state.activityLog)
+  })
+})

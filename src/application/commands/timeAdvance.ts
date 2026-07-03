@@ -1,7 +1,5 @@
 import type { GameState } from '../../domain'
 import { endDay } from './endDay'
-import { PLAYER_MAX_HEALTH } from './combatants'
-import { getPlayerOvernightHealthGain, getPlayerRecoverySupport } from './recovery'
 
 export const SLOT_SEQUENCE = ['morning', 'afternoon', 'evening', 'night'] as const
 export type TimeSlot = (typeof SLOT_SEQUENCE)[number]
@@ -85,21 +83,8 @@ export function sleepToMorning(state: GameState): GameState {
       },
     })),
   }
-  if (next.playerCharacter.combatState) {
-    const supportTier = getPlayerRecoverySupport(next, next.playerCharacter.combatState.injury)
-    next = {
-      ...next,
-      playerCharacter: {
-        ...next.playerCharacter,
-        combatState: {
-          ...next.playerCharacter.combatState,
-          health: Math.min(
-            PLAYER_MAX_HEALTH,
-            next.playerCharacter.combatState.health + getPlayerOvernightHealthGain(supportTier),
-          ),
-        },
-      },
-    }
-  }
+  // Player recovery (health/injury, scaled by house lodging/treatment support) is applied
+  // once via applyStateDecay as part of the endDay crossing above — see
+  // docs/analysis/roster-npc-spatial-contract-2026-07-03.md and destiny-uj3s.
   return next
 }

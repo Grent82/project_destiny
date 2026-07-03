@@ -32,4 +32,24 @@ describe('EventLogScreen', () => {
     expect(screen.getByText(/moves out.*hostile patrol|hostile patrol stands in the way/i)).toBeInTheDocument()
     expect(screen.getByText(/Current encounter state/i)).toBeInTheDocument()
   })
+
+  it('explains the player rest outcome after ending a day while injured', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      playerCharacter: {
+        ...initialGameStateSnapshot.playerCharacter,
+        combatState: { health: 50, morale: 64, injury: 0 },
+      },
+    })
+
+    store.dispatch(gameActions.endDay())
+
+    render(
+      <AppProviders store={store}>
+        <EventLogScreen />
+      </AppProviders>,
+    )
+
+    expect(screen.getByText(/rest in the house's quarters and wake a little steadier/i)).toBeInTheDocument()
+  })
 })

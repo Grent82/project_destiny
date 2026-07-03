@@ -3,12 +3,23 @@ import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { deriveGriefState, deriveGriefMoraleModifier } from './grief'
 import { isNpcNaked } from '../../domain/npc/isNpcNaked'
+import { PLAYER_MAX_HEALTH } from './combatants'
 import {
   hasResidentQuarters,
   hasMedicSupport,
   hasInfirmarySupport,
   isReadyForDuty,
+  getPlayerRecoverySupport,
+  getPlayerOvernightHealthGain,
+  getRecoveringInjuryRelief,
 } from './recovery'
+
+const PLAYER_REST_MESSAGE_BY_TIER: Record<ReturnType<typeof getPlayerRecoverySupport>, string> = {
+  none: 'You rest as best you can amid the ruin of House Valdris. It is not enough, but it is something.',
+  lodging: "You rest in the house's quarters and wake a little steadier.",
+  treatment: "The infirmary's care eases your wounds through the night.",
+  'treatment-plus-medic': "Between the infirmary and a skilled medic's care, you wake much improved.",
+}
 
 function hasIntactRoom(state: GameState, fn: RoomFunction): boolean {
   return state.house.rooms.some((r) => r.state === 'intact' && r.roomFunction === fn)
@@ -146,6 +157,31 @@ export function applyStateDecay(state: GameState): GameState {
       next = appendActivityLogEntry(next, 'system', `${npcName} is recovered. Back on roster.`)
     } else if (newHealth > npc.states.health) {
       next = appendActivityLogEntry(next, 'system', `${npcName} is recovering. Health improving.`)
+    }
+  }
+
+  // Step 2c: The player rests through the house's lodging/treatment support each night.
+  const playerCombatState = next.playerCharacter.combatState
+  if (playerCombatState && (playerCombatState.health < PLAYER_MAX_HEALTH || playerCombatState.injury > 0)) {
+    const supportTier = getPlayerRecoverySupport(next, playerCombatState.injury)
+    const healthGain = getPlayerOvernightHealthGain(supportTier)
+    const injuryRelief =
+      supportTier === 'treatment' || supportTier === 'treatment-plus-medic'
+        ? getRecoveringInjuryRelief(supportTier)
+        : 0
+
+    const newHealth = Math.min(PLAYER_MAX_HEALTH, playerCombatState.health + healthGain)
+    const newInjury = Math.max(0, playerCombatState.injury - injuryRelief)
+
+    if (newHealth !== playerCombatState.health || newInjury !== playerCombatState.injury) {
+      next = {
+        ...next,
+        playerCharacter: {
+          ...next.playerCharacter,
+          combatState: { ...playerCombatState, health: newHealth, injury: newInjury },
+        },
+      }
+      next = appendActivityLogEntry(next, 'system', PLAYER_REST_MESSAGE_BY_TIER[supportTier])
     }
   }
 
