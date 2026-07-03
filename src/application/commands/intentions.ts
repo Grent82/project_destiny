@@ -5,6 +5,14 @@ import { generateNpcIntention } from './intentions/pipeline'
 import { tryNpcNpcFlirtation, checkJealousyForNpc, tryNpcNpcSeekIntimacy, tryNpcNpcFlirtAggressively } from './npcNpcRomance'
 import { tryAdvanceIntimacyStage } from './applyNpcPairing'
 import { npcEatMeal, npcDrink, npcSleep, npcRest, npcGroom, npcMeditate } from './npcSurvivalActions'
+import {
+  npcConfrontRival,
+  npcAssertDominance,
+  npcProtectHouse,
+  npcPatrolDistrict,
+  npcFortifyPosition,
+  npcCareForInjured,
+} from './npcAggressionActions'
 import { createRng } from './seededRng'
 
 /**
@@ -361,6 +369,17 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
  * the generation pipeline and this handler's guard (hygiene is a dirtiness measure — see
  * applyStateDecay.ts's HYGIENE_PENALTY_THRESHOLD — not a cleanliness one) and was fixed alongside
  * the real implementation.
+ * The 6 Aggression & Defense types (destiny-kuw0) are real implementations in
+ * npcAggressionActions.ts. confront-rival reads authored rival loyalties (npcs.json) rather than
+ * inventing a new rivalry concept; protect-house/patrol-district ease districtTension (house's own
+ * district vs. the NPC's assignedDistrictId, respectively) rather than duplicating any existing
+ * mechanic — nothing else currently reduces district tension this way; fortify-position reuses the
+ * player's existing house.fortificationLevel field (already read by siteRuntime.ts/house.ts's
+ * defense selectors) instead of inventing a parallel one. care-for-injured's registry entry
+ * (careForInjuredHandler) previously stood in as a generic placeholder for many other still-unbuilt
+ * types and for the money-earning types below — giving it real logic is safe because 'care-for-
+ * injured' itself was never in this allowlist until now, and the money-earning types are always
+ * cleared (see below) before their execute() would ever run.
  * All other placeholder handlers stay excluded — see destiny-7ekd's classification.
  */
 export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
@@ -382,6 +401,12 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'rest',
   'groom',
   'meditate',
+  'confront-rival',
+  'assert-dominance',
+  'protect-house',
+  'patrol-district',
+  'fortify-position',
+  'care-for-injured',
 ])
 
 /**
@@ -533,9 +558,10 @@ const confrontRivalHandler: IntentionHandler = {
     // Requires might and ruthlessness
     return npc.attributes.might >= 50 || npc.traits.ruthlessness >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would initiate confrontation
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcConfrontRival(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -549,10 +575,7 @@ const protectHouseHandler: IntentionHandler = {
     // Requires loyalty and discipline
     return npc.traits.loyalty >= 50 || npc.traits.discipline >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would set up defense posture
-    return state
-  },
+  execute: (npc, state) => npcProtectHouse(state, npc.npcId),
 }
 
 /**
@@ -581,9 +604,10 @@ const patrolDistrictHandler: IntentionHandler = {
     // Requires endurance and survival
     return npc.attributes.endurance >= 40 || npc.skills.survival >= 30
   },
-  execute: (_npc, state) => {
-    // Placeholder - would create patrol activity
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcPatrolDistrict(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1031,9 +1055,10 @@ const assertDominanceHandler: IntentionHandler = {
     // Requires high dominance
     return npc.traits.dominance >= 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would assert dominance over target
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcAssertDominance(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1215,9 +1240,10 @@ const fortifyPositionHandler: IntentionHandler = {
     // Requires security or engineering
     return npc.skills.security >= 40 || npc.skills.engineering >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would fortify position
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcFortifyPosition(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1264,10 +1290,7 @@ const careForInjuredHandler: IntentionHandler = {
     // Requires medicine and empathy
     return npc.skills.medicine >= 40 || npc.traits.empathy >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would treat injured NPCs
-    return state
-  },
+  execute: (npc, state) => npcCareForInjured(state, npc.npcId),
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

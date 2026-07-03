@@ -1012,5 +1012,172 @@ describe('intentions', () => {
       expect(result.roster[0]!.states.stress).toBeLessThan(70)
       expect(result.roster[0]!.currentIntention).toBeNull()
     })
+
+    it('executes confront-rival (via npcConfrontRival) and clears the intention afterward', () => {
+      const intention = {
+        type: 'confront-rival' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      // npc-alis-vey has an authored rival (npc-enemy-lady-sorn) in npcs.json — both must be on
+      // the roster for npcConfrontRival to do anything.
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        roster: [
+          {
+            ...idaRhysRosterEntry,
+            npcId: 'npc-alis-vey',
+            name: 'Alis Vey',
+            assignment: 'idle' as const,
+            currentDirectiveId: null,
+            currentIntention: intention,
+            attributes: { ...idaRhysRosterEntry.attributes, might: 60 },
+          },
+          { ...idaRhysRosterEntry, npcId: 'npc-enemy-lady-sorn', name: 'Lady Sorn', assignment: 'idle' as const, currentDirectiveId: null, currentIntention: null },
+        ],
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      const rival = result.roster.find((n) => n.npcId === 'npc-enemy-lady-sorn')!
+      const actor = result.roster.find((n) => n.npcId === 'npc-alis-vey')!
+      const somethingHappened = rival.states.fear > idaRhysRosterEntry.states.fear || actor.states.fear > idaRhysRosterEntry.states.fear
+      expect(somethingHappened).toBe(true)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes assert-dominance (via npcAssertDominance) and clears the intention afterward', () => {
+      const intention = {
+        type: 'assert-dominance' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      // assertDominanceHandler.canExecute requires dominance >= 60 on the actor.
+      state = { ...state, roster: [{ ...state.roster[0]!, traits: { ...state.roster[0]!.traits, dominance: 65 } }, state.roster[1]!] }
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      const rel = result.relationships[`${idaId}-to-${marionId}`]
+      const actor = result.roster.find((n) => n.npcId === marionId)!
+      const somethingHappened = (rel?.fear ?? 0) > 0 || actor.states.anger > state.roster[0]!.states.anger
+      expect(somethingHappened).toBe(true)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes protect-house (via npcProtectHouse) and clears the intention afterward', () => {
+      const intention = {
+        type: 'protect-house' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = { ...state, districtTension: { ...state.districtTension, [state.houseDistrictId]: 50 } }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.districtTension[state.houseDistrictId]).toBeLessThan(50)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes patrol-district (via npcPatrolDistrict) and clears the intention afterward', () => {
+      const intention = {
+        type: 'patrol-district' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      state = {
+        ...state,
+        roster: [{ ...state.roster[0]!, assignedDistrictId: 'district-the-pale' }, state.roster[1]!],
+        districtTension: { ...state.districtTension, 'district-the-pale': 50 },
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.districtTension['district-the-pale']).toBeLessThan(50)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes fortify-position (via npcFortifyPosition) and clears the intention afterward', () => {
+      const intention = {
+        type: 'fortify-position' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      // fortifyPositionHandler.canExecute requires security >= 40 or engineering >= 40.
+      state = {
+        ...state,
+        money: 1000,
+        roster: [{ ...state.roster[0]!, skills: { ...state.roster[0]!.skills, security: 60 } }, state.roster[1]!],
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      expect(result.money).toBeLessThan(1000)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes care-for-injured (via npcCareForInjured) and clears the intention afterward', () => {
+      const intention = {
+        type: 'care-for-injured' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      // careForInjuredHandler.canExecute requires medicine >= 40 or empathy >= 50.
+      state = {
+        ...state,
+        roster: [
+          { ...state.roster[0]!, traits: { ...state.roster[0]!.traits, empathy: 60 } },
+          { ...state.roster[1]!, states: { ...state.roster[1]!.states, injury: 20, health: 60 } },
+        ],
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      const target = result.roster.find((n) => n.npcId === idaRhysRosterEntry.npcId)!
+      expect(target.states.health).toBeGreaterThan(60)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
   })
 })
