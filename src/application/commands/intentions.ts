@@ -2,7 +2,7 @@ import type { GameState, NpcIntention, NpcIntentionType } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { npcIntentionSchema } from '../../domain/npc/contracts'
 import { generateNpcIntention } from './intentions/pipeline'
-import { tryNpcNpcFlirtation, checkJealousyForNpc } from './npcNpcRomance'
+import { tryNpcNpcFlirtation, checkJealousyForNpc, tryNpcNpcSeekIntimacy, tryNpcNpcFlirtAggressively } from './npcNpcRomance'
 import { tryAdvanceIntimacyStage } from './applyNpcPairing'
 import { createRng } from './seededRng'
 
@@ -338,6 +338,8 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
  * they duplicated blanket-sweep systems. Those three were redesigned (not re-duplicated) to route
  * through the same canonical mechanics the blanket sweeps used (tryNpcNpcFlirtation,
  * tryAdvanceIntimacyStage, checkJealousyForNpc with a proper RNG gate) and are now wired here too.
+ * seek-intimacy/flirt-aggressively (destiny-1xd5/rq8u) are genuinely new, non-duplicate mechanics
+ * (verified against applyHouseholdIntimacy.ts and engagePhysicalIntimacy.ts) added the same way.
  * All other placeholder handlers stay excluded — see destiny-7ekd's classification.
  */
 const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
@@ -346,6 +348,8 @@ const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'flirt-with',
   'court-romantically',
   'jealousy-check',
+  'seek-intimacy',
+  'flirt-aggressively',
 ])
 
 /**
@@ -839,6 +843,61 @@ const spendTimeWithHandler: IntentionHandler = {
   },
 }
 
+/**
+ * Seek Intimacy Handler
+ * NPC seeks a quiet, consensual intimate moment with a deeply trusted partner.
+ */
+const seekIntimacyHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    return npc.traits.empathy >= 40 || npc.traits.loyalty >= 50
+  },
+  execute: (npc, state) => {
+    // Find the most trusted idle partner (deep-trust gate is enforced inside tryNpcNpcSeekIntimacy)
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.trust ?? 0
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.trust ?? 0
+        return relB - relA
+      })[0]
+
+    if (!targetEntry) return state
+
+    const rng = createRng(state.rngSeed)
+    const newState = tryNpcNpcSeekIntimacy(state, npc.npcId, targetEntry.npcId, rng.rng)
+
+    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
+  },
+}
+
+/**
+ * Flirt Aggressively Handler
+ * NPC makes a bold, high-risk romantic advance.
+ */
+const flirtAggressivelyHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    return npc.traits.dominance >= 50
+  },
+  execute: (npc, state) => {
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
+        return relB - relA
+      })[0]
+
+    if (!targetEntry) return state
+
+    const rng = createRng(state.rngSeed)
+    const newState = tryNpcNpcFlirtAggressively(state, npc.npcId, targetEntry.npcId, rng.rng)
+
+    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
+  },
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Alltagsaktivitäten (4)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1250,9 +1309,9 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'escape-attempt': escapeAttemptHandler,
   'seek-shelter': seekShelterHandler,
   'care-for-injured': careForInjuredHandler,
-  // Romantik/Sexualität (3)
-  'seek-intimacy': careForInjuredHandler, // Placeholder - will be implemented later
-  'flirt-aggressively': careForInjuredHandler, // Placeholder - will be implemented later
+  // Romantik/Sexualität (3, all real — destiny-1xd5/rq8u)
+  'seek-intimacy': seekIntimacyHandler,
+  'flirt-aggressively': flirtAggressivelyHandler,
   'visit-romantic-partner': visitLoverHandler,
   // Geld verdienen (4)
   'seek-tips': careForInjuredHandler, // Placeholder - will be implemented later

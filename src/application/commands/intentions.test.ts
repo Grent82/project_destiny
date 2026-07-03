@@ -781,5 +781,71 @@ describe('intentions', () => {
       expect(result.rngSeed).not.toBe(stateWithRivalry.rngSeed)
       expect(result.roster[0]!.currentIntention).toBeNull()
     })
+
+    it('executes seek-intimacy (via tryNpcNpcSeekIntimacy) and clears the intention afterward', () => {
+      const intention = {
+        type: 'seek-intimacy' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 2,
+        urgencyDays: 1,
+        confidence: 40,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        relationships: {
+          ...state.relationships,
+          [`${marionId}-to-${idaId}`]: { affinity: 60, trust: 75, respect: 0, fear: 0, loyalty: 0 },
+          [`${idaId}-to-${marionId}`]: { affinity: 60, trust: 75, respect: 0, fear: 0, loyalty: 0 },
+        },
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      // Deterministic once eligible — no RNG gate on the trust threshold itself.
+      expect(result.relationships[`${marionId}-to-${idaId}`]!.affinity).toBeGreaterThan(60)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes flirt-aggressively (via tryNpcNpcFlirtAggressively) and clears the intention afterward', () => {
+      const intention = {
+        type: 'flirt-aggressively' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      // flirtAggressivelyHandler.canExecute requires dominance >= 50 on the actor.
+      state = {
+        ...state,
+        roster: [
+          { ...state.roster[0]!, traits: { ...state.roster[0]!.traits, dominance: 60 } },
+          state.roster[1]!,
+        ],
+      }
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      // Success is RNG-gated internally — assert the mechanic ran (either affinity rose on
+      // success or Ida's anger rose on failure) and the intention resolved either way.
+      const abAffinity = result.relationships[`${marionId}-to-${idaId}`]?.affinity ?? 0
+      const idaAnger = result.roster.find((n) => n.npcId === idaId)!.states.anger
+      const somethingHappened = abAffinity > 0 || idaAnger > idaRhysRosterEntry.states.anger
+      expect(somethingHappened).toBe(true)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
   })
 })

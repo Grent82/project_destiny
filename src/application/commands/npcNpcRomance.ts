@@ -125,6 +125,136 @@ export function tryNpcNpcFlirtation(
 }
 
 /**
+ * Try a consensual intimacy encounter between two NPCs already at deep mutual trust.
+ *
+ * Deterministic once eligible (trust threshold met) — no success/failure roll, unlike
+ * tryNpcNpcFlirtation. Distinct from applyHouseholdIntimacy.ts's passive co-presence domestic
+ * bond (which never touches stress, and fires from room-sharing, not NPC agency) and from
+ * engagePhysicalIntimacy.ts (player-only). This is the NPC-agency-driven equivalent: an NPC
+ * actively seeking closeness with a trusted partner, relieving stress in the process.
+ */
+export function tryNpcNpcSeekIntimacy(
+  state: GameState,
+  npcAId: string,
+  npcBId: string,
+  rng: Rng,
+): GameState {
+  const npcA = contentCatalog.npcsById.get(npcAId)
+  const npcB = contentCatalog.npcsById.get(npcBId)
+
+  if (!npcA || !npcB) return state
+
+  const entryA = state.roster.find((r) => r.npcId === npcAId)
+  const entryB = state.roster.find((r) => r.npcId === npcBId)
+
+  if (!entryA || !entryB || !isEligibleForRomance(entryA) || !isEligibleForRomance(entryB)) {
+    return state
+  }
+
+  const rel = getAvgRelationship(state, npcAId, npcBId)
+
+  // Require deep mutual trust — this is a much higher bar than flirtation or courtship.
+  if (rel.trust < 70) return state
+  if (rel.fear > 20) return state
+
+  const abKey = buildRelationshipKey(npcAId, npcBId)
+  const baKey = buildRelationshipKey(npcBId, npcAId)
+  const newAb = getRelationship(state.relationships, npcAId, npcBId)
+  const newBa = getRelationship(state.relationships, npcBId, npcAId)
+
+  const affinityGain = 2 + Math.floor(rng() * 2) // 2-3
+
+  const nextState: GameState = {
+    ...state,
+    relationships: {
+      ...state.relationships,
+      [abKey]: { ...newAb, affinity: Math.min(100, newAb.affinity + affinityGain) },
+      [baKey]: { ...newBa, affinity: Math.min(100, newBa.affinity + affinityGain) },
+    },
+    roster: state.roster.map((n) =>
+      n.npcId === npcAId || n.npcId === npcBId
+        ? { ...n, states: { ...n.states, stress: Math.max(0, n.states.stress - 8) } }
+        : n,
+    ),
+  }
+
+  return appendActivityLogEntry(
+    nextState,
+    'system',
+    `${npcA.name} and ${npcB.name} share a quiet, intimate moment together.`,
+  )
+}
+
+/**
+ * Try a high-risk, high-reward aggressive flirtation — a dominance-driven advance rather than
+ * a gentle one. On success, a larger affinity gain than tryNpcNpcFlirtation; on failure, the
+ * target's own anger (a mood state, not a relationship axis) rises instead of a quiet no-op.
+ * Deliberately separate from tryNpcNpcFlirtation — different risk profile, not a duplicate.
+ */
+export function tryNpcNpcFlirtAggressively(
+  state: GameState,
+  npcAId: string,
+  npcBId: string,
+  rng: Rng,
+): GameState {
+  const npcA = contentCatalog.npcsById.get(npcAId)
+  const npcB = contentCatalog.npcsById.get(npcBId)
+
+  if (!npcA || !npcB) return state
+
+  const entryA = state.roster.find((r) => r.npcId === npcAId)
+  const entryB = state.roster.find((r) => r.npcId === npcBId)
+
+  if (!entryA || !entryB || !isEligibleForRomance(entryA) || !isEligibleForRomance(entryB)) {
+    return state
+  }
+
+  const rel = getAvgRelationship(state, npcAId, npcBId)
+
+  // An aggressive advance toward someone already afraid is out of the question.
+  if (rel.fear > 15) return state
+
+  // Success chance driven by the actor's dominance/presence/intrigue — a riskier formula than
+  // tryNpcNpcFlirtation's gentler empathy-driven one.
+  const successChance = 0.3 +
+    (npcA.startingTraits.dominance - 50) / 150 +
+    (npcA.baseAttributes.presence - 50) / 200 +
+    (npcA.startingSkills.intrigue - 50) / 200
+
+  if (rng() < successChance) {
+    const abKey = buildRelationshipKey(npcAId, npcBId)
+    const baKey = buildRelationshipKey(npcBId, npcAId)
+    const newAb = getRelationship(state.relationships, npcAId, npcBId)
+    const newBa = getRelationship(state.relationships, npcBId, npcAId)
+
+    return {
+      ...state,
+      relationships: {
+        ...state.relationships,
+        [abKey]: { ...newAb, affinity: Math.min(100, newAb.affinity + 8) },
+        [baKey]: { ...newBa, affinity: Math.min(100, newBa.affinity + 8) },
+      },
+    }
+  }
+
+  // Failed — the target's own anger rises, distinct from the quiet no-op of a gentle flirt.
+  const nextState: GameState = {
+    ...state,
+    roster: state.roster.map((n) =>
+      n.npcId === npcBId
+        ? { ...n, states: { ...n.states, anger: Math.min(100, n.states.anger + 10) } }
+        : n,
+    ),
+  }
+
+  return appendActivityLogEntry(
+    nextState,
+    'system',
+    `${npcA.name}'s forward advance on ${npcB.name} lands badly.`,
+  )
+}
+
+/**
  * Check for jealousy/rivalry triggered by one acting NPC's intention.
  *
  * If this NPC has high affinity with a target, and some rival has equal or higher affinity with

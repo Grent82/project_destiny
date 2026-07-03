@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { tryNpcNpcFlirtation, checkJealousyForNpc } from './npcNpcRomance'
+import { tryNpcNpcFlirtation, checkJealousyForNpc, tryNpcNpcSeekIntimacy, tryNpcNpcFlirtAggressively } from './npcNpcRomance'
 import { initialStateWithIda } from './testFixtures'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { NPC_IDS } from '../content/ids/npcIds'
@@ -76,6 +76,77 @@ describe('tryNpcNpcFlirtation', () => {
       ),
     }
     const result = tryNpcNpcFlirtation(state, MARION, IDA, alwaysSucceed)
+    expect(result).toBe(state)
+  })
+})
+
+describe('tryNpcNpcSeekIntimacy', () => {
+  it('increases affinity and reduces stress for both NPCs when trust is deep enough', () => {
+    let state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 60, trust: 75, fear: 0 })
+    state = {
+      ...state,
+      roster: state.roster.map((n) =>
+        n.npcId === MARION || n.npcId === IDA ? { ...n, states: { ...n.states, stress: 40 } } : n,
+      ),
+    }
+
+    const result = tryNpcNpcSeekIntimacy(state, MARION, IDA, alwaysSucceed)
+
+    const abAffinity = result.relationships[buildRelationshipKey(MARION, IDA)]!.affinity
+    const baAffinity = result.relationships[buildRelationshipKey(IDA, MARION)]!.affinity
+    expect(abAffinity).toBeGreaterThan(60)
+    expect(baAffinity).toBeGreaterThan(60)
+
+    const marion = result.roster.find((n) => n.npcId === MARION)!
+    const ida = result.roster.find((n) => n.npcId === IDA)!
+    expect(marion.states.stress).toBeLessThan(40)
+    expect(ida.states.stress).toBeLessThan(40)
+  })
+
+  it('does nothing when trust is below the deep-trust threshold', () => {
+    const state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 60, trust: 50, fear: 0 })
+    const result = tryNpcNpcSeekIntimacy(state, MARION, IDA, alwaysSucceed)
+    expect(result).toBe(state)
+  })
+
+  it('does nothing when fear is above the block threshold, even with deep trust', () => {
+    const state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 60, trust: 75, fear: 30 })
+    const result = tryNpcNpcSeekIntimacy(state, MARION, IDA, alwaysSucceed)
+    expect(result).toBe(state)
+  })
+})
+
+describe('tryNpcNpcFlirtAggressively', () => {
+  it('increases affinity on a successful roll (higher-dominance actor)', () => {
+    let state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 30, trust: 20, fear: 0 })
+    state = {
+      ...state,
+      roster: state.roster.map((n) =>
+        n.npcId === MARION ? { ...n, traits: { ...n.traits, dominance: 80 } } : n,
+      ),
+    }
+
+    const result = tryNpcNpcFlirtAggressively(state, MARION, IDA, alwaysSucceed)
+
+    const abAffinity = result.relationships[buildRelationshipKey(MARION, IDA)]!.affinity
+    expect(abAffinity).toBe(38) // 30 + 8
+  })
+
+  it('raises the target NPC\'s own anger state on a failed roll (not a relationship axis)', () => {
+    const state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 30, trust: 20, fear: 0 })
+    const idaBefore = state.roster.find((n) => n.npcId === IDA)!.states.anger
+
+    const result = tryNpcNpcFlirtAggressively(state, MARION, IDA, alwaysFail)
+
+    const idaAfter = result.roster.find((n) => n.npcId === IDA)!.states.anger
+    expect(idaAfter).toBe(idaBefore + 10)
+    // Affinity must not change on failure
+    expect(result.relationships[buildRelationshipKey(MARION, IDA)]!.affinity).toBe(30)
+  })
+
+  it('does nothing when fear is above the block threshold', () => {
+    const state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 30, trust: 20, fear: 20 })
+    const result = tryNpcNpcFlirtAggressively(state, MARION, IDA, alwaysSucceed)
     expect(result).toBe(state)
   })
 })
