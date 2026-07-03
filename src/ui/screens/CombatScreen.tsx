@@ -312,7 +312,10 @@ export function CombatScreen() {
                 </button>
                 <button
                   className="action-button"
-                  onClick={() => navigate('/roster')}
+                  onClick={() => {
+                    dispatch(gameActions.concludeCombatEncounter())
+                    navigate('/roster')
+                  }}
                   type="button"
                 >
                   View Roster

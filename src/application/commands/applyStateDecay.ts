@@ -9,9 +9,11 @@ import {
   hasMedicSupport,
   hasInfirmarySupport,
   isReadyForDuty,
+  getNpcRecoverySupport,
   getPlayerRecoverySupport,
   getPlayerOvernightHealthGain,
   getRecoveringInjuryRelief,
+  describeRecoverySupportTier,
 } from './recovery'
 
 const PLAYER_REST_MESSAGE_BY_TIER: Record<ReturnType<typeof getPlayerRecoverySupport>, string> = {
@@ -155,8 +157,34 @@ export function applyStateDecay(state: GameState): GameState {
 
     if (fullyRecovered) {
       next = appendActivityLogEntry(next, 'system', `${npcName} is recovered. Back on roster.`)
-    } else if (newHealth > npc.states.health) {
-      next = appendActivityLogEntry(next, 'system', `${npcName} is recovering. Health improving.`)
+    } else if (newHealth > npc.states.health || newInjury < npc.states.injury) {
+      const tier = getNpcRecoverySupport(next, npc)
+      next = appendActivityLogEntry(
+        next,
+        'system',
+        `${npcName} is still recovering. ${describeRecoverySupportTier(tier)}.`,
+      )
+    }
+  }
+
+  // Step 2b'. Recovering World NPCs regain health and shed injury the same way roster NPCs do.
+  // Scaffolding only — nothing currently sets a World NPC's injury above 0 (no combat/incident
+  // path touches them yet, tracked in destiny-s97u), and there's no player-facing surface for
+  // this yet either, so no activity-log entry is written here.
+  for (const worldNpc of next.worldNpcStates.filter((w) => w.recovering)) {
+    const hasInfirmary = hasInfirmarySupport(next)
+    const hasMedic = hasMedicSupport(next)
+    const newHealth = Math.min(100, worldNpc.health + 15 + (hasInfirmary ? 3 : 0) + (hasMedic ? 10 : 0))
+    const newInjury = Math.max(0, worldNpc.injury - (1 + (hasInfirmary ? 2 : 0) + (hasMedic ? 2 : 0)))
+    const fullyRecovered = isReadyForDuty(newHealth, newInjury)
+
+    next = {
+      ...next,
+      worldNpcStates: next.worldNpcStates.map((w) =>
+        w.npcId === worldNpc.npcId
+          ? { ...w, health: newHealth, injury: newInjury, recovering: !fullyRecovered }
+          : w,
+      ),
     }
   }
 

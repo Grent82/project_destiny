@@ -146,6 +146,24 @@ describe('house room function bonuses', () => {
     })
   })
 
+  describe('recovering NPC log visibility (silent-stall regression)', () => {
+    it('still logs a recovery update once health is capped but injury remains above the ready threshold', () => {
+      const state = {
+        ...initialStateWithIda,
+        roster: initialStateWithIda.roster.map((npc) =>
+          npc.npcId === recoveringNpcId
+            ? { ...npc, assignment: 'recovering' as const, states: { ...npc.states, health: 100, injury: 20 } }
+            : npc,
+        ),
+      }
+
+      const result = applyStateDecay(state)
+
+      expect(result.activityLog[0]?.message).not.toMatch(/^.*is recovering\. Health improving\.$/)
+      expect(result.activityLog[0]?.message).toMatch(/still recovering/i)
+    })
+  })
+
   describe('study', () => {
     it('accelerates stress recovery by 1/day for idle NPCs', () => {
       const marionId = 'npc-marion-vale'
@@ -368,5 +386,68 @@ describe('player rest', () => {
     const result = applyStateDecay(state)
 
     expect(result.activityLog).toEqual(state.activityLog)
+  })
+})
+
+describe('World NPC recovery scaffolding (destiny-629x)', () => {
+  const recoveringWorldNpcId = 'npc-scaffolding-test-world-npc'
+
+  function stateWithRecoveringWorldNpc(health: number, injury: number) {
+    return {
+      ...initialStateWithIda,
+      worldNpcStates: [
+        ...initialStateWithIda.worldNpcStates,
+        {
+          npcId: recoveringWorldNpcId,
+          lastContactDay: null,
+          disposition: 'neutral' as const,
+          locationOverride: null,
+          flags: [],
+          intimacyStage: 'none' as const,
+          pregnancyState: null,
+          health,
+          injury,
+          recovering: true,
+        },
+      ],
+    }
+  }
+
+  it('regains health and sheds injury each day, same math as roster NPCs with no support', () => {
+    const state = stateWithRecoveringWorldNpc(50, 40)
+    const result = applyStateDecay(state)
+
+    const worldNpc = result.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
+    expect(worldNpc!.health).toBeGreaterThan(50)
+    expect(worldNpc!.injury).toBeLessThan(40)
+    expect(worldNpc!.recovering).toBe(true)
+  })
+
+  it('gets infirmary treatment the same way roster NPCs do', () => {
+    const baseState = stateWithRecoveringWorldNpc(50, 40)
+    const withInfirmary = withRoom(baseState, 'room-bureau', 'infirmary')
+
+    const baseline = applyStateDecay(baseState)
+    const withBonus = applyStateDecay(withInfirmary)
+
+    const baselineNpc = baseline.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
+    const bonusNpc = withBonus.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
+
+    expect(bonusNpc!.injury).toBeLessThan(baselineNpc!.injury)
+  })
+
+  it('flips recovering to false once health and injury both clear the ready threshold', () => {
+    const state = stateWithRecoveringWorldNpc(90, 10)
+    const result = applyStateDecay(state)
+
+    const worldNpc = result.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
+    expect(worldNpc!.recovering).toBe(false)
+  })
+
+  it('does not touch non-recovering World NPCs', () => {
+    const state = initialStateWithIda
+    const result = applyStateDecay(state)
+
+    expect(result.worldNpcStates).toEqual(state.worldNpcStates)
   })
 })

@@ -1,4 +1,5 @@
 import type { GameState, NpcRuntimeState } from '../../domain'
+import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
 import { ROOM_IDS, TITLE_IDS } from '../content/ids'
 import { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
 
@@ -44,10 +45,15 @@ export function isReadyForDuty(health: number, injury: number): boolean {
   return health >= MIN_DEPLOYABLE_HEALTH && injury < READY_INJURY_THRESHOLD
 }
 
-export function getNpcRecoverySupport(state: GameState, npc: NpcRuntimeState): RecoverySupportTier {
+export function getNpcRecoverySupport(
+  state: GameState,
+  npc: NpcRuntimeState | WorldNpcRuntimeState,
+): RecoverySupportTier {
   const hasMedic = hasMedicSupport(state)
   const hasInfirmary = hasInfirmarySupport(state)
-  const hasLodging = hasResidentQuarters(state, npc.roomAssignment)
+  // World NPCs have no roomAssignment/lodging concept — they aren't house residents, so they can
+  // only ever reach 'none', 'treatment', or 'treatment-plus-medic'.
+  const hasLodging = 'roomAssignment' in npc && hasResidentQuarters(state, npc.roomAssignment)
 
   if (hasMedic && hasInfirmary) return 'treatment-plus-medic'
   if (hasMedic || hasInfirmary) return 'treatment'
@@ -102,5 +108,65 @@ export function getPlayerOvernightHealthGain(tier: RecoverySupportTier): number 
       return 10
     default:
       return 3
+  }
+}
+
+export function describeRecoverySupportTier(tier: RecoverySupportTier): string {
+  switch (tier) {
+    case 'lodging':
+      return 'Resting in proper quarters'
+    case 'treatment':
+      return 'Receiving infirmary care'
+    case 'treatment-plus-medic':
+      return "Infirmary care with a medic's attention"
+    default:
+      return 'No real treatment — makeshift rest only'
+  }
+}
+
+export interface RecoveryStatus {
+  ready: boolean
+  supportLabel: string
+  statusMessage: string
+}
+
+export function describeRecoveryStatus(
+  health: number,
+  injury: number,
+  tier: RecoverySupportTier,
+): RecoveryStatus {
+  const supportLabel = describeRecoverySupportTier(tier)
+  const ready = isReadyForDuty(health, injury)
+
+  if (ready) {
+    return {
+      ready: true,
+      supportLabel,
+      statusMessage: 'Fit for duty — no meaningful injury or fatigue holding them back.',
+    }
+  }
+
+  if (isSeriousInjury(injury)) {
+    const message =
+      tier === 'none'
+        ? 'Badly hurt and getting only makeshift rest — recovery will be slow without an infirmary or medic.'
+        : tier === 'lodging'
+          ? 'Badly hurt; proper quarters help, but real treatment (an infirmary or medic) would speed recovery.'
+          : 'Badly hurt but receiving real treatment — recovery is progressing steadily.'
+    return { ready: false, supportLabel, statusMessage: message }
+  }
+
+  if (health < MIN_DEPLOYABLE_HEALTH) {
+    return {
+      ready: false,
+      supportLabel,
+      statusMessage: 'Still too weak for duty — needs more rest before returning.',
+    }
+  }
+
+  return {
+    ready: false,
+    supportLabel,
+    statusMessage: 'Recovering from lingering injury, but not seriously hurt.',
   }
 }

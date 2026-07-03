@@ -278,6 +278,7 @@ strong { color: var(--text-secondary); }
 .status-debt { color: var(--text-secondary); font-size: var(--size-sm); }
 .status-debt--urgent { color: #e05050; }
 .status-debt strong { color: inherit; }
+.status-wounded { color: #d08a3e; font-size: var(--size-sm); cursor: help; }
 .status-events-badge { animation: pulse 1.5s infinite; }
 
 .squad-cohesion {

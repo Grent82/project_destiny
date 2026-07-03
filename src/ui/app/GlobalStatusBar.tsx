@@ -1,4 +1,4 @@
-import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectDebtStatus, selectPendingEventsCount, selectPlayerCharacter, selectProtagonistName, selectRenownLevel, selectRenownProgress, selectRenownThresholds, selectReputationTier } from '../../application'
+import { gameActions, selectCurrentDistrict, selectDashboardSummary, selectDebtStatus, selectPendingEventsCount, selectPlayerCharacter, selectPlayerIsWounded, selectPlayerRecoveryStatus, selectProtagonistName, selectRenownLevel, selectRenownProgress, selectRenownThresholds, selectReputationTier } from '../../application'
 import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 import { useAppDispatch, useAppSelector } from './hooks'
 
@@ -12,6 +12,8 @@ export function GlobalStatusBar() {
   const pendingEventsCount = useAppSelector(selectPendingEventsCount)
 
   const debt = useAppSelector(selectDebtStatus)
+  const playerIsWounded = useAppSelector(selectPlayerIsWounded)
+  const playerRecoveryStatus = useAppSelector(selectPlayerRecoveryStatus)
 
   const displayName = playerCharacter.name || protagonistName || 'Valdris'
   const renownLevel = useAppSelector(selectRenownLevel)
@@ -43,6 +45,14 @@ export function GlobalStatusBar() {
               title={`Debt: ${formatMarks(debt.debtAmount)} claimed by ${debt.debtClaimantName}, enforced by ${debt.debtEnforcementName}, due in ${debt.daysRemaining} days`}
             >
               Debt: <strong>{debt.daysRemaining}d</strong>
+            </span>
+          )}
+          {playerIsWounded && (
+            <span
+              className="status-wounded"
+              title={`${playerRecoveryStatus.supportLabel} — ${playerRecoveryStatus.statusMessage}`}
+            >
+              🩹 Recovering
             </span>
           )}
           <span className="status-rep">{reputationTier}</span>

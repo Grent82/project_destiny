@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState, selectNpcSocialReachability } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState, selectNpcSocialReachability, selectNpcRecoveryStatus } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -465,6 +465,7 @@ function DutySection({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
   const isSystemControlled = detail.assignment === 'deployed' || detail.assignment === 'assigned_title'
   const income = useAppSelector(selectEstimatedNpcIncome(detail.npcId))
+  const recoveryStatus = useAppSelector(selectNpcRecoveryStatus(detail.npcId))
 
   return (
     <>
@@ -491,10 +492,16 @@ function DutySection({ detail }: { detail: NpcDetail }) {
               </button>
             ))}
           </div>
-          {getNpcAssignmentDetail(detail.assignment) && (
+          {detail.assignment === 'recovering' ? (
             <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
-              {getNpcAssignmentDetail(detail.assignment)}
+              {recoveryStatus.supportLabel} — {recoveryStatus.statusMessage}
             </p>
+          ) : (
+            getNpcAssignmentDetail(detail.assignment) && (
+              <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                {getNpcAssignmentDetail(detail.assignment)}
+              </p>
+            )
           )}
           {detail.assignment === 'working' && (() => {
             const job = getJobForNpc(detail.skills)

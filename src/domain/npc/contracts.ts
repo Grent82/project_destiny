@@ -426,6 +426,12 @@ export const worldNpcRuntimeStateSchema = z.object({
   intimacyStage: intimacyStageSchema.default('none'),
   // Pregnancy tracking for World NPCs
   pregnancyState: pregnancyStateSchema.nullable().default(null),
+  // Recovery scaffolding (destiny-629x): nothing currently sets injury > 0 for a World NPC —
+  // no combat or incident path touches them yet (tracked separately in destiny-s97u). These
+  // fields exist so the recovery runtime can already handle a World NPC once a harm source lands.
+  health: z.number().int().min(0).max(100).default(100),
+  injury: z.number().int().min(0).max(100).default(0),
+  recovering: z.boolean().default(false),
 }).strict()
 
 export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>

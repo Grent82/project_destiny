@@ -34,6 +34,9 @@ function worldNpc(npcId: string, overrides?: Partial<WorldNpcRuntimeState>): Wor
     flags: [],
     intimacyStage: 'affinity',
     pregnancyState: null,
+    health: 100,
+    injury: 0,
+    recovering: false,
     ...overrides,
   }
 }

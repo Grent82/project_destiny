@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { selectRosterDetail, selectRosterEntries } from '../../application'
+import { selectRosterDetail, selectRosterEntries, selectNpcRecoveryStatus } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay } from '../../application/content/assignmentDisplay'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { getJobForNpc } from '../../application/content/jobCatalog'
@@ -216,6 +216,7 @@ function RosterRow({ entry, selectedNpcId, onSelect }: {
   onSelect: (id: string) => void
 }) {
   const key = entry.assignment
+  const recoveryStatus = useAppSelector(selectNpcRecoveryStatus(entry.npcId))
   function conditionClass(value: number, invert = false): string {
     const score = invert ? 100 - value : value
     if (score < 30) return 'muster-condition-fill muster-condition-fill--crit'
@@ -227,7 +228,9 @@ function RosterRow({ entry, selectedNpcId, onSelect }: {
       ? (contentCatalog.titlesById.get(entry.activeTitle)?.name ?? 'Titled')
       : key === 'working'
         ? `${getJobForNpc(entry.skills).name} · ~${formatWorkingIncomePerDay(entry.workingIncome)} a day`
-        : formatNpcAssignmentLabel(entry.assignment)
+        : key === 'recovering'
+          ? `${formatNpcAssignmentLabel(entry.assignment)} — ${recoveryStatus.supportLabel}`
+          : formatNpcAssignmentLabel(entry.assignment)
   return (
     <button
       className={['muster-entry', entry.npcId === selectedNpcId ? 'muster-entry--active' : ''].filter(Boolean).join(' ')}

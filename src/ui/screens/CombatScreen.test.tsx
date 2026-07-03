@@ -99,6 +99,58 @@ describe('CombatScreen', () => {
     expect(screen.getByText('Dashboard destination')).toBeInTheDocument()
   })
 
+  it('finalizes aftermath even when the player clicks View Roster instead of Conclude and Return', async () => {
+    const user = userEvent.setup()
+    const store = createGameStore()
+
+    store.dispatch(gameActions.startCombatEncounter())
+    const activeCombat = store.getState().game.activeCombat
+
+    if (!activeCombat) {
+      throw new Error('Expected seeded combat encounter to exist in test setup.')
+    }
+
+    const injuredAllyId = activeCombat.combatants.find((c) => c.side === 'allies' && c.sourceNpcId)?.sourceNpcId
+    if (!injuredAllyId) {
+      throw new Error('Expected an ally combatant with a sourceNpcId in test setup.')
+    }
+
+    store.dispatch(gameActions.replaceGameState({
+      ...store.getState().game,
+      activeCombat: {
+        ...activeCombat,
+        combatants: activeCombat.combatants.map((combatant) =>
+          combatant.side === 'enemies'
+            ? { ...combatant, health: 0 }
+            : combatant.sourceNpcId === injuredAllyId
+              ? { ...combatant, health: 0 }
+              : combatant,
+        ),
+        outcome: 'victory',
+        activeCombatantId: null,
+      },
+    }))
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter initialEntries={['/combat']}>
+          <Routes>
+            <Route path="/combat" element={<CombatScreen />} />
+            <Route path="/roster" element={<div>Roster destination</div>} />
+          </Routes>
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'View Roster' }))
+
+    expect(screen.getByText('Roster destination')).toBeInTheDocument()
+    expect(store.getState().game.activeCombat).toBeNull()
+
+    const injuredNpc = store.getState().game.roster.find((npc) => npc.npcId === injuredAllyId)
+    expect(injuredNpc?.assignment).toBe('recovering')
+  })
+
   it('sends linked encounters back to the Work Board with explicit contract aftermath copy', async () => {
     const user = userEvent.setup()
     const store = createGameStore()
