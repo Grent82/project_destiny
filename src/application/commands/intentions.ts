@@ -2,8 +2,6 @@ import type { GameState, NpcIntention, NpcIntentionType } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { npcIntentionSchema } from '../../domain/npc/contracts'
 import { generateNpcIntention } from './intentions/pipeline'
-import { tryNpcNpcFlirtation, tryNpcNpcCourtship } from './npcNpcRomance'
-import { createRng } from './seededRng'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -659,70 +657,15 @@ const groomHandler: IntentionHandler = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sozial/Romantik (5)
+// Sozial/Romantik (2 real handlers; flirt-with/court-romantically/jealousy-check
+// removed 2026-07-03 — see destiny-fb6z/destiny-jdft/destiny-2xyp. Each duplicated a
+// system destiny-q5ra already made canonical: flirt-with called the same
+// tryNpcNpcFlirtation simulateNpcNpcRomance's daily loop already calls for every
+// eligible pair; court-romantically called tryNpcNpcCourtship, which had no cooldown
+// and bypassed applyNpcPairing.ts's canonical cooldown-gated stage progression;
+// jealousy-check reimplemented checkNpcNpcJealousy without its RNG gate. Their
+// intention-type mappings below now point at a placeholder stand-in.)
 // ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Flirt With Handler
- * NPC flirts with a specific NPC (Affinity test).
- */
-const flirtWithHandler: IntentionHandler = {
-  canExecute: (npc) => {
-    if (!canExecuteIntention(npc)) return false
-    // Requires presence, empathy, and some affinity with target
-    return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
-  },
-  execute: (npc, state) => {
-    // Find a target NPC to flirt with (prefer high affinity targets)
-    const targetEntry = state.roster
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
-      .sort((a, b) => {
-        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
-        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
-        return relB - relA
-      })[0]
-
-    if (!targetEntry) return state
-
-    const rng = createRng(state.rngSeed)
-    const newState = tryNpcNpcFlirtation(state, npc.npcId, targetEntry.npcId, rng.rng)
-
-    // Advance RNG seed
-    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
-  },
-}
-
-/**
- * Court Romantically Handler
- * NPC makes a romantic advance (higher threshold).
- */
-const courtRomanticallyHandler: IntentionHandler = {
-  canExecute: (npc) => {
-    if (!canExecuteIntention(npc)) return false
-    // Requires high presence, empathy, and affinity
-    return npc.attributes.presence >= 50 && npc.traits.empathy >= 50
-  },
-  execute: (npc, state) => {
-    // Find a target NPC to court (prefer high affinity/trust targets)
-    const targetEntry = state.roster
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
-      .sort((a, b) => {
-        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]
-        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]
-        const scoreA = (relA?.affinity ?? 0) + (relA?.trust ?? 0)
-        const scoreB = (relB?.affinity ?? 0) + (relB?.trust ?? 0)
-        return scoreB - scoreA
-      })[0]
-
-    if (!targetEntry) return state
-
-    const rng = createRng(state.rngSeed)
-    const newState = tryNpcNpcCourtship(state, npc.npcId, targetEntry.npcId, rng.rng)
-
-    // Advance RNG seed
-    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
-  },
-}
 
 /**
  * Visit Lover Handler
@@ -761,53 +704,6 @@ const visitLoverHandler: IntentionHandler = {
         [reverseKey]: { ...reverseRel, affinity: Math.min(100, reverseRel.affinity + 1) },
       },
     }
-  },
-}
-
-/**
- * Jealousy Check Handler
- * NPC checks for rivalry/jealousy situations.
- */
-const jealousyCheckHandler: IntentionHandler = {
-  canExecute: (npc) => {
-    if (!canExecuteIntention(npc)) return false
-    // Requires perception and some insecurity
-    return npc.attributes.perception >= 40 || npc.traits.vanity >= 50
-  },
-  execute: (npc, state) => {
-    // Check for potential rivals (other NPCs with high affinity to targets this NPC likes)
-    // Simple implementation: just run the jealousy check for this NPC
-    // Full implementation would identify specific rivals and adjust relationships
-    let newState = state
-
-    for (const target of state.roster.filter((r) => r.npcId !== npc.npcId)) {
-      const targetRel = state.relationships[`${npc.npcId}-to-${target.npcId}`]
-      if (!targetRel || targetRel.affinity < 50) continue
-
-      // Look for rivals
-      for (const rival of state.roster.filter((r) => r.npcId !== npc.npcId && r.npcId !== target.npcId)) {
-        const rivalRel = state.relationships[`${target.npcId}-to-${rival.npcId}`]
-        if (!rivalRel || rivalRel.affinity < targetRel.affinity) continue
-
-        // Rival detected - increase fear/decrease affinity toward rival
-        const jealousKey = `${npc.npcId}-to-${rival.npcId}`
-        const currentJealous = state.relationships[jealousKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
-
-        newState = {
-          ...newState,
-          relationships: {
-            ...newState.relationships,
-            [jealousKey]: {
-              ...currentJealous,
-              fear: Math.min(100, (currentJealous.fear ?? 0) + 2),
-              affinity: Math.max(-100, currentJealous.affinity - 1),
-            },
-          },
-        }
-      }
-    }
-
-    return newState
   },
 }
 
@@ -1236,11 +1132,14 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'sleep': sleepHandler,
   'rest': restHandler,
   'groom': groomHandler,
-  // Sozial/Romantik (5)
-  'flirt-with': flirtWithHandler,
-  'court-romantically': courtRomanticallyHandler,
+  // Sozial/Romantik (2 real; flirt-with/court-romantically/jealousy-check removed
+  // 2026-07-03 — see destiny-fb6z/destiny-jdft/destiny-2xyp, each duplicated an
+  // already-canonical system. Mapped to the same placeholder stand-in used for
+  // the not-yet-built romance/money-earning types below.)
+  'flirt-with': careForInjuredHandler, // Placeholder - duplicated simulateNpcNpcRomance, removed
+  'court-romantically': careForInjuredHandler, // Placeholder - duplicated applyNpcPairing.ts, removed
   'visit-lover': visitLoverHandler,
-  'jealousy-check': jealousyCheckHandler,
+  'jealousy-check': careForInjuredHandler, // Placeholder - duplicated checkNpcNpcJealousy, removed
   'spend-time-with': spendTimeWithHandler,
   // Alltagsaktivitäten (4)
   'shop-for-goods': shopForGoodsHandler,

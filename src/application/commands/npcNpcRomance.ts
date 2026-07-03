@@ -3,7 +3,6 @@ import type { Rng } from './seededRng'
 import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
-import { NPC_INTIMACY_ADVANCE_CONDITIONS } from './applyNpcPairing'
 
 /**
  * NPC-NPC Romance and Flirtation System
@@ -120,112 +119,6 @@ export function tryNpcNpcFlirtation(
       [baKey]: {
         ...newBa,
         affinity: Math.min(100, newBa.affinity + Math.max(0, affinityGain - 1)),
-      },
-    },
-  }
-}
-
-/**
- * Try a romantic courtship attempt between two NPCs.
- *
- * Not called from simulateNpcNpcRomance (applyNpcPairing.ts owns daily stage progression).
- * Kept exported because intentions.ts's courtRomanticallyHandler still references it.
- */
-export function tryNpcNpcCourtship(
-  state: GameState,
-  npcAId: string,
-  npcBId: string,
-  rng: Rng,
-): GameState {
-  const npcA = contentCatalog.npcsById.get(npcAId)
-  const npcB = contentCatalog.npcsById.get(npcBId)
-
-  if (!npcA || !npcB) return state
-
-  const entryA = state.roster.find((r) => r.npcId === npcAId)
-  const entryB = state.roster.find((r) => r.npcId === npcBId)
-
-  if (!entryA || !entryB || !isEligibleForRomance(entryA) || !isEligibleForRomance(entryB)) {
-    return state
-  }
-
-  const rel = getAvgRelationship(state, npcAId, npcBId)
-
-  // Require minimum intimacy for courtship
-  if (rel.intimacyStage === 'none') return state
-
-  // Check fear block
-  if (rel.fear > 20) return state
-
-  // Calculate courtship success based on traits and relationship
-  const successChance = 0.35 +
-    (npcA.startingTraits.empathy - 50) / 150 +
-    (npcA.startingTraits.loyalty - 50) / 200 +
-    (npcA.baseAttributes.presence - 50) / 200 +
-    (rel.trust / 150)
-
-  if (rng() >= successChance) {
-    return state
-  }
-
-  // Courtship succeeded - check for intimacy advancement
-  const currentIdx = getIntimacyIndex(rel.intimacyStage)
-  const nextStage = STAGES[currentIdx + 1]
-
-  if (!nextStage) return state // Already at committed
-
-  // Check thresholds for advancement
-  const required = NPC_INTIMACY_ADVANCE_CONDITIONS[nextStage]
-  if (!required) return state
-
-  if (rel.affinity >= required.affinity &&
-      rel.trust >= required.trust &&
-      (required.loyalty === undefined || rel.loyalty >= required.loyalty!)) {
-    // Advance intimacy stage
-    const abKey = buildRelationshipKey(npcAId, npcBId)
-    const baKey = buildRelationshipKey(npcBId, npcAId)
-
-    const newAb = getRelationship(state.relationships, npcAId, npcBId)
-    const newBa = getRelationship(state.relationships, npcBId, npcAId)
-
-    let nextState: GameState = {
-      ...state,
-      relationships: {
-        ...state.relationships,
-        [abKey]: { ...newAb, intimacyStage: nextStage },
-        [baKey]: { ...newBa, intimacyStage: nextStage },
-      },
-    }
-
-    nextState = appendActivityLogEntry(
-      nextState,
-      'system',
-      `${npcA.name} and ${npcB.name} have deepened their bond. Their relationship has advanced to ${nextStage}.`,
-    )
-
-    return nextState
-  }
-
-  // Courtship succeeded but no stage advancement - small affinity/trust gain
-  const abKey = buildRelationshipKey(npcAId, npcBId)
-  const baKey = buildRelationshipKey(npcBId, npcAId)
-
-  const newAb = getRelationship(state.relationships, npcAId, npcBId)
-  const newBa = getRelationship(state.relationships, npcBId, npcAId)
-
-  return {
-    ...state,
-    relationships: {
-      ...state.relationships,
-      [abKey]: {
-        ...newAb,
-        affinity: Math.min(100, newAb.affinity + 2),
-        trust: Math.min(100, (newAb.trust ?? 0) + 1),
-      },
-      [baKey]: {
-        ...newBa,
-        affinity: Math.min(100, newBa.affinity + 2),
-        trust: Math.min(100, (newBa.trust ?? 0) + 1),
       },
     },
   }
