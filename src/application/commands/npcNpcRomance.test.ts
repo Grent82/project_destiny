@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { tryNpcNpcFlirtation, checkNpcNpcJealousy, simulateNpcNpcRomance } from './npcNpcRomance'
+import { tryNpcNpcFlirtation, checkJealousyForNpc } from './npcNpcRomance'
 import { initialStateWithIda } from './testFixtures'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { NPC_IDS } from '../content/ids/npcIds'
@@ -80,10 +80,10 @@ describe('tryNpcNpcFlirtation', () => {
   })
 })
 
-describe('checkNpcNpcJealousy', () => {
-  it('does nothing with fewer than 3 eligible roster NPCs', () => {
+describe('checkJealousyForNpc', () => {
+  it('does nothing with fewer than 2 other eligible roster NPCs', () => {
     const state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 80, trust: 40, fear: 0 })
-    const result = checkNpcNpcJealousy(state, alwaysSucceed)
+    const result = checkJealousyForNpc(state, MARION, alwaysSucceed)
     expect(result).toBe(state)
   })
 
@@ -97,33 +97,41 @@ describe('checkNpcNpcJealousy', () => {
     let state = withRelationship(base, MARION, IDA, { affinity: 80, trust: 40, fear: 0 })
     state = withRelationship(state, CRESS, IDA, { affinity: 90, trust: 40, fear: 0 })
 
-    const result = checkNpcNpcJealousy(state, alwaysSucceed)
+    const result = checkJealousyForNpc(state, MARION, alwaysSucceed)
 
     const marionToCress = result.relationships[buildRelationshipKey(MARION, CRESS)]
     expect(marionToCress).toBeDefined()
     expect(marionToCress!.fear).toBeGreaterThan(0)
     expect(marionToCress!.affinity).toBeLessThan(0)
   })
-})
 
-describe('simulateNpcNpcRomance — courtship is not part of the daily loop', () => {
-  it('never advances intimacyStage, even when courtship thresholds are met', () => {
-    // Affinity/trust comfortably clear every NPC_INTIMACY_ADVANCE_CONDITIONS stage.
-    let state = withRelationship(initialStateWithIda, MARION, IDA, {
-      affinity: 90,
-      trust: 90,
-      loyalty: 90,
-      fear: 0,
-      intimacyStage: 'none',
-    })
-
-    // Run several days worth of simulation; if tryNpcNpcCourtship were still hooked in,
-    // repeated high-probability rolls would eventually advance the stage.
-    for (let day = 0; day < 20; day++) {
-      state = simulateNpcNpcRomance(state, alwaysSucceed)
+  it('does not trigger when the RNG roll fails (regression: the old intention handler had no RNG gate at all)', () => {
+    const cress = createRosterEntry(CRESS, 'Cress Aldmoor')
+    const base: GameState = {
+      ...initialStateWithIda,
+      roster: [...initialStateWithIda.roster, cress],
     }
+    let state = withRelationship(base, MARION, IDA, { affinity: 80, trust: 40, fear: 0 })
+    state = withRelationship(state, CRESS, IDA, { affinity: 90, trust: 40, fear: 0 })
 
-    const rel = state.relationships[buildRelationshipKey(MARION, IDA)]!
-    expect(rel.intimacyStage).toBe('none')
+    const result = checkJealousyForNpc(state, MARION, alwaysFail)
+
+    expect(result).toBe(state)
+  })
+
+  it('only affects the acting NPC, not the whole roster (scoped, not a blanket sweep)', () => {
+    const cress = createRosterEntry(CRESS, 'Cress Aldmoor')
+    const base: GameState = {
+      ...initialStateWithIda,
+      roster: [...initialStateWithIda.roster, cress],
+    }
+    // Both Marion and Ida would independently qualify as jealous of Cress, but only Marion acts.
+    let state = withRelationship(base, MARION, CRESS, { affinity: 80, trust: 40, fear: 0 })
+    state = withRelationship(state, IDA, CRESS, { affinity: 90, trust: 40, fear: 0 })
+
+    const result = checkJealousyForNpc(state, MARION, alwaysSucceed)
+
+    const idaToCress = result.relationships[buildRelationshipKey(IDA, CRESS)]
+    expect(idaToCress?.fear ?? 0).toBe(state.relationships[buildRelationshipKey(IDA, CRESS)]?.fear ?? 0)
   })
 })

@@ -13,13 +13,13 @@ import { applyWorldNpcSocialSimulation } from "../../applyWorldNpcSocialSimulati
 import { applyRumorSpread } from "../../applyRumorSpread"
 import { applyMoneyEarningIntentions } from "../../intentions/moneyEarning/applyMoneyEarningIntentions"
 import { createRumorForNakedNpc } from "../../createRumorForNakedNpc"
-import { simulateNpcNpcRomance } from "../../npcNpcRomance"
 import { processAllowlistedNpcIntentions, executeAllowlistedNpcIntentions } from "../../intentions"
 import { resolveAllNpcDatesForCurrentSlot } from "../../resolveNpcDate"
 
 /**
- * Owns: NPC-NPC flirtation/jealousy flavor (simulateNpcNpcRomance) and resolving dates
- * scheduled by yesterday's Pairing phase (resolveAllNpcDatesForCurrentSlot).
+ * Owns: NPC Intention generation/execution (flirtation, courtship, jealousy, visit-lover,
+ * spend-time-with are all intention-driven — see destiny-mbju and its follow-up redesign) and
+ * resolving dates scheduled by yesterday's Pairing phase (resolveAllNpcDatesForCurrentSlot).
  */
 export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameState {
   let next = state
@@ -47,11 +47,9 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
   // Money-earning intentions (NPCs earning extra income)
   next = applyMoneyEarningIntentions(next)
 
-  // Execute any wired intentions generated above (visit-lover, spend-time-with)
+  // Execute any wired intentions generated above (flirt-with, court-romantically, jealousy-check,
+  // visit-lover, spend-time-with)
   next = executeAllowlistedNpcIntentions(next)
-
-  // NPC-NPC romance simulation: flirtation, jealousy
-  next = simulateNpcNpcRomance(next, rng)
 
   // Resolve any scheduled NPC-NPC dates for the current time slot
   next = resolveAllNpcDatesForCurrentSlot(next, rng)

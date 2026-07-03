@@ -26,6 +26,15 @@ export const NPC_INTIMACY_ADVANCE_CONDITIONS: Record<IntimacyStage, { affinity: 
   committed:  { affinity: 60, trust: 55 }, // terminal
 }
 
+// Days a pair must wait before advancing again after reaching this stage. Deliberately short —
+// the game's core loop deadline is day 30 (debtDueDay); the previous 14/21/30 values made
+// 'committed' mathematically unreachable in a normal playthrough (14+21 already exceeds day 30).
+export const INTIMACY_ADVANCE_COOLDOWN_DAYS: Record<Exclude<IntimacyStage, 'committed'>, number> = {
+  none: 3,
+  affinity: 5,
+  attachment: 7,
+}
+
 function pairingKey(aId: string, bId: string, suffix: string): string {
   const [a, b] = aId < bId ? [aId, bId] : [bId, aId]
   return `npc-pairing-${a}-${b}-${suffix}`
@@ -110,11 +119,14 @@ function checkPairingCompatibility(
 }
 
 /**
- * Apply intimacy stage progression and pregnancy mechanics for a pair.
+ * Try to advance a pair's shared intimacy stage by one step, respecting compatibility, thresholds
+ * (NPC_INTIMACY_ADVANCE_CONDITIONS), and the per-stage cooldown (INTIMACY_ADVANCE_COOLDOWN_DAYS).
+ *
+ * Reused by two callers: applyNpcPairing's blanket sweep (world-involving pairs, which can't hold
+ * an Intention) and intentions.ts's courtRomanticallyHandler (roster<->roster pairs, intention-gated).
  */
-function applyPairingToPair(
+export function tryAdvanceIntimacyStage(
   state: GameState,
-  rng: Rng,
   npcA: NpcRuntimeState | WorldNpcRuntimeState,
   npcB: NpcRuntimeState | WorldNpcRuntimeState,
   policy: 'open' | 'discouraged' | 'forbidden',
@@ -131,27 +143,54 @@ function applyPairingToPair(
   // Check compatibility (only for roster-roster pairs)
   if (!checkPairingCompatibility(next, npcA, npcB)) return next
 
-  // Stage progression
+  if (currentStage === 'committed') return next
+  if (!meetsAdvanceCondition(next, npcAId, npcBId, currentStage)) return next
+
   const currentIdx = STAGE_ORDER.indexOf(currentStage)
-  if (currentStage !== 'committed' && meetsAdvanceCondition(next, npcAId, npcBId, currentStage)) {
-    const targetStage = STAGE_ORDER[currentIdx + 1]!
-    const cooldown = currentStage === 'none' ? 14 : currentStage === 'affinity' ? 21 : 30
-    const key = pairingKey(npcAId, npcBId, `stage-${targetStage}`)
+  const targetStage = STAGE_ORDER[currentIdx + 1]!
+  const cooldown = INTIMACY_ADVANCE_COOLDOWN_DAYS[currentStage]
+  const key = pairingKey(npcAId, npcBId, `stage-${targetStage}`)
 
-    if (!isOnCooldown(next, key, cooldown)) {
-      next = setIntimacyOnBothEdges(next, npcAId, npcBId, targetStage)
-      next = { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } }
+  if (isOnCooldown(next, key, cooldown)) return next
 
-      // Fire noticed event at attachment stage (only for roster NPCs)
-      if (targetStage === 'attachment' && 'traits' in npcA && 'traits' in npcB) {
-        const eventKey = EVENT_IDS.NPC_PAIRING_NOTICED
-        const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === eventKey)
-        if (!alreadyPending) {
-          next = enqueueTemplateEvent(next, eventKey, { firedOnDay: next.day })
-        }
-      }
+  next = setIntimacyOnBothEdges(next, npcAId, npcBId, targetStage)
+  next = { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } }
+
+  // Fire noticed event at attachment stage (only for roster NPCs)
+  if (targetStage === 'attachment' && 'traits' in npcA && 'traits' in npcB) {
+    const eventKey = EVENT_IDS.NPC_PAIRING_NOTICED
+    const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === eventKey)
+    if (!alreadyPending) {
+      next = enqueueTemplateEvent(next, eventKey, { firedOnDay: next.day })
     }
   }
+
+  return next
+}
+
+/**
+ * Apply intimacy stage progression (world-involving pairs only — see tryAdvanceIntimacyStage's
+ * doc comment) and pregnancy mechanics (roster-roster only) for a pair.
+ */
+function applyPairingToPair(
+  state: GameState,
+  rng: Rng,
+  npcA: NpcRuntimeState | WorldNpcRuntimeState,
+  npcB: NpcRuntimeState | WorldNpcRuntimeState,
+  policy: 'open' | 'discouraged' | 'forbidden',
+): GameState {
+  let next = state
+  const npcAId = npcA.npcId
+  const npcBId = npcB.npcId
+  const isRosterRosterPair = 'traits' in npcA && 'traits' in npcB
+
+  // Roster<->roster stage progression is intention-driven (courtRomanticallyHandler) — World NPCs
+  // have no currentIntention, so world-involving pairs still advance through this blanket sweep.
+  if (!isRosterRosterPair) {
+    next = tryAdvanceIntimacyStage(next, npcA, npcB, policy)
+  }
+
+  const currentStage = getSharedIntimacyStage(next, npcAId, npcBId)
 
   // Pregnancy check at committed stage (only for roster-roster pairs)
   if (currentStage === 'committed' && policy === 'open' && 'traits' in npcA && 'traits' in npcB) {

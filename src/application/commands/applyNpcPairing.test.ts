@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { applyNpcPairing } from './applyNpcPairing'
+import { applyNpcPairing, tryAdvanceIntimacyStage, INTIMACY_ADVANCE_COOLDOWN_DAYS } from './applyNpcPairing'
 import { setNpcPairingPolicy } from './setHousePolicy'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain/game/contracts'
-import type { NpcRuntimeState } from '../../domain/npc/contracts'
+import type { NpcRuntimeState, WorldNpcRuntimeState } from '../../domain/npc/contracts'
 
 const noopRng = () => 0.5
 const alwaysRng = () => 0   // triggers pregnancy (< 0.02) when used
@@ -63,19 +63,86 @@ function stateWithPair(npcA: NpcRuntimeState, npcB: NpcRuntimeState, relOverride
   }
 }
 
+function worldNpcBase(overrides: Partial<WorldNpcRuntimeState>): WorldNpcRuntimeState {
+  return {
+    npcId: 'npc-world-a',
+    lastContactDay: null,
+    disposition: 'neutral',
+    locationOverride: null,
+    flags: [],
+    intimacyStage: 'none',
+    pregnancyState: null,
+    health: 100,
+    injury: 0,
+    recovering: false,
+    ...overrides,
+  }
+}
+
+function stateWithWorldPair(
+  npcA: WorldNpcRuntimeState,
+  npcB: WorldNpcRuntimeState,
+  relOverrides?: Record<string, unknown>,
+): GameState {
+  return {
+    ...initialGameStateSnapshot,
+    worldNpcStates: [...initialGameStateSnapshot.worldNpcStates, npcA, npcB],
+    relationships: {
+      ...initialGameStateSnapshot.relationships,
+      [buildRelationshipKey(npcA.npcId, npcB.npcId)]: {
+        affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0,
+        ...relOverrides,
+      },
+      [buildRelationshipKey(npcB.npcId, npcA.npcId)]: {
+        affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0,
+        ...relOverrides,
+      },
+    },
+    lastFiredDay: {},
+  }
+}
+
 describe('applyNpcPairing — stage progression', () => {
   it('does nothing when roster has fewer than 2 eligible NPCs', () => {
     const result = applyNpcPairing(initialGameStateSnapshot, noopRng)
     expect(result).toBe(initialGameStateSnapshot)
   })
 
-  it('advances none→affinity when conditions are met', () => {
+  it('no longer advances roster<->roster pairs directly — that is courtRomanticallyHandler\'s job now (intention-driven redesign)', () => {
     const npcA = npcBase({ npcId: 'npc-a', name: 'Alpha' })
     const npcB = npcBase({ npcId: 'npc-b', name: 'Beta' })
     const state = stateWithPair(npcA, npcB, { affinity: 35, trust: 25 })
     const result = applyNpcPairing(state, noopRng)
     const abEdge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
+    expect(abEdge?.intimacyStage ?? 'none').toBe('none')
+  })
+
+  it('still advances a world<->world pair (World NPCs cannot hold an Intention)', () => {
+    const npcA = worldNpcBase({ npcId: 'npc-world-a' })
+    const npcB = worldNpcBase({ npcId: 'npc-world-b' })
+    const state = stateWithWorldPair(npcA, npcB, { affinity: 35, trust: 25 })
+    const result = applyNpcPairing(state, noopRng)
+    const abEdge = result.relationships[buildRelationshipKey('npc-world-a', 'npc-world-b')]
     expect(abEdge?.intimacyStage).toBe('affinity')
+  })
+
+  it('still advances a roster<->world pair', () => {
+    const rosterNpc = npcBase({ npcId: 'npc-a' })
+    const worldNpc = worldNpcBase({ npcId: 'npc-world-a' })
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      roster: [...initialGameStateSnapshot.roster, rosterNpc],
+      worldNpcStates: [...initialGameStateSnapshot.worldNpcStates, worldNpc],
+      relationships: {
+        ...initialGameStateSnapshot.relationships,
+        [buildRelationshipKey('npc-a', 'npc-world-a')]: { affinity: 35, respect: 0, fear: 0, trust: 25, loyalty: 0 },
+        [buildRelationshipKey('npc-world-a', 'npc-a')]: { affinity: 35, respect: 0, fear: 0, trust: 25, loyalty: 0 },
+      },
+      lastFiredDay: {},
+    }
+    const result = applyNpcPairing(state, noopRng)
+    const edge = result.relationships[buildRelationshipKey('npc-a', 'npc-world-a')]
+    expect(edge?.intimacyStage).toBe('affinity')
   })
 
   it('does not advance when compatibility score is below threshold', () => {
@@ -110,16 +177,9 @@ describe('applyNpcPairing — stage progression', () => {
     expect(abEdge?.intimacyStage).toBeUndefined()
   })
 
-  it('fires noticed event when pair reaches attachment', () => {
-    const npcA = npcBase({ npcId: 'npc-a' })
-    const npcB = npcBase({ npcId: 'npc-b' })
-    // Pre-set affinity stage
-    const baseState = stateWithPair(npcA, npcB, { affinity: 50, trust: 45, intimacyStage: 'affinity' as const })
-    const result = applyNpcPairing(baseState, noopRng)
-    const hasPairingEvent = result.pendingEvents.some((pe) => pe.eventId === 'event-npc-pairing-noticed')
-    expect(hasPairingEvent).toBe(true)
-    expect(result.pendingEvents.find((pe) => pe.eventId === 'event-npc-pairing-noticed')?.instanceId).toBeTruthy()
-  })
+  // "Noticed" event requires both sides to be roster NPCs ('traits' in npcA && 'traits' in npcB),
+  // and roster<->roster pairs no longer advance via applyNpcPairing — see the
+  // tryAdvanceIntimacyStage describe block below for that coverage.
 
   it('skips deployed NPCs', () => {
     const npcA = npcBase({ npcId: 'npc-a', assignment: 'deployed' })
@@ -142,24 +202,85 @@ describe('applyNpcPairing — stage progression', () => {
     expect(abEdge?.intimacyStage).toBeUndefined()
   })
 
-  it('still allows progression for an idle pair both at the house (co-presence without shared quarters)', () => {
-    const npcA = npcBase({ npcId: 'npc-a', roomAssignment: null })
-    const npcB = npcBase({ npcId: 'npc-b', roomAssignment: 'room-bureau' })
-    const state = stateWithPair(npcA, npcB, { affinity: 35, trust: 25 })
+  it('still advances a world<->world pair regardless of room assignment (World NPCs have no rooms)', () => {
+    const npcA = worldNpcBase({ npcId: 'npc-world-a' })
+    const npcB = worldNpcBase({ npcId: 'npc-world-b' })
+    const state = stateWithWorldPair(npcA, npcB, { affinity: 35, trust: 25 })
 
     const result = applyNpcPairing(state, noopRng)
 
+    const abEdge = result.relationships[buildRelationshipKey('npc-world-a', 'npc-world-b')]
+    expect(abEdge?.intimacyStage).toBe('affinity')
+  })
+
+  it('sets dedup key in lastFiredDay on a world-pair stage advance', () => {
+    const npcA = worldNpcBase({ npcId: 'npc-world-a' })
+    const npcB = worldNpcBase({ npcId: 'npc-world-b' })
+    const state = stateWithWorldPair(npcA, npcB, { affinity: 35, trust: 25 })
+    const result = applyNpcPairing(state, noopRng)
+    const key = 'npc-pairing-npc-world-a-npc-world-b-stage-affinity'
+    expect(result.lastFiredDay[key]).toBeDefined()
+  })
+})
+
+describe('tryAdvanceIntimacyStage (shared mechanic — used directly by courtRomanticallyHandler for roster<->roster pairs, and by applyNpcPairing for world-involving pairs)', () => {
+  it('advances none→affinity when conditions are met, for a roster<->roster pair', () => {
+    const npcA = npcBase({ npcId: 'npc-a' })
+    const npcB = npcBase({ npcId: 'npc-b' })
+    const state = stateWithPair(npcA, npcB, { affinity: 35, trust: 25 })
+    const result = tryAdvanceIntimacyStage(state, npcA, npcB, 'open')
     const abEdge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
     expect(abEdge?.intimacyStage).toBe('affinity')
+  })
+
+  it('fires the noticed event when a roster<->roster pair reaches attachment', () => {
+    const npcA = npcBase({ npcId: 'npc-a' })
+    const npcB = npcBase({ npcId: 'npc-b' })
+    const baseState = stateWithPair(npcA, npcB, { affinity: 50, trust: 45, intimacyStage: 'affinity' as const })
+    const result = tryAdvanceIntimacyStage(baseState, npcA, npcB, 'open')
+    const hasPairingEvent = result.pendingEvents.some((pe) => pe.eventId === 'event-npc-pairing-noticed')
+    expect(hasPairingEvent).toBe(true)
   })
 
   it('sets dedup key in lastFiredDay on stage advance', () => {
     const npcA = npcBase({ npcId: 'npc-a' })
     const npcB = npcBase({ npcId: 'npc-b' })
     const state = stateWithPair(npcA, npcB, { affinity: 35, trust: 25 })
-    const result = applyNpcPairing(state, noopRng)
+    const result = tryAdvanceIntimacyStage(state, npcA, npcB, 'open')
     const key = 'npc-pairing-npc-a-npc-b-stage-affinity'
     expect(result.lastFiredDay[key]).toBeDefined()
+  })
+
+  it('respects the cooldown — does not re-advance before it elapses', () => {
+    const npcA = npcBase({ npcId: 'npc-a' })
+    const npcB = npcBase({ npcId: 'npc-b' })
+    const key = 'npc-pairing-npc-a-npc-b-stage-affinity'
+    const state: GameState = {
+      ...stateWithPair(npcA, npcB, { affinity: 35, trust: 25 }),
+      day: 10,
+      lastFiredDay: { [key]: 8 }, // fired 2 days ago; cooldown for 'none' is 3 days
+    }
+    const result = tryAdvanceIntimacyStage(state, npcA, npcB, 'open')
+    const abEdge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
+    expect(abEdge?.intimacyStage ?? 'none').toBe('none')
+  })
+
+  it('allows advancement once the cooldown has elapsed', () => {
+    const npcA = npcBase({ npcId: 'npc-a' })
+    const npcB = npcBase({ npcId: 'npc-b' })
+    const key = 'npc-pairing-npc-a-npc-b-stage-affinity'
+    const state: GameState = {
+      ...stateWithPair(npcA, npcB, { affinity: 35, trust: 25 }),
+      day: 11,
+      lastFiredDay: { [key]: 8 }, // fired 3 days ago; cooldown for 'none' is exactly 3 days
+    }
+    const result = tryAdvanceIntimacyStage(state, npcA, npcB, 'open')
+    const abEdge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
+    expect(abEdge?.intimacyStage).toBe('affinity')
+  })
+
+  it('uses the reduced 3/5/7-day cooldown values (not the old 14/21/30)', () => {
+    expect(INTIMACY_ADVANCE_COOLDOWN_DAYS).toEqual({ none: 3, affinity: 5, attachment: 7 })
   })
 })
 

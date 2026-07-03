@@ -672,5 +672,114 @@ describe('intentions', () => {
 
       expect(result.roster[0]!.currentIntention).toEqual(intention)
     })
+
+    it('executes flirt-with (via tryNpcNpcFlirtation) and clears the intention afterward', () => {
+      const intention = {
+        type: 'flirt-with' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        relationships: {
+          ...state.relationships,
+          [`${marionId}-to-${idaId}`]: { affinity: 60, trust: 50, respect: 0, fear: 0, loyalty: 0 },
+          [`${idaId}-to-${marionId}`]: { affinity: 60, trust: 50, respect: 0, fear: 0, loyalty: 0 },
+        },
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      // Success is RNG-gated internally (createRng(state.rngSeed)) — assert the mechanic ran
+      // (seed advanced) and the intention resolved, rather than a specific affinity delta.
+      expect(result.rngSeed).not.toBe(state.rngSeed)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes court-romantically (via tryAdvanceIntimacyStage) and clears the intention afterward', () => {
+      const intention = {
+        type: 'court-romantically' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 1,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      // courtRomanticallyHandler.canExecute requires presence>=50 and empathy>=50 on the actor.
+      state = {
+        ...state,
+        roster: [
+          { ...state.roster[0]!, attributes: { ...state.roster[0]!.attributes, presence: 60 }, traits: { ...state.roster[0]!.traits, empathy: 60 } },
+          state.roster[1]!,
+        ],
+      }
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        relationships: {
+          ...state.relationships,
+          [`${marionId}-to-${idaId}`]: { affinity: 35, trust: 25, respect: 0, fear: 0, loyalty: 0 },
+          [`${idaId}-to-${marionId}`]: { affinity: 35, trust: 25, respect: 0, fear: 0, loyalty: 0 },
+        },
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      // Stage progression itself is deterministic (no RNG) — thresholds are comfortably met.
+      expect(result.relationships[`${marionId}-to-${idaId}`]!.intimacyStage).toBe('affinity')
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes jealousy-check (via checkJealousyForNpc) and clears the intention afterward', () => {
+      const intention = {
+        type: 'jealousy-check' as const,
+        targetId: 'district-the-pale',
+        targetType: 'district' as const,
+        priority: 2,
+        urgencyDays: 1,
+        confidence: 40,
+        createdAtDay: 1,
+        expiresAtDay: 2,
+        validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      // checkJealousyForNpc needs at least 2 other eligible roster NPCs (a target + a rival) to
+      // ever call its RNG — a 2-NPC roster (Marion + Ida only) would early-return without
+      // consuming the seed, so add a third NPC here.
+      const cress = { ...idaRhysRosterEntry, npcId: 'npc-cress-test', name: 'Cress Test', assignment: 'idle' as const, currentIntention: null }
+      const state: GameState = {
+        ...stateWithMarionAndIda(intention),
+        roster: [...stateWithMarionAndIda(intention).roster, cress],
+      }
+      const marionId = state.roster[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      const stateWithRivalry: GameState = {
+        ...state,
+        relationships: {
+          ...state.relationships,
+          [`${marionId}-to-${idaId}`]: { affinity: 80, trust: 40, respect: 0, fear: 0, loyalty: 0 },
+          [`${cress.npcId}-to-${idaId}`]: { affinity: 90, trust: 40, respect: 0, fear: 0, loyalty: 0 },
+        },
+      }
+
+      const result = executeAllowlistedNpcIntentions(stateWithRivalry)
+
+      // Success is RNG-gated internally — assert the mechanic ran and the intention resolved.
+      expect(result.rngSeed).not.toBe(stateWithRivalry.rngSeed)
+      expect(result.roster[0]!.currentIntention).toBeNull()
+    })
   })
 })

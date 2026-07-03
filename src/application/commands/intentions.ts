@@ -2,6 +2,9 @@ import type { GameState, NpcIntention, NpcIntentionType } from '../../domain'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { npcIntentionSchema } from '../../domain/npc/contracts'
 import { generateNpcIntention } from './intentions/pipeline'
+import { tryNpcNpcFlirtation, checkJealousyForNpc } from './npcNpcRomance'
+import { tryAdvanceIntimacyStage } from './applyNpcPairing'
+import { createRng } from './seededRng'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -330,12 +333,20 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
 }
 
 /**
- * Intention types wired into endDay (destiny-mbju). Only these two of the ~47 catalogued types
- * are both real and verified safe to enable — see destiny-7ekd's classification for why the
- * other relationship-mutating handlers (flirt-with, court-romantically, jealousy-check) and all
- * placeholder handlers stay excluded.
+ * Intention types wired into endDay. destiny-7ekd/destiny-mbju originally allowlisted only
+ * visit-lover/spend-time-with, excluding flirt-with/court-romantically/jealousy-check because
+ * they duplicated blanket-sweep systems. Those three were redesigned (not re-duplicated) to route
+ * through the same canonical mechanics the blanket sweeps used (tryNpcNpcFlirtation,
+ * tryAdvanceIntimacyStage, checkJealousyForNpc with a proper RNG gate) and are now wired here too.
+ * All other placeholder handlers stay excluded — see destiny-7ekd's classification.
  */
-const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>(['visit-lover', 'spend-time-with'])
+const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
+  'visit-lover',
+  'spend-time-with',
+  'flirt-with',
+  'court-romantically',
+  'jealousy-check',
+])
 
 /**
  * Generation, gated to the wired allowlist.
@@ -657,15 +668,90 @@ const groomHandler: IntentionHandler = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sozial/Romantik (2 real handlers; flirt-with/court-romantically/jealousy-check
-// removed 2026-07-03 — see destiny-fb6z/destiny-jdft/destiny-2xyp. Each duplicated a
-// system destiny-q5ra already made canonical: flirt-with called the same
-// tryNpcNpcFlirtation simulateNpcNpcRomance's daily loop already calls for every
-// eligible pair; court-romantically called tryNpcNpcCourtship, which had no cooldown
-// and bypassed applyNpcPairing.ts's canonical cooldown-gated stage progression;
-// jealousy-check reimplemented checkNpcNpcJealousy without its RNG gate. Their
-// intention-type mappings below now point at a placeholder stand-in.)
+// Sozial/Romantik (5 real handlers, all intention-driven)
+//
+// Earlier (2026-07-03) flirt-with/court-romantically/jealousy-check were removed
+// (destiny-fb6z/jdft/2xyp) because they duplicated blanket-sweep systems
+// (simulateNpcNpcRomance, applyNpcPairing) that ran unconditionally over every
+// pair/triplet daily. Per explicit user direction, redesigned as the architecturally
+// better alternative: romance is now genuinely intention-driven — each NPC's daily
+// Intention decides whether flirting/courting/jealousy is what THAT NPC is motivated
+// to do, competing against eat/sleep/work, with exactly one canonical handler per
+// mechanic. The blanket sweeps are gone (simulateNpcNpcRomance deleted); world-involving
+// pairs (which can't hold an Intention) still advance via applyNpcPairing's remaining
+// blanket path for stage progression only.
 // ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Flirt With Handler
+ * NPC flirts with a specific NPC (affinity/trait-based success roll).
+ */
+const flirtWithHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
+  },
+  execute: (npc, state) => {
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
+        return relB - relA
+      })[0]
+
+    if (!targetEntry) return state
+
+    const rng = createRng(state.rngSeed)
+    const newState = tryNpcNpcFlirtation(state, npc.npcId, targetEntry.npcId, rng.rng)
+
+    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
+  },
+}
+
+/**
+ * Court Romantically Handler
+ * NPC makes a romantic advance — tries to advance shared intimacy stage with a target,
+ * via applyNpcPairing.ts's canonical, cooldown-gated tryAdvanceIntimacyStage.
+ */
+const courtRomanticallyHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    return npc.attributes.presence >= 50 && npc.traits.empathy >= 50
+  },
+  execute: (npc, state) => {
+    const targetEntry = state.roster
+      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .sort((a, b) => {
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]
+        const scoreA = (relA?.affinity ?? 0) + (relA?.trust ?? 0)
+        const scoreB = (relB?.affinity ?? 0) + (relB?.trust ?? 0)
+        return scoreB - scoreA
+      })[0]
+
+    if (!targetEntry) return state
+
+    return tryAdvanceIntimacyStage(state, npc, targetEntry, state.house.npcPairingPolicy)
+  },
+}
+
+/**
+ * Jealousy Check Handler
+ * NPC checks for rivalry/jealousy situations relative to itself, RNG-gated per rival.
+ */
+const jealousyCheckHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    return npc.attributes.perception >= 40 || npc.traits.vanity >= 50
+  },
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const newState = checkJealousyForNpc(state, npc.npcId, rng.rng)
+
+    return { ...newState, rngSeed: rng.getSeed?.() ?? state.rngSeed }
+  },
+}
 
 /**
  * Visit Lover Handler
@@ -1132,14 +1218,11 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'sleep': sleepHandler,
   'rest': restHandler,
   'groom': groomHandler,
-  // Sozial/Romantik (2 real; flirt-with/court-romantically/jealousy-check removed
-  // 2026-07-03 — see destiny-fb6z/destiny-jdft/destiny-2xyp, each duplicated an
-  // already-canonical system. Mapped to the same placeholder stand-in used for
-  // the not-yet-built romance/money-earning types below.)
-  'flirt-with': careForInjuredHandler, // Placeholder - duplicated simulateNpcNpcRomance, removed
-  'court-romantically': careForInjuredHandler, // Placeholder - duplicated applyNpcPairing.ts, removed
+  // Sozial/Romantik (5 real, all intention-driven — see the redesign note above)
+  'flirt-with': flirtWithHandler,
+  'court-romantically': courtRomanticallyHandler,
   'visit-lover': visitLoverHandler,
-  'jealousy-check': careForInjuredHandler, // Placeholder - duplicated checkNpcNpcJealousy, removed
+  'jealousy-check': jealousyCheckHandler,
   'spend-time-with': spendTimeWithHandler,
   // Alltagsaktivitäten (4)
   'shop-for-goods': shopForGoodsHandler,

@@ -125,132 +125,73 @@ export function tryNpcNpcFlirtation(
 }
 
 /**
- * Check for jealousy/rivalry between NPCs.
+ * Check for jealousy/rivalry triggered by one acting NPC's intention.
  *
- * If NPC A has high affinity with NPC B, and NPC B has high affinity with NPC C,
- * NPC A might feel jealous of NPC C.
+ * If this NPC has high affinity with a target, and some rival has equal or higher affinity with
+ * that same target, the acting NPC might feel jealous of the rival. RNG-gated per rival (fixes
+ * the earlier intention-handler version's missing RNG gate — see destiny-2xyp).
+ *
+ * Called from intentions.ts's jealousyCheckHandler, scoped to the one NPC whose intention this is
+ * — not a full-roster sweep (that blanket approach was retired; see the redesign this replaces).
  */
-export function checkNpcNpcJealousy(
+export function checkJealousyForNpc(
   state: GameState,
+  jealousNpcId: string,
   rng: Rng,
 ): GameState {
   const rosterNpcs = state.roster
-    .filter((entry) => isEligibleForRomance(entry))
-    .map((entry) => entry.npcId)
-
-  if (rosterNpcs.length < 3) return state
-
-  let nextState = state
-
-  // Check all triplets for jealousy potential
-  for (let i = 0; i < rosterNpcs.length; i++) {
-    for (let j = 0; j < rosterNpcs.length; j++) {
-      if (i === j) continue
-
-      const jealousNpcId = rosterNpcs[i]!
-      const targetNpcId = rosterNpcs[j]!
-
-      // Check if jealousNpc has high affinity with target
-      const jealousRel = getRelationship(state.relationships, jealousNpcId, targetNpcId)
-      if (jealousRel.affinity < 50) continue
-
-      // Look for rivals (other NPCs with high affinity to target)
-      for (let k = 0; k < rosterNpcs.length; k++) {
-        if (k === i || k === j) continue
-
-        const rivalNpcId = rosterNpcs[k]!
-
-        const rivalRel = getRelationship(state.relationships, rivalNpcId, targetNpcId)
-        if (rivalRel.affinity < jealousRel.affinity) continue
-
-        // Rival has higher or equal affinity - jealousy trigger
-        const jealousyChance = 0.15 + (jealousRel.affinity - 50) / 200
-
-        if (rng() < jealousyChance) {
-          // Jealousy triggered - increase fear or decrease affinity
-          const jealousKey = buildRelationshipKey(jealousNpcId, rivalNpcId)
-          const currentJealous = getRelationship(state.relationships, jealousNpcId, rivalNpcId)
-
-          nextState = {
-            ...nextState,
-            relationships: {
-              ...nextState.relationships,
-              [jealousKey]: {
-                ...currentJealous,
-                fear: Math.min(100, (currentJealous.fear ?? 0) + 3),
-                affinity: Math.max(-100, currentJealous.affinity - 2),
-              },
-            },
-          }
-
-          const jealousNpc = contentCatalog.npcsById.get(jealousNpcId)
-          const rivalNpc = contentCatalog.npcsById.get(rivalNpcId)
-
-          if (jealousNpc && rivalNpc) {
-            nextState = appendActivityLogEntry(
-              nextState,
-              'system',
-              `${jealousNpc.name} feels a pang of jealousy toward ${rivalNpc.name}.`,
-            )
-          }
-        }
-      }
-    }
-  }
-
-  return nextState
-}
-
-/**
- * Run all NPC-NPC romance simulations for the day.
- *
- * This includes:
- * - Flirtation attempts between eligible pairs
- * - Courtship attempts for pairs with existing intimacy
- * - Jealousy checks for complex relationship triangles
- */
-export function simulateNpcNpcRomance(
-  state: GameState,
-  rng: Rng,
-): GameState {
-  const rosterNpcs = state.roster
-    .filter((entry) => isEligibleForRomance(entry))
+    .filter((entry) => isEligibleForRomance(entry) && entry.npcId !== jealousNpcId)
     .map((entry) => entry.npcId)
 
   if (rosterNpcs.length < 2) return state
 
   let nextState = state
 
-  // Track which pairs we've processed to avoid duplicates
-  const processedPairs = new Set<string>()
+  for (const targetNpcId of rosterNpcs) {
+    // Check if jealousNpc has high affinity with target
+    const jealousRel = getRelationship(state.relationships, jealousNpcId, targetNpcId)
+    if (jealousRel.affinity < 50) continue
 
-  for (let i = 0; i < rosterNpcs.length; i++) {
-    for (let j = i + 1; j < rosterNpcs.length; j++) {
-      const npcAId = rosterNpcs[i]!
-      const npcBId = rosterNpcs[j]!
-      const pairKey = [npcAId, npcBId].sort().join('-')
+    // Look for rivals (other NPCs with high affinity to target)
+    for (const rivalNpcId of rosterNpcs) {
+      if (rivalNpcId === targetNpcId) continue
 
-      if (processedPairs.has(pairKey)) continue
-      processedPairs.add(pairKey)
+      const rivalRel = getRelationship(state.relationships, rivalNpcId, targetNpcId)
+      if (rivalRel.affinity < jealousRel.affinity) continue
 
-      const rel = getAvgRelationship(state, npcAId, npcBId)
+      // Rival has higher or equal affinity - jealousy trigger, RNG-gated
+      const jealousyChance = 0.15 + (jealousRel.affinity - 50) / 200
 
-      // Skip pairs with very low affinity
-      if (rel.affinity < 20) continue
+      if (rng() < jealousyChance) {
+        // Jealousy triggered - increase fear or decrease affinity
+        const jealousKey = buildRelationshipKey(jealousNpcId, rivalNpcId)
+        const currentJealous = getRelationship(state.relationships, jealousNpcId, rivalNpcId)
 
-      // Skip pairs with high fear
-      if (rel.fear > 30) continue
+        nextState = {
+          ...nextState,
+          relationships: {
+            ...nextState.relationships,
+            [jealousKey]: {
+              ...currentJealous,
+              fear: Math.min(100, (currentJealous.fear ?? 0) + 3),
+              affinity: Math.max(-100, currentJealous.affinity - 2),
+            },
+          },
+        }
 
-      // Try flirtation (higher chance, lower impact)
-      const flirtChance = 0.08 + (rel.affinity / 500)
-      if (rng() < flirtChance) {
-        nextState = tryNpcNpcFlirtation(nextState, npcAId, npcBId, rng)
+        const jealousNpc = contentCatalog.npcsById.get(jealousNpcId)
+        const rivalNpc = contentCatalog.npcsById.get(rivalNpcId)
+
+        if (jealousNpc && rivalNpc) {
+          nextState = appendActivityLogEntry(
+            nextState,
+            'system',
+            `${jealousNpc.name} feels a pang of jealousy toward ${rivalNpc.name}.`,
+          )
+        }
       }
     }
   }
-
-  // Run jealousy checks separately (involves triplets)
-  nextState = checkNpcNpcJealousy(nextState, rng)
 
   return nextState
 }
