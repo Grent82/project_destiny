@@ -88,7 +88,7 @@ describe('deriveGriefMoraleModifier', () => {
 
 describe('writeLossMemories', () => {
   it('writes loss memory on NPC with high trust', () => {
-    const relKey = `${SQUAD_NPC}→npc-lost`
+    const relKey = `${SQUAD_NPC}-to-npc-lost`
     const state: GameState = {
       ...initialGameStateSnapshot,
       day: 10,
@@ -103,7 +103,7 @@ describe('writeLossMemories', () => {
   })
 
   it('does NOT write loss memory on NPC with low trust', () => {
-    const relKey = `${SQUAD_NPC}→npc-lost`
+    const relKey = `${SQUAD_NPC}-to-npc-lost`
     const state: GameState = {
       ...initialGameStateSnapshot,
       relationships: { [relKey]: { affinity: 0, respect: 0, fear: 0, trust: 10, loyalty: 0 } },
@@ -127,7 +127,7 @@ describe('writeLossMemories', () => {
 
 describe('grief applies morale penalty in state decay', () => {
   it('grieving NPC loses more morale than non-grieving NPC', () => {
-    const relKey = `${SQUAD_NPC}→npc-lost`
+    const relKey = `${SQUAD_NPC}-to-npc-lost`
     const state: GameState = {
       ...initialGameStateSnapshot,
       relationships: { [relKey]: { affinity: 0, respect: 0, fear: 0, trust: 60, loyalty: 0 } },

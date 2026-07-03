@@ -162,7 +162,7 @@ export const rosterReducers = {
     })
     if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     // Direct mutation for Immer compatibility
-    const key = `${'player'}→${npcId}`
+    const key = `${'player'}-to-${npcId}`
     const existing = state.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
     state.relationships[key] = { ...existing, respect: Math.max(-100, Math.min(100, existing.respect + 8)) }
   },
@@ -181,7 +181,7 @@ export const rosterReducers = {
     })
     if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
     // Direct mutation for Immer compatibility
-    const key = `${'player'}→${npcId}`
+    const key = `${'player'}-to-${npcId}`
     const existing = state.relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
     state.relationships[key] = { ...existing, respect: Math.max(-100, Math.min(100, existing.respect - 5)) }
   },

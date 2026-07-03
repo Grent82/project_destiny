@@ -38,7 +38,7 @@ function getIntimacyStageIndex(stage: string): number {
 }
 
 function getNpcIntimacyStage(state: GameState, npcId: string): string {
-  const key = `player→${npcId}`
+  const key = `player-to-${npcId}`
   const relationship = state.relationships[key]
   if (!relationship) return 'none'
   return relationship.intimacyStage ?? 'none'

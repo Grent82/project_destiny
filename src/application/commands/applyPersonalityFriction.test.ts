@@ -142,8 +142,8 @@ describe('applyPersonalityFriction', () => {
       const npcB = makeNpc({ npcId: 'npc-b', name: 'B', traits: { ...baseTraits, curiosity: 60, empathy: 70 } })
       const state = stateWithNpcs(npcA, npcB)
       const result = applyPersonalityFriction(state, noop)
-      const keyAB = 'npc-a→npc-b'
-      const keyBA = 'npc-b→npc-a'
+      const keyAB = 'npc-a-to-npc-b'
+      const keyBA = 'npc-b-to-npc-a'
       expect(result.relationships[keyAB]?.affinity).toBeGreaterThanOrEqual(3)
       expect(result.relationships[keyAB]?.trust).toBeGreaterThanOrEqual(2)
       expect(result.relationships[keyBA]?.affinity).toBeGreaterThanOrEqual(3)

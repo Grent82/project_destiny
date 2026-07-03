@@ -48,7 +48,7 @@ describe('settleQuestSuccess — rewardRelationshipDeltas', () => {
     const state = stateWithQuest('quest-mira-rescue')
     state.mainQuest = { ...state.mainQuest, stage: 'searching' }
     const result = settleQuestSuccess(state, 'quest-mira-rescue')
-    const rel = result.relationships['player→npc-mira']
+    const rel = result.relationships['player-to-npc-mira']
     expect(rel).toBeDefined()
     expect(rel?.trust).toBe(40)
     expect(rel?.fear).toBe(-20)
@@ -57,19 +57,19 @@ describe('settleQuestSuccess — rewardRelationshipDeltas', () => {
   it('clamps relationship values to [-100, 100]', () => {
     const state = stateWithQuest('quest-mira-rescue')
     state.mainQuest = { ...state.mainQuest, stage: 'searching' }
-    state.relationships['player→npc-mira'] = { affinity: 0, respect: 0, fear: -90, trust: 80, loyalty: 0 }
+    state.relationships['player-to-npc-mira'] = { affinity: 0, respect: 0, fear: -90, trust: 80, loyalty: 0 }
     const result = settleQuestSuccess(state, 'quest-mira-rescue')
-    const rel = result.relationships['player→npc-mira']
+    const rel = result.relationships['player-to-npc-mira']
     expect(rel?.trust).toBe(100)
     expect(rel?.fear).toBe(-100)
   })
 
   it('stacks onto existing relationship values', () => {
     const state = stateWithQuest('quest-orren-wex-rescue')
-    state.relationships['player→npc-orren-wex'] = { affinity: 0, respect: 0, fear: 0, trust: 20, loyalty: 0 }
+    state.relationships['player-to-npc-orren-wex'] = { affinity: 0, respect: 0, fear: 0, trust: 20, loyalty: 0 }
     state.npcSitePresences = [] // Required for applyOrrenRescueResolution
     const result = settleQuestSuccess(state, 'quest-orren-wex-rescue')
-    const rel = result.relationships['player→npc-orren-wex']
+    const rel = result.relationships['player-to-npc-orren-wex']
     expect(rel?.trust).toBe(50)
     expect(rel?.loyalty).toBe(20)
   })

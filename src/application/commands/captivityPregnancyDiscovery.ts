@@ -14,7 +14,7 @@ function selectSourceVariant(
   npc: NpcRuntimeState,
 ): 'self' | 'healer' | 'guard' {
   const playerTrust =
-    state.relationships[`player→${npc.npcId}`]?.trust ??
+    state.relationships[`player-to-${npc.npcId}`]?.trust ??
     state.relationships[`player-${npc.npcId}`]?.trust ??
     0
 

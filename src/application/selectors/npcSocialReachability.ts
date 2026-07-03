@@ -18,6 +18,7 @@ export type NpcReachabilityReason =
   | 'eligible'
   | 'captive'
   | 'missing'
+  | 'deployed'
   | 'transferred'
   | 'assigned-other-district'
   | 'player-away-from-house'
@@ -66,6 +67,16 @@ function computeReachability(
       canConverseRemotely: false,
       canUsePrivateActions: false,
       blockerMessage: `${npcName} is missing. Their whereabouts are unknown.`,
+    }
+  }
+
+  if (npc.assignment === 'deployed') {
+    const districtLabel = npc.assignedDistrictId ? formatDistrictName(npc.assignedDistrictId) : null
+    return {
+      reason: 'deployed',
+      canConverseRemotely: true,
+      canUsePrivateActions: false,
+      blockerMessage: `${npcName} is currently deployed${districtLabel ? ` in ${districtLabel}` : ' in the field'}. Deeper conversations and shared time have to wait until they return.`,
     }
   }
 

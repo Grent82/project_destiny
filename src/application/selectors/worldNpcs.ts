@@ -91,7 +91,7 @@ export interface NpcBondView {
 
 function buildNpcBondView(key: string, axes: RelationshipAxes): NpcBondView | null {
   if (!axes.softBond) return null
-  const [fromNpcId, toNpcId] = key.split('→')
+  const [fromNpcId, toNpcId] = key.split('-to-')
   if (!fromNpcId || !toNpcId) return null
   const from = contentCatalog.npcsById.get(fromNpcId)
   const to = contentCatalog.npcsById.get(toNpcId)
@@ -114,7 +114,7 @@ export const selectNpcBonds =
     (state: RootState) => state.game.relationships,
     (relationships) =>
       Object.entries(relationships)
-        .filter(([key, axes]) => key.startsWith(`${npcId}→`) && Boolean(axes.softBond))
+        .filter(([key, axes]) => key.startsWith(`${npcId}-to-`) && Boolean(axes.softBond))
         .map(([key, axes]) => buildNpcBondView(key, axes))
         .filter((entry): entry is NpcBondView => entry !== null),
   )

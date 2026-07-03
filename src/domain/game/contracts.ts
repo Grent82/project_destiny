@@ -346,7 +346,12 @@ export const gameStateSchema = z
     institutionalStanding: z.record(z.string(), institutionalTierSchema).default({}),
     activeCouncilVotes: z.array(councilVoteEventSchema).default([]),
     houseProposalCooldown: z.number().min(0).default(0),
-    relationships: z.record(z.string(), gameRelationshipAxesSchema).default({}),
+    relationships: z
+      .record(
+        z.string().regex(/-to-/, 'Relationship keys must use the canonical "fromId-to-toId" format, not a legacy dashed key'),
+        gameRelationshipAxesSchema,
+      )
+      .default({}),
     equippedItemDurabilities: z.record(
       z.string(),
       z.record(z.enum(['weapon', 'armor']), z.number().min(0).max(200))

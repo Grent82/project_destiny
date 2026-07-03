@@ -153,11 +153,11 @@ function mergeSoftBondEdge(
 
 function pruneSoftBondCap(relationships: Record<string, RelationshipAxes>, npcId: string) {
   const softBondEdges = Object.entries(relationships)
-    .filter(([key, rel]) => key.startsWith(`${npcId}→`) && rel.softBond)
+    .filter(([key, rel]) => key.startsWith(`${npcId}-to-`) && rel.softBond)
     .map(([key, rel]) => ({
       key,
       rel,
-      targetId: key.split('→')[1]!,
+      targetId: key.split('-to-')[1]!,
     }))
 
   if (softBondEdges.length <= SOFT_BOND_CAP) return relationships
@@ -417,7 +417,7 @@ function decayDormantSoftBonds(state: GameState, eligiblePairs: Set<string>) {
 
   for (const [key, rel] of Object.entries(state.relationships)) {
     if (!rel.softBond) continue
-    const [fromId, toId] = key.split('→')
+    const [fromId, toId] = key.split('-to-')
     if (!fromId || !toId) continue
     const pairId = bondPairId(fromId, toId)
     if (eligiblePairs.has(pairId)) continue

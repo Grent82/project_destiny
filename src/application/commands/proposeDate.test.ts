@@ -324,7 +324,7 @@ function createRelationshipWithIntimacy(
   axes.intimacyStage = intimacyStage
 
   return {
-    [`player→${npcId}`]: axes,
+    [`player-to-${npcId}`]: axes,
   }
 }
 
@@ -457,7 +457,7 @@ describe('proposeDate', () => {
       roster: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
       relationships: {
         ...createRelationshipWithIntimacy('npc-test', 'affinity'),
-        ['player→npc-test']: {
+        ['player-to-npc-test']: {
           affinity: 20,
           respect: 30,
           fear: 10,

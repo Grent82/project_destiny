@@ -85,9 +85,9 @@ function getRomanticPartnerId(state: GameState, npcId: string): string | null {
   const intimacyStages = ['none', 'affinity', 'attachment', 'committed']
 
   for (const relKey of Object.keys(state.relationships)) {
-    if (!relKey.startsWith(`${npcId}→`)) continue
+    if (!relKey.startsWith(`${npcId}-to-`)) continue
 
-    const partnerId = relKey.split('→')[1]
+    const partnerId = relKey.split('-to-')[1]
     const rel = state.relationships[relKey]
     const stage = rel?.intimacyStage ?? 'none'
     const stageIndex = intimacyStages.indexOf(stage)

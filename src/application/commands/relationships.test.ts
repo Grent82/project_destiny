@@ -42,94 +42,94 @@ describe('applyRelationshipDelta', () => {
     const result = applyRelationshipDelta(state, 'player', 'npc-test', 'affinity', 10)
     expect(result.oldValue).toBe(0)
     expect(result.newValue).toBe(10)
-    expect(result.state.relationships['player→npc-test']?.affinity).toBe(10)
+    expect(result.state.relationships['player-to-npc-test']?.affinity).toBe(10)
   })
 
   it('clamps positive values to 100', () => {
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: 95, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: 95, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
     const result = applyRelationshipDelta(state, 'player', 'npc-test', 'affinity', 20)
     expect(result.newValue).toBe(100)
   })
 
   it('clamps negative values to -100', () => {
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: -95, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: -95, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
     const result = applyRelationshipDelta(state, 'player', 'npc-test', 'affinity', -20)
     expect(result.newValue).toBe(-100)
   })
 
   it('detects significant threshold crossing (crosses 25)', () => {
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: 22, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: 22, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
     const result = applyRelationshipDelta(state, 'player', 'npc-test', 'affinity', 5)
     expect(result.significant).toBe(true)
   })
 
   it('does not flag significant when no threshold crossed', () => {
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: 10, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: 10, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
     const result = applyRelationshipDelta(state, 'player', 'npc-test', 'affinity', 5)
     expect(result.significant).toBe(false)
   })
 
-  it('builds directed NPC→NPC key (no sorting)', () => {
+  it('builds directed NPC-to-NPC key (no sorting)', () => {
     const state = makeMinimalState()
     const result = applyRelationshipDelta(state, 'npc-b', 'npc-a', 'affinity', 5)
-    expect(result.state.relationships['npc-b→npc-a']?.affinity).toBe(5)
-    expect(result.state.relationships['npc-a→npc-b']).toBeUndefined()
+    expect(result.state.relationships['npc-b-to-npc-a']?.affinity).toBe(5)
+    expect(result.state.relationships['npc-a-to-npc-b']).toBeUndefined()
   })
 })
 
 describe('applyPassiveDrift', () => {
   it('does not decay affinity (only trust drifts passively)', () => {
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: 10, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: 10, respect: 0, fear: 0, trust: 0, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.affinity).toBe(10)
+    expect(result.relationships['player-to-npc-test']?.affinity).toBe(10)
   })
 
   it('does not decay trust when trust ≤ 40 (relationship still forming)', () => {
     // trust=15 is below the 40-threshold; no decay regardless of day
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 15, loyalty: 0 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 15, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.trust).toBe(15)
+    expect(result.relationships['player-to-npc-test']?.trust).toBe(15)
   })
 
   it('decays trust > 80 by 1/day (day=1, interval=1)', () => {
     // trust=85 > 80 → baseInterval=1 → driftInterval=1; day=1 % 1 = 0 → fires
     // No roster entries: default loyalty=50 → no loyalty modifier; no compat modifier
-    const state = makeMinimalState({ day: 1, relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 85, loyalty: 0 } } })
+    const state = makeMinimalState({ day: 1, relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 85, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.trust).toBe(84)
+    expect(result.relationships['player-to-npc-test']?.trust).toBe(84)
   })
 
   it('does not decay trust 61-80 at day=1 (interval=2)', () => {
     // trust=70 → baseInterval=2; day=1 % 2 = 1 ≠ 0 → no drift
-    const state = makeMinimalState({ day: 1, relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } })
+    const state = makeMinimalState({ day: 1, relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.trust).toBe(70)
+    expect(result.relationships['player-to-npc-test']?.trust).toBe(70)
   })
 
   it('decays trust 61-80 at day=2 (interval=2)', () => {
     // trust=70 → baseInterval=2; day=2 % 2 = 0 → fires
-    const state = makeMinimalState({ day: 2, relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } })
+    const state = makeMinimalState({ day: 2, relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.trust).toBe(69)
+    expect(result.relationships['player-to-npc-test']?.trust).toBe(69)
   })
 
   it('does not decay trust 41-60 at day=1 (interval=3)', () => {
-    const state = makeMinimalState({ day: 1, relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 50, loyalty: 0 } } })
+    const state = makeMinimalState({ day: 1, relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 50, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.trust).toBe(50)
+    expect(result.relationships['player-to-npc-test']?.trust).toBe(50)
   })
 
   it('decays trust 41-60 at day=3 (interval=3)', () => {
-    const state = makeMinimalState({ day: 3, relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 50, loyalty: 0 } } })
+    const state = makeMinimalState({ day: 3, relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 50, loyalty: 0 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.trust).toBe(49)
+    expect(result.relationships['player-to-npc-test']?.trust).toBe(49)
   })
 
   it('does not decay respect or loyalty', () => {
-    const state = makeMinimalState({ relationships: { 'player→npc-test': { affinity: 0, respect: 50, fear: 0, trust: 0, loyalty: 50 } } })
+    const state = makeMinimalState({ relationships: { 'player-to-npc-test': { affinity: 0, respect: 50, fear: 0, trust: 0, loyalty: 50 } } })
     const result = applyPassiveDrift(state)
-    expect(result.relationships['player→npc-test']?.respect).toBe(50)
-    expect(result.relationships['player→npc-test']?.loyalty).toBe(50)
+    expect(result.relationships['player-to-npc-test']?.respect).toBe(50)
+    expect(result.relationships['player-to-npc-test']?.loyalty).toBe(50)
   })
 
   it('high-loyalty NPC pair drifts slower (interval extended by loyalty factor)', () => {
@@ -137,7 +137,7 @@ describe('applyPassiveDrift', () => {
     // effectiveInterval = max(1, round(1 / 0.75)) = max(1, round(1.33)) = max(1, 1) = 1
     // So still fires daily at high loyalty for trust>80
     const state = {
-      ...makeMinimalState({ day: 1, relationships: { 'npc-a→npc-b': { affinity: 0, respect: 0, fear: 0, trust: 85, loyalty: 0 } } }),
+      ...makeMinimalState({ day: 1, relationships: { 'npc-a-to-npc-b': { affinity: 0, respect: 0, fear: 0, trust: 85, loyalty: 0 } } }),
       roster: [
         { ...initialStateWithIda.roster[0]!, npcId: 'npc-a', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 70 } },
         { ...initialStateWithIda.roster[0]!, npcId: 'npc-b', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 72 } },
@@ -145,7 +145,7 @@ describe('applyPassiveDrift', () => {
     }
     const result = applyPassiveDrift(state)
     // Still decays (effectiveInterval=1, day=1 % 1 = 0)
-    expect(result.relationships['npc-a→npc-b']?.trust).toBe(84)
+    expect(result.relationships['npc-a-to-npc-b']?.trust).toBe(84)
   })
 
   it('high-loyalty NPC pair with trust 61-80 gets extended interval', () => {
@@ -153,7 +153,7 @@ describe('applyPassiveDrift', () => {
     // effectiveInterval = max(1, round(2 / 0.75)) = max(1, round(2.67)) = max(1, 3) = 3
     // At day=2: 2 % 3 = 2 ≠ 0 → no drift
     const state = {
-      ...makeMinimalState({ day: 2, relationships: { 'npc-a→npc-b': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } }),
+      ...makeMinimalState({ day: 2, relationships: { 'npc-a-to-npc-b': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } }),
       roster: [
         { ...initialStateWithIda.roster[0]!, npcId: 'npc-a', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 70 } },
         { ...initialStateWithIda.roster[0]!, npcId: 'npc-b', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 72 } },
@@ -161,7 +161,7 @@ describe('applyPassiveDrift', () => {
     }
     const result = applyPassiveDrift(state)
     // No drift at day=2 (effectiveInterval=3)
-    expect(result.relationships['npc-a→npc-b']?.trust).toBe(70)
+    expect(result.relationships['npc-a-to-npc-b']?.trust).toBe(70)
   })
 
   it('high-compatibility pair with trust 61-80 gets halved drift rate (interval doubled)', () => {
@@ -174,19 +174,19 @@ describe('applyPassiveDrift', () => {
       traits: { discipline: 78, ambition: 44, empathy: 22, ruthlessness: 52, prudence: 72, curiosity: 31, dominance: 64, loyalty: 38, vanity: 29, zeal: 41 },
     }
     const state = {
-      ...makeMinimalState({ day: 2, relationships: { 'npc-ida-rhys→npc-verek-holst': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } }),
+      ...makeMinimalState({ day: 2, relationships: { 'npc-ida-rhys-to-npc-verek-holst': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } }),
       roster: [...initialStateWithIda.roster, holstEntry],
     }
     const result = applyPassiveDrift(state)
-    expect(result.relationships['npc-ida-rhys→npc-verek-holst']?.trust).toBe(70)
+    expect(result.relationships['npc-ida-rhys-to-npc-verek-holst']?.trust).toBe(70)
   })
 
   it('does not drift trust below 0', () => {
-    let state = makeMinimalState({ day: 1, relationships: { 'player→npc-test': { affinity: 0, respect: 0, fear: 0, trust: 81, loyalty: 0 } } })
+    let state = makeMinimalState({ day: 1, relationships: { 'player-to-npc-test': { affinity: 0, respect: 0, fear: 0, trust: 81, loyalty: 0 } } })
     for (let i = 0; i < 100; i++) {
       state = applyPassiveDrift({ ...state, day: i + 1 })
     }
-    expect(state.relationships['player→npc-test']?.trust).toBeGreaterThanOrEqual(0)
+    expect(state.relationships['player-to-npc-test']?.trust).toBeGreaterThanOrEqual(0)
   })
 })
 
@@ -195,17 +195,17 @@ describe('applyProximityGains', () => {
     const state = makeMinimalState()
     const result = applyProximityGains(state, ['npc-a', 'npc-b', 'npc-c'])
     // Base gain = 2 when NPCs have no trait data (unknown NPCs, compatibility score = 0)
-    expect(result.relationships['npc-a→npc-b']?.affinity).toBe(2)
-    expect(result.relationships['npc-b→npc-a']?.affinity).toBe(2)
-    expect(result.relationships['npc-a→npc-c']?.affinity).toBe(2)
-    expect(result.relationships['npc-b→npc-c']?.affinity).toBe(2)
+    expect(result.relationships['npc-a-to-npc-b']?.affinity).toBe(2)
+    expect(result.relationships['npc-b-to-npc-a']?.affinity).toBe(2)
+    expect(result.relationships['npc-a-to-npc-c']?.affinity).toBe(2)
+    expect(result.relationships['npc-b-to-npc-c']?.affinity).toBe(2)
   })
 
   it('increases player respect for each deployed NPC', () => {
     const state = makeMinimalState()
     const result = applyProximityGains(state, ['npc-a', 'npc-b'])
-    expect(result.relationships['player→npc-a']?.respect).toBe(2)
-    expect(result.relationships['player→npc-b']?.respect).toBe(2)
+    expect(result.relationships['player-to-npc-a']?.respect).toBe(2)
+    expect(result.relationships['player-to-npc-b']?.respect).toBe(2)
   })
 
   it('does nothing with empty squad', () => {
@@ -234,7 +234,7 @@ describe('applyProximityGains', () => {
     const result = applyProximityGains(state, ['npc-a', 'npc-b'])
     // R1 both<35: +10; R2 both>60: +12; base=0 -> +22 after warmth -> score=22
     // gain = max(2, round(2 * (1 + 22/50))) = max(2, round(2*1.44)) = max(2,3) = 3
-    expect(result.relationships['npc-a→npc-b']?.affinity).toBe(3)
+    expect(result.relationships['npc-a-to-npc-b']?.affinity).toBe(3)
   })
 
   it('applies compatibility multiplier: low-compat pair floored at base gain 2', () => {
@@ -257,7 +257,7 @@ describe('applyProximityGains', () => {
     }
     const result = applyProximityGains(state, ['npc-a', 'npc-b'])
     // R4 both ambition >65: -8; score = -8+10 = 2; gain = max(2, round(2*(1+2/50))) = max(2,2) = 2
-    expect(result.relationships['npc-a→npc-b']?.affinity).toBe(2)
+    expect(result.relationships['npc-a-to-npc-b']?.affinity).toBe(2)
   })
 
   it('applies curiosity bonus: either NPC curious >55 gives +1', () => {
@@ -279,7 +279,7 @@ describe('applyProximityGains', () => {
     const result = applyProximityGains(state, ['npc-a', 'npc-b'])
     // compatScore = 10 (warmth only, no rules fire with default traits)
     // gain = max(2, round(2*(1+10/50))) + 1(either curious) = max(2, round(2.4)) + 1 = 2+1 = 3
-    expect(result.relationships['npc-a→npc-b']?.affinity).toBe(3)
+    expect(result.relationships['npc-a-to-npc-b']?.affinity).toBe(3)
   })
 
   it('applies curiosity bonus: both NPCs curious >55 gives +2', () => {
@@ -300,7 +300,7 @@ describe('applyProximityGains', () => {
     }
     const result = applyProximityGains(state, ['npc-a', 'npc-b'])
     // compatScore = 10; gain = max(2, round(2.4)) + 2 = 2+2 = 4
-    expect(result.relationships['npc-a→npc-b']?.affinity).toBe(4)
+    expect(result.relationships['npc-a-to-npc-b']?.affinity).toBe(4)
   })
 })
 

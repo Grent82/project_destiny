@@ -213,7 +213,7 @@ describe('resolveDate', () => {
         },
       ],
       relationships: {
-        'player→npc-test': {
+        'player-to-npc-test': {
           affinity: 40,
           respect: 30,
           fear: 10,
@@ -225,7 +225,7 @@ describe('resolveDate', () => {
 
     const result = resolveDate(state, { dateId: 'date-123', outcomeIndex: 0 })
 
-    const relationship = result.relationships['player→npc-test']
+    const relationship = result.relationships['player-to-npc-test']
     expect(relationship.affinity).toBe(43) // 40 + 3
     expect(relationship.trust).toBe(27) // 25 + 2
   })
@@ -246,7 +246,7 @@ describe('resolveDate', () => {
         },
       ],
       relationships: {
-        'player→npc-test': {
+        'player-to-npc-test': {
           affinity: 40,
           respect: 30,
           fear: 10,
@@ -278,7 +278,7 @@ describe('resolveDate', () => {
         },
       ],
       relationships: {
-        'player→npc-test': {
+        'player-to-npc-test': {
           affinity: 40,
           respect: 30,
           fear: 10,
@@ -310,7 +310,7 @@ describe('resolveDate', () => {
         },
       ],
       relationships: {
-        'player→npc-test': {
+        'player-to-npc-test': {
           affinity: 98,
           respect: 95,
           fear: 5,
@@ -322,7 +322,7 @@ describe('resolveDate', () => {
 
     const result = resolveDate(state, { dateId: 'date-123', outcomeIndex: 0 })
 
-    expect(result.relationships['player→npc-test'].affinity).toBe(100) // Would be 108, clamped
+    expect(result.relationships['player-to-npc-test'].affinity).toBe(100) // Would be 108, clamped
   })
 
   it('advances RNG seed after resolution', () => {
@@ -341,7 +341,7 @@ describe('resolveDate', () => {
         },
       ],
       relationships: {
-        'player→npc-test': {
+        'player-to-npc-test': {
           affinity: 40,
           respect: 30,
           fear: 10,
@@ -385,7 +385,7 @@ describe('resolveDate', () => {
         },
       ],
       relationships: {
-        'player→npc-test': {
+        'player-to-npc-test': {
           affinity: 40,
           respect: 30,
           fear: 10,
@@ -398,8 +398,8 @@ describe('resolveDate', () => {
     const result1 = resolveDate(state, { dateId: 'date-123', outcomeIndex: 0 })
     const result2 = resolveDate(state, { dateId: 'date-123', outcomeIndex: 1 })
 
-    expect(result1.relationships['player→npc-test'].affinity).toBe(43) // outcome 0: +3
-    expect(result2.relationships['player→npc-test'].affinity).toBe(45) // outcome 1: +5
+    expect(result1.relationships['player-to-npc-test'].affinity).toBe(43) // outcome 0: +3
+    expect(result2.relationships['player-to-npc-test'].affinity).toBe(45) // outcome 1: +5
   })
 
   it('handles relationship axes that do not exist yet', () => {
@@ -422,7 +422,7 @@ describe('resolveDate', () => {
 
     const result = resolveDate(state, { dateId: 'date-123', outcomeIndex: 0 })
 
-    const relationship = result.relationships['player→npc-test']
+    const relationship = result.relationships['player-to-npc-test']
     expect(relationship.affinity).toBe(3)
     expect(relationship.trust).toBe(2)
   })

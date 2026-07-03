@@ -61,7 +61,7 @@ describe('applyWorldNpcSocialSimulation', () => {
 
     const result = applyWorldNpcSocialSimulation(state, () => 0)
     const outgoingKeys = Object.keys(result.relationships).filter(
-      (key) => key.startsWith('npc-garet-doyle→') && result.relationships[key]?.softBond,
+      (key) => key.startsWith('npc-garet-doyle-to-') && result.relationships[key]?.softBond,
     )
     const survivingSeededTargets = worldNpcIds.filter(
       (npcId) => result.relationships[buildRelationshipKey('npc-garet-doyle', npcId)],

@@ -20,7 +20,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
       ...makeState(),
       relationships: {
         ...makeState().relationships,
-        'player→npc-marion-vale': {
+        'player-to-npc-marion-vale': {
           affinity: 0,
           respect: 0,
           fear: 0,

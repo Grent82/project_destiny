@@ -531,7 +531,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   // Apply relationship deltas authored in the quest template
   const relationships = { ...nextState.relationships }
   for (const delta of template.rewardRelationshipDeltas) {
-    const key = `player→${delta.npcId}`
+    const key = `player-to-${delta.npcId}`
     const existing = relationships[key] ?? { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0 }
     relationships[key] = {
       affinity: Math.max(-100, Math.min(100, existing.affinity + (delta.affinity ?? 0))),

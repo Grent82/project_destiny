@@ -210,7 +210,7 @@ export const contentCatalog = {
     ])
   ),
   npcStartingRelationshipsByKey: new Map(
-    parsedNpcStartingRelationships.map((r) => [`${r.fromNpcId}→${r.toNpcId}`, r])
+    parsedNpcStartingRelationships.map((r) => [`${r.fromNpcId}-to-${r.toNpcId}`, r])
   ),
   bondBuyers: parsedBondBuyers,
   bondBuyersById: toMap(parsedBondBuyers),

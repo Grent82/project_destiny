@@ -151,8 +151,8 @@ describe('combat commands', () => {
       },
     }
     const result = concludeCombatEncounter(resolved)
-    const marionToIda = result.relationships['npc-marion-vale→npc-ida-rhys']
-    const idaToMarion = result.relationships['npc-ida-rhys→npc-marion-vale']
+    const marionToIda = result.relationships['npc-marion-vale-to-npc-ida-rhys']
+    const idaToMarion = result.relationships['npc-ida-rhys-to-npc-marion-vale']
     expect(marionToIda?.affinity).toBeGreaterThanOrEqual(8)
     expect(marionToIda?.respect).toBeGreaterThanOrEqual(5)
     expect(idaToMarion?.affinity).toBeGreaterThanOrEqual(8)
@@ -175,7 +175,7 @@ describe('combat commands', () => {
       },
     }
     const result = concludeCombatEncounter(resolved)
-    const marionToIda = result.relationships['npc-marion-vale→npc-ida-rhys']
+    const marionToIda = result.relationships['npc-marion-vale-to-npc-ida-rhys']
     expect(marionToIda?.affinity).toBeGreaterThanOrEqual(4)
     expect(marionToIda?.trust).toBeGreaterThanOrEqual(5)
     expect(result.activityLog.some((e) => /counts for something/i.test(e.message))).toBe(true)
@@ -198,8 +198,8 @@ describe('combat commands', () => {
       },
     }
     const result = concludeCombatEncounter(resolved)
-    expect(result.relationships['npc-marion-vale→npc-ida-rhys']).toBeUndefined()
-    expect(result.relationships['npc-ida-rhys→npc-marion-vale']).toBeUndefined()
+    expect(result.relationships['npc-marion-vale-to-npc-ida-rhys']).toBeUndefined()
+    expect(result.relationships['npc-ida-rhys-to-npc-marion-vale']).toBeUndefined()
   })
 
   it('fails a combat-linked quest by default when the squad is defeated', () => {

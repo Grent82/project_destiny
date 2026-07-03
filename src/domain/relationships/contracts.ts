@@ -26,9 +26,19 @@ export const relationshipAxesSchema = z.object({
 export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>
 export type SoftBondState = z.infer<typeof softBondStateSchema>
 
-/** Directed key: '{fromId}→{toId}'. fromId is the feeler; toId is the target. */
+/** Directed key: '{fromId}-to-{toId}'. fromId is the feeler; toId is the target. */
 export function buildRelationshipKey(fromId: string, toId: string): string {
-  return `${fromId}→${toId}`
+  return `${fromId}-to-${toId}`
+}
+
+/**
+ * Canonical relationship keys always contain the '-to-' separator. Legacy authored data used
+ * plain dashed keys (e.g. `player-npc-marion-vale`), which silently never matched
+ * `buildRelationshipKey()` lookups — authored starting bonds were dropped without error.
+ * See docs/analysis and destiny-rdfe.
+ */
+export function isCanonicalRelationshipKey(key: string): boolean {
+  return key.includes('-to-')
 }
 
 const EMPTY_AXES: RelationshipAxes = { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 0, intimacyStage: 'none' }

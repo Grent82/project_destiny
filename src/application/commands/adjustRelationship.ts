@@ -101,11 +101,11 @@ export function applyPassiveDrift(state: GameState): GameState {
     // Base drift interval from trust band
     const baseInterval = trust > 80 ? 1 : trust > 60 ? 2 : 3
 
-    // Parse NPC IDs from key (format: '{fromId}→{toId}')
-    const arrowIdx = key.indexOf('→')
+    // Parse NPC IDs from key (format: '{fromId}-to-{toId}')
+    const arrowIdx = key.indexOf('-to-')
     if (arrowIdx === -1) return
     const fromId = key.slice(0, arrowIdx)
-    const toId = key.slice(arrowIdx + '→'.length)
+    const toId = key.slice(arrowIdx + '-to-'.length)
 
     // Loyalty for both parties — player and unknown NPCs default to 50
     const fromLoyalty = fromId === 'player' ? DEFAULT_LOYALTY : (rosterTraitsMap.get(fromId)?.loyalty ?? DEFAULT_LOYALTY)

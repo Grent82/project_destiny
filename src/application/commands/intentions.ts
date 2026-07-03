@@ -622,8 +622,8 @@ const flirtWithHandler: IntentionHandler = {
     const targetEntry = state.roster
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
-        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]?.affinity ?? 0
-        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]?.affinity ?? 0
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
         return relB - relA
       })[0]
 
@@ -652,8 +652,8 @@ const courtRomanticallyHandler: IntentionHandler = {
     const targetEntry = state.roster
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
-        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]
-        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]
         const scoreA = (relA?.affinity ?? 0) + (relA?.trust ?? 0)
         const scoreB = (relB?.affinity ?? 0) + (relB?.trust ?? 0)
         return scoreB - scoreA
@@ -684,8 +684,8 @@ const visitLoverHandler: IntentionHandler = {
     const partnerEntry = state.roster
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
-        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]?.intimacyStage ?? 'none'
-        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]?.intimacyStage ?? 'none'
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.intimacyStage ?? 'none'
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.intimacyStage ?? 'none'
         const stages = ['none', 'affinity', 'attachment', 'committed']
         return stages.indexOf(relB) - stages.indexOf(relA)
       })[0]
@@ -693,8 +693,8 @@ const visitLoverHandler: IntentionHandler = {
     if (!partnerEntry) return state
 
     // For now, just apply a small affinity boost (could be expanded to travel logic)
-    const key = `${npc.npcId}→${partnerEntry.npcId}`
-    const reverseKey = `${partnerEntry.npcId}→${npc.npcId}`
+    const key = `${npc.npcId}-to-${partnerEntry.npcId}`
+    const reverseKey = `${partnerEntry.npcId}-to-${npc.npcId}`
     const rel = state.relationships[key] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
     const reverseRel = state.relationships[reverseKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
 
@@ -726,16 +726,16 @@ const jealousyCheckHandler: IntentionHandler = {
     let newState = state
 
     for (const target of state.roster.filter((r) => r.npcId !== npc.npcId)) {
-      const targetRel = state.relationships[`${npc.npcId}→${target.npcId}`]
+      const targetRel = state.relationships[`${npc.npcId}-to-${target.npcId}`]
       if (!targetRel || targetRel.affinity < 50) continue
 
       // Look for rivals
       for (const rival of state.roster.filter((r) => r.npcId !== npc.npcId && r.npcId !== target.npcId)) {
-        const rivalRel = state.relationships[`${target.npcId}→${rival.npcId}`]
+        const rivalRel = state.relationships[`${target.npcId}-to-${rival.npcId}`]
         if (!rivalRel || rivalRel.affinity < targetRel.affinity) continue
 
         // Rival detected - increase fear/decrease affinity toward rival
-        const jealousKey = `${npc.npcId}→${rival.npcId}`
+        const jealousKey = `${npc.npcId}-to-${rival.npcId}`
         const currentJealous = state.relationships[jealousKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
 
         newState = {
@@ -771,16 +771,16 @@ const spendTimeWithHandler: IntentionHandler = {
     const targetEntry = state.roster
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
-        const relA = state.relationships[`${npc.npcId}→${a.npcId}`]?.affinity ?? 0
-        const relB = state.relationships[`${npc.npcId}→${b.npcId}`]?.affinity ?? 0
+        const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
+        const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
         return relB - relA
       })[0]
 
     if (!targetEntry) return state
 
     // Small affinity and trust boost
-    const key = `${npc.npcId}→${targetEntry.npcId}`
-    const reverseKey = `${targetEntry.npcId}→${npc.npcId}`
+    const key = `${npc.npcId}-to-${targetEntry.npcId}`
+    const reverseKey = `${targetEntry.npcId}-to-${npc.npcId}`
     const rel = state.relationships[key] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
     const reverseRel = state.relationships[reverseKey] ?? { affinity: 0, trust: 0, respect: 0, fear: 0, loyalty: 0 }
 

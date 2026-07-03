@@ -313,7 +313,7 @@ describe('NpcDetailPanel — courtship loop', () => {
       currentDistrictId: 'district-harbor',
       relationships: {
         ...initialStateWithIda.relationships,
-        'player→npc-ida-rhys': {
+        'player-to-npc-ida-rhys': {
           affinity: 26,
           trust: 32,
           fear: 0,
@@ -403,14 +403,14 @@ describe('NpcDetailPanel — courtship loop', () => {
       ...initialStateWithIda,
       relationships: {
         ...initialStateWithIda.relationships,
-        'player→npc-ida-rhys': {
+        'player-to-npc-ida-rhys': {
           affinity: 18,
           trust: 28,
           fear: 10,
           respect: 0,
           loyalty: 0,
         },
-        'npc-ida-rhys→player': {
+        'npc-ida-rhys-to-player': {
           affinity: 0,
           trust: 0,
           fear: 0,
@@ -426,7 +426,7 @@ describe('NpcDetailPanel — courtship loop', () => {
     expect(screen.getByRole('tab', { name: 'Relations', selected: true })).toBeInTheDocument()
     expect(screen.getByText(/Courtship History/i)).toBeInTheDocument()
     expect(screen.getByText(/You make time to court Ida Rhys/i)).toBeInTheDocument()
-    expect(store.getState().game.relationships['player→npc-ida-rhys']?.intimacyStage).toBe('affinity')
+    expect(store.getState().game.relationships['player-to-npc-ida-rhys']?.intimacyStage).toBe('affinity')
   })
 
   it('opens Relations and shows deep-conversation aftermath after Talk Deeply', async () => {
@@ -435,14 +435,14 @@ describe('NpcDetailPanel — courtship loop', () => {
       ...initialStateWithIda,
       relationships: {
         ...initialStateWithIda.relationships,
-        'player→npc-ida-rhys': {
+        'player-to-npc-ida-rhys': {
           affinity: 12,
           trust: 22,
           fear: 4,
           respect: 3,
           loyalty: 0,
         },
-        'npc-ida-rhys→player': {
+        'npc-ida-rhys-to-player': {
           affinity: 4,
           trust: 6,
           fear: 0,
@@ -458,7 +458,7 @@ describe('NpcDetailPanel — courtship loop', () => {
     expect(screen.getByRole('tab', { name: 'Relations', selected: true })).toBeInTheDocument()
     expect(screen.getByText(/Deep Conversation History/i)).toBeInTheDocument()
     expect(screen.getByText(/You sit down with Ida Rhys to talk about/i)).toBeInTheDocument()
-    expect(store.getState().game.relationships['player→npc-ida-rhys']?.trust).toBeGreaterThan(22)
+    expect(store.getState().game.relationships['player-to-npc-ida-rhys']?.trust).toBeGreaterThan(22)
   })
 
   it('opens the date proposal modal from Spend Time when the bond is established', async () => {
@@ -467,7 +467,7 @@ describe('NpcDetailPanel — courtship loop', () => {
       ...initialStateWithIda,
       relationships: {
         ...initialStateWithIda.relationships,
-        'player→npc-ida-rhys': {
+        'player-to-npc-ida-rhys': {
           affinity: 26,
           trust: 32,
           fear: 0,
@@ -491,7 +491,7 @@ describe('NpcDetailPanel — courtship loop', () => {
       ...initialStateWithIda,
       relationships: {
         ...initialStateWithIda.relationships,
-        'player→npc-ida-rhys': {
+        'player-to-npc-ida-rhys': {
           affinity: 31,
           trust: 38,
           fear: 0,

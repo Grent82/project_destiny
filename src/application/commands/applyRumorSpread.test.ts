@@ -498,8 +498,8 @@ describe('applyRumorSpread', () => {
       const state = makeState({ day: 1, rumors: [], relationships: {} })
       const result = applyRumorSpread(state, alwaysPass)
 
-      const holstKey = 'player→npc-verek-holst'
-      const doyleKey = 'player→npc-garet-doyle'
+      const holstKey = 'player-to-npc-verek-holst'
+      const doyleKey = 'player-to-npc-garet-doyle'
 
       expect(result.relationships[holstKey]?.fear).toBe(5)
       expect(result.relationships[doyleKey]?.trust).toBe(-3)
@@ -509,17 +509,17 @@ describe('applyRumorSpread', () => {
       const state = makeState({ day: 1, rumors: [], relationships: {} })
       const result = applyRumorSpread(state, alwaysPass)
 
-      const vaelKey = 'player→npc-sister-vael'
+      const vaelKey = 'player-to-npc-sister-vael'
       expect(result.relationships[vaelKey]?.trust).toBeGreaterThan(0)
     })
 
     it('does not re-apply onAcquire effects on subsequent ticks', () => {
       const state = makeState({ day: 1, rumors: [], relationships: {} })
       const after1 = applyRumorSpread(state, alwaysPass)
-      const holstFearAfter1 = after1.relationships['player→npc-verek-holst']?.fear ?? 0
+      const holstFearAfter1 = after1.relationships['player-to-npc-verek-holst']?.fear ?? 0
 
       const after2 = applyRumorSpread(after1, alwaysPass)
-      const holstFearAfter2 = after2.relationships['player→npc-verek-holst']?.fear ?? 0
+      const holstFearAfter2 = after2.relationships['player-to-npc-verek-holst']?.fear ?? 0
 
       expect(holstFearAfter2).toBe(holstFearAfter1)
     })
@@ -541,7 +541,7 @@ describe('applyRumorSpread', () => {
       const rumorAfter = result.rumors.find((r) => r.id === 'rumor-valdris-eyes-d1')
       if (rumorAfter && rumorAfter.heat >= 60) {
         // onVerify should have fired
-        const sornKey = 'player→npc-enemy-lady-sorn'
+        const sornKey = 'player-to-npc-enemy-lady-sorn'
         expect(result.relationships[sornKey]?.fear).toBe(5)
         expect(rumorAfter.appliedRelationshipTriggers).toContain('onVerify')
       }
@@ -560,7 +560,7 @@ describe('applyRumorSpread', () => {
       const state = makeState({ day: 2, rumors: [alreadyHot], relationships: {} })
       const result = applyRumorSpread(state, alwaysPass)
 
-      const sornKey = 'player→npc-enemy-lady-sorn'
+      const sornKey = 'player-to-npc-enemy-lady-sorn'
       // Should not have fired again
       expect(result.relationships[sornKey]?.fear ?? 0).toBe(0)
     })
