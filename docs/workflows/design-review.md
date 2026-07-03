@@ -104,6 +104,7 @@ Bad changes:
 - only a hidden state flag changes
 - only a log line changes
 - only a test can prove it worked
+- an action looks available but the player cannot tell why it is blocked
 
 ### 6. Diegesis
 
@@ -197,6 +198,7 @@ Stop and critique harder if you see:
 
 - a page with multiple overlapping names for the same concept
 - a state change with no visible payoff
+- a visible action whose real blocker is hidden behind generic copy like "unavailable right now"
 - a clue that does not clearly point to its next conversation or place
 - a room, NPC, or item that reads like a static dossier
 - guidance links that exist only because the flow is otherwise confusing
@@ -211,6 +213,7 @@ Every player-facing bead should include:
 - player-visible acceptance
 - route clarity acceptance
 - post-action readability acceptance
+- action-availability acceptance: blocked actions name the actor, location/state blocker, and next step in player language
 
 Examples:
 - “The player can tell that the room has already been searched and still see unresolved clues.”

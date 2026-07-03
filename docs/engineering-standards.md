@@ -97,6 +97,25 @@ Code review should prioritize:
 - visible consequence after interaction
 - layer-appropriate information hierarchy in UI surfaces
 
+## UI Availability Truthfulness Rule
+
+If the UI renders a player action, the screen must be truthful about whether that action is currently possible.
+
+- Do not present an action as ordinarily clickable while hiding its real blocker in system knowledge only.
+- If an action is blocked, the UI must name the blocker concretely:
+  - who is unavailable or absent
+  - where the player is
+  - where the relevant NPC/place is
+  - what the player must do next
+- Avoid generic copy such as `Unavailable right now` when the system knows the real reason.
+- If one action in a group still works (`Speak`) while deeper actions do not (`Court`, `Spend Time`), say that explicitly.
+- If a button opens a submenu full of blocked actions, the blocker must already be visible at menu level, not only after a failed click.
+
+Examples:
+
+- Bad: `Court` is visible, click does nothing obvious, tooltip says `Unavailable right now.`
+- Good: `You are in Ironworks. Marion is at House Valdris in The Pale. Return to the house before asking for private time together.`
+
 Style issues matter less than structural violations.
 
 ## Refactoring Guidance
