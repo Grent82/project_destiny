@@ -13,6 +13,26 @@ import {
   npcFortifyPosition,
   npcCareForInjured,
 } from './npcAggressionActions'
+import { npcResourceGather, npcScavenge, npcSeekEmployment, npcHostGathering } from './npcSpecialActions'
+import {
+  npcConsolidatePower,
+  npcChallengeAuthority,
+  npcSocialize,
+  npcGossip,
+  npcMediateConflict,
+} from './npcLeadershipActions'
+import {
+  npcSpyOn,
+  npcGatherLeverage,
+  npcInterceptCommunication,
+  npcPeopleWatch,
+  npcScoutAhead,
+  npcInvestigateThreat,
+  npcSeekShelter,
+  npcPracticeSkill,
+  npcTrainSelf,
+  npcEscapeAttempt,
+} from './npcIntellectActions'
 import { createRng } from './seededRng'
 
 /**
@@ -407,6 +427,34 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'patrol-district',
   'fortify-position',
   'care-for-injured',
+  // destiny-ddqf (Special Actions): shop-for-goods stays excluded (blocked pending
+  // destiny-su15.3/su15.4 per its own bead notes); recruit-member stays excluded (no NPC
+  // group/squad runtime concept exists — see lead-group/support-group/form-squad below).
+  'resource-gather',
+  'scavenge',
+  'seek-employment',
+  'host-gathering',
+  // destiny-l2ex (Leadership & Social): lead-group/support-group stay excluded — same
+  // missing-group-system gap as recruit-member/form-squad.
+  'consolidate-power',
+  'socialize',
+  'gossip',
+  'mediate-conflict',
+  'challenge-authority',
+  // destiny-aoy7 (Intellect & Stealth): form-squad stays excluded (missing-group-system gap).
+  // escape-attempt stays excluded — isNpcBlockedFromIntention() unconditionally blocks captive
+  // NPCs from any intention, so it's structurally unreachable via this pipeline today even
+  // though npcEscapeAttempt itself is implemented and tested; unblocking it needs a deliberate
+  // carve-out in that guard, not a silent inclusion here.
+  'spy-on',
+  'gather-leverage',
+  'intercept-communication',
+  'people-watch',
+  'scout-ahead',
+  'investigate-threat',
+  'seek-shelter',
+  'practice-skill',
+  'train-self',
 ])
 
 /**
@@ -526,9 +574,10 @@ const scoutAheadHandler: IntentionHandler = {
     // Requires perception and survival
     return npc.attributes.perception >= 50 || npc.skills.survival >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would create scout activity
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcScoutAhead(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -542,10 +591,7 @@ const resourceGatherHandler: IntentionHandler = {
     // Requires survival skill
     return npc.skills.survival >= 40 || npc.attributes.endurance >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would add resources to stash
-    return state
-  },
+  execute: (npc, state) => npcResourceGather(state, npc.npcId),
 }
 
 /**
@@ -588,9 +634,10 @@ const investigateThreatHandler: IntentionHandler = {
     // Requires intellect and intrigue
     return npc.attributes.intellect >= 50 || npc.skills.intrigue >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would start investigation
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcInvestigateThreat(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -621,10 +668,7 @@ const seekEmploymentHandler: IntentionHandler = {
     // Requires negotiation skill
     return npc.skills.negotiation >= 30 || npc.traits.ambition >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would look for hire offers
-    return state
-  },
+  execute: (npc, state) => npcSeekEmployment(state, npc.npcId),
 }
 
 /**
@@ -637,10 +681,7 @@ const socializeHandler: IntentionHandler = {
     // Requires presence and empathy
     return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would create social interaction
-    return state
-  },
+  execute: (npc, state) => npcSocialize(state, npc.npcId),
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -970,10 +1011,7 @@ const trainSelfHandler: IntentionHandler = {
     // Requires discipline or ambition
     return npc.traits.discipline >= 40 || npc.traits.ambition >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would train, potentially gain skill XP
-    return state
-  },
+  execute: (npc, state) => npcTrainSelf(state, npc.npcId),
 }
 
 /**
@@ -999,9 +1037,10 @@ const practiceSkillHandler: IntentionHandler = {
     // Requires curiosity or discipline
     return npc.traits.curiosity >= 40 || npc.traits.discipline >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would practice skill, gain minor XP
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcPracticeSkill(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1019,10 +1058,7 @@ const peopleWatchHandler: IntentionHandler = {
     // Requires perception and curiosity
     return npc.attributes.perception >= 40 || npc.traits.curiosity >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would observe NPCs, potentially learn rumors
-    return state
-  },
+  execute: (npc, state) => npcPeopleWatch(state, npc.npcId),
 }
 
 /**
@@ -1035,10 +1071,7 @@ const gossipHandler: IntentionHandler = {
     // Requires performance or intrigue
     return npc.skills.performance >= 40 || npc.skills.intrigue >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would spread/gather gossip
-    return state
-  },
+  execute: (npc, state) => npcGossip(state, npc.npcId),
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1072,9 +1105,10 @@ const spyOnHandler: IntentionHandler = {
     // Requires intrigue and curiosity
     return npc.skills.intrigue >= 50 || npc.traits.curiosity >= 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would spy on target NPC
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcSpyOn(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1088,10 +1122,7 @@ const interceptCommunicationHandler: IntentionHandler = {
     // Requires intrigue and prudence
     return npc.skills.intrigue >= 50 || npc.traits.prudence >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would intercept communication
-    return state
-  },
+  execute: (npc, state) => npcInterceptCommunication(state, npc.npcId),
 }
 
 /**
@@ -1104,10 +1135,7 @@ const gatherLeverageHandler: IntentionHandler = {
     // Requires intrigue and ruthlessness
     return npc.skills.intrigue >= 40 || npc.traits.ruthlessness >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would gather blackmail material
-    return state
-  },
+  execute: (npc, state) => npcGatherLeverage(state, npc.npcId),
 }
 
 /**
@@ -1120,10 +1148,7 @@ const consolidatePowerHandler: IntentionHandler = {
     // Requires presence and ambition
     return npc.attributes.presence >= 50 && npc.traits.ambition >= 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would consolidate influence
-    return state
-  },
+  execute: (npc, state) => npcConsolidatePower(state, npc.npcId),
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1172,9 +1197,10 @@ const hostGatheringHandler: IntentionHandler = {
     // Requires performance and presence
     return npc.skills.performance >= 50 || npc.attributes.presence >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would host social gathering
-    return state
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcHostGathering(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1188,10 +1214,7 @@ const mediateConflictHandler: IntentionHandler = {
     // Requires empathy and negotiation
     return npc.traits.empathy >= 50 && npc.skills.negotiation >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would mediate between conflicting parties
-    return state
-  },
+  execute: (npc, state) => npcMediateConflict(state, npc.npcId),
 }
 
 /**
@@ -1204,10 +1227,7 @@ const challengeAuthorityHandler: IntentionHandler = {
     // Requires dominance and ruthlessness
     return npc.traits.dominance >= 50 || npc.traits.ruthlessness >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would challenge authority
-    return state
-  },
+  execute: (npc, state) => npcChallengeAuthority(state, npc.npcId),
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1224,10 +1244,7 @@ const scavengeHandler: IntentionHandler = {
     // Requires survival skill
     return npc.skills.survival >= 40
   },
-  execute: (_npc, state) => {
-    // Placeholder - would scavenge for resources
-    return state
-  },
+  execute: (npc, state) => npcScavenge(state, npc.npcId),
 }
 
 /**
@@ -1258,9 +1275,15 @@ const escapeAttemptHandler: IntentionHandler = {
     if (npc.captivityState?.status !== 'captive') return false
     return npc.attributes.agility >= 50 || npc.attributes.perception >= 50
   },
-  execute: (_npc, state) => {
-    // Placeholder - would attempt escape
-    return state
+  // npcEscapeAttempt is implemented and tested (see npcIntellectActions.ts), but 'escape-attempt'
+  // is deliberately NOT in WIRED_INTENTION_TYPES — isNpcBlockedFromIntention() unconditionally
+  // blocks captive NPCs from ANY intention, so this can never actually be generated/executed via
+  // the normal pipeline today. Wired here anyway so it's correct and ready once that guard is
+  // revisited, without silently reactivating anything (the allowlist gate still blocks it).
+  execute: (npc, state) => {
+    const rng = createRng(state.rngSeed)
+    const next = npcEscapeAttempt(state, npc.npcId, rng.rng)
+    return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
 }
 
@@ -1274,10 +1297,7 @@ const seekShelterHandler: IntentionHandler = {
     // Requires prudence or high stress
     return npc.traits.prudence >= 50 || npc.states.stress > 60
   },
-  execute: (_npc, state) => {
-    // Placeholder - would seek shelter
-    return state
-  },
+  execute: (npc, state) => npcSeekShelter(state, npc.npcId),
 }
 
 /**
