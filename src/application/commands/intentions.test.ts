@@ -7,8 +7,10 @@ import {
   executeAllNpcIntentions,
   processAllowlistedNpcIntentions,
   executeAllowlistedNpcIntentions,
+  WIRED_INTENTION_TYPES,
+  intentionHandlers,
 } from './intentions'
-import type { GameState, NpcRuntimeState } from '../../domain'
+import type { GameState, NpcRuntimeState, NpcIntentionType } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { NPC_IDS } from '../content/ids'
 import { idaRhysRosterEntry } from './testFixtures'
@@ -505,7 +507,7 @@ describe('intentions', () => {
       // Sanity check: this state really does produce a non-allowlisted intention via the real pipeline.
       const natural = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
       expect(natural).not.toBeNull()
-      expect(['visit-lover', 'spend-time-with']).not.toContain(natural?.type)
+      expect(WIRED_INTENTION_TYPES.has(natural!.type)).toBe(false)
 
       const result = processAllowlistedNpcIntentions(state)
 
@@ -540,8 +542,22 @@ describe('intentions', () => {
       const assigned = result.roster[0]!.currentIntention
 
       if (assigned) {
-        expect(['visit-lover', 'spend-time-with']).toContain(assigned.type)
+        expect(WIRED_INTENTION_TYPES.has(assigned.type)).toBe(true)
       }
+    })
+
+    it('every intention type that aliases an already-wired handler is also in the allowlist (regression: visit-romantic-partner aliased visitLoverHandler but was missing from WIRED_INTENTION_TYPES, so it could never actually fire even though the registry looked wired)', () => {
+      const wiredHandlerRefs = new Set([...WIRED_INTENTION_TYPES].map((type) => intentionHandlers[type]))
+      const missingAliases: string[] = []
+
+      for (const [type, handler] of Object.entries(intentionHandlers)) {
+        if (WIRED_INTENTION_TYPES.has(type as NpcIntentionType)) continue
+        if (wiredHandlerRefs.has(handler)) {
+          missingAliases.push(type)
+        }
+      }
+
+      expect(missingAliases).toEqual([])
     })
 
     it('does not overwrite an NPC that already has an intention', () => {

@@ -340,10 +340,15 @@ export function clearNpcIntention(state: GameState, npcId: string): GameState {
  * tryAdvanceIntimacyStage, checkJealousyForNpc with a proper RNG gate) and are now wired here too.
  * seek-intimacy/flirt-aggressively (destiny-1xd5/rq8u) are genuinely new, non-duplicate mechanics
  * (verified against applyHouseholdIntimacy.ts and engagePhysicalIntimacy.ts) added the same way.
+ * visit-romantic-partner is a distinct pipeline candidate (its own weight entries in pipeline.ts
+ * and mlWeights.ts) that resolves to the same visitLoverHandler as visit-lover in the registry —
+ * without being in this allowlist too, that candidate could never actually fire even though the
+ * registry looks wired for it.
  * All other placeholder handlers stay excluded — see destiny-7ekd's classification.
  */
-const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
+export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'visit-lover',
+  'visit-romantic-partner',
   'spend-time-with',
   'flirt-with',
   'court-romantically',
