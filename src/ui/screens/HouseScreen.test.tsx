@@ -211,6 +211,7 @@ describe('HouseScreen — domestic aftermath', () => {
           intimacyStage: 'attachment',
           summary: 'Sharing Quarters gives Marion Vale and Sanna Veld private ground to become more than field partners. The house begins to read them as a pair.',
           effects: ['Trust +3 each', 'Affinity +2 each', 'Loyalty +1 each'],
+          triggerType: 'quarters',
         },
       },
     })

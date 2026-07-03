@@ -7,6 +7,7 @@ import { calculateBaseCompatibility } from '../../domain/npc/compatibility'
 import type { Rng } from './seededRng'
 import { EVENT_IDS } from '../content/ids'
 import { enqueueTemplateEvent } from './eventInstances'
+import { isEligibleForHouseholdTogetherness } from './npcTogetherness'
 
 const COMPATIBILITY_THRESHOLD = -10
 const DOMINANCE_IMBALANCE_LIMIT = 40
@@ -75,13 +76,6 @@ function meetsAdvanceCondition(
   return true
 }
 
-function isEligible(npc: NpcRuntimeState): boolean {
-  if (npc.assignment === 'deployed') return false
-  if (npc.captivityState?.status === 'captive') return false
-  if (npc.captivityState?.status === 'missing') return false
-  if (npc.status === 'ward') return false
-  return true
-}
 
 /**
  * Check compatibility between two NPCs for pairing.
@@ -205,7 +199,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
   const policy = state.house.npcPairingPolicy
 
   // Roster NPCs (existing logic)
-  const rosterEligible = state.roster.filter(isEligible)
+  const rosterEligible = state.roster.filter((npc) => isEligibleForHouseholdTogetherness(npc, state.houseDistrictId))
 
   // World NPCs (new) - all are eligible
   const worldEligible = state.worldNpcStates

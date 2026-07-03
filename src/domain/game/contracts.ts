@@ -214,6 +214,10 @@ export const domesticRelationshipBeatSchema = z
     intimacyStage: intimacyStageSchema,
     summary: z.string().min(1),
     effects: z.array(z.string()).default([]),
+    // triggerType distinguishes living together (quarters) from working together (duty) —
+    // these are separate togetherness classes with separate consequences. See
+    // docs/analysis/roster-npc-spatial-contract-2026-07-03.md.
+    triggerType: z.enum(['quarters', 'duty']).default('quarters'),
   })
   .strict()
 export type DomesticRelationshipBeat = z.infer<typeof domesticRelationshipBeatSchema>

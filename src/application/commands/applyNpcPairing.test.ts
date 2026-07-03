@@ -130,6 +130,29 @@ describe('applyNpcPairing — stage progression', () => {
     expect(abEdge?.intimacyStage).toBeUndefined()
   })
 
+  it('skips a pair when one NPC is working away in another district (no current co-presence)', () => {
+    const npcA = npcBase({ npcId: 'npc-a', assignment: 'working', assignedDistrictId: 'district-harbor' })
+    const npcB = npcBase({ npcId: 'npc-b' })
+    const state = stateWithPair(npcA, npcB, { affinity: 35, trust: 25 })
+    expect(state.houseDistrictId).not.toBe('district-harbor')
+
+    const result = applyNpcPairing(state, noopRng)
+
+    const abEdge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
+    expect(abEdge?.intimacyStage).toBeUndefined()
+  })
+
+  it('still allows progression for an idle pair both at the house (co-presence without shared quarters)', () => {
+    const npcA = npcBase({ npcId: 'npc-a', roomAssignment: null })
+    const npcB = npcBase({ npcId: 'npc-b', roomAssignment: 'room-bureau' })
+    const state = stateWithPair(npcA, npcB, { affinity: 35, trust: 25 })
+
+    const result = applyNpcPairing(state, noopRng)
+
+    const abEdge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
+    expect(abEdge?.intimacyStage).toBe('affinity')
+  })
+
   it('sets dedup key in lastFiredDay on stage advance', () => {
     const npcA = npcBase({ npcId: 'npc-a' })
     const npcB = npcBase({ npcId: 'npc-b' })

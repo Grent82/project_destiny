@@ -111,4 +111,67 @@ describe('applyHouseholdIntimacy', () => {
     expect(result.house.lastDomesticRelationshipBeat).toBeNull()
     expect(result).toBe(state)
   })
+
+  it('does not fire a domestic beat for shared quarters when one NPC is working away in another district (no current co-presence)', () => {
+    const npcA = npcBase({ npcId: 'npc-a', roomAssignment: 'room-quarters' })
+    const npcB = npcBase({
+      npcId: 'npc-b',
+      roomAssignment: 'room-quarters',
+      assignment: 'working',
+      assignedDistrictId: 'district-harbor',
+    })
+    const state = stateWithPair(npcA, npcB)
+    expect(state.houseDistrictId).not.toBe('district-harbor')
+
+    const result = applyHouseholdIntimacy(state)
+
+    expect(result.house.lastDomesticRelationshipBeat).toBeNull()
+    expect(result).toBe(state)
+  })
+
+  it('creates a duty-routine beat — distinct and smaller than the domestic beat — for a pair sharing a duty post without shared quarters', () => {
+    const npcA = npcBase({ npcId: 'npc-a', name: 'Alpha', roomAssignment: 'room-quarters', dutyPostRoomId: 'room-kitchen' })
+    const npcB = npcBase({ npcId: 'npc-b', name: 'Beta', roomAssignment: null, dutyPostRoomId: 'room-kitchen' })
+    const state = {
+      ...stateWithPair(npcA, npcB),
+      house: {
+        ...initialGameStateSnapshot.house,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-kitchen' ? { ...room, state: 'intact' as const } : room,
+        ),
+      },
+    }
+
+    const result = applyHouseholdIntimacy(state)
+
+    const beat = result.house.lastDomesticRelationshipBeat
+    expect(beat).not.toBeNull()
+    expect(beat?.triggerType).toBe('duty')
+    expect(beat?.roomId).toBe('room-kitchen')
+    // Duty-routine camaraderie is a smaller effect than the domestic quarters beat.
+    expect(beat?.effects).toContain('Trust +1 each')
+    expect(beat?.effects).not.toContain('Trust +3 each')
+
+    const edge = result.relationships[buildRelationshipKey('npc-a', 'npc-b')]
+    expect(edge?.trust).toBe(51)
+  })
+
+  it('does not let a shared duty post fire the wrong (quarters) cooldown key', () => {
+    const npcA = npcBase({ npcId: 'npc-a', dutyPostRoomId: 'room-kitchen' })
+    const npcB = npcBase({ npcId: 'npc-b', dutyPostRoomId: 'room-kitchen' })
+    const state = {
+      ...stateWithPair(npcA, npcB),
+      house: {
+        ...initialGameStateSnapshot.house,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-kitchen' ? { ...room, state: 'intact' as const } : room,
+        ),
+      },
+    }
+
+    const result = applyHouseholdIntimacy(state)
+
+    expect(Object.keys(result.lastFiredDay).some((key) => key.startsWith('household-duty-'))).toBe(true)
+    expect(Object.keys(result.lastFiredDay).some((key) => key.startsWith('household-domestic-'))).toBe(false)
+  })
 })
