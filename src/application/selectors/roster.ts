@@ -133,6 +133,7 @@ function buildRosterDetail(root: RootState, npcId: string) {
     assignment: runtime.assignment,
     assignedDistrictId: runtime.assignedDistrictId,
     roomAssignment: runtime.roomAssignment,
+    dutyPostRoomId: runtime.dutyPostRoomId,
     activeTitle: runtime.activeTitle,
     factionAffinity,
     factionAffinityId: definition?.factionAffinityId ?? null,

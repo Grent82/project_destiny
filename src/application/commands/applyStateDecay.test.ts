@@ -209,6 +209,42 @@ describe('house room function bonuses', () => {
       expect(marionBonus!.states.morale).toBeGreaterThan(marionBaseline!.states.morale)
     })
 
+    it('keeps quarters lodging and a kitchen duty post independent — an NPC can have both at once', () => {
+      const marionId = 'npc-marion-vale'
+      const housedAndWorkingState = {
+        ...initialStateWithIda,
+        roster: initialStateWithIda.roster.map((npc) =>
+          npc.npcId === marionId
+            ? {
+                ...npc,
+                assignment: 'working' as const,
+                roomAssignment: 'room-quarters',
+                dutyPostRoomId: 'room-kitchen',
+                states: { ...npc.states, fatigue: 20, morale: 60 },
+              }
+            : npc,
+        ),
+        house: {
+          ...initialStateWithIda.house,
+          rooms: initialStateWithIda.house.rooms.map((room) =>
+            room.roomId === 'room-quarters' || room.roomId === 'room-kitchen'
+              ? { ...room, state: 'intact' as const }
+              : room,
+          ),
+        },
+      }
+
+      const result = applyStateDecay(housedAndWorkingState)
+      const marion = result.roster.find((n) => n.npcId === marionId)
+
+      // Quarters lodging bonus still applies even though the NPC also holds a duty post.
+      expect(marion!.states.fatigue).toBeLessThan(20)
+      expect(marion!.states.morale).toBeGreaterThan(60)
+      // Both fields survive independently — assigning a duty post did not clear quarters.
+      expect(marion!.roomAssignment).toBe('room-quarters')
+      expect(marion!.dutyPostRoomId).toBe('room-kitchen')
+    })
+
     it('does not treat non-residential assignments like bureau as quarters', () => {
       const marionId = 'npc-marion-vale'
       const bureauAssignedState = {

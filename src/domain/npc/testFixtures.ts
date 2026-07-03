@@ -16,6 +16,7 @@ export function createNpcRuntimeState(
     assignment: 'idle' as const,
     assignedDistrictId: null,
     roomAssignment: null,
+    dutyPostRoomId: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

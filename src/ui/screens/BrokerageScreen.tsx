@@ -197,11 +197,11 @@ export function BrokerageScreen() {
                             type="button"
                             onClick={() => {
                               if (entry.assignedToKitchen) {
-                                dispatch(gameActions.setNpcRoomAssignment({ npcId: entry.npcId, roomId: null }))
+                                dispatch(gameActions.setNpcDutyPost({ npcId: entry.npcId, roomId: null }))
                                 dispatch(gameActions.setNpcAssignment({ npcId: entry.npcId, assignment: 'idle' }))
                                 return
                               }
-                              dispatch(gameActions.setNpcRoomAssignment({ npcId: entry.npcId, roomId: 'room-kitchen' }))
+                              dispatch(gameActions.setNpcDutyPost({ npcId: entry.npcId, roomId: 'room-kitchen' }))
                               dispatch(gameActions.setNpcAssignment({ npcId: entry.npcId, assignment: 'working' }))
                             }}
                           >

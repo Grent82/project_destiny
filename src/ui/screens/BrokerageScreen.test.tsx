@@ -162,7 +162,7 @@ describe('BrokerageScreen', () => {
 
     const marion = store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')
     expect(marion?.assignment).toBe('working')
-    expect(marion?.roomAssignment).toBe('room-kitchen')
+    expect(marion?.dutyPostRoomId).toBe('room-kitchen')
     expect(screen.getByRole('button', { name: 'Remove from food service' })).toBeInTheDocument()
   })
 
@@ -272,7 +272,7 @@ describe('BrokerageScreen', () => {
           ? {
               ...npc,
               assignment: 'working' as const,
-              roomAssignment: 'room-kitchen',
+              dutyPostRoomId: 'room-kitchen',
               bondStatus: npc.bondStatus
                 ? { ...npc.bondStatus, alongsideFreeAssignmentDays: 6 }
                 : npc.bondStatus,

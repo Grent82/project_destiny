@@ -747,6 +747,11 @@ export const npcRuntimeStateSchema = z
     assignment: npcAssignmentSchema,
     assignedDistrictId: z.string().nullable().default(null),
     roomAssignment: entityIdSchema.nullable().default(null),
+    // dutyPostRoomId: where this NPC is presently stationed for in-house work (e.g. kitchen
+    // duty). Distinct from roomAssignment (lodging/quarters) — see
+    // docs/analysis/roster-npc-spatial-contract-2026-07-03.md. An NPC can have quarters and a
+    // duty post at the same time; assigning one must never overwrite the other.
+    dutyPostRoomId: entityIdSchema.nullable().default(null),
     activeTitle: entityIdSchema.nullable(),
     wagesOwedDays: nonNegativeIntegerSchema,
     contractWagePerDay: z.number().optional(),

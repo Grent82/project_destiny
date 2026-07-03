@@ -14,6 +14,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
     assignment: 'idle',
     assignedDistrictId: null,
     roomAssignment: null,
+    dutyPostRoomId: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

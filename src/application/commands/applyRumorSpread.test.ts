@@ -385,6 +385,7 @@ describe('applyRumorSpread', () => {
         assignment: districtId ? 'working' : 'idle',
         assignedDistrictId: districtId,
         roomAssignment: null,
+        dutyPostRoomId: null,
         activeTitle: null,
         wagesOwedDays: 0,
         trainingFocus: null,

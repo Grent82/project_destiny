@@ -32,6 +32,7 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   }),
   trainingFocus: null,
   roomAssignment: null,
+  dutyPostRoomId: null,
   attributes: {
     might: 54,
     agility: 42,

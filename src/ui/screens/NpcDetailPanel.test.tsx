@@ -511,6 +511,6 @@ describe('NpcDetailPanel — bond status visibility', () => {
 
     const ida = store.getState().game.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
     expect(ida?.assignment).toBe('working')
-    expect(ida?.roomAssignment).toBe('room-kitchen')
+    expect(ida?.dutyPostRoomId).toBe('room-kitchen')
   })
 })

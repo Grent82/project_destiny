@@ -25,6 +25,7 @@ describe('Intention Generation Pipeline', () => {
     assignment: 'idle',
     assignedDistrictId: null,
     roomAssignment: null,
+    dutyPostRoomId: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

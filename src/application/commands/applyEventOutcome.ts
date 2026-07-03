@@ -349,6 +349,7 @@ export function applyOutcomes(
                 wagesOwedDays: 0,
                 trainingFocus: null,
                 roomAssignment: null,
+                dutyPostRoomId: null,
                 attributes: { ...npcDef.baseAttributes },
                 skills: { ...npcDef.startingSkills },
                 traits: { ...npcDef.startingTraits },

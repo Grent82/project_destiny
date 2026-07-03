@@ -55,6 +55,7 @@ export function formalizeHeir(
     wagesOwedDays: 0,
     trainingFocus: null,
     roomAssignment: null,
+    dutyPostRoomId: null,
     attributes,
     skills: skills as NpcRuntimeState['skills'],
     traits,

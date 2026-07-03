@@ -189,7 +189,7 @@ describe('selectEconomyOverview', () => {
           ? {
               ...npc,
               assignment: 'working' as const,
-              roomAssignment: 'room-kitchen',
+              dutyPostRoomId: 'room-kitchen',
               bondStatus: {
                 holderId: 'player',
                 contractValue: 55,

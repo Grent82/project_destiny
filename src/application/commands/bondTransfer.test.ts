@@ -22,6 +22,7 @@ function bondedNpc(overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
     assignment: 'working' as const,
     assignedDistrictId: null,
     roomAssignment: null,
+    dutyPostRoomId: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

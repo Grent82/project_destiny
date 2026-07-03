@@ -93,7 +93,7 @@ export function buildCanonicalFoodProducers(state: GameState): Producer[] {
       ? state.roster.filter(
           (npc) =>
             npc.assignment === 'working' &&
-            npc.roomAssignment === 'room-kitchen' &&
+            npc.dutyPostRoomId === 'room-kitchen' &&
             npc.bondStatus?.holderId === 'player' &&
             npc.bondStatus?.ownerType === 'player',
         ).length

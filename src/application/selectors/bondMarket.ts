@@ -255,7 +255,7 @@ export const selectBrokerageOverview = createSelector(
         marketValue: npc.bondStatus!.marketValue,
         forSale: npc.bondStatus!.forSale,
         assignedToKitchen:
-          npc.assignment === 'working' && npc.roomAssignment === 'room-kitchen',
+          npc.assignment === 'working' && npc.dutyPostRoomId === 'room-kitchen',
         conditionLabel: describeConditionLabel(npc.states.health),
         saleQuotes: npc.bondStatus!.forSale
           ? contentCatalog.bondBuyers.map((buyer) => ({

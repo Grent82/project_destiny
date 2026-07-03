@@ -17,6 +17,7 @@ const createNpcWithConfiscatedState = (captivityStatus: 'rescued' | 'returned'):
   contractWagePerDay: 5,
   trainingFocus: null,
   roomAssignment: null,
+  dutyPostRoomId: null,
   attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
   skills: { melee: 40, ranged: 30, medicine: 20, administration: 25, engineering: 15, negotiation: 35, survival: 25, security: 20, crafting: 15, performance: 10, academics: 20, intrigue: 30 },
   traits: { discipline: 50, ambition: 40, empathy: 60, ruthlessness: 30, prudence: 55, curiosity: 45, dominance: 35, loyalty: 70, vanity: 20, zeal: 25 },

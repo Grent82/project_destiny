@@ -169,7 +169,7 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
       (npc) =>
         npc.npcId === detail.npcId &&
         npc.assignment === 'working' &&
-        npc.roomAssignment === 'room-kitchen',
+        npc.dutyPostRoomId === 'room-kitchen',
     ),
   )
 
@@ -229,11 +229,11 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
                 type="button"
                 onClick={() => {
                   if (isAssignedToKitchenService) {
-                    dispatch(gameActions.setNpcRoomAssignment({ npcId: detail.npcId, roomId: null }))
+                    dispatch(gameActions.setNpcDutyPost({ npcId: detail.npcId, roomId: null }))
                     dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: 'idle' }))
                     return
                   }
-                  dispatch(gameActions.setNpcRoomAssignment({ npcId: detail.npcId, roomId: 'room-kitchen' }))
+                  dispatch(gameActions.setNpcDutyPost({ npcId: detail.npcId, roomId: 'room-kitchen' }))
                   dispatch(gameActions.setNpcAssignment({ npcId: detail.npcId, assignment: 'working' }))
                 }}
               >
