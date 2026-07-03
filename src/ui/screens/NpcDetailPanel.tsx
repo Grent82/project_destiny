@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState, selectNpcSocialReachability } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -152,11 +152,6 @@ interface NpcDetailPanelProps {
 }
 
 const PLAYER_ASSIGNMENTS = ['idle', 'working', 'training', 'recovering'] as const
-
-function formatDistrictName(districtId: string | null | undefined): string {
-  if (!districtId) return 'an unknown district'
-  return contentCatalog.districtsById.get(districtId)?.name ?? districtId.replace('district-', '').replace(/-/g, ' ')
-}
 
 function BondStatusSection({ detail }: { detail: NpcDetail }) {
   const dispatch = useAppDispatch()
@@ -681,40 +676,18 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const giftHistory = useAppSelector(selectGiftHistoryWithPlayer(detail.npcId))
   const courtshipHistory = useAppSelector(selectCourtshipHistoryWithPlayer(detail.npcId))
   const deepConversationHistory = useAppSelector(selectDeepConversationHistoryWithPlayer(detail.npcId))
-  const currentDistrictId = useAppSelector((state) => state.game.currentDistrictId)
-  const houseDistrictId = useAppSelector((state) => state.game.houseDistrictId)
   const giftItems = useAppSelector(selectGiftInventoryItems)
+  const reachability = useAppSelector(selectNpcSocialReachability(detail.npcId))
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const isAtHouse = currentDistrictId === houseDistrictId
-  const playerDistrictLabel = formatDistrictName(currentDistrictId)
-  const houseDistrictLabel = formatDistrictName(houseDistrictId)
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
   const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
-  const deploymentDistrictLabel = detail.assignedDistrictId ? formatDistrictName(detail.assignedDistrictId) : null
-  const socialPresenceReason =
-    detail.assignment === 'deployed'
-      ? `${detail.name} is currently deployed${deploymentDistrictLabel ? ` in ${deploymentDistrictLabel}` : ' in the field'}. Deeper conversations and shared time have to wait until they return.`
-      : detail.assignment === 'transferred'
-        ? `${detail.name} has been transferred away and is no longer available for private time with the house.`
-        : detail.assignedDistrictId && detail.assignedDistrictId !== houseDistrictId
-          ? `${detail.name} is currently occupied in ${formatDistrictName(detail.assignedDistrictId)}. You are in ${playerDistrictLabel}. Meet in person before asking for private time.`
-          : !isAtHouse
-            ? `You are in ${playerDistrictLabel}. ${detail.name} is at House Valdris in ${houseDistrictLabel}. Return to the house before asking for private time together.`
-            : null
-  const canUsePrivateSocialActions = socialPresenceReason === null
-  const canOfferGift =
-    canUsePrivateSocialActions &&
-    detail.assignment !== 'deployed'
+  const canUsePrivateSocialActions = reachability.canUsePrivateActions
+  const socialPresenceReason = reachability.blockerMessage
+  const canOfferGift = canUsePrivateSocialActions
   const giftUnavailableReason =
-    detail.assignment === 'deployed'
-      ? `${detail.name} is away on deployment. Bring the gift once they return.`
-      : socialPresenceReason
-        ? socialPresenceReason
-      : giftItems.length === 0
-        ? 'Carry a gift item in player inventory to offer one here.'
-        : null
+    socialPresenceReason ?? (giftItems.length === 0 ? 'Carry a gift item in player inventory to offer one here.' : null)
 
   const deepConversationTitle = canUsePrivateSocialActions
     ? 'Share a meaningful conversation about values, fears, dreams, or past. This action does not consume time slots.'
@@ -848,7 +821,13 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               <section className="muster-action-menu" role="group" aria-label="Talk options">
                 <div className="muster-action-row">
                   {dialogueTree && (
-                    <button className="action-button action-button--primary" type="button" onClick={handleTalk}>
+                    <button
+                      className="action-button action-button--primary"
+                      type="button"
+                      onClick={handleTalk}
+                      disabled={!reachability.canConverseRemotely}
+                      title={reachability.canConverseRemotely ? 'Speak with this NPC.' : socialPresenceReason ?? 'Speak is unavailable right now.'}
+                    >
                       Speak
                     </button>
                   )}
@@ -874,7 +853,9 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
                   {canUsePrivateSocialActions
                     ? 'Talk Deeply and Court do not consume time slots.'
-                    : 'Speak still works from here. Deeper talk and courtship require meeting in person.'}
+                    : reachability.canConverseRemotely
+                      ? 'Speak still works from here. Deeper talk and courtship require meeting in person.'
+                      : 'No conversation is possible right now.'}
                 </p>
               </section>
             )}

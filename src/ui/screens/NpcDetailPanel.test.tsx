@@ -342,6 +342,44 @@ describe('NpcDetailPanel — courtship loop', () => {
     )
   })
 
+  it('blocks all conversation, not just private actions, for a captive NPC', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel({
+      ...initialStateWithIda,
+      roster: initialStateWithIda.roster.map((npc) =>
+        npc.npcId === 'npc-ida-rhys'
+          ? {
+              ...npc,
+              captivityState: {
+                status: 'captive' as const,
+                holderId: 'holder-001',
+                siteId: 'site-1',
+                roomId: 'room-1',
+                regime: 'guarded' as const,
+                condition: 'hurt' as const,
+                compliance: 'resistant' as const,
+                bondType: 'fear' as const,
+                timeHeldDays: 2,
+                lastTransferDay: null,
+                questTag: null,
+                confiscatedItems: [],
+                confiscatedMoney: null,
+                confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+              },
+            }
+          : npc,
+      ),
+    })
+
+    expect(screen.getByText(/held captive/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.getByRole('button', { name: 'Speak' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Talk Deeply' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Court' })).toBeDisabled()
+    expect(screen.getByText(/No conversation is possible right now/i)).toBeInTheDocument()
+  })
+
   it('closes Talk and Spend Time when the same menu button is clicked twice', async () => {
     const user = userEvent.setup()
     renderIdaPanel()
