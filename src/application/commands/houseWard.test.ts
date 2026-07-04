@@ -199,9 +199,14 @@ describe('houseWard commands', () => {
       }
       const baseNpc = {
         name: 'Tommy',
+        npcType: 'roster' as const,
+        playerRosterMember: true,
         status: 'citizen' as const,
         assignment: 'idle' as const,
         assignedDistrictId: null,
+        worldDisposition: null,
+        lastContactDay: null,
+        locationOverride: null,
         roomAssignment: null,
         dutyPostRoomId: null,
         activeTitle: null,
@@ -247,9 +252,14 @@ describe('houseWard commands', () => {
       }
       const result = formalizeAdultWard(state, 'npc-child', {
         name: 'Tommy',
+        npcType: 'roster' as const,
+        playerRosterMember: true,
         status: 'ward' as const,
         assignment: 'idle' as const,
         assignedDistrictId: null,
+        worldDisposition: null,
+        lastContactDay: null,
+        locationOverride: null,
         roomAssignment: null,
         dutyPostRoomId: null,
         activeTitle: null,
@@ -286,9 +296,14 @@ describe('houseWard commands', () => {
       const state = initialGameStateSnapshot
       const result = formalizeAdultWard(state, 'non-existent', {
         name: 'Test',
+        npcType: 'roster' as const,
+        playerRosterMember: true,
         status: 'citizen' as const,
         assignment: 'idle' as const,
         assignedDistrictId: null,
+        worldDisposition: null,
+        lastContactDay: null,
+        locationOverride: null,
         roomAssignment: null,
         dutyPostRoomId: null,
         activeTitle: null,
@@ -333,9 +348,14 @@ describe('houseWard commands', () => {
       }
       const baseNpc = {
         name: 'Tommy',
+        npcType: 'roster' as const,
+        playerRosterMember: true,
         status: 'citizen' as const,
         assignment: 'idle' as const,
         assignedDistrictId: null,
+        worldDisposition: null,
+        lastContactDay: null,
+        locationOverride: null,
         roomAssignment: null,
         dutyPostRoomId: null,
         activeTitle: null,

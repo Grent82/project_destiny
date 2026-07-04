@@ -290,11 +290,18 @@ export const authoredMemorySchema = z
 
 export type AuthoredMemory = z.infer<typeof authoredMemorySchema>
 
+/**
+ * The kind of NPC (content classification, authored in the definition). This is distinct from
+ * runtime player-roster membership — see npcRuntimeStateSchema.playerRosterMember and
+ * docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1.
+ */
+export const npcTypeSchema = z.enum(['roster', 'story', 'world', 'enemy'])
+
 export const npcDefinitionSchema = z
   .object({
     id: entityIdSchema,
     name: z.string().min(1),
-    npcType: z.enum(['roster', 'story', 'world', 'enemy']).default('roster'),
+    npcType: npcTypeSchema.default('roster'),
     districtId: entityIdSchema.optional(),
     description: z.string().optional(),
     origin: z.string().min(1),
@@ -777,9 +784,23 @@ export const npcRuntimeStateSchema = z
   .object({
     npcId: entityIdSchema,
     name: z.string().min(1),
+    // Content kind, mirrors the definition. Stored on the runtime state so the unified person list
+    // can be filtered/iterated by kind. See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1.
+    npcType: npcTypeSchema.default('roster'),
+    // Runtime relationship: does this person work for the player? This is the SOLE replacement for the
+    // old "is in the state.roster array" signal — selectRoster keys on this, NOT on npcType. A world
+    // NPC can be recruited (playerRosterMember:true) and a dismissed operative becomes an ordinary
+    // world NPC (playerRosterMember:false) without vanishing. Default true keeps existing (all-roster)
+    // saves valid; recruit/migration/hydration set it explicitly.
+    playerRosterMember: z.boolean().default(true),
     status: npcStatusSchema,
     assignment: npcAssignmentSchema,
     assignedDistrictId: z.string().nullable().default(null),
+    // World-NPC ambient fields (null for player-roster persons), folded in from the deleted
+    // worldNpcRuntimeStateSchema during the unify migration. See contract doc §4.1.
+    worldDisposition: worldNpcDispositionSchema.nullable().default(null),
+    lastContactDay: z.number().int().nonnegative().nullable().default(null),
+    locationOverride: z.string().nullable().default(null),
     roomAssignment: entityIdSchema.nullable().default(null),
     // dutyPostRoomId: where this NPC is presently stationed for in-house work (e.g. kitchen
     // duty). Distinct from roomAssignment (lodging/quarters) — see
@@ -832,7 +853,7 @@ export type NpcMemoryEntry = z.infer<typeof npcMemoryEntrySchema>
 export type NpcMotivation = z.infer<typeof npcMotivationSchema>
 export type NpcQuirk = z.infer<typeof npcQuirkSchema>
 export type QuirkTag = z.infer<typeof quirkTagSchema>
-export type NpcType = z.infer<typeof npcDefinitionSchema>['npcType']
+export type NpcType = z.infer<typeof npcTypeSchema>
 export type NpcRuntimeState = z.infer<typeof npcRuntimeStateSchema>
 export type NpcStatus = z.infer<typeof npcStatusSchema>
 export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>

@@ -18,6 +18,11 @@ function bondedNpc(overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
   return {
     npcId: 'npc-test-bond',
     name: 'Sable',
+    npcType: 'roster' as const,
+    playerRosterMember: true,
+    worldDisposition: null,
+    lastContactDay: null,
+    locationOverride: null,
     status: 'prisoner' as const,
     assignment: 'working' as const,
     assignedDistrictId: null,

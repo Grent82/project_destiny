@@ -63,9 +63,18 @@ function buildRosterEntryFromOffer(
   return {
     npcId,
     name: npcDef.name,
+    // Content kind from the definition; recruiting does not change what KIND of person they are.
+    npcType: npcDef.npcType,
+    // Recruiting is exactly what makes someone a player-roster member (the sole discriminator now
+    // that persons no longer live in a separate `roster` array). See unified-npc-runtime-contract §2.1.
+    playerRosterMember: true,
     status: npcDef.status,
     assignment: 'idle' as const,
     assignedDistrictId: null,
+    // World-ambient fields do not apply to a player-roster member.
+    worldDisposition: null,
+    lastContactDay: null,
+    locationOverride: null,
     activeTitle: null,
     wagesOwedDays: 0,
     contractWagePerDay: wagePerDay,

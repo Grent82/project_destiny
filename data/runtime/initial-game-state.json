@@ -109,6 +109,8 @@
     {
       "npcId": "npc-marion-vale",
       "name": "Marion Vale",
+      "npcType": "roster",
+      "playerRosterMember": true,
       "status": "retainer",
       "assignment": "idle",
       "activeTitle": null,

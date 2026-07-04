@@ -342,9 +342,16 @@ export function applyOutcomes(
               const newEntry = {
                 npcId: addNpcId,
                 name: npcDef.name,
+                // Kind from the definition; joining the house does not change what kind of person they are.
+                npcType: npcDef.npcType,
+                // They come to stay in the house → a player-roster member. See unified-npc-runtime-contract §2.1.
+                playerRosterMember: true,
                 status: npcDef.status,
                 assignment: 'idle' as const,
                 assignedDistrictId: null,
+                worldDisposition: null,
+                lastContactDay: null,
+                locationOverride: null,
                 activeTitle: null,
                 wagesOwedDays: 0,
                 trainingFocus: null,

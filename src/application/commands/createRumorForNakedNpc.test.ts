@@ -58,6 +58,11 @@ function createNakedNpc(npcId: string, name: string): NpcRuntimeState {
   return {
     npcId,
     name,
+    npcType: 'roster',
+    playerRosterMember: true,
+    worldDisposition: null,
+    lastContactDay: null,
+    locationOverride: null,
     status: 'citizen',
     assignment: 'idle',
     assignedDistrictId: null,

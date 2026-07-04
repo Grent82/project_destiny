@@ -39,16 +39,34 @@ the world simulation for non-roster NPCs is a thinner, non-personality-driven pa
 - `availableForHire` is **unchanged** and **out of scope** — these are pre-recruitment *offers*, not
   persons. A `HireOffer` only becomes a person (an `npcRuntimeStates` entry) when accepted. See §8.
 - `roster` survives **only as a derived selector** `selectRoster(state)` = entries with
-  `npcType === 'roster'`. UI/domain code that means "the player's recruited team" uses the selector,
-  not the raw list.
+  `playerRosterMember === true`. UI/domain code that means "the player's recruited team" uses the
+  selector, not the raw list.
 
-### 2.1 What distinguishes a person now
+### 2.1 What distinguishes a person now — TWO independent discriminators
 
-- `npcType: 'roster' | 'world' | 'story' | 'enemy'` (already on the *definition*, npc/contracts.ts:297).
-  Mirror it onto the runtime state (new field, see §4).
+**CRITICAL (owner directive 2026-07-04): do NOT conflate "kind of NPC" with "works for the player".**
+Verified in code: today "on the player roster" is defined *solely* by membership in the `state.roster`
+array — there is no field for it, and `recruitNpc` does not copy `npcType` onto the runtime entry (the
+runtime state has no `npcType` at all today). `npcType` is read at runtime only on *definitions*
+(`contentCatalog`), and `generateHireOffers` gates offers to `npcType==='roster'`, which is *why*
+"npcType roster" and "recruited" happen to coincide today. They must be split explicitly, or the merge
+mixes world NPCs into the player roster.
+
+- `npcType: 'roster' | 'world' | 'story' | 'enemy'` — the **content kind**, from the definition
+  (npc/contracts.ts:297). Stored on runtime state (new field, §4) so the heterogeneous list can be
+  filtered/iterated by kind (generation, decay, district/world selectors). Set once at
+  hydration/recruitment from the def; never mutated casually.
+- `playerRosterMember: boolean` — the **runtime relationship**: does this person work for the player?
+  This is the *sole* replacement for the old "is in the `roster` array" signal. `recruitNpc` sets it
+  `true`; leaving the player's service sets it `false` (and the person becomes an ordinary world NPC,
+  it does not vanish). `selectRoster` and roster-slot capacity logic key on THIS, never on `npcType`.
 - `captivityState?: CaptivityState` (already an optional field on `NpcRuntimeState`, :805). A captive
   is any runtime NPC whose `captivityState.status === 'captive'`. This becomes the **single** home
   for captivity data; the `npcCaptivityStates` record is folded in and deleted.
+
+A recruited person is `playerRosterMember:true` regardless of `npcType` — so a world NPC can be hired
+and correctly counts as roster, and an NPC dismissed from service correctly stops counting while
+keeping their `npcType`.
 
 ### 2.2 Capability gating (captives stay captive)
 
@@ -77,12 +95,21 @@ Capability is decided by a single pure predicate, extending the existing gate:
 Add to `npcRuntimeStateSchema` (all optional/defaulted so existing roster entries stay valid):
 
 ```ts
-npcType: npcTypeSchema.default('roster'),          // role, mirrors the definition
+npcType: npcTypeSchema.default('roster'),          // content kind, mirrors the definition
+playerRosterMember: z.boolean().default(true),     // runtime relationship: works for the player.
+                                                   // default true = backward-compatible: today every
+                                                   // runtime person is a player-roster member (they
+                                                   // live in state.roster). Factory/migration/recruit
+                                                   // set it explicitly; world/captive hydration = false.
 // world-only ambient fields (null/absent for roster persons):
 worldDisposition: worldNpcDispositionSchema.nullable().default(null),
 lastContactDay: z.number().int().nonnegative().nullable().default(null),
 locationOverride: z.string().nullable().default(null),
 ```
+
+`selectRoster` = `npcRuntimeStates.filter(n => n.playerRosterMember)`. Roster-slot capacity
+(`renownLevel.rosterSlots` vs. `state.roster.length`, recruitment.ts:139) must count
+`playerRosterMember === true`, NOT the whole list — fix in the consumer-migration/rename phase.
 
 `npcTypeSchema` must be extracted as a named export (currently inline at :297 as
 `z.enum(['roster','story','world','enemy'])`).

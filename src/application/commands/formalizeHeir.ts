@@ -48,9 +48,15 @@ export function formalizeHeir(
   const newNpc: NpcRuntimeState = {
     npcId: heirId,
     name: heir.name,
+    // A formalized heir is a household member of the player's line.
+    npcType: 'roster',
+    playerRosterMember: true,
     status: 'family',
     assignment: 'idle',
     assignedDistrictId: null,
+    worldDisposition: null,
+    lastContactDay: null,
+    locationOverride: null,
     activeTitle: null,
     wagesOwedDays: 0,
     trainingFocus: null,

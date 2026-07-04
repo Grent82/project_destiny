@@ -381,6 +381,11 @@ describe('applyRumorSpread', () => {
       return {
         npcId,
         name: 'Test NPC',
+        npcType: 'roster',
+        playerRosterMember: true,
+        worldDisposition: null,
+        lastContactDay: null,
+        locationOverride: null,
         status: 'mercenary',
         assignment: districtId ? 'working' : 'idle',
         assignedDistrictId: districtId,

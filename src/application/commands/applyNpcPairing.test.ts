@@ -13,6 +13,11 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
   return {
     npcId: 'npc-a',
     name: 'Alpha',
+    npcType: 'roster',
+    playerRosterMember: true,
+    worldDisposition: null,
+    lastContactDay: null,
+    locationOverride: null,
     status: 'mercenary',
     assignment: 'idle',
     assignedDistrictId: null,

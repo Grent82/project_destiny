@@ -11,9 +11,14 @@ import { NPC_IDS } from '../content/ids'
 export const idaRhysRosterEntry: NpcRuntimeState = {
   npcId: NPC_IDS.IDA_RHYS,
   name: 'Ida Rhys',
+  npcType: 'roster',
+  playerRosterMember: true,
   status: 'mercenary',
   assignment: 'idle',
   assignedDistrictId: null,
+  worldDisposition: null,
+  lastContactDay: null,
+  locationOverride: null,
   activeTitle: null,
   wagesOwedDays: 0,
   contractWagePerDay: calculateMercenaryContractWage({

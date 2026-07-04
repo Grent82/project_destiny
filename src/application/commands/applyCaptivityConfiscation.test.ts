@@ -9,6 +9,11 @@ import { NPC_IDS } from '../content/ids'
 const createNpcWithItems = (captivityStatus?: 'captive' | 'missing' | 'rescued' | 'returned'): NpcRuntimeState => ({
   npcId: NPC_IDS.MARION_VALE,
   name: 'Marion Vale',
+  npcType: 'roster',
+  playerRosterMember: true,
+  worldDisposition: null,
+  lastContactDay: null,
+  locationOverride: null,
   status: 'mercenary',
   assignment: 'idle',
   assignedDistrictId: null,
