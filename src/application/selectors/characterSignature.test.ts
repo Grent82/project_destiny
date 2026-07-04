@@ -3,13 +3,13 @@ import { selectCharacterSignature } from './characterSignature'
 import type { RootState } from '../store/gameStore'
 import { initialStateWithIda } from '../commands/testFixtures'
 
-function makeState(overrides: Partial<typeof initialStateWithIda['roster'][0]['states']> = {}): RootState {
-  const baseRoster = initialStateWithIda.roster.map((r) =>
+function makeState(overrides: Partial<typeof initialStateWithIda['npcRuntimeStates'][0]['states']> = {}): RootState {
+  const baseRoster = initialStateWithIda.npcRuntimeStates.map((r) =>
     r.npcId === 'npc-ida-rhys'
       ? { ...r, states: { ...r.states, ...overrides } }
       : r,
   )
-  return { game: { ...initialStateWithIda, roster: baseRoster } } as unknown as RootState
+  return { game: { ...initialStateWithIda, npcRuntimeStates: baseRoster } } as unknown as RootState
 }
 
 describe('selectCharacterSignature', () => {

@@ -116,14 +116,14 @@ function applyHealEffect(
   itemName: string,
 ): GameState {
   if (targetNpcId) {
-    const npcIndex = state.roster.findIndex((n) => n.npcId === targetNpcId)
+    const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === targetNpcId)
     if (npcIndex !== -1) {
-      const npc = state.roster[npcIndex]!
+      const npc = state.npcRuntimeStates[npcIndex]!
       const newHealth = Math.min(100, npc.states.health + value)
       const updatedNpc = { ...npc, states: { ...npc.states, health: newHealth } }
-      const targetName = state.roster.find((n) => n.npcId === targetNpcId)?.name ?? targetNpcId
+      const targetName = state.npcRuntimeStates.find((n) => n.npcId === targetNpcId)?.name ?? targetNpcId
       return appendActivityLogEntry(
-        { ...state, roster: state.roster.map((n, i) => i === npcIndex ? updatedNpc : n) },
+        { ...state, npcRuntimeStates: state.npcRuntimeStates.map((n, i) => i === npcIndex ? updatedNpc : n) },
         'system',
         `Used ${itemName} on ${targetName}. +${value} health.`,
       )
@@ -158,9 +158,9 @@ function applyStatModEffect(
   // duration is reserved for future use - stat_mod effects can have duration in the schema
   void duration
   if (targetNpcId) {
-    const npcIndex = state.roster.findIndex((n) => n.npcId === targetNpcId)
+    const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === targetNpcId)
     if (npcIndex !== -1) {
-      const npc = state.roster[npcIndex]!
+      const npc = state.npcRuntimeStates[npcIndex]!
       const statMap: Record<string, keyof typeof npc.states> = {
         fatigue: 'fatigue',
         stress: 'stress',
@@ -176,7 +176,7 @@ function applyStatModEffect(
         const updated = Math.max(0, Math.min(100, current + value))
         const updatedNpc = { ...npc, states: { ...npc.states, [statKey]: updated } }
         return appendActivityLogEntry(
-          { ...state, roster: state.roster.map((n, i) => i === npcIndex ? updatedNpc : n) },
+          { ...state, npcRuntimeStates: state.npcRuntimeStates.map((n, i) => i === npcIndex ? updatedNpc : n) },
           'system',
           `Used ${itemName}. ${stat} ${value > 0 ? '+' : ''}${value}.`,
         )

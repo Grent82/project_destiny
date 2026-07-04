@@ -50,7 +50,7 @@ export function applyStateDecay(state: GameState): GameState {
 
   let next: GameState = {
     ...state,
-    roster: state.roster.map((npc) => {
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => {
       const isResting = npc.assignment !== 'deployed'
       const highAnger = (npc.states.anger ?? 0) > ANGER_PENALTY_THRESHOLD
       const highHygiene = (npc.states.hygiene ?? 0) > HYGIENE_PENALTY_THRESHOLD
@@ -122,7 +122,7 @@ export function applyStateDecay(state: GameState): GameState {
   }
 
   // Step 2b: Recovering NPCs regain health and shed injury each day.
-  for (const npc of next.roster.filter((r) => r.assignment === 'recovering')) {
+  for (const npc of next.npcRuntimeStates.filter((r) => r.assignment === 'recovering')) {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const npcName = npcDef?.name ?? npc.npcId
     const ageBand = npcDef?.ageBand ?? 'adult'
@@ -144,7 +144,7 @@ export function applyStateDecay(state: GameState): GameState {
 
     next = {
       ...next,
-      roster: next.roster.map((r) =>
+      npcRuntimeStates: next.npcRuntimeStates.map((r) =>
         r.npcId === npc.npcId
           ? {
               ...r,

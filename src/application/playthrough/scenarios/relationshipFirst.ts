@@ -129,10 +129,10 @@ export const relationshipFirstScenario: PlaythroughScenario = {
     assertStep('Relationship-first outcomes', [
       assertion('exp-idle', 'Expedition idle after resolve', (s) => s.expeditionState.status === 'idle'),
       assertion('npc-idle', `${SQUAD_NPC} idle after expedition`, (s) =>
-        s.roster.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'idle',
+        s.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'idle',
       ),
       assertion('morale-survives', 'NPC morale is non-negative', (s) =>
-        (s.roster.find((n) => n.npcId === SQUAD_NPC)?.states.morale ?? 0) >= 0,
+        (s.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)?.states.morale ?? 0) >= 0,
       ),
     ]),
   ],

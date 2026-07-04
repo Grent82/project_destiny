@@ -16,7 +16,7 @@ interface DateParticipant {
  */
 function findDateParticipant(state: GameState, npcId: string): DateParticipant | null {
   if (npcId === 'player') return {}
-  const roster = state.roster.find((r) => r.npcId === npcId)
+  const roster = state.npcRuntimeStates.find((r) => r.npcId === npcId)
   if (roster) return { assignment: roster.assignment, captivityStatus: roster.captivityState?.status }
   const world = state.worldNpcStates.find((w) => w.npcId === npcId)
   if (world) return {}

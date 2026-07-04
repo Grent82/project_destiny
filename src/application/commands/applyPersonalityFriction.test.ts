@@ -55,7 +55,7 @@ function makeNpc(partial: Partial<NpcRuntimeState> & { npcId: string; name: stri
 }
 
 function stateWithNpcs(...npcs: NpcRuntimeState[]) {
-  return { ...initialStateWithIda, roster: npcs }
+  return { ...initialStateWithIda, npcRuntimeStates: npcs }
 }
 
 describe('applyPersonalityFriction', () => {
@@ -253,7 +253,7 @@ describe('applyPersonalityFriction', () => {
       const state1 = stateWithNpcs(npcA, npcB)
       const result1 = applyPersonalityFriction(state1, noop)
       // Second run with reversed roster order
-      const state2 = { ...result1, pendingEvents: [], roster: [npcB, npcA] }
+      const state2 = { ...result1, pendingEvents: [], npcRuntimeStates: [npcB, npcA] }
       const result2 = applyPersonalityFriction(state2, noop)
       expect(result2.pendingEvents.some((e) => e.eventId === 'event-npc-dominance-tension')).toBe(false)
     })

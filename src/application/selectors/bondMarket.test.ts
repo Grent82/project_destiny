@@ -21,9 +21,9 @@ describe('selectBrokerageOverview', () => {
   it('summarizes live bonded-labor pressure from existing bond-service rules', () => {
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           assignment: 'working' as const,
           roomAssignment: 'room-kitchen',
           bondStatus: {
@@ -41,7 +41,7 @@ describe('selectBrokerageOverview', () => {
           },
         },
         {
-          ...initialStateWithIda.roster[1]!,
+          ...initialStateWithIda.npcRuntimeStates[1]!,
           assignment: 'working' as const,
           bondStatus: null,
         },
@@ -104,7 +104,7 @@ describe('selectBrokerageOverview', () => {
   it('derives explicit buyer quotes when a house-held contract is marked for transfer', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
@@ -166,7 +166,7 @@ describe('selectBrokerageOverview', () => {
   it('surfaces condition and holding drift for brokerage cases', () => {
     const state = {
       ...stateWithTransferredCompactHold(),
-      roster: stateWithTransferredCompactHold().roster.map((npc) =>
+      npcRuntimeStates: stateWithTransferredCompactHold().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
@@ -218,7 +218,7 @@ describe('selectBrokerageOverview', () => {
 function stateWithTransferredCompactHold() {
   return {
     ...initialStateWithIda,
-    roster: initialStateWithIda.roster.map((npc) =>
+    npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
       npc.npcId === 'npc-ida-rhys'
         ? {
             ...npc,

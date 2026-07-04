@@ -18,7 +18,7 @@ const FATIGUE_HIGH = 65
  * Returns empty string if no meaningful signal is found.
  */
 export function selectCharacterSignature(state: RootState, npcId: string): string {
-  const runtime = state.game.roster.find((r) => r.npcId === npcId)
+  const runtime = state.game.npcRuntimeStates.find((r) => r.npcId === npcId)
   const definition = contentCatalog.npcsById.get(npcId)
 
   if (!runtime || !definition) return ''

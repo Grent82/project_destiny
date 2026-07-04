@@ -10,7 +10,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 2, // even day → affinity triggers
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward' } : npc,
       ),
       factionStandings: { 'faction-civic-compact': 0 },
@@ -25,7 +25,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 3, // odd day → no affinity gain
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward' } : npc,
       ),
       factionStandings: { 'faction-civic-compact': 5 },
@@ -40,7 +40,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 2,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: null } : npc,
       ),
       factionStandings: { 'faction-civic-compact': 0 },
@@ -56,7 +56,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 2,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward' } : npc,
       ),
       factionStandings: { 'faction-civic-compact': 30 },
@@ -71,7 +71,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 2,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward' } : npc,
       ),
       factionStandings: { 'faction-civic-compact': 29 },
@@ -86,7 +86,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
     const state = {
       ...initialGameStateSnapshot,
       day: 2,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward' } : npc,
       ),
       factionStandings: { 'faction-civic-compact': 0 },
@@ -103,7 +103,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
   it('does not apply affinity standing when NPC has no faction affinity', () => {
     // Inject a fake NPC with no affinity into state
     const noAffinityNpc = {
-      ...initialGameStateSnapshot.roster[0]!,
+      ...initialGameStateSnapshot.npcRuntimeStates[0]!,
       npcId: 'npc-no-affinity-test',
       name: 'Generic NPC',
       activeTitle: 'title-trainer' as const,
@@ -112,7 +112,7 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
       ...initialGameStateSnapshot,
       day: 2,
       // Use the Marion Vale slot but override with no-affinity npc
-      roster: [noAffinityNpc],
+      npcRuntimeStates: [noAffinityNpc],
       factionStandings: {},
     }
 
@@ -125,19 +125,19 @@ describe('applyTitleEffects — faction affinity passive standing', () => {
 describe('applyTitleEffects — workshop room function', () => {
   it('improves focused engineering training when a workshop is assigned to an intact room', () => {
     const trainingNpc = {
-      ...initialGameStateSnapshot.roster[0]!,
+      ...initialGameStateSnapshot.npcRuntimeStates[0]!,
       npcId: 'npc-marion-vale',
       assignment: 'training' as const,
       trainingFocus: 'engineering' as const,
       skills: {
-        ...initialGameStateSnapshot.roster[0]!.skills,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills,
         engineering: 20,
       },
     }
     const baseState = {
       ...initialGameStateSnapshot,
       day: 2,
-      roster: [trainingNpc],
+      npcRuntimeStates: [trainingNpc],
     }
     const withWorkshop = {
       ...baseState,
@@ -154,8 +154,8 @@ describe('applyTitleEffects — workshop room function', () => {
     const baseline = applyTitleEffects(baseState, deterministicRng)
     const boosted = applyTitleEffects(withWorkshop, deterministicRng)
 
-    const baselineEngineering = baseline.roster.find((npc) => npc.npcId === 'npc-marion-vale')!.skills.engineering
-    const boostedEngineering = boosted.roster.find((npc) => npc.npcId === 'npc-marion-vale')!.skills.engineering
+    const baselineEngineering = baseline.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')!.skills.engineering
+    const boostedEngineering = boosted.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')!.skills.engineering
 
     expect(boostedEngineering).toBeGreaterThan(baselineEngineering)
   })

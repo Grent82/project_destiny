@@ -48,7 +48,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
 function stateWithPair(npcA: NpcRuntimeState, npcB: NpcRuntimeState, relOverrides?: Record<string, unknown>): GameState {
   return {
     ...initialGameStateSnapshot,
-    roster: [...initialGameStateSnapshot.roster, npcA, npcB],
+    npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, npcA, npcB],
     relationships: {
       ...initialGameStateSnapshot.relationships,
       [buildRelationshipKey(npcA.npcId, npcB.npcId)]: {

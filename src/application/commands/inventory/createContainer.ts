@@ -43,7 +43,7 @@ export function createContainer(state: GameState, params: CreateContainerParams)
     }
   } else {
     // Check if NPC exists
-    const npcExists = state.roster.some((n) => n.npcId === ownerId)
+    const npcExists = state.npcRuntimeStates.some((n) => n.npcId === ownerId)
     if (!npcExists) {
       return state
     }

@@ -22,7 +22,7 @@ export interface ScavengeForSellParams {
 export function scavengeForSell(state: GameState, params: ScavengeForSellParams): GameState {
   const { npcId, districtId } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   // Check guard: requires survival >= 30 OR perception >= 40
@@ -54,7 +54,7 @@ export function scavengeForSell(state: GameState, params: ScavengeForSellParams)
 
     const newState = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -82,7 +82,7 @@ export function scavengeForSell(state: GameState, params: ScavengeForSellParams)
 
   const newState = {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,

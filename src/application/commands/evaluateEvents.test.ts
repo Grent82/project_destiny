@@ -14,8 +14,8 @@ import type { EventTemplate } from '../../domain/events/contracts'
 /** Deterministic rng that always returns the provided value — for test control. */
 const alwaysFire = () => 0   // rng() > probability is always false → event fires
 const neverFire = () => 1    // rng() > probability is always true  → event blocked
-function cloneRosterNpc(index: number, overrides: Partial<GameState['roster'][number]> = {}) {
-  const base = initialGameStateSnapshot.roster[0]
+function cloneRosterNpc(index: number, overrides: Partial<GameState['npcRuntimeStates'][number]> = {}) {
+  const base = initialGameStateSnapshot.npcRuntimeStates[0]
   if (!base) {
     throw new Error('Expected at least one roster NPC in initialGameStateSnapshot for tests')
   }
@@ -381,45 +381,45 @@ describe('district travel event triggers', () => {
 describe('applyOutcomes', () => {
   it('resolveNpcStateSubject selects highest-stress deterministically', () => {
     const state = makeState({
-      roster: [
-        cloneRosterNpc(1, { name: 'First', states: { stress: 80 } as GameState['roster'][number]['states'] }),
-        cloneRosterNpc(2, { name: 'Second', states: { stress: 40 } as GameState['roster'][number]['states'] }),
+      npcRuntimeStates: [
+        cloneRosterNpc(1, { name: 'First', states: { stress: 80 } as GameState['npcRuntimeStates'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Second', states: { stress: 40 } as GameState['npcRuntimeStates'][number]['states'] }),
       ],
     })
 
-    const resolved = resolveNpcStateSubject(state.roster, 'highest-stress')
+    const resolved = resolveNpcStateSubject(state.npcRuntimeStates, 'highest-stress')
     expect(resolved?.name).toBe('First')
   })
 
   it('resolveNpcStateSubject selects lowest morale', () => {
     const state = makeState({
-      roster: [
-        cloneRosterNpc(1, { name: 'First', states: { morale: 70 } as GameState['roster'][number]['states'] }),
-        cloneRosterNpc(2, { name: 'Second', states: { morale: 25 } as GameState['roster'][number]['states'] }),
+      npcRuntimeStates: [
+        cloneRosterNpc(1, { name: 'First', states: { morale: 70 } as GameState['npcRuntimeStates'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Second', states: { morale: 25 } as GameState['npcRuntimeStates'][number]['states'] }),
       ],
     })
 
-    const resolved = resolveNpcStateSubject(state.roster, 'lowest-morale')
+    const resolved = resolveNpcStateSubject(state.npcRuntimeStates, 'lowest-morale')
     expect(resolved?.name).toBe('Second')
   })
 
   it('resolveNpcStateSubject selects highest loyalty by trait and breaks ties by stable order', () => {
     const tieState = makeState({
-      roster: [
-        cloneRosterNpc(1, { name: 'First', traits: { loyalty: 72 } as GameState['roster'][number]['traits'] }),
-        cloneRosterNpc(2, { name: 'Second', traits: { loyalty: 72 } as GameState['roster'][number]['traits'] }),
+      npcRuntimeStates: [
+        cloneRosterNpc(1, { name: 'First', traits: { loyalty: 72 } as GameState['npcRuntimeStates'][number]['traits'] }),
+        cloneRosterNpc(2, { name: 'Second', traits: { loyalty: 72 } as GameState['npcRuntimeStates'][number]['traits'] }),
       ],
     })
 
-    expect(resolveNpcStateSubject(tieState.roster, 'highest-loyalty')?.name).toBe('First')
+    expect(resolveNpcStateSubject(tieState.npcRuntimeStates, 'highest-loyalty')?.name).toBe('First')
   })
 
   it('resolveNpcStateSubject resolves explicit npcId subjects', () => {
     const first = cloneRosterNpc(1)
     const second = cloneRosterNpc(2)
-    const state = makeState({ roster: [first, second] })
+    const state = makeState({ npcRuntimeStates: [first, second] })
 
-    const resolved = resolveNpcStateSubject(state.roster, `npcId:${second.npcId}`)
+    const resolved = resolveNpcStateSubject(state.npcRuntimeStates, `npcId:${second.npcId}`)
     expect(resolved?.npcId).toBe(second.npcId)
   })
 
@@ -536,7 +536,7 @@ describe('applyOutcomes', () => {
   it('addNpcToRoster places NPC on roster with arc initialized', () => {
     const state = makeState()
     const next = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
-    const elyn = next.roster.find((r) => r.npcId === 'npc-elyn')
+    const elyn = next.npcRuntimeStates.find((r) => r.npcId === 'npc-elyn')
     expect(elyn).toBeDefined()
     expect(elyn?.npcArc?.arcId).toBe('arc-ward-growing')
     expect(elyn?.npcArc?.stage).toBe('early-childhood')
@@ -545,7 +545,7 @@ describe('applyOutcomes', () => {
   it('addNpcToRoster without arcId places NPC with null arc', () => {
     const state = makeState()
     const next = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn' }])
-    const elyn = next.roster.find((r) => r.npcId === 'npc-elyn')
+    const elyn = next.npcRuntimeStates.find((r) => r.npcId === 'npc-elyn')
     expect(elyn).toBeDefined()
     expect(elyn?.npcArc).toBeNull()
   })
@@ -558,11 +558,11 @@ describe('applyOutcomes', () => {
   })
 
   it('createBond adds bondStatus to NPC with correct entry reason', () => {
-    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
     const next = applyOutcomes(state, [
-      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'debt-settlement', delta: 100 },
+      { type: 'createBond', npcId: state.npcRuntimeStates[0]!.npcId, value: 'debt-settlement', delta: 100 },
     ])
-    const npc = next.roster.find((r) => r.npcId === state.roster[0]!.npcId)
+    const npc = next.npcRuntimeStates.find((r) => r.npcId === state.npcRuntimeStates[0]!.npcId)
     expect(npc?.bondStatus).toBeDefined()
     expect(npc?.bondStatus?.entryReason).toBe('debt-settlement')
     expect(npc?.bondStatus?.contractValue).toBe(100)
@@ -570,20 +570,20 @@ describe('applyOutcomes', () => {
   })
 
   it('createBond with termDays sets the term correctly', () => {
-    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
     const next = applyOutcomes(state, [
-      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'compact-assessment', target: '30', delta: 50 },
+      { type: 'createBond', npcId: state.npcRuntimeStates[0]!.npcId, value: 'compact-assessment', target: '30', delta: 50 },
     ])
-    const npc = next.roster.find((r) => r.npcId === state.roster[0]!.npcId)
+    const npc = next.npcRuntimeStates.find((r) => r.npcId === state.npcRuntimeStates[0]!.npcId)
     expect(npc?.bondStatus?.termDays).toBe(30)
   })
 
   it('createBond uses default contractValue when delta not provided', () => {
-    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
     const next = applyOutcomes(state, [
-      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'voluntary' },
+      { type: 'createBond', npcId: state.npcRuntimeStates[0]!.npcId, value: 'voluntary' },
     ])
-    const npc = next.roster.find((r) => r.npcId === state.roster[0]!.npcId)
+    const npc = next.npcRuntimeStates.find((r) => r.npcId === state.npcRuntimeStates[0]!.npcId)
     expect(npc?.bondStatus?.contractValue).toBe(50) // default
   })
 
@@ -598,8 +598,8 @@ describe('applyOutcomes', () => {
 
   it('createBond warns and skips when entry reason is missing', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
-    const next = applyOutcomes(state, [{ type: 'createBond', npcId: state.roster[0]!.npcId }])
+    const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
+    const next = applyOutcomes(state, [{ type: 'createBond', npcId: state.npcRuntimeStates[0]!.npcId }])
 
     expect(next).toEqual(state)
     expect(warn).toHaveBeenCalledWith('applyEventOutcome: outcome type "createBond" is missing required field(s): value (entryReason)')
@@ -607,9 +607,9 @@ describe('applyOutcomes', () => {
 
   it('createBond warns and skips when entry reason is invalid', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
+    const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
     const next = applyOutcomes(state, [
-      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'invalid-reason' as string },
+      { type: 'createBond', npcId: state.npcRuntimeStates[0]!.npcId, value: 'invalid-reason' as string },
     ])
 
     expect(next).toEqual(state)
@@ -628,10 +628,10 @@ describe('applyOutcomes', () => {
   })
 
   it('createBond appends activity log entry with message', () => {
-    const state = makeState({ roster: [{ ...initialGameStateSnapshot.roster[0]!, bondStatus: null }] })
-    const npcName = state.roster[0]!.name
+    const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
+    const npcName = state.npcRuntimeStates[0]!.name
     const next = applyOutcomes(state, [
-      { type: 'createBond', npcId: state.roster[0]!.npcId, value: 'combat-capture', message: '{npcName} was captured in battle.' },
+      { type: 'createBond', npcId: state.npcRuntimeStates[0]!.npcId, value: 'combat-capture', message: '{npcName} was captured in battle.' },
     ])
     const logEntry = next.activityLog.find((e) => e.message.includes(npcName))
     expect(logEntry).toBeDefined()
@@ -642,7 +642,7 @@ describe('applyOutcomes', () => {
     const state = makeState()
     const once = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
     const twice = applyOutcomes(once, [{ type: 'addNpcToRoster', npcId: 'npc-elyn', arcId: 'arc-ward-growing' }])
-    expect(twice.roster.filter((r) => r.npcId === 'npc-elyn')).toHaveLength(1)
+    expect(twice.npcRuntimeStates.filter((r) => r.npcId === 'npc-elyn')).toHaveLength(1)
   })
 
   it('addActivityLogEntry appends a log message', () => {
@@ -654,9 +654,9 @@ describe('applyOutcomes', () => {
 
   it('adjustNpcState changes the resolved NPC state and logs the named outcome', () => {
     const state = makeState({
-      roster: [
-        cloneRosterNpc(1, { name: 'Cress', states: { stress: 85 } as GameState['roster'][number]['states'] }),
-        cloneRosterNpc(2, { name: 'Mara', states: { stress: 30 } as GameState['roster'][number]['states'] }),
+      npcRuntimeStates: [
+        cloneRosterNpc(1, { name: 'Cress', states: { stress: 85 } as GameState['npcRuntimeStates'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Mara', states: { stress: 30 } as GameState['npcRuntimeStates'][number]['states'] }),
       ],
     })
 
@@ -670,14 +670,14 @@ describe('applyOutcomes', () => {
       },
     ])
 
-    expect(next.roster[0]?.states.stress).toBe(65)
+    expect(next.npcRuntimeStates[0]?.states.stress).toBe(65)
     expect(next.activityLog[0]?.message).toBe('Cress finally rests.')
   })
 
   it('adjustNpcState clamps at schema bounds', () => {
     const first = cloneRosterNpc(1)
     const state = makeState({
-      roster: [
+      npcRuntimeStates: [
         {
           ...first,
           states: { ...first.states, health: 95 },
@@ -691,17 +691,17 @@ describe('applyOutcomes', () => {
       { type: 'adjustNpcState', subject: `npcId:${first.npcId}`, axis: 'loyalty', delta: 10 },
     ])
 
-    expect(next.roster[0]?.states.health).toBe(100)
-    expect(next.roster[0]?.traits.loyalty).toBe(100)
+    expect(next.npcRuntimeStates[0]?.states.health).toBe(100)
+    expect(next.npcRuntimeStates[0]?.traits.loyalty).toBe(100)
   })
 
   it('adjustNpcState skips cleanly on empty roster', () => {
-    const state = makeState({ roster: [] })
+    const state = makeState({ npcRuntimeStates: [] })
     const next = applyOutcomes(state, [
       { type: 'adjustNpcState', subject: 'highest-stress', axis: 'stress', delta: -10, message: '{npcName} rests.' },
     ])
 
-    expect(next.roster).toHaveLength(0)
+    expect(next.npcRuntimeStates).toHaveLength(0)
     expect(next.activityLog[0]?.message).not.toBe('rests.')
   })
 
@@ -713,15 +713,15 @@ describe('applyOutcomes', () => {
     const state = makeState({
       money: 100,
       cityDials: { control: 50, prosperity: 50, unrest: 20, corruption: 20 },
-      roster: [
-        cloneRosterNpc(1, { name: 'Steady', traits: { loyalty: 80 } as GameState['roster'][number]['traits'] }),
-        cloneRosterNpc(2, { name: 'Shaky', traits: { loyalty: 45 } as GameState['roster'][number]['traits'] }),
+      npcRuntimeStates: [
+        cloneRosterNpc(1, { name: 'Steady', traits: { loyalty: 80 } as GameState['npcRuntimeStates'][number]['traits'] }),
+        cloneRosterNpc(2, { name: 'Shaky', traits: { loyalty: 45 } as GameState['npcRuntimeStates'][number]['traits'] }),
       ],
     })
 
     const next = applyOutcomes(state, choice!.outcomes)
     expect(next.money).toBe(70)
-    expect(next.roster[0]?.traits.loyalty).toBeGreaterThan(state.roster[0]!.traits.loyalty)
+    expect(next.npcRuntimeStates[0]?.traits.loyalty).toBeGreaterThan(state.npcRuntimeStates[0]!.traits.loyalty)
     expect(next.cityDials.unrest).toBe(20)
   })
 
@@ -732,15 +732,15 @@ describe('applyOutcomes', () => {
 
     const state = makeState({
       cityDials: { control: 50, prosperity: 50, unrest: 60, corruption: 20 },
-      roster: [
-        cloneRosterNpc(1, { name: 'Spent', states: { stress: 90, morale: 20 } as GameState['roster'][number]['states'] }),
-        cloneRosterNpc(2, { name: 'Stable', states: { stress: 35, morale: 55 } as GameState['roster'][number]['states'] }),
+      npcRuntimeStates: [
+        cloneRosterNpc(1, { name: 'Spent', states: { stress: 90, morale: 20 } as GameState['npcRuntimeStates'][number]['states'] }),
+        cloneRosterNpc(2, { name: 'Stable', states: { stress: 35, morale: 55 } as GameState['npcRuntimeStates'][number]['states'] }),
       ],
     })
 
     const next = applyOutcomes(state, choice!.outcomes)
-    expect(next.roster[0]?.states.stress).toBeLessThan(state.roster[0]!.states.stress)
-    expect(next.roster[0]?.states.morale).toBeGreaterThan(state.roster[0]!.states.morale)
+    expect(next.npcRuntimeStates[0]?.states.stress).toBeLessThan(state.npcRuntimeStates[0]!.states.stress)
+    expect(next.npcRuntimeStates[0]?.states.morale).toBeGreaterThan(state.npcRuntimeStates[0]!.states.morale)
     expect(next.cityDials.unrest).toBe(60)
   })
 
@@ -810,7 +810,7 @@ describe('resolveEvent reducer', () => {
     )
 
     expect(next.rngSeed).not.toBe(initialState.rngSeed)
-    expect(next.roster.some((entry) => entry.npcId === 'npc-elyn')).toBe(true)
+    expect(next.npcRuntimeStates.some((entry) => entry.npcId === 'npc-elyn')).toBe(true)
   })
 
   it('can dismiss the last resolved event summary', () => {
@@ -1011,7 +1011,7 @@ describe('resolveEvent reducer', () => {
 
 describe('event budget — day-1 burst guardrail', () => {
   it('fresh-save day-1 evaluateEvents adds at most 5 regular events', () => {
-    const state = makeState({ day: 1, isFirstRun: false, roster: [], lastFiredDay: {} })
+    const state = makeState({ day: 1, isFirstRun: false, npcRuntimeStates: [], lastFiredDay: {} })
     const next = evaluateEvents(state, alwaysFire)
     const regularEvents = next.pendingEvents.filter(
       (e) => !e.eventId.startsWith('event-tutorial-'),
@@ -1020,7 +1020,7 @@ describe('event budget — day-1 burst guardrail', () => {
   })
 
   it('fresh-save day-1 total pending events stays bounded', () => {
-    const state = makeState({ day: 1, isFirstRun: false, roster: [], lastFiredDay: {} })
+    const state = makeState({ day: 1, isFirstRun: false, npcRuntimeStates: [], lastFiredDay: {} })
     const next = evaluateEvents(state, alwaysFire)
     expect(next.pendingEvents.length).toBeLessThanOrEqual(10)
   })

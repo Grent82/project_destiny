@@ -8,7 +8,7 @@ import { calculateMercenaryContractWage } from './wageRates'
 function makeState(overrides: Partial<GameState> = {}): GameState {
   return {
     ...initialGameStateSnapshot,
-    roster: [],
+    npcRuntimeStates: [],
     availableForHire: [],
     factionStandings: {
       'faction-civic-compact': 10,
@@ -139,9 +139,9 @@ describe('generateDistrictHireOffers', () => {
   describe('skipping already-hired NPCs', () => {
     it('does not offer an NPC already on the roster', () => {
       const state = makeState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0] ?? {
+            ...initialGameStateSnapshot.npcRuntimeStates[0] ?? {
               npcId: 'npc-marion-vale',
               name: 'Marion Vale',
               status: 'retainer' as const,

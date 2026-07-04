@@ -15,7 +15,7 @@ export function syncRosterFromCombat(
 
   return {
     ...state,
-    roster: state.roster.map((npc) => {
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => {
       const combatant = allyByNpcId.get(npc.npcId)
 
       if (!combatant) {

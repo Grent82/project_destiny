@@ -195,7 +195,7 @@ export function applyHouseholdIntimacy(state: GameState): GameState {
   const policy = state.house.npcPairingPolicy
   if (policy === 'forbidden') return state
 
-  const eligible = state.roster.filter((npc) => isEligibleForHouseholdTogetherness(npc, state.houseDistrictId))
+  const eligible = state.npcRuntimeStates.filter((npc) => isEligibleForHouseholdTogetherness(npc, state.houseDistrictId))
   if (eligible.length < 2) return state
 
   // Shared quarters routine — living together.

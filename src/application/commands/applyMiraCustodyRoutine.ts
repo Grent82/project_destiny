@@ -85,7 +85,7 @@ export function isMiraCaptive(captivity: CaptivityState | undefined): boolean {
 function cloneState(state: GameState): GameState {
   return {
     ...state,
-    roster: state.roster.map((npc) => ({ ...npc, states: { ...npc.states } })),
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => ({ ...npc, states: { ...npc.states } })),
     npcCaptivityStates: { ...state.npcCaptivityStates },
     eventInstances: [...state.eventInstances],
     activityLog: [...state.activityLog],
@@ -186,7 +186,7 @@ function queueMiraTransferEvent(
  * have earned access to this truth through investigation/clues.
  */
 export function getMiraCustodySchedule(
-  state: Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests' | 'day'>,
+  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day'>,
 ): {
   currentRoom: string | null
   nextRoom: string | null

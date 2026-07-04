@@ -21,7 +21,7 @@ import {
  * Pairs that already have a relationship entry in state are skipped.
  */
 export function initializeRosterRelationships(state: GameState, rng: Rng = Math.random): GameState {
-  const { roster } = state
+  const { npcRuntimeStates: roster } = state
   if (roster.length < 2) return state
 
   const relationships = { ...state.relationships }

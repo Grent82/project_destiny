@@ -25,7 +25,7 @@ const baseGameState: GameState = {
   },
   factionStates: [],
   districts: [],
-  roster: [],
+  npcRuntimeStates: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {
@@ -345,7 +345,7 @@ describe('proposeDate', () => {
   it('creates a date proposal when relationship is sufficient', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
       relationships: createRelationshipWithIntimacy('npc-test', 'affinity'),
     }
 
@@ -367,7 +367,7 @@ describe('proposeDate', () => {
   it('rejects proposal when intimacy is too low', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'none', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'none', 'idle')],
       relationships: createRelationshipWithIntimacy('npc-test', 'none'),
     }
 
@@ -386,7 +386,7 @@ describe('proposeDate', () => {
   it('rejects proposal when NPC is deployed', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'deployed')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'deployed')],
       relationships: createRelationshipWithIntimacy('npc-test', 'affinity'),
     }
 
@@ -405,7 +405,7 @@ describe('proposeDate', () => {
   it('respects date cooldown between same NPC', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'attachment', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'attachment', 'idle')],
       relationships: createRelationshipWithIntimacy('npc-test', 'attachment'),
       npcDateCooldowns: {
         'npc-test-15': 10,
@@ -427,7 +427,7 @@ describe('proposeDate', () => {
   it('adds cooldown entry when date is accepted', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'attachment', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'attachment', 'idle')],
       relationships: createRelationshipWithIntimacy('npc-test', 'attachment'),
     }
 
@@ -446,7 +446,7 @@ describe('proposeDate', () => {
   it('allows proposal when cooldown has expired', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
       relationships: createRelationshipWithIntimacy('npc-test', 'affinity'),
       npcDateCooldowns: {
         'npc-test-10': 5,
@@ -467,7 +467,7 @@ describe('proposeDate', () => {
   it('rejects when affinity is below threshold', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
       relationships: {
         ...createRelationshipWithIntimacy('npc-test', 'affinity'),
         ['player-to-npc-test']: {
@@ -498,7 +498,7 @@ describe('proposeDateWithPlayer', () => {
   it('is an alias for proposeDate with player as proposer', () => {
     const state: GameState = {
       ...baseGameState,
-      roster: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
+      npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', 'affinity', 'idle')],
       relationships: createRelationshipWithIntimacy('npc-test', 'affinity'),
     }
 

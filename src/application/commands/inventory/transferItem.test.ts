@@ -29,7 +29,7 @@ function createContainer(
 // Helper to create a minimal NPC for testing
 function createTestNpc(npcId: string, name: string): NpcRuntimeState {
   return {
-    ...initialGameStateSnapshot.roster[0],
+    ...initialGameStateSnapshot.npcRuntimeStates[0],
     npcId,
     name,
     currentIntention: null,
@@ -46,7 +46,7 @@ const NPC_ID_2 = 'npc-verek-holst'
 
 const baseState: GameState = {
   ...initialGameStateSnapshot,
-  roster: [
+  npcRuntimeStates: [
     createTestNpc(NPC_ID_1, 'Marion Vale'),
     createTestNpc(NPC_ID_2, 'Verek Holst'),
   ],

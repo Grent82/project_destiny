@@ -7,7 +7,7 @@ describe('applyAllNpcAgency', () => {
   it('same seed produces identical outcome (deterministic)', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'working' as const })),
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) => ({ ...npc, assignment: 'working' as const })),
     }
 
     const rng1 = createRng(42).rng
@@ -24,7 +24,7 @@ describe('applyAllNpcAgency', () => {
   it('idle NPCs never trigger agency actions', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) => ({ ...npc, assignment: 'idle' as const })),
     }
     const logBefore = state.activityLog.length
 
@@ -40,7 +40,7 @@ describe('applyAllNpcAgency', () => {
     // the same output pattern as the original monolithic version
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'working' as const })),
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) => ({ ...npc, assignment: 'working' as const })),
     }
 
     // Run with multiple seeds to ensure no regression
@@ -48,7 +48,7 @@ describe('applyAllNpcAgency', () => {
       const result = applyAllNpcAgency(state, createRng(seed).rng)
       // Assert that result is a valid GameState with expected structure
       expect(result.day).toBe(state.day)
-      expect(result.roster.length).toBe(state.roster.length)
+      expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length)
     }
   })
 })

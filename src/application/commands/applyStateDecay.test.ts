@@ -21,7 +21,7 @@ describe('house room function bonuses', () => {
   function stateWithRecoveringIda(health = 40) {
     return {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === recoveringNpcId
           ? { ...npc, assignment: 'recovering' as const, states: { ...npc.states, health } }
           : npc,
@@ -37,8 +37,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(baseState)
       const withBonus = applyStateDecay(withInfirmary)
 
-      const idaBaseline = baseline.roster.find((n) => n.npcId === recoveringNpcId)
-      const idaBonus = withBonus.roster.find((n) => n.npcId === recoveringNpcId)
+      const idaBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
+      const idaBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
 
       expect(idaBonus!.states.health).toBeGreaterThan(idaBaseline!.states.health)
     })
@@ -51,8 +51,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(baseState)
       const withBonus = applyStateDecay(withInfirmary)
 
-      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
-      const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
+      const marionBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === marionId)
+      const marionBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       expect(marionBonus!.states.health).toBe(marionBaseline!.states.health)
     })
@@ -74,8 +74,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(baseState)
       const damaged = applyStateDecay(damagedInfirmary)
 
-      const idaBaseline = baseline.roster.find((n) => n.npcId === recoveringNpcId)
-      const idaDamaged = damaged.roster.find((n) => n.npcId === recoveringNpcId)
+      const idaBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
+      const idaDamaged = damaged.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
 
       expect(idaDamaged!.states.health).toBe(idaBaseline!.states.health)
     })
@@ -89,8 +89,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(initialStateWithIda)
       const withBonus = applyStateDecay(withKitchen)
 
-      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
-      const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
+      const marionBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === marionId)
+      const marionBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       expect(marionBonus!.states.hunger).toBeLessThan(marionBaseline!.states.hunger)
     })
@@ -102,8 +102,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(baseState)
       const withBonus = applyStateDecay(withKitchen)
 
-      const idaBaseline = baseline.roster.find((n) => n.npcId === recoveringNpcId)
-      const idaBonus = withBonus.roster.find((n) => n.npcId === recoveringNpcId)
+      const idaBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
+      const idaBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
 
       expect(idaBonus!.states.hunger).toBeLessThanOrEqual(idaBaseline!.states.hunger)
     })
@@ -114,7 +114,7 @@ describe('house room function bonuses', () => {
       const marionId = 'npc-marion-vale'
       const fatiguedState = {
         ...initialStateWithIda,
-        roster: initialStateWithIda.roster.map((npc) =>
+        npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId
             ? { ...npc, states: { ...npc.states, fatigue: 20 } }
             : npc,
@@ -125,8 +125,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(fatiguedState)
       const withBonus = applyStateDecay(withBarracks)
 
-      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
-      const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
+      const marionBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === marionId)
+      const marionBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       expect(marionBonus!.states.fatigue).toBeLessThan(marionBaseline!.states.fatigue)
     })
@@ -138,8 +138,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(baseState)
       const withBonus = applyStateDecay(withBarracks)
 
-      const idaBaseline = baseline.roster.find((n) => n.npcId === recoveringNpcId)
-      const idaBonus = withBonus.roster.find((n) => n.npcId === recoveringNpcId)
+      const idaBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
+      const idaBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === recoveringNpcId)
 
       // Recovering NPCs don't get barracks fatigue bonus
       expect(idaBonus!.states.fatigue).toBe(idaBaseline!.states.fatigue)
@@ -150,7 +150,7 @@ describe('house room function bonuses', () => {
     it('still logs a recovery update once health is capped but injury remains above the ready threshold', () => {
       const state = {
         ...initialStateWithIda,
-        roster: initialStateWithIda.roster.map((npc) =>
+        npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === recoveringNpcId
             ? { ...npc, assignment: 'recovering' as const, states: { ...npc.states, health: 100, injury: 20 } }
             : npc,
@@ -170,7 +170,7 @@ describe('house room function bonuses', () => {
       // Give Marion some stress to recover from
       const stressedState = {
         ...initialStateWithIda,
-        roster: initialStateWithIda.roster.map((npc) =>
+        npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId
             ? { ...npc, states: { ...npc.states, stress: 40 } }
             : npc,
@@ -181,8 +181,8 @@ describe('house room function bonuses', () => {
       const baseline = applyStateDecay(stressedState)
       const withBonus = applyStateDecay(withStudy)
 
-      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
-      const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
+      const marionBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === marionId)
+      const marionBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       expect(marionBonus!.states.stress).toBeLessThan(marionBaseline!.states.stress)
     })
@@ -193,7 +193,7 @@ describe('house room function bonuses', () => {
       const marionId = 'npc-marion-vale'
       const housedState = {
         ...initialStateWithIda,
-        roster: initialStateWithIda.roster.map((npc) =>
+        npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId
             ? {
                 ...npc,
@@ -214,14 +214,14 @@ describe('house room function bonuses', () => {
 
       const baseline = applyStateDecay({
         ...housedState,
-        roster: housedState.roster.map((npc) =>
+        npcRuntimeStates: housedState.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId ? { ...npc, roomAssignment: null } : npc,
         ),
       })
       const withBonus = applyStateDecay(housedState)
 
-      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
-      const marionBonus = withBonus.roster.find((n) => n.npcId === marionId)
+      const marionBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === marionId)
+      const marionBonus = withBonus.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       expect(marionBonus!.states.fatigue).toBeLessThan(marionBaseline!.states.fatigue)
       expect(marionBonus!.states.morale).toBeGreaterThan(marionBaseline!.states.morale)
@@ -231,7 +231,7 @@ describe('house room function bonuses', () => {
       const marionId = 'npc-marion-vale'
       const housedAndWorkingState = {
         ...initialStateWithIda,
-        roster: initialStateWithIda.roster.map((npc) =>
+        npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId
             ? {
                 ...npc,
@@ -253,7 +253,7 @@ describe('house room function bonuses', () => {
       }
 
       const result = applyStateDecay(housedAndWorkingState)
-      const marion = result.roster.find((n) => n.npcId === marionId)
+      const marion = result.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       // Quarters lodging bonus still applies even though the NPC also holds a duty post.
       expect(marion!.states.fatigue).toBeLessThan(20)
@@ -275,7 +275,7 @@ describe('house room function bonuses', () => {
               : room,
           ),
         },
-        roster: initialStateWithIda.roster.map((npc) =>
+        npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId
             ? {
                 ...npc,
@@ -288,14 +288,14 @@ describe('house room function bonuses', () => {
 
       const baseline = applyStateDecay({
         ...bureauAssignedState,
-        roster: bureauAssignedState.roster.map((npc) =>
+        npcRuntimeStates: bureauAssignedState.npcRuntimeStates.map((npc) =>
           npc.npcId === marionId ? { ...npc, roomAssignment: null } : npc,
         ),
       })
       const withAssignment = applyStateDecay(bureauAssignedState)
 
-      const marionBaseline = baseline.roster.find((n) => n.npcId === marionId)
-      const marionAssigned = withAssignment.roster.find((n) => n.npcId === marionId)
+      const marionBaseline = baseline.npcRuntimeStates.find((n) => n.npcId === marionId)
+      const marionAssigned = withAssignment.npcRuntimeStates.find((n) => n.npcId === marionId)
 
       expect(marionAssigned!.states.fatigue).toBe(marionBaseline!.states.fatigue)
       expect(marionAssigned!.states.morale).toBe(marionBaseline!.states.morale)
@@ -344,7 +344,7 @@ describe('player rest', () => {
     const state = withRoom(stateWithPlayerInjury(50, 32), 'room-bureau', 'infirmary')
     const withMedic = {
       ...state,
-      roster: state.roster.map((npc) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-medic' } : npc,
       ),
     }
@@ -358,7 +358,7 @@ describe('player rest', () => {
     const state = withRoom(stateWithPlayerInjury(50, 10), 'room-bureau', 'infirmary')
     const withMedic = {
       ...state,
-      roster: state.roster.map((npc) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-medic' } : npc,
       ),
     }

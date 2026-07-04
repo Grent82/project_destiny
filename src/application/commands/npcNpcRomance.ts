@@ -73,8 +73,8 @@ export function tryNpcNpcFlirtation(
   if (!npcA || !npcB) return state
 
   // Check eligibility
-  const entryA = state.roster.find((r) => r.npcId === npcAId)
-  const entryB = state.roster.find((r) => r.npcId === npcBId)
+  const entryA = state.npcRuntimeStates.find((r) => r.npcId === npcAId)
+  const entryB = state.npcRuntimeStates.find((r) => r.npcId === npcBId)
 
   if (!entryA || !entryB || !isEligibleForRomance(entryA) || !isEligibleForRomance(entryB)) {
     return state
@@ -144,8 +144,8 @@ export function tryNpcNpcSeekIntimacy(
 
   if (!npcA || !npcB) return state
 
-  const entryA = state.roster.find((r) => r.npcId === npcAId)
-  const entryB = state.roster.find((r) => r.npcId === npcBId)
+  const entryA = state.npcRuntimeStates.find((r) => r.npcId === npcAId)
+  const entryB = state.npcRuntimeStates.find((r) => r.npcId === npcBId)
 
   if (!entryA || !entryB || !isEligibleForRomance(entryA) || !isEligibleForRomance(entryB)) {
     return state
@@ -171,7 +171,7 @@ export function tryNpcNpcSeekIntimacy(
       [abKey]: { ...newAb, affinity: Math.min(100, newAb.affinity + affinityGain) },
       [baKey]: { ...newBa, affinity: Math.min(100, newBa.affinity + affinityGain) },
     },
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcAId || n.npcId === npcBId
         ? { ...n, states: { ...n.states, stress: Math.max(0, n.states.stress - 8) } }
         : n,
@@ -202,8 +202,8 @@ export function tryNpcNpcFlirtAggressively(
 
   if (!npcA || !npcB) return state
 
-  const entryA = state.roster.find((r) => r.npcId === npcAId)
-  const entryB = state.roster.find((r) => r.npcId === npcBId)
+  const entryA = state.npcRuntimeStates.find((r) => r.npcId === npcAId)
+  const entryB = state.npcRuntimeStates.find((r) => r.npcId === npcBId)
 
   if (!entryA || !entryB || !isEligibleForRomance(entryA) || !isEligibleForRomance(entryB)) {
     return state
@@ -240,7 +240,7 @@ export function tryNpcNpcFlirtAggressively(
   // Failed — the target's own anger rises, distinct from the quiet no-op of a gentle flirt.
   const nextState: GameState = {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcBId
         ? { ...n, states: { ...n.states, anger: Math.min(100, n.states.anger + 10) } }
         : n,
@@ -269,7 +269,7 @@ export function checkJealousyForNpc(
   jealousNpcId: string,
   rng: Rng,
 ): GameState {
-  const rosterNpcs = state.roster
+  const rosterNpcs = state.npcRuntimeStates
     .filter((entry) => isEligibleForRomance(entry) && entry.npcId !== jealousNpcId)
     .map((entry) => entry.npcId)
 

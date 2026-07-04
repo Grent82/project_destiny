@@ -150,7 +150,7 @@ describe('selectEconomyOverview', () => {
         corridorStatus: 'disrupted',
         corridorClearanceProgressDays: 1,
       },
-      roster: initialGameStateSnapshot.roster.slice(0, 2),
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.slice(0, 2),
       currentDistrictId: 'district-harbor',
     })
 
@@ -184,7 +184,7 @@ describe('selectEconomyOverview', () => {
   it('includes bonded kitchen labor in local output when a player-held bound NPC is placed into food service', () => {
     const state = makeState({
       house: makeHouseKitchenIntact(),
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,

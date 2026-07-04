@@ -66,9 +66,9 @@ describe('checkRelationshipMilestones (via applyNpcConsequences)', () => {
     const state = stateWithRelationship('npc-ida-rhys', 0, 70)
     const daraOnRoster = {
       ...state,
-      roster: [
-        ...state.roster,
-        { ...state.roster[0]!, npcId: 'npc-dara-slink', name: 'Dara Slink' },
+      npcRuntimeStates: [
+        ...state.npcRuntimeStates,
+        { ...state.npcRuntimeStates[0]!, npcId: 'npc-dara-slink', name: 'Dara Slink' },
       ],
     }
     const result = applyNpcConsequences(daraOnRoster, daraOnRoster.relationships, noop)

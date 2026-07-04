@@ -42,13 +42,13 @@ describe('recruitNpc', () => {
 
   it('adds the NPC to the roster', () => {
     const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
-    const onRoster = next.roster.find((r) => r.npcId === 'npc-verek-holst')
+    const onRoster = next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')
     expect(onRoster).toBeDefined()
   })
 
   it('adds NPC with loyalty penalty of -20 from starting loyalty', () => {
     const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
-    const onRoster = next.roster.find((r) => r.npcId === 'npc-verek-holst')
+    const onRoster = next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')
     // npc-verek-holst starting loyalty is 38, penalty of 20 → 18
     expect(onRoster?.traits.loyalty).toBe(18)
   })
@@ -69,7 +69,7 @@ describe('recruitNpc', () => {
       ],
     }
     const next = recruitNpc(lowLoyaltyState, 'npc-aldric-vane')
-    const onRoster = next.roster.find((r) => r.npcId === 'npc-aldric-vane')
+    const onRoster = next.npcRuntimeStates.find((r) => r.npcId === 'npc-aldric-vane')
     // npc-aldric-vane starting loyalty is 27, penalty → 7
     expect(onRoster?.traits.loyalty).toBeGreaterThanOrEqual(0)
   })
@@ -93,7 +93,7 @@ describe('recruitNpc', () => {
   it('does nothing when player cannot afford signing bonus', () => {
     const brokeState = { ...stateWithOffers, money: 50 }
     const next = recruitNpc(brokeState, 'npc-cress-aldmoor')
-    expect(next.roster.find((r) => r.npcId === 'npc-cress-aldmoor')).toBeUndefined()
+    expect(next.npcRuntimeStates.find((r) => r.npcId === 'npc-cress-aldmoor')).toBeUndefined()
     expect(next.money).toBe(50)
   })
 
@@ -114,7 +114,7 @@ describe('recruitNpc', () => {
       factionStandings: { ...stateWithOffers.factionStandings, 'faction-gilded-court': 10 },
     }
     const next = recruitNpc(factionLockedState, 'npc-verek-holst')
-    expect(next.roster.find((r) => r.npcId === 'npc-verek-holst')).toBeUndefined()
+    expect(next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')).toBeUndefined()
   })
 
   it('allows recruit when player meets required faction standing', () => {
@@ -134,7 +134,7 @@ describe('recruitNpc', () => {
       factionStandings: { ...stateWithOffers.factionStandings, 'faction-gilded-court': 35 },
     }
     const next = recruitNpc(factionMetState, 'npc-verek-holst')
-    expect(next.roster.find((r) => r.npcId === 'npc-verek-holst')).toBeDefined()
+    expect(next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')).toBeDefined()
   })
 
   it('logs a recruitment message', () => {
@@ -163,7 +163,7 @@ describe('deriveBondTermsFromHireOffer', () => {
 describe('acquireBoundHireOffer', () => {
   it('adds the NPC to the roster under a player-held debt contract', () => {
     const next = acquireBoundHireOffer(stateWithOffers, 'npc-cress-aldmoor')
-    const onRoster = next.roster.find((entry) => entry.npcId === 'npc-cress-aldmoor')
+    const onRoster = next.npcRuntimeStates.find((entry) => entry.npcId === 'npc-cress-aldmoor')
 
     expect(onRoster).toBeDefined()
     expect(onRoster?.bondStatus?.ownerType).toBe('player')
@@ -196,12 +196,12 @@ describe('dismissNpc', () => {
 
   it('removes the NPC from roster', () => {
     const next = dismissNpc(stateWithRoster, 'npc-marion-vale')
-    expect(next.roster.find((r) => r.npcId === 'npc-marion-vale')).toBeUndefined()
+    expect(next.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')).toBeUndefined()
   })
 
   it('leaves other roster members intact', () => {
     const next = dismissNpc(stateWithRoster, 'npc-marion-vale')
-    expect(next.roster.find((r) => r.npcId === 'npc-ida-rhys')).toBeDefined()
+    expect(next.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')).toBeDefined()
   })
 
   it('removes dismissed NPC from selectedSquadNpcIds', () => {

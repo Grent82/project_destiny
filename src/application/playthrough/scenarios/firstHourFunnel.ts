@@ -103,7 +103,7 @@ export const firstHourFunnelScenario: PlaythroughScenario = {
     {
       id: 'roster-intact',
       description: 'Marion remains on roster throughout',
-      predicate: (s) => s.roster.some((n) => n.npcId === MARION_NPC),
+      predicate: (s) => s.npcRuntimeStates.some((n) => n.npcId === MARION_NPC),
     },
   ],
 }

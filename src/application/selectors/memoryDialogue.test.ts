@@ -12,7 +12,7 @@ describe('Memory Dialogue Selector', () => {
   const createTestState = (memories = idaRhysRosterEntry.npcMemory): GameState => ({
     ...JSON.parse(
       JSON.stringify({
-        roster: [{ ...idaRhysRosterEntry, npcMemory: memories }],
+        npcRuntimeStates: [{ ...idaRhysRosterEntry, npcMemory: memories }],
         relationships: {
           'player|npc-ida-rhys': {
             affinity: 45,
@@ -45,7 +45,7 @@ describe('Memory Dialogue Selector', () => {
   describe('getMemoryDialogueTopicsForNpc', () => {
     it('returns empty array when NPC has no memories', () => {
       const state = createTestState([])
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       expect(topics).toEqual([])
     })
@@ -75,7 +75,7 @@ describe('Memory Dialogue Selector', () => {
         },
       ]
       const state = createTestState(memories)
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       expect(topics).toHaveLength(3)
       expect(topics.map((t) => t.memoryEvent)).toEqual(['combat', 'training', 'first_meeting'])
@@ -106,7 +106,7 @@ describe('Memory Dialogue Selector', () => {
         },
       ]
       const state = createTestState(memories)
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       expect(topics[0]?.memoryDay).toBe(12)
       expect(topics[1]?.memoryDay).toBe(8)
@@ -133,7 +133,7 @@ describe('Memory Dialogue Selector', () => {
       const state = createTestState(memories)
       // Set intimacy stage to 'committed' to avoid attachment modifier on courtship
       state.relationships['player|npc-ida-rhys']!.intimacyStage = 'committed'
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       const combatTopic = topics.find((t) => t.memoryEvent === 'combat')
       const courtshipTopic = topics.find((t) => t.memoryEvent === 'courtship')
@@ -160,7 +160,7 @@ describe('Memory Dialogue Selector', () => {
         },
       ]
       const state = createTestState(memories)
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       const betrayalTopic = topics.find((t) => t.memoryEvent === 'betrayal')
       const giftTopic = topics.find((t) => t.memoryEvent === 'gift_received')
@@ -187,7 +187,7 @@ describe('Memory Dialogue Selector', () => {
         },
       ]
       const state = createTestState(memories)
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       const combatTopic = topics.find((t) => t.memoryEvent === 'combat')
       const trainingTopic = topics.find((t) => t.memoryEvent === 'training')
@@ -221,7 +221,7 @@ describe('Memory Dialogue Selector', () => {
         },
       ]
       const state = createTestState(memories)
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       const combatTopic = topics.find((t) => t.memoryEvent === 'combat')
       expect(combatTopic?.memoryDay).toBe(12)
@@ -242,7 +242,7 @@ describe('Memory Dialogue Selector', () => {
         { day: 10, event: 'loss', eventType: 'loss' as const, visibility: 'open' as const, sentiment: 'traumatic' as const },
       ]
       const state = createTestState(memories)
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       expect(topics).toHaveLength(10)
       const topicLabels = topics.map((t) => t.topicLabel)
@@ -271,7 +271,7 @@ describe('Memory Dialogue Selector', () => {
       // Override intimacy stage to committed
       stateWithCommitted.relationships['player|npc-ida-rhys']!.intimacyStage = 'committed'
 
-      const topics = getMemoryDialogueTopicsForNpc(stateWithCommitted.roster, stateWithCommitted.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(stateWithCommitted.npcRuntimeStates, stateWithCommitted.relationships, 'npc-ida-rhys')
       const intimacyTopic = topics.find((t) => t.memoryEvent === 'intimacy')
 
       expect(intimacyTopic?.topicLabel).toBe('Speak intimately about us')
@@ -298,7 +298,7 @@ describe('Memory Dialogue Selector', () => {
       const state = createTestState(memories)
       state.relationships['player|npc-ida-rhys']!.trust = 30
 
-      const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, 'npc-ida-rhys')
+      const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, 'npc-ida-rhys')
 
       // Only combat should be visible (betrayal is hidden and requires trust >= 80)
       expect(topics).toHaveLength(1)

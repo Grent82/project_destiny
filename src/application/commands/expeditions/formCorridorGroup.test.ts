@@ -60,7 +60,7 @@ describe('formCorridorGroup', () => {
         corridorStatus: 'blocked' as const,
       },
       // No eligible NPCs (all have low melee/security)
-      roster: initialGameStateSnapshot.roster,
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates,
       worldNpcStates: [],
     }
     const rng = makeRng(42)
@@ -78,21 +78,21 @@ describe('formCorridorGroup', () => {
         ...initialGameStateSnapshot.cityResources,
         corridorStatus: 'blocked' as const,
       },
-      roster: [
-        ...initialGameStateSnapshot.roster,
+      npcRuntimeStates: [
+        ...initialGameStateSnapshot.npcRuntimeStates,
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           npcId: 'npc-elite-1',
           name: 'Elite Warrior 1',
-          skills: { ...initialGameStateSnapshot.roster[0]!.skills, melee: 60, security: 55 },
-          traits: { ...initialGameStateSnapshot.roster[0]!.traits, discipline: 60 },
+          skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, melee: 60, security: 55 },
+          traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 60 },
         },
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           npcId: 'npc-elite-2',
           name: 'Elite Warrior 2',
-          skills: { ...initialGameStateSnapshot.roster[0]!.skills, melee: 70, security: 60 },
-          traits: { ...initialGameStateSnapshot.roster[0]!.traits, discipline: 70 },
+          skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, melee: 70, security: 60 },
+          traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 70 },
         },
       ],
       worldNpcStates: [],
@@ -113,14 +113,14 @@ describe('formCorridorGroup', () => {
         ...initialGameStateSnapshot.cityResources,
         corridorStatus: 'blocked' as const,
       },
-      roster: [
-        ...initialGameStateSnapshot.roster,
+      npcRuntimeStates: [
+        ...initialGameStateSnapshot.npcRuntimeStates,
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           npcId: 'npc-elite',
           name: 'Elite Warrior',
-          skills: { ...initialGameStateSnapshot.roster[0]!.skills, melee: 80, security: 70 },
-          traits: { ...initialGameStateSnapshot.roster[0]!.traits, discipline: 80 },
+          skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, melee: 80, security: 70 },
+          traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 80 },
         },
       ],
       worldNpcStates: [],
@@ -142,12 +142,12 @@ describe('formCorridorGroup', () => {
         ...initialGameStateSnapshot.cityResources,
         corridorStatus: status as 'blocked' | 'disrupted' | 'open',
       },
-      roster: [
-        ...initialGameStateSnapshot.roster,
+      npcRuntimeStates: [
+        ...initialGameStateSnapshot.npcRuntimeStates,
         {
-          ...initialGameStateSnapshot.roster[0]!,
-          skills: { ...initialGameStateSnapshot.roster[0]!.skills, melee: 60, security: 55 },
-          traits: { ...initialGameStateSnapshot.roster[0]!.traits, discipline: 60 },
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+          skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, melee: 60, security: 55 },
+          traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 60 },
         },
       ],
       worldNpcStates: [],

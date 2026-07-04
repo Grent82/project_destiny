@@ -125,13 +125,13 @@ function applyOrrenRescueResolution(state: GameState, questId: string): GameStat
   delete nextState.npcCaptivityStates[NPC_IDS.ORREN_WEX]
 
   // Update roster if applicable
-  const rosterIndex = nextState.roster.findIndex((npc) => npc.npcId === NPC_IDS.ORREN_WEX)
+  const rosterIndex = nextState.npcRuntimeStates.findIndex((npc) => npc.npcId === NPC_IDS.ORREN_WEX)
   if (rosterIndex >= 0) {
-    const updatedRoster = [...nextState.roster]
+    const updatedRoster = [...nextState.npcRuntimeStates]
     const updatedNpc = { ...updatedRoster[rosterIndex] }
     delete (updatedNpc as { captivityState?: unknown }).captivityState
     updatedRoster[rosterIndex] = updatedNpc
-    nextState = { ...nextState, roster: updatedRoster }
+    nextState = { ...nextState, npcRuntimeStates: updatedRoster }
   }
 
   // Filter out the captive presence
@@ -193,7 +193,7 @@ function applyQuestAftermath(state: GameState, aftermath: QuestAftermath | null,
 
   // NPC unlocks from aftermath
   for (const npcId of aftermath.unlockNpcIds) {
-    const alreadyHired = nextState.roster.some((e) => e.npcId === npcId)
+    const alreadyHired = nextState.npcRuntimeStates.some((e) => e.npcId === npcId)
     const alreadyAvailable = nextState.availableForHire.some((e) => e.npcId === npcId)
     if (!alreadyHired && !alreadyAvailable) {
       const npcDef = getNpcDefinitions().find((e) => e.id === npcId)
@@ -411,7 +411,7 @@ export function settleQuestSuccess(state: GameState, questId: string, options: Q
   }
 
   if (applyUnlocksNpc && template.unlocksNpcId) {
-    const alreadyHired = nextState.roster.some((entry) => entry.npcId === template.unlocksNpcId)
+    const alreadyHired = nextState.npcRuntimeStates.some((entry) => entry.npcId === template.unlocksNpcId)
     const alreadyAvailable = nextState.availableForHire.some(
       (entry) => entry.npcId === template.unlocksNpcId,
     )

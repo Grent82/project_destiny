@@ -44,7 +44,7 @@ export function travelToDistrict(state: GameState, districtId: string): GameStat
       )
       nextState = {
         ...nextState,
-        roster: nextState.roster.map((npc) =>
+        npcRuntimeStates: nextState.npcRuntimeStates.map((npc) =>
           npc.assignment === 'idle' || npc.assignment === 'deployed'
             ? { ...npc, states: { ...npc.states, stress: Math.min(100, npc.states.stress + 3) } }
             : npc,

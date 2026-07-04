@@ -35,7 +35,7 @@ describe('joinCorridorExpedition', () => {
   it('adds NPC to expedition and marks as deployed', () => {
     const result = joinCorridorExpedition(stateWithGroup, groupId, npcId)
 
-    const npc = result.roster.find((r) => r.npcId === npcId)
+    const npc = result.npcRuntimeStates.find((r) => r.npcId === npcId)
     expect(npc?.assignment).toBe('deployed')
     expect(result.cityResources.activeGroups[0]!.playerContribution?.joinedNpcIds).toContain(npcId)
   })
@@ -55,21 +55,21 @@ describe('joinCorridorExpedition', () => {
   it('returns state unchanged if NPC is not idle', () => {
     const stateWithAssignedNpc = {
       ...stateWithGroup,
-      roster: stateWithGroup.roster.map((r) =>
+      npcRuntimeStates: stateWithGroup.npcRuntimeStates.map((r) =>
         r.npcId === npcId ? { ...r, assignment: 'working' as const } : r
       ),
     }
 
     const result = joinCorridorExpedition(stateWithAssignedNpc, groupId, npcId)
 
-    const npc = result.roster.find((r) => r.npcId === npcId)
+    const npc = result.npcRuntimeStates.find((r) => r.npcId === npcId)
     expect(npc?.assignment).toBe('working')
   })
 
   it('returns state unchanged if NPC is already on directive', () => {
     const stateWithDirective = {
       ...stateWithGroup,
-      roster: stateWithGroup.roster.map((r) =>
+      npcRuntimeStates: stateWithGroup.npcRuntimeStates.map((r) =>
         r.npcId === npcId ? { ...r, currentDirectiveId: 'some-directive' } : r
       ),
     }

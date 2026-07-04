@@ -49,7 +49,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
 function stateWithActors(captive: NpcRuntimeState, actor: NpcRuntimeState): GameState {
   return {
     ...initialGameStateSnapshot,
-    roster: [...initialGameStateSnapshot.roster, captive, actor],
+    npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, captive, actor],
     relationships: {
       ...initialGameStateSnapshot.relationships,
       [buildRelationshipKey('player', captive.npcId)]: {
@@ -75,7 +75,7 @@ describe('applyNpcRoomInteractions', () => {
     const next = applyNpcRoomInteractions(
       {
         ...state,
-        roster: state.roster.map((npc) =>
+        npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
           npc.npcId === captiveId ? { ...npc, states: { ...npc.states, fear: 10 } } : npc,
         ),
         npcCaptivityStates: {
@@ -114,7 +114,7 @@ describe('applyNpcRoomInteractions', () => {
     )
 
     expect(next.npcCaptivityStates[captiveId]?.compliance).toBe('conflicted')
-    expect(next.roster.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(10)
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(10)
   })
 
   it('lets protective or medical rooms improve captive condition and trust', () => {
@@ -128,7 +128,7 @@ describe('applyNpcRoomInteractions', () => {
     const next = applyNpcRoomInteractions(
       {
         ...state,
-        roster: state.roster.map((npc) =>
+        npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
           npc.npcId === captiveId ? { ...npc, states: { ...npc.states, fear: 35 } } : npc,
         ),
         npcCaptivityStates: {
@@ -167,7 +167,7 @@ describe('applyNpcRoomInteractions', () => {
     )
 
     expect(next.npcCaptivityStates[captiveId]?.condition).toBe('hurt')
-    expect(next.roster.find((npc) => npc.npcId === captiveId)?.states.fear).toBeLessThan(35)
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeLessThan(35)
     expect(next.relationships[buildRelationshipKey('player', captiveId)]?.trust ?? 0).toBeGreaterThan(0)
   })
 

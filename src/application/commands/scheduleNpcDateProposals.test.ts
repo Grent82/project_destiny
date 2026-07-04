@@ -62,7 +62,7 @@ describe('scheduleAcceptedNpcDateProposals', () => {
     const state: GameState = {
       ...initialStateWithIda,
       day: 10,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === MARION ? { ...n, assignment: 'deployed' as const } : n,
       ),
       pendingDateProposals: [acceptedProposal({})],

@@ -9,7 +9,7 @@ describe('applyShopOwnerAgency', () => {
     const result = applyShopOwnerAgency(state)
 
     // Roster and other state should be unchanged
-    expect(result.roster).toEqual(state.roster)
+    expect(result.npcRuntimeStates).toEqual(state.npcRuntimeStates)
     expect(result.money).toBe(state.money)
     // RNG seed stays the same when no processing occurs
     expect(result.rngSeed).toBe(state.rngSeed)
@@ -27,9 +27,9 @@ describe('applyShopOwnerAgency', () => {
 
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           shopOwnerProfile,
         },
       ],
@@ -38,7 +38,7 @@ describe('applyShopOwnerAgency', () => {
     const result = applyShopOwnerAgency(state)
 
     // NPC should still be in roster with updated profile
-    const npc = result.roster[0]!
+    const npc = result.npcRuntimeStates[0]!
     expect(npc.shopOwnerProfile).toBeDefined()
     expect(npc.shopOwnerProfile!.shopId).toBe('shop-tallow-general')
   })
@@ -55,16 +55,16 @@ describe('applyShopOwnerAgency', () => {
 
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           shopOwnerProfile: conservativeProfile,
         },
       ],
     }
 
     const result = applyShopOwnerAgency(state)
-    const npc = result.roster[0]!
+    const npc = result.npcRuntimeStates[0]!
 
     expect(npc.shopOwnerProfile!.businessStrategy).toBe('conservative')
     expect(npc.shopOwnerProfile!.profitMargin).toBe(0.15)
@@ -82,16 +82,16 @@ describe('applyShopOwnerAgency', () => {
 
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           shopOwnerProfile: aggressiveProfile,
         },
       ],
     }
 
     const result = applyShopOwnerAgency(state)
-    const npc = result.roster[0]!
+    const npc = result.npcRuntimeStates[0]!
 
     expect(npc.shopOwnerProfile!.businessStrategy).toBe('aggressive')
     expect(npc.shopOwnerProfile!.profitMargin).toBe(0.4)
@@ -100,9 +100,9 @@ describe('applyShopOwnerAgency', () => {
   it('advances RNG seed after processing', () => {
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           shopOwnerProfile: {
             shopId: 'shop-tallow-general',
             businessStrategy: 'balanced' as const,
@@ -124,9 +124,9 @@ describe('applyShopOwnerAgency', () => {
   it('processes multiple shop owners independently', () => {
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           shopOwnerProfile: {
             shopId: 'shop-tallow-general',
             businessStrategy: 'conservative' as const,
@@ -137,7 +137,7 @@ describe('applyShopOwnerAgency', () => {
           },
         },
         {
-          ...initialGameStateSnapshot.roster[1]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[1]!,
           shopOwnerProfile: {
             shopId: 'shop-foundry-weapons',
             businessStrategy: 'aggressive' as const,
@@ -152,8 +152,8 @@ describe('applyShopOwnerAgency', () => {
 
     const result = applyShopOwnerAgency(state)
 
-    expect(result.roster[0]!.shopOwnerProfile!.businessStrategy).toBe('conservative')
-    expect(result.roster[1]!.shopOwnerProfile!.businessStrategy).toBe('aggressive')
+    expect(result.npcRuntimeStates[0]!.shopOwnerProfile!.businessStrategy).toBe('conservative')
+    expect(result.npcRuntimeStates[1]!.shopOwnerProfile!.businessStrategy).toBe('aggressive')
   })
 })
 

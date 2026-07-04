@@ -7,7 +7,7 @@ import { describeNpcBondSurface } from './bondMarket'
 
 // File-local roster input selector (memoization input for the createSelectors below). The canonical
 // EXPORTED player-roster selector lives in selectors/npcs.ts — do not export a duplicate here.
-const selectRoster = (state: RootState) => state.game.roster
+const selectRoster = (state: RootState) => state.game.npcRuntimeStates
 
 export const WORKING_INCOME_SKILLS: (keyof Skills)[] = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
 
@@ -83,7 +83,7 @@ export function selectEstimatedNpcIncome(npcId: string) {
 }
 
 export const selectRosterEntries = createSelector(
-  (state: RootState) => state.game.roster,
+  (state: RootState) => state.game.npcRuntimeStates,
   (roster) => roster.map((npc) => {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const def = npcDef ?? contentCatalog.enemyNpcsById.get(npc.npcId)
@@ -115,7 +115,7 @@ export const selectRosterEntries = createSelector(
 )
 
 function buildRosterDetail(root: RootState, npcId: string) {
-  const runtime = root.game.roster.find((entry) => entry.npcId === npcId)
+  const runtime = root.game.npcRuntimeStates.find((entry) => entry.npcId === npcId)
 
   if (!runtime) {
     return null

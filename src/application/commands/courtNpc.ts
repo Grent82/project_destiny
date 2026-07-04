@@ -6,7 +6,7 @@ import { advanceRomanceArc } from './advanceRomanceArc'
 const PLAYER_ID = 'player'
 
 function canCourtNpc(state: GameState, npcId: string) {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
   // All NPCs are romance-eligible. Context (deployment, captivity, ward) affects gains, not eligibility.

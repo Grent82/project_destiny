@@ -13,7 +13,7 @@ import {
 
 import type { QuestRuntime } from '../../domain/quests/contracts'
 
-function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests'> {
+function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'> {
   return {
     ...initialGameStateSnapshot,
     npcCaptivityStates: {
@@ -37,7 +37,7 @@ function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'n
     },
     completedQuestIds: overrides.completedQuestIds ?? [],
     activeQuests: overrides.activeQuests ?? [],
-    roster: overrides.roster ?? [],
+    npcRuntimeStates: overrides.npcRuntimeStates ?? [],
   }
 }
 

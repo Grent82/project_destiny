@@ -19,7 +19,7 @@ describe('completeEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -29,7 +29,7 @@ describe('completeEmployment', () => {
 
     const result = completeEmployment(state, idaRhysRosterEntry.npcId)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('completed')
     expect(employee?.currentEmployment?.completedAtDay).toBe(state.day)
   })
@@ -49,7 +49,7 @@ describe('completeEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -65,7 +65,7 @@ describe('completeEmployment', () => {
 
     const result = completeEmployment(state, idaRhysRosterEntry.npcId)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.personalFunds.savings).toBe(150) // 50 + 100 bonus
   })
 
@@ -83,7 +83,7 @@ describe('completeEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -116,7 +116,7 @@ describe('failEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -126,7 +126,7 @@ describe('failEmployment', () => {
 
     const result = failEmployment(state, idaRhysRosterEntry.npcId)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('failed')
     expect(employee?.currentEmployment?.completedAtDay).toBe(state.day)
   })
@@ -145,7 +145,7 @@ describe('failEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -177,7 +177,7 @@ describe('cancelEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -187,7 +187,7 @@ describe('cancelEmployment', () => {
 
     const result = cancelEmployment(state, idaRhysRosterEntry.npcId)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('cancelled')
     expect(employee?.currentEmployment?.completedAtDay).toBe(state.day)
   })
@@ -196,7 +196,7 @@ describe('cancelEmployment', () => {
     // Create state with NPC that explicitly has null employment
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: null,
@@ -205,7 +205,7 @@ describe('cancelEmployment', () => {
     }
     const result = cancelEmployment(state, idaRhysRosterEntry.npcId)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     // State should be unchanged
     expect(employee?.currentEmployment).toBeNull()
   })

@@ -28,7 +28,7 @@ describe('combat commands', () => {
     const state = {
       ...initialStateWithIda,
       selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'],
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys'
           ? { ...npc, states: { ...npc.states, health: 32 } }
           : npc,
@@ -39,7 +39,7 @@ describe('combat commands', () => {
     const allyCombatant = nextState.activeCombat?.combatants.find(
       (combatant) => combatant.sourceNpcId === 'npc-ida-rhys',
     )
-    const rosterEntry = nextState.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
+    const rosterEntry = nextState.npcRuntimeStates.find((npc) => npc.npcId === 'npc-ida-rhys')
 
     expect(allyCombatant?.health).toBe(32)
     expect(allyCombatant?.maxHealth).toBe(32)

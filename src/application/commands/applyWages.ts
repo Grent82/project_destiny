@@ -30,7 +30,7 @@ export function wageForStatus(status: NpcStatus): number {
   }
 }
 
-function resolveRosterWagePerDay(status: NpcStatus, contractWagePerDay: number | undefined, skills: GameState['roster'][number]['skills']): number {
+function resolveRosterWagePerDay(status: NpcStatus, contractWagePerDay: number | undefined, skills: GameState['npcRuntimeStates'][number]['skills']): number {
   if (contractWagePerDay !== undefined) return contractWagePerDay
   if (status === 'mercenary') return calculateMercenaryContractWage(skills)
   return wageForStatus(status)
@@ -46,7 +46,7 @@ export function applyWages(state: GameState): GameState {
 
   // Step 1: Wage deduction
   next = { ...next, relationships: { ...next.relationships } }
-  for (const rosterEntry of state.roster) {
+  for (const rosterEntry of state.npcRuntimeStates) {
     if (rosterEntry.bondStatus?.holderId === 'player') continue
     const wage = resolveRosterWagePerDay(
       rosterEntry.status,
@@ -63,7 +63,7 @@ export function applyWages(state: GameState): GameState {
       const cashAmount = effectiveWage - savingsAmount // Ensure total equals effectiveWage (handles odd numbers)
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === rosterEntry.npcId
             ? {
                 ...r,
@@ -83,7 +83,7 @@ export function applyWages(state: GameState): GameState {
     } else {
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === rosterEntry.npcId
             ? { ...r, wagesOwedDays: r.wagesOwedDays + 1 }
             : r,
@@ -99,12 +99,12 @@ export function applyWages(state: GameState): GameState {
 
   // Step 1b: Loyalty decay for unpaid NPCs (empathy trait reduces decay rate by 15%)
   const loyaltyDecay = next.playerCharacter.traits.empathy > 60 ? 13 : 15
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (npc.wagesOwedDays >= 2) {
       const newLoyalty = Math.max(0, npc.traits.loyalty - loyaltyDecay)
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? { ...r, traits: { ...r.traits, loyalty: newLoyalty } }
             : r,
@@ -129,7 +129,7 @@ export function applyWages(state: GameState): GameState {
   }
 
   // Step 1c: Wage arrears warnings and departure
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (npc.bondStatus?.holderId === 'player') continue
     const wage = resolveRosterWagePerDay(npc.status, npc.contractWagePerDay, npc.skills)
     if (wage === 0) continue
@@ -137,7 +137,7 @@ export function applyWages(state: GameState): GameState {
     if (npc.wagesOwedDays >= 5 && (npc.assignment === 'working' || npc.assignment === 'assigned_title')) {
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? {
                 ...r,
@@ -155,7 +155,7 @@ export function applyWages(state: GameState): GameState {
     } else if (npc.wagesOwedDays >= 14) {
       next = {
         ...next,
-        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+        npcRuntimeStates: next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId),
       }
       next = appendActivityLogEntry(
         next,
@@ -176,7 +176,7 @@ export function applyWages(state: GameState): GameState {
   if (next.cityDials.unrest >= 70) {
     next = {
       ...next,
-      roster: next.roster.map((npc) => ({
+      npcRuntimeStates: next.npcRuntimeStates.map((npc) => ({
         ...npc,
         traits: { ...npc.traits, loyalty: Math.max(0, npc.traits.loyalty - 1) },
       })),

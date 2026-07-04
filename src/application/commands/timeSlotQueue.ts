@@ -270,7 +270,7 @@ export class TimeSlotQueue {
   ): NpcIntentionType[] {
     void rng // RNG available for future use if needed
 
-    const npc = state.roster.find((n) => n.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
     if (!npc) return []
 
     const intentionType = generateNpcIntention(state, npc)
@@ -284,7 +284,7 @@ export class TimeSlotQueue {
     rng: Rng,
   ): GameState {
     void rng // RNG available for future use if handler needs it
-    const npc = state.roster.find((n) => n.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
     if (!npc) return state
 
     const handler = intentionHandlers[intentionType]

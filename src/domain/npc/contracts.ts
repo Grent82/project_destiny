@@ -788,7 +788,7 @@ export const npcRuntimeStateSchema = z
     // can be filtered/iterated by kind. See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1.
     npcType: npcTypeSchema.default('roster'),
     // Runtime relationship: does this person work for the player? This is the SOLE replacement for the
-    // old "is in the state.roster array" signal — selectRoster keys on this, NOT on npcType. A world
+    // old "is in the state.npcRuntimeStates array" signal — selectRoster keys on this, NOT on npcType. A world
     // NPC can be recruited (playerRosterMember:true) and a dismissed operative becomes an ordinary
     // world NPC (playerRosterMember:false) without vanishing. Default true keeps existing (all-roster)
     // saves valid; recruit/migration/hydration set it explicitly.

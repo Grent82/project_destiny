@@ -61,7 +61,7 @@ export function startCombatEncounter(state: GameState, linkedQuestId?: string | 
     return state
   }
 
-  const squad = state.roster.filter(
+  const squad = state.npcRuntimeStates.filter(
     (npc) => state.selectedSquadNpcIds.includes(npc.npcId) && isDeployable(npc),
   )
 
@@ -225,7 +225,7 @@ export function performCombatAction(state: GameState, action: CombatAction): Gam
 
   // Fear check: ally may refuse advance action
   if (action === 'advance' && activeCombatant.sourceNpcId) {
-    const npc = state.roster.find((r) => r.npcId === activeCombatant.sourceNpcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === activeCombatant.sourceNpcId)
     if (npc && checkFearRefuseAdvance({ fear: npc.states.fear }, rng)) {
       const refusalMessage = `${activeCombatant.name} hesitates — fear roots them in place.`
       let nextEncounter = appendLog(
@@ -286,7 +286,7 @@ export function performCombatAction(state: GameState, action: CombatAction): Gam
 
     // Auto-switch to secondary weapon if primary breaks
     const primaryBroken = npcDur['weapon'] === 0
-    const rosterNpc = nextState.roster.find((r) => r.npcId === npcId)
+    const rosterNpc = nextState.npcRuntimeStates.find((r) => r.npcId === npcId)
     if (primaryBroken && rosterNpc?.loadout.secondaryWeaponId) {
       const secondaryId = rosterNpc.loadout.secondaryWeaponId
       nextState = {
@@ -370,7 +370,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
       nextState = loyaltyResult.state
 
       // Bridge rule: near-death → relationship fear increase (reduced on victory)
-      const rosterEntry = nextState.roster.find((e) => e.npcId === ally.sourceNpcId)
+      const rosterEntry = nextState.npcRuntimeStates.find((e) => e.npcId === ally.sourceNpcId)
       const currentFear = rosterEntry?.states.fear ?? 0
       const fearDelta = computePostCombatFearDelta(ally.health, ally.maxHealth, 'victory', currentFear)
       if (fearDelta > 0) {
@@ -383,7 +383,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
     const recruitableDefs = contentCatalog.enemyNpcs.filter((en) => en.recruitableOnDefeat)
     if (recruitableDefs.length > 0) {
       const alreadyOffered = new Set(nextState.availableForHire.map((o) => o.npcId))
-      const alreadyHired = new Set(nextState.roster.map((r) => r.npcId))
+      const alreadyHired = new Set(nextState.npcRuntimeStates.map((r) => r.npcId))
       const eligible = recruitableDefs.filter(
         (en) => !alreadyOffered.has(en.id) && !alreadyHired.has(en.id),
       )
@@ -471,7 +471,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
         )
       }
       // Bridge rule: full fear delta for near-death on defeat
-      const rosterEntry = nextState.roster.find((e) => e.npcId === ally.sourceNpcId)
+      const rosterEntry = nextState.npcRuntimeStates.find((e) => e.npcId === ally.sourceNpcId)
       const currentFear = rosterEntry?.states.fear ?? 0
       const fearDelta = computePostCombatFearDelta(ally.health, ally.maxHealth, 'defeat', currentFear)
       if (fearDelta > 0) {
@@ -621,7 +621,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
 
   nextState = {
     ...nextState,
-    roster: nextState.roster.map((npc) => {
+    npcRuntimeStates: nextState.npcRuntimeStates.map((npc) => {
       const ally = allyCombatants.find((c) => c.sourceNpcId === npc.npcId)
       if (!ally) return npc
 

@@ -18,7 +18,7 @@ import { publishEvent } from '../events/publishEvent'
 export function applyNakednessConsequences(state: GameState): GameState {
   let next = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (!isNpcNaked(npc)) continue
 
     // Determine if NPC is in public (not in player house)
@@ -30,7 +30,7 @@ export function applyNakednessConsequences(state: GameState): GameState {
     if (penalty.moraleDelta !== 0) {
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? { ...r, states: { ...r.states, morale: Math.max(0, r.states.morale + penalty.moraleDelta) } }
             : r,
@@ -42,7 +42,7 @@ export function applyNakednessConsequences(state: GameState): GameState {
     if (penalty.stressDelta !== 0) {
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? { ...r, states: { ...r.states, stress: Math.min(100, r.states.stress + penalty.stressDelta) } }
             : r,

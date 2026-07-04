@@ -67,7 +67,7 @@ export const invariantSquadFromRoster: AssertionSpec = assertion(
   'All selected squad members must be in the roster',
   (state) =>
     state.selectedSquadNpcIds.every((id) =>
-      state.roster.some((npc) => npc.npcId === id)
+      state.npcRuntimeStates.some((npc) => npc.npcId === id)
     )
 )
 
@@ -123,7 +123,7 @@ export function diffBranches(a: RunResult, b: RunResult): BranchDelta {
   return {
     moneyDelta: b.finalState.money - a.finalState.money,
     dayDelta: b.finalState.day - a.finalState.day,
-    rosterSizeDelta: b.finalState.roster.length - a.finalState.roster.length,
+    rosterSizeDelta: b.finalState.npcRuntimeStates.length - a.finalState.npcRuntimeStates.length,
     completedQuestsDelta:
       b.finalState.completedQuestIds.length - a.finalState.completedQuestIds.length,
     debtPaidChanged: a.finalState.debtPaid !== b.finalState.debtPaid,

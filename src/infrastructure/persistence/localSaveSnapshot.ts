@@ -35,7 +35,30 @@ function isStorageLike(value: unknown): value is StorageLike {
   )
 }
 
-function migrateState(raw: unknown): GameState | null {
+/**
+ * v6 → v7 field rename (destiny-rama.7 / unified-npc-runtime-contract §7 step 1): the GameState field
+ * `roster` was renamed to `npcRuntimeStates`, and every person gained `npcType` + `playerRosterMember`.
+ * Any save written before v7 uses the old `roster` key and lacks those fields, so it would fail the
+ * now-strict schema. Rename the key and stamp the fields — every pre-v7 person was a player-roster
+ * member (world/captive persons did not yet live in this list). Applied to every version branch below
+ * (all of them spread the raw save), and a no-op once the save is already on the new shape.
+ */
+function migrateRosterFieldToNpcRuntimeStates(raw: unknown): unknown {
+  if (raw === null || typeof raw !== 'object') return raw
+  const record = raw as Record<string, unknown>
+  if (!Array.isArray(record.roster) || record.npcRuntimeStates !== undefined) return raw
+  const npcRuntimeStates = (record.roster as unknown[]).map((entry) =>
+    entry && typeof entry === 'object'
+      ? { npcType: 'roster', playerRosterMember: true, ...(entry as Record<string, unknown>) }
+      : entry,
+  )
+  const rest: Record<string, unknown> = { ...record }
+  delete rest.roster
+  return { ...rest, npcRuntimeStates }
+}
+
+function migrateState(rawInput: unknown): GameState | null {
+  const raw = migrateRosterFieldToNpcRuntimeStates(rawInput)
   const version = (raw as Record<string, unknown>)?.saveVersion ?? 0
 
   if (version === 0) {
@@ -100,10 +123,18 @@ function migrateState(raw: unknown): GameState | null {
     return normalizePendingEventInstances({ ...migrated, saveVersion: 5 })
   }
 
-  if (version === 5) {
-    // v5 is now the current version — just validate and return
-    const raw5 = raw as Record<string, unknown>
-    return gameStateSchema.safeParse(raw5).data ?? null
+  if (version === 5 || version === 6) {
+    // v5/v6 → v7: the only structural change is the roster → npcRuntimeStates field rename plus the
+    // new npcType/playerRosterMember fields, both already applied by
+    // migrateRosterFieldToNpcRuntimeStates above (and the remaining new fields carry schema defaults).
+    const rawOld = raw as Record<string, unknown>
+    return gameStateSchema.safeParse({ ...rawOld, saveVersion: 7 }).data ?? null
+  }
+
+  if (version === 7) {
+    // v7 is the current version — validate and return.
+    const raw7 = raw as Record<string, unknown>
+    return gameStateSchema.safeParse(raw7).data ?? null
   }
 
   // Unknown future version — cannot load

@@ -111,7 +111,7 @@ export const expeditionReducers = {
     })
     if (isOverLimit) return
 
-    for (const npc of state.roster) {
+    for (const npc of state.npcRuntimeStates) {
       if (squadNpcIds.includes(npc.npcId)) npc.assignment = 'deployed'
     }
     state.cityResources.foodSecurity = Math.max(0, (state.cityResources.foodSecurity ?? 0) - supplies)
@@ -157,7 +157,7 @@ export const expeditionReducers = {
     }
 
     if (encounter.type === 'combat') {
-      const squadNpcs = state.roster.filter((n) => exp.squadNpcIds.includes(n.npcId))
+      const squadNpcs = state.npcRuntimeStates.filter((n) => exp.squadNpcIds.includes(n.npcId))
       if (squadNpcs.length > 0) {
         const target = squadNpcs[Math.floor(Math.random() * squadNpcs.length)]!
         target.states.health = Math.max(0, target.states.health - 15)
@@ -193,20 +193,20 @@ export const expeditionReducers = {
         message: 'Supplies exhausted. The squad forages, but their strength fades.',
       })
       if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
-      for (const npc of state.roster) {
+      for (const npc of state.npcRuntimeStates) {
         if (exp.squadNpcIds.includes(npc.npcId)) {
           npc.states.health = Math.max(0, npc.states.health - 10)
           npc.states.morale = Math.max(0, npc.states.morale - 15)
         }
       }
     } else if (!wasStocked && exp.suppliesRemaining === 0) {
-      for (const npc of state.roster) {
+      for (const npc of state.npcRuntimeStates) {
         if (exp.squadNpcIds.includes(npc.npcId)) {
           npc.states.health = Math.max(0, npc.states.health - 5)
           npc.states.morale = Math.max(0, npc.states.morale - 5)
         }
       }
-      const squadNpcs = state.roster.filter((n) => exp.squadNpcIds.includes(n.npcId))
+      const squadNpcs = state.npcRuntimeStates.filter((n) => exp.squadNpcIds.includes(n.npcId))
       const criticalCount = squadNpcs.filter((n) => n.states.health < 20).length
       if (criticalCount >= Math.ceil(squadNpcs.length / 2)) {
         exp.status = 'returned'
@@ -248,7 +248,7 @@ export const expeditionReducers = {
 
     return {
       ...nextState,
-      roster: nextState.roster.map((npc) => {
+      npcRuntimeStates: nextState.npcRuntimeStates.map((npc) => {
         if (exp.squadNpcIds.includes(npc.npcId) && npc.assignment === 'deployed') {
           return { ...npc, assignment: 'idle' as const }
         }
@@ -296,7 +296,7 @@ export const expeditionReducers = {
     const def = contentCatalog.itemsById.get(foundInstance.itemId)
     const healEffect = def?.typedEffects?.find((e) => e.type === 'heal')
     const healValue = typeof healEffect?.value === 'number' ? healEffect.value : 0
-    const npc = state.roster.find((n) => n.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
     if (npc) {
       npc.states.health = Math.min(100, npc.states.health + healValue)
     }

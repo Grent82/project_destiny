@@ -82,7 +82,7 @@ function checkRelationshipMilestones(state: GameState): GameState {
 
     if (milestone.hireOffer) {
       const alreadyAvailable = next.availableForHire.some((o) => o.npcId === milestone.hireOffer!.npcId)
-      const alreadyOnRoster = next.roster.some((r) => r.npcId === milestone.hireOffer!.npcId)
+      const alreadyOnRoster = next.npcRuntimeStates.some((r) => r.npcId === milestone.hireOffer!.npcId)
       if (!alreadyAvailable && !alreadyOnRoster) {
         next = { ...next, availableForHire: [...next.availableForHire, milestone.hireOffer] }
       }
@@ -108,7 +108,7 @@ export function applyNpcConsequences(
 
   // Step 5b: Passive relationship drift and proximity gains
   next = applyPassiveDrift(next)
-  const deployedNpcIds = next.roster.filter((r) => r.assignment === 'deployed').map((r) => r.npcId)
+  const deployedNpcIds = next.npcRuntimeStates.filter((r) => r.assignment === 'deployed').map((r) => r.npcId)
   if (deployedNpcIds.length > 0) {
     next = applyProximityGains(next, deployedNpcIds)
   }
@@ -117,11 +117,11 @@ export function applyNpcConsequences(
   next = checkRelationshipMilestones(next)
 
   // Step 5c-pre: Ambition frustration morale drain
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (npc.traits.ambition > TRAIT_HIGH && npc.activeTitle === null && npc.assignment !== 'deployed') {
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? { ...r, states: { ...r.states, morale: Math.max(0, r.states.morale - 2) } }
             : r,
@@ -138,7 +138,7 @@ export function applyNpcConsequences(
   // Step 5c: NPC departure / betrayal check (after wages and passive drift)
   // Use start-of-day relationships: newly-created entries from wage payment have
   // loyalty=0 by default, which would incorrectly flag new NPCs for departure.
-  const rosterBeforeDepartures = next.roster
+  const rosterBeforeDepartures = next.npcRuntimeStates
   for (const npc of rosterBeforeDepartures) {
     const captivityStatus = npc.captivityState?.status
     if (captivityStatus === 'captive' || captivityStatus === 'missing') continue
@@ -153,14 +153,14 @@ export function applyNpcConsequences(
     if (result.type === 'departed') {
       next = {
         ...next,
-        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+        npcRuntimeStates: next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId),
         availableForHire: next.availableForHire.filter((o) => o.npcId !== npc.npcId),
       }
       next = appendActivityLogEntry(next, 'system', `${result.npcName}: ${result.reason}`)
     } else if (result.type === 'betrayed') {
       next = {
         ...next,
-        roster: next.roster.filter((r) => r.npcId !== npc.npcId),
+        npcRuntimeStates: next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId),
       }
       // Leak info to rivals — boost a hostile faction's standing
       const hostieFactions = Object.entries(next.factionStandings)
@@ -182,7 +182,7 @@ export function applyNpcConsequences(
   }
 
   // Step 5d: Durability warnings
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     const npcDur = next.equippedItemDurabilities[npc.npcId]
     if (!npcDur) continue
 

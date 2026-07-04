@@ -53,7 +53,7 @@ describe('RosterScreen', () => {
   it('surfaces bound and transferred status in the roster roll itself', () => {
     const store = createGameStore({
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
@@ -112,7 +112,7 @@ describe('RosterScreen', () => {
   it('shows empty state when roster has no members', () => {
     const store = createGameStore({
       ...initialStateWithIda,
-      roster: [],
+      npcRuntimeStates: [],
     })
 
     render(
@@ -130,7 +130,7 @@ describe('RosterScreen', () => {
   it('displays idle NPCs with At liberty status', () => {
     const store = createGameStore({
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, assignment: 'idle' as const } : npc
       ),
     })
@@ -150,7 +150,7 @@ describe('RosterScreen', () => {
   it('displays working NPCs with job assignment', () => {
     const store = createGameStore({
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? { ...npc, assignment: 'working' as const, roomAssignment: 'room-kitchen' }
           : npc
@@ -172,7 +172,7 @@ describe('RosterScreen', () => {
   it('displays NPC title badge when active title is assigned', () => {
     const store = createGameStore({
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-house-lord' } : npc
       ),
     })
@@ -192,9 +192,9 @@ describe('RosterScreen', () => {
   it('allows filtering by assignment state', () => {
     const store = createGameStore({
       ...initialStateWithIda,
-      roster: [
-        { ...initialStateWithIda.roster[0], assignment: 'idle' as const },
-        { ...initialStateWithIda.roster[1], assignment: 'working' as const, roomAssignment: 'room-kitchen' },
+      npcRuntimeStates: [
+        { ...initialStateWithIda.npcRuntimeStates[0], assignment: 'idle' as const },
+        { ...initialStateWithIda.npcRuntimeStates[1], assignment: 'working' as const, roomAssignment: 'room-kitchen' },
       ],
     })
 

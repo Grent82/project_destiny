@@ -71,7 +71,7 @@ describe('tryNpcNpcFlirtation', () => {
   it('does nothing when one NPC is not eligible (deployed)', () => {
     const state: GameState = {
       ...withRelationship(initialStateWithIda, MARION, IDA, { affinity: 60, trust: 40, fear: 0 }),
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === MARION ? { ...n, assignment: 'deployed' as const } : n,
       ),
     }
@@ -85,7 +85,7 @@ describe('tryNpcNpcSeekIntimacy', () => {
     let state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 60, trust: 75, fear: 0 })
     state = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === MARION || n.npcId === IDA ? { ...n, states: { ...n.states, stress: 40 } } : n,
       ),
     }
@@ -97,8 +97,8 @@ describe('tryNpcNpcSeekIntimacy', () => {
     expect(abAffinity).toBeGreaterThan(60)
     expect(baAffinity).toBeGreaterThan(60)
 
-    const marion = result.roster.find((n) => n.npcId === MARION)!
-    const ida = result.roster.find((n) => n.npcId === IDA)!
+    const marion = result.npcRuntimeStates.find((n) => n.npcId === MARION)!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === IDA)!
     expect(marion.states.stress).toBeLessThan(40)
     expect(ida.states.stress).toBeLessThan(40)
   })
@@ -121,7 +121,7 @@ describe('tryNpcNpcFlirtAggressively', () => {
     let state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 30, trust: 20, fear: 0 })
     state = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === MARION ? { ...n, traits: { ...n.traits, dominance: 80 } } : n,
       ),
     }
@@ -134,11 +134,11 @@ describe('tryNpcNpcFlirtAggressively', () => {
 
   it('raises the target NPC\'s own anger state on a failed roll (not a relationship axis)', () => {
     const state = withRelationship(initialStateWithIda, MARION, IDA, { affinity: 30, trust: 20, fear: 0 })
-    const idaBefore = state.roster.find((n) => n.npcId === IDA)!.states.anger
+    const idaBefore = state.npcRuntimeStates.find((n) => n.npcId === IDA)!.states.anger
 
     const result = tryNpcNpcFlirtAggressively(state, MARION, IDA, alwaysFail)
 
-    const idaAfter = result.roster.find((n) => n.npcId === IDA)!.states.anger
+    const idaAfter = result.npcRuntimeStates.find((n) => n.npcId === IDA)!.states.anger
     expect(idaAfter).toBe(idaBefore + 10)
     // Affinity must not change on failure
     expect(result.relationships[buildRelationshipKey(MARION, IDA)]!.affinity).toBe(30)
@@ -162,7 +162,7 @@ describe('checkJealousyForNpc', () => {
     const cress = createRosterEntry(CRESS, 'Cress Aldmoor')
     const base: GameState = {
       ...initialStateWithIda,
-      roster: [...initialStateWithIda.roster, cress],
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, cress],
     }
     // Marion is jealous: has high affinity with Ida, but Cress has even higher affinity with Ida.
     let state = withRelationship(base, MARION, IDA, { affinity: 80, trust: 40, fear: 0 })
@@ -180,7 +180,7 @@ describe('checkJealousyForNpc', () => {
     const cress = createRosterEntry(CRESS, 'Cress Aldmoor')
     const base: GameState = {
       ...initialStateWithIda,
-      roster: [...initialStateWithIda.roster, cress],
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, cress],
     }
     let state = withRelationship(base, MARION, IDA, { affinity: 80, trust: 40, fear: 0 })
     state = withRelationship(state, CRESS, IDA, { affinity: 90, trust: 40, fear: 0 })
@@ -194,7 +194,7 @@ describe('checkJealousyForNpc', () => {
     const cress = createRosterEntry(CRESS, 'Cress Aldmoor')
     const base: GameState = {
       ...initialStateWithIda,
-      roster: [...initialStateWithIda.roster, cress],
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, cress],
     }
     // Both Marion and Ida would independently qualify as jealous of Cress, but only Marion acts.
     let state = withRelationship(base, MARION, CRESS, { affinity: 80, trust: 40, fear: 0 })

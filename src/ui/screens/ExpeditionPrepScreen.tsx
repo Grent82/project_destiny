@@ -18,7 +18,7 @@ export function ExpeditionPrepScreen() {
   const navigate = useNavigate()
   const destinations = useAppSelector(selectAllExpeditionDestinations)
   const expStatus = useAppSelector(selectExpeditionStatus)
-  const roster = useAppSelector((state) => state.game.roster)
+  const roster = useAppSelector((state) => state.game.npcRuntimeStates)
   const foodSecurity = useAppSelector((state) => state.game.cityResources?.foodSecurity ?? 0)
   const activeQuests = useAppSelector(selectActiveQuests)
 

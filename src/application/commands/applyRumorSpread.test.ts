@@ -18,7 +18,7 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     factionStandings: {},
     factionStates: [],
     districts: [],
-    roster: [],
+    npcRuntimeStates: [],
     cityResources: { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0 },
     activityLog: [],
     selectedSquadNpcIds: [],
@@ -377,7 +377,7 @@ describe('applyRumorSpread', () => {
   })
 
   describe('district-aware pass chance (destiny-5hm3)', () => {
-    function makeNpc(npcId: string, districtId: string | null, dominance = 70): GameState['roster'][number] {
+    function makeNpc(npcId: string, districtId: string | null, dominance = 70): GameState['npcRuntimeStates'][number] {
       return {
         npcId,
         name: 'Test NPC',
@@ -422,8 +422,8 @@ describe('applyRumorSpread', () => {
 
       const npc = makeNpc('npc-test-worker', 'district-harbor', 80)
 
-      const stateWith = makeState({ rumors: [rumorWithPresence], roster: [npc] })
-      const stateWithout = makeState({ rumors: [rumorWithout], roster: [npc] })
+      const stateWith = makeState({ rumors: [rumorWithPresence], npcRuntimeStates: [npc] })
+      const stateWithout = makeState({ rumors: [rumorWithout], npcRuntimeStates: [npc] })
 
       // Use a mid-range rng so presence tips the pass
       const midRng = () => 0.4
@@ -456,7 +456,7 @@ describe('applyRumorSpread', () => {
 
       const state = makeState({
         rumors: [rumorInHouseDistrict, rumorElsewhere],
-        roster: [idleNpc],
+        npcRuntimeStates: [idleNpc],
         houseDistrictId: 'district-the-pale',
       })
 
@@ -477,7 +477,7 @@ describe('applyRumorSpread', () => {
       // houseDistrictId is 'district-the-warrens' (not the-pale), so idle NPCs won't be in the-pale either
       const state = makeState({
         rumors: [rumor],
-        roster: [npcInHarbor],
+        npcRuntimeStates: [npcInHarbor],
         houseDistrictId: 'district-the-warrens',
       })
 

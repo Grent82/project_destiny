@@ -17,7 +17,7 @@ describe('Context Modulators', () => {
     timeSlot: 'morning',
     currentDistrictId: 'district-the-pale',
     districtTension: { 'district-the-pale': 50, ...(districtTensionOverrides || {}) },
-    roster: rosterOverrides || [],
+    npcRuntimeStates: rosterOverrides || [],
     cityResources: {
       foodSecurity: 60,
       foodStock: 100,

@@ -66,7 +66,7 @@ function checkProposalEligibility(
     }
   }
 
-  const targetNpc = state.roster.find((n) => n.npcId === targetId)
+  const targetNpc = state.npcRuntimeStates.find((n) => n.npcId === targetId)
   if (!targetNpc) {
     return {
       eligible: false,

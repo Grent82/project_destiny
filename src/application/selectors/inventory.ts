@@ -395,7 +395,7 @@ export const selectNpcAccessibleSources = createSelector(
       itemCount: number
     }> = []
 
-    const npc = game.roster.find((n) => n.npcId === _npcId)
+    const npc = game.npcRuntimeStates.find((n) => n.npcId === _npcId)
     if (!npc) return sources
 
     // NPC's own inventory

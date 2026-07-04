@@ -15,7 +15,7 @@ const createTestState = (overrides?: Partial<GameState>): GameState => ({
   factionStandings: {},
   factionStates: [],
   districts: [],
-  roster: [],
+  npcRuntimeStates: [],
   inventoryState: {
     player: { equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null }, bagContainers: [], totalBagSlots: 40, usedBagSlots: 0 },
     npcInventories: {},
@@ -139,7 +139,7 @@ const createTestNpc = (id: string, name: string, overrides?: Partial<NpcRuntimeS
 describe('generateNpcDateProposals', () => {
   it('returns state unchanged if fewer than 2 eligible NPCs', () => {
     const state = createTestState({
-      roster: [createTestNpc('npc-1', 'NPC One')],
+      npcRuntimeStates: [createTestNpc('npc-1', 'NPC One')],
     })
     const rng = createRng(42).rng
     const result = generateNpcDateProposals(state, rng)
@@ -148,7 +148,7 @@ describe('generateNpcDateProposals', () => {
 
   it('returns state unchanged if NPCs have no intimacy', () => {
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One'),
         createTestNpc('npc-2', 'NPC Two'),
       ],
@@ -161,7 +161,7 @@ describe('generateNpcDateProposals', () => {
 
   it('returns state unchanged if NPCs are on cooldown', () => {
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One'),
         createTestNpc('npc-2', 'NPC Two'),
       ],
@@ -182,7 +182,7 @@ describe('generateNpcDateProposals', () => {
   it('creates date proposal when RNG roll succeeds and intimacy is sufficient', () => {
     // Use a seed that will produce a favorable RNG roll
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-marion', 'Marion Vale'),
         createTestNpc('npc-ida', 'Ida Rhys'),
       ],
@@ -211,7 +211,7 @@ describe('generateNpcDateProposals', () => {
 
   it('skips NPCs who are deployed', () => {
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One', { assignment: 'deployed' }),
         createTestNpc('npc-2', 'NPC Two'),
       ],
@@ -230,7 +230,7 @@ describe('generateNpcDateProposals', () => {
 
   it('skips NPCs who are captive', () => {
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One', { captivityState: { status: 'captive', holderId: 'npc-enemy', siteId: null, roomId: null, regime: 'unknown', condition: 'healthy', compliance: 'resistant', bondType: 'none', timeHeldDays: 5, lastTransferDay: null, questTag: null, confiscatedItems: [], confiscatedMoney: null, confiscatedEquipment: { weapon: null, armor: null, accessory: [] } } }),
         createTestNpc('npc-2', 'NPC Two'),
       ],
@@ -248,7 +248,7 @@ describe('generateNpcDateProposals', () => {
 
   it('skips NPCs who are wards', () => {
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One', { status: 'ward' }),
         createTestNpc('npc-2', 'NPC Two'),
       ],
@@ -267,7 +267,7 @@ describe('generateNpcDateProposals', () => {
   it('only proposes dates appropriate for intimacy stage', () => {
     // At 'affinity' stage, only affinity-required dates should be eligible
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One'),
         createTestNpc('npc-2', 'NPC Two'),
       ],
@@ -291,7 +291,7 @@ describe('generateNpcDateProposals', () => {
 
   it('adds activity log entry when proposal is created', () => {
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-marion', 'Marion Vale'),
         createTestNpc('npc-ida', 'Ida Rhys'),
       ],
@@ -319,7 +319,7 @@ describe('generateNpcDateProposals', () => {
   it('respects npcPairingPolicy forbidden for new pairs', () => {
     // Note: This is handled by applyNpcPairing, but date proposals should also respect policy
     const state = createTestState({
-      roster: [
+      npcRuntimeStates: [
         createTestNpc('npc-1', 'NPC One'),
         createTestNpc('npc-2', 'NPC Two'),
       ],

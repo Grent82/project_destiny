@@ -101,7 +101,7 @@ function queueInstance(state: GameState, npc: NpcRuntimeState): GameState {
 export function ensureCaptivityPregnancyDiscovery(state: GameState): GameState {
   let next = state
 
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (npc.pregnancyState?.context !== 'unknown') continue
     next = queueInstance(next, npc)
   }

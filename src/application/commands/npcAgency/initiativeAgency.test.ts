@@ -6,17 +6,17 @@ import type { NpcRuntimeState } from '../../../domain/npc/contracts'
 describe('applyInitiativeAgency', () => {
   function makeInitiatorNpc(): NpcRuntimeState {
     return {
-      ...initialStateWithIda.roster[0]!,
+      ...initialStateWithIda.npcRuntimeStates[0]!,
       npcId: 'npc-nessa-test',
       name: 'Nessa Test',
-      traits: { ...initialStateWithIda.roster[0]!.traits, ambition: 80, dominance: 65 },
+      traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, ambition: 80, dominance: 65 },
       npcArc: { arcId: 'arc-initiator', stage: 'active', stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
     }
   }
 
   it('does nothing when day is not divisible by 7', () => {
     const nessa = makeInitiatorNpc()
-    const state = { ...initialStateWithIda, day: 6, roster: [nessa] }
+    const state = { ...initialStateWithIda, day: 6, npcRuntimeStates: [nessa] }
     const logBefore = state.activityLog.length
     const result = applyInitiativeAgency(state, () => 0)
     expect(result.activityLog.length).toBe(logBefore)
@@ -24,7 +24,7 @@ describe('applyInitiativeAgency', () => {
 
   it('fires an initiative action on day divisible by 7', () => {
     const nessa = makeInitiatorNpc()
-    const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
+    const state = { ...initialStateWithIda, day: 7, npcRuntimeStates: [nessa] }
     const logBefore = state.activityLog.length
     const result = applyInitiativeAgency(state, () => 0)
     expect(result.activityLog.length).toBeGreaterThan(logBefore)
@@ -32,15 +32,15 @@ describe('applyInitiativeAgency', () => {
 
   it('records initiative in stageFlags', () => {
     const nessa = makeInitiatorNpc()
-    const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
+    const state = { ...initialStateWithIda, day: 7, npcRuntimeStates: [nessa] }
     const result = applyInitiativeAgency(state, () => 0)
-    const updated = result.roster.find((n) => n.npcId === nessa.npcId)!
+    const updated = result.npcRuntimeStates.find((n) => n.npcId === nessa.npcId)!
     expect(updated.npcArc!.stageFlags[`initiative-7`]).toBe(true)
   })
 
   it('resource_move adds money to house funds when selected', () => {
     const nessa = makeInitiatorNpc()
-    const state = { ...initialStateWithIda, day: 7, money: 50, roster: [nessa] }
+    const state = { ...initialStateWithIda, day: 7, money: 50, npcRuntimeStates: [nessa] }
     // Force resource_move by controlling RNG calls
     let callCount = 0
     const forceResourceMove = () => {
@@ -57,8 +57,8 @@ describe('applyInitiativeAgency', () => {
   })
 
   it('does nothing for NPCs without arc-initiator', () => {
-    const npcNoArc = { ...initialStateWithIda.roster[0]!, npcArc: null }
-    const state = { ...initialStateWithIda, day: 7, roster: [npcNoArc] }
+    const npcNoArc = { ...initialStateWithIda.npcRuntimeStates[0]!, npcArc: null }
+    const state = { ...initialStateWithIda, day: 7, npcRuntimeStates: [npcNoArc] }
     const logBefore = state.activityLog.length
     const result = applyInitiativeAgency(state, () => 0)
     expect(result.activityLog.length).toBe(logBefore)
@@ -66,7 +66,7 @@ describe('applyInitiativeAgency', () => {
 
   it('deterministic: same seed produces identical outcome', () => {
     const nessa = makeInitiatorNpc()
-    const state = { ...initialStateWithIda, day: 7, roster: [nessa] }
+    const state = { ...initialStateWithIda, day: 7, npcRuntimeStates: [nessa] }
 
     const result1 = applyInitiativeAgency(state, () => 0.1)
     const result2 = applyInitiativeAgency(state, () => 0.1)

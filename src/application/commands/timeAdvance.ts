@@ -52,7 +52,7 @@ export function sleepBrief(state: GameState): GameState {
   let next = advanceTimeSlotInState(state)
   next = {
     ...next,
-    roster: next.roster.map((npc) => ({
+    npcRuntimeStates: next.npcRuntimeStates.map((npc) => ({
       ...npc,
       states: {
         ...npc.states,
@@ -73,7 +73,7 @@ export function sleepToMorning(state: GameState): GameState {
   let next = advanceSlotsInState(state, steps)
   next = {
     ...next,
-    roster: next.roster.map((npc) => ({
+    npcRuntimeStates: next.npcRuntimeStates.map((npc) => ({
       ...npc,
       states: {
         ...npc.states,

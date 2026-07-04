@@ -46,9 +46,9 @@ function stateWithRelationship(overrides: {
       },
     },
     lastFiredDay: {},
-    roster: [
+    npcRuntimeStates: [
       {
-        ...initialStateWithIda.roster[1]!,
+        ...initialStateWithIda.npcRuntimeStates[1]!,
         assignment: overrides.assignment ?? 'idle',
         status: overrides.status ?? 'mercenary',
         captivityState: overrides.captivityStatus

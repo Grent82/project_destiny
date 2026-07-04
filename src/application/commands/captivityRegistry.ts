@@ -1,17 +1,17 @@
 import type { CaptivityState, GameState } from '../../domain'
 
 export function getNpcCaptivityState(
-  state: Pick<GameState, 'npcCaptivityStates' | 'roster'>,
+  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates'>,
   npcId: string,
 ): CaptivityState | undefined {
-  return state.npcCaptivityStates[npcId] ?? state.roster.find((npc) => npc.npcId === npcId)?.captivityState
+  return state.npcCaptivityStates[npcId] ?? state.npcRuntimeStates.find((npc) => npc.npcId === npcId)?.captivityState
 }
 
 export function getAllNpcCaptivityStates(
-  state: Pick<GameState, 'npcCaptivityStates' | 'roster'>,
+  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates'>,
 ): Record<string, CaptivityState> {
   const merged = { ...state.npcCaptivityStates }
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (npc.captivityState && !merged[npc.npcId]) {
       merged[npc.npcId] = npc.captivityState
     }
@@ -20,7 +20,7 @@ export function getAllNpcCaptivityStates(
 }
 
 export function setNpcCaptivityState(
-  state: Pick<GameState, 'npcCaptivityStates' | 'roster'>,
+  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates'>,
   npcId: string,
   captivityState: CaptivityState | null,
 ): void {
@@ -30,7 +30,7 @@ export function setNpcCaptivityState(
     state.npcCaptivityStates[npcId] = captivityState
   }
 
-  const rosterNpc = state.roster.find((npc) => npc.npcId === npcId)
+  const rosterNpc = state.npcRuntimeStates.find((npc) => npc.npcId === npcId)
   if (!rosterNpc) return
   if (captivityState === null) {
     delete rosterNpc.captivityState

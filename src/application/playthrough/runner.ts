@@ -157,8 +157,8 @@ function extractMetrics(state: GameState): ScenarioMetrics {
   return {
     day: state.day,
     money: state.money,
-    rosterCount: state.roster.length,
-    rosterReadyCount: state.roster.filter((n) => n.assignment === 'idle' && n.states.health > 30).length,
+    rosterCount: state.npcRuntimeStates.length,
+    rosterReadyCount: state.npcRuntimeStates.filter((n) => n.assignment === 'idle' && n.states.health > 30).length,
     activeQuestCount: state.activeQuests.length,
     completedQuestCount: state.completedQuestIds.length,
     factionStandings: { ...state.factionStandings },

@@ -7,7 +7,7 @@ import { appendActivityLogEntry } from './activityLog'
 export function applyThresholds(state: GameState): GameState {
   let next = state
 
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     const snap = {
       stress: npc.states.stress,
       morale: npc.states.morale,
@@ -20,7 +20,7 @@ export function applyThresholds(state: GameState): GameState {
     if (moraleDecay < 0) {
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? { ...r, states: { ...r.states, morale: Math.max(0, r.states.morale + moraleDecay) } }
             : r,

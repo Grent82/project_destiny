@@ -22,7 +22,7 @@ const MARION_ID = 'npc-marion-vale'
 function withNpcOverrides(state: GameState, npcId: string, overrides: Partial<NpcRuntimeState>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
   }
 }
 
@@ -62,19 +62,19 @@ const alwaysFail = () => 0.999
 describe('npcSpyOn', () => {
   it('learns the target\'s authored private need on success and records an npcMemory entry', () => {
     const result = npcSpyOn(initialStateWithIda, NPC_ID, alwaysSucceed)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.npcMemory.length).toBeGreaterThan(0)
     expect(actor.npcMemory.at(-1)!.event).toContain('Marion')
   })
 
   it('raises the target\'s fear when caught (failure)', () => {
     const result = npcSpyOn(initialStateWithIda, NPC_ID, alwaysFail)
-    const target = result.roster.find((n) => n.npcId === MARION_ID)!
+    const target = result.npcRuntimeStates.find((n) => n.npcId === MARION_ID)!
     expect(target.states.fear).toBeGreaterThan(idaRhysRosterEntry.states.fear)
   })
 
   it('no-ops when there is no other idle NPC', () => {
-    const state: GameState = { ...initialStateWithIda, roster: [initialStateWithIda.roster.find((n) => n.npcId === NPC_ID)!] }
+    const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [initialStateWithIda.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!] }
     const result = npcSpyOn(state, NPC_ID, alwaysSucceed)
     expect(result).toBe(state)
   })
@@ -121,7 +121,7 @@ describe('npcPeopleWatch', () => {
   it('adds an npcMemory entry when assigned to a district', () => {
     const state = withNpcOverrides(initialStateWithIda, NPC_ID, { assignedDistrictId: 'district-the-pale' })
     const result = npcPeopleWatch(state, NPC_ID)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.npcMemory.length).toBeGreaterThan(0)
   })
 
@@ -160,7 +160,7 @@ describe('npcSeekShelter', () => {
     let state = withRoomFunction(initialStateWithIda, 'quarters')
     state = withNpcOverrides(state, NPC_ID, { states: { ...idaRhysRosterEntry.states, fear: 50, stress: 50 } })
     const result = npcSeekShelter(state, NPC_ID)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.states.fear).toBe(40)
     expect(actor.states.stress).toBe(45)
   })
@@ -168,7 +168,7 @@ describe('npcSeekShelter', () => {
   it('reduces fear/stress less without a safe room', () => {
     const state = withNpcOverrides(initialStateWithIda, NPC_ID, { states: { ...idaRhysRosterEntry.states, fear: 50, stress: 50 } })
     const result = npcSeekShelter(state, NPC_ID)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.states.fear).toBe(47)
     expect(actor.states.stress).toBe(48)
   })
@@ -177,7 +177,7 @@ describe('npcSeekShelter', () => {
 describe('npcPracticeSkill', () => {
   it('gains a small amount of XP in a random skill', () => {
     const result = npcPracticeSkill(initialStateWithIda, NPC_ID, () => 0.5)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     const changed = Object.entries(actor.skills).some(([k, v]) => v !== idaRhysRosterEntry.skills[k as keyof typeof idaRhysRosterEntry.skills])
     expect(changed).toBe(true)
   })
@@ -188,7 +188,7 @@ describe('npcTrainSelf', () => {
     let state = withRoomFunction(initialStateWithIda, 'study')
     state = withNpcOverrides(state, NPC_ID, { trainingFocus: 'intrigue' })
     const result = npcTrainSelf(state, NPC_ID)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.skills.intrigue).toBeGreaterThan(idaRhysRosterEntry.skills.intrigue)
   })
 
@@ -219,7 +219,7 @@ describe('npcEscapeAttempt', () => {
       },
     })
     const result = npcEscapeAttempt(state, NPC_ID, alwaysSucceed)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.captivityState?.status).toBe('missing')
   })
 
@@ -243,7 +243,7 @@ describe('npcEscapeAttempt', () => {
       },
     })
     const result = npcEscapeAttempt(state, NPC_ID, alwaysFail)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.captivityState?.status).toBe('captive')
     expect(actor.states.fear).toBeGreaterThan(idaRhysRosterEntry.states.fear)
   })

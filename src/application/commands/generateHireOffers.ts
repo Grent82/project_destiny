@@ -20,7 +20,7 @@ export function generateDistrictHireOffers(
   reputationScore: number = computeReputationScore(state),
   rng: Rng = Math.random,
 ): void {
-  const alreadyHired = new Set(state.roster.map((r) => r.npcId))
+  const alreadyHired = new Set(state.npcRuntimeStates.map((r) => r.npcId))
   const alreadyOffered = new Set(state.availableForHire.map((o) => o.npcId))
 
   const district = contentCatalog.districtsById.get(districtId)

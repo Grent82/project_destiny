@@ -17,21 +17,21 @@ const NPC_ID = idaRhysRosterEntry.npcId
 function withNpcOverrides(state: GameState, npcId: string, overrides: Partial<NpcRuntimeState>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
   }
 }
 
 function withNpcStates(state: GameState, npcId: string, states: Partial<NpcRuntimeState['states']>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...states } } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...states } } : n)),
   }
 }
 
 function addRosterEntry(state: GameState, npcId: string, overrides: Partial<NpcRuntimeState> = {}): GameState {
   return {
     ...state,
-    roster: [...state.roster, { ...idaRhysRosterEntry, npcId, name: npcId, ...overrides }],
+    npcRuntimeStates: [...state.npcRuntimeStates, { ...idaRhysRosterEntry, npcId, name: npcId, ...overrides }],
   }
 }
 
@@ -89,7 +89,7 @@ describe('npcConfrontRival', () => {
 
     const result = npcConfrontRival(state, 'npc-alis-vey', alwaysSucceed)
 
-    const rival = result.roster.find((n) => n.npcId === 'npc-enemy-lady-sorn')!
+    const rival = result.npcRuntimeStates.find((n) => n.npcId === 'npc-enemy-lady-sorn')!
     expect(rival.states.fear).toBeGreaterThan(idaRhysRosterEntry.states.fear)
     expect(rival.states.anger).toBeGreaterThan(idaRhysRosterEntry.states.anger)
   })
@@ -100,7 +100,7 @@ describe('npcConfrontRival', () => {
 
     const result = npcConfrontRival(state, 'npc-alis-vey', alwaysFail)
 
-    const actor = result.roster.find((n) => n.npcId === 'npc-alis-vey')!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === 'npc-alis-vey')!
     expect(actor.states.fear).toBeGreaterThan(idaRhysRosterEntry.states.fear)
   })
 })
@@ -109,7 +109,7 @@ describe('npcAssertDominance', () => {
   it('increases the weakest idle target\'s fear and decreases their respect on success', () => {
     const result = npcAssertDominance(initialStateWithIda, NPC_ID, alwaysSucceed)
 
-    const marionId = initialStateWithIda.roster[0]!.npcId
+    const marionId = initialStateWithIda.npcRuntimeStates[0]!.npcId
     const rel = result.relationships[`${marionId}-to-${NPC_ID}`]
     expect(rel?.fear ?? 0).toBeGreaterThan(0)
     expect(rel?.respect ?? 0).toBeLessThan(0)
@@ -118,12 +118,12 @@ describe('npcAssertDominance', () => {
   it('raises the actor\'s own anger when rebuffed', () => {
     const result = npcAssertDominance(initialStateWithIda, NPC_ID, alwaysFail)
 
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.states.anger).toBeGreaterThan(idaRhysRosterEntry.states.anger)
   })
 
   it('no-ops when there is no other idle NPC', () => {
-    const state: GameState = { ...initialStateWithIda, roster: [initialStateWithIda.roster.find((n) => n.npcId === NPC_ID)!] }
+    const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [initialStateWithIda.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!] }
     const result = npcAssertDominance(state, NPC_ID, alwaysSucceed)
     expect(result).toBe(state)
   })
@@ -136,7 +136,7 @@ describe('npcProtectHouse', () => {
     const result = npcProtectHouse(state, NPC_ID)
 
     expect(result.districtTension[initialStateWithIda.houseDistrictId]).toBeLessThan(50)
-    const actor = result.roster.find((n) => n.npcId === NPC_ID)!
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(actor.states.morale).toBeGreaterThan(idaRhysRosterEntry.states.morale)
   })
 })
@@ -202,7 +202,7 @@ describe('npcCareForInjured', () => {
 
     const result = npcCareForInjured(state, NPC_ID)
 
-    const target = result.roster.find((n) => n.npcId === 'npc-injured-1')!
+    const target = result.npcRuntimeStates.find((n) => n.npcId === 'npc-injured-1')!
     expect(target.states.health).toBeGreaterThan(50)
     expect(target.states.injury).toBe(30)
     expect(result.inventoryState.npcInventories[NPC_ID]![0]!.slots).toHaveLength(0)
@@ -216,7 +216,7 @@ describe('npcCareForInjured', () => {
 
     const result = npcCareForInjured(state, NPC_ID)
 
-    const target = result.roster.find((n) => n.npcId === 'npc-injured-1')!
+    const target = result.npcRuntimeStates.find((n) => n.npcId === 'npc-injured-1')!
     expect(target.states.injury).toBeLessThan(30)
   })
 
@@ -226,7 +226,7 @@ describe('npcCareForInjured', () => {
 
     const result = npcCareForInjured(state, NPC_ID)
 
-    const target = result.roster.find((n) => n.npcId === 'npc-injured-1')!
+    const target = result.npcRuntimeStates.find((n) => n.npcId === 'npc-injured-1')!
     expect(target.states.health).toBe(55)
     expect(target.states.injury).toBe(30)
   })

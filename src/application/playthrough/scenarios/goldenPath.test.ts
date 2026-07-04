@@ -28,7 +28,7 @@ describe('Golden-Path scenario', () => {
     const post = result.checkpoints['cp-post-expedition']
     expect(post).toBeDefined()
     expect(post!.expeditionState.status).toBe('idle')
-    expect(post!.roster.find((n) => n.npcId === 'npc-marion-vale')?.assignment).toBe('idle')
+    expect(post!.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')?.assignment).toBe('idle')
   })
 
   it('advances the day counter during expedition resolution', async () => {

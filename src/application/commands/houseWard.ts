@@ -140,7 +140,7 @@ export function formalizeAdultWard(
       ...state.house,
       houseHeirs: state.house.houseHeirs.filter((h) => h.id !== wardId),
     },
-    roster: [...state.roster, newNpc],
+    npcRuntimeStates: [...state.npcRuntimeStates, newNpc],
   }
 
   return appendActivityLogEntry(
@@ -173,7 +173,7 @@ export function payWardAllowance(state: GameState): GameState {
   let next = state
   const today = state.day
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (npc.status !== 'ward') continue
 
     const lastPayment = npc.wardPersonalAllowance.lastAllowanceDay
@@ -183,7 +183,7 @@ export function payWardAllowance(state: GameState): GameState {
 
     next = {
       ...next,
-      roster: next.roster.map((r) =>
+      npcRuntimeStates: next.npcRuntimeStates.map((r) =>
         r.npcId === npc.npcId
           ? {
               ...r,

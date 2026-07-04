@@ -49,9 +49,9 @@ function stateWithRelationship(overrides: {
       },
     },
     lastFiredDay: {},
-    roster: [
+    npcRuntimeStates: [
       {
-        ...initialStateWithIda.roster[1]!,
+        ...initialStateWithIda.npcRuntimeStates[1]!,
         assignment: overrides.assignment ?? 'idle',
         status: overrides.status ?? 'mercenary',
         captivityState: overrides.captivityStatus
@@ -73,7 +73,7 @@ function stateWithRelationship(overrides: {
             }
           : undefined,
         traits: {
-          ...initialStateWithIda.roster[1]!.traits,
+          ...initialStateWithIda.npcRuntimeStates[1]!.traits,
           empathy: overrides.empathy ?? 50,
           prudence: overrides.prudence ?? 50,
           ambition: overrides.ambition ?? 50,
@@ -171,10 +171,10 @@ describe('deepConversation', () => {
     // Manually change the topic in the second call by modifying state to allow different topic
     // Since topic selection is trait-based, we need different traits for different topic
     const secondNpc = {
-      ...state.roster[0]!,
-      traits: { ...state.roster[0]!.traits, prudence: 70, empathy: 40 },
+      ...state.npcRuntimeStates[0]!,
+      traits: { ...state.npcRuntimeStates[0]!.traits, prudence: 70, empathy: 40 },
     }
-    const secondState = { ...first, roster: [secondNpc] }
+    const secondState = { ...first, npcRuntimeStates: [secondNpc] }
     const second = deepConversation(secondState, NPC_ID)
 
     const entries = second.activityLog.filter((entry) => entry.id.startsWith(`deep-conv::${NPC_ID}::`))
@@ -194,7 +194,7 @@ describe('deepConversation', () => {
     const state = stateWithRelationship({ trust: 30, affinity: 20, fear: 10 })
     const deployedState = {
       ...state,
-      roster: [{ ...state.roster[0]!, assignment: 'deployed' as const }],
+      npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignment: 'deployed' as const }],
     }
 
     const result = deepConversation(deployedState, NPC_ID)

@@ -13,7 +13,7 @@ export function processAllEmployments(state: GameState): GameState {
   let newState = state
 
   // Find all NPCs with employment
-  const employments = state.roster
+  const employments = state.npcRuntimeStates
     .filter((npc) => npc.currentEmployment !== null)
     .map((npc) => ({
       npc,
@@ -58,7 +58,7 @@ function processSingleEmployment(
     newState = progressEmployment(newState, employment.employmentId)
 
     // Check if employment should be completed or failed after progress
-    const updatedNpc = newState.roster.find((npc) => npc.npcId === employeeId)
+    const updatedNpc = newState.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
     if (updatedNpc?.currentEmployment?.status === 'in-progress') {
       // Check for deadline failure
       if (
@@ -86,7 +86,7 @@ function handleAutoRenewal(
   state: GameState,
   employeeId: string,
 ): GameState {
-  const npc = state.roster.find((npc) => npc.npcId === employeeId)
+  const npc = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!npc || !npc.currentEmployment) {
     return state
   }
@@ -106,7 +106,7 @@ function handleAutoRenewal(
 
   return {
     ...state,
-    roster: state.roster.map((rosterNpc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((rosterNpc) =>
       rosterNpc.npcId === employeeId
         ? { ...rosterNpc, currentEmployment: renewedEmployment }
         : rosterNpc,
@@ -118,7 +118,7 @@ function handleAutoRenewal(
  * Starts a pending employment.
  */
 function startEmployment(state: GameState, employeeId: string): GameState {
-  const npc = state.roster.find((npc) => npc.npcId === employeeId)
+  const npc = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!npc || !npc.currentEmployment) {
     return state
   }
@@ -135,7 +135,7 @@ function startEmployment(state: GameState, employeeId: string): GameState {
 
   return {
     ...state,
-    roster: state.roster.map((rosterNpc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((rosterNpc) =>
       rosterNpc.npcId === employeeId
         ? { ...rosterNpc, currentEmployment: updatedEmployment }
         : rosterNpc,

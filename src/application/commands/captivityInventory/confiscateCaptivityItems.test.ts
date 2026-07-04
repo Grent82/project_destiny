@@ -148,7 +148,7 @@ describe('confiscateCaptivityItems', () => {
     const npcId = NPC_IDS.IDA_RHYS
     const stateWithNpc = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -186,7 +186,7 @@ describe('confiscateCaptivityItems', () => {
       confiscationType: 'imprisonment',
     })
 
-    const npc = result.roster.find((n) => n.npcId === npcId)
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === npcId)
     expect(npc).toBeDefined()
     // Carried cash should be reduced
     expect(npc!.personalFunds.carriedCash).toBe(50) // 100 - 50 confiscated

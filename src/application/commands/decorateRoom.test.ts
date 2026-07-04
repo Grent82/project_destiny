@@ -40,7 +40,7 @@ const baseState: GameState = {
   factionStandings: { 'faction-civic-compact': 10, 'faction-gilded-court': -65, 'faction-foundry-league': 5, 'faction-tallow-ring': 15, 'faction-restored': 0, 'faction-house-merrow': -15 },
   factionStates: [],
   districts: [],
-  roster: [idaRhysRosterEntry],
+  npcRuntimeStates: [idaRhysRosterEntry],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {
@@ -189,7 +189,7 @@ describe('decorateRoom', () => {
     const state: GameState = {
       ...baseState,
       money: 80,
-      roster: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, ambition: 65 } }],
+      npcRuntimeStates: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, ambition: 65 } }],
       relationships: {
         [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: 30, fear: 10, trust: 25, loyalty: 15 },
         [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: 25, fear: 5, trust: 20, loyalty: 20 },
@@ -206,7 +206,7 @@ describe('decorateRoom', () => {
     const state: GameState = {
       ...baseState,
       money: 30,
-      roster: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, prudence: 60 } }],
+      npcRuntimeStates: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, prudence: 60 } }],
       relationships: {
         [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: 30, fear: 10, trust: 25, loyalty: 15 },
         [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: 25, fear: 5, trust: 20, loyalty: 20 },
@@ -223,7 +223,7 @@ describe('decorateRoom', () => {
     const state: GameState = {
       ...baseState,
       money: 50,
-      roster: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, empathy: 55 } }],
+      npcRuntimeStates: [{ ...idaRhysRosterEntry, traits: { ...idaRhysRosterEntry.traits, empathy: 55 } }],
       relationships: {
         [buildRelationshipKey(PLAYER_ID, idaRhysRosterEntry.npcId)]: { affinity: 20, respect: 30, fear: 10, trust: 25, loyalty: 15 },
         [buildRelationshipKey(idaRhysRosterEntry.npcId, PLAYER_ID)]: { affinity: 15, respect: 25, fear: 5, trust: 20, loyalty: 20 },

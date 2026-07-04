@@ -9,7 +9,7 @@ const NPC_ID = idaRhysRosterEntry.npcId
 function withNpcOverrides(state: GameState, npcId: string, overrides: Partial<NpcRuntimeState>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
   }
 }
 
@@ -35,7 +35,7 @@ describe('npcScavenge', () => {
 describe('npcSeekEmployment', () => {
   it('creates a real employment contract via createEmployment', () => {
     const result = npcSeekEmployment(initialStateWithIda, NPC_ID)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.currentEmployment).not.toBeNull()
     expect(npc.currentEmployment?.taskType).toBe('work')
   })
@@ -61,7 +61,7 @@ describe('npcSeekEmployment', () => {
     state = { ...state }
 
     const result = npcSeekEmployment(state, NPC_ID)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.currentEmployment?.employmentId).toBe('employment-existing')
   })
 })
@@ -85,7 +85,7 @@ describe('npcHostGathering', () => {
   it('boosts affinity for invited guests on success', () => {
     const state = withReceptionRoom(initialStateWithIda)
     const result = npcHostGathering(state, NPC_ID, alwaysSucceed)
-    const marionId = state.roster[0]!.npcId
+    const marionId = state.npcRuntimeStates[0]!.npcId
     const rel = result.relationships[`${NPC_ID}-to-${marionId}`]
     expect(rel?.affinity ?? 0).toBeGreaterThan(0)
   })
@@ -93,14 +93,14 @@ describe('npcHostGathering', () => {
   it('still gives a smaller affinity boost on failure', () => {
     const state = withReceptionRoom(initialStateWithIda)
     const result = npcHostGathering(state, NPC_ID, alwaysFail)
-    const marionId = state.roster[0]!.npcId
+    const marionId = state.npcRuntimeStates[0]!.npcId
     const rel = result.relationships[`${NPC_ID}-to-${marionId}`]
     expect(rel?.affinity ?? 0).toBeGreaterThan(0)
   })
 
   it('no-ops when there are no other idle NPCs', () => {
     const base = withReceptionRoom(initialStateWithIda)
-    const state: GameState = { ...base, roster: [base.roster.find((n) => n.npcId === NPC_ID)!] }
+    const state: GameState = { ...base, npcRuntimeStates: [base.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!] }
     const result = npcHostGathering(state, NPC_ID, alwaysSucceed)
     expect(result).toBe(state)
   })

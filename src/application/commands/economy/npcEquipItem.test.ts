@@ -23,9 +23,9 @@ function createGameStateWithNpcInventory(npcId: string, items: Array<{ itemInsta
 
   return {
     ...initialGameStateSnapshot,
-    roster: [
+    npcRuntimeStates: [
       {
-        ...initialGameStateSnapshot.roster[0]!,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
         npcId: TEST_NPC_ID,
         name: 'Test Mercenary',
       },
@@ -51,7 +51,7 @@ describe('npcEquipItem', () => {
       slot: 'weapon',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.weapon).toBe('weapon-dagger-wasterunner')
     const npcContainers = result.inventoryState.npcInventories[TEST_NPC_ID]
     const hasItem = npcContainers?.some((c) => c.slots.some((s) => s.itemInstanceId === 'weapon-dagger-wasterunner'))
@@ -69,7 +69,7 @@ describe('npcEquipItem', () => {
       slot: 'armor',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.armor).toBe('armor-light-tallow-work-coat')
     const npcContainers = result.inventoryState.npcInventories[TEST_NPC_ID]
     const hasItem = npcContainers?.some((c) => c.slots.some((s) => s.itemInstanceId === 'armor-light-tallow-work-coat'))
@@ -88,7 +88,7 @@ describe('npcEquipItem', () => {
       slot: 'accessory',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.accessory).toContain(accessoryItemId)
     const npcContainers = result.inventoryState.npcInventories[TEST_NPC_ID]
     const hasItem = npcContainers?.some((c) => c.slots.some((s) => s.itemInstanceId === accessoryItemId))
@@ -101,7 +101,7 @@ describe('npcEquipItem', () => {
       { itemInstanceId: 'weapon-dagger-wasterunner', quantity: 1 },
       { itemInstanceId: newWeapon, quantity: 1 },
     ])
-    const npc = state.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     npc.equipment = { weapon: 'weapon-dagger-wasterunner', armor: null, accessory: [] }
 
     const result = npcEquipItem(state, {
@@ -110,7 +110,7 @@ describe('npcEquipItem', () => {
       slot: 'weapon',
     })
 
-    const updatedNpc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const updatedNpc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(updatedNpc.equipment?.weapon).toBe(newWeapon)
     const npcContainers = result.inventoryState.npcInventories[TEST_NPC_ID]
     const hasOldWeapon = npcContainers?.some((c) => c.slots.some((s) => s.itemInstanceId === 'weapon-dagger-wasterunner'))
@@ -137,7 +137,7 @@ describe('npcEquipItem', () => {
       slot: 'weapon',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.weapon).toBeNull()
   })
 
@@ -152,7 +152,7 @@ describe('npcEquipItem', () => {
       slot: 'weapon',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.weapon).toBeNull()
   })
 
@@ -176,7 +176,7 @@ describe('npcEquipItem', () => {
       slot: 'accessory',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.accessory).toHaveLength(2)
   })
 
@@ -189,7 +189,7 @@ describe('npcEquipItem', () => {
       { itemInstanceId: accessory3, quantity: 1 },
     ])
     // Simulate state where accessory1 and accessory2 are already equipped
-    const npc = state.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     npc.equipment = { weapon: null, armor: null, accessory: [accessory1, accessory2] }
 
     const result = npcEquipItem(state, {
@@ -198,7 +198,7 @@ describe('npcEquipItem', () => {
       slot: 'accessory',
     })
 
-    const updatedNpc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const updatedNpc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     // When equipping 3rd accessory, oldest (accessory1) is unequipped and returned to inventory
     // New accessory (accessory3) is added, keeping accessory2 and accessory3
     expect(updatedNpc.equipment?.accessory).toHaveLength(2)
@@ -214,9 +214,9 @@ describe('npcUnequipItem', () => {
   it('unequips weapon and returns it to inventory', () => {
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           npcId: TEST_NPC_ID,
           equipment: { weapon: 'weapon-dagger-wasterunner', armor: null, accessory: [] },
         },
@@ -228,7 +228,7 @@ describe('npcUnequipItem', () => {
       slot: 'weapon',
     })
 
-    const npc = result.roster.find((n) => n.npcId === TEST_NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)!
     expect(npc.equipment?.weapon).toBeNull()
     const npcContainers = result.inventoryState.npcInventories[TEST_NPC_ID]
     const hasItem = npcContainers?.some((c) => c.slots.some((s) => s.itemInstanceId === 'weapon-dagger-wasterunner'))
@@ -238,9 +238,9 @@ describe('npcUnequipItem', () => {
   it('returns state unchanged if nothing equipped in slot', () => {
     const state = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           npcId: TEST_NPC_ID,
           equipment: { weapon: null, armor: null, accessory: [] },
         },

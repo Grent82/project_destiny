@@ -208,7 +208,7 @@ function applyPairingToPair(
 
       next = {
         ...next,
-        roster: next.roster.map((n) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((n) =>
           n.npcId === bearerId
             ? {
                 ...n,
@@ -240,7 +240,7 @@ export function applyNpcPairing(state: GameState, rng: Rng): GameState {
   const policy = state.house.npcPairingPolicy
 
   // Roster NPCs (existing logic)
-  const rosterEligible = state.roster.filter((npc) => isEligibleForHouseholdTogetherness(npc, state.houseDistrictId))
+  const rosterEligible = state.npcRuntimeStates.filter((npc) => isEligibleForHouseholdTogetherness(npc, state.houseDistrictId))
 
   // World NPCs (new) - all are eligible
   const worldEligible = state.worldNpcStates

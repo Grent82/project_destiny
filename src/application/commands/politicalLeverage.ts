@@ -28,7 +28,7 @@ export function getRelationshipPoliticalCapital(
 ): RelationshipPoliticalCapital {
   const sources: LeverageSource[] = []
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     if (!npcDef || npcDef.factionAffinityId !== factionId) continue
 
@@ -89,7 +89,7 @@ const COERCIVE_ENTRY_REASONS = new Set(['compact-assessment', 'combat-capture', 
  * Pure function — no side effects, no state mutations.
  */
 export function getBondHolderLeverage(state: GameState, npcId: string): BondHolderLeverage {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
 
   if (!npc?.bondStatus || npc.bondStatus.holderId !== 'player' || npc.bondStatus.ownerType !== 'player') {
     return { canExert: false, risk: 0, flavor: 'No active bond over this person.' }

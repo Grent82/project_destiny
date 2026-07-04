@@ -19,27 +19,27 @@ function makeArcNpc(base: NpcRuntimeState): NpcRuntimeState {
 describe('applyNpcTraitDrift', () => {
   it('does not drift traits on NPCs without npcArc', () => {
     const state = initialStateWithIda
-    const traitsBefore = state.roster.map((n) => ({ ...n.traits }))
+    const traitsBefore = state.npcRuntimeStates.map((n) => ({ ...n.traits }))
 
     const result = applyNpcTraitDrift(state, () => 0)
 
-    result.roster.forEach((npc, i) => {
+    result.npcRuntimeStates.forEach((npc, i) => {
       expect(npc.traits).toEqual(traitsBefore[i])
     })
   })
 
   it('drifts traits toward influencer when rng triggers (rng returns 0 = always triggers)', () => {
-    const learner = makeArcNpc({ ...initialStateWithIda.roster[1]! })
-    const influencer = initialStateWithIda.roster[0]!
+    const learner = makeArcNpc({ ...initialStateWithIda.npcRuntimeStates[1]! })
+    const influencer = initialStateWithIda.npcRuntimeStates[0]!
 
     const state = {
       ...initialStateWithIda,
-      roster: [influencer, learner],
+      npcRuntimeStates: [influencer, learner],
     }
 
     const result = applyNpcTraitDrift(state, () => 0)
 
-    const updatedLearner = result.roster.find((n) => n.npcId === learner.npcId)!
+    const updatedLearner = result.npcRuntimeStates.find((n) => n.npcId === learner.npcId)!
     // At least one of the drift traits should have shifted toward influencer
     const driftTraits = ['empathy', 'discipline', 'ruthlessness', 'curiosity', 'loyalty'] as const
     const anyChanged = driftTraits.some(
@@ -50,38 +50,38 @@ describe('applyNpcTraitDrift', () => {
 
   it('never drifts below 0 or above 100', () => {
     const learner = makeArcNpc({
-      ...initialStateWithIda.roster[1]!,
+      ...initialStateWithIda.npcRuntimeStates[1]!,
       traits: {
-        ...initialStateWithIda.roster[1]!.traits,
+        ...initialStateWithIda.npcRuntimeStates[1]!.traits,
         empathy: 0,
         discipline: 100,
       },
     })
     const influencer = {
-      ...initialStateWithIda.roster[0]!,
+      ...initialStateWithIda.npcRuntimeStates[0]!,
       traits: {
-        ...initialStateWithIda.roster[0]!.traits,
+        ...initialStateWithIda.npcRuntimeStates[0]!.traits,
         empathy: 0,
         discipline: 100,
       },
     }
 
-    const state = { ...initialStateWithIda, roster: [influencer, learner] }
+    const state = { ...initialStateWithIda, npcRuntimeStates: [influencer, learner] }
     const result = applyNpcTraitDrift(state, () => 0)
 
-    const updated = result.roster.find((n) => n.npcId === learner.npcId)!
+    const updated = result.npcRuntimeStates.find((n) => n.npcId === learner.npcId)!
     const allTraits = Object.values(updated.traits)
     expect(allTraits.every((v) => v >= 0 && v <= 100)).toBe(true)
   })
 
   it('records drift in driftHistory', () => {
-    const learner = makeArcNpc({ ...initialStateWithIda.roster[1]! })
-    const influencer = initialStateWithIda.roster[0]!
+    const learner = makeArcNpc({ ...initialStateWithIda.npcRuntimeStates[1]! })
+    const influencer = initialStateWithIda.npcRuntimeStates[0]!
 
-    const state = { ...initialStateWithIda, roster: [influencer, learner] }
+    const state = { ...initialStateWithIda, npcRuntimeStates: [influencer, learner] }
     const result = applyNpcTraitDrift(state, () => 0)
 
-    const updated = result.roster.find((n) => n.npcId === learner.npcId)!
+    const updated = result.npcRuntimeStates.find((n) => n.npcId === learner.npcId)!
     expect(updated.npcArc!.driftHistory.length).toBeGreaterThan(0)
     expect(updated.npcArc!.driftHistory[0]).toMatchObject({
       day: state.day,
@@ -90,22 +90,22 @@ describe('applyNpcTraitDrift', () => {
   })
 
   it('does not drift when rng never triggers (rng returns 1 = never < 0.15)', () => {
-    const learner = makeArcNpc({ ...initialStateWithIda.roster[1]! })
-    const influencer = initialStateWithIda.roster[0]!
+    const learner = makeArcNpc({ ...initialStateWithIda.npcRuntimeStates[1]! })
+    const influencer = initialStateWithIda.npcRuntimeStates[0]!
 
-    const state = { ...initialStateWithIda, roster: [influencer, learner] }
+    const state = { ...initialStateWithIda, npcRuntimeStates: [influencer, learner] }
     const traitsBefore = { ...learner.traits }
 
     const result = applyNpcTraitDrift(state, () => 1)
 
-    const updated = result.roster.find((n) => n.npcId === learner.npcId)!
+    const updated = result.npcRuntimeStates.find((n) => n.npcId === learner.npcId)!
     expect(updated.traits).toEqual(traitsBefore)
     expect(updated.npcArc!.driftHistory).toHaveLength(0)
   })
 
   it('does not drift traits when arc is in set stage', () => {
     const learner: NpcRuntimeState = {
-      ...initialStateWithIda.roster[1]!,
+      ...initialStateWithIda.npcRuntimeStates[1]!,
       npcArc: {
         arcId: 'arc-becoming',
         stage: 'set',
@@ -114,77 +114,77 @@ describe('applyNpcTraitDrift', () => {
         driftHistory: [],
       },
     }
-    const influencer = initialStateWithIda.roster[0]!
-    const state = { ...initialStateWithIda, roster: [influencer, learner] }
+    const influencer = initialStateWithIda.npcRuntimeStates[0]!
+    const state = { ...initialStateWithIda, npcRuntimeStates: [influencer, learner] }
     const traitsBefore = { ...learner.traits }
 
     const result = applyNpcTraitDrift(state, () => 0) // always triggers
 
-    const updated = result.roster.find((n) => n.npcId === learner.npcId)!
+    const updated = result.npcRuntimeStates.find((n) => n.npcId === learner.npcId)!
     expect(updated.traits).toEqual(traitsBefore)
   })
 
   it('applies larger delta in forming stage than crystallizing stage', () => {
     const makeArcNpc = (stage: 'forming' | 'crystallizing'): NpcRuntimeState => ({
-      ...initialStateWithIda.roster[1]!,
+      ...initialStateWithIda.npcRuntimeStates[1]!,
       npcId: `npc-test-${stage}`,
       npcArc: { arcId: 'arc-becoming', stage, stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
-      traits: { ...initialStateWithIda.roster[1]!.traits, discipline: 30 },
+      traits: { ...initialStateWithIda.npcRuntimeStates[1]!.traits, discipline: 30 },
     })
     const influencer = {
-      ...initialStateWithIda.roster[0]!,
-      traits: { ...initialStateWithIda.roster[0]!.traits, discipline: 80 },
+      ...initialStateWithIda.npcRuntimeStates[0]!,
+      traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, discipline: 80 },
     }
 
     const formingNpc = makeArcNpc('forming')
     const crystallizingNpc = makeArcNpc('crystallizing')
 
-    const stateForming = { ...initialStateWithIda, roster: [influencer, formingNpc] }
-    const stateCryst = { ...initialStateWithIda, roster: [influencer, crystallizingNpc] }
+    const stateForming = { ...initialStateWithIda, npcRuntimeStates: [influencer, formingNpc] }
+    const stateCryst = { ...initialStateWithIda, npcRuntimeStates: [influencer, crystallizingNpc] }
 
     const resultF = applyNpcTraitDrift(stateForming, () => 0)
     const resultC = applyNpcTraitDrift(stateCryst, () => 0)
 
-    const deltaF = resultF.roster[1]!.traits.discipline - 30
-    const deltaC = resultC.roster[1]!.traits.discipline - 30
+    const deltaF = resultF.npcRuntimeStates[1]!.traits.discipline - 30
+    const deltaC = resultC.npcRuntimeStates[1]!.traits.discipline - 30
 
     expect(deltaF).toBeGreaterThan(deltaC)
   })
 
   it('drifts arc-ward-growing NPCs at ×3 rate compared to arc-becoming', () => {
     const makeWardNpc = (): NpcRuntimeState => ({
-      ...initialStateWithIda.roster[1]!,
+      ...initialStateWithIda.npcRuntimeStates[1]!,
       npcId: 'npc-ward-test',
       npcArc: { arcId: 'arc-ward-growing', stage: 'early-childhood', stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
-      traits: { ...initialStateWithIda.roster[1]!.traits, discipline: 30 },
+      traits: { ...initialStateWithIda.npcRuntimeStates[1]!.traits, discipline: 30 },
     })
     const makeBecomingNpc = (): NpcRuntimeState => ({
-      ...initialStateWithIda.roster[1]!,
+      ...initialStateWithIda.npcRuntimeStates[1]!,
       npcId: 'npc-becoming-test',
       npcArc: { arcId: 'arc-becoming', stage: 'forming', stageEnteredDay: 0, stageFlags: {}, driftHistory: [] },
-      traits: { ...initialStateWithIda.roster[1]!.traits, discipline: 30 },
+      traits: { ...initialStateWithIda.npcRuntimeStates[1]!.traits, discipline: 30 },
     })
     const influencer = {
-      ...initialStateWithIda.roster[0]!,
-      traits: { ...initialStateWithIda.roster[0]!.traits, discipline: 80 },
+      ...initialStateWithIda.npcRuntimeStates[0]!,
+      traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, discipline: 80 },
     }
 
-    const stateWard = { ...initialStateWithIda, roster: [influencer, makeWardNpc()] }
-    const stateBecoming = { ...initialStateWithIda, roster: [influencer, makeBecomingNpc()] }
+    const stateWard = { ...initialStateWithIda, npcRuntimeStates: [influencer, makeWardNpc()] }
+    const stateBecoming = { ...initialStateWithIda, npcRuntimeStates: [influencer, makeBecomingNpc()] }
 
     const resultWard = applyNpcTraitDrift(stateWard, () => 0)
     const resultBecoming = applyNpcTraitDrift(stateBecoming, () => 0)
 
-    const deltaWard = resultWard.roster[1]!.traits.discipline - 30
-    const deltaBecoming = resultBecoming.roster[1]!.traits.discipline - 30
+    const deltaWard = resultWard.npcRuntimeStates[1]!.traits.discipline - 30
+    const deltaBecoming = resultBecoming.npcRuntimeStates[1]!.traits.discipline - 30
 
     // Early-childhood ward multiplier (3.0) vs forming multiplier (2.0)
     expect(deltaWard).toBeGreaterThan(deltaBecoming)
   })
 
   it('same seed produces identical results (deterministic)', () => {
-    const learner = makeArcNpc({ ...initialStateWithIda.roster[1]! })
-    const state = { ...initialStateWithIda, roster: [initialStateWithIda.roster[0]!, learner] }
+    const learner = makeArcNpc({ ...initialStateWithIda.npcRuntimeStates[1]! })
+    const state = { ...initialStateWithIda, npcRuntimeStates: [initialStateWithIda.npcRuntimeStates[0]!, learner] }
 
     let callCount = 0
     const deterministicRng = () => {
@@ -197,6 +197,6 @@ describe('applyNpcTraitDrift', () => {
     callCount = 0
     const result2 = applyNpcTraitDrift(state, deterministicRng)
 
-    expect(result1.roster).toEqual(result2.roster)
+    expect(result1.npcRuntimeStates).toEqual(result2.npcRuntimeStates)
   })
 })

@@ -16,7 +16,7 @@ const HELD_DECAY_BY_SPECIALIZATION: Record<string, number> = {
 }
 
 export function transferBondedNpc(state: GameState, npcId: string, buyerId: string): GameState {
-  const npc = state.roster.find((r) => r.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
   if (!npc || !npc.bondStatus || npc.bondStatus.ownerType !== 'player') return state
 
   const buyer = contentCatalog.bondBuyersById.get(buyerId)
@@ -32,8 +32,8 @@ export function transferBondedNpc(state: GameState, npcId: string, buyerId: stri
     [buyerId]: [...buyerEntries, npcId],
   }
 
-  // Update roster: mark transferred, change owner
-  const roster = state.roster.map((r) => {
+  // Update npcRuntimeStates: mark transferred, change owner
+  const roster = state.npcRuntimeStates.map((r) => {
     if (r.npcId !== npcId) {
       // High-empathy morale response for witnesses
       if (r.traits.empathy > 55) {
@@ -60,7 +60,7 @@ export function transferBondedNpc(state: GameState, npcId: string, buyerId: stri
   let next: GameState = {
     ...state,
     money: state.money + saleAmount,
-    roster,
+    npcRuntimeStates: roster,
     bondedPersonsRegistry,
   }
 
@@ -77,7 +77,7 @@ export function transferBondedNpc(state: GameState, npcId: string, buyerId: stri
 export function checkBondAcquisitionOffers(state: GameState, rng: Rng): GameState {
   let next = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (!npc.bondStatus?.forSale) continue
     if (npc.bondStatus.ownerType !== 'player') continue
 
@@ -102,7 +102,7 @@ export function checkBondAcquisitionOffers(state: GameState, rng: Rng): GameStat
       {
         ...next,
         lastFiredDay: { ...next.lastFiredDay, 'bond-acquisition-offer': state.day },
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId && r.bondStatus
             ? { ...r, bondStatus: { ...r.bondStatus, lastOfferDay: state.day } }
             : r,
@@ -127,12 +127,12 @@ export function checkBondAcquisitionOffers(state: GameState, rng: Rng): GameStat
 
 /** Decay or improve condition of NPC-held bonded persons based on the buyer's specialization. */
 export function applyNpcHeldConditionDecay(state: GameState): GameState {
-  const transferredNpcs = state.roster.filter(
+  const transferredNpcs = state.npcRuntimeStates.filter(
     (npc) => npc.assignment === 'transferred' && npc.bondStatus?.ownerType === 'npc',
   )
   if (transferredNpcs.length === 0) return state
 
-  const roster = state.roster.map((npc) => {
+  const roster = state.npcRuntimeStates.map((npc) => {
     if (npc.assignment !== 'transferred' || npc.bondStatus?.ownerType !== 'npc') return npc
 
     const buyer = contentCatalog.bondBuyersById.get(npc.bondStatus.holderId)
@@ -146,7 +146,7 @@ export function applyNpcHeldConditionDecay(state: GameState): GameState {
     }
   })
 
-  return { ...state, roster }
+  return { ...state, npcRuntimeStates: roster }
 }
 
 /**
@@ -154,7 +154,7 @@ export function applyNpcHeldConditionDecay(state: GameState): GameState {
  * Returns state unchanged if the player cannot afford the ransom.
  */
 export function rescueBondedNpcLegal(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((r) => r.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
   if (!npc || !npc.bondStatus || npc.bondStatus.ownerType !== 'npc') return state
 
   const ransom = Math.ceil(npc.bondStatus.marketValue * 1.5)
@@ -170,7 +170,7 @@ export function rescueBondedNpcLegal(state: GameState, npcId: string): GameState
  * Costs faction standing; person arrives in degraded condition (health −20).
  */
 export function rescueBondedNpcExtraction(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((r) => r.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
   if (!npc || !npc.bondStatus || npc.bondStatus.ownerType !== 'npc') return state
 
   let next = applyRescue(state, npcId, npc.bondStatus.holderId, 0, 'system',
@@ -180,7 +180,7 @@ export function rescueBondedNpcExtraction(state: GameState, npcId: string): Game
   // Condition penalty from the extraction
   next = {
     ...next,
-    roster: next.roster.map((r) =>
+    npcRuntimeStates: next.npcRuntimeStates.map((r) =>
       r.npcId === npcId
         ? { ...r, states: { ...r.states, health: Math.max(0, r.states.health - 20) } }
         : r,
@@ -199,7 +199,7 @@ export function rescueBondedNpcExtraction(state: GameState, npcId: string): Game
  * Person arrives with health −15 from the extraction.
  */
 export function rescueBondedNpcForce(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((r) => r.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
   if (!npc || !npc.bondStatus || npc.bondStatus.ownerType !== 'npc') return state
 
   let next = applyRescue(state, npcId, npc.bondStatus.holderId, 0, 'system',
@@ -208,7 +208,7 @@ export function rescueBondedNpcForce(state: GameState, npcId: string): GameState
 
   next = {
     ...next,
-    roster: next.roster.map((r) =>
+    npcRuntimeStates: next.npcRuntimeStates.map((r) =>
       r.npcId === npcId
         ? { ...r, states: { ...r.states, health: Math.max(0, r.states.health - 15) } }
         : r,
@@ -236,7 +236,7 @@ function applyRescue(
     bondedPersonsRegistry[prevOwnerId] = ownerEntries
   }
 
-  const roster = state.roster.map((r) => {
+  const roster = state.npcRuntimeStates.map((r) => {
     if (r.npcId !== npcId) return r
     return {
       ...r,
@@ -255,7 +255,7 @@ function applyRescue(
   const next: GameState = {
     ...state,
     money: Math.max(0, state.money - cost),
-    roster,
+    npcRuntimeStates: roster,
     bondedPersonsRegistry,
   }
 

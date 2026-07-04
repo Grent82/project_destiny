@@ -264,12 +264,12 @@ describe('getMiraCustodySchedule', () => {
     timeHeldDays: number
     roomId: string
     lastTransferDay: number | null
-  }> = {}): Pick<GameState, 'npcCaptivityStates' | 'roster' | 'completedQuestIds' | 'activeQuests' | 'day'> {
+  }> = {}): Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day'> {
     return {
       day: overrides.day ?? 1,
       completedQuestIds: [],
       activeQuests: [],
-      roster: [],
+      npcRuntimeStates: [],
       npcCaptivityStates: {
         'npc-mira': {
           status: 'captive',

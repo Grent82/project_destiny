@@ -237,7 +237,7 @@ describe('houseWard commands', () => {
       const result = formalizeAdultWard(state, 'npc-formalized-1', baseNpc)
 
       expect(result.house.houseHeirs).toHaveLength(0)
-      expect(result.roster.some(n => n.npcId === 'npc-formalized-1')).toBe(true)
+      expect(result.npcRuntimeStates.some(n => n.npcId === 'npc-formalized-1')).toBe(true)
     })
 
     it('does not formalize non-adult ward', () => {
@@ -289,7 +289,7 @@ describe('houseWard commands', () => {
       })
 
       expect(result.house.houseHeirs).toHaveLength(1)
-      expect(result.roster.some(n => n.npcId === 'npc-child')).toBe(false)
+      expect(result.npcRuntimeStates.some(n => n.npcId === 'npc-child')).toBe(false)
     })
 
     it('does not formalize non-existent ward', () => {
@@ -333,7 +333,7 @@ describe('houseWard commands', () => {
       })
 
       expect(result.house.houseHeirs).toHaveLength(0)
-      expect(result.roster.length).toBeGreaterThanOrEqual(0)
+      expect(result.npcRuntimeStates.length).toBeGreaterThanOrEqual(0)
     })
 
     it('records activity log entry on formalization', () => {

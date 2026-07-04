@@ -52,7 +52,7 @@ describe('applyMoneyEarningIntentions', () => {
   it('processes NPCs with seek-tips intention', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-tips', 'Street Performer', 'seek-tips', 60, 60),
       ],
     } as unknown as GameState
@@ -60,7 +60,7 @@ describe('applyMoneyEarningIntentions', () => {
     const result = applyMoneyEarningIntentions(state)
 
     // Should have attempted tips (RNG dependent, but we check the structure)
-    const npc = result.roster.find((n) => n.npcId === 'npc-tips')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-tips')
     expect(npc).toBeDefined()
     // Tips go to carriedCash
     expect(npc!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
@@ -69,14 +69,14 @@ describe('applyMoneyEarningIntentions', () => {
   it('processes NPCs with black-market-trade intention', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-blackmarket', 'Smuggler', 'black-market-trade', 50, 50, 60, 60),
       ],
     } as unknown as GameState
 
     const result = applyMoneyEarningIntentions(state)
 
-    const npc = result.roster.find((n) => n.npcId === 'npc-blackmarket')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-blackmarket')
     expect(npc).toBeDefined()
     // Black market goes to carriedCash
     expect(npc!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
@@ -85,14 +85,14 @@ describe('applyMoneyEarningIntentions', () => {
   it('processes NPCs with beg-for-coin intention', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-beggar', 'Desperate Beggar', 'beg-for-coin', 30, 30, 30, 30, 30, 30, 70),
       ],
     } as unknown as GameState
 
     const result = applyMoneyEarningIntentions(state)
 
-    const npc = result.roster.find((n) => n.npcId === 'npc-beggar')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-beggar')
     expect(npc).toBeDefined()
     // Begging goes to carriedCash
     expect(npc!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
@@ -101,14 +101,14 @@ describe('applyMoneyEarningIntentions', () => {
   it('processes NPCs with scavenge-for-sell intention', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-scavenger', 'Scavenger', 'scavenge-for-sell', 50, 50, 50, 50, 60, 60),
       ],
     } as unknown as GameState
 
     const result = applyMoneyEarningIntentions(state)
 
-    const npc = result.roster.find((n) => n.npcId === 'npc-scavenger')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-scavenger')
     expect(npc).toBeDefined()
     // Scavenging goes to carriedCash
     expect(npc!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
@@ -117,7 +117,7 @@ describe('applyMoneyEarningIntentions', () => {
   it('skips NPCs with active directives', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
           ...createNpcWithIntention('npc-directive', 'Busy NPC', 'seek-tips', 60, 60),
           currentDirectiveId: 'directive-some-task',
@@ -127,14 +127,14 @@ describe('applyMoneyEarningIntentions', () => {
 
     const result = applyMoneyEarningIntentions(state)
 
-    const npc = result.roster.find((n) => n.npcId === 'npc-directive')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-directive')
     expect(npc!.personalFunds.carriedCash).toBe(0) // Should not earn
   })
 
   it('skips NPCs with non-idle assignments', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
           ...createNpcWithIntention('npc-working', 'Working NPC', 'seek-tips', 60, 60),
           assignment: 'working' as const,
@@ -144,14 +144,14 @@ describe('applyMoneyEarningIntentions', () => {
 
     const result = applyMoneyEarningIntentions(state)
 
-    const npc = result.roster.find((n) => n.npcId === 'npc-working')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-working')
     expect(npc!.personalFunds.carriedCash).toBe(0) // Should not earn
   })
 
   it('updates rngSeed after processing', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-tips', 'Street Performer', 'seek-tips', 60, 60),
       ],
     } as unknown as GameState
@@ -164,7 +164,7 @@ describe('applyMoneyEarningIntentions', () => {
   it('handles multiple money-earning intentions in same day', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-tips', 'Performer', 'seek-tips', 60, 60),
         createNpcWithIntention('npc-scavenger', 'Scavenger', 'scavenge-for-sell', 50, 50, 50, 50, 60, 60),
       ],
@@ -172,8 +172,8 @@ describe('applyMoneyEarningIntentions', () => {
 
     const result = applyMoneyEarningIntentions(state)
 
-    const performer = result.roster.find((n) => n.npcId === 'npc-tips')
-    const scavenger = result.roster.find((n) => n.npcId === 'npc-scavenger')
+    const performer = result.npcRuntimeStates.find((n) => n.npcId === 'npc-tips')
+    const scavenger = result.npcRuntimeStates.find((n) => n.npcId === 'npc-scavenger')
 
     expect(performer!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
     expect(scavenger!.personalFunds.carriedCash).toBeGreaterThanOrEqual(0)
@@ -182,21 +182,21 @@ describe('applyMoneyEarningIntentions', () => {
   it('clears the intention after processing so generation can produce a new one tomorrow (regression: this used to never clear, permanently blocking re-generation)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-tips', 'Street Performer', 'seek-tips', 60, 60),
       ],
     } as unknown as GameState
 
     const result = applyMoneyEarningIntentions(state)
 
-    const npc = result.roster.find((n) => n.npcId === 'npc-tips')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-tips')
     expect(npc!.currentIntention).toBeNull()
   })
 
   it('does not clear intentions belonging to other NPCs or non-money-earning types', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNpcWithIntention('npc-tips', 'Street Performer', 'seek-tips', 60, 60),
         {
           ...createNpcWithIntention('npc-other', 'Other NPC', 'seek-tips', 60, 60),
@@ -207,7 +207,7 @@ describe('applyMoneyEarningIntentions', () => {
 
     const result = applyMoneyEarningIntentions(state)
 
-    const other = result.roster.find((n) => n.npcId === 'npc-other')
+    const other = result.npcRuntimeStates.find((n) => n.npcId === 'npc-other')
     expect(other!.currentIntention).toEqual({ type: 'eat-meal', target: null, targetType: 'district' })
   })
 
@@ -217,7 +217,7 @@ describe('applyMoneyEarningIntentions', () => {
     // despite being assigned to a district with no black market at all.
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
           ...createNpcWithIntention('npc-blackmarket', 'Smuggler', 'black-market-trade', 50, 50, 90, 90),
           assignedDistrictId: 'district-gilded-heights',
@@ -226,7 +226,7 @@ describe('applyMoneyEarningIntentions', () => {
     } as unknown as GameState
 
     const result = applyMoneyEarningIntentions(state)
-    const npc = result.roster.find((n) => n.npcId === 'npc-blackmarket')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-blackmarket')
     expect(npc!.personalFunds.carriedCash).toBe(0)
   })
 })

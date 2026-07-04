@@ -50,7 +50,7 @@ const createGameStateWithNpcItems = (captivityStatus?: 'captive' | 'missing' | '
   const npc = createNpcWithItems(captivityStatus)
   return {
     ...initialGameStateSnapshot,
-    roster: [npc],
+    npcRuntimeStates: [npc],
     inventoryState: {
       player: {
         equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
@@ -154,11 +154,11 @@ describe('applyCaptivityConfiscation', () => {
     expect(npcInventory[0].slots[2].itemInstanceId).toBeNull()
 
     // Equipment should be removed
-    expect(result.roster[0].equipment.weapon).toBeNull()
+    expect(result.npcRuntimeStates[0].equipment.weapon).toBeNull()
 
     // Personal funds should be confiscated
-    expect(result.roster[0].personalFunds.savings).toBe(0)
-    expect(result.roster[0].personalFunds.carriedCash).toBe(0)
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(0)
+    expect(result.npcRuntimeStates[0].personalFunds.carriedCash).toBe(0)
 
     // Activity log should have confiscation entry
     const logEntry = result.activityLog.find((entry) => entry.message.includes('confiscated'))
@@ -171,11 +171,11 @@ describe('applyCaptivityConfiscation', () => {
     const result = applyCaptivityConfiscation(state, { npcId: NPC_IDS.MARION_VALE, captivityType: 'imprisonment' })
 
     // Weapons should be confiscated from equipment
-    expect(result.roster[0].equipment.weapon).toBeNull()
+    expect(result.npcRuntimeStates[0].equipment.weapon).toBeNull()
 
     // Money should be confiscated
-    expect(result.roster[0].personalFunds.savings).toBe(0)
-    expect(result.roster[0].personalFunds.carriedCash).toBe(0)
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(0)
+    expect(result.npcRuntimeStates[0].personalFunds.carriedCash).toBe(0)
 
     // Non-weapon items should remain in inventory
     const npcInventory = result.inventoryState.npcInventories[NPC_IDS.MARION_VALE]
@@ -193,11 +193,11 @@ describe('applyCaptivityConfiscation', () => {
     const result = applyCaptivityConfiscation(state, { npcId: NPC_IDS.MARION_VALE, captivityType: 'arrest' })
 
     // Equipment weapon should be removed
-    expect(result.roster[0].equipment.weapon).toBeNull()
+    expect(result.npcRuntimeStates[0].equipment.weapon).toBeNull()
 
     // Money should remain
-    expect(result.roster[0].personalFunds.savings).toBe(100)
-    expect(result.roster[0].personalFunds.carriedCash).toBe(50)
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(100)
+    expect(result.npcRuntimeStates[0].personalFunds.carriedCash).toBe(50)
 
     // Non-weapon items should remain
     const npcInventory = result.inventoryState.npcInventories[NPC_IDS.MARION_VALE]
@@ -217,11 +217,11 @@ describe('applyCaptivityConfiscation', () => {
     expect(npcInventory[0].slots[2].itemInstanceId).toBe('item-gold-001')
 
     // Equipment should remain
-    expect(result.roster[0].equipment.weapon).toBe('weapon-unique-001')
+    expect(result.npcRuntimeStates[0].equipment.weapon).toBe('weapon-unique-001')
 
     // Money should remain
-    expect(result.roster[0].personalFunds.savings).toBe(100)
-    expect(result.roster[0].personalFunds.carriedCash).toBe(50)
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(100)
+    expect(result.npcRuntimeStates[0].personalFunds.carriedCash).toBe(50)
   })
 
   it('gives basic clothes when confiscating all items', () => {
@@ -230,8 +230,8 @@ describe('applyCaptivityConfiscation', () => {
     const result = applyCaptivityConfiscation(state, { npcId: NPC_IDS.MARION_VALE, captivityType: 'kidnap' })
 
     // Clothing should be set to basic garments
-    expect(result.roster[0].clothing.torso).toBeDefined()
-    expect(result.roster[0].clothing.legs).toBeDefined()
+    expect(result.npcRuntimeStates[0].clothing.torso).toBeDefined()
+    expect(result.npcRuntimeStates[0].clothing.legs).toBeDefined()
   })
 
   it('updates captivityState with confiscation timestamp', () => {
@@ -239,6 +239,6 @@ describe('applyCaptivityConfiscation', () => {
 
     const result = applyCaptivityConfiscation(state, { npcId: NPC_IDS.MARION_VALE, captivityType: 'kidnap' })
 
-    expect(result.roster[0].captivityState?.lastTransferDay).toBe(state.day)
+    expect(result.npcRuntimeStates[0].captivityState?.lastTransferDay).toBe(state.day)
   })
 })

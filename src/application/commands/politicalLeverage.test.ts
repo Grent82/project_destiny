@@ -75,7 +75,7 @@ describe('getRelationshipPoliticalCapital', () => {
   it('scores fear-bond when NPC fears player AND player holds their bond', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === MARION_ID
           ? {
               ...n,
@@ -115,7 +115,7 @@ describe('getRelationshipPoliticalCapital', () => {
   it('does NOT score fear-bond when fear is below threshold (<=50)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === MARION_ID
           ? {
               ...n,
@@ -208,7 +208,7 @@ describe('getBondHolderLeverage', () => {
   it('returns canExert=false when bond is held by an NPC, not the player', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === MARION_ID
           ? {
               ...n,
@@ -240,7 +240,7 @@ describe('getBondHolderLeverage', () => {
         ...initialGameStateSnapshot.playerCharacter,
         traits: { ...initialGameStateSnapshot.playerCharacter.traits, dominance: 90 },
       },
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === MARION_ID
           ? {
               ...n,
@@ -284,7 +284,7 @@ describe('getBondHolderLeverage', () => {
         ...initialGameStateSnapshot.playerCharacter,
         traits: { ...initialGameStateSnapshot.playerCharacter.traits, dominance: 80 },
       },
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === MARION_ID
           ? {
               ...n,

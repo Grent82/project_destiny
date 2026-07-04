@@ -95,7 +95,7 @@ describe('endDay threshold events', () => {
   it('logs hunger warning when NPC hunger exceeds threshold', () => {
     const hungryState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) => ({
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) => ({
         ...npc,
         states: { ...npc.states, hunger: 71 },
       })),
@@ -111,7 +111,7 @@ describe('endDay threshold events', () => {
     // Stress decays by 3 in step 2 for resting NPCs, so set it high enough to exceed 80 after decay
     const stressedState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) => ({
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) => ({
         ...npc,
         roomAssignment: null,
         states: { ...npc.states, stress: 90, morale: 50 },
@@ -120,7 +120,7 @@ describe('endDay threshold events', () => {
     const next = endDay(stressedState)
     // stress 90 - 3 decay = 87 > 80 threshold → morale 50 - 5 = 45
     // Marion Vale also has ambition=71 (>65), no title, not deployed → ambition drain -2 → 43
-    const stressedNpc = next.roster[0]!
+    const stressedNpc = next.npcRuntimeStates[0]!
     expect(stressedNpc.states.morale).toBe(43) // 50 - 5 (stress) - 2 (ambition)
     const stressWarning = next.activityLog.find((e) =>
       e.message.includes('carries the weight'),

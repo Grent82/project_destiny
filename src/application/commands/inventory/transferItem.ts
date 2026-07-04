@@ -95,7 +95,7 @@ interface SourceResult {
  */
 function findItemInSource(state: GameState, type: ItemLocationType, id: string, itemInstanceId: string, requiredQuantity: number): SourceResult | null {
   if (type === 'npc_inventory') {
-    const npc = state.roster.find((n) => n.npcId === id)
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === id)
     if (!npc) return null
 
     // Check NPC's containers (new format - inventoryState.npcInventories)
@@ -183,7 +183,7 @@ function findItemInSource(state: GameState, type: ItemLocationType, id: string, 
     }
 
     // Check NPC equipment
-    const npc = state.roster.find((n) => n.npcId === id)
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === id)
     if (!npc) return null
 
     // Check NPC's equipment slots (using equipment structure, not loadout)
@@ -205,7 +205,7 @@ function findItemInSource(state: GameState, type: ItemLocationType, id: string, 
  */
 function validateDestination(state: GameState, type: ItemLocationType, id: string): boolean {
   if (type === 'npc_inventory') {
-    return state.roster.some((n) => n.npcId === id)
+    return state.npcRuntimeStates.some((n) => n.npcId === id)
   }
 
   if (type === 'player_inventory') {
@@ -232,7 +232,7 @@ function validateDestination(state: GameState, type: ItemLocationType, id: strin
       return true
     }
     // Check if NPC exists
-    return state.roster.some((n) => n.npcId === id)
+    return state.npcRuntimeStates.some((n) => n.npcId === id)
   }
 
   return false
@@ -260,7 +260,7 @@ function findContainer(state: GameState, containerId: string): { containerType: 
  * Remove items from NPC inventory.
  */
 function removeFromNpcInventory(state: GameState, npcId: string, itemInstanceId: string, quantity: number): GameState {
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
   const npcContainers = state.inventoryState.npcInventories[npcId] || []
@@ -468,10 +468,10 @@ function removeFromEquipment(state: GameState, ownerId: string, itemInstanceId: 
   }
 
   // NPC equipment removal - use equipment structure (not loadout)
-  const npcIndex = state.roster.findIndex((n) => n.npcId === ownerId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === ownerId)
   if (npcIndex === -1) return state
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
   const updatedNpc = { ...npc, equipment: { ...npc.equipment } }
 
   // Remove from equipment (weapon, armor, accessory slots)
@@ -485,11 +485,11 @@ function removeFromEquipment(state: GameState, ownerId: string, itemInstanceId: 
     updatedNpc.equipment.accessory = updatedNpc.equipment.accessory?.slice(0, 1) || []
   }
 
-  const updatedRoster = [...state.roster]
+  const updatedRoster = [...state.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
   // Add item back to NPC inventory
-  let result = { ...state, roster: updatedRoster }
+  let result = { ...state, npcRuntimeStates: updatedRoster }
   result = addToNpcInventory(result, ownerId, itemInstanceId, itemInstanceId, 1)
 
   return result
@@ -610,10 +610,10 @@ function addToEquipment(state: GameState, ownerId: string, itemInstanceId: strin
   }
 
   // NPC equipment
-  const npcIndex = state.roster.findIndex((n) => n.npcId === ownerId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === ownerId)
   if (npcIndex === -1) return state
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
   const updatedNpc = { ...npc, loadout: { ...npc.loadout } }
 
   // Determine slot based on item category
@@ -631,12 +631,12 @@ function addToEquipment(state: GameState, ownerId: string, itemInstanceId: strin
     return state
   }
 
-  const updatedRoster = [...state.roster]
+  const updatedRoster = [...state.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
   // Remove from inventory first
   let result = removeFromNpcInventory(state, ownerId, itemInstanceId, 1)
-  result = { ...result, roster: updatedRoster }
+  result = { ...result, npcRuntimeStates: updatedRoster }
 
   return result
 }
@@ -693,7 +693,7 @@ function updateItemRegistryLocation(state: GameState, itemInstanceId: string, lo
  * Add items to NPC inventory.
  */
 function addToNpcInventory(state: GameState, npcId: string, itemInstanceId: string, _itemId: string, quantity: number): GameState {
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
   // Get current NPC containers and create deep copies

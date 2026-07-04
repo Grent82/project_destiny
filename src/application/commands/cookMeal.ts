@@ -19,7 +19,7 @@ const MEAL_GAINS: Record<MealType, { trust: number; affinity: number; loyalty: n
 }
 
 function canCookMeal(state: GameState, npcId: string): { npcId: string; kitchenRoomId: string } | null {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
   if (npc.assignment === 'deployed') return null
@@ -58,7 +58,7 @@ export function cookMeal(state: GameState, npcId: string, mealType: MealType): G
   if (!result) return state
 
   const { npcId: validNpcId } = result
-  const npc = state.roster.find((entry) => entry.npcId === validNpcId)!
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === validNpcId)!
 
   const cost = MEAL_COSTS[mealType]
   if (state.money < cost) return state

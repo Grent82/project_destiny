@@ -180,7 +180,7 @@ describe('DashboardScreen', () => {
         corridorStatus: 'disrupted',
         corridorClearanceProgressDays: 1,
       },
-      roster: initialGameStateSnapshot.roster.slice(0, 2),
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.slice(0, 2),
     })
 
     render(
@@ -213,7 +213,7 @@ describe('DashboardScreen', () => {
     const store = createGameStore({
       ...initialGameStateSnapshot,
       house: makeHouseKitchenIntact(),
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,

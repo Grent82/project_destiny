@@ -22,7 +22,7 @@ export function applyEndOfDayResources(state: GameState): GameState {
   if (next.cityResources.foodSecurity < 40) {
     next = {
       ...next,
-      roster: next.roster.map((npc) => ({
+      npcRuntimeStates: next.npcRuntimeStates.map((npc) => ({
         ...npc,
         states: {
           ...npc.states,
@@ -62,12 +62,12 @@ export function applyCaptivityDegradation(state: GameState): GameState {
 
   const next: GameState = {
     ...state,
-    roster: state.roster.map((npc) => ({ ...npc })),
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => ({ ...npc })),
     npcCaptivityStates: { ...state.npcCaptivityStates },
   }
 
   for (const [npcId, cap] of activeEntries) {
-    const rosterNpc = next.roster.find((npc) => npc.npcId === npcId)
+    const rosterNpc = next.npcRuntimeStates.find((npc) => npc.npcId === npcId)
     const newDays = cap.timeHeldDays + 1
     const risk = rosterNpc ? selectNpcCoercionRisk(rosterNpc) : 0
     const threshold = risk > 0.6 ? Math.max(1, Math.floor(CAPTIVITY_DEGRADATION_DAYS / 2)) : CAPTIVITY_DEGRADATION_DAYS

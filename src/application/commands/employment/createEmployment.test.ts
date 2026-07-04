@@ -20,7 +20,7 @@ describe('createEmployment', () => {
 
     const result = createEmployment(state, params)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee).toBeDefined()
     expect(employee?.currentEmployment).toBeDefined()
     expect(employee?.currentEmployment?.employmentId).toContain('employment-player')
@@ -33,7 +33,7 @@ describe('createEmployment', () => {
   it('rejects employment if NPC has a faction directive', () => {
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: null,
@@ -55,7 +55,7 @@ describe('createEmployment', () => {
     const result = createEmployment(state, params)
 
     // Employment should not be created
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment).toBeNull()
   })
 
@@ -73,7 +73,7 @@ describe('createEmployment', () => {
     const result = createEmployment(state, params)
 
     // State should be unchanged
-    expect(result.roster.length).toBe(state.roster.length)
+    expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length)
   })
 
   it('logs activity when employment is created', () => {
@@ -100,7 +100,7 @@ describe('createEmployment', () => {
   it('clears previous employment when creating new one', () => {
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: {
@@ -133,7 +133,7 @@ describe('createEmployment', () => {
 
     const result = createEmployment(state, params)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.employmentId).not.toBe('employment-old-123')
     expect(employee?.currentEmployment?.taskType).toBe('scout')
   })

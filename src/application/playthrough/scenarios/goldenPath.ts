@@ -61,7 +61,7 @@ export const goldenPathScenario: PlaythroughScenario = {
       assertion(
         'npc-on-roster',
         `${SQUAD_NPC} is on the roster`,
-        (s) => s.roster.some((n) => n.npcId === SQUAD_NPC),
+        (s) => s.npcRuntimeStates.some((n) => n.npcId === SQUAD_NPC),
       ),
       assertion(
         'expedition-idle',
@@ -102,7 +102,7 @@ export const goldenPathScenario: PlaythroughScenario = {
       assertion(
         'npc-deployed',
         `${SQUAD_NPC} assignment is deployed`,
-        (s) => s.roster.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'deployed',
+        (s) => s.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'deployed',
       ),
       assertion(
         'supplies-allocated',
@@ -164,7 +164,7 @@ export const goldenPathScenario: PlaythroughScenario = {
       assertion(
         'npc-returned-to-idle',
         `${SQUAD_NPC} is idle after expedition resolved`,
-        (s) => s.roster.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'idle',
+        (s) => s.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'idle',
       ),
       assertion(
         'day-advanced',
@@ -187,7 +187,7 @@ export const goldenPathScenario: PlaythroughScenario = {
     assertion(
       'roster-alive',
       'Every roster NPC has health ≥ 0',
-      (s) => s.roster.every((n) => n.states.health >= 0),
+      (s) => s.npcRuntimeStates.every((n) => n.states.health >= 0),
     ),
   ],
 }

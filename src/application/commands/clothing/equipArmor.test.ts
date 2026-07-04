@@ -6,7 +6,7 @@ describe('equipArmor', () => {
   it('equips an armor item to the correct layer', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -22,7 +22,7 @@ describe('equipArmor', () => {
       itemId: 'armor-light-padded-vest',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.armor.lightTorso).toBe('armor-light-padded-vest')
     expect(result.activityLog.some((e) => e.message.includes('equips'))).toBe(true)
   })
@@ -30,7 +30,7 @@ describe('equipArmor', () => {
   it('unequips current item before equipping new one', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -46,7 +46,7 @@ describe('equipArmor', () => {
       itemId: 'armor-light-padded-vest',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.armor.lightTorso).toBe('armor-light-padded-vest')
   })
 
@@ -65,7 +65,7 @@ describe('unequipArmor', () => {
   it('unequips an armor item from the correct layer', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -80,7 +80,7 @@ describe('unequipArmor', () => {
       layer: 'shield',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.armor.shield).toBeNull()
     expect(result.activityLog.some((e) => e.message.includes('unequips'))).toBe(true)
   })

@@ -68,21 +68,21 @@ describe('endDay — ambition frustration', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.5)
 
     // Marion Vale has ambition=71, no title, assignment='working' → qualifies
-    const marion = initialGameStateSnapshot.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marion = initialGameStateSnapshot.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     expect(marion.traits.ambition).toBeGreaterThan(65)
     expect(marion.activeTitle).toBeNull()
     expect(marion.assignment).not.toBe('deployed')
 
     const isolatedState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, roomAssignment: null } : npc,
       ),
     }
 
-    const moraleBefore = isolatedState.roster.find((r) => r.npcId === 'npc-marion-vale')!.states.morale
+    const moraleBefore = isolatedState.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!.states.morale
     const next = endDay(isolatedState)
-    const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionAfter = next.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     expect(marionAfter.states.morale).toBe(Math.max(0, moraleBefore - 2))
 
     const logEntry = next.activityLog.find(

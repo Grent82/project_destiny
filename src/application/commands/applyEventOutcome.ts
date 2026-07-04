@@ -54,7 +54,7 @@ function clampNpcStateValue(value: number) {
 }
 
 export function resolveNpcStateSubject(
-  roster: GameState['roster'],
+  roster: GameState['npcRuntimeStates'],
   subject: NpcStateSubject,
 ) {
   if (roster.length === 0) return null
@@ -156,7 +156,7 @@ export function applyOutcomes(
           const subjectKey = outcome.subject!
           const npcStateAxis = outcome.axis! as AdjustNpcStateAxis
           const npcStateDelta = outcome.delta!
-          const subject = resolveNpcStateSubject(next.roster, subjectKey as NpcStateSubject)
+          const subject = resolveNpcStateSubject(next.npcRuntimeStates, subjectKey as NpcStateSubject)
           if (!subject) {
             console.warn(`applyEventOutcome: outcome type "adjustNpcState" could not resolve subject "${subjectKey}" — outcome skipped`)
             break
@@ -164,7 +164,7 @@ export function applyOutcomes(
 
           next = {
             ...next,
-            roster: next.roster.map((entry) => {
+            npcRuntimeStates: next.npcRuntimeStates.map((entry) => {
               if (entry.npcId !== subject.npcId) return entry
               if (npcStateAxis === 'loyalty') {
                 return {
@@ -296,7 +296,7 @@ export function applyOutcomes(
             warnAndSkip(outcome.type, 'npcId', unlockNpcId)
             break
           }
-          const alreadyHired = next.roster.some((r) => r.npcId === unlockNpcId)
+          const alreadyHired = next.npcRuntimeStates.some((r) => r.npcId === unlockNpcId)
           const alreadyOffered = next.availableForHire.some((o) => o.npcId === unlockNpcId)
           if (!alreadyHired && !alreadyOffered) {
             next = {
@@ -327,7 +327,7 @@ export function applyOutcomes(
             warnAndSkip(outcome.type, 'npcId', addNpcId)
             break
           }
-          const alreadyOnRoster = next.roster.some((r) => r.npcId === addNpcId)
+          const alreadyOnRoster = next.npcRuntimeStates.some((r) => r.npcId === addNpcId)
           if (!alreadyOnRoster) {
             const npcDef = contentCatalog.npcsById.get(addNpcId)
             if (npcDef) {
@@ -378,7 +378,7 @@ export function applyOutcomes(
                 factionRelationships: [],
                 wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
               }
-              next = { ...next, roster: [...next.roster, newEntry] }
+              next = { ...next, npcRuntimeStates: [...next.npcRuntimeStates, newEntry] }
               const seeded = getSeeded()
               next = initializeRosterRelationships(next, seeded.rng)
               next = { ...next, rngSeed: seeded.getSeed() }
@@ -425,13 +425,13 @@ export function applyOutcomes(
         const entryReason = entryReasonRaw as 'compact-assessment' | 'debt-settlement' | 'voluntary' | 'combat-capture' | 'inherited'
 
         // Find the NPC in the roster
-        const npcIndex = next.roster.findIndex((r) => r.npcId === npcId)
+        const npcIndex = next.npcRuntimeStates.findIndex((r) => r.npcId === npcId)
         if (npcIndex === -1) {
           console.warn(`applyEventOutcome: createBond could not find NPC "${npcId}" in roster — outcome skipped`)
           break
         }
 
-        const npc = next.roster[npcIndex]
+        const npc = next.npcRuntimeStates[npcIndex]
         const contractValue = outcome.delta ?? 50  // Default contract value if not specified
         const termDays = outcome.target ? parseInt(outcome.target, 10) : null  // Use target for term days
         const marketValue = outcome.marketValue ?? contractValue
@@ -454,7 +454,7 @@ export function applyOutcomes(
         // Update the NPC with bond status
         next = {
           ...next,
-          roster: next.roster.map((entry, idx) =>
+          npcRuntimeStates: next.npcRuntimeStates.map((entry, idx) =>
             idx === npcIndex ? { ...entry, bondStatus } : entry
           ),
         }

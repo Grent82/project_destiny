@@ -31,7 +31,7 @@ export interface NpcDistanceResult {
 export function calculateNpcDistances(state: GameState): NpcDistanceResult[] {
   const playerDistrict = state.currentDistrictId
 
-  return state.roster.map((npc) => {
+  return state.npcRuntimeStates.map((npc) => {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const npcDistrict = npcDef?.districtId ?? npc.assignedDistrictId
 

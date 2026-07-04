@@ -285,7 +285,7 @@ function calculateIntentionPriority(npc: NpcRuntimeState, intentionType: NpcInte
  * - Urgency based on intention type and world conditions
  */
 export function calculateNpcIntention(state: GameState, npcId: string): NpcIntention | null {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return null
 
   // Check guard conditions
@@ -326,7 +326,7 @@ export function calculateNpcIntention(state: GameState, npcId: string): NpcInten
 export function processNpcIntentions(state: GameState): GameState {
   let newState = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     // Skip NPCs who already have an intention or directive
     if (npc.currentIntention) continue
     if (npc.currentDirectiveId) continue
@@ -336,7 +336,7 @@ export function processNpcIntentions(state: GameState): GameState {
     if (intention) {
       newState = {
         ...newState,
-        roster: newState.roster.map((n) =>
+        npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
           n.npcId === npc.npcId ? { ...n, currentIntention: intention } : n,
         ),
       }
@@ -350,12 +350,12 @@ export function processNpcIntentions(state: GameState): GameState {
  * Clears an NPC's intention (called when they start a directive or assignment).
  */
 export function clearNpcIntention(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc || !npc.currentIntention) return state
 
   return {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId ? { ...n, currentIntention: null } : n,
     ),
   }
@@ -469,7 +469,7 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
 export function processAllowlistedNpcIntentions(state: GameState): GameState {
   let next = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (npc.currentIntention) continue
     if (npc.currentDirectiveId) continue
 
@@ -478,7 +478,7 @@ export function processAllowlistedNpcIntentions(state: GameState): GameState {
 
     next = {
       ...next,
-      roster: next.roster.map((n) =>
+      npcRuntimeStates: next.npcRuntimeStates.map((n) =>
         n.npcId === npc.npcId ? { ...n, currentIntention: intention } : n,
       ),
     }
@@ -494,7 +494,7 @@ export function processAllowlistedNpcIntentions(state: GameState): GameState {
 export function executeAllowlistedNpcIntentions(state: GameState): GameState {
   let next = state
 
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (!npc.currentIntention || !WIRED_INTENTION_TYPES.has(npc.currentIntention.type)) continue
 
     next = executeNpcIntention(npc, next)
@@ -779,7 +779,7 @@ const flirtWithHandler: IntentionHandler = {
     return npc.attributes.presence >= 40 || npc.traits.empathy >= 40
   },
   execute: (npc, state) => {
-    const targetEntry = state.roster
+    const targetEntry = state.npcRuntimeStates
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
@@ -807,7 +807,7 @@ const courtRomanticallyHandler: IntentionHandler = {
     return npc.attributes.presence >= 50 && npc.traits.empathy >= 50
   },
   execute: (npc, state) => {
-    const targetEntry = state.roster
+    const targetEntry = state.npcRuntimeStates
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]
@@ -852,7 +852,7 @@ const visitLoverHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     // Find romantic partner (highest intimacy stage)
-    const partnerEntry = state.roster
+    const partnerEntry = state.npcRuntimeStates
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.intimacyStage ?? 'none'
@@ -892,7 +892,7 @@ const spendTimeWithHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     // Find a friend/companion to spend time with (high affinity, any intimacy stage)
-    const targetEntry = state.roster
+    const targetEntry = state.npcRuntimeStates
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
@@ -937,7 +937,7 @@ const seekIntimacyHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     // Find the most trusted idle partner (deep-trust gate is enforced inside tryNpcNpcSeekIntimacy)
-    const targetEntry = state.roster
+    const targetEntry = state.npcRuntimeStates
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.trust ?? 0
@@ -964,7 +964,7 @@ const flirtAggressivelyHandler: IntentionHandler = {
     return npc.traits.dominance >= 50
   },
   execute: (npc, state) => {
-    const targetEntry = state.roster
+    const targetEntry = state.npcRuntimeStates
       .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
@@ -1402,7 +1402,7 @@ export function executeNpcIntention(npc: NpcRuntimeState, state: GameState): Gam
 export function executeAllNpcIntentions(state: GameState): GameState {
   let newState = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (npc.currentIntention) {
       newState = executeNpcIntention(npc, newState)
     }

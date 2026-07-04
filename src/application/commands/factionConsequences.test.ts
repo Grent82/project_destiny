@@ -24,21 +24,21 @@ describe('adjustFactionStanding — NPC loyalty reactions', () => {
   it('reduces affiliated NPC loyalty when delta is less than -10', () => {
     // npc-marion-vale has factionAffinityId: faction-civic-compact, traits.loyalty: 52
     const store = makeStore()
-    const loyaltyBefore = store.getState().game.roster.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
+    const loyaltyBefore = store.getState().game.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
 
     store.dispatch(gameActions.adjustFactionStanding({ factionId: 'faction-civic-compact', delta: -20 }))
 
-    const loyaltyAfter = store.getState().game.roster.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
+    const loyaltyAfter = store.getState().game.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
     expect(loyaltyAfter).toBe(loyaltyBefore - 5)
   })
 
   it('does not reduce NPC loyalty when delta is -10 or greater', () => {
     const store = makeStore()
-    const loyaltyBefore = store.getState().game.roster.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
+    const loyaltyBefore = store.getState().game.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
 
     store.dispatch(gameActions.adjustFactionStanding({ factionId: 'faction-civic-compact', delta: -10 }))
 
-    const loyaltyAfter = store.getState().game.roster.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
+    const loyaltyAfter = store.getState().game.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!.traits.loyalty
     expect(loyaltyAfter).toBe(loyaltyBefore)
   })
 })

@@ -112,5 +112,5 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
 /** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */
 export const initialStateWithIda: GameState = {
   ...initialGameStateSnapshot,
-  roster: [...initialGameStateSnapshot.roster, idaRhysRosterEntry],
+  npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, idaRhysRosterEntry],
 }

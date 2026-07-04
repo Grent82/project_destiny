@@ -38,14 +38,14 @@ function clampPercent(value: number): number {
 function updateNpcStates(state: GameState, npcId: string, updates: Partial<NpcRuntimeState['states']>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...updates } } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...updates } } : n)),
   }
 }
 
 function addNpcMemory(state: GameState, npcId: string, event: string, day: number): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? { ...n, npcMemory: [...n.npcMemory, { day, event, eventType: 'custom' as const, visibility: 'hidden' as const, sentiment: 'neutral' as const }].slice(-20) }
         : n,
@@ -55,7 +55,7 @@ function addNpcMemory(state: GameState, npcId: string, event: string, day: numbe
 
 /** Gains skill XP for one skill, reusing the same rarity caps/gain-multiplier as formal training. */
 function gainSkillXp(state: GameState, npcId: string, skillKey: keyof Skills, baseGain: number): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
   const npcDef = contentCatalog.npcsById.get(npcId)
   const rarityCap = RARITY_SKILL_CAPS[npcDef?.rarity ?? 'common'] ?? 70
@@ -67,16 +67,16 @@ function gainSkillXp(state: GameState, npcId: string, skillKey: keyof Skills, ba
 
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, skills: { ...n.skills, [skillKey]: newVal } } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, skills: { ...n.skills, [skillKey]: newVal } } : n)),
   }
 }
 
 /** NPC spies on another idle NPC, learning their authored private need. Risks being caught. */
 export function npcSpyOn(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const target = state.roster.filter((r) => r.npcId !== npcId && r.assignment === 'idle')[0]
+  const target = state.npcRuntimeStates.filter((r) => r.npcId !== npcId && r.assignment === 'idle')[0]
   if (!target) return state
 
   const successChance = Math.max(
@@ -100,7 +100,7 @@ export function npcSpyOn(state: GameState, npcId: string, rng: Rng): GameState {
  * (previously unwired) applyBlackmailLeverage command.
  */
 export function npcGatherLeverage(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const knownCompromising = state.privateCorrespondence.filter(
@@ -131,7 +131,7 @@ export function npcGatherLeverage(state: GameState, npcId: string): GameState {
 
 /** NPC intercepts a piece of correspondence they aren't a party to, via the existing (previously unwired) applyInterception command. */
 export function npcInterceptCommunication(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const candidate = state.privateCorrespondence.find(
@@ -149,7 +149,7 @@ export function npcInterceptCommunication(state: GameState, npcId: string): Game
 
 /** NPC watches people in their (public) assigned district, picking up a rumor. */
 export function npcPeopleWatch(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc || !npc.assignedDistrictId) return state
 
   const rumorText = contentCatalog.rumors[0]?.text
@@ -162,7 +162,7 @@ export function npcPeopleWatch(state: GameState, npcId: string): GameState {
 
 /** NPC scouts ahead in their district, occasionally turning up something useful. */
 export function npcScoutAhead(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc || !npc.assignedDistrictId) return state
 
   const successChance = Math.max(
@@ -186,7 +186,7 @@ export function npcScoutAhead(state: GameState, npcId: string, rng: Rng): GameSt
 
 /** NPC investigates potential threats in their district, easing tension when they turn up something actionable. */
 export function npcInvestigateThreat(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc || !npc.assignedDistrictId) return state
 
   const successChance = Math.max(
@@ -212,7 +212,7 @@ export function npcInvestigateThreat(state: GameState, npcId: string, rng: Rng):
 
 /** NPC seeks shelter, easing fear and stress. Larger effect with intact quarters/barracks available. */
 export function npcSeekShelter(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const hasShelter = hasIntactHouseRoomFunction(state, 'quarters') || hasIntactHouseRoomFunction(state, 'barracks')
@@ -231,7 +231,7 @@ export function npcSeekShelter(state: GameState, npcId: string): GameState {
 
 /** NPC practices a random skill on their own initiative — a smaller, unconditional counterpart to train-self. */
 export function npcPracticeSkill(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const skillKey = SKILL_KEYS[Math.floor(rng() * SKILL_KEYS.length)]!
@@ -244,7 +244,7 @@ export function npcPracticeSkill(state: GameState, npcId: string, rng: Rng): Gam
  * workshop or study — the AC's "Training-Facility" requirement.
  */
 export function npcTrainSelf(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
   if (!hasIntactHouseRoomFunction(state, 'workshop') && !hasIntactHouseRoomFunction(state, 'study')) return state
 
@@ -261,7 +261,7 @@ export function npcTrainSelf(state: GameState, npcId: string): GameState {
  * docblock above.
  */
 export function npcEscapeAttempt(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc || npc.captivityState?.status !== 'captive') return state
 
   const successChance = Math.max(
@@ -272,7 +272,7 @@ export function npcEscapeAttempt(state: GameState, npcId: string, rng: Rng): Gam
   if (rng() < successChance) {
     const next: GameState = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === npcId && n.captivityState ? { ...n, captivityState: { ...n.captivityState, status: 'missing' } } : n,
       ),
     }

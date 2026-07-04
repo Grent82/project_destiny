@@ -117,12 +117,12 @@ export function confiscateCaptivityItems(state: GameState, params: ConfiscateCap
   const { npcId, regime, confiscationType } = params
 
   // Find NPC in roster
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) {
     return state // NPC not found, no change
   }
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   // Get confiscation rules for this regime and type
   const rules = CONFISCATION_RULES[regime]?.[confiscationType]
@@ -196,12 +196,12 @@ export function confiscateCaptivityItems(state: GameState, params: ConfiscateCap
 
   // Remove carried cash from personalFunds if money confiscated
   if (moneyConfiscated > 0) {
-    const npc = newState.roster[npcIndex]
+    const npc = newState.npcRuntimeStates[npcIndex]
     const confiscatedCash = Math.min(moneyConfiscated, npc.personalFunds.carriedCash)
     if (confiscatedCash > 0) {
       newState = {
         ...newState,
-        roster: newState.roster.map((n, i) =>
+        npcRuntimeStates: newState.npcRuntimeStates.map((n, i) =>
           i === npcIndex
             ? {
                 ...n,

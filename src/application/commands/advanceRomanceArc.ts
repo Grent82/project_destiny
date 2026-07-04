@@ -41,7 +41,7 @@ function nextStage(current: IntimacyStage): IntimacyStage | null {
  * - Captivity: Adds moral complexity tag to log
  */
 export function advanceRomanceArc(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const playerToNpcKey = buildRelationshipKey(PLAYER_ID, npcId)

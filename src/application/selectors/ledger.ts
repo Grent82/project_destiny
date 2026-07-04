@@ -30,15 +30,15 @@ function estimateTitleIncome(npc: { activeTitle: string | null; skills: Record<s
 }
 
 export const selectDailyIncomeBreakdown = createSelector([selectGame], (game) => {
-  const wages = game.roster.reduce((sum, npc) => sum + wageForStatus(npc.status), 0)
+  const wages = game.npcRuntimeStates.reduce((sum, npc) => sum + wageForStatus(npc.status), 0)
 
-  const workingNpcIncome = game.roster
+  const workingNpcIncome = game.npcRuntimeStates
     .filter((npc) => npc.assignment === 'working')
     .reduce((sum, npc) => sum + computeWorkingIncome(npc.skills), 0)
 
   // House baseline: +5 Marks/day always
   const HOUSE_BASELINE = 5
-  const titleIncome = game.roster.reduce((sum, npc) => sum + estimateTitleIncome(npc), 0) + HOUSE_BASELINE
+  const titleIncome = game.npcRuntimeStates.reduce((sum, npc) => sum + estimateTitleIncome(npc), 0) + HOUSE_BASELINE
 
   const net = workingNpcIncome + titleIncome - wages
 

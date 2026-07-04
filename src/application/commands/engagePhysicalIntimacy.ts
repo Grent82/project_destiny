@@ -57,8 +57,8 @@ type ConsentCheck =
   | { allowed: false; reason: 'boundary-violation'; boundary: string }
   | { allowed: false; reason: 'explicit-consent-required' }
 
-function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: EngagePhysicalIntimacyOptions): { npc: NonNullable<GameState['roster'][0]>; consent: ConsentCheck; contraceptionItem: ContraceptionItem | null } | null {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: EngagePhysicalIntimacyOptions): { npc: NonNullable<GameState['npcRuntimeStates'][0]>; consent: ConsentCheck; contraceptionItem: ContraceptionItem | null } | null {
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
   if (npc.assignment === 'deployed') return null
@@ -348,9 +348,9 @@ export function engagePhysicalIntimacy(
 
   // Handle pregnancy state
   if (pregnancyOccurred) {
-    const nextNpc = next.roster.find((n) => n.npcId === npcId)
+    const nextNpc = next.npcRuntimeStates.find((n) => n.npcId === npcId)
     if (nextNpc) {
-      next.roster = next.roster.map((n) =>
+      next.npcRuntimeStates = next.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,

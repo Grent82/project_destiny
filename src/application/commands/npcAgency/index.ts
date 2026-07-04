@@ -35,7 +35,7 @@ function buildAgencyPool(npc: { traits: { ruthlessness: number; prudence: number
 /** Apply all NPC agency actions in a single pass. */
 export function applyAllNpcAgency(state: GameState, rng: Rng = Math.random): GameState {
   let next = state
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

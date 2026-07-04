@@ -10,8 +10,8 @@ import { selectNpcRecoveryStatus, selectPlayerRecoveryStatus, selectPlayerIsWoun
 function storeWithIda(overrides: Partial<typeof idaRhysRosterEntry> = {}) {
   return createGameStore({
     ...initialGameStateSnapshot,
-    roster: [
-      ...initialGameStateSnapshot.roster,
+    npcRuntimeStates: [
+      ...initialGameStateSnapshot.npcRuntimeStates,
       {
         ...idaRhysRosterEntry,
         ...overrides,

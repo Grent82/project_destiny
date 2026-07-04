@@ -6,7 +6,7 @@ import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { endDay } from './endDay'
 
 describe('equipItem reducer', () => {
-  const npcId = initialGameStateSnapshot.roster[0]?.npcId ?? 'npc-marion-vale'
+  const npcId = initialGameStateSnapshot.npcRuntimeStates[0]?.npcId ?? 'npc-marion-vale'
 
   function createStateWithNpcItem(itemId: string, instanceId: string) {
     return {
@@ -53,7 +53,7 @@ describe('equipItem reducer', () => {
     const state = createStateWithNpcItem('weapon-dagger-wasterunner', 'inst-weapon-dagger-wasterunner-001')
     const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: 'inst-weapon-dagger-wasterunner-001' })
     const next = gameSliceReducer(state, action)
-    const npc = next.roster.find((r) => r.npcId === npcId)
+    const npc = next.npcRuntimeStates.find((r) => r.npcId === npcId)
     // The equip command updates equipment, not loadout directly
     expect(npc?.equipment.weapon).toBe('inst-weapon-dagger-wasterunner-001')
   })
@@ -62,7 +62,7 @@ describe('equipItem reducer', () => {
     const state = createStateWithNpcItem('armor-light-tallow-work-coat', 'inst-armor-light-tallow-work-coat-001')
     const action = gameActions.equipItem({ npcId, slot: 'armorId', itemId: 'inst-armor-light-tallow-work-coat-001' })
     const next = gameSliceReducer(state, action)
-    const npc = next.roster.find((r) => r.npcId === npcId)
+    const npc = next.npcRuntimeStates.find((r) => r.npcId === npcId)
     expect(npc?.equipment.armor).toBe('inst-armor-light-tallow-work-coat-001')
   })
 
@@ -70,7 +70,7 @@ describe('equipItem reducer', () => {
     const instanceId = 'inst-weapon-dagger-wasterunner-001'
     const stateWithWeapon = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((npc, i) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc, i) =>
         i === 0 ? { ...npc, equipment: { ...npc.equipment, weapon: instanceId } } : npc,
       ),
       inventoryState: {
@@ -106,7 +106,7 @@ describe('equipItem reducer', () => {
     }
     const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: null })
     const next = gameSliceReducer(stateWithWeapon, action)
-    const npc = next.roster.find((r) => r.npcId === npcId)
+    const npc = next.npcRuntimeStates.find((r) => r.npcId === npcId)
     expect(npc?.equipment.weapon).toBeNull()
   })
 
@@ -114,7 +114,7 @@ describe('equipItem reducer', () => {
     const state = initialGameStateSnapshot
     const action = gameActions.equipItem({ npcId: 'npc-does-not-exist', slot: 'primaryWeaponId', itemId: 'weapon-dagger-wasterunner' })
     const next = gameSliceReducer(state, action)
-    expect(next.roster).toEqual(state.roster)
+    expect(next.npcRuntimeStates).toEqual(state.npcRuntimeStates)
   })
 
   it('does nothing when item is not found in accessible inventory', () => {

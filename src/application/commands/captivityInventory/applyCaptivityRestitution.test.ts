@@ -54,7 +54,7 @@ describe('applyCaptivityRestitution', () => {
     const npcId = NPC_IDS.IDA_RHYS
     const stateWithNpc = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -90,7 +90,7 @@ describe('applyCaptivityRestitution', () => {
       releasedBy: 'acquittal',
     })
 
-    const npc = result.roster.find((n) => n.npcId === npcId)
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === npcId)
     expect(npc).toBeDefined()
     // Money should be returned to carriedCash
     expect(npc!.personalFunds.carriedCash).toBeGreaterThan(0)

@@ -23,7 +23,7 @@ export const selectNpcRecoveryStatus = (npcId: string) => {
     selector = createSelector(
       [
         (state: RootState) => state.game,
-        (state: RootState) => state.game.roster.find((r) => r.npcId === npcId),
+        (state: RootState) => state.game.npcRuntimeStates.find((r) => r.npcId === npcId),
       ],
       (game, npc): RecoveryStatus => {
         if (!npc) {

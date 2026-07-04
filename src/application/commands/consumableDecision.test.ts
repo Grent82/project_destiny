@@ -49,12 +49,12 @@ describe('consumable mission use', () => {
       const stateWithDecision: GameState = {
         ...initialGameStateSnapshot,
         inventoryState: createInventoryWithPlayerItem('inst-salve-001', 'item-dressing-league-surplus'),
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             npcId: 'npc-test',
             name: 'Mara',
-            states: { ...initialGameStateSnapshot.roster[0]!.states, health: 60, injury: 20 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 60, injury: 20 },
             loadout: {
               primaryWeaponId: null,
               secondaryWeaponId: null,
@@ -80,7 +80,7 @@ describe('consumable mission use', () => {
       const playerItems = state.inventoryState.player.bagContainers.flatMap(c => c.slots)
       expect(playerItems.some(s => s.itemInstanceId === 'inst-salve-001')).toBe(false)
       // NPC health should have increased
-      const npc = state.roster.find((n) => n.npcId === 'npc-test')
+      const npc = state.npcRuntimeStates.find((n) => n.npcId === 'npc-test')
       expect(npc!.states.health).toBeGreaterThan(60)
       expect(state.activityLog[0]?.message).toContain('Mara')
     })
@@ -89,12 +89,12 @@ describe('consumable mission use', () => {
       const stateWithDecision: GameState = {
         ...initialGameStateSnapshot,
         inventoryState: createInventoryWithPlayerItem('inst-salve-001', 'item-dressing-league-surplus'),
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             npcId: 'npc-test',
             name: 'Mara',
-            states: { ...initialGameStateSnapshot.roster[0]!.states, health: 60, injury: 20 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 60, injury: 20 },
             loadout: {
               primaryWeaponId: null,
               secondaryWeaponId: null,
@@ -116,7 +116,7 @@ describe('consumable mission use', () => {
       const store = createGameStore(stateWithDecision)
       store.dispatch(gameActions.resolveConsumableUse())
 
-      const npc = store.getState().game.roster.find((n) => n.npcId === 'npc-test')
+      const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-test')
       expect(npc!.states.injury).toBe(20)
     })
 
@@ -151,12 +151,12 @@ describe('consumable mission use', () => {
     it('NPC health unchanged when skipping', () => {
       const stateWithDecision: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             npcId: 'npc-test',
             name: 'Mara',
-            states: { ...initialGameStateSnapshot.roster[0]!.states, health: 65 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 65 },
           },
         ],
         pendingConsumableDecision: {
@@ -169,7 +169,7 @@ describe('consumable mission use', () => {
       }
       const store = createGameStore(stateWithDecision)
       store.dispatch(gameActions.skipConsumableUse())
-      const npc = store.getState().game.roster.find((n) => n.npcId === 'npc-test')
+      const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-test')
       expect(npc!.states.health).toBe(65) // unchanged
     })
   })

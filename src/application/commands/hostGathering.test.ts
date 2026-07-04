@@ -40,7 +40,7 @@ const createBaseState = (roster: NpcRuntimeState[] = [idaRhysRosterEntry]): Game
   factionStandings: { 'faction-civic-compact': 10, 'faction-gilded-court': -65, 'faction-foundry-league': 5, 'faction-tallow-ring': 15, 'faction-restored': 0, 'faction-house-merrow': -15 },
   factionStates: [],
   districts: [],
-  roster,
+  npcRuntimeStates: roster,
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {

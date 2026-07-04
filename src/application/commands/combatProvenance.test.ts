@@ -38,7 +38,7 @@ function getStateForCombat(): GameState {
   return {
     ...initialStateWithIda,
     currentDistrictId: 'district-the-warrens',
-    selectedSquadNpcIds: [initialStateWithIda.roster[0].npcId],
+    selectedSquadNpcIds: [initialStateWithIda.npcRuntimeStates[0].npcId],
     activeQuests: [makeQuestRuntime()],
   }
 }

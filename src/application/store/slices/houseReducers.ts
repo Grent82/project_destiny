@@ -14,14 +14,14 @@ import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 export const houseReducers = {
   repairItem(state: GameState, action: PayloadAction<{ npcId: string; slot: 'weapon' | 'armor' }>) {
     const { npcId, slot } = action.payload
-    const npc = state.roster.find((r) => r.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
     if (!npc) return
 
     const itemId = slot === 'weapon' ? npc.loadout.primaryWeaponId : npc.loadout.armorId
     if (!itemId) return
 
     const baseRepairCost = slot === 'weapon' ? getWeaponRepairCost(itemId) : getArmorRepairCost(itemId)
-    const hasQuartermaster = state.roster.some((r) => r.activeTitle === 'title-quartermaster')
+    const hasQuartermaster = state.npcRuntimeStates.some((r) => r.activeTitle === 'title-quartermaster')
     const finalRepairCost = computeRepairCost(baseRepairCost, hasQuartermaster)
     if (state.money < finalRepairCost) return
 
@@ -103,7 +103,7 @@ export const houseReducers = {
     const snap = current(state) as GameState
 
     const fortScore = snap.house.fortificationLevel * 15
-    const guardCount = snap.roster.filter((n) => n.assignment === 'defense').length
+    const guardCount = snap.npcRuntimeStates.filter((n) => n.assignment === 'defense').length
     const crewScore = guardCount * 10
     const tierScore: Record<string, number> = {
       ruined: 0, patched: 10, maintained: 25, restored: 50, grand: 80,
@@ -146,7 +146,7 @@ export const houseReducers = {
           message: `Night thieves emptied what they could find. ${stolen} Marks lost.`,
         })
       } else {
-        state.roster.forEach((npc) => {
+        state.npcRuntimeStates.forEach((npc) => {
           npc.states.morale = Math.max(0, npc.states.morale - 15)
           npc.states.stress = Math.min(100, npc.states.stress + 20)
         })

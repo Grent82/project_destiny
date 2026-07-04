@@ -14,7 +14,7 @@ import type { GameState } from '../../domain/game/contracts'
 function makeNpc(
   overrides: { resolve?: number; fear?: number; dominance?: number; loyalty?: number } = {}
 ): NpcRuntimeState {
-  const base = initialGameStateSnapshot.roster[0]!
+  const base = initialGameStateSnapshot.npcRuntimeStates[0]!
   return {
     ...base,
     attributes: { ...base.attributes, resolve: overrides.resolve ?? 50 },
@@ -78,7 +78,7 @@ describe('captivity degradation uses coercionRisk', () => {
   function makeCaptiveState(resolve: number, fear: number): GameState {
     return {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC
           ? {
               ...n,
@@ -108,7 +108,7 @@ describe('captivity degradation uses coercionRisk', () => {
     const store = createGameStore(state)
     // Full threshold is 7 days — 4 days should not trigger
     for (let i = 0; i < 4; i++) store.dispatch(gameActions.endDay())
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     expect(npc.captivityState?.condition).toBe('healthy')
   })
 
@@ -118,7 +118,7 @@ describe('captivity degradation uses coercionRisk', () => {
     const store = createGameStore(state)
     // 4 days should trigger degradation at halved threshold (3)
     for (let i = 0; i < 4; i++) store.dispatch(gameActions.endDay())
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     expect(npc.captivityState?.condition).not.toBe('healthy')
   })
 })
@@ -127,7 +127,7 @@ describe('rescueNpc uses coercionRisk', () => {
   it('vulnerable NPC suffers heavier recovery penalty', () => {
     const makeRescuable = (resolve: number): GameState => ({
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC
           ? {
               ...n,
@@ -157,8 +157,8 @@ describe('rescueNpc uses coercionRisk', () => {
     resilientStore.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
     vulnerableStore.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
 
-    const resilientHealth = resilientStore.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.health
-    const vulnerableHealth = vulnerableStore.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.health
+    const resilientHealth = resilientStore.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.health
+    const vulnerableHealth = vulnerableStore.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.health
 
     // Vulnerable NPC should have lower health after rescue (heavier penalty)
     expect(vulnerableHealth).toBeLessThanOrEqual(resilientHealth)
@@ -167,7 +167,7 @@ describe('rescueNpc uses coercionRisk', () => {
   it('rescued NPC is assigned to recovering', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC
           ? {
               ...n,
@@ -190,7 +190,7 @@ describe('rescueNpc uses coercionRisk', () => {
     }
     const store = createGameStore(state)
     store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     expect(npc.assignment).toBe('recovering')
     expect(npc.captivityState?.status).toBe('rescued')
   })

@@ -28,8 +28,8 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   let next = state
 
   // Step 4: Title effects
-  for (let npcIdx = 0; npcIdx < next.roster.length; npcIdx++) {
-    const npc = next.roster[npcIdx]!
+  for (let npcIdx = 0; npcIdx < next.npcRuntimeStates.length; npcIdx++) {
+    const npc = next.npcRuntimeStates[npcIdx]!
     if (!npc.activeTitle) continue
     const npcName = npc.name
 
@@ -37,14 +37,14 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       case TITLE_IDS.MEDIC: {
         const medicineSkill = npc.skills['medicine'] ?? 45
         const healAmount = 8 + Math.floor(Math.max(0, medicineSkill - 45) / 15)
-        const injured = next.roster
+        const injured = next.npcRuntimeStates
           .filter((r) => r.states.health < 100)
           .sort((a, b) => a.states.health - b.states.health)[0]
         if (injured) {
           const patientName = injured.name
           next = {
             ...next,
-            roster: next.roster.map((r) =>
+            npcRuntimeStates: next.npcRuntimeStates.map((r) =>
               r.npcId === injured.npcId
                 ? { ...r, states: { ...r.states, health: Math.min(100, r.states.health + healAmount) } }
                 : r,
@@ -82,7 +82,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       case TITLE_IDS.TRAINER: {
         const meleeSkill = npc.skills['melee'] ?? 45
         const trainCount = meleeSkill >= 70 ? 2 : 1
-        const idleNpcs = next.roster.filter(
+        const idleNpcs = next.npcRuntimeStates.filter(
           (r) => r.assignment === 'idle' && r.npcId !== npc.npcId,
         )
         for (let t = 0; t < Math.min(trainCount, idleNpcs.length); t++) {
@@ -90,7 +90,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
           const skillKey = SKILL_KEYS[Math.floor(rng() * SKILL_KEYS.length)]!
           next = {
             ...next,
-            roster: next.roster.map((r) =>
+            npcRuntimeStates: next.npcRuntimeStates.map((r) =>
               r.npcId === target.npcId
                 ? { ...r, skills: { ...r.skills, [skillKey]: Math.min(100, r.skills[skillKey] + 1) } }
                 : r,
@@ -203,7 +203,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
           broken: 'hurt',
           hurt: 'healthy',
         }
-        const captives = next.roster.filter(
+        const captives = next.npcRuntimeStates.filter(
           (r) => r.captivityState?.status === 'captive' || r.captivityState?.status === 'missing',
         )
         for (const captive of captives) {
@@ -213,7 +213,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
           const newCondition = CONDITION_RECOVER[cap.condition] ?? cap.condition
           next = {
             ...next,
-            roster: next.roster.map((r) =>
+            npcRuntimeStates: next.npcRuntimeStates.map((r) =>
               r.npcId === captive.npcId
                 ? { ...r, captivityState: { ...cap, condition: newCondition as typeof cap.condition } }
                 : r,
@@ -248,7 +248,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
 
     // Faction affinity passive standing: +1 every 2 days, capped at standing 30 from this mechanic
     if (next.day % 2 === 0) {
-      const currentNpc = next.roster[npcIdx]!  // re-read after any roster mutations above
+      const currentNpc = next.npcRuntimeStates[npcIdx]!  // re-read after any roster mutations above
       const npcDef = contentCatalog.npcsById.get(currentNpc.npcId)
       const affinityFactionId = npcDef?.factionAffinityId
       if (affinityFactionId) {
@@ -272,7 +272,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
 
   // Step 4b: Training NPCs gain skills each day
   {
-    const hasTrainer = next.roster.some(
+    const hasTrainer = next.npcRuntimeStates.some(
       (r) => r.activeTitle === TITLE_IDS.TRAINER && r.assignment !== 'deployed',
     )
     const hasWorkshop = hasIntactHouseRoomFunction(next, 'workshop')
@@ -287,7 +287,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     const baseGain = hasTrainer ? 2 : 1
     const studyMult = studyIntact ? 1.25 : 1
 
-    for (const npc of next.roster.filter((r) => r.assignment === 'training')) {
+    for (const npc of next.npcRuntimeStates.filter((r) => r.assignment === 'training')) {
       const npcDef = contentCatalog.npcsById.get(npc.npcId)
       const rarityCap = RARITY_SKILL_CAPS[npcDef?.rarity ?? 'common'] ?? 70
 
@@ -316,7 +316,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
 
       next = {
         ...next,
-        roster: next.roster.map((r) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((r) =>
           r.npcId === npc.npcId
             ? { ...r, skills: { ...r.skills, [skillKey]: newVal } }
             : r,
@@ -343,7 +343,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   // Step 4c: Working NPC passive income
   const prosperityMult =
     next.cityDials.prosperity >= 60 ? 1.1 : next.cityDials.prosperity <= 30 ? 0.9 : 1
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
   for (const runtimeNpc of workingNpcs) {
     const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
     if (!npcDef) continue
@@ -372,7 +372,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   if (backgroundId === 'blade') {
     next = {
       ...next,
-      roster: next.roster.map((r) =>
+      npcRuntimeStates: next.npcRuntimeStates.map((r) =>
         r.assignment !== 'deployed'
           ? r
           : { ...r, states: { ...r.states, morale: Math.min(100, r.states.morale + 1) } }

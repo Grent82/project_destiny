@@ -112,7 +112,7 @@ export const selectNpcSocialReachability =
     if (!selector) {
       selector = createSelector(
         [
-          (state: RootState) => state.game.roster.find((r) => r.npcId === npcId),
+          (state: RootState) => state.game.npcRuntimeStates.find((r) => r.npcId === npcId),
           (state: RootState) => getNpcCaptivityState(state.game, npcId),
           (state: RootState) => state.game.houseDistrictId,
           (state: RootState) => state.game.currentDistrictId,

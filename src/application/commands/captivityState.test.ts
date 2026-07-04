@@ -36,7 +36,7 @@ function makeStateWithCaptive(captivityOverride?: object): GameState {
         ...captivityOverride,
       },
     },
-    roster: initialGameStateSnapshot.roster.map((npc) =>
+    npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === SQUAD_NPC
         ? {
             ...npc,
@@ -156,7 +156,7 @@ describe('setCaptivityState action', () => {
         },
       }),
     )
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.status).toBe('missing')
     expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.siteId).toBe('site-poi-pale-old-tannery')
   })
@@ -164,7 +164,7 @@ describe('setCaptivityState action', () => {
   it('clears captivityState when null is passed', () => {
     const store = createGameStore(makeStateWithCaptive())
     store.dispatch(gameActions.setCaptivityState({ npcId: SQUAD_NPC, captivityState: null }))
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState).toBeUndefined()
     expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]).toBeUndefined()
   })
@@ -201,31 +201,31 @@ describe('rescueNpc action', () => {
   it('sets captivityState status to rescued', () => {
     const store = createGameStore(makeStateWithCaptive())
     store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.status).toBe('rescued')
   })
 
   it('changes assignment to recovering', () => {
     const store = createGameStore(makeStateWithCaptive())
     store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.assignment).toBe('recovering')
   })
 
   it('applies health/stress penalties for broken condition at rescue', () => {
     const store = createGameStore(makeStateWithCaptive({ condition: 'broken' }))
-    const before = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const before = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
-    const after = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const after = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     expect(after.states.health).toBeLessThan(before.states.health)
     expect(after.states.stress).toBeGreaterThan(before.states.stress)
   })
 
   it('no health penalty for healthy condition', () => {
     const store = createGameStore(makeStateWithCaptive({ condition: 'healthy' }))
-    const healthBefore = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.health
+    const healthBefore = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.health
     store.dispatch(gameActions.rescueNpc({ npcId: SQUAD_NPC }))
-    const healthAfter = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.health
+    const healthAfter = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.health
     expect(healthAfter).toBe(healthBefore)
   })
 
@@ -269,7 +269,7 @@ describe('captivity degradation in endDay', () => {
   it('increments timeHeldDays by 1 each endDay call', () => {
     const store = createGameStore(makeStateWithCaptive({ timeHeldDays: 3 }))
     store.dispatch(gameActions.endDay())
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.timeHeldDays).toBe(4)
     expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.timeHeldDays).toBe(4)
   })
@@ -285,14 +285,14 @@ describe('captivity degradation in endDay', () => {
       }),
     )
     store.dispatch(gameActions.endDay())
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.condition).toBe('hurt')
   })
 
   it('does not degrade further from altered (max tier)', () => {
     const store = createGameStore(makeStateWithCaptive({ timeHeldDays: 13, condition: 'altered' }))
     store.dispatch(gameActions.endDay())
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.condition).toBe('altered')
   })
 
@@ -301,7 +301,7 @@ describe('captivity degradation in endDay', () => {
     const dayBefore = store.getState().game.day
     store.dispatch(gameActions.endDay())
     expect(store.getState().game.day).toBe(dayBefore + 1)
-    const npc = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState).toBeUndefined()
   })
 

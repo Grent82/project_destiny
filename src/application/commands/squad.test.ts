@@ -44,30 +44,30 @@ describe('squad commands', () => {
         'npc-e',
         'npc-f',
       ],
-      roster: [
-        ...initialGameStateSnapshot.roster,
+      npcRuntimeStates: [
+        ...initialGameStateSnapshot.npcRuntimeStates,
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-a',
         },
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-b',
         },
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-c',
         },
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-d',
         },
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-e',
         },
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-f',
         },
       ],
@@ -89,7 +89,7 @@ describe('squad commands', () => {
   it('does not add a working npc to the selected squad', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'working' as const } : npc,
       ),
     }
@@ -101,7 +101,7 @@ describe('squad commands', () => {
   it('does not add a training npc to the selected squad', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'training' as const } : npc,
       ),
     }

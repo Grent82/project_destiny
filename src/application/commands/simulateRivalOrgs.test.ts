@@ -13,7 +13,7 @@ const baseState: GameState = {
   factionStandings: {},
   factionStates: [],
   districts: [],
-  roster: [],
+  npcRuntimeStates: [],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {

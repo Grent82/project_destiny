@@ -22,7 +22,7 @@ export interface BegForCoinParams {
 export function begForCoin(state: GameState, params: BegForCoinParams): GameState {
   const { npcId, districtId } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   // Check guard: requires presence >= 30 OR stress > 60
@@ -60,7 +60,7 @@ export function begForCoin(state: GameState, params: BegForCoinParams): GameStat
 
   const newState = {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,

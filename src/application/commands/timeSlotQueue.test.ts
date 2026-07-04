@@ -20,7 +20,7 @@ function createMockGameState(): GameState {
     rngSeed: 12345,
     timeSlot: 'morning',
     currentDistrictId: 'district-1',
-    roster: [],
+    npcRuntimeStates: [],
     activityLog: [],
     npcDistances: [],
     timeSlotState: {

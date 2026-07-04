@@ -71,7 +71,7 @@ function resolveEventId(baseId: string, stageFlags: Record<string, boolean>): st
 /** Step 9c: Check arc stage transitions for all NPCs that have an active arc. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function checkNpcArcTransitions(state: GameState, _rng?: () => number): GameState {
-  const arcNpcs = state.roster.filter((npc) => npc.npcArc != null)
+  const arcNpcs = state.npcRuntimeStates.filter((npc) => npc.npcArc != null)
   if (arcNpcs.length === 0) return state
 
   let next = state
@@ -120,7 +120,7 @@ export function checkNpcArcTransitions(state: GameState, _rng?: () => number): G
 
     next = {
       ...next,
-      roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
+      npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
     }
 
     // Fire authored transition event (skip if already pending or no event ID)
@@ -152,7 +152,7 @@ export function checkNpcArcTransitions(state: GameState, _rng?: () => number): G
 
 /** arc-fractured Path A/B branching: called from endDay after normal arc check. */
 export function checkFracturedArcBranching(state: GameState): GameState {
-  const fracturedNpcs = state.roster.filter(
+  const fracturedNpcs = state.npcRuntimeStates.filter(
     (npc) => npc.npcArc?.arcId === 'arc-fractured' && (npc.npcArc.stage === 'cracking' || npc.npcArc.stage === 'broken'),
   )
   if (fracturedNpcs.length === 0) return state
@@ -169,7 +169,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
       // Detect anchor NPC: first roster NPC with empathy > 60 and trust ≥ 40 toward fractured NPC
       let updatedFlags = { ...arc.stageFlags }
       if (!updatedFlags['anchorNpcId']) {
-        const anchor = state.roster.find((candidate) => {
+        const anchor = state.npcRuntimeStates.find((candidate) => {
           if (candidate.npcId === npc.npcId) return false
           if (candidate.traits.empathy <= 60) return false
           const key = buildRelationshipKey(candidate.npcId, npc.npcId)
@@ -190,7 +190,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
           ...npc,
           npcArc: { ...arc, stage: 'healing', stageEnteredDay: state.day, stageFlags: updatedFlags },
         }
-        next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
+        next = { ...next, npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
         if (!alreadyPending) {
           next = enqueueTemplateEvent(next, EVENT_IDS.BREN_ANCHOR_FOUND, { firedOnDay: state.day })
         }
@@ -201,7 +201,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
           ...npc,
           npcArc: { ...arc, stage: 'broken', stageEnteredDay: state.day, stageFlags: updatedFlags },
         }
-        next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
+        next = { ...next, npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
         const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === EVENT_IDS.BREN_LEAVING_WARNING)
         if (!alreadyPending) {
           next = enqueueTemplateEvent(next, EVENT_IDS.BREN_LEAVING_WARNING, { firedOnDay: state.day })
@@ -212,7 +212,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
   }
 
   // Departure risk in broken stage: escalate departure threshold
-  const brokenNpcs = next.roster.filter(
+  const brokenNpcs = next.npcRuntimeStates.filter(
     (npc) => npc.npcArc?.arcId === 'arc-fractured' && npc.npcArc.stage === 'broken',
   )
   for (const npc of brokenNpcs) {
@@ -227,7 +227,7 @@ export function checkFracturedArcBranching(state: GameState): GameState {
         }
         next = {
           ...next,
-          roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
+          npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)),
         }
         next = enqueueTemplateEvent(next, EVENT_IDS.BREN_LEFT, { firedOnDay: state.day })
       }

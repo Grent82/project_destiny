@@ -25,7 +25,7 @@ function updateNpcStates(
 ): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...updates } } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...updates } } : n)),
   }
 }
 
@@ -90,7 +90,7 @@ function statModValue(itemDef: ItemDefinition, stat: string): number | null {
 
 /** NPC eats to reduce hunger — prefers a personal food item, falls back to house food stock. */
 export function npcEatMeal(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const found = findNpcInventoryItemByTag(state, npcId, 'food')
@@ -116,7 +116,7 @@ export function npcEatMeal(state: GameState, npcId: string): GameState {
 
 /** NPC drinks — sobers up and eases hunger slightly. Guards against drinking while already very intoxicated. */
 export function npcDrink(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   if (npc.states.intoxication > 70) {
@@ -150,7 +150,7 @@ export function npcDrink(state: GameState, npcId: string): GameState {
 
 /** NPC sleeps to significantly reduce fatigue. Quarters (intact, assigned room) improve the effect. */
 export function npcSleep(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const hasQuarters = hasResidentQuarters(state, npc.roomAssignment)
@@ -171,7 +171,7 @@ export function npcSleep(state: GameState, npcId: string): GameState {
 
 /** NPC rests briefly for lighter active recovery — smaller effect than sleep, works anywhere. */
 export function npcRest(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const hasQuarters = hasResidentQuarters(state, npc.roomAssignment)
@@ -191,7 +191,7 @@ export function npcRest(state: GameState, npcId: string): GameState {
  * grooming item, falls back to washing with house water.
  */
 export function npcGroom(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const found = findNpcInventoryItemByTag(state, npcId, 'grooming')
@@ -214,7 +214,7 @@ export function npcGroom(state: GameState, npcId: string): GameState {
  * combat/alarm" guard).
  */
 export function npcMeditate(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   if (state.playerCharacter.combatState) return state

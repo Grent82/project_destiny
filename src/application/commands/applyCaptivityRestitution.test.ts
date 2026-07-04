@@ -67,7 +67,7 @@ const createNpcWithConfiscatedState = (captivityStatus: 'rescued' | 'returned'):
 // Fixture: GameState with confiscated items in captivityState
 const createGameStateWithConfiscatedItems = (captivityStatus: 'rescued' | 'returned'): GameState => ({
   ...initialGameStateSnapshot,
-  roster: [createNpcWithConfiscatedState(captivityStatus)],
+  npcRuntimeStates: [createNpcWithConfiscatedState(captivityStatus)],
   inventoryState: {
     player: {
       equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
@@ -101,7 +101,7 @@ describe('applyCaptivityRestitution', () => {
   it('returns unchanged state if NPC is not rescued/returned', () => {
     const state = createGameStateWithConfiscatedItems('rescued')
     // Change status back to captive to test the guard
-    state.roster[0].captivityState = { ...state.roster[0].captivityState!, status: 'captive' }
+    state.npcRuntimeStates[0].captivityState = { ...state.npcRuntimeStates[0].captivityState!, status: 'captive' }
 
     const result = applyCaptivityRestitution(state, { npcId: NPC_IDS.MARION_VALE })
 
@@ -111,7 +111,7 @@ describe('applyCaptivityRestitution', () => {
   it('returns unchanged state if NPC has no confiscated items', () => {
     const state = createGameStateWithConfiscatedItems('rescued')
     // Clear confiscated items
-    state.roster[0].captivityState = { ...state.roster[0].captivityState!, confiscatedItems: [], confiscatedMoney: null, confiscatedEquipment: { weapon: null, armor: null, accessory: [] } }
+    state.npcRuntimeStates[0].captivityState = { ...state.npcRuntimeStates[0].captivityState!, confiscatedItems: [], confiscatedMoney: null, confiscatedEquipment: { weapon: null, armor: null, accessory: [] } }
 
     const result = applyCaptivityRestitution(state, { npcId: NPC_IDS.MARION_VALE })
 
@@ -130,14 +130,14 @@ describe('applyCaptivityRestitution', () => {
     expect(npcInventory[0].slots[2].itemInstanceId).toBe('item-gold-001')
 
     // Money should be returned
-    expect(result.roster[0].personalFunds.savings).toBe(100)
-    expect(result.roster[0].personalFunds.carriedCash).toBe(50)
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(100)
+    expect(result.npcRuntimeStates[0].personalFunds.carriedCash).toBe(50)
 
     // Equipment should be returned
-    expect(result.roster[0].equipment.weapon).toBe('weapon-unique-001')
+    expect(result.npcRuntimeStates[0].equipment.weapon).toBe('weapon-unique-001')
 
     // Captivity state should be updated
-    expect(result.roster[0].captivityState?.lastTransferDay).toBe(state.day)
+    expect(result.npcRuntimeStates[0].captivityState?.lastTransferDay).toBe(state.day)
   })
 
   it('returns items on return', () => {
@@ -148,7 +148,7 @@ describe('applyCaptivityRestitution', () => {
     // Items should be returned
     const npcInventory = result.inventoryState.npcInventories[NPC_IDS.MARION_VALE]
     expect(npcInventory[0].slots[0].itemInstanceId).toBe('item-weapon-001')
-    expect(result.roster[0].personalFunds.savings).toBe(100)
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(100)
   })
 
   it('returns all items on returned', () => {
@@ -157,15 +157,15 @@ describe('applyCaptivityRestitution', () => {
     const result = applyCaptivityRestitution(state, { npcId: NPC_IDS.MARION_VALE })
 
     // All items should be returned
-    expect(result.roster[0].equipment.weapon).toBe('weapon-unique-001')
-    expect(result.roster[0].personalFunds.savings).toBe(100)
-    expect(result.roster[0].personalFunds.carriedCash).toBe(50)
+    expect(result.npcRuntimeStates[0].equipment.weapon).toBe('weapon-unique-001')
+    expect(result.npcRuntimeStates[0].personalFunds.savings).toBe(100)
+    expect(result.npcRuntimeStates[0].personalFunds.carriedCash).toBe(50)
   })
 
   it('does not return items if marked as retained', () => {
     const state = createGameStateWithConfiscatedItems('rescued')
     // Mark weapon as retained by removing it from confiscated items
-    state.roster[0].captivityState!.confiscatedItems = state.roster[0].captivityState!.confiscatedItems.filter(i => i.uniqueId !== 'item-weapon-001')
+    state.npcRuntimeStates[0].captivityState!.confiscatedItems = state.npcRuntimeStates[0].captivityState!.confiscatedItems.filter(i => i.uniqueId !== 'item-weapon-001')
 
     const result = applyCaptivityRestitution(state, { npcId: NPC_IDS.MARION_VALE })
 

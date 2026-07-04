@@ -7,7 +7,7 @@ import { appendActivityLogEntry } from '../activityLog'
 /** NPC faction agency: ambitious NPCs quietly do favors for factions, shifting standing. */
 export function applyFactionAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

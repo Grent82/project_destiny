@@ -137,7 +137,7 @@ describe('startExpedition carry limit gate', () => {
   it('launches expedition when within limits', () => {
     const store = createGameStore({
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC ? { ...n, states: { ...n.states, health: 60 } } : n,
       ),
       selectedSquadNpcIds: [SQUAD_NPC],
@@ -158,7 +158,7 @@ describe('startExpedition carry limit gate', () => {
   it('blocks expedition when over document limit', () => {
     const store = createGameStore({
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC ? { ...n, states: { ...n.states, health: 60 } } : n,
       ),
       selectedSquadNpcIds: [SQUAD_NPC],

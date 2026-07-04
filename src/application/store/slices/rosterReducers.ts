@@ -94,14 +94,14 @@ export const rosterReducers = {
   },
 
   setNpcAssignment(state: GameState, action: PayloadAction<{ npcId: string; assignment: string }>) {
-    const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === action.payload.npcId)
     if (!npc) return
     if (npc.assignment === 'deployed' || npc.assignment === 'assigned_title') return
     npc.assignment = action.payload.assignment as typeof npc.assignment
   },
 
   setNpcRoomAssignment(state: GameState, action: PayloadAction<{ npcId: string; roomId: string | null }>) {
-    const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === action.payload.npcId)
     if (!npc) return
     if (action.payload.roomId === null) {
       npc.roomAssignment = null
@@ -113,7 +113,7 @@ export const rosterReducers = {
   },
 
   setNpcDutyPost(state: GameState, action: PayloadAction<{ npcId: string; roomId: string | null }>) {
-    const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === action.payload.npcId)
     if (!npc) return
     if (action.payload.roomId === null) {
       npc.dutyPostRoomId = null
@@ -125,7 +125,7 @@ export const rosterReducers = {
   },
 
   setNpcTrainingFocus(state: GameState, action: PayloadAction<{ npcId: string; skill: string | null }>) {
-    const npc = state.roster.find((r) => r.npcId === action.payload.npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === action.payload.npcId)
     if (!npc) return
     npc.trainingFocus = action.payload.skill
   },
@@ -149,7 +149,7 @@ export const rosterReducers = {
 
   assignTitle(state: GameState, action: PayloadAction<{ npcId: string; titleId: string }>) {
     const { npcId, titleId } = action.payload
-    const npc = state.roster.find((r) => r.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
     if (!npc) return
     npc.activeTitle = titleId
     const roleLabel = titleId.replace('title-', '').replace('-', ' ')
@@ -169,7 +169,7 @@ export const rosterReducers = {
 
   revokeTitle(state: GameState, action: PayloadAction<{ npcId: string }>) {
     const { npcId } = action.payload
-    const npc = state.roster.find((r) => r.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
     if (!npc) return
     npc.activeTitle = null
     state.activityLog.unshift({
@@ -196,7 +196,7 @@ export const rosterReducers = {
 
   rescueNpc(state: GameState, action: PayloadAction<{ npcId: string }>) {
     const { npcId } = action.payload
-    const npc = state.roster.find((n) => n.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
     const cap = getNpcCaptivityState(state, npcId)
     if (!npc || !cap) return
 
@@ -263,7 +263,7 @@ export const rosterReducers = {
     action: PayloadAction<{ npcId: string; marketValue: number; forSale: boolean }>,
   ) {
     const { npcId, marketValue, forSale } = action.payload
-    const npc = state.roster.find((r) => r.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
     if (!npc || !npc.bondStatus) return
     npc.bondStatus.forSale = forSale
     npc.bondStatus.marketValue = Math.max(0, marketValue)

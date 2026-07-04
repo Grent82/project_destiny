@@ -60,7 +60,7 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
 
   // Check for naked NPCs in public districts and generate scandal rumors
   // This runs after all NPC actions have been processed
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (npc.assignedDistrictId) {
       next = createRumorForNakedNpc(next, {
         npcId: npc.npcId,

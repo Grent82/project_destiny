@@ -9,8 +9,8 @@ const IDA = idaRhysRosterEntry.npcId
 function withWorldPerson(state: GameState): GameState {
   return {
     ...state,
-    roster: [
-      ...state.roster,
+    npcRuntimeStates: [
+      ...state.npcRuntimeStates,
       { ...idaRhysRosterEntry, npcId: 'npc-world-1', name: 'World One', npcType: 'world', playerRosterMember: false },
     ],
   }
@@ -37,7 +37,7 @@ describe('updateNpc', () => {
     // Input untouched (new references, no mutation).
     expect(findNpc(before, IDA)!.states.stress).toBe(beforeStress)
     expect(after).not.toBe(before)
-    expect(after.roster).not.toBe(before.roster)
+    expect(after.npcRuntimeStates).not.toBe(before.npcRuntimeStates)
   })
 
   it('leaves other NPCs untouched', () => {
@@ -48,8 +48,8 @@ describe('updateNpc', () => {
 
   it('returns state with unchanged roster content when the id is absent', () => {
     const after = updateNpc(initialStateWithIda, 'npc-nope', (n) => ({ ...n, name: 'X' }))
-    expect(after.roster.map((n) => n.npcId)).toEqual(initialStateWithIda.roster.map((n) => n.npcId))
-    expect(after.roster.map((n) => n.name)).toEqual(initialStateWithIda.roster.map((n) => n.name))
+    expect(after.npcRuntimeStates.map((n) => n.npcId)).toEqual(initialStateWithIda.npcRuntimeStates.map((n) => n.npcId))
+    expect(after.npcRuntimeStates.map((n) => n.name)).toEqual(initialStateWithIda.npcRuntimeStates.map((n) => n.name))
   })
 })
 

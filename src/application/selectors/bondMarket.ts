@@ -214,7 +214,7 @@ export const selectNpcHeldBondedPersons = createSelector(
   [selectGame],
   (game) => {
     const registry = game.bondedPersonsRegistry ?? {}
-    return game.roster
+    return game.npcRuntimeStates
       .filter((npc) => npc.assignment === 'transferred' && npc.bondStatus?.ownerType === 'npc')
       .map((npc) => {
         const buyer = npc.bondStatus ? contentCatalog.bondBuyersById.get(npc.bondStatus.holderId) : undefined
@@ -232,7 +232,7 @@ export const selectNpcHeldBondedPersons = createSelector(
 export const selectForSaleNpcs = createSelector(
   [selectGame],
   (game) =>
-    game.roster.filter(
+    game.npcRuntimeStates.filter(
       (npc) => npc.bondStatus?.forSale === true && npc.bondStatus.ownerType === 'player',
     ),
 )
@@ -244,7 +244,7 @@ export const selectBrokerageOverview = createSelector(
       (room) => room.roomId === 'room-kitchen' && room.state === 'intact',
     )
 
-    const houseHeld: BrokerageHouseHeldEntry[] = game.roster
+    const houseHeld: BrokerageHouseHeldEntry[] = game.npcRuntimeStates
       .filter((npc) => npc.bondStatus?.ownerType === 'player' && npc.bondStatus.holderId === 'player')
       .map((npc) => ({
         npcId: npc.npcId,
@@ -267,7 +267,7 @@ export const selectBrokerageOverview = createSelector(
           : [],
       }))
 
-    const transferred: BrokerageTransferredEntry[] = game.roster
+    const transferred: BrokerageTransferredEntry[] = game.npcRuntimeStates
       .filter((npc) => npc.assignment === 'transferred' && npc.bondStatus?.ownerType === 'npc')
       .map((npc) => {
         const buyer = contentCatalog.bondBuyersById.get(npc.bondStatus!.holderId)
@@ -320,16 +320,16 @@ export const selectBrokerageOverview = createSelector(
       .filter((entry): entry is BrokerageIntakeEntry => entry !== null)
 
     const boundKitchenHands = houseHeld.filter((entry) => entry.assignedToKitchen).length
-    const workingBoundNpcs = game.roster.filter(
+    const workingBoundNpcs = game.npcRuntimeStates.filter(
       (npc) =>
         npc.bondStatus?.ownerType === 'player' &&
         npc.bondStatus.holderId === 'player' &&
         npc.assignment === 'working',
     )
-    const freeWorkers = game.roster.filter(
+    const freeWorkers = game.npcRuntimeStates.filter(
       (npc) => npc.assignment === 'working' && !(npc.bondStatus?.ownerType === 'player' && npc.bondStatus.holderId === 'player'),
     )
-    const empathicWitnessCount = game.roster.filter((npc) => !npc.bondStatus && npc.traits.empathy > 55).length
+    const empathicWitnessCount = game.npcRuntimeStates.filter((npc) => !npc.bondStatus && npc.traits.empathy > 55).length
     const equalityNoticeDaysRemaining =
       workingBoundNpcs.length > 0 && freeWorkers.length > 0
         ? Math.max(
@@ -350,7 +350,7 @@ export const selectBrokerageOverview = createSelector(
       boundKitchenHands,
       boundKitchenOutput: boundKitchenHands * BOUND_KITCHEN_HAND_YIELD,
       risks: {
-        coerciveHoldCount: game.roster.filter(
+        coerciveHoldCount: game.npcRuntimeStates.filter(
           (npc) =>
             npc.bondStatus?.ownerType === 'player' &&
             npc.bondStatus.holderId === 'player' &&
@@ -377,7 +377,7 @@ export function selectNpcBondSurface(state: RootState, npcId: string): NpcBondSu
   let selector = npcBondSurfaceSelectorCache.get(npcId)
   if (!selector) {
     selector = createSelector(
-      [(root: RootState) => root.game.roster, (root: RootState) => root.game.money],
+      [(root: RootState) => root.game.npcRuntimeStates, (root: RootState) => root.game.money],
       (roster, money) => {
         const npc = roster.find((entry) => entry.npcId === npcId)
         return describeNpcBondSurface(npc?.bondStatus ?? null, money)

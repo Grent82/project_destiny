@@ -66,7 +66,7 @@ export function applyMoneyEarningIntentions(state: GameState): GameState {
   let next = state
   const { rng, getSeed } = createRng(state.rngSeed)
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     // Skip NPCs with active directives or assignments
     if (npc.currentDirectiveId !== null) continue
     if (npc.assignment !== 'idle') continue

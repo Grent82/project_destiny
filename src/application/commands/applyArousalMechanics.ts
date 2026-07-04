@@ -18,7 +18,7 @@ import { appendActivityLogEntry } from '../commands/activityLog'
 export function applyArousalMechanics(state: GameState): GameState {
   let newState = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     const arousal = npc.arousalState ?? { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null }
     const currentDay = state.day
 
@@ -33,7 +33,7 @@ export function applyArousalMechanics(state: GameState): GameState {
     if (cooldownExpired) {
       const partnerId = getRomanticPartnerId(state, npc.npcId)
       if (partnerId) {
-        const partner = state.roster.find((n) => n.npcId === partnerId)
+        const partner = state.npcRuntimeStates.find((n) => n.npcId === partnerId)
         if (partner && areNpcsInSameRoom(state, npc.npcId, partner.npcId)) {
           // Proximity boost: +5 arousal when near partner (after decay)
           newLevel = Math.min(100, newLevel + 5)
@@ -54,7 +54,7 @@ export function applyArousalMechanics(state: GameState): GameState {
     if (newLevel !== arousal.level) {
       newState = {
         ...newState,
-        roster: newState.roster.map((n) =>
+        npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
           n.npcId === npc.npcId
             ? {
                 ...n,
@@ -105,8 +105,8 @@ function getRomanticPartnerId(state: GameState, npcId: string): string | null {
  * Checks if two NPCs are in the same room.
  */
 function areNpcsInSameRoom(state: GameState, npcId1: string, npcId2: string): boolean {
-  const npc1 = state.roster.find((n) => n.npcId === npcId1)
-  const npc2 = state.roster.find((n) => n.npcId === npcId2)
+  const npc1 = state.npcRuntimeStates.find((n) => n.npcId === npcId1)
+  const npc2 = state.npcRuntimeStates.find((n) => n.npcId === npcId2)
 
   if (!npc1 || !npc2) return false
   if (!npc1.roomAssignment || !npc2.roomAssignment) return false

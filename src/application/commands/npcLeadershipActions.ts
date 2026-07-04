@@ -20,7 +20,7 @@ function clampAxis(value: number): number {
  * their assigned district's controlling faction as a fallback (per-NPC relationships are empty
  * for most NPCs by default). Returns null if no faction can be resolved either way. */
 function resolveFactionTarget(
-  npc: GameState['roster'][number],
+  npc: GameState['npcRuntimeStates'][number],
 ): { factionId: string; usesPersonalRelationship: boolean } | null {
   const personal = npc.factionRelationships[0]
   if (personal) return { factionId: personal.factionId, usesPersonalRelationship: true }
@@ -33,7 +33,7 @@ function resolveFactionTarget(
 
 /** NPC works to consolidate power/influence, improving their (or the house's) faction standing. */
 export function npcConsolidatePower(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const target = resolveFactionTarget(npc)
@@ -48,7 +48,7 @@ export function npcConsolidatePower(state: GameState, npcId: string): GameState 
   if (target.usesPersonalRelationship) {
     next = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -74,7 +74,7 @@ export function npcConsolidatePower(state: GameState, npcId: string): GameState 
 
 /** NPC publicly challenges an authority figure, risking faction standing for personal defiance. */
 export function npcChallengeAuthority(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const target = resolveFactionTarget(npc)
@@ -89,7 +89,7 @@ export function npcChallengeAuthority(state: GameState, npcId: string): GameStat
   if (target.usesPersonalRelationship) {
     next = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -112,7 +112,7 @@ export function npcChallengeAuthority(state: GameState, npcId: string): GameStat
 
   next = {
     ...next,
-    roster: next.roster.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, morale: Math.min(100, n.states.morale + 3) } } : n)),
+    npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, morale: Math.min(100, n.states.morale + 3) } } : n)),
   }
 
   return appendActivityLogEntry(next, 'system', `${npc.name} openly challenges ${target.factionId}'s authority.`)
@@ -120,10 +120,10 @@ export function npcChallengeAuthority(state: GameState, npcId: string): GameStat
 
 /** NPC socializes with a nearby idle NPC — light affinity/trust gain, deterministic. */
 export function npcSocialize(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const target = state.roster
+  const target = state.npcRuntimeStates
     .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
     .sort((a, b) => {
       const relA = getRelationship(state.relationships, npcId, a.npcId).affinity
@@ -152,10 +152,10 @@ export function npcSocialize(state: GameState, npcId: string): GameState {
 
 /** NPC gossips with a nearby idle NPC, sharing a rumor if the house knows any. */
 export function npcGossip(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const target = state.roster
+  const target = state.npcRuntimeStates
     .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
     .sort((a, b) => {
       const relA = getRelationship(state.relationships, npcId, a.npcId).affinity
@@ -187,10 +187,10 @@ export function npcGossip(state: GameState, npcId: string): GameState {
 
 /** NPC mediates a conflict between the two idle roster NPCs with the worst relationship. */
 export function npcMediateConflict(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const others = state.roster.filter((r) => r.npcId !== npcId && r.assignment === 'idle')
+  const others = state.npcRuntimeStates.filter((r) => r.npcId !== npcId && r.assignment === 'idle')
   let worstPair: { a: string; b: string; affinity: number } | null = null
   for (const a of others) {
     for (const b of others) {

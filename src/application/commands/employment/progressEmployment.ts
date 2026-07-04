@@ -21,7 +21,7 @@ export function progressEmployment(
   employmentId: string,
 ): GameState {
   // Find the employment
-  const employmentNpc = state.roster.find(
+  const employmentNpc = state.npcRuntimeStates.find(
     (npc) => npc.currentEmployment?.employmentId === employmentId,
   )
 
@@ -85,7 +85,7 @@ export function progressEmployment(
     // Progress updated but not complete yet - update history
     return {
       ...state,
-      roster: state.roster.map((npc) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
         npc.npcId === employmentNpc.npcId
           ? { ...npc, currentEmployment: { ...employment, performanceHistory: updatedHistory } }
           : npc,
@@ -102,14 +102,14 @@ function updateEmploymentHistory(
   employeeId: string,
   history: Array<{ day: number; progressAtDay: number; stressImpact: number }>,
 ): GameState {
-  const npc = state.roster.find((npc) => npc.npcId === employeeId)
+  const npc = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!npc || !npc.currentEmployment) {
     return state
   }
 
   return {
     ...state,
-    roster: state.roster.map((rosterNpc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((rosterNpc) =>
       rosterNpc.npcId === employeeId
         ? { ...rosterNpc, currentEmployment: { ...rosterNpc.currentEmployment!, performanceHistory: history } }
         : rosterNpc,

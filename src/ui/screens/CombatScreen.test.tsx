@@ -147,7 +147,7 @@ describe('CombatScreen', () => {
     expect(screen.getByText('Roster destination')).toBeInTheDocument()
     expect(store.getState().game.activeCombat).toBeNull()
 
-    const injuredNpc = store.getState().game.roster.find((npc) => npc.npcId === injuredAllyId)
+    const injuredNpc = store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === injuredAllyId)
     expect(injuredNpc?.assignment).toBe('recovering')
   })
 

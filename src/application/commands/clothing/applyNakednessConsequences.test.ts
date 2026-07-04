@@ -86,12 +86,12 @@ describe('applyNakednessConsequences', () => {
   it('applies public penalty to naked NPCs in public (roomAssignment: null)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [createNakedNpc('npc-naked-public', 'Naked Wanderer', null, 50, 30)],
+      npcRuntimeStates: [createNakedNpc('npc-naked-public', 'Naked Wanderer', null, 50, 30)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)
 
-    const npc = result.roster[0]
+    const npc = result.npcRuntimeStates[0]
     expect(npc.states.morale).toBe(30) // 50 - 20
     expect(npc.states.stress).toBe(45) // 30 + 15
     // 2 activity log entries: one for consequence, one for public sighting
@@ -103,12 +103,12 @@ describe('applyNakednessConsequences', () => {
   it('applies private penalty to naked NPCs with room assignment', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [createNakedNpc('npc-naked-private', 'Private Nude', 'room-quarters', 50, 30)],
+      npcRuntimeStates: [createNakedNpc('npc-naked-private', 'Private Nude', 'room-quarters', 50, 30)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)
 
-    const npc = result.roster[0]
+    const npc = result.npcRuntimeStates[0]
     expect(npc.states.morale).toBe(48) // 50 - 2
     expect(npc.states.stress).toBe(33) // 30 + 3
   })
@@ -116,12 +116,12 @@ describe('applyNakednessConsequences', () => {
   it('does not apply penalties to clothed NPCs', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [createClothedNpc('npc-clothed', 'Proper Citizen', 50, 30)],
+      npcRuntimeStates: [createClothedNpc('npc-clothed', 'Proper Citizen', 50, 30)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)
 
-    const npc = result.roster[0]
+    const npc = result.npcRuntimeStates[0]
     expect(npc.states.morale).toBe(50) // Unchanged
     expect(npc.states.stress).toBe(30) // Unchanged
     expect(result.activityLog.length).toBe(0)
@@ -130,7 +130,7 @@ describe('applyNakednessConsequences', () => {
   it('handles multiple naked NPCs with different contexts', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNakedNpc('npc-public', 'Public Naked', null, 50, 30),
         createNakedNpc('npc-private', 'Private Naked', 'room-quarters', 50, 30),
         createClothedNpc('npc-clothed', 'Clothed', 50, 30),
@@ -139,12 +139,12 @@ describe('applyNakednessConsequences', () => {
 
     const result = applyNakednessConsequences(state)
 
-    expect(result.roster[0].states.morale).toBe(30) // Public: -20
-    expect(result.roster[0].states.stress).toBe(45) // Public: +15
-    expect(result.roster[1].states.morale).toBe(48) // Private: -2
-    expect(result.roster[1].states.stress).toBe(33) // Private: +3
-    expect(result.roster[2].states.morale).toBe(50) // Cloth: unchanged
-    expect(result.roster[2].states.stress).toBe(30) // Cloth: unchanged
+    expect(result.npcRuntimeStates[0].states.morale).toBe(30) // Public: -20
+    expect(result.npcRuntimeStates[0].states.stress).toBe(45) // Public: +15
+    expect(result.npcRuntimeStates[1].states.morale).toBe(48) // Private: -2
+    expect(result.npcRuntimeStates[1].states.stress).toBe(33) // Private: +3
+    expect(result.npcRuntimeStates[2].states.morale).toBe(50) // Cloth: unchanged
+    expect(result.npcRuntimeStates[2].states.stress).toBe(30) // Cloth: unchanged
     // 3 activity log entries: 2 consequences + 1 public sighting
     expect(result.activityLog.length).toBe(3)
   })
@@ -152,31 +152,31 @@ describe('applyNakednessConsequences', () => {
   it('caps morale at 0 (cannot go negative)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [createNakedNpc('npc-low-morale', 'Low Morale', null, 10, 30)],
+      npcRuntimeStates: [createNakedNpc('npc-low-morale', 'Low Morale', null, 10, 30)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)
 
-    const npc = result.roster[0]
+    const npc = result.npcRuntimeStates[0]
     expect(npc.states.morale).toBe(0) // 10 - 20 = -10, capped at 0
   })
 
   it('caps stress at 100 (cannot exceed)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [createNakedNpc('npc-high-stress', 'High Stress', null, 50, 95)],
+      npcRuntimeStates: [createNakedNpc('npc-high-stress', 'High Stress', null, 50, 95)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)
 
-    const npc = result.roster[0]
+    const npc = result.npcRuntimeStates[0]
     expect(npc.states.stress).toBe(100) // 95 + 15 = 110, capped at 100
   })
 
   it('logs appropriate context for public vs private nakedness', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         createNakedNpc('npc-public', 'Public', null, 50, 30),
         createNakedNpc('npc-private', 'Private', 'room-quarters', 50, 30),
       ],
@@ -194,7 +194,7 @@ describe('applyNakednessConsequences', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
       day: 42,
-      roster: [createNakedNpc('npc-event-test', 'Event Victim', null, 50, 30)],
+      npcRuntimeStates: [createNakedNpc('npc-event-test', 'Event Victim', null, 50, 30)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)
@@ -215,7 +215,7 @@ describe('applyNakednessConsequences', () => {
   it('does not publish event for naked NPCs in private', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [createNakedNpc('npc-private-no-event', 'Private Only', 'room-quarters', 50, 30)],
+      npcRuntimeStates: [createNakedNpc('npc-private-no-event', 'Private Only', 'room-quarters', 50, 30)],
     } as unknown as GameState
 
     const result = applyNakednessConsequences(state)

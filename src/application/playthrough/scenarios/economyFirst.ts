@@ -121,7 +121,7 @@ export const economyFirstScenario: PlaythroughScenario = {
     assertStep('Economy-first post-expedition outcomes', [
       assertion('exp-idle', 'Expedition idle', (s) => s.expeditionState.status === 'idle'),
       assertion('npc-returned', `${SQUAD_NPC} returned to idle`, (s) =>
-        s.roster.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'idle',
+        s.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)?.assignment === 'idle',
       ),
       assertion('money-survives', 'Money remains non-negative', (s) => s.money >= 0),
     ]),

@@ -30,7 +30,7 @@ export function hasResidentQuarters(state: GameState, roomId: string | null): bo
 }
 
 export function hasMedicSupport(state: GameState): boolean {
-  return state.roster.some((npc) => npc.activeTitle === TITLE_IDS.MEDIC && npc.assignment !== 'deployed')
+  return state.npcRuntimeStates.some((npc) => npc.activeTitle === TITLE_IDS.MEDIC && npc.assignment !== 'deployed')
 }
 
 export function hasInfirmarySupport(state: GameState): boolean {

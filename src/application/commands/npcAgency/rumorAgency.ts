@@ -7,7 +7,7 @@ import { getJobForNpc } from '../../content/jobCatalog'
 /** NPC rumor agency: working NPCs overhear and spread rumors in their district. */
 export function applyRumorAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

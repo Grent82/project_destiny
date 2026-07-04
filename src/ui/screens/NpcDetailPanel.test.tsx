@@ -79,7 +79,7 @@ function withKitchenState<T extends typeof initialStateWithIda>(state: T, roomSt
 function stateWithPlayerHeldIda() {
   return {
     ...initialStateWithIda,
-    roster: initialStateWithIda.roster.map((npc) =>
+    npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
       npc.npcId === 'npc-ida-rhys'
         ? {
             ...npc,
@@ -109,7 +109,7 @@ function stateWithTransferredIda() {
     bondedPersonsRegistry: {
       'buyer-compact-registrar': ['npc-ida-rhys'],
     },
-    roster: initialStateWithIda.roster.map((npc) =>
+    npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
       npc.npcId === 'npc-ida-rhys'
         ? {
             ...npc,
@@ -346,7 +346,7 @@ describe('NpcDetailPanel — courtship loop', () => {
     const user = userEvent.setup()
     renderIdaPanel({
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys'
           ? {
               ...npc,
@@ -547,7 +547,7 @@ describe('NpcDetailPanel — bond status visibility', () => {
 
     await user.click(screen.getByRole('button', { name: 'Place in food service' }))
 
-    const ida = store.getState().game.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
+    const ida = store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === 'npc-ida-rhys')
     expect(ida?.assignment).toBe('working')
     expect(ida?.dutyPostRoomId).toBe('room-kitchen')
   })

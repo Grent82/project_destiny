@@ -26,12 +26,12 @@ export function joinCorridorExpedition(
   const group = state.cityResources.activeGroups[groupIndex]
 
   // Find the NPC in the roster
-  const npcIndex = state.roster.findIndex((r) => r.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((r) => r.npcId === npcId)
   if (npcIndex === -1) {
     return state
   }
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   // Check NPC is available (idle, not on directive)
   if (npc.assignment !== 'idle' || npc.currentDirectiveId !== null) {
@@ -52,13 +52,13 @@ export function joinCorridorExpedition(
   // Update NPC assignment to deployed
   let next = {
     ...state,
-    roster: [
-      ...state.roster.slice(0, npcIndex),
+    npcRuntimeStates: [
+      ...state.npcRuntimeStates.slice(0, npcIndex),
       {
         ...npc,
         assignment: 'deployed' as const,
       },
-      ...state.roster.slice(npcIndex + 1),
+      ...state.npcRuntimeStates.slice(npcIndex + 1),
     ],
   }
 

@@ -36,7 +36,7 @@ function queueEvent(state: GameState, eventId: string): GameState {
 }
 
 export function freeNpc(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   const bondStatus = npc?.bondStatus
   if (!npc || !bondStatus || bondStatus.holderId !== 'player') return state
   if (state.money < bondStatus.contractValue) return state
@@ -44,7 +44,7 @@ export function freeNpc(state: GameState, npcId: string): GameState {
   let next: GameState = {
     ...state,
     money: state.money - bondStatus.contractValue,
-    roster: state.roster.map((entry) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((entry) =>
       entry.npcId === npcId
         ? { ...entry, bondStatus: null }
         : entry.traits.empathy > 55
@@ -81,7 +81,7 @@ function applyEqualityNotice(state: GameState, npc: NpcRuntimeState): GameState 
   let next = state
   next = {
     ...next,
-    roster: next.roster.map((entry) =>
+    npcRuntimeStates: next.npcRuntimeStates.map((entry) =>
       entry.npcId === npc.npcId
         ? {
             ...entry,
@@ -109,7 +109,7 @@ function applyEqualityNotice(state: GameState, npc: NpcRuntimeState): GameState 
 }
 
 function applyMonthlyBondOperationCosts(state: GameState): GameState {
-  const boundWorkers = state.roster.filter(
+  const boundWorkers = state.npcRuntimeStates.filter(
     (npc) => isPlayerHeldBound(npc) && npc.assignment === 'working',
   )
   if (boundWorkers.length === 0 || state.day % TITLE_OBJECTION_DAY_INTERVAL !== 0) {
@@ -125,7 +125,7 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
         (state.factionStandings[TALLOW_RING_ID] ?? 0) - 1,
       ),
     },
-    roster: state.roster.map((npc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
       npc.traits.empathy > 55
         ? {
             ...npc,
@@ -142,7 +142,7 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
   next = adjustCityDial(next, 'prosperity', -1)
   next = adjustCityDial(next, 'unrest', 1)
 
-  const objectionNpc = next.roster.find(
+  const objectionNpc = next.npcRuntimeStates.find(
     (npc) =>
       npc.traits.empathy > 55 &&
       (npc.activeTitle === TITLE_IDS.STEWARD || npc.activeTitle === TITLE_IDS.ARCHIVIST),
@@ -151,7 +151,7 @@ function applyMonthlyBondOperationCosts(state: GameState): GameState {
   if (objectionNpc) {
     next = {
       ...next,
-      roster: next.roster.map((npc) =>
+      npcRuntimeStates: next.npcRuntimeStates.map((npc) =>
         npc.npcId === objectionNpc.npcId
           ? { ...npc, activeTitle: null }
           : npc,
@@ -182,7 +182,7 @@ function applyBondHolderPowerDynamics(state: GameState): GameState {
   let next = state
   const player = state.playerCharacter
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (!npc.bondStatus || npc.bondStatus.holderId !== 'player' || npc.bondStatus.ownerType !== 'player') continue
 
     const bond = npc.bondStatus
@@ -230,7 +230,7 @@ function applyBondHolderPowerDynamics(state: GameState): GameState {
  * Pure function — takes state, returns new state with no side effects.
  */
 export function applyBondHolderConsequences(state: GameState): GameState {
-  const playerBonds = state.roster.filter(
+  const playerBonds = state.npcRuntimeStates.filter(
     (npc) => npc.bondStatus?.holderId === 'player' && npc.bondStatus?.ownerType === 'player',
   )
   if (playerBonds.length === 0) return state
@@ -256,7 +256,7 @@ export function applyBondHolderConsequences(state: GameState): GameState {
   }
 
   // Roster friction: free NPCs with high empathy register the arrangement
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (npc.bondStatus || npc.traits.empathy <= 60) continue
     applyRelationshipDelta(next, npc.npcId, 'player', 'affinity', -1)
   }
@@ -287,14 +287,14 @@ export function applyBondHolderConsequences(state: GameState): GameState {
 }
 
 export function applyBondServiceEffects(state: GameState): GameState {
-  const freeWorkers = state.roster.filter(
+  const freeWorkers = state.npcRuntimeStates.filter(
     (npc) => npc.assignment === 'working' && !isPlayerHeldBound(npc),
   )
 
   let next: GameState = {
     ...state,
     relationships: { ...state.relationships },
-    roster: state.roster.map((npc) => {
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => {
       if (!isPlayerHeldBound(npc) || !npc.bondStatus) return npc
 
       const alongsideFree =
@@ -312,7 +312,7 @@ export function applyBondServiceEffects(state: GameState): GameState {
     }),
   }
 
-  for (const npc of next.roster) {
+  for (const npc of next.npcRuntimeStates) {
     if (
       isPlayerHeldBound(npc) &&
       npc.bondStatus &&

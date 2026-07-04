@@ -61,7 +61,7 @@ export const questReducers = {
       applyMidQuestBeats(
         {
           npcCaptivityStates: state.npcCaptivityStates,
-          roster: state.roster,
+          npcRuntimeStates: state.npcRuntimeStates,
           completedQuestIds: state.completedQuestIds,
           activeQuests: state.activeQuests,
           day: state.day,
@@ -188,7 +188,7 @@ export const questReducers = {
       applyMidQuestBeats(
         {
           npcCaptivityStates: state.npcCaptivityStates,
-          roster: state.roster,
+          npcRuntimeStates: state.npcRuntimeStates,
           completedQuestIds: state.completedQuestIds,
           activeQuests: state.activeQuests,
           day: state.day,

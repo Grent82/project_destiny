@@ -88,16 +88,16 @@ function applyShopOwnerAgencyForNpc(state: GameState, npc: NpcRuntimeState, rng:
     )
 
     // Update NPC with new profile (in a real implementation, this would update actual prices)
-    const npcIndex = next.roster.findIndex((r) => r.npcId === npc.npcId)
+    const npcIndex = next.npcRuntimeStates.findIndex((r) => r.npcId === npc.npcId)
     if (npcIndex !== -1) {
-      const updatedRoster = [...next.roster]
+      const updatedRoster = [...next.npcRuntimeStates]
       updatedRoster[npcIndex] = {
         ...npc,
         shopOwnerProfile: profile,
       }
       next = {
         ...next,
-        roster: updatedRoster,
+        npcRuntimeStates: updatedRoster,
       }
     }
 
@@ -123,7 +123,7 @@ export function applyShopOwnerAgency(state: GameState): GameState {
   const rng = seeded.rng
 
   // Find all shop owner NPCs
-  const shopOwnerNpcs = next.roster.filter((npc) => npc.shopOwnerProfile != null)
+  const shopOwnerNpcs = next.npcRuntimeStates.filter((npc) => npc.shopOwnerProfile != null)
 
   // Apply agency to each shop owner
   for (const npc of shopOwnerNpcs) {

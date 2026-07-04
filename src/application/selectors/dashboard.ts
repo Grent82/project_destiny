@@ -14,7 +14,7 @@ import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 const selectGame = (state: RootState) => state.game
 
 export const selectDashboardSummary = createSelector([selectGame], (game) => {
-  const roster = game.roster
+  const roster = game.npcRuntimeStates
 
   return {
     day: game.day,

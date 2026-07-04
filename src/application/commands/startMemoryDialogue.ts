@@ -16,7 +16,7 @@ export function startMemoryDialogue(
   if (!npc) return state
 
   // Check if NPC has this memory type
-  const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, npcId)
+  const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, npcId)
   const availableTopic = topics.find((t) => t.memoryEvent === memoryEvent)
 
   if (!availableTopic) {
@@ -122,14 +122,14 @@ export function canNpcInitiateMemoryDialogue(state: GameState, npcId: string): {
   suggestedTopic?: string
   reason?: string
 } {
-  const topics = getMemoryDialogueTopicsForNpc(state.roster, state.relationships, npcId)
+  const topics = getMemoryDialogueTopicsForNpc(state.npcRuntimeStates, state.relationships, npcId)
 
   if (topics.length === 0) {
     return { canInitiate: false, reason: 'No accessible memories' }
   }
 
   // Get NPC traits for agency decision
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return { canInitiate: false, reason: 'NPC not found' }
 
   const empathy = npc.traits.empathy ?? 0

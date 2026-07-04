@@ -29,7 +29,7 @@ export function applyFoodConsumption(state: GameState): GameState {
   let totalConsumption = 0
 
   // Player house roster consumption
-  const rosterPopulation = state.roster.length
+  const rosterPopulation = state.npcRuntimeStates.length
   totalConsumption += rosterPopulation * PER_CAPITA_CONSUMPTION
 
   // District population consumption (simplified: each district has base population)
@@ -57,7 +57,7 @@ export function applyFoodConsumption(state: GameState): GameState {
  * Useful for tests and planning.
  */
 export function calculateTotalConsumption(state: GameState): number {
-  const rosterPopulation = state.roster.length
+  const rosterPopulation = state.npcRuntimeStates.length
   const districtCount = state.districts.length
   const districtBasePopulation = 100
 

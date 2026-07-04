@@ -115,7 +115,7 @@ export function generateNpcDateProposals(state: GameState, rng: Rng): GameState 
   let nextState = state
 
   // Collect all eligible NPCs (Roster + World)
-  const rosterEligible = state.roster
+  const rosterEligible = state.npcRuntimeStates
     .filter(isRosterNpcDateEligible)
     .map((npc) => ({ npcId: npc.npcId, name: npc.name, isWorldNpc: false }))
 

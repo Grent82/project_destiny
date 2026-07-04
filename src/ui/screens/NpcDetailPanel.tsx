@@ -160,7 +160,7 @@ function BondStatusSection({ detail }: { detail: NpcDetail }) {
     state.game.house.rooms.some((room) => room.roomId === 'room-kitchen' && room.state === 'intact'),
   )
   const isAssignedToKitchenService = useAppSelector((state) =>
-    state.game.roster.some(
+    state.game.npcRuntimeStates.some(
       (npc) =>
         npc.npcId === detail.npcId &&
         npc.assignment === 'working' &&

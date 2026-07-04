@@ -50,7 +50,7 @@ function isValidArmorItem(item: unknown, layer: string): boolean {
 export function equipArmor(state: GameState, params: EquipArmorParams): GameState {
   const { npcId, layer, itemId } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) {
     return state
   }
@@ -75,7 +75,7 @@ export function equipArmor(state: GameState, params: EquipArmorParams): GameStat
   if (currentItemId) {
     newState = {
       ...newState,
-      roster: newState.roster.map((n) =>
+      npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -92,7 +92,7 @@ export function equipArmor(state: GameState, params: EquipArmorParams): GameStat
   // Equip new item
   newState = {
     ...newState,
-    roster: newState.roster.map((n) =>
+    npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,
@@ -124,7 +124,7 @@ export interface UnequipArmorParams {
 export function unequipArmor(state: GameState, params: UnequipArmorParams): GameState {
   const { npcId, layer } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) {
     return state
   }
@@ -139,7 +139,7 @@ export function unequipArmor(state: GameState, params: UnequipArmorParams): Game
 
   const newState = {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,

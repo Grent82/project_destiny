@@ -105,7 +105,7 @@
       "marketPressure": 30
     }
   ],
-  "roster": [
+  "npcRuntimeStates": [
     {
       "npcId": "npc-marion-vale",
       "name": "Marion Vale",
@@ -598,7 +598,7 @@
     "relationshipMilestones": []
   },
   "visitedDialogueNodes": {},
-  "saveVersion": 5,
+  "saveVersion": 7,
   "rumors": [],
   "bondVisibility": {},
   "inventoryState": {

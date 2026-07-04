@@ -17,7 +17,7 @@ import { createEmployment } from './employment/createEmployment'
 
 /** NPC gathers raw materials for the house, feeding the (currently unpopulated) materialStock. */
 export function npcResourceGather(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const gain = Math.max(
@@ -37,7 +37,7 @@ export function npcResourceGather(state: GameState, npcId: string): GameState {
 
 /** NPC scavenges for scrap materials — a smaller, endurance-focused counterpart to resource-gather. */
 export function npcScavenge(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const gain = Math.max(1, Math.round(1 + (npc.skills.survival - 50) / 20 + (npc.attributes.endurance - 50) / 20))
@@ -58,7 +58,7 @@ export function npcScavenge(state: GameState, npcId: string): GameState {
  * employment contract.
  */
 export function npcSeekEmployment(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
   if (npc.currentEmployment && npc.currentEmployment.status !== 'completed' && npc.currentEmployment.status !== 'failed' && npc.currentEmployment.status !== 'cancelled') {
     return state
@@ -84,7 +84,7 @@ export function npcSeekEmployment(state: GameState, npcId: string): GameState {
  * reception/quarters/study room, matching hostGathering.ts's room requirement.
  */
 export function npcHostGathering(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const room = state.house.rooms.find(
@@ -92,7 +92,7 @@ export function npcHostGathering(state: GameState, npcId: string, rng: Rng): Gam
   )
   if (!room) return state
 
-  const guests = state.roster
+  const guests = state.npcRuntimeStates
     .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
     .sort((a, b) => {
       const relA = state.relationships[buildRelationshipKey(npcId, a.npcId)]?.affinity ?? 0

@@ -5,7 +5,7 @@ import { generateThreatEncounter } from '../../content/threatCatalog'
  */
 export interface EncounterGameState {
   day: number
-  roster: {
+  npcRuntimeStates: {
     skills: { melee?: number; ranged?: number }
     attributes: { endurance?: number; resolve?: number }
   }[]
@@ -178,7 +178,7 @@ export function resolveEncounter(
  * @param roster - The roster of NPCs in the squad
  * @returns Combined combat power value
  */
-export function calculateSquadPower(roster: EncounterGameState['roster']): number {
+export function calculateSquadPower(roster: EncounterGameState['npcRuntimeStates']): number {
   return roster.reduce((power: number, npc) => {
     // Simple power calculation: attack = melee + ranged, defense = endurance + resolve
     const attack = (npc.skills.melee ?? 0) + (npc.skills.ranged ?? 0)

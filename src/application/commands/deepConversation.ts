@@ -14,15 +14,15 @@ const TOPIC_LABELS: Record<ConversationTopic, string> = {
   past: 'the scars and stories that made you who you are',
 }
 
-function canHaveDeepConversation(state: GameState, npcId: string): NonNullable<GameState['roster'][0]> | null {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+function canHaveDeepConversation(state: GameState, npcId: string): NonNullable<GameState['npcRuntimeStates'][0]> | null {
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
   // All NPCs are romance-eligible. Context affects gains, not eligibility.
   return npc
 }
 
-function selectTopic(npc: NonNullable<GameState['roster'][0]>): ConversationTopic {
+function selectTopic(npc: NonNullable<GameState['npcRuntimeStates'][0]>): ConversationTopic {
   const { empathy, prudence, ambition, curiosity } = npc.traits
 
   if (empathy >= 60 && curiosity >= 50) return 'fears'
@@ -31,7 +31,7 @@ function selectTopic(npc: NonNullable<GameState['roster'][0]>): ConversationTopi
   return 'dreams'
 }
 
-function getTopicGains(topic: ConversationTopic, npc: NonNullable<GameState['roster'][0]>): { affinity?: number; respect?: number; trust?: number; fear?: number; loyalty?: number } {
+function getTopicGains(topic: ConversationTopic, npc: NonNullable<GameState['npcRuntimeStates'][0]>): { affinity?: number; respect?: number; trust?: number; fear?: number; loyalty?: number } {
   const { empathy, prudence, ambition, curiosity, ruthlessness } = npc.traits
 
   let gains: { affinity?: number; respect?: number; trust?: number; fear?: number; loyalty?: number }
@@ -61,7 +61,7 @@ function getTopicGains(topic: ConversationTopic, npc: NonNullable<GameState['ros
   return gains
 }
 
-function topicResponse(npc: NonNullable<GameState['roster'][0]>, topic: ConversationTopic, advanced: boolean): string {
+function topicResponse(npc: NonNullable<GameState['npcRuntimeStates'][0]>, topic: ConversationTopic, advanced: boolean): string {
   const { empathy, prudence, ambition } = npc.traits
 
   if (advanced) {

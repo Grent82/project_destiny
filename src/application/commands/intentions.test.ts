@@ -18,9 +18,9 @@ import { idaRhysRosterEntry } from './testFixtures'
 describe('intentions', () => {
   const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
     ...initialGameStateSnapshot,
-    roster: [
+    npcRuntimeStates: [
       {
-        ...initialGameStateSnapshot.roster[0]!,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
         factionRelationships: [],
         currentIntention: null,
       },
@@ -31,9 +31,9 @@ describe('intentions', () => {
   describe('calculateNpcIntention', () => {
     it('returns null for NPC with player assignment', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'deployed',
             currentDirectiveId: null,
             factionRelationships: [],
@@ -48,9 +48,9 @@ describe('intentions', () => {
 
     it('returns null for NPC with faction directive', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: 'directive-test-123',
             factionRelationships: [],
@@ -65,9 +65,9 @@ describe('intentions', () => {
 
     it('returns null for ward NPC', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             status: 'ward',
@@ -83,21 +83,21 @@ describe('intentions', () => {
 
     it('returns an intention for eligible idle NPC', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             factionRelationships: [],
             currentIntention: null,
             // Boost traits to ensure an intention is generated
             traits: {
-              ...initialGameStateSnapshot.roster[0]!.traits,
+              ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits,
               ambition: 75,
               discipline: 65,
             },
             attributes: {
-              ...initialGameStateSnapshot.roster[0]!.attributes,
+              ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes,
               presence: 70,
             },
           },
@@ -119,9 +119,9 @@ describe('intentions', () => {
 
     it('returns null for NPC with low trait scores', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             factionRelationships: [],
@@ -179,9 +179,9 @@ describe('intentions', () => {
 
     it('returns null for captive NPC', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             captivityState: {
@@ -227,14 +227,14 @@ describe('intentions', () => {
       }
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: intention,
             states: {
-              ...initialGameStateSnapshot.roster[0]!.states,
+              ...initialGameStateSnapshot.npcRuntimeStates[0]!.states,
               hunger: 60,
             },
             factionRelationships: [],
@@ -249,19 +249,19 @@ describe('intentions', () => {
     it('handles empty roster', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [],
+        npcRuntimeStates: [],
       }
       const result = executeAllNpcIntentions(state)
 
-      expect(result.roster).toHaveLength(0)
+      expect(result.npcRuntimeStates).toHaveLength(0)
     })
 
     it('skips NPCs without intentions', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: null,
@@ -271,7 +271,7 @@ describe('intentions', () => {
       }
       const result = executeAllNpcIntentions(state)
 
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
   })
 
@@ -279,9 +279,9 @@ describe('intentions', () => {
     it('assigns intentions to idle NPCs', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: null,
@@ -293,7 +293,7 @@ describe('intentions', () => {
       }
       const result = processNpcIntentions(state)
 
-      const npc = result.roster[0]!
+      const npc = result.npcRuntimeStates[0]!
       expect(npc.currentIntention).not.toBeNull()
     })
 
@@ -311,9 +311,9 @@ describe('intentions', () => {
       }
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: existingIntention,
@@ -325,15 +325,15 @@ describe('intentions', () => {
       }
       const result = processNpcIntentions(state)
 
-      expect(result.roster[0]!.currentIntention).toBe(existingIntention)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBe(existingIntention)
     })
 
     it('skips NPCs with active directive', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: 'directive-1',
             currentIntention: null,
@@ -345,17 +345,17 @@ describe('intentions', () => {
       }
       const result = processNpcIntentions(state)
 
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('handles empty roster', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [],
+        npcRuntimeStates: [],
       }
       const result = processNpcIntentions(state)
 
-      expect(result.roster).toHaveLength(0)
+      expect(result.npcRuntimeStates).toHaveLength(0)
     })
   })
 
@@ -374,33 +374,33 @@ describe('intentions', () => {
       }
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             currentIntention: existingIntention,
             factionRelationships: [],
           },
         ],
       }
-      const result = clearNpcIntention(state, state.roster[0]!.npcId)
+      const result = clearNpcIntention(state, state.npcRuntimeStates[0]!.npcId)
 
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('returns state unchanged for NPC without intention', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             currentIntention: null,
             factionRelationships: [],
           },
         ],
       }
-      const result = clearNpcIntention(state, state.roster[0]!.npcId)
+      const result = clearNpcIntention(state, state.npcRuntimeStates[0]!.npcId)
 
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('returns state unchanged for non-existent NPC', () => {
@@ -425,12 +425,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const npc: NpcRuntimeState = {
-        ...initialGameStateSnapshot.roster[0]!,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
         assignment: 'idle',
         currentDirectiveId: null,
         currentIntention: intention,
         states: {
-          ...initialGameStateSnapshot.roster[0]!.states,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!.states,
           hunger: 60,
         },
         factionRelationships: [],
@@ -444,7 +444,7 @@ describe('intentions', () => {
 
     it('returns state unchanged for NPC without intention', () => {
       const npc: NpcRuntimeState = {
-        ...initialGameStateSnapshot.roster[0]!,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
         currentIntention: null,
         factionRelationships: [],
       }
@@ -468,12 +468,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const npc: NpcRuntimeState = {
-        ...initialGameStateSnapshot.roster[0]!,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
         assignment: 'deployed',
         currentDirectiveId: null,
         currentIntention: intention,
         states: {
-          ...initialGameStateSnapshot.roster[0]!.states,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!.states,
           hunger: 60,
         },
         factionRelationships: [],
@@ -490,19 +490,19 @@ describe('intentions', () => {
     it('discards a naturally-generated intention outside the wired allowlist', () => {
       const state = createTestState({
         cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'blocked' },
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: null,
             factionRelationships: [],
-            attributes: { ...initialGameStateSnapshot.roster[0]!.attributes, presence: 80 },
-            traits: { ...initialGameStateSnapshot.roster[0]!.traits, ambition: 55, discipline: 30, curiosity: 30 },
+            attributes: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes, presence: 80 },
+            traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, ambition: 55, discipline: 30, curiosity: 30 },
             // lead-group (still unwired — no NPC group/squad runtime concept exists) requires a
             // blocked corridor plus presence>=60 && ambition>=50; keep other needs low/moderate so
             // it isn't outranked by an already-wired state-driven candidate like eat-meal/sleep.
-            states: { ...initialGameStateSnapshot.roster[0]!.states, hunger: 10, fatigue: 10, stress: 10, hygiene: 10 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 10, fatigue: 10, stress: 10, hygiene: 10 },
           },
         ],
       })
@@ -514,27 +514,27 @@ describe('intentions', () => {
 
       const result = processAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('never assigns a currentIntention outside the wired allowlist, across a varied roster', () => {
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: null,
             factionRelationships: [],
             traits: {
-              ...initialGameStateSnapshot.roster[0]!.traits,
+              ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits,
               ambition: 75,
               discipline: 65,
               empathy: 70,
               loyalty: 70,
             },
             attributes: {
-              ...initialGameStateSnapshot.roster[0]!.attributes,
+              ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes,
               presence: 70,
             },
           },
@@ -542,7 +542,7 @@ describe('intentions', () => {
       })
 
       const result = processAllowlistedNpcIntentions(state)
-      const assigned = result.roster[0]!.currentIntention
+      const assigned = result.npcRuntimeStates[0]!.currentIntention
 
       if (assigned) {
         expect(WIRED_INTENTION_TYPES.has(assigned.type)).toBe(true)
@@ -593,9 +593,9 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       const state = createTestState({
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
             currentDirectiveId: null,
             currentIntention: existing,
@@ -606,7 +606,7 @@ describe('intentions', () => {
 
       const result = processAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.currentIntention).toEqual(existing)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toEqual(existing)
     })
   })
 
@@ -614,9 +614,9 @@ describe('intentions', () => {
     function stateWithMarionAndIda(marionIntention: NpcRuntimeState['currentIntention']) {
       return {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle' as const,
             currentDirectiveId: null,
             currentIntention: marionIntention,
@@ -640,7 +640,7 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
       state = {
         ...state,
@@ -655,7 +655,7 @@ describe('intentions', () => {
 
       expect(result.relationships[`${marionId}-to-${idaId}`]!.affinity).toBe(61)
       expect(result.relationships[`${idaId}-to-${marionId}`]!.affinity).toBe(61)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes spend-time-with and clears the intention afterward', () => {
@@ -671,7 +671,7 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
       state = {
         ...state,
@@ -687,7 +687,7 @@ describe('intentions', () => {
       expect(result.relationships[`${marionId}-to-${idaId}`]!.affinity).toBe(41)
       expect(result.relationships[`${marionId}-to-${idaId}`]!.trust).toBe(21)
       expect(result.relationships[`${idaId}-to-${marionId}`]!.affinity).toBe(41)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('does not execute or clear an intention outside the wired allowlist', () => {
@@ -706,7 +706,7 @@ describe('intentions', () => {
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.currentIntention).toEqual(intention)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toEqual(intention)
     })
 
     it('executes flirt-with (via tryNpcNpcFlirtation) and clears the intention afterward', () => {
@@ -722,7 +722,7 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
       state = {
         ...state,
@@ -738,7 +738,7 @@ describe('intentions', () => {
       // Success is RNG-gated internally (createRng(state.rngSeed)) — assert the mechanic ran
       // (seed advanced) and the intention resolved, rather than a specific affinity delta.
       expect(result.rngSeed).not.toBe(state.rngSeed)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes court-romantically (via tryAdvanceIntimacyStage) and clears the intention afterward', () => {
@@ -757,12 +757,12 @@ describe('intentions', () => {
       // courtRomanticallyHandler.canExecute requires presence>=50 and empathy>=50 on the actor.
       state = {
         ...state,
-        roster: [
-          { ...state.roster[0]!, attributes: { ...state.roster[0]!.attributes, presence: 60 }, traits: { ...state.roster[0]!.traits, empathy: 60 } },
-          state.roster[1]!,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, attributes: { ...state.npcRuntimeStates[0]!.attributes, presence: 60 }, traits: { ...state.npcRuntimeStates[0]!.traits, empathy: 60 } },
+          state.npcRuntimeStates[1]!,
         ],
       }
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
       state = {
         ...state,
@@ -777,7 +777,7 @@ describe('intentions', () => {
 
       // Stage progression itself is deterministic (no RNG) — thresholds are comfortably met.
       expect(result.relationships[`${marionId}-to-${idaId}`]!.intimacyStage).toBe('affinity')
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes jealousy-check (via checkJealousyForNpc) and clears the intention afterward', () => {
@@ -798,9 +798,9 @@ describe('intentions', () => {
       const cress = { ...idaRhysRosterEntry, npcId: 'npc-cress-test', name: 'Cress Test', assignment: 'idle' as const, currentIntention: null }
       const state: GameState = {
         ...stateWithMarionAndIda(intention),
-        roster: [...stateWithMarionAndIda(intention).roster, cress],
+        npcRuntimeStates: [...stateWithMarionAndIda(intention).npcRuntimeStates, cress],
       }
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
       const stateWithRivalry: GameState = {
         ...state,
@@ -815,7 +815,7 @@ describe('intentions', () => {
 
       // Success is RNG-gated internally — assert the mechanic ran and the intention resolved.
       expect(result.rngSeed).not.toBe(stateWithRivalry.rngSeed)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes seek-intimacy (via tryNpcNpcSeekIntimacy) and clears the intention afterward', () => {
@@ -831,7 +831,7 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
       state = {
         ...state,
@@ -846,7 +846,7 @@ describe('intentions', () => {
 
       // Deterministic once eligible — no RNG gate on the trust threshold itself.
       expect(result.relationships[`${marionId}-to-${idaId}`]!.affinity).toBeGreaterThan(60)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes flirt-aggressively (via tryNpcNpcFlirtAggressively) and clears the intention afterward', () => {
@@ -865,12 +865,12 @@ describe('intentions', () => {
       // flirtAggressivelyHandler.canExecute requires dominance >= 50 on the actor.
       state = {
         ...state,
-        roster: [
-          { ...state.roster[0]!, traits: { ...state.roster[0]!.traits, dominance: 60 } },
-          state.roster[1]!,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, traits: { ...state.npcRuntimeStates[0]!.traits, dominance: 60 } },
+          state.npcRuntimeStates[1]!,
         ],
       }
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
 
       const result = executeAllowlistedNpcIntentions(state)
@@ -878,10 +878,10 @@ describe('intentions', () => {
       // Success is RNG-gated internally — assert the mechanic ran (either affinity rose on
       // success or Ida's anger rose on failure) and the intention resolved either way.
       const abAffinity = result.relationships[`${marionId}-to-${idaId}`]?.affinity ?? 0
-      const idaAnger = result.roster.find((n) => n.npcId === idaId)!.states.anger
+      const idaAnger = result.npcRuntimeStates.find((n) => n.npcId === idaId)!.states.anger
       const somethingHappened = abAffinity > 0 || idaAnger > idaRhysRosterEntry.states.anger
       expect(somethingHappened).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes eat-meal (via npcEatMeal) and clears the intention afterward', () => {
@@ -897,12 +897,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, hunger: 60 } }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, states: { ...state.npcRuntimeStates[0]!.states, hunger: 60 } }, state.npcRuntimeStates[1]!] }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.states.hunger).toBeLessThan(60)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.states.hunger).toBeLessThan(60)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes drink (via npcDrink) and clears the intention afterward', () => {
@@ -920,16 +920,16 @@ describe('intentions', () => {
       let state: GameState = stateWithMarionAndIda(intention)
       state = {
         ...state,
-        roster: [
-          { ...state.roster[0]!, states: { ...state.roster[0]!.states, hunger: 50, intoxication: 40 } },
-          state.roster[1]!,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, states: { ...state.npcRuntimeStates[0]!.states, hunger: 50, intoxication: 40 } },
+          state.npcRuntimeStates[1]!,
         ],
       }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.states.intoxication).toBeLessThan(40)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.states.intoxication).toBeLessThan(40)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes sleep (via npcSleep) and clears the intention afterward', () => {
@@ -945,12 +945,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, fatigue: 80 } }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, states: { ...state.npcRuntimeStates[0]!.states, fatigue: 80 } }, state.npcRuntimeStates[1]!] }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.states.fatigue).toBeLessThan(80)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.states.fatigue).toBeLessThan(80)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes rest (via npcRest) and clears the intention afterward', () => {
@@ -966,12 +966,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, fatigue: 50 } }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, states: { ...state.npcRuntimeStates[0]!.states, fatigue: 50 } }, state.npcRuntimeStates[1]!] }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.states.fatigue).toBeLessThan(50)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.states.fatigue).toBeLessThan(50)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes groom (via npcGroom) and clears the intention afterward', () => {
@@ -987,12 +987,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, hygiene: 70 } }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, states: { ...state.npcRuntimeStates[0]!.states, hygiene: 70 } }, state.npcRuntimeStates[1]!] }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.states.hygiene).toBeLessThan(70)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.states.hygiene).toBeLessThan(70)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes meditate (via npcMeditate) and clears the intention afterward', () => {
@@ -1008,12 +1008,12 @@ describe('intentions', () => {
         validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
       }
       let state: GameState = stateWithMarionAndIda(intention)
-      state = { ...state, roster: [{ ...state.roster[0]!, states: { ...state.roster[0]!.states, stress: 70 } }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, states: { ...state.npcRuntimeStates[0]!.states, stress: 70 } }, state.npcRuntimeStates[1]!] }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      expect(result.roster[0]!.states.stress).toBeLessThan(70)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.states.stress).toBeLessThan(70)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes confront-rival (via npcConfrontRival) and clears the intention afterward', () => {
@@ -1032,7 +1032,7 @@ describe('intentions', () => {
       // the roster for npcConfrontRival to do anything.
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
             ...idaRhysRosterEntry,
             npcId: 'npc-alis-vey',
@@ -1048,11 +1048,11 @@ describe('intentions', () => {
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      const rival = result.roster.find((n) => n.npcId === 'npc-enemy-lady-sorn')!
-      const actor = result.roster.find((n) => n.npcId === 'npc-alis-vey')!
+      const rival = result.npcRuntimeStates.find((n) => n.npcId === 'npc-enemy-lady-sorn')!
+      const actor = result.npcRuntimeStates.find((n) => n.npcId === 'npc-alis-vey')!
       const somethingHappened = rival.states.fear > idaRhysRosterEntry.states.fear || actor.states.fear > idaRhysRosterEntry.states.fear
       expect(somethingHappened).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes assert-dominance (via npcAssertDominance) and clears the intention afterward', () => {
@@ -1069,17 +1069,17 @@ describe('intentions', () => {
       }
       let state: GameState = stateWithMarionAndIda(intention)
       // assertDominanceHandler.canExecute requires dominance >= 60 on the actor.
-      state = { ...state, roster: [{ ...state.roster[0]!, traits: { ...state.roster[0]!.traits, dominance: 65 } }, state.roster[1]!] }
-      const marionId = state.roster[0]!.npcId
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, traits: { ...state.npcRuntimeStates[0]!.traits, dominance: 65 } }, state.npcRuntimeStates[1]!] }
+      const marionId = state.npcRuntimeStates[0]!.npcId
       const idaId = idaRhysRosterEntry.npcId
 
       const result = executeAllowlistedNpcIntentions(state)
 
       const rel = result.relationships[`${idaId}-to-${marionId}`]
-      const actor = result.roster.find((n) => n.npcId === marionId)!
-      const somethingHappened = (rel?.fear ?? 0) > 0 || actor.states.anger > state.roster[0]!.states.anger
+      const actor = result.npcRuntimeStates.find((n) => n.npcId === marionId)!
+      const somethingHappened = (rel?.fear ?? 0) > 0 || actor.states.anger > state.npcRuntimeStates[0]!.states.anger
       expect(somethingHappened).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes protect-house (via npcProtectHouse) and clears the intention afterward', () => {
@@ -1100,7 +1100,7 @@ describe('intentions', () => {
       const result = executeAllowlistedNpcIntentions(state)
 
       expect(result.districtTension[state.houseDistrictId]).toBeLessThan(50)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes patrol-district (via npcPatrolDistrict) and clears the intention afterward', () => {
@@ -1118,14 +1118,14 @@ describe('intentions', () => {
       let state: GameState = stateWithMarionAndIda(intention)
       state = {
         ...state,
-        roster: [{ ...state.roster[0]!, assignedDistrictId: 'district-the-pale' }, state.roster[1]!],
+        npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-the-pale' }, state.npcRuntimeStates[1]!],
         districtTension: { ...state.districtTension, 'district-the-pale': 50 },
       }
 
       const result = executeAllowlistedNpcIntentions(state)
 
       expect(result.districtTension['district-the-pale']).toBeLessThan(50)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes fortify-position (via npcFortifyPosition) and clears the intention afterward', () => {
@@ -1145,13 +1145,13 @@ describe('intentions', () => {
       state = {
         ...state,
         money: 1000,
-        roster: [{ ...state.roster[0]!, skills: { ...state.roster[0]!.skills, security: 60 } }, state.roster[1]!],
+        npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, skills: { ...state.npcRuntimeStates[0]!.skills, security: 60 } }, state.npcRuntimeStates[1]!],
       }
 
       const result = executeAllowlistedNpcIntentions(state)
 
       expect(result.money).toBeLessThan(1000)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes care-for-injured (via npcCareForInjured) and clears the intention afterward', () => {
@@ -1170,17 +1170,17 @@ describe('intentions', () => {
       // careForInjuredHandler.canExecute requires medicine >= 40 or empathy >= 50.
       state = {
         ...state,
-        roster: [
-          { ...state.roster[0]!, traits: { ...state.roster[0]!.traits, empathy: 60 } },
-          { ...state.roster[1]!, states: { ...state.roster[1]!.states, injury: 20, health: 60 } },
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, traits: { ...state.npcRuntimeStates[0]!.traits, empathy: 60 } },
+          { ...state.npcRuntimeStates[1]!, states: { ...state.npcRuntimeStates[1]!.states, injury: 20, health: 60 } },
         ],
       }
 
       const result = executeAllowlistedNpcIntentions(state)
 
-      const target = result.roster.find((n) => n.npcId === idaRhysRosterEntry.npcId)!
+      const target = result.npcRuntimeStates.find((n) => n.npcId === idaRhysRosterEntry.npcId)!
       expect(target.states.health).toBeGreaterThan(60)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     function makeIntention(type: NpcIntentionType) {
@@ -1203,11 +1203,11 @@ describe('intentions', () => {
       state = {
         ...state,
         cityResources: { ...state.cityResources, materialStock: 20 },
-        roster: [{ ...state.roster[0]!, skills: { ...state.roster[0]!.skills, survival: 50 } }, state.roster[1]!],
+        npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, skills: { ...state.npcRuntimeStates[0]!.skills, survival: 50 } }, state.npcRuntimeStates[1]!],
       }
       const result = executeAllowlistedNpcIntentions(state)
       expect(result.cityResources.materialStock).toBeGreaterThan(20)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes scavenge (via npcScavenge) and clears the intention afterward', () => {
@@ -1216,18 +1216,18 @@ describe('intentions', () => {
       state = {
         ...state,
         cityResources: { ...state.cityResources, materialStock: 20 },
-        roster: [{ ...state.roster[0]!, skills: { ...state.roster[0]!.skills, survival: 50 } }, state.roster[1]!],
+        npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, skills: { ...state.npcRuntimeStates[0]!.skills, survival: 50 } }, state.npcRuntimeStates[1]!],
       }
       const result = executeAllowlistedNpcIntentions(state)
       expect(result.cityResources.materialStock).toBeGreaterThan(20)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes seek-employment (via npcSeekEmployment) and clears the intention afterward', () => {
       const state: GameState = stateWithMarionAndIda(makeIntention('seek-employment'))
       const result = executeAllowlistedNpcIntentions(state)
-      expect(result.roster[0]!.currentEmployment).not.toBeNull()
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentEmployment).not.toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes host-gathering (via npcHostGathering) and clears the intention afterward', () => {
@@ -1241,37 +1241,37 @@ describe('intentions', () => {
       }
       const result = executeAllowlistedNpcIntentions(state)
       const idaId = idaRhysRosterEntry.npcId
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
       // The host is Marion (roster[0]); Ida is the only other idle NPC available to invite.
-      const rel = result.relationships[`${state.roster[0]!.npcId}-to-${idaId}`]
+      const rel = result.relationships[`${state.npcRuntimeStates[0]!.npcId}-to-${idaId}`]
       expect(rel?.affinity ?? 0).toBeGreaterThan(0)
     })
 
     it('executes consolidate-power (via npcConsolidatePower) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('consolidate-power'))
-      state = { ...state, roster: [{ ...state.roster[0]!, assignedDistrictId: 'district-harbor' }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-harbor' }, state.npcRuntimeStates[1]!] }
       const result = executeAllowlistedNpcIntentions(state)
       const changed = Object.entries(result.factionStandings).some(([id, v]) => v > (state.factionStandings[id] ?? 0))
       expect(changed).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes socialize (via npcSocialize) and clears the intention afterward', () => {
       const state: GameState = stateWithMarionAndIda(makeIntention('socialize'))
       const idaId = idaRhysRosterEntry.npcId
       const result = executeAllowlistedNpcIntentions(state)
-      const rel = result.relationships[`${state.roster[0]!.npcId}-to-${idaId}`]
+      const rel = result.relationships[`${state.npcRuntimeStates[0]!.npcId}-to-${idaId}`]
       expect(rel?.affinity ?? 0).toBeGreaterThan(0)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes gossip (via npcGossip) and clears the intention afterward', () => {
       const state: GameState = stateWithMarionAndIda(makeIntention('gossip'))
       const idaId = idaRhysRosterEntry.npcId
       const result = executeAllowlistedNpcIntentions(state)
-      const rel = result.relationships[`${state.roster[0]!.npcId}-to-${idaId}`]
+      const rel = result.relationships[`${state.npcRuntimeStates[0]!.npcId}-to-${idaId}`]
       expect(rel?.affinity ?? 0).toBeGreaterThan(0)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes mediate-conflict (via npcMediateConflict) and clears the intention afterward', () => {
@@ -1280,9 +1280,9 @@ describe('intentions', () => {
       // The mediator (Marion, roster[0]) needs empathy>=50 && negotiation>=40 to canExecute.
       state = {
         ...state,
-        roster: [
-          { ...state.roster[0]!, traits: { ...state.roster[0]!.traits, empathy: 60 }, skills: { ...state.roster[0]!.skills, negotiation: 50 } },
-          state.roster[1]!,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, traits: { ...state.npcRuntimeStates[0]!.traits, empathy: 60 }, skills: { ...state.npcRuntimeStates[0]!.skills, negotiation: 50 } },
+          state.npcRuntimeStates[1]!,
           { ...idaRhysRosterEntry, npcId: 'npc-third', name: 'Third', assignment: 'idle' as const },
         ],
         relationships: {
@@ -1294,41 +1294,41 @@ describe('intentions', () => {
       const result = executeAllowlistedNpcIntentions(state)
       const rel = result.relationships[`${idaId}-to-npc-third`]
       expect(rel?.affinity ?? 0).toBeGreaterThan(-30)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes challenge-authority (via npcChallengeAuthority) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('challenge-authority'))
       state = {
         ...state,
-        roster: [
-          { ...state.roster[0]!, assignedDistrictId: 'district-harbor', traits: { ...state.roster[0]!.traits, dominance: 60 } },
-          state.roster[1]!,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-harbor', traits: { ...state.npcRuntimeStates[0]!.traits, dominance: 60 } },
+          state.npcRuntimeStates[1]!,
         ],
       }
       const result = executeAllowlistedNpcIntentions(state)
       const changed = Object.entries(result.factionStandings).some(([id, v]) => v < (state.factionStandings[id] ?? 0))
       expect(changed).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes spy-on (via npcSpyOn) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('spy-on'))
       // spyOnHandler.canExecute requires intrigue >= 50 or curiosity >= 60.
-      state = { ...state, roster: [{ ...state.roster[0]!, skills: { ...state.roster[0]!.skills, intrigue: 60 } }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, skills: { ...state.npcRuntimeStates[0]!.skills, intrigue: 60 } }, state.npcRuntimeStates[1]!] }
       const result = executeAllowlistedNpcIntentions(state)
       // Marion (actor) is roster[0]; Ida is the spy target — either she learns something (memory
       // entry) or is caught (Ida's fear rises). Either way the mechanic ran.
-      const actor = result.roster.find((n) => n.npcId === state.roster[0]!.npcId)!
-      const target = result.roster.find((n) => n.npcId === idaRhysRosterEntry.npcId)!
+      const actor = result.npcRuntimeStates.find((n) => n.npcId === state.npcRuntimeStates[0]!.npcId)!
+      const target = result.npcRuntimeStates.find((n) => n.npcId === idaRhysRosterEntry.npcId)!
       const somethingHappened = actor.npcMemory.length > 0 || target.states.fear > idaRhysRosterEntry.states.fear
       expect(somethingHappened).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes gather-leverage (via npcGatherLeverage) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('gather-leverage'))
-      const marionId = state.roster[0]!.npcId
+      const marionId = state.npcRuntimeStates[0]!.npcId
       state = {
         ...state,
         privateCorrespondence: [
@@ -1353,7 +1353,7 @@ describe('intentions', () => {
       const result = executeAllowlistedNpcIntentions(state)
       const msg = result.privateCorrespondence.find((m) => m.id === 'msg-leverage-1')!
       expect(msg.consequenceApplied).toBe(true)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes intercept-communication (via npcInterceptCommunication) and clears the intention afterward', () => {
@@ -1382,48 +1382,48 @@ describe('intentions', () => {
       const result = executeAllowlistedNpcIntentions(state)
       const msg = result.privateCorrespondence.find((m) => m.id === 'msg-intercept-1')!
       expect(msg.status).toBe('intercepted')
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes people-watch (via npcPeopleWatch) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('people-watch'))
-      state = { ...state, roster: [{ ...state.roster[0]!, assignedDistrictId: 'district-the-pale' }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-the-pale' }, state.npcRuntimeStates[1]!] }
       const result = executeAllowlistedNpcIntentions(state)
-      const actor = result.roster.find((n) => n.npcId === state.roster[0]!.npcId)!
+      const actor = result.npcRuntimeStates.find((n) => n.npcId === state.npcRuntimeStates[0]!.npcId)!
       expect(actor.npcMemory.length).toBeGreaterThan(0)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes scout-ahead (via npcScoutAhead) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('scout-ahead'))
-      state = { ...state, roster: [{ ...state.roster[0]!, assignedDistrictId: 'district-the-pale' }, state.roster[1]!] }
+      state = { ...state, npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-the-pale' }, state.npcRuntimeStates[1]!] }
       const result = executeAllowlistedNpcIntentions(state)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes investigate-threat (via npcInvestigateThreat) and clears the intention afterward', () => {
       let state: GameState = stateWithMarionAndIda(makeIntention('investigate-threat'))
       state = {
         ...state,
-        roster: [{ ...state.roster[0]!, assignedDistrictId: 'district-the-pale' }, state.roster[1]!],
+        npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-the-pale' }, state.npcRuntimeStates[1]!],
         districtTension: { ...state.districtTension, 'district-the-pale': 50 },
       }
       const result = executeAllowlistedNpcIntentions(state)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes seek-shelter (via npcSeekShelter) and clears the intention afterward', () => {
       const state: GameState = stateWithMarionAndIda(makeIntention('seek-shelter'))
       const result = executeAllowlistedNpcIntentions(state)
-      const actor = result.roster.find((n) => n.npcId === state.roster[0]!.npcId)!
-      expect(actor.states.fear).toBeLessThan(state.roster[0]!.states.fear)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      const actor = result.npcRuntimeStates.find((n) => n.npcId === state.npcRuntimeStates[0]!.npcId)!
+      expect(actor.states.fear).toBeLessThan(state.npcRuntimeStates[0]!.states.fear)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes practice-skill (via npcPracticeSkill) and clears the intention afterward', () => {
       const state: GameState = stateWithMarionAndIda(makeIntention('practice-skill'))
       const result = executeAllowlistedNpcIntentions(state)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes train-self (via npcTrainSelf) and clears the intention afterward', () => {
@@ -1436,7 +1436,7 @@ describe('intentions', () => {
         },
       }
       const result = executeAllowlistedNpcIntentions(state)
-      expect(result.roster[0]!.currentIntention).toBeNull()
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
   })
 })

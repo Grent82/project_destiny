@@ -75,10 +75,10 @@ describe('sleepBrief', () => {
   it('reduces roster fatigue by 15', () => {
     const s = {
       ...stateAtSlot('morning'),
-      roster: initialStateWithIda.roster.map((n) => ({ ...n, states: { ...n.states, fatigue: 40 } })),
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) => ({ ...n, states: { ...n.states, fatigue: 40 } })),
     }
     const result = sleepBrief(s)
-    for (const npc of result.roster) {
+    for (const npc of result.npcRuntimeStates) {
       expect(npc.states.fatigue).toBe(25)
     }
   })
@@ -86,10 +86,10 @@ describe('sleepBrief', () => {
   it('does not reduce fatigue below 0', () => {
     const s = {
       ...stateAtSlot('morning'),
-      roster: initialStateWithIda.roster.map((n) => ({ ...n, states: { ...n.states, fatigue: 5 } })),
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) => ({ ...n, states: { ...n.states, fatigue: 5 } })),
     }
     const result = sleepBrief(s)
-    for (const npc of result.roster) {
+    for (const npc of result.npcRuntimeStates) {
       expect(npc.states.fatigue).toBe(0)
     }
   })
@@ -115,13 +115,13 @@ describe('sleepToMorning', () => {
     const initialHealth = 80
     const s = {
       ...stateAtSlot('night'),
-      roster: initialStateWithIda.roster.map((n) => ({
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) => ({
         ...n,
         states: { ...n.states, fatigue: initialFatigue, health: initialHealth },
       })),
     }
     const result = sleepToMorning(s)
-    for (const npc of result.roster) {
+    for (const npc of result.npcRuntimeStates) {
       expect(npc.states.fatigue).toBeLessThan(initialFatigue)
       expect(npc.states.health).toBeGreaterThan(initialHealth)
     }

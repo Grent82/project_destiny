@@ -15,13 +15,13 @@ import type { CaptivityState, NpcRuntimeState, PregnancyState } from '../../doma
 import { getAllNpcCaptivityStates, getNpcCaptivityState } from '../commands/captivityRegistry'
 
 /**
- * Canonical player-roster selector. BRIDGE (destiny-rama.4): `state.game.roster` currently holds
+ * Canonical player-roster selector. BRIDGE (destiny-rama.4): `state.game.npcRuntimeStates` currently holds
  * only player-roster members, so this raw input is correct today and stays memoization-friendly.
  * When world/captive persons join the unified list (C2/C3), this flips to filter
  * `playerRosterMember` on `state.game.npcRuntimeStates`. World NPCs are read via selectWorldNpcStates
  * (selectors/worldNpcs.ts). See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1/§9.
  */
-export const selectRoster = (state: RootState) => state.game.roster
+export const selectRoster = (state: RootState) => state.game.npcRuntimeStates
 export const selectNpcCaptivityRegistry = (state: RootState) => state.game.npcCaptivityStates
 
 /** All roster NPCs who are currently missing or captive. */
@@ -43,7 +43,7 @@ export function selectNpcCaptivityState(
 export const selectKnownCaptivityNpcIds = createSelector(
   [selectNpcCaptivityRegistry, selectRoster],
   (registry, roster) =>
-    Object.entries(getAllNpcCaptivityStates({ npcCaptivityStates: registry, roster }))
+    Object.entries(getAllNpcCaptivityStates({ npcCaptivityStates: registry, npcRuntimeStates: roster }))
       .filter(([, captivity]) => captivity.status === 'missing' || captivity.status === 'captive')
       .map(([npcId]) => npcId),
 )
@@ -53,7 +53,7 @@ export function selectNpcPregnancyState(
   state: RootState,
   npcId: string,
 ): PregnancyState | undefined {
-  return state.game.roster.find((n) => n.npcId === npcId)?.pregnancyState
+  return state.game.npcRuntimeStates.find((n) => n.npcId === npcId)?.pregnancyState
 }
 
 /** All NPCs who have been rescued (status === 'rescued') and may carry recovery debuffs. */

@@ -37,7 +37,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
     }
 
     const nextState = concludeCombatEncounter(damagedState)
-    const rosterEntry = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
     expect(rosterEntry.states.health).toBe(40)
   })
 
@@ -57,7 +57,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
     }
 
     const nextState = concludeCombatEncounter(koState)
-    const rosterEntry = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
     expect(rosterEntry.assignment).toBe('recovering')
     expect(rosterEntry.states.health).toBe(10) // KO'd NPCs are set to 10 (critical but alive)
   })
@@ -73,7 +73,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
       .map((c) => c.sourceNpcId!)
 
     for (const npcId of allyIds) {
-      const rosterEntry = nextState.roster.find((r) => r.npcId === npcId)!
+      const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === npcId)!
       expect(rosterEntry.assignment).toBe('idle')
     }
   })
@@ -94,7 +94,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
     }
 
     const nextState = concludeCombatEncounter(badlyHurtState)
-    const rosterEntry = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
 
     expect(rosterEntry.assignment).toBe('recovering')
     expect(rosterEntry.states.injury).toBeGreaterThanOrEqual(30)
@@ -150,12 +150,12 @@ describe('concludeCombatEncounter — emotional aftermath', () => {
     const ally = resolvedState.activeCombat.combatants.find(
       (c) => c.side === 'allies' && c.sourceNpcId,
     )!
-    const npcBefore = resolvedState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const npcBefore = resolvedState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
     const npcBeforeMorale = npcBefore.states.morale
     const npcBeforeStress = npcBefore.states.stress
 
     const nextState = concludeCombatEncounter(resolvedState)
-    const npcAfter = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const npcAfter = nextState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
 
     // Victory: morale +5; stress -3 then +3 = net 0 change on stress, morale net +5
     expect(npcAfter.states.morale).toBeGreaterThanOrEqual(npcBeforeMorale)
@@ -172,12 +172,12 @@ describe('concludeCombatEncounter — emotional aftermath', () => {
     const ally = resolvedState.activeCombat.combatants.find(
       (c) => c.side === 'allies' && c.sourceNpcId,
     )!
-    const npcBefore = resolvedState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const npcBefore = resolvedState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
     const npcBeforeMorale = npcBefore.states.morale
     const npcBeforeStress = npcBefore.states.stress
 
     const nextState = concludeCombatEncounter(resolvedState)
-    const npcAfter = nextState.roster.find((r) => r.npcId === ally.sourceNpcId!)!
+    const npcAfter = nextState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
 
     // Defeat: morale -8; stress +8 +3 = +11
     expect(npcAfter.states.morale).toBe(Math.max(0, npcBeforeMorale - 8))
@@ -190,7 +190,7 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
     const stateWithRecovering = {
       ...initialStateWithIda,
       selectedSquadNpcIds: [],
-      roster: initialStateWithIda.roster.map((r) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) =>
         r.npcId === 'npc-ida-rhys' ? { ...r, assignment: 'recovering' as const } : r,
       ),
     }
@@ -203,14 +203,14 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
     const stateWithIdle = {
       ...initialStateWithIda,
       selectedSquadNpcIds: [],
-      roster: initialStateWithIda.roster.map((r) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) =>
         r.npcId === 'npc-ida-rhys' ? { ...r, assignment: 'idle' as const } : r,
       ),
     }
 
     const nextState = addNpcToSelectedSquad(stateWithIdle, 'npc-ida-rhys')
     expect(nextState.selectedSquadNpcIds).toContain('npc-ida-rhys')
-    const rosterEntry = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
     expect(rosterEntry.assignment).toBe('deployed')
   })
 
@@ -218,7 +218,7 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
     const stateWithInjuredNpc = {
       ...initialStateWithIda,
       selectedSquadNpcIds: [],
-      roster: initialStateWithIda.roster.map((r) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) =>
         r.npcId === 'npc-ida-rhys'
           ? { ...r, states: { ...r.states, health: 24 } }
           : r,
@@ -236,7 +236,7 @@ describe('addNpcToSelectedSquad — recovering guard', () => {
     )
 
     const nextState = removeNpcFromSelectedSquad(deployedState, 'npc-ida-rhys')
-    const rosterEntry = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
 
     expect(nextState.selectedSquadNpcIds).not.toContain('npc-ida-rhys')
     expect(rosterEntry.assignment).toBe('idle')
@@ -247,7 +247,7 @@ describe('endDay — recovering NPC health recovery', () => {
   it('recovering NPCs gain 15 health per day', () => {
     const stateWithRecovering = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((r) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) =>
         r.npcId === 'npc-ida-rhys'
           ? { ...r, assignment: 'recovering' as const, states: { ...r.states, health: 20 } }
           : r,
@@ -255,14 +255,14 @@ describe('endDay — recovering NPC health recovery', () => {
     }
 
     const nextState = endDay(stateWithRecovering)
-    const npcAfter = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const npcAfter = nextState.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
     expect(npcAfter.states.health).toBe(35) // 20 + 15
   })
 
   it('recovering NPC returns to idle when health reaches 80', () => {
     const stateWithRecovering = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((r) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) =>
         r.npcId === 'npc-ida-rhys'
           ? { ...r, assignment: 'recovering' as const, states: { ...r.states, health: 70 } }
           : r,
@@ -270,7 +270,7 @@ describe('endDay — recovering NPC health recovery', () => {
     }
 
     const nextState = endDay(stateWithRecovering)
-    const npcAfter = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const npcAfter = nextState.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
     expect(npcAfter.states.health).toBe(85) // 70 + 15 = 85
     expect(npcAfter.assignment).toBe('idle')
   })
@@ -278,7 +278,7 @@ describe('endDay — recovering NPC health recovery', () => {
   it('recovering NPC does not return to idle on health alone while injury stays serious', () => {
     const stateWithRecovering = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((r) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) =>
         r.npcId === 'npc-ida-rhys'
           ? {
               ...r,
@@ -290,7 +290,7 @@ describe('endDay — recovering NPC health recovery', () => {
     }
 
     const nextState = endDay(stateWithRecovering)
-    const npcAfter = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const npcAfter = nextState.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
 
     expect(npcAfter.states.health).toBeGreaterThan(70)
     expect(npcAfter.assignment).toBe('recovering')
@@ -299,7 +299,7 @@ describe('endDay — recovering NPC health recovery', () => {
   it('recovery bonus applies with medic on roster (not deployed)', () => {
     const stateWithMedicAndRecovering = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((r) => {
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((r) => {
         if (r.npcId === 'npc-marion-vale') {
           return { ...r, activeTitle: 'title-medic', assignment: 'idle' as const }
         }
@@ -311,7 +311,7 @@ describe('endDay — recovering NPC health recovery', () => {
     }
 
     const nextState = endDay(stateWithMedicAndRecovering)
-    const npcAfter = nextState.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const npcAfter = nextState.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
     // 20 + 15 (base) + 10 (medic recovery bonus) + 8 (medic title tick) = 53
     expect(npcAfter.states.health).toBe(53)
   })

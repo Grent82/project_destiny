@@ -31,7 +31,7 @@ function canDecorateRoom(state: GameState, roomId: string, npcId: string): {
   npcId: string
   room: HouseRoom
 } | null {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc) return null
   if (state.currentDistrictId !== state.houseDistrictId) return null
   if (npc.assignment === 'deployed') return null
@@ -69,7 +69,7 @@ export function decorateRoom(state: GameState, roomId: string, npcId: string, de
   if (!result) return state
 
   const { npcId: validNpcId, room } = result
-  const npc = state.roster.find((entry) => entry.npcId === validNpcId)!
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === validNpcId)!
 
   const cost = DECOR_COSTS[decorStyle]
   if (state.money < cost) return state

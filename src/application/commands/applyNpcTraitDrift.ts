@@ -34,12 +34,12 @@ const DRIFT_ARC_IDS = new Set(['arc-becoming', 'arc-ward-growing'])
  *  NPCs with arc-becoming or arc-ward-growing receive drift — most people don't change
  *  their fundamental nature from proximity. Young or fractured NPCs in specific arcs do. */
 export function applyNpcTraitDrift(state: GameState, rng: Rng = Math.random): GameState {
-  const learners = state.roster.filter(
+  const learners = state.npcRuntimeStates.filter(
     (npc) => npc.npcArc != null && DRIFT_ARC_IDS.has(npc.npcArc.arcId),
   )
   if (learners.length === 0) return state
 
-  const influencers = state.roster.filter((npc) => npc.npcArc == null || !DRIFT_ARC_IDS.has(npc.npcArc.arcId))
+  const influencers = state.npcRuntimeStates.filter((npc) => npc.npcArc == null || !DRIFT_ARC_IDS.has(npc.npcArc.arcId))
 
   let next = state
 
@@ -81,7 +81,7 @@ export function applyNpcTraitDrift(state: GameState, rng: Rng = Math.random): Ga
 
     next = {
       ...next,
-      roster: next.roster.map((n) => (n.npcId === learner.npcId ? updatedNpc : n)),
+      npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === learner.npcId ? updatedNpc : n)),
     }
   }
 

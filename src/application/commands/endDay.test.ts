@@ -26,7 +26,7 @@ describe('endDay', () => {
   it('wage deduction reduces credits by the combined daily wage', () => {
     const stateNoWorking = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => ({ ...npc, assignment: 'idle' as const })),
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) => ({ ...npc, assignment: 'idle' as const })),
     }
     const next = endDay(stateNoWorking)
     expect(next.money).toBe(stateNoWorking.money - 16 + 5)
@@ -34,15 +34,15 @@ describe('endDay', () => {
 
   it('hunger rises by 8 each day for non-deployed NPCs', () => {
     const next = endDay(initialGameStateSnapshot)
-    const marionBefore = initialGameStateSnapshot.roster.find((r) => r.npcId === 'npc-marion-vale')!
-    const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionBefore = initialGameStateSnapshot.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionAfter = next.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     expect(marionAfter.states.hunger).toBe(Math.min(100, marionBefore.states.hunger + 8))
   })
 
   it('fatigue decreases for resting NPCs', () => {
     const next = endDay(initialStateWithIda)
-    const idaBefore = initialStateWithIda.roster.find((r) => r.npcId === 'npc-ida-rhys')!
-    const idaAfter = next.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const idaBefore = initialStateWithIda.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
+    const idaAfter = next.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
     // idle => resting => fatigue -10
     expect(idaAfter.states.fatigue).toBe(Math.max(0, idaBefore.states.fatigue - 10))
   })
@@ -50,20 +50,20 @@ describe('endDay', () => {
   it('medic title heals the most injured NPC by 8 health', () => {
     const stateWithMedic = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-medic' } : npc,
       ),
     }
     const next = endDay(stateWithMedic)
     // Ida Rhys has health 91 (lower than Marion's 96), so she gets healed
-    const idaAfter = next.roster.find((r) => r.npcId === 'npc-ida-rhys')!
+    const idaAfter = next.npcRuntimeStates.find((r) => r.npcId === 'npc-ida-rhys')!
     expect(idaAfter.states.health).toBe(99) // 91 + 8
   })
 
   it('steward title adds skill-scaled Marks to credits after wage deduction', () => {
     const stateWithSteward = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' ? { ...npc, activeTitle: 'title-steward', assignment: 'idle' as const } : { ...npc, assignment: 'idle' as const },
       ),
     }
@@ -109,14 +109,14 @@ describe('endDay', () => {
   it('increments wagesOwedDays when credits cannot cover wage', () => {
     const brokeState = { ...initialGameStateSnapshot, money: 0 }
     const next = endDay(brokeState)
-    const npcWithDebt = next.roster.find((r) => r.wagesOwedDays > 0)
+    const npcWithDebt = next.npcRuntimeStates.find((r) => r.wagesOwedDays > 0)
     expect(npcWithDebt).toBeDefined()
   })
 
   it('trainer title trains a random idle NPC on a random skill', () => {
     const stateWithTrainer = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? { ...npc, activeTitle: 'title-trainer', assignment: 'idle' as const }
           : npc,
@@ -130,11 +130,11 @@ describe('endDay', () => {
     expect(trainerLog).toBeDefined()
 
     // At least one NPC should have a higher total skill sum than before
-    const totalSkillsBefore = stateWithTrainer.roster.reduce(
+    const totalSkillsBefore = stateWithTrainer.npcRuntimeStates.reduce(
       (sum, npc) => sum + Object.values(npc.skills).reduce((a, b) => a + b, 0),
       0,
     )
-    const totalSkillsAfter = next.roster.reduce(
+    const totalSkillsAfter = next.npcRuntimeStates.reduce(
       (sum, npc) => sum + Object.values(npc.skills).reduce((a, b) => a + b, 0),
       0,
     )
@@ -157,7 +157,7 @@ describe('endDay', () => {
   it('does not crash when roster is empty', () => {
     const emptyRosterState = {
       ...initialGameStateSnapshot,
-      roster: [],
+      npcRuntimeStates: [],
       selectedSquadNpcIds: [],
     }
     expect(() => endDay(emptyRosterState)).not.toThrow()
@@ -338,9 +338,9 @@ describe('endDay', () => {
       ...initialStateWithIda,
       cityDials: { control: 45, prosperity: 45, unrest: 75, corruption: 30 },
     }
-    const marionBefore = state.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionBefore = state.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     const next = endDay(state)
-    const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionAfter = next.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     expect(marionAfter.traits.loyalty).toBeLessThan(marionBefore.traits.loyalty)
     expect(next.activityLog.some((e) => e.message.includes('Unrest in the city'))).toBe(true)
   })
@@ -350,9 +350,9 @@ describe('endDay', () => {
       ...initialStateWithIda,
       cityDials: { control: 45, prosperity: 45, unrest: 55, corruption: 30 },
     }
-    const marionBefore = state.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionBefore = state.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     const next = endDay(state)
-    const marionAfter = next.roster.find((r) => r.npcId === 'npc-marion-vale')!
+    const marionAfter = next.npcRuntimeStates.find((r) => r.npcId === 'npc-marion-vale')!
     expect(next.activityLog.some((e) => e.message.includes('Unrest in the city'))).toBe(false)
     // Loyalty should not have extra decay (Marion has wages paid, so no unpaid decay either)
     expect(marionAfter.traits.loyalty).toBe(marionBefore.traits.loyalty)
@@ -362,7 +362,7 @@ describe('endDay', () => {
     const workingState = {
       ...initialStateWithIda,
       cityDials: { control: 45, prosperity: 65, unrest: 40, corruption: 30 },
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'working' as const } : { ...npc, assignment: 'idle' as const },
       ),
     }
@@ -375,7 +375,7 @@ describe('endDay', () => {
     const baseState = {
       ...initialStateWithIda,
       cityDials: { control: 45, prosperity: 45, unrest: 40, corruption: 30 },
-      roster: initialStateWithIda.roster.map((npc) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys' ? { ...npc, assignment: 'working' as const } : { ...npc, assignment: 'idle' as const },
       ),
     }

@@ -38,7 +38,7 @@ function canHostGathering(state: GameState, _gatheringType: GatheringType, parti
   const participatingNpcs: NpcRuntimeState[] = []
 
   for (const npcId of participatingNpcIds) {
-    const npc = state.roster.find((entry) => entry.npcId === npcId)
+    const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
     if (!npc) return null
     if (npc.assignment === 'deployed') return null
     if (npc.captivityState?.status === 'captive') return null

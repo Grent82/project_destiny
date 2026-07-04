@@ -10,7 +10,7 @@ export function completeEmployment(
   employeeId: string,
   failureReason?: string,
 ): GameState {
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
+  const employee = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!employee || !employee.currentEmployment) {
     return state
   }
@@ -34,7 +34,7 @@ export function completeEmployment(
   // Clear current employment
   newState = {
     ...newState,
-    roster: newState.roster.map((npc) =>
+    npcRuntimeStates: newState.npcRuntimeStates.map((npc) =>
       npc.npcId === employeeId
         ? { ...npc, currentEmployment: updatedEmployment }
         : npc,
@@ -67,14 +67,14 @@ function payEmploymentBonus(
   employeeId: string,
   bonus: number,
 ): GameState {
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
+  const employee = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!employee) {
     return state
   }
 
   return {
     ...state,
-    roster: state.roster.map((npc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
       npc.npcId === employeeId
         ? {
             ...npc,
@@ -103,7 +103,7 @@ export function failEmployment(
  * Cancels an employment task without completion or failure.
  */
 export function cancelEmployment(state: GameState, employeeId: string): GameState {
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
+  const employee = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!employee || !employee.currentEmployment) {
     return state
   }
@@ -116,7 +116,7 @@ export function cancelEmployment(state: GameState, employeeId: string): GameStat
 
   return {
     ...state,
-    roster: state.roster.map((npc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
       npc.npcId === employeeId
         ? { ...npc, currentEmployment: updatedEmployment }
         : npc,

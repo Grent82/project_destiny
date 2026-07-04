@@ -26,7 +26,7 @@ describe('processAllEmployments', () => {
     const state = {
       ...initialStateWithIda,
       day: 5,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -36,7 +36,7 @@ describe('processAllEmployments', () => {
 
     const result = processAllEmployments(state)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('in-progress')
     expect(employee?.currentEmployment?.startedAtDay).toBe(5)
   })
@@ -66,7 +66,7 @@ describe('processAllEmployments', () => {
       ...initialStateWithIda,
       day: 5,
       rngSeed: 50, // Positive variance for consistent progress
-      roster: [highSkillNpc],
+      npcRuntimeStates: [highSkillNpc],
     }
 
     // Process multiple days to simulate progress
@@ -78,7 +78,7 @@ describe('processAllEmployments', () => {
     }
 
     // Should eventually complete with high skill
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('completed')
   })
 
@@ -99,7 +99,7 @@ describe('processAllEmployments', () => {
       ...initialStateWithIda,
       day: 3,
       rngSeed: 0, // Negative variance for slow progress
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -114,7 +114,7 @@ describe('processAllEmployments', () => {
     // Process employment - should fail because deadline is met with insufficient progress
     const result = processAllEmployments(state)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     // With survival 10: progress = 10/100 * 50 + (0 % 20 - 10) = 5 - 10 = -5 -> clamped to 0
     // Progress is 0, which is < 50, and deadline is met -> should fail
     expect(employee?.currentEmployment?.status).toBe('failed')
@@ -145,7 +145,7 @@ describe('processAllEmployments', () => {
     const state = {
       ...initialStateWithIda,
       day: 2,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment1,
@@ -162,18 +162,18 @@ describe('processAllEmployments', () => {
     const result = processAllEmployments(state)
 
     // First employment should start
-    const employee1 = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee1 = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee1?.currentEmployment?.status).toBe('in-progress')
 
     // Second employment should progress
-    const employee2 = result.roster.find((npc) => npc.npcId === 'npc-second')
+    const employee2 = result.npcRuntimeStates.find((npc) => npc.npcId === 'npc-second')
     expect(employee2?.currentEmployment?.status).toBe('in-progress')
   })
 
   it('skips NPCs without employment', () => {
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: null,
@@ -183,7 +183,7 @@ describe('processAllEmployments', () => {
 
     const result = processAllEmployments(state)
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment).toBeNull()
   })
 })

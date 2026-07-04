@@ -88,7 +88,7 @@ export function equipClothing(state: GameState, params: EquipClothingParams): Ga
   const { npcId, layer, itemId } = params
 
   // Find NPC in roster
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) {
     return state // NPC not found, no change
   }
@@ -119,7 +119,7 @@ export function equipClothing(state: GameState, params: EquipClothingParams): Ga
 
     newState = {
       ...newState,
-      roster: newState.roster.map((n) =>
+      npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
         n.npcId === npcId
           ? {
               ...n,
@@ -136,7 +136,7 @@ export function equipClothing(state: GameState, params: EquipClothingParams): Ga
   // Equip new item
   newState = {
     ...newState,
-    roster: newState.roster.map((n) =>
+    npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,
@@ -170,7 +170,7 @@ export interface UnequipClothingParams {
 export function unequipClothing(state: GameState, params: UnequipClothingParams): GameState {
   const { npcId, layer } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) {
     return state
   }
@@ -189,7 +189,7 @@ export function unequipClothing(state: GameState, params: UnequipClothingParams)
 
   newState = {
     ...newState,
-    roster: newState.roster.map((n) =>
+    npcRuntimeStates: newState.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,

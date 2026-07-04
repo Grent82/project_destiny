@@ -14,7 +14,7 @@ describe('Memory Dialogue Commands', () => {
   const createTestState = (memories = idaRhysRosterEntry.npcMemory): GameState => ({
     ...JSON.parse(
       JSON.stringify({
-        roster: [{ ...idaRhysRosterEntry, npcMemory: memories }],
+        npcRuntimeStates: [{ ...idaRhysRosterEntry, npcMemory: memories }],
         relationships: {
           'player|npc-ida-rhys': {
             affinity: 45,
@@ -235,7 +235,7 @@ describe('Memory Dialogue Commands', () => {
       ]
       const state = createTestState(memories)
       // Override NPC traits to have high empathy
-      state.roster[0]!.traits.empathy = 70
+      state.npcRuntimeStates[0]!.traits.empathy = 70
 
       const result = canNpcInitiateMemoryDialogue(state, 'npc-ida-rhys')
 
@@ -255,7 +255,7 @@ describe('Memory Dialogue Commands', () => {
       ]
       const state = createTestState(memories)
       // High empathy acts as nostalgic proxy since quirks are on NpcDefinition not runtime
-      state.roster[0]!.traits.empathy = 80
+      state.npcRuntimeStates[0]!.traits.empathy = 80
 
       const result = canNpcInitiateMemoryDialogue(state, 'npc-ida-rhys')
 
@@ -277,7 +277,7 @@ describe('Memory Dialogue Commands', () => {
       // Low empathy means threshold is 70, but betrayal requires minTrust 60
       // With empathy 30, threshold is 70, which is > 60, so betrayal should still be suitable
       // Let's test with a topic that requires higher trust than the threshold
-      state.roster[0]!.traits.empathy = 30 // threshold = 70
+      state.npcRuntimeStates[0]!.traits.empathy = 30 // threshold = 70
 
       const result = canNpcInitiateMemoryDialogue(state, 'npc-ida-rhys')
 

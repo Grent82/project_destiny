@@ -49,7 +49,7 @@ export function HouseScreen() {
   const heirs = useAppSelector(selectHouseHeirs)
   const assignableRooms = useAppSelector(selectAssignableHouseRooms)
   const roomOccupancy = useAppSelector(selectHouseRoomOccupancy)
-  const roster = useAppSelector((state) => state.game.roster)
+  const roster = useAppSelector((state) => state.game.npcRuntimeStates)
   const pairingPolicy = useAppSelector((state) => state.game.house.npcPairingPolicy)
   const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)

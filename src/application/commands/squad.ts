@@ -8,7 +8,7 @@ export function addNpcToSelectedSquad(
   state: GameState,
   npcId: string,
 ): GameState {
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
 
   if (!npc) {
     return state
@@ -32,7 +32,7 @@ export function addNpcToSelectedSquad(
     return state
   }
 
-  const updatedRoster = state.roster.map((r) =>
+  const updatedRoster = state.npcRuntimeStates.map((r) =>
     r.npcId === npcId && r.assignment === 'idle'
       ? { ...r, assignment: 'deployed' as const }
       : r,
@@ -40,7 +40,7 @@ export function addNpcToSelectedSquad(
 
   return {
     ...state,
-    roster: updatedRoster,
+    npcRuntimeStates: updatedRoster,
     selectedSquadNpcIds: [...state.selectedSquadNpcIds, npcId],
   }
 }
@@ -55,7 +55,7 @@ export function removeNpcFromSelectedSquad(
 
   return {
     ...state,
-    roster: state.roster.map((npc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
       npc.npcId === npcId && npc.assignment === 'deployed'
         ? { ...npc, assignment: 'idle' }
         : npc,

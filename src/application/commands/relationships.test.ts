@@ -20,7 +20,7 @@ function makeMinimalState(overrides: Partial<GameState> = {}): GameState {
     factionStandings: {},
     factionStates: [],
     districts: [],
-    roster: [],
+    npcRuntimeStates: [],
     cityResources: {
       foodSecurity: 60,
       foodStock: 600,
@@ -138,9 +138,9 @@ describe('applyPassiveDrift', () => {
     // So still fires daily at high loyalty for trust>80
     const state = {
       ...makeMinimalState({ day: 1, relationships: { 'npc-a-to-npc-b': { affinity: 0, respect: 0, fear: 0, trust: 85, loyalty: 0 } } }),
-      roster: [
-        { ...initialStateWithIda.roster[0]!, npcId: 'npc-a', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 70 } },
-        { ...initialStateWithIda.roster[0]!, npcId: 'npc-b', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 72 } },
+      npcRuntimeStates: [
+        { ...initialStateWithIda.npcRuntimeStates[0]!, npcId: 'npc-a', traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, loyalty: 70 } },
+        { ...initialStateWithIda.npcRuntimeStates[0]!, npcId: 'npc-b', traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, loyalty: 72 } },
       ],
     }
     const result = applyPassiveDrift(state)
@@ -154,9 +154,9 @@ describe('applyPassiveDrift', () => {
     // At day=2: 2 % 3 = 2 ≠ 0 → no drift
     const state = {
       ...makeMinimalState({ day: 2, relationships: { 'npc-a-to-npc-b': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } }),
-      roster: [
-        { ...initialStateWithIda.roster[0]!, npcId: 'npc-a', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 70 } },
-        { ...initialStateWithIda.roster[0]!, npcId: 'npc-b', traits: { ...initialStateWithIda.roster[0]!.traits, loyalty: 72 } },
+      npcRuntimeStates: [
+        { ...initialStateWithIda.npcRuntimeStates[0]!, npcId: 'npc-a', traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, loyalty: 70 } },
+        { ...initialStateWithIda.npcRuntimeStates[0]!, npcId: 'npc-b', traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, loyalty: 72 } },
       ],
     }
     const result = applyPassiveDrift(state)
@@ -169,13 +169,13 @@ describe('applyPassiveDrift', () => {
     // effectiveInterval = max(1, round(2 / 0.5)) = max(1, 4) = 4
     // At day=2: 2 % 4 ≠ 0 → no drift
     const holstEntry = {
-      ...initialStateWithIda.roster[1]!,
+      ...initialStateWithIda.npcRuntimeStates[1]!,
       npcId: 'npc-verek-holst',
       traits: { discipline: 78, ambition: 44, empathy: 22, ruthlessness: 52, prudence: 72, curiosity: 31, dominance: 64, loyalty: 38, vanity: 29, zeal: 41 },
     }
     const state = {
       ...makeMinimalState({ day: 2, relationships: { 'npc-ida-rhys-to-npc-verek-holst': { affinity: 0, respect: 0, fear: 0, trust: 70, loyalty: 0 } } }),
-      roster: [...initialStateWithIda.roster, holstEntry],
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, holstEntry],
     }
     const result = applyPassiveDrift(state)
     expect(result.relationships['npc-ida-rhys-to-npc-verek-holst']?.trust).toBe(70)
@@ -218,16 +218,16 @@ describe('applyProximityGains', () => {
     // High compat pair: score ~+20 → multiplier = 1.4 → gain = round(2*1.4) = 3
     const state = {
       ...makeMinimalState(),
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-a',
-          traits: { ...initialStateWithIda.roster[0]!.traits, dominance: 20, empathy: 65 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, dominance: 20, empathy: 65 },
         },
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-b',
-          traits: { ...initialStateWithIda.roster[0]!.traits, dominance: 25, empathy: 70 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, dominance: 25, empathy: 70 },
         },
       ],
     }
@@ -242,16 +242,16 @@ describe('applyProximityGains', () => {
     // For true penalty: use ambition rivalry pair
     const state = {
       ...makeMinimalState(),
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-a',
-          traits: { ...initialStateWithIda.roster[0]!.traits, ambition: 70, curiosity: 30 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, ambition: 70, curiosity: 30 },
         },
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-b',
-          traits: { ...initialStateWithIda.roster[0]!.traits, ambition: 72, curiosity: 30 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, ambition: 72, curiosity: 30 },
         },
       ],
     }
@@ -263,16 +263,16 @@ describe('applyProximityGains', () => {
   it('applies curiosity bonus: either NPC curious >55 gives +1', () => {
     const state = {
       ...makeMinimalState(),
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-a',
-          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 60 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, curiosity: 60 },
         },
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-b',
-          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 30 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, curiosity: 30 },
         },
       ],
     }
@@ -285,16 +285,16 @@ describe('applyProximityGains', () => {
   it('applies curiosity bonus: both NPCs curious >55 gives +2', () => {
     const state = {
       ...makeMinimalState(),
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-a',
-          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 60 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, curiosity: 60 },
         },
         {
-          ...initialStateWithIda.roster[0]!,
+          ...initialStateWithIda.npcRuntimeStates[0]!,
           npcId: 'npc-b',
-          traits: { ...initialStateWithIda.roster[0]!.traits, curiosity: 65 },
+          traits: { ...initialStateWithIda.npcRuntimeStates[0]!.traits, curiosity: 65 },
         },
       ],
     }
@@ -308,7 +308,7 @@ describe('npcMemory — writeNpcMemory', () => {
   it('writes a memory entry to a roster NPC', () => {
     const state = structuredClone(initialStateWithIda)
     const nextState = writeNpcMemory(state, 'npc-ida-rhys', 'Test event')
-    const npc = nextState.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const npc = nextState.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(npc.npcMemory.length).toBe(1)
     expect(npc.npcMemory[0]!.event).toBe('Test event')
   })
@@ -318,7 +318,7 @@ describe('npcMemory — writeNpcMemory', () => {
     for (let i = 0; i < 25; i++) {
       state = writeNpcMemory(state, 'npc-ida-rhys', `event-${i}`)
     }
-    const npc = state.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const npc = state.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(npc.npcMemory.length).toBe(20)
     expect(npc.npcMemory[npc.npcMemory.length - 1]!.event).toBe('event-24')
   })

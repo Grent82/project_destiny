@@ -7,13 +7,13 @@ import { applyRelationshipDelta } from '../adjustRelationship'
 /** NPC bond agency: NPCs build loyalty with fellow roster members through shared work. */
 export function applyBondAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue
 
     const npcName = npc.name
-    const others = next.roster.filter((r) => r.npcId !== npc.npcId)
+    const others = next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId)
 
     // Only trigger bond-building for a subset of NPCs
     if (rng() >= 0.5) continue

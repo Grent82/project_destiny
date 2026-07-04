@@ -25,7 +25,7 @@ describe('progressEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -35,7 +35,7 @@ describe('progressEmployment', () => {
 
     const result = progressEmployment(state, 'employment-test-123')
 
-    const employee = result.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.status).toBe('in-progress') // May complete if progress >= 100
   })
 
@@ -69,7 +69,7 @@ describe('progressEmployment', () => {
 
     const state: GameState = {
       ...initialStateWithIda,
-      roster: [{ ...highSkillNpc, currentEmployment: employment }],
+      npcRuntimeStates: [{ ...highSkillNpc, currentEmployment: employment }],
       rngSeed: 50, // Positive variance
     }
 
@@ -81,7 +81,7 @@ describe('progressEmployment', () => {
       result = progressEmployment(result, 'employment-complete-789')
     }
 
-    const employee = result.roster.find((npc) => npc.npcId === highSkillNpc.npcId)
+    const employee = result.npcRuntimeStates.find((npc) => npc.npcId === highSkillNpc.npcId)
     // After enough progress, should be completed
     expect(employee?.currentEmployment?.status).toBe('completed')
     expect(employee?.currentEmployment?.completedAtDay).toBeGreaterThan(0)
@@ -100,7 +100,7 @@ describe('progressEmployment', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: pendingEmployment,
@@ -111,7 +111,7 @@ describe('progressEmployment', () => {
     const result = progressEmployment(state, 'employment-pending-123')
 
     // Should remain pending
-    expect(result.roster[0].currentEmployment?.status).toBe('pending')
+    expect(result.npcRuntimeStates[0].currentEmployment?.status).toBe('pending')
   })
 
   it('returns state unchanged for non-existent employment', () => {

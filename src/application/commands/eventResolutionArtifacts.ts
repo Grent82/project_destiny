@@ -145,7 +145,7 @@ export function buildResolvedEventArtifacts(
       case 'adjustNpcState': {
         if (outcome.subject && outcome.axis && typeof outcome.delta === 'number' && outcome.delta !== 0) {
           const npc = resolveNpcStateSubject(
-            state.roster,
+            state.npcRuntimeStates,
             outcome.subject as `npcId:${string}` | 'highest-stress' | 'lowest-morale' | 'highest-loyalty',
           )
           const npcName = npc?.name ?? 'A retainer'

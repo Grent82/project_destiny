@@ -15,7 +15,7 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     factionStandings: overrides.factionStandings ?? {},
     factionStates: overrides.factionStates ?? [],
     districts: overrides.districts ?? [],
-    roster: overrides.roster ?? [],
+    npcRuntimeStates: overrides.npcRuntimeStates ?? [],
     // inventory removed - migrated to inventoryState
     houseStorageCapacity: overrides.houseStorageCapacity ?? 40,
     installedHouseModules: overrides.installedHouseModules ?? [],

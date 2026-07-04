@@ -184,7 +184,7 @@ export const worldReducers = {
     }
 
     if (delta < -10) {
-      state.roster.forEach((rosterNpc) => {
+      state.npcRuntimeStates.forEach((rosterNpc) => {
         const npcDef = getNpcDefinitions().find((n) => n.id === rosterNpc.npcId)
         if (npcDef?.factionAffinityId === factionId) {
           rosterNpc.traits.loyalty = Math.max(0, (rosterNpc.traits.loyalty ?? 50) - 5)

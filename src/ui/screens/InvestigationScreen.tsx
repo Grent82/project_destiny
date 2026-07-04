@@ -18,7 +18,7 @@ export function InvestigationScreen() {
   const navigate = useNavigate()
   const data = useAppSelector(selectActiveInvestigationQuest)
   const lastResultData = useAppSelector(selectLastInvestigationResult)
-  const roster = useAppSelector((s) => s.game.roster)
+  const roster = useAppSelector((s) => s.game.npcRuntimeStates)
   const activeQuestRuntime = useAppSelector((state) =>
     data ? state.game.activeQuests.find((quest) => quest.questId === data.investigation.questId) ?? null : null,
   )

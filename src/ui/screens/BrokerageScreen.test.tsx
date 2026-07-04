@@ -24,7 +24,7 @@ function stateWithBrokerageActivity() {
   return withKitchenState(
     {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((npc) => {
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) => {
         if (npc.npcId === 'npc-marion-vale') {
           return {
             ...npc,
@@ -139,7 +139,7 @@ describe('BrokerageScreen', () => {
   it('shows visible condition and drift signals for bound cases', () => {
     renderBrokerageScreen({
       ...stateWithBrokerageActivity(),
-      roster: stateWithBrokerageActivity().roster.map((npc) =>
+      npcRuntimeStates: stateWithBrokerageActivity().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys'
           ? {
               ...npc,
@@ -160,7 +160,7 @@ describe('BrokerageScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Place in food service' }))
 
-    const marion = store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')
+    const marion = store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')
     expect(marion?.assignment).toBe('working')
     expect(marion?.dutyPostRoomId).toBe('room-kitchen')
     expect(screen.getByRole('button', { name: 'Remove from food service' })).toBeInTheDocument()
@@ -172,7 +172,7 @@ describe('BrokerageScreen', () => {
         {
           ...initialGameStateSnapshot,
           availableForHire: [],
-          roster: initialGameStateSnapshot.roster.map((npc) => ({
+          npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) => ({
             ...npc,
             bondStatus: null,
           })),
@@ -206,7 +206,7 @@ describe('BrokerageScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Take under debt contract' }))
 
-    const ida = store.getState().game.roster.find((npc) => npc.npcId === 'npc-ida-rhys')
+    const ida = store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === 'npc-ida-rhys')
     expect(ida?.bondStatus?.ownerType).toBe('player')
     expect(ida?.bondStatus?.entryReason).toBe('debt-settlement')
     expect(store.getState().game.availableForHire).toHaveLength(0)
@@ -240,7 +240,7 @@ describe('BrokerageScreen', () => {
     const store = renderBrokerageScreen({
       ...stateWithBrokerageActivity(),
       money: 100,
-      roster: stateWithBrokerageActivity().roster.map((npc) =>
+      npcRuntimeStates: stateWithBrokerageActivity().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale' && npc.bondStatus
           ? {
               ...npc,
@@ -258,7 +258,7 @@ describe('BrokerageScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Transfer to Noble House Agent (126 Marks)' }))
 
     expect(store.getState().game.money).toBe(226)
-    const marion = store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')
+    const marion = store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')
     expect(marion?.assignment).toBe('transferred')
     expect(marion?.bondStatus?.ownerType).toBe('npc')
     expect(screen.getByText(/held by Noble House Agent/i)).toBeInTheDocument()
@@ -267,7 +267,7 @@ describe('BrokerageScreen', () => {
   it('surfaces the ongoing moral and civic pressure of bonded labor', () => {
     renderBrokerageScreen({
       ...stateWithBrokerageActivity(),
-      roster: stateWithBrokerageActivity().roster.map((npc) =>
+      npcRuntimeStates: stateWithBrokerageActivity().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
@@ -326,7 +326,7 @@ describe('BrokerageScreen', () => {
   it('shows health drift when NPC has negative health trend', () => {
     renderBrokerageScreen({
       ...stateWithBrokerageActivity(),
-      roster: stateWithBrokerageActivity().roster.map((npc) =>
+      npcRuntimeStates: stateWithBrokerageActivity().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-ida-rhys'
           ? {
               ...npc,
@@ -347,9 +347,9 @@ describe('BrokerageScreen', () => {
     const user = userEvent.setup()
     const store = renderBrokerageScreen({
       ...withKitchenState(initialGameStateSnapshot, 'intact'),
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0],
+          ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-marion-vale',
           states: { health: 80, fatigue: 10, stress: 15, morale: 60, fear: 5, anger: 10, hunger: 20, injury: 0, intoxication: 0, hygiene: 80 },
           bondStatus: {
@@ -367,7 +367,7 @@ describe('BrokerageScreen', () => {
           },
         },
         {
-          ...initialGameStateSnapshot.roster[1],
+          ...initialGameStateSnapshot.npcRuntimeStates[1],
           npcId: 'npc-ida-rhys',
           states: { health: 75, fatigue: 15, stress: 20, morale: 55, fear: 8, anger: 12, hunger: 25, injury: 0, intoxication: 0, hygiene: 75 },
           bondStatus: {
@@ -394,7 +394,7 @@ describe('BrokerageScreen', () => {
     const transferButtons = screen.getAllByRole('button', { name: /Offer for transfer/i })
     await user.click(transferButtons[0])
 
-    const marion = store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')
+    const marion = store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')
     expect(marion?.bondStatus?.forSale).toBe(true)
   })
 })

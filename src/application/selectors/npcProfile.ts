@@ -22,7 +22,7 @@ export interface NpcCombatSnapshot {
 
 /**
  * Full NPC profile — the canonical merge of all 6 data sources:
- * state.roster, state.relationships, state.house.houseHeirs,
+ * state.npcRuntimeStates, state.relationships, state.house.houseHeirs,
  * state.activeCombat, contentCatalog.npcsById, contentCatalog.dialogueTreesById.
  *
  * Use this in any component that needs a complete view of one NPC.
@@ -95,7 +95,7 @@ export function selectFullNpcProfile(state: RootState, npcId: string): FullNpcPr
   const base = selectRosterDetail(state, npcId)
   if (!base) return null
 
-  const runtime = state.game.roster.find((n) => n.npcId === npcId)!
+  const runtime = state.game.npcRuntimeStates.find((n) => n.npcId === npcId)!
 
   // Relationship axes
   const playerToNpc = getRelationship(state.game.relationships, 'player', npcId)
@@ -142,7 +142,7 @@ export function selectFullNpcProfile(state: RootState, npcId: string): FullNpcPr
  */
 export function createSelectFullNpcProfile(npcId: string) {
   return createSelector(
-    (state: RootState) => state.game.roster,
+    (state: RootState) => state.game.npcRuntimeStates,
     (state: RootState) => state.game.relationships,
     (state: RootState) => state.game.house.houseHeirs,
     (state: RootState) => state.game.activeCombat,

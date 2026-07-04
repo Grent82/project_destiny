@@ -48,7 +48,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
 function stateWithActors(captive: NpcRuntimeState, actor: NpcRuntimeState): GameState {
   return {
     ...initialGameStateSnapshot,
-    roster: [...initialGameStateSnapshot.roster, captive, actor],
+    npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, captive, actor],
   }
 }
 
@@ -100,7 +100,7 @@ describe('applyAbstractCustodySimulation', () => {
     )
 
     expect(next.npcCaptivityStates[captiveId]?.condition).toBe('broken')
-    expect(next.roster.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(14)
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(14)
     expect(next.pendingEvents.some((event) => event.eventId === ABSTRACT_CUSTODY_ALERT_EVENT_ID)).toBe(true)
     expect(
       next.pendingEvents.find((event) => event.eventId === ABSTRACT_CUSTODY_ALERT_EVENT_ID)?.instanceId,
@@ -154,7 +154,7 @@ describe('applyAbstractCustodySimulation', () => {
     )
 
     expect(next.npcCaptivityStates[captiveId]?.condition).toBe('hurt')
-    expect(next.roster.find((npc) => npc.npcId === captiveId)?.states.fear).toBeLessThan(36)
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeLessThan(36)
   })
 
   it('preserves abstract custody consequences when the site becomes concrete later', () => {

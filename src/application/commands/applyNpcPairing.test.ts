@@ -52,7 +52,7 @@ function npcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
 function stateWithPair(npcA: NpcRuntimeState, npcB: NpcRuntimeState, relOverrides?: Record<string, unknown>): GameState {
   return {
     ...initialGameStateSnapshot,
-    roster: [...initialGameStateSnapshot.roster, npcA, npcB],
+    npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, npcA, npcB],
     relationships: {
       ...initialGameStateSnapshot.relationships,
       [buildRelationshipKey(npcA.npcId, npcB.npcId)]: {
@@ -138,7 +138,7 @@ describe('applyNpcPairing — stage progression', () => {
     const worldNpc = worldNpcBase({ npcId: 'npc-world-a' })
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [...initialGameStateSnapshot.roster, rosterNpc],
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, rosterNpc],
       worldNpcStates: [...initialGameStateSnapshot.worldNpcStates, worldNpc],
       relationships: {
         ...initialGameStateSnapshot.relationships,
@@ -300,7 +300,7 @@ describe('applyNpcPairing — pregnancy', () => {
     })
     // alwaysRng returns 0, which is < 0.02 → pregnancy triggers
     const result = applyNpcPairing(state, alwaysRng)
-    const hasPregnancy = result.roster.some((n) => n.pregnancyState !== undefined)
+    const hasPregnancy = result.npcRuntimeStates.some((n) => n.pregnancyState !== undefined)
     expect(hasPregnancy).toBe(true)
   })
 
@@ -314,7 +314,7 @@ describe('applyNpcPairing — pregnancy', () => {
       'discouraged',
     )
     const result = applyNpcPairing(state, alwaysRng)
-    expect(result.roster.some((n) => n.pregnancyState)).toBe(false)
+    expect(result.npcRuntimeStates.some((n) => n.pregnancyState)).toBe(false)
   })
 
   it('pregnancy sets partnerNpcId on the pregnant NPC', () => {
@@ -324,7 +324,7 @@ describe('applyNpcPairing — pregnancy', () => {
       affinity: 70, trust: 65, loyalty: 45, intimacyStage: 'committed' as const,
     })
     const result = applyNpcPairing(state, alwaysRng)
-    const pregnant = result.roster.find((n) => n.pregnancyState)
+    const pregnant = result.npcRuntimeStates.find((n) => n.pregnancyState)
     expect(pregnant?.pregnancyState?.partnerNpcId).toBeTruthy()
     expect(pregnant?.pregnancyState?.context).toBe('consensual')
   })

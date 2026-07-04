@@ -77,7 +77,7 @@ export function computeBestInvestigationSkill(state: GameState, npcIds: string[]
   let bestSkillValue = 0
 
   npcIds.forEach((npcId) => {
-    const rosterNpc = state.roster.find((npc) => npc.npcId === npcId)
+    const rosterNpc = state.npcRuntimeStates.find((npc) => npc.npcId === npcId)
     if (!rosterNpc) return
 
     INVESTIGATION_SKILLS.forEach((skill) => {
@@ -96,7 +96,7 @@ export function computeApproachSkillValue(
   let bestSkillValue = 0
 
   npcIds.forEach((npcId) => {
-    const rosterNpc = state.roster.find((npc) => npc.npcId === npcId)
+    const rosterNpc = state.npcRuntimeStates.find((npc) => npc.npcId === npcId)
     if (!rosterNpc) return
 
     primarySkills.forEach((skill) => {
@@ -144,7 +144,7 @@ export function buildInvestigationOperativeResults(
   difficultyModifier = 0,
 ): InvestigationOperativeResult[] {
   return npcIds.flatMap((npcId) => {
-    const rosterNpc = state.roster.find((npc) => npc.npcId === npcId)
+    const rosterNpc = state.npcRuntimeStates.find((npc) => npc.npcId === npcId)
     if (!rosterNpc) return []
 
     const rankedSkills = primarySkills

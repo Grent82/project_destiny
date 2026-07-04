@@ -86,7 +86,7 @@ describe('resolveRaid action', () => {
         ...initialGameStateSnapshot,
         money: 500,
         house: { ...initialGameStateSnapshot.house, fortificationLevel: 5 },
-        roster: initialGameStateSnapshot.roster.map((n) =>
+        npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
           n.npcId === SQUAD_NPC ? { ...n, assignment: 'defense' as const } : n,
         ),
       }
@@ -120,7 +120,7 @@ describe('resolveRaid action', () => {
         ...initialGameStateSnapshot,
         money: 500,
         house: { ...initialGameStateSnapshot.house, fortificationLevel: 5 },
-        roster: initialGameStateSnapshot.roster.map((n) =>
+        npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
           n.npcId === SQUAD_NPC ? { ...n, assignment: 'defense' as const } : n,
         ),
       }
@@ -134,17 +134,17 @@ describe('resolveRaid action', () => {
   describe('the_remainder raid', () => {
     it('reduces morale when undefended', () => {
       const store = createGameStore()
-      const moraleBefore = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.morale
+      const moraleBefore = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.morale
       store.dispatch(gameActions.resolveRaid({ raidStrength: 30, raidType: 'the_remainder' }))
-      const moraleAfter = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.morale
+      const moraleAfter = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.morale
       expect(moraleAfter).toBeLessThan(moraleBefore)
     })
 
     it('increases stress when undefended', () => {
       const store = createGameStore()
-      const stressBefore = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.stress
+      const stressBefore = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.stress
       store.dispatch(gameActions.resolveRaid({ raidStrength: 30, raidType: 'the_remainder' }))
-      const stressAfter = store.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.stress
+      const stressAfter = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.stress
       expect(stressAfter).toBeGreaterThan(stressBefore)
     })
   })

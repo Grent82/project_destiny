@@ -19,8 +19,8 @@ export const selectRosterCapacity = createSelector([selectGame], (game) => {
     total: renownSlots + houseBonus,
     renownSlots,
     houseBonus,
-    current: game.roster.length,
-    isFull: game.roster.length >= renownSlots + houseBonus,
+    current: game.npcRuntimeStates.length,
+    isFull: game.npcRuntimeStates.length >= renownSlots + houseBonus,
   }
 })
 

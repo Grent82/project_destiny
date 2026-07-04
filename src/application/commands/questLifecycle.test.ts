@@ -256,7 +256,7 @@ describe('failed quest archiving and rediscovery prevention', () => {
 describe('applyMidQuestBeats', () => {
   const mockState = {
     npcCaptivityStates: {},
-    roster: [],
+    npcRuntimeStates: [],
     completedQuestIds: [],
     activeQuests: [],
     day: 1,

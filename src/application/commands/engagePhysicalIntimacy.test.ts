@@ -48,7 +48,7 @@ function stateWithRelationship(overrides: {
       },
     },
     lastFiredDay: {},
-    roster: [initialStateWithIda.roster[1]!],
+    npcRuntimeStates: [initialStateWithIda.npcRuntimeStates[1]!],
   }
 }
 
@@ -113,7 +113,7 @@ describe('engagePhysicalIntimacy', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
     const deployedState = {
       ...state,
-      roster: [{ ...state.roster[0]!, assignment: 'deployed' as const }],
+      npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignment: 'deployed' as const }],
     }
 
     const result = engagePhysicalIntimacy(deployedState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
@@ -125,7 +125,7 @@ describe('engagePhysicalIntimacy', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
     const wardState = {
       ...state,
-      roster: [{ ...state.roster[0]!, status: 'ward' as const }],
+      npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, status: 'ward' as const }],
     }
 
     const result = engagePhysicalIntimacy(wardState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
@@ -137,7 +137,7 @@ describe('engagePhysicalIntimacy', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
     const captiveState = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? {
               ...n,
@@ -182,7 +182,7 @@ describe('engagePhysicalIntimacy', () => {
 
     try {
       const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
-      const npc = result.roster.find((n) => n.npcId === NPC_ID)
+      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
       expect(npc?.pregnancyState?.context).toBe('consensual')
       expect(npc?.pregnancyState?.daysElapsed).toBe(0)
       expect(npc?.pregnancyState?.wanted).toBe(null)
@@ -203,7 +203,7 @@ describe('engagePhysicalIntimacy', () => {
 
     try {
       const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'want-pregnancy' })
-      const npc = result.roster.find((n) => n.npcId === NPC_ID)
+      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
       expect(npc?.pregnancyState?.wanted).toBe(true)
       expect(result.activityLog[0]?.message).toMatch(/This was what you hoped for/)
     } finally {
@@ -223,7 +223,7 @@ describe('engagePhysicalIntimacy', () => {
 
     try {
       const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'avoid-pregnancy' })
-      const npc = result.roster.find((n) => n.npcId === NPC_ID)
+      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
       expect(npc?.pregnancyState?.wanted).toBe(false)
       expect(result.activityLog[0]?.message).toMatch(/This was not what you planned/)
     } finally {
@@ -246,7 +246,7 @@ describe('engagePhysicalIntimacy', () => {
     try {
       // Without contraception item (item not loaded in test environment)
       const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
-      const npc = result.roster.find((n) => n.npcId === NPC_ID)
+      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
       // With random 0.15 < risk 0.20, pregnancy SHOULD occur without contraception
       expect(npc?.pregnancyState).toBeDefined()
     } finally {
@@ -268,7 +268,7 @@ describe('engagePhysicalIntimacy', () => {
 
     try {
       const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
-      const npc = result.roster.find((n) => n.npcId === NPC_ID)
+      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
       // With random=0.25 > risk=0.20, no pregnancy should occur
       expect(npc?.pregnancyState).toBeUndefined()
     } finally {

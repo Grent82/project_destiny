@@ -23,7 +23,7 @@ const startingState = {
   ...initialGameStateSnapshot,
   money: 50, // barely enough — economic stress
   selectedSquadNpcIds: [],
-  roster: initialGameStateSnapshot.roster.map((npc) =>
+  npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
     npc.npcId === SQUAD_NPC
       ? {
           ...npc,
@@ -61,7 +61,7 @@ export const failurePathScenario: PlaythroughScenario = {
 
     assertStep('Verify compromised starting condition', [
       assertion('low-health', 'NPC starts critically low on health', (s) => {
-        const npc = s.roster.find((n) => n.npcId === SQUAD_NPC)
+        const npc = s.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
         return (npc?.states.health ?? 100) < 50
       }),
       assertion('low-money', 'Starting money is constrained', (s) => s.money < 100),
@@ -76,7 +76,7 @@ export const failurePathScenario: PlaythroughScenario = {
 
     assertStep('State remains coherent after rest', [
       assertion('day-advanced', 'Day advanced', (s) => s.day >= 2),
-      assertion('npc-alive', 'NPC still on roster', (s) => s.roster.some((n) => n.npcId === SQUAD_NPC)),
+      assertion('npc-alive', 'NPC still on roster', (s) => s.npcRuntimeStates.some((n) => n.npcId === SQUAD_NPC)),
     ]),
 
     // Phase 2: Deploy compromised squad (adverse decision — push past limits)
@@ -109,7 +109,7 @@ export const failurePathScenario: PlaythroughScenario = {
 
     assertStep('After day 1 field — game still coherent', [
       assertion('no-negative-health', 'No roster NPC has negative health', (s) =>
-        s.roster.every((n) => n.states.health >= 0),
+        s.npcRuntimeStates.every((n) => n.states.health >= 0),
       ),
       assertion('expedition-state-valid', 'Expedition status is a known value', (s) =>
         ['idle', 'traveling', 'returned'].includes(s.expeditionState.status),
@@ -139,7 +139,7 @@ export const failurePathScenario: PlaythroughScenario = {
 
     assertStep('World remains coherent after failure path', [
       assertion('no-negative-health-final', 'No NPC health below zero', (s) =>
-        s.roster.every((n) => n.states.health >= 0),
+        s.npcRuntimeStates.every((n) => n.states.health >= 0),
       ),
       assertion('money-valid', 'Money is a non-negative number', (s) => s.money >= 0),
       assertion('day-positive', 'Day is positive', (s) => s.day > 0),
@@ -152,7 +152,7 @@ export const failurePathScenario: PlaythroughScenario = {
   invariants: [
     assertion('money-non-negative', 'Money must never go negative', (s) => s.money >= 0),
     assertion('health-non-negative', 'No NPC health below zero', (s) =>
-      s.roster.every((n) => n.states.health >= 0),
+      s.npcRuntimeStates.every((n) => n.states.health >= 0),
     ),
   ],
 }

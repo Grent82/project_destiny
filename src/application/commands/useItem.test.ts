@@ -61,12 +61,12 @@ describe('useItem — consume heal', () => {
     const state = stateWithItem('item-salve-burngrade')
     const s = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === targetId ? { ...n, states: { ...n.states, health: 60 } } : n,
       ),
     }
     const result = useItem(s, { instanceId: 'test-inst-item-salve-burngrade', action: 'consume', targetNpcId: targetId })
-    const npc = result.roster.find((n) => n.npcId === targetId)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === targetId)!
     expect(npc.states.health).toBe(66) // 60 + 6
     expect(result.inventoryState.player.bagContainers).toHaveLength(0)
     expect(result.activityLog[0]?.message).toContain('+6 health')
@@ -77,12 +77,12 @@ describe('useItem — consume heal', () => {
     const state = stateWithItem('item-salve-burngrade')
     const s = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === targetId ? { ...n, states: { ...n.states, health: 98 } } : n,
       ),
     }
     const result = useItem(s, { instanceId: 'test-inst-item-salve-burngrade', action: 'consume', targetNpcId: targetId })
-    const npc = result.roster.find((n) => n.npcId === targetId)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === targetId)!
     expect(npc.states.health).toBe(100)
   })
 

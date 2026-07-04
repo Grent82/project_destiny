@@ -92,16 +92,16 @@ describe('applyEndOfDayResources', () => {
       cityResources: { ...initialGameStateSnapshot.cityResources, foodSecurity: 30 },
     }
     const result = applyEndOfDayResources(lowFoodState)
-    for (const npc of result.roster) {
-      const before = initialGameStateSnapshot.roster.find((r) => r.npcId === npc.npcId)!
+    for (const npc of result.npcRuntimeStates) {
+      const before = initialGameStateSnapshot.npcRuntimeStates.find((r) => r.npcId === npc.npcId)!
       expect(npc.states.hunger).toBe(Math.min(100, before.states.hunger + 10))
     }
   })
 
   it('does not apply extra hunger when foodSecurity is 40 or above', () => {
     const result = applyEndOfDayResources(initialGameStateSnapshot)
-    for (const npc of result.roster) {
-      const before = initialGameStateSnapshot.roster.find((r) => r.npcId === npc.npcId)!
+    for (const npc of result.npcRuntimeStates) {
+      const before = initialGameStateSnapshot.npcRuntimeStates.find((r) => r.npcId === npc.npcId)!
       expect(npc.states.hunger).toBe(before.states.hunger)
     }
   })

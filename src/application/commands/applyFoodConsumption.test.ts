@@ -24,9 +24,9 @@ describe('applyFoodConsumption', () => {
   it('consumes food for roster members', () => {
     const state = makeState({
       cityResources: { ...initialGameStateSnapshot.cityResources, foodStock: 10000 },
-      roster: [
-        ...initialGameStateSnapshot.roster,
-        { ...initialGameStateSnapshot.roster[0], npcId: 'npc-test-2' },
+      npcRuntimeStates: [
+        ...initialGameStateSnapshot.npcRuntimeStates,
+        { ...initialGameStateSnapshot.npcRuntimeStates[0], npcId: 'npc-test-2' },
       ],
     })
     const result = applyFoodConsumption(state)
@@ -70,10 +70,10 @@ describe('applyFoodConsumption', () => {
 describe('calculateTotalConsumption', () => {
   it('calculates roster consumption', () => {
     const state = makeState({
-      roster: [
-        { ...initialGameStateSnapshot.roster[0], npcId: 'npc-1' },
-        { ...initialGameStateSnapshot.roster[0], npcId: 'npc-2' },
-        { ...initialGameStateSnapshot.roster[0], npcId: 'npc-3' },
+      npcRuntimeStates: [
+        { ...initialGameStateSnapshot.npcRuntimeStates[0], npcId: 'npc-1' },
+        { ...initialGameStateSnapshot.npcRuntimeStates[0], npcId: 'npc-2' },
+        { ...initialGameStateSnapshot.npcRuntimeStates[0], npcId: 'npc-3' },
       ],
       districts: [],
     })
@@ -85,7 +85,7 @@ describe('calculateTotalConsumption', () => {
 
   it('calculates district consumption', () => {
     const state = makeState({
-      roster: [],
+      npcRuntimeStates: [],
       districts: [
         { ...initialGameStateSnapshot.districts[0], districtId: 'dist-1' },
         { ...initialGameStateSnapshot.districts[0], districtId: 'dist-2' },
@@ -99,9 +99,9 @@ describe('calculateTotalConsumption', () => {
 
   it('combines roster and district consumption', () => {
     const state = makeState({
-      roster: [
-        { ...initialGameStateSnapshot.roster[0], npcId: 'npc-1' },
-        { ...initialGameStateSnapshot.roster[0], npcId: 'npc-2' },
+      npcRuntimeStates: [
+        { ...initialGameStateSnapshot.npcRuntimeStates[0], npcId: 'npc-1' },
+        { ...initialGameStateSnapshot.npcRuntimeStates[0], npcId: 'npc-2' },
       ],
       districts: [
         { ...initialGameStateSnapshot.districts[0], districtId: 'dist-1' },

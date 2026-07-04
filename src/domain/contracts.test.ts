@@ -218,7 +218,7 @@ describe('gameStateSchema', () => {
           marketPressure: 58,
         },
       ],
-      roster: [],
+      npcRuntimeStates: [],
       // inventory removed - migrated to inventoryState
       cityResources: {
         foodSecurity: 62,
@@ -255,7 +255,7 @@ describe('gameStateSchema', () => {
       hasSeenOpening: true,
       factionStates: [],
       districts: [],
-      roster: [],
+      npcRuntimeStates: [],
       // inventory removed - migrated to inventoryState
       cityResources: {
         foodSecurity: 62,
@@ -311,7 +311,7 @@ describe('gameStateSchema', () => {
       hasSeenOpening: true,
       factionStates: [],
       districts: [],
-      roster: [],
+      npcRuntimeStates: [],
       // inventory removed - migrated to inventoryState
       cityResources: {
         foodSecurity: 62,

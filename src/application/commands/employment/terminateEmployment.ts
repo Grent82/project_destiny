@@ -37,7 +37,7 @@ export function terminateEmployment(
 ): GameState {
   const { employeeId, terminationReason, penaltyPaid = false } = params
 
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
+  const employee = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!employee || !employee.currentEmployment) {
     return state
   }
@@ -56,7 +56,7 @@ export function terminateEmployment(
 
   let newState = {
     ...state,
-    roster: state.roster.map((npc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
       npc.npcId === employeeId
         ? { ...npc, currentEmployment: updatedEmployment }
         : npc,

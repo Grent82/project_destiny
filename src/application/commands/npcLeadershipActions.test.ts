@@ -15,7 +15,7 @@ const NPC_ID = idaRhysRosterEntry.npcId
 function withNpcOverrides(state: GameState, npcId: string, overrides: Partial<NpcRuntimeState>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, ...overrides } : n)),
   }
 }
 
@@ -25,7 +25,7 @@ describe('npcConsolidatePower', () => {
       factionRelationships: [{ factionId: 'faction-test', standing: 10 }],
     })
     const result = npcConsolidatePower(state, NPC_ID)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.factionRelationships[0]!.standing).toBeGreaterThan(10)
   })
 
@@ -51,7 +51,7 @@ describe('npcChallengeAuthority', () => {
       factionRelationships: [{ factionId: 'faction-test', standing: 10 }],
     })
     const result = npcChallengeAuthority(state, NPC_ID)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.factionRelationships[0]!.standing).toBeLessThan(10)
     expect(npc.states.morale).toBeGreaterThan(idaRhysRosterEntry.states.morale)
   })
@@ -60,14 +60,14 @@ describe('npcChallengeAuthority', () => {
 describe('npcSocialize', () => {
   it('increases affinity and trust between actor and target', () => {
     const result = npcSocialize(initialStateWithIda, NPC_ID)
-    const marionId = initialStateWithIda.roster[0]!.npcId
+    const marionId = initialStateWithIda.npcRuntimeStates[0]!.npcId
     const rel = result.relationships[`${NPC_ID}-to-${marionId}`]
     expect(rel?.affinity ?? 0).toBeGreaterThan(0)
     expect(rel?.trust ?? 0).toBeGreaterThan(0)
   })
 
   it('no-ops when there is no other idle NPC', () => {
-    const state: GameState = { ...initialStateWithIda, roster: [initialStateWithIda.roster.find((n) => n.npcId === NPC_ID)!] }
+    const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [initialStateWithIda.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!] }
     const result = npcSocialize(state, NPC_ID)
     expect(result).toBe(state)
   })
@@ -76,7 +76,7 @@ describe('npcSocialize', () => {
 describe('npcGossip', () => {
   it('increases affinity slightly between actor and target', () => {
     const result = npcGossip(initialStateWithIda, NPC_ID)
-    const marionId = initialStateWithIda.roster[0]!.npcId
+    const marionId = initialStateWithIda.npcRuntimeStates[0]!.npcId
     const rel = result.relationships[`${NPC_ID}-to-${marionId}`]
     expect(rel?.affinity ?? 0).toBeGreaterThan(0)
   })
@@ -85,7 +85,7 @@ describe('npcGossip', () => {
 describe('npcMediateConflict', () => {
   it('improves affinity between the two idle NPCs with the worst relationship', () => {
     let state = initialStateWithIda
-    const marionId = state.roster[0]!.npcId
+    const marionId = state.npcRuntimeStates[0]!.npcId
     state = {
       ...state,
       relationships: {
@@ -93,13 +93,13 @@ describe('npcMediateConflict', () => {
         [`${marionId}-to-${NPC_ID}`]: { affinity: -20, respect: 0, fear: 0, trust: 0, loyalty: 0 },
         [`${NPC_ID}-to-${marionId}`]: { affinity: -20, respect: 0, fear: 0, trust: 0, loyalty: 0 },
       },
-      roster: [
-        state.roster[0]!,
-        { ...state.roster[1]!, assignment: 'idle' as const },
+      npcRuntimeStates: [
+        state.npcRuntimeStates[0]!,
+        { ...state.npcRuntimeStates[1]!, assignment: 'idle' as const },
       ],
     }
     // add a third NPC as the mediator
-    state = { ...state, roster: [...state.roster, { ...idaRhysRosterEntry, npcId: 'npc-mediator', name: 'Mediator', assignment: 'idle' as const }] }
+    state = { ...state, npcRuntimeStates: [...state.npcRuntimeStates, { ...idaRhysRosterEntry, npcId: 'npc-mediator', name: 'Mediator', assignment: 'idle' as const }] }
 
     const result = npcMediateConflict(state, 'npc-mediator')
 

@@ -12,9 +12,9 @@ describe('npcMemory selectors', () => {
     relationships: Record<string, RelationshipAxes> = {},
   ): GameState => ({
     ...initialGameStateSnapshot,
-    roster: [
+    npcRuntimeStates: [
       {
-        ...initialGameStateSnapshot.roster[0]!,
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
         npcMemory: memories,
         factionRelationships: [],
       },

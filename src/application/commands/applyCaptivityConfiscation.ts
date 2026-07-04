@@ -68,14 +68,14 @@ export function applyCaptivityConfiscation(
 ): GameState {
   const { npcId, captivityType } = payload
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   // Only confiscate if NPC is actually captive
   if (npc.captivityState?.status !== 'captive') return state
 
   const rules = CONFISCATION_RULES[captivityType]
-  let next: GameState = { ...state, roster: [...state.roster], inventoryState: { ...state.inventoryState, npcInventories: { ...state.inventoryState.npcInventories } } }
+  let next: GameState = { ...state, npcRuntimeStates: [...state.npcRuntimeStates], inventoryState: { ...state.inventoryState, npcInventories: { ...state.inventoryState.npcInventories } } }
   const nextNpc = { ...npc }
 
   // Remove weapons from equipment
@@ -155,8 +155,8 @@ export function applyCaptivityConfiscation(
   }
 
   // Update roster
-  const nextRoster = next.roster.map((n) => (n.npcId === npcId ? nextNpc : n))
-  next.roster = nextRoster
+  const nextRoster = next.npcRuntimeStates.map((n) => (n.npcId === npcId ? nextNpc : n))
+  next.npcRuntimeStates = nextRoster
 
   // Add activity log entry
   const confiscationMessages: Record<CaptivityType, string> = {

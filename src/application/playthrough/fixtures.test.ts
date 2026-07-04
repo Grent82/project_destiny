@@ -18,7 +18,7 @@ describe('playthrough fixtures and helpers', () => {
       const state = withState({ day: 15, money: 0 })
       expect(state.day).toBe(15)
       expect(state.money).toBe(0)
-      expect(state.roster).toBeDefined()
+      expect(state.npcRuntimeStates).toBeDefined()
     })
 
     it('fixtureDay15 produces day 15 state', () => {

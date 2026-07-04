@@ -76,7 +76,7 @@ function spawnAuthoredRumors(state: GameState): GameState {
  * At-home assignments (idle/training/recovering/assigned_title) → house home district.
  * Out assignments (working/deployed/defense) → explicit assignedDistrictId, then NPC definition home.
  */
-function effectiveDistrictId(npc: GameState['roster'][number], houseDistrictId: string): string | null {
+function effectiveDistrictId(npc: GameState['npcRuntimeStates'][number], houseDistrictId: string): string | null {
   const atHome = ['idle', 'training', 'recovering', 'assigned_title'] as const
   if ((atHome as readonly string[]).includes(npc.assignment)) return houseDistrictId
   return npc.assignedDistrictId ?? contentCatalog.npcsById.get(npc.npcId)?.districtId ?? null
@@ -93,7 +93,7 @@ function computePassChance(rumor: Rumor, state: GameState): number {
   const base = 0.08 * multiplier + 0.30 * (rumor.credibility / 100)
 
   // Filter to NPCs whose effective district matches this rumour's district
-  const districtRoster = state.roster.filter(
+  const districtRoster = state.npcRuntimeStates.filter(
     (npc) => effectiveDistrictId(npc, state.houseDistrictId) === rumor.districtId,
   )
 

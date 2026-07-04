@@ -39,7 +39,7 @@ function withNpcItem(state: GameState, npcId: string, itemId: string, uniqueId: 
 function withNpcStates(state: GameState, npcId: string, states: Partial<typeof idaRhysRosterEntry.states>): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...states } } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...states } } : n)),
   }
 }
 
@@ -50,7 +50,7 @@ describe('npcEatMeal', () => {
 
     const result = npcEatMeal(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hunger).toBe(30) // 60 - 30
     expect(result.inventoryState.npcInventories[NPC_ID]![0]!.slots).toHaveLength(0)
     expect(result.inventoryState.itemRegistry['inst-ration-1']).toBeUndefined()
@@ -62,7 +62,7 @@ describe('npcEatMeal', () => {
 
     const result = npcEatMeal(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hunger).toBe(40) // 60 - 20
     expect(result.cityResources.foodStock).toBe(stockBefore - 1)
   })
@@ -73,7 +73,7 @@ describe('npcEatMeal', () => {
 
     const result = npcEatMeal(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hunger).toBe(55) // 60 - 5
     expect(result.cityResources.foodStock).toBe(0)
   })
@@ -86,7 +86,7 @@ describe('npcDrink', () => {
 
     const result = npcDrink(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hunger).toBe(40) // 50 - 10
     expect(npc.states.intoxication).toBe(20) // 40 - 20
     expect(result.inventoryState.npcInventories[NPC_ID]![0]!.slots).toHaveLength(0)
@@ -97,7 +97,7 @@ describe('npcDrink', () => {
 
     const result = npcDrink(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hunger).toBe(50) // unchanged
     expect(npc.states.intoxication).toBe(75) // 80 - 5
   })
@@ -108,7 +108,7 @@ describe('npcDrink', () => {
 
     const result = npcDrink(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hunger).toBe(50)
     expect(npc.states.intoxication).toBe(40)
   })
@@ -119,12 +119,12 @@ describe('npcSleep', () => {
     let state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80, stress: 50, health: 80 })
     state = {
       ...state,
-      roster: state.roster.map((n) => (n.npcId === NPC_ID ? { ...n, roomAssignment: 'room-quarters' } : n)),
+      npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === NPC_ID ? { ...n, roomAssignment: 'room-quarters' } : n)),
     }
 
     const result = npcSleep(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.fatigue).toBe(40) // 80 - 40
     expect(npc.states.stress).toBe(35) // 50 - 15
     expect(npc.states.health).toBe(85) // 80 + 5
@@ -135,7 +135,7 @@ describe('npcSleep', () => {
 
     const result = npcSleep(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.fatigue).toBe(65) // 80 - 15
     expect(npc.states.stress).toBe(44) // 50 - 6
     expect(npc.states.health).toBe(82) // 80 + 2
@@ -144,7 +144,7 @@ describe('npcSleep', () => {
   it('does not touch injury — sleep does not treat wounds, only treatment does (destiny-i8nc contract)', () => {
     const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80, injury: 20 })
     const result = npcSleep(state, NPC_ID)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.injury).toBe(20)
   })
 })
@@ -155,7 +155,7 @@ describe('npcRest', () => {
 
     const result = npcRest(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.fatigue).toBe(38) // 50 - 12
     expect(npc.states.stress).toBe(26) // 30 - 4 (no quarters by default)
     expect(npc.states.health).toBe(80) // unchanged
@@ -169,7 +169,7 @@ describe('npcGroom', () => {
 
     const result = npcGroom(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hygiene).toBe(40) // 70 - 30
     expect(result.inventoryState.npcInventories[NPC_ID]![0]!.slots).toHaveLength(0)
   })
@@ -179,7 +179,7 @@ describe('npcGroom', () => {
 
     const result = npcGroom(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hygiene).toBe(55) // 70 - 15
   })
 
@@ -189,7 +189,7 @@ describe('npcGroom', () => {
 
     const result = npcGroom(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.hygiene).toBe(65) // 70 - 5
   })
 })
@@ -199,7 +199,7 @@ describe('npcMeditate', () => {
     let state = withNpcStates(initialStateWithIda, NPC_ID, { stress: 70 })
     state = {
       ...state,
-      roster: state.roster.map((n) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? { ...n, attributes: { ...n.attributes, intellect: 70 }, traits: { ...n.traits, prudence: 70 } }
           : n,
@@ -208,7 +208,7 @@ describe('npcMeditate', () => {
 
     const result = npcMeditate(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     // reduction = 15 + round((70-50)/5 + (70-50)/5) = 15 + 8 = 23
     expect(npc.states.stress).toBe(47)
   })
@@ -225,7 +225,7 @@ describe('npcMeditate', () => {
 
     const result = npcMeditate(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.stress).toBe(70)
   })
 
@@ -233,13 +233,13 @@ describe('npcMeditate', () => {
     let state = withNpcStates(initialStateWithIda, NPC_ID, { stress: 70 })
     state = {
       ...state,
-      roster: state.roster.map((n) => (n.npcId === NPC_ID ? { ...n, assignedDistrictId: 'district-the-pale' } : n)),
+      npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === NPC_ID ? { ...n, assignedDistrictId: 'district-the-pale' } : n)),
       districtTension: { ...state.districtTension, 'district-the-pale': 90 },
     }
 
     const result = npcMeditate(state, NPC_ID)
 
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.stress).toBe(70)
   })
 })

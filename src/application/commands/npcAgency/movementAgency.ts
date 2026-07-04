@@ -8,7 +8,7 @@ import { writeNpcMemory } from '../adjustRelationship'
 /** NPC movement agency: ambitious NPCs relocate to adjacent districts for new opportunities. */
 export function applyMovementAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

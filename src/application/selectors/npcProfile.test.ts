@@ -9,7 +9,7 @@ function stateWithIda(overrides: Partial<GameState> = {}): { game: GameState } {
   return {
     game: {
       ...initialGameStateSnapshot,
-      roster: [idaRhysRosterEntry],
+      npcRuntimeStates: [idaRhysRosterEntry],
       ...overrides,
     },
   } as { game: GameState }
@@ -90,7 +90,7 @@ describe('selectFullNpcProfile', () => {
         bondStartDay: 0,
       },
     }
-    const state = stateWithIda({ roster: [withBond] })
+    const state = stateWithIda({ npcRuntimeStates: [withBond] })
     const result = selectFullNpcProfile(state as never, 'npc-ida-rhys')
     expect(result!.bondStatus).not.toBeNull()
     expect(result!.bondStatus!.entryReason).toBe('debt-settlement')

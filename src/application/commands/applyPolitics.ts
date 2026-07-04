@@ -458,7 +458,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
       ),
     }
     if (next.day >= 35) {
-      const departing = next.roster.filter(
+      const departing = next.npcRuntimeStates.filter(
         (npc) => npc.traits.loyalty < 40 && npc.assignment !== 'deployed',
       )
       for (const npc of departing) {
@@ -471,7 +471,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
       const departingIds = new Set(departing.map((n) => n.npcId))
       next = {
         ...next,
-        roster: next.roster.filter((n) => !departingIds.has(n.npcId)),
+        npcRuntimeStates: next.npcRuntimeStates.filter((n) => !departingIds.has(n.npcId)),
         selectedSquadNpcIds: next.selectedSquadNpcIds.filter((id) => !departingIds.has(id)),
       }
     }

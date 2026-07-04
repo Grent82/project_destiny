@@ -18,7 +18,7 @@ export function writeNpcMemory(
   participants?: string[],
   axisDelta?: Record<string, number>,
 ): GameState {
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
   const entry = {
@@ -30,14 +30,14 @@ export function writeNpcMemory(
     ...(participants ? { participants } : {}),
     ...(axisDelta ? { axisDelta } : {}),
   }
-  const existing = state.roster[npcIndex]!.npcMemory ?? []
+  const existing = state.npcRuntimeStates[npcIndex]!.npcMemory ?? []
   const updated = [...existing, entry].slice(-MAX_NPC_MEMORY_ENTRIES)
   return {
     ...state,
-    roster: [
-      ...state.roster.slice(0, npcIndex),
-      { ...state.roster[npcIndex]!, npcMemory: updated },
-      ...state.roster.slice(npcIndex + 1),
+    npcRuntimeStates: [
+      ...state.npcRuntimeStates.slice(0, npcIndex),
+      { ...state.npcRuntimeStates[npcIndex]!, npcMemory: updated },
+      ...state.npcRuntimeStates.slice(npcIndex + 1),
     ],
   }
 }
@@ -88,7 +88,7 @@ export function applyRelationshipDelta(
 const DEFAULT_LOYALTY = 50
 
 export function applyPassiveDrift(state: GameState): GameState {
-  const rosterTraitsMap = new Map(state.roster.map((n) => [n.npcId, n.traits]))
+  const rosterTraitsMap = new Map(state.npcRuntimeStates.map((n) => [n.npcId, n.traits]))
   let relationships = state.relationships
 
   Object.keys(relationships).forEach((key) => {
@@ -140,7 +140,7 @@ const BASE_RESPECT_GAIN = 2
 
 export function applyProximityGains(state: GameState, npcIds: string[]): GameState {
   const npcTraitsMap = new Map(
-    state.roster
+    state.npcRuntimeStates
       .filter((n) => npcIds.includes(n.npcId))
       .map((n) => [n.npcId, n.traits]),
   )

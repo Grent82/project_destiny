@@ -17,7 +17,7 @@ const PLAYER_ID = 'player'
  * Returns state unchanged if the NPC is not at 'committed' stage.
  */
 export function pursuePlayerLegacy(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const playerToNpcKey = buildRelationshipKey(PLAYER_ID, npcId)
@@ -52,7 +52,7 @@ export function tickLegacyIntent(state: GameState, rng: () => number): GameState
   let next = state
   const DAILY_PROBABILITY = 1 / 300
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (npc.pregnancyState) continue // already pregnant
 
     const key = buildRelationshipKey(PLAYER_ID, npc.npcId)
@@ -62,7 +62,7 @@ export function tickLegacyIntent(state: GameState, rng: () => number): GameState
     if (rng() < DAILY_PROBABILITY) {
       next = {
         ...next,
-        roster: next.roster.map((n) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((n) =>
           n.npcId === npc.npcId
             ? { ...n, pregnancyState: { context: 'consensual' as const, daysElapsed: 0, questTag: null, wanted: null } }
             : n,
@@ -102,8 +102,8 @@ function buildBiologicalHeirOrigin(
   motherNpcId: string,
   otherParentId: string,
 ): { originStory: string; legitimacyStatus: HeirLegitimacy; birthContext: string } {
-  const mother = state.roster.find((npc) => npc.npcId === motherNpcId)
-  const otherParent = state.roster.find((npc) => npc.npcId === otherParentId)
+  const mother = state.npcRuntimeStates.find((npc) => npc.npcId === motherNpcId)
+  const otherParent = state.npcRuntimeStates.find((npc) => npc.npcId === otherParentId)
   const motherName = mother?.name ?? motherNpcId
   const otherParentName = otherParentId === PLAYER_ID ? 'the house lord' : otherParent?.name ?? otherParentId
   const intimacyStage = resolveIntimacyStage(state, motherNpcId, otherParentId)
@@ -166,7 +166,7 @@ function buildBiologicalHeirOrigin(
 export function tickPregnancyProgress(state: GameState): GameState {
   let next = state
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     if (!npc.pregnancyState) continue
 
     const newDays = npc.pregnancyState.daysElapsed + 1
@@ -174,7 +174,7 @@ export function tickPregnancyProgress(state: GameState): GameState {
     if (newDays < GESTATION_DAYS) {
       next = {
         ...next,
-        roster: next.roster.map((n) =>
+        npcRuntimeStates: next.npcRuntimeStates.map((n) =>
           n.npcId === npc.npcId
             ? { ...n, pregnancyState: { ...n.pregnancyState!, daysElapsed: newDays } }
             : n,
@@ -186,7 +186,7 @@ export function tickPregnancyProgress(state: GameState): GameState {
     // Birth: remove pregnancyState, optionally create heir
     next = {
       ...next,
-      roster: next.roster.map((n) =>
+      npcRuntimeStates: next.npcRuntimeStates.map((n) =>
         n.npcId === npc.npcId ? { ...n, pregnancyState: undefined } : n,
       ),
     }

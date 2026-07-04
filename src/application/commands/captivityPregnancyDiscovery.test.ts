@@ -28,7 +28,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
           loyalty: 0,
         },
       },
-      roster: makeState().roster.map((npc) =>
+      npcRuntimeStates: makeState().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
@@ -54,7 +54,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
   it('deduplicates per NPC once the discovery key has fired', () => {
     const state = {
       ...makeState(),
-      roster: makeState().roster.map((npc) =>
+      npcRuntimeStates: makeState().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,
@@ -75,7 +75,7 @@ describe('ensureCaptivityPregnancyDiscovery', () => {
   it('falls back to healer copy for distressed NPCs', () => {
     const state = {
       ...makeState(),
-      roster: makeState().roster.map((npc) =>
+      npcRuntimeStates: makeState().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? {
               ...npc,

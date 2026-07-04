@@ -10,7 +10,7 @@ import { writeNpcMemory } from '../adjustRelationship'
 /** NPC incident agency: reckless/ambitious NPCs cause confrontations that raise district tension. */
 export function applyIncidentAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.roster.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

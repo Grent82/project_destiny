@@ -43,9 +43,9 @@ function stateWithRelationship(overrides: {
         bondType: overrides.bondType,
       },
     },
-    roster: [
+    npcRuntimeStates: [
       {
-        ...initialStateWithIda.roster[1]!,
+        ...initialStateWithIda.npcRuntimeStates[1]!,
         status: overrides.status ?? 'mercenary',
         captivityState: overrides.captivityStatus
           ? {
@@ -93,12 +93,12 @@ describe('advanceRomanceArc', () => {
       },
     }
     const verekInRoster = {
-      ...initialStateWithIda.roster[0]!,
+      ...initialStateWithIda.npcRuntimeStates[0]!,
       npcId: 'npc-verek-holst',
       name: 'Verek Holst',
     }
     const result = advanceRomanceArc(
-      { ...state, roster: [verekInRoster] },
+      { ...state, npcRuntimeStates: [verekInRoster] },
       'npc-verek-holst',
     )
     // Now advances! All NPCs are eligible.
@@ -203,10 +203,10 @@ describe('advanceRomanceArc', () => {
   })
 
   it('ADVANCES for ward NPCs (no longer blocked)', () => {
-    const wardNpc = { ...initialStateWithIda.roster[1]!, status: 'ward' as const }
+    const wardNpc = { ...initialStateWithIda.npcRuntimeStates[1]!, status: 'ward' as const }
     const state = {
       ...stateWithRelationship({ trust: 80, affinity: 50, fear: 5, status: 'ward' }),
-      roster: [wardNpc],
+      npcRuntimeStates: [wardNpc],
     }
     const result = advanceRomanceArc(state, NPC_ID)
     const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!

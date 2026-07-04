@@ -24,7 +24,7 @@ export function formalizeHeir(
 
   const renownSlots = getRenownLevel(state.playerCharacter.renown).rosterSlots
   const rosterCapacity = renownSlots + (state.house.rosterBonus ?? 0)
-  if (state.roster.length >= rosterCapacity) {
+  if (state.npcRuntimeStates.length >= rosterCapacity) {
     return appendActivityLogEntry(
       state,
       'system',
@@ -35,7 +35,7 @@ export function formalizeHeir(
   const { rng, getSeed } = createRng(state.rngSeed)
 
   const parentRefs = heir.parentRefs ?? []
-  const parentNpcs = state.roster.filter((n) => parentRefs.includes(n.npcId))
+  const parentNpcs = state.npcRuntimeStates.filter((n) => parentRefs.includes(n.npcId))
   const parentTraits = parentNpcs.map((n) => n.traits)
   const parentAttrs = parentNpcs.map((n) => n.attributes)
 
@@ -106,7 +106,7 @@ export function formalizeHeir(
       ...state.house,
       houseHeirs: state.house.houseHeirs.filter((h) => h.id !== heirId),
     },
-    roster: [...state.roster, newNpc],
+    npcRuntimeStates: [...state.npcRuntimeStates, newNpc],
     rngSeed: getSeed(),
   }
 

@@ -63,7 +63,7 @@ const MEMORY_TO_DIALOGUE_TOPIC: Record<string, { label: string; minTrust?: numbe
  * Returns dialogue-ready topics based on visible memories and relationship state.
  */
 export function getMemoryDialogueTopicsForNpc(
-  roster: GameState['roster'],
+  roster: GameState['npcRuntimeStates'],
   relationships: GameState['relationships'],
   npcId: string,
 ): Array<{
@@ -137,7 +137,7 @@ export function getMemoryDialogueTopicsForNpc(
  */
 export const getAvailableMemoryTopics = createSelector(
   [
-    (state: GameState) => state.roster,
+    (state: GameState) => state.npcRuntimeStates,
     (state: GameState) => state.relationships,
     (_: GameState, npcId: string) => npcId,
   ],
@@ -151,7 +151,7 @@ export const getAvailableMemoryTopics = createSelector(
  */
 export function hasMemoryType(state: GameState, npcId: string, eventType: string): boolean {
   const memories = getVisibleMemoriesForNpc.resultFunc(
-    state.roster,
+    state.npcRuntimeStates,
     state.relationships,
     npcId,
     'player',
@@ -168,7 +168,7 @@ export function getRecentMemoryOfType(
   eventType: string,
 ): NpcMemoryEntry | undefined {
   const memories = getVisibleMemoriesForNpc.resultFunc(
-    state.roster,
+    state.npcRuntimeStates,
     state.relationships,
     npcId,
     'player',

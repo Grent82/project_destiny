@@ -138,7 +138,7 @@ export function giftItemToNpc(state: GameState, payload: { instanceId: string; n
     return removePlayerItem(state, instanceId)
   }
 
-  const npc = state.roster.find((entry) => entry.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc || !isNpcColocatedForGift(state, npc)) return state
 
   // Transfer item from player inventory to NPC inventory using canonical transfer

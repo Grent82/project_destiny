@@ -11,15 +11,15 @@ describe('handleSocialSimulationPhase — NPC Intention wiring (destiny-mbju and
   it('never assigns or leaves a currentIntention outside the wired allowlist after a full phase run', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           assignment: 'idle',
           currentDirectiveId: null,
           currentIntention: null,
           factionRelationships: [],
           traits: {
-            ...initialGameStateSnapshot.roster[0]!.traits,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits,
             empathy: 70,
             loyalty: 70,
           },
@@ -30,7 +30,7 @@ describe('handleSocialSimulationPhase — NPC Intention wiring (destiny-mbju and
 
     const result = handleSocialSimulationPhase(state, createRng(12345).rng)
 
-    const marion = result.roster.find((n) => n.npcId === state.roster[0]!.npcId)
+    const marion = result.npcRuntimeStates.find((n) => n.npcId === state.npcRuntimeStates[0]!.npcId)
     if (marion!.currentIntention) {
       expect(WIRED_INTENTION_TYPES.has(marion!.currentIntention.type)).toBe(true)
     }
@@ -39,15 +39,15 @@ describe('handleSocialSimulationPhase — NPC Intention wiring (destiny-mbju and
   it('runs generation and execution for the wired allowlist without throwing, and resolves any assigned intention within the same day', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           assignment: 'idle',
           currentDirectiveId: null,
           currentIntention: null,
           factionRelationships: [],
           traits: {
-            ...initialGameStateSnapshot.roster[0]!.traits,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits,
             empathy: 70,
             loyalty: 70,
           },
@@ -60,7 +60,7 @@ describe('handleSocialSimulationPhase — NPC Intention wiring (destiny-mbju and
 
     // Whatever (if anything) was generated for the wired allowlist was also executed and cleared
     // in the same phase run — no NPC should end the phase still holding a wired intention.
-    const marion = result.roster.find((n) => n.npcId === state.roster[0]!.npcId)
+    const marion = result.npcRuntimeStates.find((n) => n.npcId === state.npcRuntimeStates[0]!.npcId)
     expect(marion!.currentIntention).toBeNull()
   })
 
@@ -72,13 +72,13 @@ describe('handleSocialSimulationPhase — NPC Intention wiring (destiny-mbju and
     // real currentIntention within a full handleSocialSimulationPhase run.
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [
+      npcRuntimeStates: [
         {
-          ...initialGameStateSnapshot.roster[0]!,
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
           assignment: 'idle',
           currentDirectiveId: null,
           assignedDistrictId: 'district-the-pale',
-          skills: { ...initialGameStateSnapshot.roster[0]!.skills, intrigue: 90, security: 90 },
+          skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, intrigue: 90, security: 90 },
           currentIntention: {
             type: 'black-market-trade',
             targetId: 'district-the-pale',
@@ -96,7 +96,7 @@ describe('handleSocialSimulationPhase — NPC Intention wiring (destiny-mbju and
     }
 
     const result = handleSocialSimulationPhase(state, createRng(12345).rng)
-    const npc = result.roster.find((n) => n.npcId === state.roster[0]!.npcId)
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === state.npcRuntimeStates[0]!.npcId)
 
     expect(npc!.currentIntention).toBeNull()
   })

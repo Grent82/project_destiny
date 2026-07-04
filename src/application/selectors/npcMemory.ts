@@ -73,7 +73,7 @@ function canViewMemory(
  */
 export const getVisibleMemoriesForNpc = createSelector(
   [
-    (state: GameState) => state.roster,
+    (state: GameState) => state.npcRuntimeStates,
     (state: GameState) => state.relationships,
     (_: GameState, npcId: string) => npcId,
     (_: GameState, __: string, viewerId: string) => viewerId,
@@ -100,7 +100,7 @@ export const getVisibleMemoriesForNpc = createSelector(
  * Selector that returns all memories for an NPC (admin/debug view).
  */
 export const getAllMemoriesForNpc = createSelector(
-  [(state: GameState) => state.roster, (_: GameState, npcId: string) => npcId],
+  [(state: GameState) => state.npcRuntimeStates, (_: GameState, npcId: string) => npcId],
   (roster, npcId) => {
     const npc = roster.find((n) => n.npcId === npcId)
     return npc?.npcMemory ?? []

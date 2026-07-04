@@ -29,7 +29,7 @@ describe('Economy-first branch playthrough', () => {
   it('NPC returns to idle after expedition', async () => {
     const result = await runScenario(economyFirstScenario)
     const post = result.checkpoints['cp-econ-post-expedition']
-    expect(post?.roster.find((n) => n.npcId === ECON_SQUAD_NPC)?.assignment).toBe('idle')
+    expect(post?.npcRuntimeStates.find((n) => n.npcId === ECON_SQUAD_NPC)?.assignment).toBe('idle')
   })
 })
 
@@ -108,7 +108,7 @@ describe('Failure-path branch playthrough', () => {
   it('starts with NPC in low health as expected', async () => {
     const result = await runScenario(failurePathScenario)
     const start = result.checkpoints['cp-fail-start']
-    const npc = start?.roster.find((n) => n.npcId === 'npc-marion-vale')
+    const npc = start?.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')
     expect(npc?.states.health).toBeLessThan(50)
   })
 })

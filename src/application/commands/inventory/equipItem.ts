@@ -31,7 +31,7 @@ export function equipItem(state: GameState, params: EquipItemParams): GameState 
  * - Unaffiliated NPC: can equip from personal inventory only
  */
 function getAccessibleContainersForNpc(state: GameState, npcId: string): { containerType: 'npc_inventory' | 'container'; containerId: string }[] {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return []
 
   const containers: { containerType: 'npc_inventory' | 'container'; containerId: string }[] = []
@@ -217,10 +217,10 @@ function unequipItemFromPlayer(state: GameState, slot: EquipmentSlotType): GameS
  * Supports equipping from personal inventory and accessible shared storage (household/organization).
  */
 function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string, slot: EquipmentSlotType): GameState {
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   // Get item definition from the item registry (not the catalog, since we have an instance ID)
   const itemInstance = state.inventoryState.itemRegistry[itemInstanceId]
@@ -275,7 +275,7 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
   }
 
   // Update NPC equipment slots directly (transferItem handles the inventory side)
-  const updatedNpc = nextState.roster.find((n) => n.npcId === npcId)!
+  const updatedNpc = nextState.npcRuntimeStates.find((n) => n.npcId === npcId)!
 
   if (slot === 'accessory_1') {
     const currentAccessories = updatedNpc.equipment.accessory || []
@@ -308,14 +308,14 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
     }
   }
 
-  const updatedRoster = [...nextState.roster]
+  const updatedRoster = [...nextState.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
   appendActivityLogEntry(nextState, 'system', `${npc.name} equipped ${itemDef.name} in ${formatSlotName(slot)}`)
 
   return {
     ...nextState,
-    roster: updatedRoster,
+    npcRuntimeStates: updatedRoster,
   }
 }
 
@@ -323,7 +323,7 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
  * Internal unequip function that returns item to NPC's personal inventory.
  */
 function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: EquipmentSlotType, itemInstanceId: string): GameState {
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
   // Get item definition from the item registry first
@@ -349,7 +349,7 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
   }
 
   // Update NPC equipment
-  const updatedNpc = nextState.roster.find((n) => n.npcId === npcId)!
+  const updatedNpc = nextState.npcRuntimeStates.find((n) => n.npcId === npcId)!
   const updatedEquipment = { ...updatedNpc.equipment }
 
   if (slot.startsWith('accessory')) {
@@ -375,7 +375,7 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
     updatedAttributes.endurance = Math.max(0, updatedAttributes.endurance - Math.floor(armor.soak / 20))
   }
 
-  const updatedRoster = [...nextState.roster]
+  const updatedRoster = [...nextState.npcRuntimeStates]
   updatedRoster[npcIndex] = {
     ...updatedNpc,
     equipment: updatedEquipment,
@@ -384,7 +384,7 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
 
   return {
     ...nextState,
-    roster: updatedRoster,
+    npcRuntimeStates: updatedRoster,
   }
 }
 
@@ -393,10 +393,10 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
  * Returns item to NPC's personal inventory.
  */
 function unequipItemFromNpc(state: GameState, npcId: string, slot: EquipmentSlotType): GameState {
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) return state
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   const itemInstanceId: string | null = slot === 'accessory_1'
     ? npc.equipment.accessory?.[0] ?? null

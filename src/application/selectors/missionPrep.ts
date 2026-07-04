@@ -5,7 +5,7 @@ import { isDeployable } from '../commands/isDeployable'
 import { selectRosterEntries } from './roster'
 
 const selectSelectedSquadNpcIds = (state: RootState) => state.game.selectedSquadNpcIds
-const selectRawRoster = (state: RootState) => state.game.roster
+const selectRawRoster = (state: RootState) => state.game.npcRuntimeStates
 
 export const selectMissionPrepSummary = createSelector(
   [selectRosterEntries, selectRawRoster, selectSelectedSquadNpcIds],

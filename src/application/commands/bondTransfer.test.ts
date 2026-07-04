@@ -71,7 +71,7 @@ function stateWithBondedNpc(npc: NpcRuntimeState, day = 10) {
     ...initialGameStateSnapshot,
     day,
     money: 500,
-    roster: [npc],
+    npcRuntimeStates: [npc],
     bondedPersonsRegistry: {},
   }
 }
@@ -98,7 +98,7 @@ describe('transferBondedNpc', () => {
     const npc = bondedNpc()
     const state = stateWithBondedNpc(npc)
     const result = transferBondedNpc(state, npc.npcId, BUYER_COMPACT)
-    const transferred = result.roster.find((r) => r.npcId === npc.npcId)!
+    const transferred = result.npcRuntimeStates.find((r) => r.npcId === npc.npcId)!
     expect(transferred.assignment).toBe('transferred')
     expect(transferred.bondStatus?.ownerType).toBe('npc')
     expect(transferred.bondStatus?.holderId).toBe(BUYER_COMPACT)
@@ -122,11 +122,11 @@ describe('transferBondedNpc', () => {
       ...initialGameStateSnapshot,
       day: 10,
       money: 500,
-      roster: [subject, highEmpathyNpc],
+      npcRuntimeStates: [subject, highEmpathyNpc],
       bondedPersonsRegistry: {},
     }
     const result = transferBondedNpc(state, subject.npcId, BUYER_COMPACT)
-    const witness = result.roster.find((r) => r.npcId === 'npc-witness')!
+    const witness = result.npcRuntimeStates.find((r) => r.npcId === 'npc-witness')!
     expect(witness.states.morale).toBeLessThan(50)
   })
 
@@ -191,7 +191,7 @@ describe('applyNpcHeldConditionDecay', () => {
     })
     const state = stateWithBondedNpc(npc)
     const result = applyNpcHeldConditionDecay(state)
-    expect(result.roster[0]!.states.health).toBe(79)
+    expect(result.npcRuntimeStates[0]!.states.health).toBe(79)
   })
 
   it('decays health by 2 for Tallow Ring-held npc', () => {
@@ -201,7 +201,7 @@ describe('applyNpcHeldConditionDecay', () => {
     })
     const state = stateWithBondedNpc(npc)
     const result = applyNpcHeldConditionDecay(state)
-    expect(result.roster[0]!.states.health).toBe(78)
+    expect(result.npcRuntimeStates[0]!.states.health).toBe(78)
   })
 
   it('improves health by 1 for Noble-held npc', () => {
@@ -212,14 +212,14 @@ describe('applyNpcHeldConditionDecay', () => {
     })
     const state = stateWithBondedNpc(npc)
     const result = applyNpcHeldConditionDecay(state)
-    expect(result.roster[0]!.states.health).toBe(61)
+    expect(result.npcRuntimeStates[0]!.states.health).toBe(61)
   })
 
   it('does not affect non-transferred npcs', () => {
     const npc = bondedNpc()
     const state = stateWithBondedNpc(npc)
     const result = applyNpcHeldConditionDecay(state)
-    expect(result.roster[0]!.states.health).toBe(80)
+    expect(result.npcRuntimeStates[0]!.states.health).toBe(80)
   })
 })
 
@@ -237,7 +237,7 @@ describe('rescueBondedNpcLegal', () => {
       bondedPersonsRegistry: { [BUYER_COMPACT]: [npc.npcId] },
     }
     const result = rescueBondedNpcLegal(state, npc.npcId)
-    const rescued = result.roster.find((r) => r.npcId === npc.npcId)!
+    const rescued = result.npcRuntimeStates.find((r) => r.npcId === npc.npcId)!
     expect(rescued.assignment).toBe('recovering')
     expect(rescued.bondStatus?.ownerType).toBe('player')
     expect(result.bondedPersonsRegistry[BUYER_COMPACT] ?? []).not.toContain(npc.npcId)
@@ -268,7 +268,7 @@ describe('rescueBondedNpcExtraction', () => {
       factionStandings: { 'faction-tallow-ring': 0 },
     }
     const result = rescueBondedNpcExtraction(state, npc.npcId)
-    const rescued = result.roster.find((r) => r.npcId === npc.npcId)!
+    const rescued = result.npcRuntimeStates.find((r) => r.npcId === npc.npcId)!
     expect(rescued.assignment).toBe('recovering')
     expect(rescued.states.health).toBe(60) // 80 - 20
     expect(result.factionStandings['faction-tallow-ring']).toBe(-15)
@@ -286,7 +286,7 @@ describe('rescueBondedNpcForce', () => {
       bondedPersonsRegistry: { [BUYER_COMPACT]: [npc.npcId] },
     }
     const result = rescueBondedNpcForce(state, npc.npcId)
-    const rescued = result.roster.find((r) => r.npcId === npc.npcId)!
+    const rescued = result.npcRuntimeStates.find((r) => r.npcId === npc.npcId)!
     expect(rescued.assignment).toBe('recovering')
     expect(rescued.states.health).toBe(65) // 80 - 15
   })

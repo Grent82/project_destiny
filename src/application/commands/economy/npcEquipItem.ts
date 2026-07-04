@@ -120,12 +120,12 @@ function findItemInNpcInventory(containers: import('../../../domain/inventory/co
 export function npcEquipItem(state: GameState, params: EquipItemParams): GameState {
   const { npcId, itemId, slot } = params
 
-  const npcIndex = state.roster.findIndex((r) => r.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((r) => r.npcId === npcId)
   if (npcIndex === -1) {
     return state
   }
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   const itemDef = contentCatalog.itemsById.get(itemId)
   if (!itemDef) {
@@ -225,12 +225,12 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
     updatedNpc.attributes = applyEquipmentBonuses(updatedNpc, itemDef).attributes
 
     // Update roster and inventoryState
-    const updatedRoster = [...state.roster]
+    const updatedRoster = [...state.npcRuntimeStates]
     updatedRoster[npcIndex] = updatedNpc
 
     const result = {
       ...newState,
-      roster: updatedRoster,
+      npcRuntimeStates: updatedRoster,
       inventoryState: {
         ...newState.inventoryState,
         npcInventories: {
@@ -310,12 +310,12 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
     updatedNpc.attributes = applyEquipmentBonuses(updatedNpc, itemDef).attributes
 
     // Update roster and inventoryState
-    const updatedRoster = [...state.roster]
+    const updatedRoster = [...state.npcRuntimeStates]
     updatedRoster[npcIndex] = updatedNpc
 
     const result = {
       ...state,
-      roster: updatedRoster,
+      npcRuntimeStates: updatedRoster,
       inventoryState: {
         ...state.inventoryState,
         npcInventories: {
@@ -352,12 +352,12 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
   updatedNpc.attributes = applyEquipmentBonuses(updatedNpc, itemDef).attributes
 
   // Update roster and inventoryState
-  const updatedRoster = [...state.roster]
+  const updatedRoster = [...state.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
   const result = {
     ...state,
-    roster: updatedRoster,
+    npcRuntimeStates: updatedRoster,
     inventoryState: {
       ...state.inventoryState,
       npcInventories: {
@@ -382,12 +382,12 @@ export function npcEquipItem(state: GameState, params: EquipItemParams): GameSta
 export function npcUnequipItem(state: GameState, params: { npcId: string; slot: EquipmentSlot }): GameState {
   const { npcId, slot } = params
 
-  const npcIndex = state.roster.findIndex((r) => r.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((r) => r.npcId === npcId)
   if (npcIndex === -1) {
     return state
   }
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   // Get current item(s) for this slot
   let currentItemIds: string[] = []
@@ -456,12 +456,12 @@ export function npcUnequipItem(state: GameState, params: { npcId: string; slot: 
     updatedNpc.equipment[slot as 'weapon' | 'armor'] = null
   }
 
-  const updatedRoster = [...state.roster]
+  const updatedRoster = [...state.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
   const result = {
     ...state,
-    roster: updatedRoster,
+    npcRuntimeStates: updatedRoster,
     inventoryState: {
       ...state.inventoryState,
       npcInventories: {

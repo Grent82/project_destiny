@@ -121,7 +121,7 @@ export const combatFirstScenario: PlaythroughScenario = {
     assertStep('Combat-first path remains coherent', [
       assertion('exp-idle', 'Expedition idle', (s) => s.expeditionState.status === 'idle'),
       assertion('npc-survived', `${SQUAD_NPC} is on the roster`, (s) =>
-        s.roster.some((n) => n.npcId === SQUAD_NPC),
+        s.npcRuntimeStates.some((n) => n.npcId === SQUAD_NPC),
       ),
       assertion('world-coherent', 'Day counter is positive', (s) => s.day > 0),
     ]),
@@ -131,7 +131,7 @@ export const combatFirstScenario: PlaythroughScenario = {
     assertion('money-non-negative', 'Money must never go negative', (s) => s.money >= 0),
     assertion('day-positive', 'Day counter positive', (s) => s.day > 0),
     assertion('roster-health-non-negative', 'All roster NPCs have non-negative health', (s) =>
-      s.roster.every((n) => n.states.health >= 0),
+      s.npcRuntimeStates.every((n) => n.states.health >= 0),
     ),
   ],
 }

@@ -6,7 +6,7 @@ describe('equipClothing', () => {
   it('equips a clothing item to the correct layer', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -23,7 +23,7 @@ describe('equipClothing', () => {
       itemId: 'cloth-shirt-burlap',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.clothing.torso).toBe('cloth-shirt-burlap')
     expect(result.activityLog.some((e) => e.message.includes('equips'))).toBe(true)
   })
@@ -31,7 +31,7 @@ describe('equipClothing', () => {
   it('unequips current item before equipping new one', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -47,14 +47,14 @@ describe('equipClothing', () => {
       itemId: 'cloth-shirt-burlap',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.clothing.torso).toBe('cloth-shirt-burlap')
   })
 
   it('does nothing if item is already equipped', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -71,7 +71,7 @@ describe('equipClothing', () => {
     })
 
     // Should return state unchanged
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.clothing.head).toBe('cloth-headscarf-ragged')
   })
 
@@ -92,7 +92,7 @@ describe('equipClothing', () => {
       itemId: 'non-existent-item',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.clothing.torso).toBeNull()
   })
 })
@@ -101,7 +101,7 @@ describe('unequipClothing', () => {
   it('unequips a clothing item from the correct layer', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -116,7 +116,7 @@ describe('unequipClothing', () => {
       layer: 'feet',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.clothing.feet).toBeNull()
     expect(result.activityLog.some((e) => e.message.includes('unequips'))).toBe(true)
   })
@@ -124,7 +124,7 @@ describe('unequipClothing', () => {
   it('returns state unchanged if nothing equipped on layer', () => {
     const state = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === 'npc-ida-rhys'
           ? {
               ...n,
@@ -139,7 +139,7 @@ describe('unequipClothing', () => {
       layer: 'arms',
     })
 
-    const ida = result.roster.find((n) => n.npcId === 'npc-ida-rhys')!
+    const ida = result.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
     expect(ida.clothing.arms).toBeNull()
   })
 })

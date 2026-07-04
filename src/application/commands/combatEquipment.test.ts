@@ -116,7 +116,7 @@ const BASE_GAME_STATE = {
   factionStandings: {},
   factionStates: [],
   districts: [],
-  roster: [BASE_NPC_STATE, { ...BASE_NPC_STATE, npcId: 'npc-2' }],
+  npcRuntimeStates: [BASE_NPC_STATE, { ...BASE_NPC_STATE, npcId: 'npc-2' }],
   cityResources: {
     foodSecurity: 62,
     foodStock: 620,

@@ -48,7 +48,7 @@ export function poachEmployee(
 ): PoachResult {
   const { poacherId, poacherType, employeeId, wageOffer, bonusOffer = 0, poachBonus = 0 } = params
 
-  const employee = state.roster.find((npc) => npc.npcId === employeeId)
+  const employee = state.npcRuntimeStates.find((npc) => npc.npcId === employeeId)
   if (!employee) {
     return {
       success: false,
@@ -145,7 +145,7 @@ export function poachEmployee(
 
   const newState = {
     ...state,
-    roster: state.roster.map((npc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
       npc.npcId === employeeId
         ? { ...npc, currentEmployment: newEmployment }
         : npc,

@@ -406,8 +406,8 @@ export function resolveDate(
   // Handle pregnancy for Roster NPCs at committed stage
   const abIntimacy = nextState.relationships[abKey]?.intimacyStage ?? 'none'
   if (abIntimacy === 'committed') {
-    const npcA = nextState.roster.find((n) => n.npcId === npcAId)
-    const npcB = nextState.roster.find((n) => n.npcId === npcBId)
+    const npcA = nextState.npcRuntimeStates.find((n) => n.npcId === npcAId)
+    const npcB = nextState.npcRuntimeStates.find((n) => n.npcId === npcBId)
 
     if (npcA && npcB && !npcA.pregnancyState && !npcB.pregnancyState) {
       const pregnancyKey = `date-pregnancy-${npcAId}-${npcBId}`
@@ -418,7 +418,7 @@ export function resolveDate(
 
         nextState = {
           ...nextState,
-          roster: nextState.roster.map((n) =>
+          npcRuntimeStates: nextState.npcRuntimeStates.map((n) =>
             n.npcId === bearerId
               ? {
                   ...n,

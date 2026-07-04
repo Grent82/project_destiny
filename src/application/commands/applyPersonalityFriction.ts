@@ -30,7 +30,7 @@ function isOnCooldown(state: GameState, key: string, cooldownDays: number): bool
 /** Monthly pass: evaluates all eligible roster pairs for personality friction and bonding moments. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function applyPersonalityFriction(state: GameState, _rng?: () => number): GameState {
-  const eligible = state.roster.filter(
+  const eligible = state.npcRuntimeStates.filter(
     (npc) =>
       npc.assignment !== 'recovering' &&
       npc.captivityState?.status !== 'captive' &&

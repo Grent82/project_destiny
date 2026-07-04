@@ -40,7 +40,7 @@ const baseState: GameState = {
   factionStandings: { 'faction-civic-compact': 10, 'faction-gilded-court': -65, 'faction-foundry-league': 5, 'faction-tallow-ring': 15, 'faction-restored': 0, 'faction-house-merrow': -15 },
   factionStates: [],
   districts: [],
-  roster: [idaRhysRosterEntry],
+  npcRuntimeStates: [idaRhysRosterEntry],
   houseStorageCapacity: 40,
   installedHouseModules: [],
   inventoryState: {
@@ -157,13 +157,13 @@ describe('cookMeal', () => {
   it('requires the NPC to be in the house', () => {
     const state: GameState = {
       ...baseState,
-      roster: [
+      npcRuntimeStates: [
         { ...idaRhysRosterEntry, roomAssignment: null },
       ],
     }
 
     const result = cookMeal(state, idaRhysRosterEntry.npcId, 'simple')
-    expect(result.roster[0]!.roomAssignment).toBeNull() // NPC still not in house
+    expect(result.npcRuntimeStates[0]!.roomAssignment).toBeNull() // NPC still not in house
   })
 
   it('cooks a lavish meal for higher cost and better relationship gains', () => {

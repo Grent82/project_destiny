@@ -38,7 +38,7 @@ function findEligibleNPCs(state: GameState): EligibleNPC[] {
   const eligible: EligibleNPC[] = []
 
   // Check roster NPCs
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     // Skip NPCs who are blocked (assigned or on directive)
     if (isNpcBlockedFromCoalition(npc)) continue
 
@@ -182,7 +182,7 @@ export function processLeadCoalitionIntentions(state: GameState): GameState {
   }
 
   // Find NPCs with lead-group intentions
-  const leadIntentions = state.roster.filter(
+  const leadIntentions = state.npcRuntimeStates.filter(
     (npc) =>
       npc.currentIntention?.type === 'lead-group' &&
       npc.assignment === 'idle' &&
@@ -217,7 +217,7 @@ export function processSupportCoalitionIntentions(state: GameState): GameState {
   }
 
   // Find NPCs with support-group intentions
-  const supportIntentions = state.roster.filter(
+  const supportIntentions = state.npcRuntimeStates.filter(
     (npc) =>
       npc.currentIntention?.type === 'support-group' &&
       npc.assignment === 'idle' &&

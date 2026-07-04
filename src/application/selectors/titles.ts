@@ -12,7 +12,7 @@ export function selectTitleEligibilityForNpc(
   let selector = titleEligibilitySelectorCache.get(npcId)
   if (!selector) {
     selector = createSelector(
-      [(state: RootState) => state.game.roster],
+      [(state: RootState) => state.game.npcRuntimeStates],
       (roster) => {
         const npcRuntime = roster.find((r) => r.npcId === npcId)
         const titles = getTitleDefinitions()

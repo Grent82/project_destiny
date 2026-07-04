@@ -90,7 +90,7 @@ export function buildCanonicalFoodProducers(state: GameState): Producer[] {
   const houseLabor = kitchen?.state === 'intact' ? 2 : 0
   const boundKitchenHands =
     kitchen?.state === 'intact'
-      ? state.roster.filter(
+      ? state.npcRuntimeStates.filter(
           (npc) =>
             npc.assignment === 'working' &&
             npc.dutyPostRoomId === 'room-kitchen' &&

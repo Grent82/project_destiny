@@ -123,13 +123,13 @@ describe('formalizeHeir', () => {
   it('adds NPC to roster', () => {
     const state = stateWithHeir(makeHeir({ stage: 'adult' }))
     const result = formalizeHeir(state, 'heir-test')
-    expect(result.roster.length).toBe(state.roster.length + 1)
+    expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length + 1)
   })
 
   it('promoted heir has valid trait values [0, 100]', () => {
     const state = stateWithHeir(makeHeir({ stage: 'adult' }))
     const result = formalizeHeir(state, 'heir-test')
-    const npc = result.roster.find((n) => n.npcId === 'heir-test')!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'heir-test')!
     for (const val of Object.values(npc.traits)) {
       expect(val).toBeGreaterThanOrEqual(0)
       expect(val).toBeLessThanOrEqual(100)
@@ -140,7 +140,7 @@ describe('formalizeHeir', () => {
     const heir = makeHeir({ stage: 'adult', parentRefs: ['npc-marion-vale'] })
     const state = stateWithHeir(heir)
     const result = formalizeHeir(state, 'heir-test')
-    const npc = result.roster.find((n) => n.npcId === 'heir-test')
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'heir-test')
     expect(npc).toBeDefined()
   })
 

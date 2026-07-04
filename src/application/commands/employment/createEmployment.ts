@@ -15,7 +15,7 @@ export function createEmployment(
   params: CreateEmploymentParams,
 ): GameState {
   // Validate employee exists in roster
-  const employee = state.roster.find((npc) => npc.npcId === params.employeeId)
+  const employee = state.npcRuntimeStates.find((npc) => npc.npcId === params.employeeId)
   if (!employee) {
     // Try world NPCs
     const worldNpc = state.worldNpcStates.find((npc) => npc.npcId === params.employeeId)
@@ -54,7 +54,7 @@ export function createEmployment(
   if (employee) {
     newState = {
       ...state,
-      roster: state.roster.map((npc) =>
+      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
         npc.npcId === params.employeeId
           ? { ...npc, currentEmployment: newEmployment }
           : npc,

@@ -71,7 +71,7 @@ function withGiftState(
         ],
       },
     },
-    roster: initialGameStateSnapshot.roster.map((npc) =>
+    npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === TARGET_NPC_ID
         ? { ...npc, ...npcOverrides }
         : npc,
@@ -83,7 +83,7 @@ function withGiftState(
 describe('resolveGiftOutcome', () => {
   it('rewards vanity on calling tokens', () => {
     const state = withGiftState('item-gift-calling-token')
-    const npc = state.roster.find((entry) => entry.npcId === TARGET_NPC_ID)!
+    const npc = state.npcRuntimeStates.find((entry) => entry.npcId === TARGET_NPC_ID)!
     npc.traits.vanity = 80
     npc.traits.prudence = 30
     const definition = contentCatalog.itemsById.get('item-gift-calling-token')!
@@ -95,7 +95,7 @@ describe('resolveGiftOutcome', () => {
   it('boosts trust on personal gifts for empathetic NPCs', () => {
     const definition = contentCatalog.itemsById.get('item-gift-pressed-flower-fold')!
     const state = withGiftState('item-gift-pressed-flower-fold')
-    const npc = state.roster.find((entry) => entry.npcId === TARGET_NPC_ID)!
+    const npc = state.npcRuntimeStates.find((entry) => entry.npcId === TARGET_NPC_ID)!
     npc.traits.empathy = 82
     const outcome = resolveGiftOutcome(definition, npc)
     expect(outcome.trust).toBeGreaterThan(0)
@@ -105,7 +105,7 @@ describe('resolveGiftOutcome', () => {
   it('lets prudence dampen ostentatious gifts', () => {
     const definition = contentCatalog.itemsById.get('item-gift-calling-token')!
     const state = withGiftState('item-gift-calling-token')
-    const npc = state.roster.find((entry) => entry.npcId === TARGET_NPC_ID)!
+    const npc = state.npcRuntimeStates.find((entry) => entry.npcId === TARGET_NPC_ID)!
     npc.traits.prudence = 85
     const outcome = resolveGiftOutcome(definition, npc)
     expect(outcome.trust).toBeLessThan(0)
@@ -128,7 +128,7 @@ describe('giftItemToNpc', () => {
     const next = giftItemToNpc(
       withGiftState(itemId, {
         traits: {
-          ...initialGameStateSnapshot.roster.find((npc) => npc.npcId === TARGET_NPC_ID)!.traits,
+          ...initialGameStateSnapshot.npcRuntimeStates.find((npc) => npc.npcId === TARGET_NPC_ID)!.traits,
           empathy: 82,
         },
       }),

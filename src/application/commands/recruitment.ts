@@ -42,7 +42,7 @@ function buildRosterEntryFromOffer(
   npcId: string,
   wagePerDay: number,
   initialLoyaltyPenalty: number,
-  bondStatus: GameState['roster'][number]['bondStatus'],
+  bondStatus: GameState['npcRuntimeStates'][number]['bondStatus'],
 ) {
   const npcDef = contentCatalog.npcsById.get(npcId)
   if (!npcDef) return null
@@ -141,11 +141,11 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
   const npcDef = contentCatalog.npcsById.get(npcId)
   if (!npcDef) return state
 
-  const alreadyOnRoster = state.roster.some((r) => r.npcId === npcId)
+  const alreadyOnRoster = state.npcRuntimeStates.some((r) => r.npcId === npcId)
   if (alreadyOnRoster) return state
 
   const renownLevel = getRenownLevel(state.playerCharacter.renown)
-  if (state.roster.length >= renownLevel.rosterSlots) return state
+  if (state.npcRuntimeStates.length >= renownLevel.rosterSlots) return state
 
   const newRosterEntry = buildRosterEntryFromOffer(state, npcId, offer.wagePerDay, 20, null)
   if (!newRosterEntry) return state
@@ -153,7 +153,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
   let next: GameState = {
     ...state,
     money: state.money - offer.signingBonus,
-    roster: [...state.roster, newRosterEntry],
+    npcRuntimeStates: [...state.npcRuntimeStates, newRosterEntry],
     availableForHire: state.availableForHire.filter((o) => o.npcId !== npcId),
   }
 
@@ -190,11 +190,11 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
     if (standing < offer.requiredFactionStanding) return state
   }
 
-  const alreadyOnRoster = state.roster.some((entry) => entry.npcId === npcId)
+  const alreadyOnRoster = state.npcRuntimeStates.some((entry) => entry.npcId === npcId)
   if (alreadyOnRoster) return state
 
   const renownLevel = getRenownLevel(state.playerCharacter.renown)
-  if (state.roster.length >= renownLevel.rosterSlots) return state
+  if (state.npcRuntimeStates.length >= renownLevel.rosterSlots) return state
 
   const terms = deriveBondTermsFromHireOffer(offer)
   if (state.money < terms.intakeFee) return state
@@ -223,7 +223,7 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
   let next: GameState = {
     ...state,
     money: state.money - terms.intakeFee,
-    roster: [...state.roster, newRosterEntry],
+    npcRuntimeStates: [...state.npcRuntimeStates, newRosterEntry],
     availableForHire: state.availableForHire.filter((entry) => entry.npcId !== npcId),
   }
 
@@ -240,7 +240,7 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
 }
 
 export function dismissNpc(state: GameState, npcId: string): GameState {
-  const entry = state.roster.find((r) => r.npcId === npcId)
+  const entry = state.npcRuntimeStates.find((r) => r.npcId === npcId)
   if (!entry) return state
 
   const npcDef = contentCatalog.npcsById.get(npcId)
@@ -252,7 +252,7 @@ export function dismissNpc(state: GameState, npcId: string): GameState {
   // Now remove the NPC from roster and squad
   next = {
     ...next,
-    roster: next.roster.filter((r) => r.npcId !== npcId),
+    npcRuntimeStates: next.npcRuntimeStates.filter((r) => r.npcId !== npcId),
     selectedSquadNpcIds: next.selectedSquadNpcIds.filter((id) => id !== npcId),
   }
 

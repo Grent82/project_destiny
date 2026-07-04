@@ -25,7 +25,7 @@ function stateWithHeir(heir: Heir, rosterOverride?: NpcRuntimeState[]): GameStat
       ...initialGameStateSnapshot.house,
       houseHeirs: [heir],
     },
-    roster: rosterOverride ?? initialGameStateSnapshot.roster,
+    npcRuntimeStates: rosterOverride ?? initialGameStateSnapshot.npcRuntimeStates,
   }
 }
 
@@ -42,14 +42,14 @@ describe('formalizeHeir', () => {
     const heir = heirBase({ stage: 'apprentice' })
     const state = stateWithHeir(heir)
     const result = formalizeHeir(state, 'heir-test')
-    expect(result.roster.length).toBe(state.roster.length)
+    expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length)
     expect(result.house.houseHeirs).toHaveLength(1)
   })
 
   it('does nothing if heirId not found', () => {
     const state = stateWithHeir(heirBase({}))
     const result = formalizeHeir(state, 'heir-unknown')
-    expect(result.roster.length).toBe(state.roster.length)
+    expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length)
     expect(result.house.houseHeirs).toHaveLength(1)
   })
 
@@ -62,8 +62,8 @@ describe('formalizeHeir', () => {
   it('adds a new NpcRuntimeState to the roster', () => {
     const state = stateWithHeir(heirBase({}))
     const result = formalizeHeir(state, 'heir-test')
-    expect(result.roster.length).toBe(state.roster.length + 1)
-    const added = result.roster.find((n) => n.name === 'Cael')
+    expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length + 1)
+    const added = result.npcRuntimeStates.find((n) => n.name === 'Cael')
     expect(added).toBeDefined()
   })
 
@@ -84,7 +84,7 @@ describe('formalizeHeir', () => {
     // Renown=0 → 4 slots, rosterBonus=0 → capacity 4
     // Fill the roster with 4 NPCs (1 starting + 3 fillers)
     const fullRoster: NpcRuntimeState[] = [
-      ...initialGameStateSnapshot.roster,
+      ...initialGameStateSnapshot.npcRuntimeStates,
       makeFillerNpc('filler-1'),
       makeFillerNpc('filler-2'),
       makeFillerNpc('filler-3'),
@@ -92,7 +92,7 @@ describe('formalizeHeir', () => {
     const state = stateWithHeir(heirBase({}), fullRoster)
     const result = formalizeHeir(state, 'heir-test')
     // Heir should NOT be added to the roster
-    expect(result.roster.length).toBe(4)
+    expect(result.npcRuntimeStates.length).toBe(4)
     // Heir should remain in houseHeirs
     expect(result.house.houseHeirs).toHaveLength(1)
     // Activity log should explain why

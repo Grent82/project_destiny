@@ -299,7 +299,7 @@ export const gameStateSchema = z
     factionStandings: z.record(z.string(), z.number().min(-100).max(100)),
     factionStates: z.array(factionRuntimeStateSchema),
     districts: z.array(districtRuntimeStateSchema),
-    roster: z.array(npcRuntimeStateSchema),
+    npcRuntimeStates: z.array(npcRuntimeStateSchema),
     // inventory removed - legacy ownedItems system fully deprecated
     // ownedItems removed - migrated to inventoryState.player.bagContainers
     inventoryState: inventoryStateSchema.default(() => ({
@@ -518,7 +518,7 @@ export const gameStateSchema = z
     pendingDateProposals: z.array(dateProposalSchema).default([]),
     scheduledDates: z.array(scheduledDateSchema).default([]),
     npcDateCooldowns: z.record(z.string(), z.number().int().nonnegative()).default({}),
-    saveVersion: z.number().int().min(1).default(6),
+    saveVersion: z.number().int().min(1).default(7),
     timeSlotState: timeSlotStateSchema.default({
       currentSlot: 'morning',
       slotQueue: [],

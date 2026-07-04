@@ -30,7 +30,7 @@ export function buildNakedNpcRumor(
   npcId: string,
   districtId: string,
   day: number,
-  roster: GameState['roster'],
+  roster: GameState['npcRuntimeStates'],
 ): Rumor | null {
   // Find the NPC in the roster
   const npc = roster.find((r) => r.npcId === npcId)
@@ -71,7 +71,7 @@ export function createRumorForNakedNpc(
   state: GameState,
   params: CreateRumorForNakedNpcParams,
 ): GameState {
-  const rumor = buildNakedNpcRumor(params.npcId, params.districtId, params.day, state.roster)
+  const rumor = buildNakedNpcRumor(params.npcId, params.districtId, params.day, state.npcRuntimeStates)
 
   if (!rumor) return state
 

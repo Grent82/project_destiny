@@ -8,7 +8,7 @@ import { selectNpcSocialReachability } from './npcSocialReachability'
 function storeWithIda(overrides: Partial<typeof idaRhysRosterEntry> = {}) {
   return createGameStore({
     ...initialGameStateSnapshot,
-    roster: [...initialGameStateSnapshot.roster, { ...idaRhysRosterEntry, ...overrides }],
+    npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, { ...idaRhysRosterEntry, ...overrides }],
   })
 }
 
@@ -57,7 +57,7 @@ describe('selectNpcSocialReachability', () => {
     const store = createGameStore({
       ...initialGameStateSnapshot,
       currentDistrictId: 'district-harbor',
-      roster: [...initialGameStateSnapshot.roster, idaRhysRosterEntry],
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, idaRhysRosterEntry],
     })
     const result = selectNpcSocialReachability(idaRhysRosterEntry.npcId)(store.getState())
 

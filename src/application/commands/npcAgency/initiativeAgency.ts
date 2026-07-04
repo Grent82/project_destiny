@@ -9,7 +9,7 @@ import type { InitiativeAction } from './types'
 
 /** Initiative agency module: arc-initiator NPCs take weekly strategic actions. */
 export function applyInitiativeAgency(state: GameState, rng: Rng): GameState {
-  const initiatorNpcs = state.roster.filter(
+  const initiatorNpcs = state.npcRuntimeStates.filter(
     (npc) => npc.npcArc?.arcId === 'arc-initiator' && state.day % 7 === 0,
   )
   if (initiatorNpcs.length === 0) return state
@@ -36,7 +36,7 @@ export function applyInitiativeAgency(state: GameState, rng: Rng): GameState {
       }
       next = appendActivityLogEntry(next, 'system', `${npc.name} has been working a contact in ${districtName}. Tension there has ${delta < 0 ? 'eased' : 'increased'}.`)
     } else if (action === 'npc_approach') {
-      const others = next.roster.filter((r) => r.npcId !== npc.npcId)
+      const others = next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId)
       if (others.length > 0) {
         const other = others[Math.floor(rng() * others.length)]!
         const relKey = buildRelationshipKey(npc.npcId, other.npcId)
@@ -72,7 +72,7 @@ export function applyInitiativeAgency(state: GameState, rng: Rng): GameState {
     }
 
     const updatedNpc = { ...npc, npcArc: { ...arc, stageFlags: updatedFlags } }
-    next = { ...next, roster: next.roster.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
+    next = { ...next, npcRuntimeStates: next.npcRuntimeStates.map((n) => (n.npcId === npc.npcId ? updatedNpc : n)) }
   }
 
   return next

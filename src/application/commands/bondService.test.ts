@@ -13,9 +13,9 @@ function withBoundNpc(
   stateOverrides: Partial<GameState> = {},
 ): GameState {
   const marion = {
-    ...initialGameStateSnapshot.roster[0]!,
+    ...initialGameStateSnapshot.npcRuntimeStates[0]!,
     traits: {
-      ...initialGameStateSnapshot.roster[0]!.traits,
+      ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits,
       empathy: 72,
     },
   }
@@ -46,7 +46,7 @@ function withBoundNpc(
       ...initialGameStateSnapshot.factionStandings,
       'faction-tallow-ring': 10,
     },
-    roster: [marion, ida],
+    npcRuntimeStates: [marion, ida],
     ...stateOverrides,
   }
 }
@@ -59,14 +59,14 @@ describe('freeNpc', () => {
     )
 
     expect(next.money).toBe(80)
-    const ida = next.roster.find((npc) => npc.npcId === 'npc-ida-rhys')!
+    const ida = next.npcRuntimeStates.find((npc) => npc.npcId === 'npc-ida-rhys')!
     expect(ida.bondStatus).toBeNull()
 
     const relationship = next.relationships[buildRelationshipKey('player', 'npc-ida-rhys')]!
     expect(relationship.loyalty).toBe(25)
     expect(relationship.trust).toBe(20)
 
-    const marion = next.roster.find((npc) => npc.npcId === 'npc-marion-vale')!
+    const marion = next.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')!
     expect(marion.states.morale).toBe(71)
     expect(next.pendingEvents.some((event) => event.eventId === 'event-npc-freed')).toBe(true)
     expect(next.pendingEvents.find((event) => event.eventId === 'event-npc-freed')?.instanceId).toBeTruthy()
@@ -91,15 +91,15 @@ describe('applyBondServiceEffects', () => {
       },
     })
     state.day = 28
-    state.roster = state.roster.map((npc) =>
+    state.npcRuntimeStates = state.npcRuntimeStates.map((npc) =>
       npc.npcId === 'npc-marion-vale'
         ? { ...npc, assignment: 'working' as const, traits: { ...npc.traits, empathy: 72 } }
         : npc,
     )
 
     const next = applyBondServiceEffects(state)
-    const ida = next.roster.find((npc) => npc.npcId === 'npc-ida-rhys')!
-    const marion = next.roster.find((npc) => npc.npcId === 'npc-marion-vale')!
+    const ida = next.npcRuntimeStates.find((npc) => npc.npcId === 'npc-ida-rhys')!
+    const marion = next.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')!
 
     expect(ida.bondStatus?.alongsideFreeAssignmentDays).toBe(14)
     expect(ida.states.morale).toBe(56)
@@ -118,7 +118,7 @@ describe('applyBondServiceEffects', () => {
       {},
       {
         day: 28,
-        roster: withBoundNpc().roster.map((npc) =>
+        npcRuntimeStates: withBoundNpc().npcRuntimeStates.map((npc) =>
           npc.npcId === 'npc-marion-vale'
             ? {
                 ...npc,
@@ -131,7 +131,7 @@ describe('applyBondServiceEffects', () => {
     )
 
     const next = applyBondServiceEffects(state)
-    const marion = next.roster.find((npc) => npc.npcId === 'npc-marion-vale')!
+    const marion = next.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')!
 
     expect(marion.activeTitle).toBeNull()
     expect(next.pendingEvents.some((event) => event.eventId === 'event-title-npc-bond-objection')).toBe(true)
@@ -147,9 +147,9 @@ describe('bond service end-of-day integration', () => {
       ...withBoundNpc({
         bondStatus: null,
       }),
-      roster: withBoundNpc({
+      npcRuntimeStates: withBoundNpc({
         bondStatus: null,
-      }).roster.map((npc) =>
+      }).npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? { ...npc, assignment: 'idle' as const }
           : npc,
@@ -158,7 +158,7 @@ describe('bond service end-of-day integration', () => {
 
     const boundState = {
       ...withBoundNpc(),
-      roster: withBoundNpc().roster.map((npc) =>
+      npcRuntimeStates: withBoundNpc().npcRuntimeStates.map((npc) =>
         npc.npcId === 'npc-marion-vale'
           ? { ...npc, assignment: 'idle' as const }
           : npc,
@@ -208,12 +208,12 @@ describe('applyBondHolderPowerDynamics (via applyBondServiceEffects)', () => {
     const combatCapture = applyBondServiceEffects({
       ...initialGameStateSnapshot,
       playerCharacter: highDominancePlayer,
-      roster: [makeBondedNpc({}, { entryReason: 'combat-capture' as const })],
+      npcRuntimeStates: [makeBondedNpc({}, { entryReason: 'combat-capture' as const })],
     })
     const voluntary = applyBondServiceEffects({
       ...initialGameStateSnapshot,
       playerCharacter: highDominancePlayer,
-      roster: [makeBondedNpc({}, { entryReason: 'voluntary' as const })],
+      npcRuntimeStates: [makeBondedNpc({}, { entryReason: 'voluntary' as const })],
     })
 
     const npcId = idaRhysRosterEntry.npcId
@@ -227,7 +227,7 @@ describe('applyBondHolderPowerDynamics (via applyBondServiceEffects)', () => {
 
     const result = applyBondServiceEffects({
       ...initialGameStateSnapshot,
-      roster: [highEmpathyNpc],
+      npcRuntimeStates: [highEmpathyNpc],
     })
 
     const npcId = idaRhysRosterEntry.npcId
@@ -244,11 +244,11 @@ describe('applyBondHolderPowerDynamics (via applyBondServiceEffects)', () => {
     const result = applyBondServiceEffects({
       ...initialGameStateSnapshot,
       playerCharacter: highDominancePlayer,
-      roster: [makeBondedNpc({}, { entryReason: 'combat-capture' as const })],
+      npcRuntimeStates: [makeBondedNpc({}, { entryReason: 'combat-capture' as const })],
     })
 
     const npcId = idaRhysRosterEntry.npcId
-    const npcMemory = result.roster.find((n) => n.npcId === npcId)?.npcMemory ?? []
+    const npcMemory = result.npcRuntimeStates.find((n) => n.npcId === npcId)?.npcMemory ?? []
     // Combat-capture with high dominance → fearDelta >> 5, triggers writeNpcMemory auto + explicit
     const hasContractMemory = npcMemory.some((m) => m.event.includes('contract') || m.event.includes('chain'))
     expect(hasContractMemory).toBe(true)
@@ -257,11 +257,11 @@ describe('applyBondHolderPowerDynamics (via applyBondServiceEffects)', () => {
   it('voluntary long-term bond produces smaller fear than fresh combat-capture', () => {
     const voluntaryLongTerm = applyBondServiceEffects({
       ...initialGameStateSnapshot,
-      roster: [makeBondedNpc({}, { entryReason: 'voluntary' as const, alongsideFreeAssignmentDays: 28 })],
+      npcRuntimeStates: [makeBondedNpc({}, { entryReason: 'voluntary' as const, alongsideFreeAssignmentDays: 28 })],
     })
     const combatCaptureFresh = applyBondServiceEffects({
       ...initialGameStateSnapshot,
-      roster: [makeBondedNpc({}, { entryReason: 'combat-capture' as const, alongsideFreeAssignmentDays: 0 })],
+      npcRuntimeStates: [makeBondedNpc({}, { entryReason: 'combat-capture' as const, alongsideFreeAssignmentDays: 0 })],
     })
 
     const npcId = idaRhysRosterEntry.npcId
@@ -309,7 +309,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
   it('applies ruthlessness drift when a coercive bond is held', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [makeBondedRosterEntry({}, { entryReason: 'combat-capture' })],
+      npcRuntimeStates: [makeBondedRosterEntry({}, { entryReason: 'combat-capture' })],
     }
     const before = state.playerCharacter.traits.ruthlessness
     const result = applyBondServiceEffects(state)
@@ -319,7 +319,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
   it('does NOT apply ruthlessness drift for voluntary bonds', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [makeBondedRosterEntry({}, { entryReason: 'voluntary' })],
+      npcRuntimeStates: [makeBondedRosterEntry({}, { entryReason: 'voluntary' })],
     }
     const before = state.playerCharacter.traits.ruthlessness
     const result = applyBondServiceEffects(state)
@@ -329,7 +329,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
   it('applies dominance drift when any player-held bond exists', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [makeBondedRosterEntry({}, { entryReason: 'inherited' })],
+      npcRuntimeStates: [makeBondedRosterEntry({}, { entryReason: 'inherited' })],
     }
     const before = state.playerCharacter.traits.dominance
     const result = applyBondServiceEffects(state)
@@ -341,7 +341,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
       day: 7,
-      roster: [makeBondedRosterEntry()],
+      npcRuntimeStates: [makeBondedRosterEntry()],
     }
     const before = state.activityLog.length
     const result = applyBondServiceEffects(state)
@@ -354,7 +354,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
       day: 4,
-      roster: [makeBondedRosterEntry()],
+      npcRuntimeStates: [makeBondedRosterEntry()],
     }
     const before = state.activityLog.length
     const result = applyBondServiceEffects(state)
@@ -369,7 +369,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
     const bond3 = makeBondedRosterEntry({ npcId: 'npc-3', name: 'Three' })
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [bond1, bond2, bond3],
+      npcRuntimeStates: [bond1, bond2, bond3],
     }
     const beforeUnrest = state.cityDials.unrest
     const beforeGilded = state.factionStandings['faction-gilded-court'] ?? 0
@@ -381,7 +381,7 @@ describe('applyBondHolderConsequences (via applyBondServiceEffects)', () => {
   it('does NOT affect city or Gilded Court when fewer than 3 bonds held', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
-      roster: [makeBondedRosterEntry()],
+      npcRuntimeStates: [makeBondedRosterEntry()],
       factionStandings: { 'faction-gilded-court': 10 },
     }
     const beforeUnrest = state.cityDials.unrest

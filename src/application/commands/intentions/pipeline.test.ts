@@ -78,7 +78,7 @@ describe('Intention Generation Pipeline', () => {
       foodSecurity: 60, foodStock: 100, foodCapacity: 200, waterAccess: 50, materialStock: 100,
       corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [],
     },
-    roster: [],
+    npcRuntimeStates: [],
     relationships: {},
     activeQuests: [],
   })

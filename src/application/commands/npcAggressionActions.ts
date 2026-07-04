@@ -29,7 +29,7 @@ function updateNpcStates(
 ): GameState {
   return {
     ...state,
-    roster: state.roster.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...updates } } : n)),
+    npcRuntimeStates: state.npcRuntimeStates.map((n) => (n.npcId === npcId ? { ...n, states: { ...n.states, ...updates } } : n)),
   }
 }
 
@@ -38,12 +38,12 @@ function updateNpcStates(
  * rival authored (npcs.json loyalties) or that rival isn't currently in the roster.
  */
 export function npcConfrontRival(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const rivalLoyalty = contentCatalog.npcsById.get(npcId)?.loyalties.find((l) => l.type === 'rival')
   if (!rivalLoyalty) return state
-  const target = state.roster.find((n) => n.npcId === rivalLoyalty.targetId)
+  const target = state.npcRuntimeStates.find((n) => n.npcId === rivalLoyalty.targetId)
   if (!target) return state
 
   const successChance = Math.max(
@@ -78,10 +78,10 @@ export function npcConfrontRival(state: GameState, npcId: string, rng: Rng): Gam
  * relationship toward them (more fear, less genuine respect) on success.
  */
 export function npcAssertDominance(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const target = state.roster
+  const target = state.npcRuntimeStates
     .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
     .sort((a, b) => a.traits.dominance - b.traits.dominance)[0]
   if (!target) return state
@@ -121,7 +121,7 @@ export function npcAssertDominance(state: GameState, npcId: string, rng: Rng): G
  * NPC patrols the house grounds, easing tension in the house's own district.
  */
 export function npcProtectHouse(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const districtId = state.houseDistrictId
@@ -143,7 +143,7 @@ export function npcProtectHouse(state: GameState, npcId: string): GameState {
  * NPC patrols their assigned district, easing its tension. No-ops if not assigned anywhere.
  */
 export function npcPatrolDistrict(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc || !npc.assignedDistrictId) return state
 
   const districtId = npc.assignedDistrictId
@@ -178,7 +178,7 @@ const FORTIFY_COST = 20
  * material cost deducted from house funds). No-ops if funds are short or the level is maxed.
  */
 export function npcFortifyPosition(state: GameState, npcId: string, rng: Rng): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
   if (state.house.fortificationLevel >= 5) return state
   if (state.money < FORTIFY_COST) return state
@@ -214,10 +214,10 @@ export function npcFortifyPosition(state: GameState, npcId: string, rng: Rng): G
  * healing-tagged item (consumed); falls back to bedside comfort with a smaller effect.
  */
 export function npcCareForInjured(state: GameState, npcId: string): GameState {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const target = state.roster
+  const target = state.npcRuntimeStates
     .filter((r) => r.npcId !== npcId && (r.assignment === 'idle' || r.assignment === 'recovering'))
     .filter((r) => r.states.injury > 0 || r.states.health < 80)
     .sort((a, b) => b.states.injury - a.states.injury)[0]

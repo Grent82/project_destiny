@@ -72,7 +72,7 @@ export function writeLossMemories(
 ): GameState {
   return {
     ...state,
-    roster: state.roster.map((npc) => {
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => {
       if (npc.npcId === lostNpcId) return npc
 
       const relKey = buildRelationshipKey(npc.npcId, lostNpcId)

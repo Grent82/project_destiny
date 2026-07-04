@@ -22,7 +22,7 @@ export interface SeekTipsParams {
 export function seekTips(state: GameState, params: SeekTipsParams): GameState {
   const { npcId, districtId } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   // Check guard: requires presence >= 40 OR performance >= 30
@@ -47,7 +47,7 @@ export function seekTips(state: GameState, params: SeekTipsParams): GameState {
   // Add to NPC's carriedCash
   const newState = {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,

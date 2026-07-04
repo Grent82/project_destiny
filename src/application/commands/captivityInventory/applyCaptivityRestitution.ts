@@ -122,12 +122,12 @@ export function applyCaptivityRestitution(state: GameState, params: RestitutionP
   const { npcId, regime, releasedBy } = params
 
   // Find NPC in roster
-  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === npcId)
   if (npcIndex === -1) {
     return state // NPC not found, no change
   }
 
-  const npc = state.roster[npcIndex]
+  const npc = state.npcRuntimeStates[npcIndex]
 
   // Get restitution rules for this regime
   const rules = RESTITUTION_RULES[regime]
@@ -260,7 +260,7 @@ export function applyCaptivityRestitution(state: GameState, params: RestitutionP
   if (moneyReturned > 0) {
     newState = {
       ...newState,
-      roster: newState.roster.map((n, i) =>
+      npcRuntimeStates: newState.npcRuntimeStates.map((n, i) =>
         i === npcIndex
           ? {
               ...n,

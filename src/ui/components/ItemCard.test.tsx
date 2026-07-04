@@ -68,7 +68,7 @@ describe('ItemCard', () => {
 
 describe('TargetPickerModal', () => {
   it('shows empty state when roster is empty', () => {
-    const emptyRosterState = { ...initialGameStateSnapshot, roster: [] }
+    const emptyRosterState = { ...initialGameStateSnapshot, npcRuntimeStates: [] }
     const store = createGameStore(emptyRosterState)
     render(
       <TargetPickerModal

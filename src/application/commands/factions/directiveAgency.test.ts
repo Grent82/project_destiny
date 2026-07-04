@@ -10,9 +10,9 @@ describe('directiveAgency', () => {
     it('returns state unchanged when no NPCs are eligible', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'deployed', // Not eligible
             factionRelationships: [],
           },
@@ -26,12 +26,12 @@ describe('directiveAgency', () => {
     it('creates a directive when eligible NPC is available', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
-            attributes: { ...initialGameStateSnapshot.roster[0]!.attributes, perception: 70 },
-            skills: { ...initialGameStateSnapshot.roster[0]!.skills, survival: 50 },
+            attributes: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes, perception: 70 },
+            skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, survival: 50 },
             factionRelationships: [{ factionId: 'faction-civic-compact', standing: 30 }],
           },
         ],
@@ -47,12 +47,12 @@ describe('directiveAgency', () => {
     it('updates NPC currentDirectiveId when directive is assigned', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             assignment: 'idle',
-            attributes: { ...initialGameStateSnapshot.roster[0]!.attributes, perception: 70 },
-            skills: { ...initialGameStateSnapshot.roster[0]!.skills, survival: 50 },
+            attributes: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes, perception: 70 },
+            skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, survival: 50 },
             factionRelationships: [{ factionId: 'faction-civic-compact', standing: 30 }],
           },
         ],
@@ -85,9 +85,9 @@ describe('directiveAgency', () => {
     it('returns true when NPC has currentDirectiveId', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             currentDirectiveId: 'directive-test-123',
             factionRelationships: [],
           },
@@ -100,9 +100,9 @@ describe('directiveAgency', () => {
     it('returns false when NPC has no currentDirectiveId', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             currentDirectiveId: null,
             factionRelationships: [],
           },
@@ -134,9 +134,9 @@ describe('directiveAgency', () => {
 
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             currentDirectiveId: testDirective.id,
             factionRelationships: [],
           },
@@ -151,9 +151,9 @@ describe('directiveAgency', () => {
     it('returns null when NPC has no directive', () => {
       const state: GameState = {
         ...initialGameStateSnapshot,
-        roster: [
+        npcRuntimeStates: [
           {
-            ...initialGameStateSnapshot.roster[0]!,
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             currentDirectiveId: null,
             factionRelationships: [],
           },

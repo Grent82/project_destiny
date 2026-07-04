@@ -13,7 +13,7 @@ function createGameState(roster: NpcRuntimeState[]): GameState {
     hasSeenOpening: false,
     cityDials: { control: 50, prosperity: 50, unrest: 50, corruption: 50 },
     currentDistrictId: 'the-pale',
-    roster,
+    npcRuntimeStates: roster,
     house: {
       rooms: [],
       foodStock: 100,

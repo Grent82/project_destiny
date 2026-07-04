@@ -29,7 +29,7 @@ const IMPROVED_CONDITION: Record<CaptivityCondition, CaptivityCondition> = {
 function cloneState(state: GameState): GameState {
   return {
     ...state,
-    roster: state.roster.map((npc) => ({ ...npc, states: { ...npc.states } })),
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) => ({ ...npc, states: { ...npc.states } })),
     npcCaptivityStates: { ...state.npcCaptivityStates },
     pendingEvents: [...state.pendingEvents],
     eventInstances: [...state.eventInstances],
@@ -54,7 +54,7 @@ function allAbstractSiteIds(state: GameState): string[] {
 }
 
 function getRosterNpc(state: GameState, npcId: string): NpcRuntimeState | undefined {
-  return state.roster.find((npc) => npc.npcId === npcId)
+  return state.npcRuntimeStates.find((npc) => npc.npcId === npcId)
 }
 
 function getCaptivesForSite(state: GameState, siteId: string) {

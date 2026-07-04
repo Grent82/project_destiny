@@ -134,7 +134,7 @@ describe('calculateSquadPower', () => {
   })
 
   it('calculates power based on attributes and skills', () => {
-    const roster: EncounterGameState['roster'] = [
+    const roster: EncounterGameState['npcRuntimeStates'] = [
       {
         skills: { melee: 30, ranged: 20 },
         attributes: { endurance: 50, resolve: 50 },

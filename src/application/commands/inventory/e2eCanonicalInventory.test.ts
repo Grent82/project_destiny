@@ -39,7 +39,7 @@ function createRichState(): GameState {
     ...initialGameStateSnapshot,
     currentDistrictId: 'district-ironworks',
     money: 500,
-    roster: initialGameStateSnapshot.roster.map((npc) =>
+    npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === TEST_NPC_ID
         ? { ...npc, assignment: 'working' } // Make NPC a household member for equip testing
         : npc
@@ -105,7 +105,7 @@ function createStateWithStoredItem(itemId: string, instanceId: string): GameStat
         ],
       },
     },
-    roster: initialGameStateSnapshot.roster.map((npc) =>
+    npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === TEST_NPC_ID
         ? { ...npc, assignment: 'working' }
         : npc
@@ -162,7 +162,7 @@ function createStateWithNpcItem(itemId: string, instanceId: string): GameState {
         ],
       },
     },
-    roster: initialGameStateSnapshot.roster.map((npc) =>
+    npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === TEST_NPC_ID
         ? { ...npc, assignment: 'working' }
         : npc
@@ -228,7 +228,7 @@ function createStateWithWeaponInStorage(weaponId: string, instanceId: string): G
         ],
       },
     },
-    roster: initialGameStateSnapshot.roster.map((npc) =>
+    npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === TEST_NPC_ID
         ? { ...npc, assignment: 'working' }
         : npc
@@ -353,7 +353,7 @@ describe('Canonical Inventory E2E Regression Suite', () => {
       })
 
       // NPC should have the weapon equipped
-      expect(equipped.roster.find((n) => n.npcId === TEST_NPC_ID)?.equipment.weapon).toBe(INST_DAGGER_001)
+      expect(equipped.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)?.equipment.weapon).toBe(INST_DAGGER_001)
     })
 
     it('allows NPC to equip weapon from personal inventory', () => {
@@ -367,7 +367,7 @@ describe('Canonical Inventory E2E Regression Suite', () => {
         slot: 'weapon',
       })
 
-      expect(equipped.roster.find((n) => n.npcId === TEST_NPC_ID)?.equipment.weapon).toBe(INST_DAGGER_001)
+      expect(equipped.npcRuntimeStates.find((n) => n.npcId === TEST_NPC_ID)?.equipment.weapon).toBe(INST_DAGGER_001)
     })
   })
 

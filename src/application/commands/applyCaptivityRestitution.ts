@@ -11,7 +11,7 @@ import { appendActivityLogEntry } from './activityLog'
 export function applyCaptivityRestitution(state: GameState, payload: { npcId: string }): GameState {
   const { npcId } = payload
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   // Only restitution if NPC is freed
@@ -36,7 +36,7 @@ export function applyCaptivityRestitution(state: GameState, payload: { npcId: st
 
   let next: GameState = {
     ...state,
-    roster: [...state.roster],
+    npcRuntimeStates: [...state.npcRuntimeStates],
     inventoryState: {
       ...state.inventoryState,
       npcInventories: { ...state.inventoryState.npcInventories },
@@ -135,8 +135,8 @@ export function applyCaptivityRestitution(state: GameState, payload: { npcId: st
   }
 
   // Update roster
-  const nextRoster = next.roster.map((n) => (n.npcId === npcId ? nextNpc : n))
-  next.roster = nextRoster
+  const nextRoster = next.npcRuntimeStates.map((n) => (n.npcId === npcId ? nextNpc : n))
+  next.npcRuntimeStates = nextRoster
 
   // Add activity log entry
   next = appendActivityLogEntry(

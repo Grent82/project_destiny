@@ -183,7 +183,7 @@ export function buildIntentionContext(
   const districtSafety = 100 - tension
 
   // Determine relationship state from states and recent interactions
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   const stress = npc?.states.stress ?? 50
   const morale = npc?.states.morale ?? 50
 

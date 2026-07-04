@@ -72,7 +72,7 @@ function findEligibleNPCs(
   const factionStanding = state.factionStandings[factionId] ?? 0
   const eligible: { npc: NpcRuntimeState; score: number }[] = []
 
-  for (const npc of state.roster) {
+  for (const npc of state.npcRuntimeStates) {
     // Skip NPCs who are already on a directive
     if (npc.currentDirectiveId) continue
 
@@ -144,7 +144,7 @@ function generateDirectiveDescription(directiveType: FactionDirectiveType, targe
  */
 function getTargetName(targetId: string, state: GameState): string {
   // Check if it's an NPC
-  const npc = state.roster.find((n) => n.npcId === targetId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === targetId)
   if (npc) return npc.name
 
   // Check if it's a district
@@ -249,7 +249,7 @@ function tryGenerateDirective(
   const newState = {
     ...state,
     activeDirectives: [...state.activeDirectives, directive],
-    roster: state.roster.map((rosterNpc) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((rosterNpc) =>
       rosterNpc.npcId === npc.npcId
         ? {
             ...rosterNpc,
@@ -283,7 +283,7 @@ function processDueDirectives(state: GameState, rng: ReturnType<typeof createRng
   let newState = state
 
   for (const directive of dueDirectives) {
-    const npc = newState.roster.find((n) => n.npcId === directive.targetNpcId)
+    const npc = newState.npcRuntimeStates.find((n) => n.npcId === directive.targetNpcId)
     if (!npc) continue
 
     // Calculate success chance based on NPC skills and directive type
@@ -322,7 +322,7 @@ function processDueDirectives(state: GameState, rng: ReturnType<typeof createRng
             }
           : d,
       ),
-      roster: newState.roster.map((rosterNpc) =>
+      npcRuntimeStates: newState.npcRuntimeStates.map((rosterNpc) =>
         rosterNpc.npcId === directive.targetNpcId
           ? {
               ...rosterNpc,
@@ -411,7 +411,7 @@ export function generateFactionDirectives(state: GameState): GameState {
  * Checks if an NPC is currently on a directive.
  */
 export function isNpcOnDirective(state: GameState, npcId: string): boolean {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   return !!npc?.currentDirectiveId
 }
 
@@ -419,7 +419,7 @@ export function isNpcOnDirective(state: GameState, npcId: string): boolean {
  * Gets the active directive for an NPC.
  */
 export function getNpcDirective(state: GameState, npcId: string): FactionDirective | null {
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc?.currentDirectiveId) return null
 
   return state.activeDirectives.find((d) => d.id === npc.currentDirectiveId) ?? null

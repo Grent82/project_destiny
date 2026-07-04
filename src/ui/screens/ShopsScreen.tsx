@@ -36,7 +36,7 @@ export function ShopsScreen() {
   const gameState = useAppSelector((state) => state.game)
   const houseStorageWeapons = useAppSelector(selectHouseStorageWeapons)
   const houseStorageArmors = useAppSelector(selectHouseStorageArmors)
-  const roster = gameState.roster
+  const roster = gameState.npcRuntimeStates
   const durabilities = gameState.equippedItemDurabilities
   const money = gameState.money
   const hasQuartermaster = roster.some((r) => r.activeTitle === 'title-quartermaster')

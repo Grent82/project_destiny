@@ -8,7 +8,7 @@ describe('poachEmployee', () => {
   it('fails when employee has no current employment', () => {
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: null,
@@ -42,7 +42,7 @@ describe('poachEmployee', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -76,7 +76,7 @@ describe('poachEmployee', () => {
 
     const state = {
       ...initialStateWithIda,
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -113,7 +113,7 @@ describe('poachEmployee', () => {
     const state = {
       ...initialStateWithIda,
       rngSeed: 100, // Moderate roll
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -135,7 +135,7 @@ describe('poachEmployee', () => {
     expect(result.newEmployment?.wageOffer).toBe(15)
 
     // Verify employee has new employment
-    const employee = result.newState?.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.newState?.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.employerId).toBe('player')
     expect(employee?.currentEmployment?.wagePerDay).toBe(15)
   })
@@ -157,7 +157,7 @@ describe('poachEmployee', () => {
     const state = {
       ...initialStateWithIda,
       rngSeed: 50, // Medium roll
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -194,7 +194,7 @@ describe('poachEmployee', () => {
     const state = {
       ...initialStateWithIda,
       rngSeed: 100, // Moderate roll
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -232,7 +232,7 @@ describe('poachEmployee', () => {
     const state = {
       ...initialStateWithIda,
       rngSeed: 100, // Moderate roll
-      roster: [
+      npcRuntimeStates: [
         {
           ...idaRhysRosterEntry,
           currentEmployment: employment,
@@ -250,7 +250,7 @@ describe('poachEmployee', () => {
     expect(result.success).toBe(true)
 
     // Check new employment has reduced protection
-    const employee = result.newState?.roster.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
+    const employee = result.newState?.npcRuntimeStates.find((npc) => npc.npcId === idaRhysRosterEntry.npcId)
     expect(employee?.currentEmployment?.poachProtection).toBe(0) // 20 - 20 = 0
     expect(employee?.currentEmployment?.autoRenew).toBe(false) // Reset on poach
   })

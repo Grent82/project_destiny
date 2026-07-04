@@ -19,7 +19,7 @@ import type { NpcRuntimeState } from '../../domain/npc/contracts'
 const SQUAD_NPC = 'npc-marion-vale'
 
 function npcWith(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
-  return { ...initialGameStateSnapshot.roster[0]!, ...overrides }
+  return { ...initialGameStateSnapshot.npcRuntimeStates[0]!, ...overrides }
 }
 
 describe('deriveGriefState', () => {
@@ -95,7 +95,7 @@ describe('writeLossMemories', () => {
       relationships: { [relKey]: { affinity: 0, respect: 0, fear: 0, trust: 50, loyalty: 0 } },
     }
     const result = writeLossMemories(state, 'npc-lost', 10)
-    const npc = result.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     const lossMemory = npc.npcMemory.find((m) => m.event === 'loss')
     expect(lossMemory).toBeDefined()
     expect(lossMemory?.participants).toContain('npc-lost')
@@ -109,7 +109,7 @@ describe('writeLossMemories', () => {
       relationships: { [relKey]: { affinity: 0, respect: 0, fear: 0, trust: 10, loyalty: 0 } },
     }
     const result = writeLossMemories(state, 'npc-lost', 5)
-    const npc = result.roster.find((n) => n.npcId === SQUAD_NPC)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!
     expect(npc.npcMemory.find((m) => m.event === 'loss')).toBeUndefined()
   })
 
@@ -119,7 +119,7 @@ describe('writeLossMemories', () => {
       relationships: {},
     }
     const result = writeLossMemories(state, SQUAD_NPC, 1)
-    const lostNpc = result.roster.find((n) => n.npcId === SQUAD_NPC)
+    const lostNpc = result.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     // The lost NPC would be removed by dismissNpc, but writeLossMemories skips it
     expect(lostNpc?.npcMemory.find((m) => m.event === 'loss')).toBeUndefined()
   })
@@ -131,7 +131,7 @@ describe('grief applies morale penalty in state decay', () => {
     const state: GameState = {
       ...initialGameStateSnapshot,
       relationships: { [relKey]: { affinity: 0, respect: 0, fear: 0, trust: 60, loyalty: 0 } },
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC
           ? {
               ...n,
@@ -144,7 +144,7 @@ describe('grief applies morale penalty in state decay', () => {
 
     const noGriefState: GameState = {
       ...initialGameStateSnapshot,
-      roster: initialGameStateSnapshot.roster.map((n) =>
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n) =>
         n.npcId === SQUAD_NPC
           ? { ...n, states: { ...n.states, morale: 80, anger: 0, hygiene: 0 }, npcMemory: [] }
           : n,
@@ -157,8 +157,8 @@ describe('grief applies morale penalty in state decay', () => {
     griefStore.dispatch(gameActions.endDay())
     noGriefStore.dispatch(gameActions.endDay())
 
-    const griefMorale = griefStore.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.morale
-    const noGriefMorale = noGriefStore.getState().game.roster.find((n) => n.npcId === SQUAD_NPC)!.states.morale
+    const griefMorale = griefStore.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.morale
+    const noGriefMorale = noGriefStore.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)!.states.morale
 
     expect(griefMorale).toBeLessThan(noGriefMorale)
   })

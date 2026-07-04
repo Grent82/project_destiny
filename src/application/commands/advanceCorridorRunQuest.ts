@@ -44,7 +44,7 @@ export function advanceCorridorRunQuest(
   // Build squad member names for activity log
   const squadNames = squadNpcIds
     .map((id) => {
-      const rosterEntry = state.roster.find((r) => r.npcId === id)
+      const rosterEntry = state.npcRuntimeStates.find((r) => r.npcId === id)
       return rosterEntry?.name ?? id
     })
     .join(', ')

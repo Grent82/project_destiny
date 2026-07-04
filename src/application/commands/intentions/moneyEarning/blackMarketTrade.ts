@@ -24,7 +24,7 @@ export interface BlackMarketTradeParams {
 export function blackMarketTrade(state: GameState, params: BlackMarketTradeParams): GameState {
   const { npcId, districtId } = params
 
-  const npc = state.roster.find((n) => n.npcId === npcId)
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   // Check guard: requires intrigue >= 40 OR security >= 40
@@ -59,7 +59,7 @@ export function blackMarketTrade(state: GameState, params: BlackMarketTradeParam
 
   const newState = {
     ...state,
-    roster: state.roster.map((n) =>
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
       n.npcId === npcId
         ? {
             ...n,

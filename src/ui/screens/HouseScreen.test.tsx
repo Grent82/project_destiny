@@ -257,7 +257,7 @@ describe('HouseScreen — room occupancy', () => {
       'npc-marion-vale',
     )
 
-    expect(store.getState().game.roster.find((npc) => npc.npcId === 'npc-marion-vale')?.roomAssignment).toBe('room-bureau')
+    expect(store.getState().game.npcRuntimeStates.find((npc) => npc.npcId === 'npc-marion-vale')?.roomAssignment).toBe('room-bureau')
     expect(within(roomLedger()).getByText(/Quartered here: Marion Vale/i)).toBeInTheDocument()
     // The plan writes the occupant into the room
     expect(screen.getAllByText(/Marion Vale/).length).toBeGreaterThanOrEqual(2)

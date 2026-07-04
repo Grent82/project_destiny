@@ -87,7 +87,7 @@ describe('tickLegacyIntent', () => {
     }
     // rng always returns 0: below any probability threshold
     const result = tickLegacyIntent(state, () => 0)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.pregnancyState?.context).toBe('consensual')
     expect(npc.pregnancyState?.daysElapsed).toBe(0)
   })
@@ -111,7 +111,7 @@ describe('tickLegacyIntent', () => {
     }
     // rng returns 1: always above threshold
     const result = tickLegacyIntent(state, () => 1)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.pregnancyState).toBeUndefined()
   })
 
@@ -142,14 +142,14 @@ describe('tickPregnancyProgress', () => {
   it('increments daysElapsed each tick', () => {
     const state: GameState = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 10, questTag: null, wanted: null } }
           : n,
       ),
     }
     const result = tickPregnancyProgress(state)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.pregnancyState?.daysElapsed).toBe(11)
   })
 
@@ -166,7 +166,7 @@ describe('tickPregnancyProgress', () => {
           intimacyStage: 'committed',
         },
       },
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null, wanted: null } }
           : n,
@@ -186,21 +186,21 @@ describe('tickPregnancyProgress', () => {
   it('clears pregnancyState after birth', () => {
     const state: GameState = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? { ...n, pregnancyState: { context: 'consensual', daysElapsed: 269, questTag: null, wanted: null } }
           : n,
       ),
     }
     const result = tickPregnancyProgress(state)
-    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
     expect(npc.pregnancyState).toBeUndefined()
   })
 
   it('does not create heir for unknown context pregnancies', () => {
     const state: GameState = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? { ...n, pregnancyState: { context: 'unknown', daysElapsed: 269, questTag: null, wanted: null } }
           : n,
@@ -213,7 +213,7 @@ describe('tickPregnancyProgress', () => {
   it('marks ward-born heirs as hidden and gives them a distinct origin story', () => {
     const state: GameState = {
       ...initialStateWithIda,
-      roster: initialStateWithIda.roster.map((n) =>
+      npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((n) =>
         n.npcId === NPC_ID
           ? {
               ...n,
