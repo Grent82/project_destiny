@@ -66,7 +66,7 @@ export function transferItem(state: GameState, params: TransferItemParams): Game
   } else if (toType === 'shop_stock') {
     newState = addToShopStock(newState, toId, itemInstanceId, sourceResult.itemId, quantity)
   } else if (toType === 'equipment') {
-    newState = addToEquipment(newState, toId, itemInstanceId, sourceResult.itemId, quantity)
+    newState = addToEquipment(newState, toId, itemInstanceId, sourceResult.itemId)
   }
 
   // Update itemRegistry with new location
@@ -568,7 +568,7 @@ function addToShopStock(state: GameState, shopId: string, itemInstanceId: string
 /**
  * Add items to equipment slot.
  */
-function addToEquipment(state: GameState, ownerId: string, itemInstanceId: string, itemId: string, _quantity: number): GameState {
+function addToEquipment(state: GameState, ownerId: string, itemInstanceId: string, itemId: string): GameState {
   const itemDef = contentCatalog.itemsById.get(itemId)
   if (!itemDef) return state
 

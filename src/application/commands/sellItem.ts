@@ -1,7 +1,9 @@
 import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { formatMarks } from '../../domain/game/currency'
-import { removePlayerItem, findPlayerItem } from './inventory/inventoryHelpers'
+import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
+import { transferItem } from './inventory/transferItem'
+import type { TransferItemParams } from '../../domain/inventory/contracts'
 
 /**
  * Computes the sell price for an owned item at the current district.
@@ -25,6 +27,28 @@ export function computeSellPrice(state: GameState, instanceId: string): number {
   return Math.max(1, Math.floor(baseValue * multiplier))
 }
 
+/**
+ * Find the shop in the current district that buys this item type.
+ * Returns the shopId or null if no shop buys this item.
+ */
+function findShopForItem(state: GameState, itemId: string): string | null {
+  const currentDistrictId = state.currentDistrictId
+  if (!currentDistrictId) return null
+
+  // Find shops in the current district
+  const districtShops = contentCatalog.shops.filter((s) => s.districtId === currentDistrictId)
+
+  for (const shop of districtShops) {
+    // Check if this shop offers this item type
+    const offersItem = shop.offers.some((offer) => offer.itemId === itemId)
+    if (offersItem) {
+      return shop.id
+    }
+  }
+
+  return null
+}
+
 export function sellItem(state: GameState, instanceId: string): GameState {
   const item = findPlayerItem(state, instanceId)
   if (!item) return state
@@ -34,11 +58,53 @@ export function sellItem(state: GameState, instanceId: string): GameState {
 
   const sellPrice = computeSellPrice(state, instanceId)
 
-  const newState = removePlayerItem(state, instanceId)
+  // Find a shop in the current district to sell to
+  const shopId = findShopForItem(state, def.id)
+  if (!shopId) {
+    // No shop in current district buys this item - just remove it and give money
+    // This is a fallback for edge cases
+    const newState = findPlayerItem(state, instanceId)
+      ? removePlayerItem(state, instanceId)
+      : state
+
+    return {
+      ...newState,
+      money: newState.money + sellPrice,
+      activityLog: [
+        {
+          id: `log-${state.day}-${state.timeSlot}-sell-${instanceId}`,
+          day: state.day,
+          timeSlot: state.timeSlot,
+          category: 'economy' as const,
+          message: `Sold ${def.name} for ${formatMarks(sellPrice)}.`,
+        },
+        ...newState.activityLog,
+      ].slice(0, 50),
+    }
+  }
+
+  // Transfer item to shop stock using canonical transfer
+  const shopStockContainerId = `shop:${shopId}:stock`
+  const transferParams: TransferItemParams = {
+    fromType: 'player_inventory',
+    fromId: 'player',
+    toType: 'shop_stock',
+    toId: shopStockContainerId,
+    itemInstanceId: instanceId,
+    quantity: 1,
+  }
+
+  let nextState = transferItem(state, transferParams)
+  if (nextState === state) {
+    // Transfer failed - item not found or other error
+    return state
+  }
+
+  // Add money to player
+  nextState = { ...nextState, money: nextState.money + sellPrice }
 
   return {
-    ...newState,
-    money: newState.money + sellPrice,
+    ...nextState,
     activityLog: [
       {
         id: `log-${state.day}-${state.timeSlot}-sell-${instanceId}`,
@@ -47,7 +113,7 @@ export function sellItem(state: GameState, instanceId: string): GameState {
         category: 'economy' as const,
         message: `Sold ${def.name} for ${formatMarks(sellPrice)}.`,
       },
-      ...newState.activityLog,
+      ...nextState.activityLog,
     ].slice(0, 50),
   }
 }

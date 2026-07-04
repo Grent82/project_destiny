@@ -30,6 +30,28 @@ const selectCorridorStatus = (state: RootState) => state.game.cityResources.corr
 const selectInstitutionalStanding = (state: RootState) => state.game.institutionalStanding
 const selectDistrictTension = (state: RootState) => state.game.districtTension
 
+/**
+ * Build a map of itemId -> total stock quantity for a specific shop.
+ */
+function buildShopItemIdStockMap(inventoryState: GameState['inventoryState'], shopId: string): Map<string, number> {
+  const quantities = new Map<string, number>()
+  const shopStockContainerId = `shop:${shopId}:stock`
+
+  for (const container of inventoryState.sharedContainers) {
+    if (container.containerId === shopStockContainerId || container.ownerId === shopStockContainerId || container.ownerId === shopId) {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId) {
+          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+          if (instanceDef) {
+            quantities.set(instanceDef.itemId, (quantities.get(instanceDef.itemId) ?? 0) + slot.quantity)
+          }
+        }
+      }
+    }
+  }
+  return quantities
+}
+
 export const selectShopsInCurrentDistrict = (state: RootState) => {
   const districtId = state.game.currentDistrictId
   if (!districtId) return []
@@ -56,6 +78,7 @@ export const selectShopOverview = createSelector(
   [selectMoney, selectInventoryState, selectDistrictStates, selectCurrentDistrictId, selectFactionStandings, selectCorridorStatus, selectInstitutionalStanding, selectDistrictTension],
   (money, inventoryState, districtStates, currentDistrictId, factionStandings, corridorStatus, institutionalStanding, districtTension) => {
     const quantities = buildPlayerInventoryQuantityMap(inventoryState)
+    const shopStockMap = new Map<string, Map<string, number>>() // shopId -> itemId -> stock quantity
     const lowestPriceByItem = new Map<string, number>()
     const districtStateById = new Map(districtStates.map((d) => [d.districtId, d]))
 
@@ -72,6 +95,10 @@ export const selectShopOverview = createSelector(
       : []
 
     for (const shop of shopsToShow) {
+      // Build stock map for this shop
+      const stockMap = buildShopItemIdStockMap(inventoryState, shop.id)
+      shopStockMap.set(shop.id, stockMap)
+
       for (const offer of shop.offers) {
         const currentLowest = lowestPriceByItem.get(offer.itemId)
 
@@ -152,6 +179,9 @@ export const selectShopOverview = createSelector(
                     marketPressureMod,
                   )
 
+                  const shopStock = shopStockMap.get(shop.id)
+                  const stockQuantity = shopStock?.get(offer.itemId) ?? 0
+
                   return {
                     itemId: offer.itemId,
                     itemName: item?.name ?? offer.itemId,
@@ -159,6 +189,8 @@ export const selectShopOverview = createSelector(
                     price: pricingBreakdown.finalPrice,
                     pricingBreakdown,
                     ownedQuantity: quantities.get(offer.itemId) ?? 0,
+                    stockQuantity,
+                    inStock: stockQuantity > 0,
                     affordable: money >= pricingBreakdown.finalPrice,
                     bestPrice: lowestPriceByItem.get(offer.itemId) === offer.price,
                     priceDelta:

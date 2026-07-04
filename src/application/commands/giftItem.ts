@@ -5,6 +5,8 @@ import { contentCatalog } from '../content/contentCatalog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { appendActivityLogEntry, MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
+import { transferItem } from './inventory/transferItem'
+import type { TransferItemParams } from '../../domain/inventory/contracts'
 
 type GiftEffect = Extract<ItemEffect, { type: 'relationship_gift' }>
 
@@ -132,13 +134,28 @@ export function giftItemToNpc(state: GameState, payload: { instanceId: string; n
   const item = contentCatalog.itemsById.get(itemInstance.instance.itemId)
   if (!item) return state
   if (item.category !== 'gift') {
+    // Not a gift item - just remove it (legacy behavior for non-gift items)
     return removePlayerItem(state, instanceId)
   }
 
   const npc = state.roster.find((entry) => entry.npcId === npcId)
   if (!npc || !isNpcColocatedForGift(state, npc)) return state
 
-  let next: GameState = removePlayerItem(state, instanceId)
+  // Transfer item from player inventory to NPC inventory using canonical transfer
+  const transferParams: TransferItemParams = {
+    fromType: 'player_inventory',
+    fromId: 'player',
+    toType: 'npc_inventory',
+    toId: npcId,
+    itemInstanceId: instanceId,
+    quantity: 1,
+  }
+
+  let next: GameState = transferItem(state, transferParams)
+  if (next === state) {
+    // Transfer failed - item not found or other error
+    return state
+  }
 
   const outcome = resolveGiftOutcome(item, npc)
   if (outcome.affinity !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'affinity', outcome.affinity); next = r.state }

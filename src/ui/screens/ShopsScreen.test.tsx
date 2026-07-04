@@ -30,8 +30,12 @@ function createInventoryWithItem(instanceId: string, itemId: string, quantity = 
       usedBagSlots: 1,
       equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
     },
-    sharedContainers: [],
-    itemRegistry: { [instanceId]: { itemId, uniqueId: instanceId, quantity: 1, locationType: 'player_inventory' as const, acquiredDay: 1, flags: [] } },
+    // Keep the sharedContainers from initial state (includes shop stock)
+    sharedContainers: initialGameStateSnapshot.inventoryState.sharedContainers,
+    itemRegistry: {
+      ...initialGameStateSnapshot.inventoryState.itemRegistry,
+      [instanceId]: { itemId, uniqueId: instanceId, quantity: 1, locationType: 'player_inventory' as const, acquiredDay: 1, flags: [] }
+    },
   }
 }
 

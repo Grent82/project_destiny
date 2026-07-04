@@ -3,7 +3,8 @@ import { formatMarks } from '../../domain/game/currency'
 import { resolveShopPricingBreakdown } from '../content/shopPricing'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
-import { addPlayerItem } from './inventory/inventoryHelpers'
+import { transferItem } from './inventory/transferItem'
+import type { TransferItemParams } from '../../domain/inventory/contracts'
 
 export function purchaseItemFromShop(
   state: GameState,
@@ -29,31 +30,53 @@ export function purchaseItemFromShop(
     return state
   }
 
-  const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
-  // Generate a unique instance ID for the purchased item
-  const instanceId = `inst-${itemId}-${Date.now()}`
-  const baseState = { ...state, money: state.money - purchasePrice }
-  const afterPurchase = addPlayerItem(baseState, instanceId, 1)
-  // Add the item to the registry so it can be looked up by the UI
-  const afterRegistry = {
-    ...afterPurchase,
-    inventoryState: {
-      ...afterPurchase.inventoryState,
-      itemRegistry: {
-        ...afterPurchase.inventoryState.itemRegistry,
-        [instanceId]: {
-          itemId,
-          uniqueId: instanceId,
-          quantity: 1,
-          locationType: 'player_inventory' as const,
-          acquiredDay: afterPurchase.day,
-          flags: [],
-        },
-      },
-    },
+  // Find an item instance in the shop's stock
+  const shopStockContainerId = `shop:${shopId}:stock`
+  const shopStock = state.inventoryState.sharedContainers.find(
+    (c) => c.containerId === shopStockContainerId || c.ownerId === shopStockContainerId || c.ownerId === shopId
+  )
+
+  if (!shopStock) {
+    return state
   }
+
+  // Find an available item instance in shop stock
+  const availableSlot = shopStock.slots.find((slot) => {
+    if (!slot.itemInstanceId) return false
+    const instanceDef = state.inventoryState.itemRegistry[slot.itemInstanceId]
+    return instanceDef?.itemId === itemId && slot.quantity > 0
+  })
+
+  if (!availableSlot || !availableSlot.itemInstanceId) {
+    // Shop is out of stock - no item instance available
+    const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
+    return appendActivityLogEntry(
+      state,
+      'economy',
+      `${shop.name} is out of stock for ${itemName}.`,
+    )
+  }
+
+  const itemInstanceId = availableSlot.itemInstanceId
+  const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
+
+  // Deduct money
+  let nextState: GameState = { ...state, money: state.money - purchasePrice }
+
+  // Transfer item from shop stock to player inventory using canonical transfer
+  const transferParams: TransferItemParams = {
+    fromType: 'shop_stock',
+    fromId: shopStockContainerId,
+    toType: 'player_inventory',
+    toId: 'player',
+    itemInstanceId,
+    quantity: 1,
+  }
+
+  nextState = transferItem(nextState, transferParams)
+
   return appendActivityLogEntry(
-    afterRegistry,
+    nextState,
     'economy',
     `Purchased ${itemName} from ${shop.name} for ${formatMarks(purchasePrice)}.`,
   )

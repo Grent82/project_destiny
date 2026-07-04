@@ -40,6 +40,36 @@ function withGiftState(
           },
         ],
       },
+      // Keep sharedContainers from initial state (required for transferItem)
+      sharedContainers: initialGameStateSnapshot.inventoryState.sharedContainers,
+      // Add item registry entry for the gift item
+      itemRegistry: {
+        ...initialGameStateSnapshot.inventoryState.itemRegistry,
+        [itemId]: {
+          uniqueId: itemId,
+          itemId,
+          quantity: 1,
+          locationType: 'player_inventory',
+          locationId: 'player',
+          acquiredDay: 1,
+          acquiredFrom: 'player',
+          flags: [],
+        },
+      },
+      // Initialize NPC inventory container
+      npcInventories: {
+        ...initialGameStateSnapshot.inventoryState.npcInventories,
+        [TARGET_NPC_ID]: [
+          {
+            containerId: `npc:${TARGET_NPC_ID}:inventory`,
+            containerType: 'backpack',
+            ownerId: TARGET_NPC_ID,
+            maxSlots: 20,
+            slots: [],
+            locked: false,
+          },
+        ],
+      },
     },
     roster: initialGameStateSnapshot.roster.map((npc) =>
       npc.npcId === TARGET_NPC_ID
@@ -84,7 +114,7 @@ describe('resolveGiftOutcome', () => {
 })
 
 describe('giftItemToNpc', () => {
-  it('removes the gift, updates relationships, and logs the reaction', () => {
+  it('transfers the gift to NPC inventory, updates relationships, and logs the reaction', () => {
     const itemId = 'item-gift-pressed-flower-fold'
     const key = buildRelationshipKey('player', TARGET_NPC_ID)
     // Read before value before calling giftItemToNpc to avoid mutation issues
@@ -105,8 +135,18 @@ describe('giftItemToNpc', () => {
       { instanceId: itemId, npcId: TARGET_NPC_ID },
     )
 
-    const slotCount = next.inventoryState.player.bagContainers.reduce((sum, c) => sum + c.slots.length, 0)
-    expect(slotCount).toBe(0)
+    // Check that the item was removed from player inventory
+    const playerSlotCount = next.inventoryState.player.bagContainers.reduce((sum, c) => sum + c.slots.length, 0)
+    expect(playerSlotCount).toBe(0)
+
+    // Check that the item was added to NPC inventory
+    const npcContainers = next.inventoryState.npcInventories[TARGET_NPC_ID] || []
+    const npcSlots = npcContainers.flatMap((c) => c.slots)
+    const giftedItemSlot = npcSlots.find((s) => s.itemInstanceId === itemId)
+    expect(giftedItemSlot).toBeDefined()
+    expect(giftedItemSlot?.quantity).toBe(1)
+
+    // Check that relationships were updated
     const after = next.relationships[key]!
     const totalDelta =
       (after.affinity - before.affinity) +
@@ -119,7 +159,7 @@ describe('giftItemToNpc', () => {
 
   it('does nothing when the NPC is not colocated with the player', () => {
     const state = withGiftState('item-gift-pressed-flower-fold', {}, { currentDistrictId: 'district-the-warrens' })
-    const next = giftItemToNpc(state, { instanceId: 'gift-item-gift-pressed-flower-fold', npcId: TARGET_NPC_ID })
+    const next = giftItemToNpc(state, { instanceId: 'item-gift-pressed-flower-fold', npcId: TARGET_NPC_ID })
     expect(next).toEqual(state)
   })
 })
