@@ -14,6 +14,13 @@ import type { RootState } from '../store/gameStore'
 import type { CaptivityState, NpcRuntimeState, PregnancyState } from '../../domain/npc/contracts'
 import { getAllNpcCaptivityStates, getNpcCaptivityState } from '../commands/captivityRegistry'
 
+/**
+ * Canonical player-roster selector. BRIDGE (destiny-rama.4): `state.game.roster` currently holds
+ * only player-roster members, so this raw input is correct today and stays memoization-friendly.
+ * When world/captive persons join the unified list (C2/C3), this flips to filter
+ * `playerRosterMember` on `state.game.npcRuntimeStates`. World NPCs are read via selectWorldNpcStates
+ * (selectors/worldNpcs.ts). See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1/§9.
+ */
 export const selectRoster = (state: RootState) => state.game.roster
 export const selectNpcCaptivityRegistry = (state: RootState) => state.game.npcCaptivityStates
 

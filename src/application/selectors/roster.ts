@@ -5,6 +5,8 @@ import { selectCharacterSignature } from './characterSignature'
 import type { Skills } from '../../domain/npc/contracts'
 import { describeNpcBondSurface } from './bondMarket'
 
+// File-local roster input selector (memoization input for the createSelectors below). The canonical
+// EXPORTED player-roster selector lives in selectors/npcs.ts — do not export a duplicate here.
 const selectRoster = (state: RootState) => state.game.roster
 
 export const WORKING_INCOME_SKILLS: (keyof Skills)[] = ['administration', 'medicine', 'engineering', 'negotiation', 'security', 'crafting', 'academics']
