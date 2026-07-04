@@ -3,7 +3,7 @@ import type { ItemDefinition, ItemEffect } from '../../domain/items/contracts'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { applyRelationshipDelta } from './adjustRelationship'
-import { MAX_ACTIVITY_ENTRIES } from './activityLog'
+import { appendActivityLogEntry, MAX_ACTIVITY_ENTRIES } from './activityLog'
 import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
 
 type GiftEffect = Extract<ItemEffect, { type: 'relationship_gift' }>
@@ -145,6 +145,17 @@ export function giftItemToNpc(state: GameState, payload: { instanceId: string; n
   if (outcome.respect !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'respect', outcome.respect); next = r.state }
   if (outcome.trust !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'trust', outcome.trust); next = r.state }
   if (outcome.loyalty !== 0) { const r = applyRelationshipDelta(next, 'player', npcId, 'loyalty', outcome.loyalty); next = r.state }
+
+  // Apply affinityBonus effect if present
+  const affinityBonusEffect = item.typedEffects.find((e): e is Extract<ItemEffect, { type: 'affinityBonus' }> => e.type === 'affinityBonus')
+  if (affinityBonusEffect) {
+    const bonusValue = typeof affinityBonusEffect.value === 'number' ? affinityBonusEffect.value : 0
+    if (bonusValue > 0) {
+      const r = applyRelationshipDelta(next, 'player', npcId, 'affinity', bonusValue)
+      next = r.state
+      next = appendActivityLogEntry(next, 'system', `${item.name} gifted to ${npc.name}. Extra affinity bonus +${bonusValue} applied!`)
+    }
+  }
 
   next.activityLog.unshift({
     id: `gift::${npcId}::${item.id}::${state.day}::${state.timeSlot}`,

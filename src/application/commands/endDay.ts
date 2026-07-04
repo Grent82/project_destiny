@@ -18,6 +18,7 @@ import {
   handleQuestsPhase,
   handleFactionDirectivesPhase,
   handleEmploymentPhase,
+  handleItemEffectsPhase,
 } from "./endDay/handlers"
 
 // Re-export for backwards compatibility — external consumers (e.g. ledger selector) import from here.
@@ -45,6 +46,7 @@ export { applyCaptivityDegradation, checkMainQuestProgression } from "./endDay/l
  * 14. QUESTS — Quest expiry and debt crisis
  * 15. FACTION_DIRECTIVES — Generate faction directives for available NPCs
  * 16. EMPLOYMENT — Process NPC employment contracts (priority: below faction directives)
+ * 17. ITEM_EFFECTS — Expire temporary stat boosts, training bonuses, and status effects
  */
 export function endDay(state: GameState): GameState {
   const seeded = createRng(state.rngSeed)
@@ -97,6 +99,9 @@ export function endDay(state: GameState): GameState {
 
   // Phase 16: EMPLOYMENT — Process NPC employment contracts
   next = handleEmploymentPhase(next)
+
+  // Phase 17: ITEM_EFFECTS — Expire temporary stat boosts, training bonuses, and status effects
+  next = handleItemEffectsPhase(next)
 
   // Store advanced RNG seed for next day's deterministic run
   return { ...next, rngSeed: seeded.getSeed() }

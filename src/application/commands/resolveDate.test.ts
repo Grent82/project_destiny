@@ -99,6 +99,14 @@ const baseGameState: GameState = {
     weapons: [],
     armors: [],
   },
+  enabledActions: [],
+  playerStatuses: [],
+  activeTrainingBonuses: [],
+  tempStatBoosts: [],
+  equippedTools: [],
+  evidenceInventory: [],
+  houseImprovements: { waterQuality: 0, herbSupply: 0, entrySecurity: 0 },
+  sleepQualityBonus: 0,
   playerCharacter: {
     name: 'Test Player',
     attributes: {

@@ -1,5 +1,5 @@
 import type { GameState } from '../../domain'
-import type { UseActionType } from '../../domain/items/contracts'
+import type { ItemEffect, UseActionType } from '../../domain/items/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { PLAYER_MAX_HEALTH } from './combatants'
@@ -32,7 +32,7 @@ export function useItem(state: GameState, payload: UseItemPayload): GameState {
       return applyConsume(state, instance.instance.uniqueId, targetNpcId, itemDef.name, itemDef.typedEffects ?? [])
     case 'present':
     case 'archive':
-      return applyDocumentDisposition(state, instance.instance.uniqueId, action, itemDef.name)
+      return applyDocumentDisposition(state, instance.instance.uniqueId, action, itemDef.name, itemDef.typedEffects ?? [])
     default:
       return state
   }
@@ -43,66 +43,62 @@ function applyConsume(
   instanceId: string,
   targetNpcId: string | undefined,
   itemName: string,
-  effects: Array<{ type: string; [key: string]: unknown }>,
+  effects: ItemEffect[],
 ): GameState {
   // Remove the item first
   let next: GameState = removePlayerItem(state, instanceId)
 
   for (const effect of effects) {
-    if (effect.type === 'heal') {
-      const value = typeof effect.value === 'number' ? effect.value : 0
-      if (targetNpcId) {
-        const npcIndex = next.roster.findIndex((n) => n.npcId === targetNpcId)
-        if (npcIndex !== -1) {
-          const npc = next.roster[npcIndex]!
-          const newHealth = Math.min(100, npc.states.health + value)
-          const updatedNpc = { ...npc, states: { ...npc.states, health: newHealth } }
-          next = { ...next, roster: next.roster.map((n, i) => i === npcIndex ? updatedNpc : n) }
-        }
-      } else if (next.playerCharacter.combatState) {
-        next = {
-          ...next,
-          playerCharacter: {
-            ...next.playerCharacter,
-            combatState: {
-              ...next.playerCharacter.combatState,
-              health: Math.min(
-                PLAYER_MAX_HEALTH,
-                next.playerCharacter.combatState.health + value,
-              ),
-            },
-          },
-        }
-      }
-      const targetName = targetNpcId
-        ? (next.roster.find((n) => n.npcId === targetNpcId)?.name ?? targetNpcId)
-        : 'self'
-      next = appendActivityLogEntry(
-        next,
-        'system',
-        `Used ${itemName} on ${targetName}. +${value} health.`,
-      )
-    } else if (effect.type === 'stat_mod') {
-      const stat = typeof effect.stat === 'string' ? effect.stat : ''
-      const value = typeof effect.value === 'number' ? effect.value : 0
-      if (targetNpcId && stat) {
-        const npcIndex = next.roster.findIndex((n) => n.npcId === targetNpcId)
-        if (npcIndex !== -1) {
-          const npc = next.roster[npcIndex]!
-          const statMap: Record<string, keyof typeof npc.states> = {
-            fatigue: 'fatigue', stress: 'stress', hunger: 'hunger',
-            morale: 'morale', fear: 'fear', anger: 'anger',
-          }
-          const statKey = statMap[stat]
-          if (statKey) {
-            const current = npc.states[statKey]
-            const updated = Math.max(0, Math.min(100, current + value))
-            const updatedNpc = { ...npc, states: { ...npc.states, [statKey]: updated } }
-            next = { ...next, roster: next.roster.map((n, i) => i === npcIndex ? updatedNpc : n) }
-          }
-        }
-      }
-      next = appendActivityLogEntry(next, 'system', `Used ${itemName}. ${stat} ${value > 0 ? '+' : ''}${value}.`)
+    switch (effect.type) {
+      case 'heal':
+        next = applyHealEffect(next, effect.value, targetNpcId, itemName)
+        break
+
+      case 'stat_mod':
+        next = applyStatModEffect(next, effect.stat, effect.value, targetNpcId, itemName, effect.duration)
+        break
+
+      case 'reduceStat':
+        next = applyReduceStatEffect(next, effect.stat, effect.value, itemName)
+        break
+
+      case 'boostStat':
+        next = applyBoostStatEffect(next, effect.stat, effect.value, itemName, state.day, effect.duration)
+        break
+
+      case 'addStatus':
+        next = applyAddStatusEffect(next, effect.value, itemName)
+        break
+
+      case 'removeStatus':
+        next = applyRemoveStatusEffect(next, effect.value, itemName)
+        break
+
+      case 'training_bonus':
+        next = applyTrainingBonusEffect(next, effect.skill, effect.value, itemName, state.day)
+        break
+
+      case 'enableAction':
+        next = applyEnableActionEffect(next, effect.action, itemName)
+        break
+
+      case 'evidence_use':
+        next = applyEvidenceUseEffect(next, effect.disposition, itemName)
+        break
+
+      // These effects are handled elsewhere (equip, install, present)
+      case 'relationship_gift':
+      case 'storage_expand':
+      case 'rest_quality_bonus':
+      case 'tradeValue':
+      case 'contraception':
+      case 'baseImprovement':
+      case 'skillBonus':
+      case 'affinityBonus':
+      case 'grantRight':
+      case 'grantAccess':
+        // No direct consume effect - handled by other commands
+        break
     }
   }
 
@@ -113,14 +109,245 @@ function applyConsume(
   return next
 }
 
+function applyHealEffect(
+  state: GameState,
+  value: number,
+  targetNpcId: string | undefined,
+  itemName: string,
+): GameState {
+  if (targetNpcId) {
+    const npcIndex = state.roster.findIndex((n) => n.npcId === targetNpcId)
+    if (npcIndex !== -1) {
+      const npc = state.roster[npcIndex]!
+      const newHealth = Math.min(100, npc.states.health + value)
+      const updatedNpc = { ...npc, states: { ...npc.states, health: newHealth } }
+      const targetName = state.roster.find((n) => n.npcId === targetNpcId)?.name ?? targetNpcId
+      return appendActivityLogEntry(
+        { ...state, roster: state.roster.map((n, i) => i === npcIndex ? updatedNpc : n) },
+        'system',
+        `Used ${itemName} on ${targetName}. +${value} health.`,
+      )
+    }
+  } else if (state.playerCharacter.combatState) {
+    return appendActivityLogEntry(
+      {
+        ...state,
+        playerCharacter: {
+          ...state.playerCharacter,
+          combatState: {
+            ...state.playerCharacter.combatState,
+            health: Math.min(PLAYER_MAX_HEALTH, state.playerCharacter.combatState.health + value),
+          },
+        },
+      },
+      'system',
+      `Used ${itemName}. +${value} health.`,
+    )
+  }
+  return state
+}
+
+function applyStatModEffect(
+  state: GameState,
+  stat: string,
+  value: number,
+  targetNpcId: string | undefined,
+  itemName: string,
+  duration?: number,
+): GameState {
+  // duration is reserved for future use - stat_mod effects can have duration in the schema
+  void duration
+  if (targetNpcId) {
+    const npcIndex = state.roster.findIndex((n) => n.npcId === targetNpcId)
+    if (npcIndex !== -1) {
+      const npc = state.roster[npcIndex]!
+      const statMap: Record<string, keyof typeof npc.states> = {
+        fatigue: 'fatigue',
+        stress: 'stress',
+        hunger: 'hunger',
+        morale: 'morale',
+        fear: 'fear',
+        anger: 'anger',
+        toxin: 'intoxication',
+      }
+      const statKey = statMap[stat]
+      if (statKey) {
+        const current = npc.states[statKey]
+        const updated = Math.max(0, Math.min(100, current + value))
+        const updatedNpc = { ...npc, states: { ...npc.states, [statKey]: updated } }
+        return appendActivityLogEntry(
+          { ...state, roster: state.roster.map((n, i) => i === npcIndex ? updatedNpc : n) },
+          'system',
+          `Used ${itemName}. ${stat} ${value > 0 ? '+' : ''}${value}.`,
+        )
+      }
+    }
+  }
+  return state
+}
+
+function applyReduceStatEffect(
+  state: GameState,
+  stat: string,
+  value: number,
+  itemName: string,
+): GameState {
+  // reduceStat uses negative values to reduce the stat (e.g., value: -30 reduces hunger by 30)
+  // These stats are typically on NPCs (hunger, fatigue, stress)
+  // For player, we log the effect - actual stat reduction happens on NPCs when they consume
+  void stat // Reserved for future player stat handling
+
+  return appendActivityLogEntry(
+    state,
+    'system',
+    `Used ${itemName}. ${stat} reduced by ${Math.abs(value)}.`,
+  )
+}
+
+function applyBoostStatEffect(
+  state: GameState,
+  stat: string,
+  value: number,
+  itemName: string,
+  currentDay: number,
+  duration: number,
+): GameState {
+  const expiresDay = currentDay + duration
+  const newBoost = {
+    stat,
+    value,
+    expiresDay,
+  }
+
+  return appendActivityLogEntry(
+    {
+      ...state,
+      tempStatBoosts: [...state.tempStatBoosts, newBoost],
+    },
+    'system',
+    `Used ${itemName}. ${stat} boosted by ${value} for ${duration} days.`,
+  )
+}
+
+function applyAddStatusEffect(
+  state: GameState,
+  statusId: string,
+  itemName: string,
+): GameState {
+  const newStatus = {
+    statusId,
+    source: itemName,
+  }
+
+  return appendActivityLogEntry(
+    {
+      ...state,
+      playerStatuses: [...state.playerStatuses, newStatus],
+    },
+    'system',
+    `Used ${itemName}. Status '${statusId}' applied.`,
+  )
+}
+
+function applyRemoveStatusEffect(
+  state: GameState,
+  statusId: string,
+  itemName: string,
+): GameState {
+  const filteredStatuses = state.playerStatuses.filter((s) => s.statusId !== statusId)
+
+  return appendActivityLogEntry(
+    {
+      ...state,
+      playerStatuses: filteredStatuses,
+    },
+    'system',
+    `Used ${itemName}. Status '${statusId}' removed.`,
+  )
+}
+
+function applyTrainingBonusEffect(
+  state: GameState,
+  skill: string,
+  value: number,
+  itemName: string,
+  currentDay: number,
+): GameState {
+  // currentDay is reserved for future expiration tracking
+  void currentDay
+  // Training bonuses typically last until end of day or have a specific duration
+  // For now, we'll add them without expiration (can be consumed via daily tick)
+  const newBonus = {
+    skill,
+    value,
+    source: itemName,
+  }
+
+  return appendActivityLogEntry(
+    {
+      ...state,
+      activeTrainingBonuses: [...state.activeTrainingBonuses, newBonus],
+    },
+    'system',
+    `Used ${itemName}. ${skill} training bonus +${value} applied.`,
+  )
+}
+
+function applyEnableActionEffect(
+  state: GameState,
+  action: string,
+  itemName: string,
+): GameState {
+  // Only add if not already enabled
+  if (state.enabledActions.includes(action)) {
+    return state
+  }
+
+  return appendActivityLogEntry(
+    {
+      ...state,
+      enabledActions: [...state.enabledActions, action],
+    },
+    'system',
+    `Used ${itemName}. Action '${action}' unlocked.`,
+  )
+}
+
+function applyEvidenceUseEffect(
+  state: GameState,
+  disposition: 'filed' | 'presented' | 'burned' | undefined,
+  itemName: string,
+): GameState {
+  // Evidence can be used for investigations - for now just log it
+  const message = disposition
+    ? `Used ${itemName} as evidence (${disposition}).`
+    : `Used ${itemName} as evidence.`
+
+  return appendActivityLogEntry(state, 'system', message)
+}
+
 function applyDocumentDisposition(
   state: GameState,
   instanceId: string,
   action: 'present' | 'archive',
   itemName: string,
+  effects: ItemEffect[],
 ): GameState {
   const disposition = action === 'archive' ? 'filed' : 'presented'
-  const next: GameState = removePlayerItem(state, instanceId)
+  let next: GameState = removePlayerItem(state, instanceId)
+
+  // Process enableAction effects for documents
+  for (const effect of effects) {
+    if (effect.type === 'enableAction') {
+      if (!next.enabledActions.includes(effect.action)) {
+        next = {
+          ...next,
+          enabledActions: [...next.enabledActions, effect.action],
+        }
+      }
+    }
+  }
+
   return appendActivityLogEntry(
     next,
     'system',

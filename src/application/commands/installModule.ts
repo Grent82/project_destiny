@@ -3,6 +3,8 @@
  *
  * Moves a householdModule item from ownedItems to installedHouseModules.
  * storage_expand effects are applied directly to houseStorageCapacity.
+ * baseImprovement effects are applied to houseImprovements.
+ * rest_quality_bonus effects are applied to sleepQualityBonus.
  * The item is removed from the storable pool permanently.
  *
  * Validation:
@@ -14,12 +16,11 @@
 import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { removePlayerItem } from './inventory/inventoryHelpers'
 
 export type InstallModuleResult =
   | { success: true; state: GameState }
   | { success: false; reason: 'item_not_found' | 'not_a_module' | 'already_installed' }
-
-import { removePlayerItem } from './inventory/inventoryHelpers'
 
 export function installModule(
   state: GameState,
@@ -40,26 +41,88 @@ export function installModule(
   )
   if (alreadyInstalled) return { success: false, reason: 'already_installed' }
 
+  let next: GameState = removePlayerItem(state, itemId)
+
   // Apply storage_expand effects to houseStorageCapacity directly
   const storageExpansion = def.typedEffects
     .filter((e): e is Extract<typeof e, { type: 'storage_expand' }> => e.type === 'storage_expand')
     .reduce((sum, e) => sum + e.value, 0)
 
-  // Remove item from inventory first
-  let next = removePlayerItem(state, itemId)
+  // Apply baseImprovement effects to houseImprovements
+  for (const effect of def.typedEffects) {
+    if (effect.type === 'baseImprovement') {
+      const stat = effect.stat as 'waterQuality' | 'herbSupply' | 'entrySecurity'
+      const value = typeof effect.value === 'number' ? effect.value : 0
 
-  next = appendActivityLogEntry(
-    {
+      if (stat === 'waterQuality') {
+        next = {
+          ...next,
+          houseImprovements: {
+            ...next.houseImprovements,
+            waterQuality: next.houseImprovements.waterQuality + value,
+          },
+        }
+      } else if (stat === 'herbSupply') {
+        next = {
+          ...next,
+          houseImprovements: {
+            ...next.houseImprovements,
+            herbSupply: next.houseImprovements.herbSupply + value,
+          },
+        }
+      } else if (stat === 'entrySecurity') {
+        next = {
+          ...next,
+          houseImprovements: {
+            ...next.houseImprovements,
+            entrySecurity: next.houseImprovements.entrySecurity + value,
+          },
+        }
+      }
+    }
+  }
+
+  // Apply rest_quality_bonus effects to sleepQualityBonus
+  const restQualityBonus = def.typedEffects
+    .filter((e): e is Extract<typeof e, { type: 'rest_quality_bonus' }> => e.type === 'rest_quality_bonus')
+    .reduce((sum, e) => sum + e.value, 0)
+
+  if (restQualityBonus !== 0) {
+    next = {
       ...next,
-      installedHouseModules: [
-        ...state.installedHouseModules,
-        { moduleItemId: itemId, installedAtDay: state.day },
-      ],
-      houseStorageCapacity: state.houseStorageCapacity + storageExpansion,
-    },
-    'system',
-    `${def.name} installed on Day ${state.day}.${storageExpansion > 0 ? ` Storage +${storageExpansion}.` : ''}`,
-  )
+      sleepQualityBonus: next.sleepQualityBonus + restQualityBonus,
+    }
+  }
+
+  // Add to installed modules
+  next = {
+    ...next,
+    installedHouseModules: [
+      ...state.installedHouseModules,
+      { moduleItemId: itemId, installedAtDay: state.day },
+    ],
+    houseStorageCapacity: state.houseStorageCapacity + storageExpansion,
+  }
+
+  // Build log message
+  const logLines: string[] = [`${def.name} installed on Day ${state.day}.`]
+  if (storageExpansion > 0) {
+    logLines.push(`Storage +${storageExpansion}.`)
+  }
+  if (restQualityBonus !== 0) {
+    logLines.push(`Sleep quality +${restQualityBonus}.`)
+  }
+
+  // Add baseImprovement info to log
+  for (const effect of def.typedEffects) {
+    if (effect.type === 'baseImprovement') {
+      const stat = effect.stat
+      const value = typeof effect.value === 'number' ? effect.value : 0
+      logLines.push(`${stat} +${value}.`)
+    }
+  }
+
+  next = appendActivityLogEntry(next, 'system', logLines.join(' '))
 
   return { success: true, state: next }
 }

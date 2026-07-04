@@ -39,6 +39,16 @@ export const itemEffectSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('tradeValue'), value: z.number().nonnegative() }),
   z.object({ type: z.literal('enableAction'), action: z.string().min(1) }),
   z.object({ type: z.literal('contraception'), efficacy: z.number().min(0).max(1), uses: z.number().int().positive() }),
+  // New effect types for item effects epic
+  z.object({ type: z.literal('reduceStat'), stat: z.string(), value: z.number() }),
+  z.object({ type: z.literal('boostStat'), stat: z.string(), value: z.number(), duration: z.number() }),
+  z.object({ type: z.literal('addStatus'), value: z.string() }),
+  z.object({ type: z.literal('removeStatus'), value: z.string() }),
+  z.object({ type: z.literal('baseImprovement'), stat: z.string(), value: z.number() }),
+  z.object({ type: z.literal('skillBonus'), skill: z.string(), value: z.number() }),
+  z.object({ type: z.literal('affinityBonus'), target: z.string(), value: z.number() }),
+  z.object({ type: z.literal('grantRight'), right: z.string() }),
+  z.object({ type: z.literal('grantAccess'), location: z.string() }),
 ])
 
 export const itemDefinitionSchema = z

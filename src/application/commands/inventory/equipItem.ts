@@ -60,7 +60,28 @@ function equipItemToPlayer(state: GameState, itemInstanceId: string, slot: Equip
 
   const itemName = getItemName(itemInstanceId)
 
-  appendActivityLogEntry(newState, 'system', `Equipped ${itemName} in ${formatSlotName(slot)}`)
+  // Check for skillBonus effects (for tool items)
+  const itemDef = contentCatalog.itemsById.get(itemInstanceId)
+  let finalState = newState
+  if (itemDef && itemDef.category === 'tool') {
+    for (const effect of itemDef.typedEffects) {
+      if (effect.type === 'skillBonus') {
+        finalState = {
+          ...finalState,
+          equippedTools: [
+            ...finalState.equippedTools,
+            {
+              itemId: itemDef.id,
+              skill: effect.skill,
+              value: effect.value,
+            },
+          ],
+        }
+      }
+    }
+  }
+
+  appendActivityLogEntry(finalState, 'system', `Equipped ${itemName} in ${formatSlotName(slot)}`)
 
   return {
     ...newState,
@@ -93,14 +114,28 @@ function unequipItemFromPlayer(state: GameState, slot: EquipmentSlotType): GameS
     [slot]: null,
   }
 
-  appendActivityLogEntry(state, 'system', `Unequipped ${itemName} from ${formatSlotName(slot)}`)
+  // Remove skillBonus effects if unequipping a tool
+  let finalState = state
+  if (itemInstanceId) {
+    const currentItemDef = contentCatalog.itemsById.get(itemInstanceId)
+    if (currentItemDef && currentItemDef.category === 'tool') {
+      finalState = {
+        ...state,
+        equippedTools: state.equippedTools.filter(
+          (t) => t.itemId !== currentItemDef.id,
+        ),
+      }
+    }
+  }
+
+  appendActivityLogEntry(finalState, 'system', `Unequipped ${itemName} from ${formatSlotName(slot)}`)
 
   return {
-    ...state,
+    ...finalState,
     inventoryState: {
-      ...state.inventoryState,
+      ...finalState.inventoryState,
       player: {
-        ...state.inventoryState.player,
+        ...finalState.inventoryState.player,
         equipmentSlots: updatedEquipment,
         bagContainers: updatedContainers,
       },

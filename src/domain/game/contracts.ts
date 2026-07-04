@@ -12,6 +12,7 @@ import { eventInstanceSchema, pendingEventSchema } from '../events/contracts'
 import { factionDefinitionSchema, factionRuntimeStateSchema, politicalDialsSchema, factionDirectiveSchema } from '../factions/contracts'
 import {
   armorDefinitionSchema,
+  documentDispositionSchema,
   installedModuleSchema,
   itemDefinitionSchema,
   weaponDefinitionSchema,
@@ -412,6 +413,41 @@ export const gameStateSchema = z
       weapons: z.array(z.string()),
       armors: z.array(z.string()),
     }).default(() => ({ weapons: [], armors: [] })),
+    // Item effects state structures
+    enabledActions: z.array(z.string()).default([]), // Actions unlocked by enableAction items
+    playerStatuses: z.array(z.object({
+      statusId: z.string(),
+      source: z.string().optional(),
+      duration: z.number().int().nonnegative().optional(),
+      value: z.number().optional(),
+    })).default([]), // Active status effects (addStatus/removeStatus)
+    activeTrainingBonuses: z.array(z.object({
+      skill: z.string(),
+      value: z.number(),
+      source: z.string(), // itemId or source description
+      expiresDay: z.number().int().nonnegative().optional(),
+    })).default([]), // Training bonus effects
+    tempStatBoosts: z.array(z.object({
+      stat: z.string(),
+      value: z.number(),
+      expiresDay: z.number().int().nonnegative(),
+    })).default([]), // Temporary stat boosts from boostStat
+    equippedTools: z.array(z.object({
+      itemId: z.string(),
+      skill: z.string(),
+      value: z.number(),
+    })).default([]), // Equipped tools with skillBonus
+    evidenceInventory: z.array(z.object({
+      instanceId: z.string(),
+      itemId: z.string(),
+      disposition: documentDispositionSchema.optional(),
+    })).default([]), // Evidence items for investigation
+    houseImprovements: z.object({
+      waterQuality: z.number().int().default(0),
+      herbSupply: z.number().int().default(0),
+      entrySecurity: z.number().int().default(0),
+    }).default(() => ({ waterQuality: 0, herbSupply: 0, entrySecurity: 0 })), // baseImprovement effects
+    sleepQualityBonus: z.number().int().default(0), // rest_quality_bonus effect
     isFirstRun: z.boolean().default(true),
     debtAmount: z.number().int().nonnegative().default(800),
     debtClaimantNpcId: z.string().default('npc-enemy-harlen-voss'),
