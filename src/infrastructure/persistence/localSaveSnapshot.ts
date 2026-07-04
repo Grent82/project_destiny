@@ -93,9 +93,17 @@ function migrateState(raw: unknown): GameState | null {
   }
 
   if (version === 4) {
-    // v4 is now the current version — just validate and return
+    // v4 → v5: normalize pending events into concrete event instances
     const raw4 = raw as Record<string, unknown>
-    return gameStateSchema.safeParse(raw4).data ?? null
+    const migrated = gameStateSchema.safeParse(raw4).data
+    if (!migrated) return null
+    return normalizePendingEventInstances({ ...migrated, saveVersion: 5 })
+  }
+
+  if (version === 5) {
+    // v5 is now the current version — just validate and return
+    const raw5 = raw as Record<string, unknown>
+    return gameStateSchema.safeParse(raw5).data ?? null
   }
 
   // Unknown future version — cannot load

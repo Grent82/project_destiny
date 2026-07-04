@@ -78,7 +78,7 @@ export const inventoryContainerSchema = z
   .object({
     containerId: entityIdSchema, // Unique container identifier
     containerType: containerTypeSchema,
-    ownerId: z.string().min(1), // 'player' or npcId
+    ownerId: z.string().min(1), // Owner identifier: 'player', 'npc:<npcId>', 'household:<houseId>', 'organization:<orgId>', 'shop:<shopId>', 'site:<siteId>'
     name: z.string().min(1).optional(), // Custom name (e.g., 'Marion\'s Backpack')
     maxSlots: positiveIntegerSchema.default(20),
     slots: z.array(inventorySlotSchema).default([]),
@@ -114,8 +114,8 @@ export type PlayerInventoryState = z.infer<typeof playerInventoryStateSchema>
 export const inventoryStateSchema = z
   .object({
     player: playerInventoryStateSchema,
-    npcInventories: z.record(entityIdSchema, z.array(inventoryContainerSchema)).default({}), // npcId -> containers
-    sharedContainers: z.array(inventoryContainerSchema).default([]), // House vault, shop storage, etc.
+    npcInventories: z.record(entityIdSchema, z.array(inventoryContainerSchema)).default({}), // npcId -> containers (e.g., 'npc:marion-vale' -> [npc:marion-vale:inventory])
+    sharedContainers: z.array(inventoryContainerSchema).default([]), // House vault, shop stock, organization storage, site containers
     itemRegistry: z.record(entityIdSchema, itemInstanceSchema).default({}), // uniqueId -> ItemInstance
   })
   .strict()
@@ -139,7 +139,7 @@ export type TransferItemParams = z.infer<typeof transferItemParamsSchema>
 
 export const equipItemParamsSchema = z
   .object({
-    ownerId: z.string().min(1), // 'player' or npcId
+    ownerId: z.string().min(1), // Owner identifier: 'player', 'npc:<npcId>', 'household:<houseId>', 'organization:<orgId>', 'shop:<shopId>', 'site:<siteId>'
     itemInstanceId: entityIdSchema,
     slot: equipmentSlotTypeSchema,
   })

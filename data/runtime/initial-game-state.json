@@ -596,7 +596,7 @@
     "relationshipMilestones": []
   },
   "visitedDialogueNodes": {},
-  "saveVersion": 4,
+  "saveVersion": 5,
   "rumors": [],
   "bondVisibility": {},
   "inventoryState": {
@@ -607,12 +607,32 @@
         "accessory_1": null,
         "accessory_2": null
       },
-      "bagContainers": [],
+      "bagContainers": [
+        {
+          "containerId": "player:inventory:bag-1",
+          "containerType": "backpack",
+          "ownerId": "player",
+          "name": "My Backpack",
+          "maxSlots": 20,
+          "slots": [],
+          "locked": false
+        }
+      ],
       "totalBagSlots": 40,
       "usedBagSlots": 0
     },
     "npcInventories": {},
-    "sharedContainers": [],
+    "sharedContainers": [
+      {
+        "containerId": "household:house-blackthorn:storage",
+        "containerType": "vault",
+        "ownerId": "household:house-blackthorn",
+        "name": "House Storage",
+        "maxSlots": 40,
+        "slots": [],
+        "locked": false
+      }
+    ],
     "itemRegistry": {}
   },
   "eventInstances": [],
