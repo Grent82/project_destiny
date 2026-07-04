@@ -1,4 +1,5 @@
 import type { GameState } from '../../domain/game/contracts'
+import { selectRosterNpcs } from './npcPopulation'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import {
   calculateInheritedTraits,
@@ -24,7 +25,7 @@ export function formalizeHeir(
 
   const renownSlots = getRenownLevel(state.playerCharacter.renown).rosterSlots
   const rosterCapacity = renownSlots + (state.house.rosterBonus ?? 0)
-  if (state.npcRuntimeStates.length >= rosterCapacity) {
+  if (selectRosterNpcs(state).length >= rosterCapacity) {
     return appendActivityLogEntry(
       state,
       'system',

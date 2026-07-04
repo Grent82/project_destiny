@@ -1,4 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit'
+import { selectRosterNpcs } from '../commands/npcPopulation'
 import { contentCatalog } from '../content/contentCatalog'
 import { getRenownLevel } from '../../domain/progression/contracts'
 import type { RootState } from '../store/gameStore'
@@ -19,8 +20,8 @@ export const selectRosterCapacity = createSelector([selectGame], (game) => {
     total: renownSlots + houseBonus,
     renownSlots,
     houseBonus,
-    current: game.npcRuntimeStates.length,
-    isFull: game.npcRuntimeStates.length >= renownSlots + houseBonus,
+    current: selectRosterNpcs(game).length,
+    isFull: selectRosterNpcs(game).length >= renownSlots + houseBonus,
   }
 })
 

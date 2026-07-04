@@ -1,4 +1,5 @@
 import type { FactionDirective, FactionDirectiveType, GameState } from '../../../domain'
+import { selectRosterNpcs } from '../npcPopulation'
 import { directiveSkillRequirements } from '../../../domain/factions/contracts'
 import { type NpcRuntimeState } from '../../../domain/npc/contracts'
 import { createRng } from '../seededRng'
@@ -72,7 +73,7 @@ function findEligibleNPCs(
   const factionStanding = state.factionStandings[factionId] ?? 0
   const eligible: { npc: NpcRuntimeState; score: number }[] = []
 
-  for (const npc of state.npcRuntimeStates) {
+  for (const npc of selectRosterNpcs(state)) {
     // Skip NPCs who are already on a directive
     if (npc.currentDirectiveId) continue
 

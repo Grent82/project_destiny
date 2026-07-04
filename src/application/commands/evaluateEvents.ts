@@ -1,4 +1,5 @@
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
+import { selectRosterNpcs } from './npcPopulation'
 import type { GameState } from '../../domain'
 import type { EventTemplate } from '../../domain/events/contracts'
 import { contentCatalog } from '../content/contentCatalog'
@@ -24,7 +25,7 @@ function checkConditions(template: EventTemplate, state: GameState, rng: Rng): b
   if (cond.maxCredits !== undefined && state.money > cond.maxCredits) return false
   if (cond.minRenown !== undefined && state.playerCharacter.renown < cond.minRenown) return false
   if (cond.debtPaid !== undefined && state.debtPaid !== cond.debtPaid) return false
-  if (cond.minRosterSize !== undefined && state.npcRuntimeStates.length < cond.minRosterSize) return false
+  if (cond.minRosterSize !== undefined && selectRosterNpcs(state).length < cond.minRosterSize) return false
   if (cond.completedQuestCountMin !== undefined && state.completedQuestIds.length < cond.completedQuestCountMin) return false
   if (cond.isFirstRun !== undefined && state.isFirstRun !== cond.isFirstRun) return false
 

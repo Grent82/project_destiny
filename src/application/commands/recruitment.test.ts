@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
-import { initialStateWithIda } from './testFixtures'
+import { initialStateWithIda, idaRhysRosterEntry } from './testFixtures'
 import { recruitNpc, dismissNpc, expireHireOffers, deriveBondTermsFromHireOffer, acquireBoundHireOffer } from './recruitment'
 
 const stateWithOffers = {
@@ -38,6 +38,26 @@ describe('recruitNpc', () => {
   it('does not deduct anything when signing bonus is zero', () => {
     const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
     expect(next.money).toBe(stateWithOffers.money)
+  })
+
+  it('counts only player-roster members toward capacity — world NPCs sharing the list do not consume slots (destiny-rama.6)', () => {
+    // Once all NPC types share one list, a crowd of world NPCs must not exhaust the player's roster
+    // capacity. rosterSlots is compared against selectRosterNpcs (playerRosterMember), not the raw list.
+    const worldCrowd = []
+    for (let i = 0; i < 25; i++) {
+      worldCrowd.push({ ...idaRhysRosterEntry, npcId: `npc-world-${i}`, npcType: 'world' as const, playerRosterMember: false })
+    }
+    const crowdedState = {
+      ...stateWithOffers,
+      npcRuntimeStates: [...stateWithOffers.npcRuntimeStates, ...worldCrowd],
+    }
+
+    const next = recruitNpc(crowdedState, 'npc-verek-holst')
+
+    // Recruiting still succeeds despite 25 world NPCs in the list, because only playerRosterMember counts.
+    const recruited = next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')
+    expect(recruited).toBeDefined()
+    expect(recruited?.playerRosterMember).toBe(true)
   })
 
   it('adds the NPC to the roster', () => {

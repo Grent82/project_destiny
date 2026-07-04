@@ -21,6 +21,7 @@ import type {
   TraceEntry,
   RunFailure,
 } from './contracts'
+import { selectRosterNpcs } from '../commands/npcPopulation'
 import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import type { GameState } from '../../domain/game/contracts'
@@ -157,7 +158,7 @@ function extractMetrics(state: GameState): ScenarioMetrics {
   return {
     day: state.day,
     money: state.money,
-    rosterCount: state.npcRuntimeStates.length,
+    rosterCount: selectRosterNpcs(state).length,
     rosterReadyCount: state.npcRuntimeStates.filter((n) => n.assignment === 'idle' && n.states.health > 30).length,
     activeQuestCount: state.activeQuests.length,
     completedQuestCount: state.completedQuestIds.length,

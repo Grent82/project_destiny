@@ -1,4 +1,5 @@
 import type { GameState, Skills } from '../../domain'
+import { selectRosterNpcs } from './npcPopulation'
 import { RARITY_SKILL_CAPS, skillGainMultiplier, crossedMilestones } from '../../domain/progression/contracts'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
@@ -37,7 +38,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       case TITLE_IDS.MEDIC: {
         const medicineSkill = npc.skills['medicine'] ?? 45
         const healAmount = 8 + Math.floor(Math.max(0, medicineSkill - 45) / 15)
-        const injured = next.npcRuntimeStates
+        const injured = selectRosterNpcs(next)
           .filter((r) => r.states.health < 100)
           .sort((a, b) => a.states.health - b.states.health)[0]
         if (injured) {
@@ -82,7 +83,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
       case TITLE_IDS.TRAINER: {
         const meleeSkill = npc.skills['melee'] ?? 45
         const trainCount = meleeSkill >= 70 ? 2 : 1
-        const idleNpcs = next.npcRuntimeStates.filter(
+        const idleNpcs = selectRosterNpcs(next).filter(
           (r) => r.assignment === 'idle' && r.npcId !== npc.npcId,
         )
         for (let t = 0; t < Math.min(trainCount, idleNpcs.length); t++) {
@@ -287,7 +288,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
     const baseGain = hasTrainer ? 2 : 1
     const studyMult = studyIntact ? 1.25 : 1
 
-    for (const npc of next.npcRuntimeStates.filter((r) => r.assignment === 'training')) {
+    for (const npc of selectRosterNpcs(next).filter((r) => r.assignment === 'training')) {
       const npcDef = contentCatalog.npcsById.get(npc.npcId)
       const rarityCap = RARITY_SKILL_CAPS[npcDef?.rarity ?? 'common'] ?? 70
 
@@ -343,7 +344,7 @@ export function applyTitleEffects(state: GameState, rng: Rng = Math.random): Gam
   // Step 4c: Working NPC passive income
   const prosperityMult =
     next.cityDials.prosperity >= 60 ? 1.1 : next.cityDials.prosperity <= 30 ? 0.9 : 1
-  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
+  const workingNpcs = selectRosterNpcs(next).filter((r) => r.assignment === 'working')
   for (const runtimeNpc of workingNpcs) {
     const npcDef = contentCatalog.npcsById.get(runtimeNpc.npcId)
     if (!npcDef) continue

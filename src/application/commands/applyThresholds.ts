@@ -1,4 +1,5 @@
 import type { GameState } from '../../domain'
+import { selectRosterNpcs } from './npcPopulation'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 import { getLoyaltyDeployStatus, getStressMoraleDecay } from '../../domain/npcStateModifiers'
 import { appendActivityLogEntry } from './activityLog'
@@ -7,7 +8,7 @@ import { appendActivityLogEntry } from './activityLog'
 export function applyThresholds(state: GameState): GameState {
   let next = state
 
-  for (const npc of next.npcRuntimeStates) {
+  for (const npc of selectRosterNpcs(next)) {
     const snap = {
       stress: npc.states.stress,
       morale: npc.states.morale,

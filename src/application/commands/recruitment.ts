@@ -1,4 +1,5 @@
 import type { GameState } from '../../domain'
+import { selectRosterNpcs } from './npcPopulation'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { formatMarks } from '../../domain/game/currency'
@@ -145,7 +146,7 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
   if (alreadyOnRoster) return state
 
   const renownLevel = getRenownLevel(state.playerCharacter.renown)
-  if (state.npcRuntimeStates.length >= renownLevel.rosterSlots) return state
+  if (selectRosterNpcs(state).length >= renownLevel.rosterSlots) return state
 
   const newRosterEntry = buildRosterEntryFromOffer(state, npcId, offer.wagePerDay, 20, null)
   if (!newRosterEntry) return state
@@ -194,7 +195,7 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
   if (alreadyOnRoster) return state
 
   const renownLevel = getRenownLevel(state.playerCharacter.renown)
-  if (state.npcRuntimeStates.length >= renownLevel.rosterSlots) return state
+  if (selectRosterNpcs(state).length >= renownLevel.rosterSlots) return state
 
   const terms = deriveBondTermsFromHireOffer(offer)
   if (state.money < terms.intakeFee) return state

@@ -1,4 +1,5 @@
 import type { GameState, HireOffer } from '../../domain'
+import { selectRosterNpcs } from './npcPopulation'
 import { appendActivityLogEntry } from './activityLog'
 import { applyPassiveDrift, applyProximityGains } from './adjustRelationship'
 import { evaluateNpcDeparture } from './npcDeparture'
@@ -117,7 +118,7 @@ export function applyNpcConsequences(
   next = checkRelationshipMilestones(next)
 
   // Step 5c-pre: Ambition frustration morale drain
-  for (const npc of next.npcRuntimeStates) {
+  for (const npc of selectRosterNpcs(next)) {
     if (npc.traits.ambition > TRAIT_HIGH && npc.activeTitle === null && npc.assignment !== 'deployed') {
       next = {
         ...next,

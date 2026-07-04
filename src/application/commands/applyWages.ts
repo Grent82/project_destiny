@@ -1,4 +1,5 @@
 import type { GameState, NpcStatus } from '../../domain'
+import { selectRosterNpcs } from './npcPopulation'
 import { appendActivityLogEntry } from './activityLog'
 import { applyRelationshipDelta } from './adjustRelationship'
 import { formatMarks } from '../../domain/game/currency'
@@ -46,7 +47,7 @@ export function applyWages(state: GameState): GameState {
 
   // Step 1: Wage deduction
   next = { ...next, relationships: { ...next.relationships } }
-  for (const rosterEntry of state.npcRuntimeStates) {
+  for (const rosterEntry of selectRosterNpcs(state)) {
     if (rosterEntry.bondStatus?.holderId === 'player') continue
     const wage = resolveRosterWagePerDay(
       rosterEntry.status,
@@ -99,7 +100,7 @@ export function applyWages(state: GameState): GameState {
 
   // Step 1b: Loyalty decay for unpaid NPCs (empathy trait reduces decay rate by 15%)
   const loyaltyDecay = next.playerCharacter.traits.empathy > 60 ? 13 : 15
-  for (const npc of next.npcRuntimeStates) {
+  for (const npc of selectRosterNpcs(next)) {
     if (npc.wagesOwedDays >= 2) {
       const newLoyalty = Math.max(0, npc.traits.loyalty - loyaltyDecay)
       next = {
@@ -129,7 +130,7 @@ export function applyWages(state: GameState): GameState {
   }
 
   // Step 1c: Wage arrears warnings and departure
-  for (const npc of next.npcRuntimeStates) {
+  for (const npc of selectRosterNpcs(next)) {
     if (npc.bondStatus?.holderId === 'player') continue
     const wage = resolveRosterWagePerDay(npc.status, npc.contractWagePerDay, npc.skills)
     if (wage === 0) continue

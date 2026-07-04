@@ -1,4 +1,5 @@
 import type { GameState } from '../../../domain/game/contracts'
+import { selectRosterNpcs } from '../npcPopulation'
 import type { GroupMember, GroupRole } from '../../../domain/expedition/contracts'
 import { publishEvent } from '../events/publishEvent'
 import { appendActivityLogEntry } from '../activityLog'
@@ -38,7 +39,7 @@ function findEligibleNPCs(state: GameState): EligibleNPC[] {
   const eligible: EligibleNPC[] = []
 
   // Check roster NPCs
-  for (const npc of state.npcRuntimeStates) {
+  for (const npc of selectRosterNpcs(state)) {
     // Skip NPCs who are blocked (assigned or on directive)
     if (isNpcBlockedFromCoalition(npc)) continue
 

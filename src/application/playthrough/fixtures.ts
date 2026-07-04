@@ -8,6 +8,7 @@
  */
 
 import type { GameState } from '../../domain/game/contracts'
+import { selectRosterNpcs } from '../commands/npcPopulation'
 import type { AssertionSpec, RunResult } from './contracts'
 import { assertion } from './contracts'
 import { initialGameStateSnapshot } from '../store/initialGameState'
@@ -123,7 +124,7 @@ export function diffBranches(a: RunResult, b: RunResult): BranchDelta {
   return {
     moneyDelta: b.finalState.money - a.finalState.money,
     dayDelta: b.finalState.day - a.finalState.day,
-    rosterSizeDelta: b.finalState.npcRuntimeStates.length - a.finalState.npcRuntimeStates.length,
+    rosterSizeDelta: selectRosterNpcs(b.finalState).length - selectRosterNpcs(a.finalState).length,
     completedQuestsDelta:
       b.finalState.completedQuestIds.length - a.finalState.completedQuestIds.length,
     debtPaidChanged: a.finalState.debtPaid !== b.finalState.debtPaid,
