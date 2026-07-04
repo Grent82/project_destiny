@@ -32,7 +32,7 @@ export function purchaseWeaponToHouseStorage(state: GameState, weaponId: string,
     (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
   )
 
-  let updatedSharedContainers = [...state.inventoryState.sharedContainers]
+  const updatedSharedContainers = [...state.inventoryState.sharedContainers]
 
   if (storageContainerIndex === -1) {
     // Create household storage container if it doesn't exist
@@ -124,7 +124,7 @@ export function purchaseArmorToHouseStorage(state: GameState, armorId: string, p
     (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
   )
 
-  let updatedSharedContainers = [...state.inventoryState.sharedContainers]
+  const updatedSharedContainers = [...state.inventoryState.sharedContainers]
 
   if (storageContainerIndex === -1) {
     // Create household storage container if it doesn't exist

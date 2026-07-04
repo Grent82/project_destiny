@@ -55,7 +55,7 @@ export function depositToHouseStorage(state: GameState, itemInstanceId: string):
     (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
   )
 
-  let updatedSharedContainers = [...state.inventoryState.sharedContainers]
+  const updatedSharedContainers = [...state.inventoryState.sharedContainers]
 
   if (storageContainerIndex === -1) {
     // Create household storage container if it doesn't exist
@@ -86,12 +86,23 @@ export function depositToHouseStorage(state: GameState, itemInstanceId: string):
 
   updatedSharedContainers[storageContainerIndex] = { ...storageContainer, slots: updatedStorageSlots }
 
+  // Update item registry location
+  const updatedItemRegistry = {
+    ...state.inventoryState.itemRegistry,
+    [itemInstanceId]: {
+      ...itemInstance,
+      locationType: 'container' as const,
+      locationId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+    },
+  }
+
   const nextState = {
     ...state,
     inventoryState: {
       ...state.inventoryState,
       player: { ...state.inventoryState.player, bagContainers: updatedPlayerContainers, usedBagSlots },
       sharedContainers: updatedSharedContainers,
+      itemRegistry: updatedItemRegistry,
     },
   }
 
@@ -189,12 +200,23 @@ export function withdrawFromHouseStorage(state: GameState, itemInstanceId: strin
 
   const usedBagSlots = updatedPlayerContainers.reduce((sum, c) => sum + c.slots.reduce((s, slot) => s + slot.quantity, 0), 0)
 
+  // Update item registry location
+  const updatedItemRegistry = {
+    ...state.inventoryState.itemRegistry,
+    [itemInstanceId]: {
+      ...itemInstance,
+      locationType: 'player_inventory' as const,
+      locationId: 'player',
+    },
+  }
+
   const nextState = {
     ...state,
     inventoryState: {
       ...state.inventoryState,
       player: { ...state.inventoryState.player, bagContainers: updatedPlayerContainers, usedBagSlots },
       sharedContainers: updatedSharedContainers,
+      itemRegistry: updatedItemRegistry,
     },
   }
 
@@ -421,7 +443,7 @@ export function storeInSiteContainer(
   const usedBagSlots = updatedPlayerContainers.reduce((sum, c) => sum + c.slots.reduce((s, slot) => s + slot.quantity, 0), 0)
 
   // Add to site container
-  let siteContainerIndex = state.inventoryState.sharedContainers.findIndex(
+  const siteContainerIndex = state.inventoryState.sharedContainers.findIndex(
     (c) => c.containerId === siteContainerId
   )
 
@@ -430,7 +452,7 @@ export function storeInSiteContainer(
     return state
   }
 
-  let updatedSharedContainers = [...state.inventoryState.sharedContainers]
+  const updatedSharedContainers = [...state.inventoryState.sharedContainers]
 
   const siteContainer = updatedSharedContainers[siteContainerIndex]
   const siteSlotIndex = siteContainer.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
@@ -527,7 +549,7 @@ export function depositToOrganizationStorage(
     (c) => c.containerId === organizationStorageId
   )
 
-  let updatedSharedContainers = [...state.inventoryState.sharedContainers]
+  const updatedSharedContainers = [...state.inventoryState.sharedContainers]
 
   if (storageContainerIndex === -1) {
     // Create organization storage container if it doesn't exist
