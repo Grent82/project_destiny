@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { ContainerType } from '../../domain/inventory/contracts'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
@@ -7,33 +8,106 @@ import { endDay } from './endDay'
 describe('equipItem reducer', () => {
   const npcId = initialGameStateSnapshot.roster[0]?.npcId ?? 'npc-marion-vale'
 
-  it('sets primaryWeaponId on the NPC loadout', () => {
-    const state = initialGameStateSnapshot
-    const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: 'weapon-dagger-wasterunner' })
+  function createStateWithNpcItem(itemId: string, instanceId: string) {
+    return {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        npcInventories: {
+          ...initialGameStateSnapshot.inventoryState.npcInventories,
+          [npcId]: [
+            {
+              containerId: `npc:${npcId}:inventory`,
+              containerType: 'backpack' as ContainerType,
+              ownerId: npcId,
+              maxSlots: 20,
+              slots: [
+                {
+                  slotId: `slot-${instanceId}`,
+                  itemInstanceId: instanceId,
+                  quantity: 1,
+                },
+              ],
+              locked: false,
+            },
+          ],
+        },
+        itemRegistry: {
+          ...initialGameStateSnapshot.inventoryState.itemRegistry,
+          [instanceId]: {
+            uniqueId: instanceId,
+            itemId,
+            quantity: 1,
+            locationType: 'npc_inventory' as const,
+            locationId: npcId,
+            acquiredDay: 1,
+            acquiredFrom: npcId,
+            flags: [],
+          },
+        },
+      },
+    }
+  }
+
+  it('equips weapon from NPC inventory to primaryWeapon slot', () => {
+    const state = createStateWithNpcItem('weapon-dagger-wasterunner', 'inst-weapon-dagger-wasterunner-001')
+    const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: 'inst-weapon-dagger-wasterunner-001' })
     const next = gameSliceReducer(state, action)
     const npc = next.roster.find((r) => r.npcId === npcId)
-    expect(npc?.loadout.primaryWeaponId).toBe('weapon-dagger-wasterunner')
+    // The equip command updates equipment, not loadout directly
+    expect(npc?.equipment.weapon).toBe('inst-weapon-dagger-wasterunner-001')
   })
 
-  it('sets armorId on the NPC loadout', () => {
-    const state = initialGameStateSnapshot
-    const action = gameActions.equipItem({ npcId, slot: 'armorId', itemId: 'armor-light-tallow-work-coat' })
+  it('equips armor from NPC inventory to armor slot', () => {
+    const state = createStateWithNpcItem('armor-light-tallow-work-coat', 'inst-armor-light-tallow-work-coat-001')
+    const action = gameActions.equipItem({ npcId, slot: 'armorId', itemId: 'inst-armor-light-tallow-work-coat-001' })
     const next = gameSliceReducer(state, action)
     const npc = next.roster.find((r) => r.npcId === npcId)
-    expect(npc?.loadout.armorId).toBe('armor-light-tallow-work-coat')
+    expect(npc?.equipment.armor).toBe('inst-armor-light-tallow-work-coat-001')
   })
 
-  it('unequips the slot when itemId is null', () => {
+  it('unequips weapon from primaryWeapon slot', () => {
+    const instanceId = 'inst-weapon-dagger-wasterunner-001'
     const stateWithWeapon = {
       ...initialGameStateSnapshot,
       roster: initialGameStateSnapshot.roster.map((npc, i) =>
-        i === 0 ? { ...npc, loadout: { ...npc.loadout, primaryWeaponId: 'weapon-dagger-wasterunner' } } : npc,
+        i === 0 ? { ...npc, equipment: { ...npc.equipment, weapon: instanceId } } : npc,
       ),
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        npcInventories: {
+          ...initialGameStateSnapshot.inventoryState.npcInventories,
+          [npcId]: [
+            {
+              containerId: `npc:${npcId}:inventory`,
+              containerType: 'backpack' as ContainerType,
+              ownerId: npcId,
+              maxSlots: 20,
+              slots: [],
+              locked: false,
+            },
+          ],
+        },
+        itemRegistry: {
+          ...initialGameStateSnapshot.inventoryState.itemRegistry,
+          [instanceId]: {
+            uniqueId: instanceId,
+            itemId: 'weapon-dagger-wasterunner',
+            quantity: 1,
+            locationType: 'equipment' as const,
+            locationId: npcId,
+            equippedSlot: 'weapon' as const,
+            acquiredDay: 1,
+            acquiredFrom: npcId,
+            flags: [],
+          },
+        },
+      },
     }
     const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: null })
     const next = gameSliceReducer(stateWithWeapon, action)
     const npc = next.roster.find((r) => r.npcId === npcId)
-    expect(npc?.loadout.primaryWeaponId).toBeNull()
+    expect(npc?.equipment.weapon).toBeNull()
   })
 
   it('does nothing when npcId is not found', () => {
@@ -41,6 +115,13 @@ describe('equipItem reducer', () => {
     const action = gameActions.equipItem({ npcId: 'npc-does-not-exist', slot: 'primaryWeaponId', itemId: 'weapon-dagger-wasterunner' })
     const next = gameSliceReducer(state, action)
     expect(next.roster).toEqual(state.roster)
+  })
+
+  it('does nothing when item is not found in accessible inventory', () => {
+    const state = initialGameStateSnapshot
+    const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: 'inst-nonexistent-weapon' })
+    const next = gameSliceReducer(state, action)
+    expect(next).toEqual(state)
   })
 })
 

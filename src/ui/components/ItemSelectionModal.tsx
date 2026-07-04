@@ -6,6 +6,7 @@ type EquipSlot = 'primaryWeaponId' | 'secondaryWeaponId' | 'armorId'
 
 interface WeaponEntry {
   id: string
+  instanceId: string
   name: string
   weaponClass: string
   damageMin: number
@@ -16,6 +17,7 @@ interface WeaponEntry {
 
 interface ArmorEntry {
   id: string
+  instanceId: string
   name: string
   armorClass: string
   soak: number
@@ -35,8 +37,8 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
   const armors = useAppSelector(selectStashedArmors) as ArmorEntry[]
   const isWeaponSlot = slot === 'primaryWeaponId' || slot === 'secondaryWeaponId'
 
-  function handleSelect(itemId: string | null) {
-    dispatch(gameActions.equipItem({ npcId, slot, itemId }))
+  function handleSelect(instanceId: string | null) {
+    dispatch(gameActions.equipItem({ npcId, slot, itemId: instanceId }))
     onClose()
   }
 
@@ -63,10 +65,10 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
               ? <p className="summary">No weapons in stash. Acquire weapons from The Market.</p>
               : weapons.map((w) => (
               <button
-                key={w.id}
+                key={w.instanceId}
                 className="item-selection-option"
                 type="button"
-                onClick={() => handleSelect(w.id)}
+                onClick={() => handleSelect(w.instanceId)}
               >
                 <span className="item-option-name">{w.name}</span>
                 <span className="item-option-meta">
@@ -78,10 +80,10 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
               ? <p className="summary">No armor in stash. Acquire armor from The Market.</p>
               : armors.map((a) => (
               <button
-                key={a.id}
+                key={a.instanceId}
                 className="item-selection-option"
                 type="button"
-                onClick={() => handleSelect(a.id)}
+                onClick={() => handleSelect(a.instanceId)}
               >
                 <span className="item-option-name">{a.name}</span>
                 <span className="item-option-meta">

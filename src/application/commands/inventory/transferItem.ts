@@ -186,11 +186,11 @@ function findItemInSource(state: GameState, type: ItemLocationType, id: string, 
     const npc = state.roster.find((n) => n.npcId === id)
     if (!npc) return null
 
-    // Check NPC's equipment slots (loadout)
-    if (npc.loadout.primaryWeaponId === itemInstanceId ||
-        npc.loadout.secondaryWeaponId === itemInstanceId ||
-        npc.loadout.armorId === itemInstanceId ||
-        npc.loadout.accessoryIds?.includes(itemInstanceId)) {
+    // Check NPC's equipment slots (using equipment structure, not loadout)
+    if (npc.equipment.weapon === itemInstanceId ||
+        npc.equipment.armor === itemInstanceId ||
+        npc.equipment.accessory?.[0] === itemInstanceId ||
+        npc.equipment.accessory?.[1] === itemInstanceId) {
       return { sourceType: 'equipment', itemInstanceId, itemId: itemInstanceId, quantity: 1 }
     }
 
@@ -467,22 +467,22 @@ function removeFromEquipment(state: GameState, ownerId: string, itemInstanceId: 
     )
   }
 
-  // NPC equipment removal
+  // NPC equipment removal - use equipment structure (not loadout)
   const npcIndex = state.roster.findIndex((n) => n.npcId === ownerId)
   if (npcIndex === -1) return state
 
   const npc = state.roster[npcIndex]
-  const updatedNpc = { ...npc, loadout: { ...npc.loadout } }
+  const updatedNpc = { ...npc, equipment: { ...npc.equipment } }
 
-  // Remove from loadout
-  if (updatedNpc.loadout.primaryWeaponId === itemInstanceId) {
-    updatedNpc.loadout.primaryWeaponId = null
-  } else if (updatedNpc.loadout.secondaryWeaponId === itemInstanceId) {
-    updatedNpc.loadout.secondaryWeaponId = null
-  } else if (updatedNpc.loadout.armorId === itemInstanceId) {
-    updatedNpc.loadout.armorId = null
-  } else if (updatedNpc.loadout.accessoryIds) {
-    updatedNpc.loadout.accessoryIds = updatedNpc.loadout.accessoryIds.filter(id => id !== itemInstanceId)
+  // Remove from equipment (weapon, armor, accessory slots)
+  if (updatedNpc.equipment.weapon === itemInstanceId) {
+    updatedNpc.equipment.weapon = null
+  } else if (updatedNpc.equipment.armor === itemInstanceId) {
+    updatedNpc.equipment.armor = null
+  } else if (updatedNpc.equipment.accessory?.[0] === itemInstanceId) {
+    updatedNpc.equipment.accessory = updatedNpc.equipment.accessory?.slice(1) || []
+  } else if (updatedNpc.equipment.accessory?.[1] === itemInstanceId) {
+    updatedNpc.equipment.accessory = updatedNpc.equipment.accessory?.slice(0, 1) || []
   }
 
   const updatedRoster = [...state.roster]

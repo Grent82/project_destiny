@@ -1,7 +1,8 @@
 import { appendActivityLogEntry } from '../activityLog'
 import { type GameState } from '../../../domain/game/contracts'
-import { type EquipItemParams, type EquipmentSlotType } from '../../../domain/inventory/contracts'
+import { type EquipItemParams, type EquipmentSlotType, type TransferItemParams } from '../../../domain/inventory/contracts'
 import { contentCatalog } from '../../content/contentCatalog'
+import { transferItem } from './transferItem'
 
 /**
  * Equip an item instance on player or NPC.
@@ -20,6 +21,74 @@ export function equipItem(state: GameState, params: EquipItemParams): GameState 
   }
 
   return equipItemToNpc(state, ownerId, itemInstanceId, slot)
+}
+
+/**
+ * Determine which containers an NPC can access for equipping.
+ * Based on the canonical inventory decision:
+ * - Roster NPC in player household: can equip from personal inventory AND household storage
+ * - Organization NPC: can equip from personal inventory AND organization storage
+ * - Unaffiliated NPC: can equip from personal inventory only
+ */
+function getAccessibleContainersForNpc(state: GameState, npcId: string): { containerType: 'npc_inventory' | 'container'; containerId: string }[] {
+  const npc = state.roster.find((n) => n.npcId === npcId)
+  if (!npc) return []
+
+  const containers: { containerType: 'npc_inventory' | 'container'; containerId: string }[] = []
+
+  // Always allow personal inventory
+  containers.push({ containerType: 'npc_inventory', containerId: npcId })
+
+  // Check if NPC is in player household (roster and assigned to household work)
+  // Valid household assignments: 'working', 'assigned_title', 'idle', 'training', 'defense'
+  const isHouseholdMember = npc.assignment === 'working' || npc.assignment === 'assigned_title' || npc.assignment === 'idle' || npc.assignment === 'training' || npc.assignment === 'defense'
+  if (isHouseholdMember) {
+    // Allow household storage access
+    const householdStorageId = `household:house-blackthorn:storage`
+    const householdContainer = state.inventoryState.sharedContainers.find(
+      (c) => c.containerId === householdStorageId || c.ownerId === householdStorageId
+    )
+    if (householdContainer) {
+      containers.push({ containerType: 'container', containerId: householdStorageId })
+    }
+  }
+
+  // Organization-based access would require an affiliation field on the NPC
+  // For now, we only support household storage access
+  // TODO: Add affiliation tracking to NpcRuntimeState for organization-based access
+
+  return containers
+}
+
+/**
+ * Find an item instance in accessible containers for an NPC.
+ */
+function findNpcAccessibleItem(state: GameState, npcId: string, itemInstanceId: string): { containerType: string; containerId: string; slotIndex: number } | null {
+  const accessible = getAccessibleContainersForNpc(state, npcId)
+
+  for (const access of accessible) {
+    if (access.containerType === 'npc_inventory') {
+      const npcContainers = state.inventoryState.npcInventories[npcId] || []
+      for (const container of npcContainers) {
+        const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
+        if (slotIndex !== -1) {
+          return { containerType: 'npc_inventory', containerId: npcId, slotIndex }
+        }
+      }
+    } else if (access.containerType === 'container') {
+      const sharedContainer = state.inventoryState.sharedContainers.find(
+        (c) => c.containerId === access.containerId || c.ownerId === access.containerId
+      )
+      if (sharedContainer) {
+        const slotIndex = sharedContainer.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
+        if (slotIndex !== -1) {
+          return { containerType: 'shared_container', containerId: access.containerId, slotIndex }
+        }
+      }
+    }
+  }
+
+  return null
 }
 
 /**
@@ -145,6 +214,7 @@ function unequipItemFromPlayer(state: GameState, slot: EquipmentSlotType): GameS
 
 /**
  * Equip an item to an NPC.
+ * Supports equipping from personal inventory and accessible shared storage (household/organization).
  */
 function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string, slot: EquipmentSlotType): GameState {
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
@@ -152,27 +222,21 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
 
   const npc = state.roster[npcIndex]
 
-  // Find the item in NPC's inventory containers
-  const npcContainers = state.inventoryState.npcInventories[npcId] || []
-  let foundContainerIndex = -1
-  let foundSlotIndex = -1
+  // Get item definition from the item registry (not the catalog, since we have an instance ID)
+  const itemInstance = state.inventoryState.itemRegistry[itemInstanceId]
+  if (!itemInstance) return state
 
-  for (const [containerIndex, container] of npcContainers.entries()) {
-    const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
-    if (slotIndex !== -1) {
-      foundContainerIndex = containerIndex
-      foundSlotIndex = slotIndex
-      break
-    }
-  }
-
-  if (foundContainerIndex === -1) return state
-
-  // Validate item category matches slot
-  const itemDef = contentCatalog.itemsById.get(itemInstanceId)
+  const itemDef = contentCatalog.itemsById.get(itemInstance.itemId)
   if (!itemDef) return state
 
   if (!isValidSlotForItem(itemDef, slot)) {
+    return state
+  }
+
+  // Find the item in accessible containers
+  const itemLocation = findNpcAccessibleItem(state, npcId, itemInstanceId)
+  if (!itemLocation) {
+    // Item not found in any accessible container
     return state
   }
 
@@ -183,59 +247,41 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
       ? npc.equipment.accessory?.[1] ?? null
       : (npc.equipment[slot as 'weapon' | 'armor'] as string) ?? null
 
-  const updatedNpc = { ...npc, equipment: { ...npc.equipment } }
-  const updatedContainers = [...npcContainers]
+  let nextState: GameState = state
 
   if (currentEquipped) {
-    // Return current item to inventory
-    let added = false
-    for (const container of updatedContainers) {
-      if (container.slots.length < container.maxSlots) {
-        container.slots.push({
-          slotId: `slot-${currentEquipped}-${Date.now()}`,
-          itemInstanceId: currentEquipped,
-          quantity: 1,
-        })
-        added = true
-        break
-      }
-    }
-
-    if (!added) {
-      updatedContainers.push({
-        containerId: `npc-container-${Date.now()}`,
-        containerType: 'backpack',
-        ownerId: npcId,
-        maxSlots: 20,
-        slots: [{ slotId: `slot-${currentEquipped}-new`, itemInstanceId: currentEquipped, quantity: 1 }],
-        locked: false,
-      })
-    }
-
-    // Remove stat bonuses from unequipped item
-    const currentItemDef = contentCatalog.itemsById.get(currentEquipped)
-    if (currentItemDef && currentItemDef.category === 'weapon') {
-      const weapon = currentItemDef as import('../../../domain/items/contracts').WeaponDefinition
-      updatedNpc.attributes = {
-        ...updatedNpc.attributes,
-        might: Math.max(0, updatedNpc.attributes.might - Math.floor((weapon.damageMin + weapon.damageMax) / 20)),
-        agility: Math.max(0, updatedNpc.attributes.agility - Math.floor(weapon.accuracy / 20)),
-      }
-    } else if (currentItemDef && currentItemDef.category === 'armor') {
-      const armor = currentItemDef as import('../../../domain/items/contracts').ArmorDefinition
-      updatedNpc.attributes = {
-        ...updatedNpc.attributes,
-        endurance: Math.max(0, updatedNpc.attributes.endurance - Math.floor(armor.soak / 20)),
-      }
-    }
+    // Unequip current item first (returns to NPC's personal inventory)
+    nextState = unequipItemFromNpcInternal(nextState, npcId, slot, currentEquipped)
   }
 
-  // Update equipment
+  // Use canonical transfer to move item to equipment slot
+  // Determine source type based on where the item was found
+  const fromType = itemLocation.containerType === 'npc_inventory' ? 'npc_inventory' : 'container'
+  const fromId = itemLocation.containerId
+
+  const transferParams: TransferItemParams = {
+    fromType,
+    fromId,
+    toType: 'equipment',
+    toId: npcId,
+    itemInstanceId,
+    quantity: 1,
+  }
+
+  nextState = transferItem(nextState, transferParams)
+  if (nextState === state) {
+    // Transfer failed
+    return state
+  }
+
+  // Update NPC equipment slots directly (transferItem handles the inventory side)
+  const updatedNpc = nextState.roster.find((n) => n.npcId === npcId)!
+
   if (slot === 'accessory_1') {
-    const currentAccessories = npc.equipment.accessory || []
+    const currentAccessories = updatedNpc.equipment.accessory || []
     updatedNpc.equipment.accessory = [...currentAccessories.slice(0, 1), itemInstanceId]
   } else if (slot === 'accessory_2') {
-    const currentAccessories = npc.equipment.accessory || []
+    const currentAccessories = updatedNpc.equipment.accessory || []
     if (currentAccessories.length >= 2) {
       updatedNpc.equipment.accessory = [...currentAccessories.slice(1), itemInstanceId]
     } else {
@@ -244,22 +290,6 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
   } else {
     const equipSlot: 'weapon' | 'armor' = slot === 'weapon' || slot === 'armor' ? slot : 'weapon'
     updatedNpc.equipment[equipSlot] = itemInstanceId
-  }
-
-  // Remove from inventory
-  const container = updatedContainers[foundContainerIndex]
-  if (container) {
-    const updatedSlots = [...container.slots]
-    const slotQuantity = updatedSlots[foundSlotIndex].quantity
-    if (slotQuantity <= 1) {
-      updatedSlots.splice(foundSlotIndex, 1)
-    } else {
-      updatedSlots[foundSlotIndex] = {
-        ...updatedSlots[foundSlotIndex],
-        quantity: slotQuantity - 1,
-      }
-    }
-    updatedContainers[foundContainerIndex] = { ...container, slots: updatedSlots }
   }
 
   // Calculate stat bonuses for new equipment
@@ -278,26 +308,89 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
     }
   }
 
-  const updatedRoster = [...state.roster]
+  const updatedRoster = [...nextState.roster]
   updatedRoster[npcIndex] = updatedNpc
 
-  appendActivityLogEntry(state, 'system', `${npc.name} equipped ${itemDef.name} in ${formatSlotName(slot)}`)
+  appendActivityLogEntry(nextState, 'system', `${npc.name} equipped ${itemDef.name} in ${formatSlotName(slot)}`)
 
   return {
-    ...state,
+    ...nextState,
     roster: updatedRoster,
-    inventoryState: {
-      ...state.inventoryState,
-      npcInventories: {
-        ...state.inventoryState.npcInventories,
-        [npcId]: updatedContainers,
-      },
-    },
+  }
+}
+
+/**
+ * Internal unequip function that returns item to NPC's personal inventory.
+ */
+function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: EquipmentSlotType, itemInstanceId: string): GameState {
+  const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
+  if (npcIndex === -1) return state
+
+  // Get item definition from the item registry first
+  const itemInstance = state.inventoryState.itemRegistry[itemInstanceId]
+  if (!itemInstance) return state
+
+  const itemDef = contentCatalog.itemsById.get(itemInstance.itemId)
+  if (!itemDef) return state
+
+  // Return to NPC's personal inventory using canonical transfer
+  const transferParams: TransferItemParams = {
+    fromType: 'equipment',
+    fromId: npcId,
+    toType: 'npc_inventory',
+    toId: npcId,
+    itemInstanceId,
+    quantity: 1,
+  }
+
+  const nextState = transferItem(state, transferParams)
+  if (nextState === state) {
+    return state
+  }
+
+  // Update NPC equipment
+  const updatedNpc = nextState.roster.find((n) => n.npcId === npcId)!
+  const updatedEquipment = { ...updatedNpc.equipment }
+
+  if (slot.startsWith('accessory')) {
+    const currentAccessories = updatedNpc.equipment.accessory || []
+    if (slot === 'accessory_1' && currentAccessories.length > 0) {
+      updatedEquipment.accessory = currentAccessories.slice(1)
+    } else if (slot === 'accessory_2' && currentAccessories.length > 1) {
+      updatedEquipment.accessory = currentAccessories.slice(0, 1)
+    }
+  } else {
+    const equipSlot: 'weapon' | 'armor' = slot === 'weapon' || slot === 'armor' ? slot : 'weapon'
+    updatedEquipment[equipSlot] = null
+  }
+
+  // Remove stat bonuses
+  const updatedAttributes = { ...updatedNpc.attributes }
+  if (itemDef.category === 'weapon') {
+    const weapon = itemDef as import('../../../domain/items/contracts').WeaponDefinition
+    updatedAttributes.might = Math.max(0, updatedAttributes.might - Math.floor((weapon.damageMin + weapon.damageMax) / 20))
+    updatedAttributes.agility = Math.max(0, updatedAttributes.agility - Math.floor(weapon.accuracy / 20))
+  } else if (itemDef.category === 'armor') {
+    const armor = itemDef as import('../../../domain/items/contracts').ArmorDefinition
+    updatedAttributes.endurance = Math.max(0, updatedAttributes.endurance - Math.floor(armor.soak / 20))
+  }
+
+  const updatedRoster = [...nextState.roster]
+  updatedRoster[npcIndex] = {
+    ...updatedNpc,
+    equipment: updatedEquipment,
+    attributes: updatedAttributes,
+  }
+
+  return {
+    ...nextState,
+    roster: updatedRoster,
   }
 }
 
 /**
  * Unequip an item from an NPC.
+ * Returns item to NPC's personal inventory.
  */
 function unequipItemFromNpc(state: GameState, npcId: string, slot: EquipmentSlotType): GameState {
   const npcIndex = state.roster.findIndex((n) => n.npcId === npcId)
@@ -313,80 +406,7 @@ function unequipItemFromNpc(state: GameState, npcId: string, slot: EquipmentSlot
 
   if (!itemInstanceId) return state
 
-  const itemDef = contentCatalog.itemsById.get(itemInstanceId)
-  if (!itemDef) return state
-
-  // Return to inventory
-  const updatedContainers = [...(state.inventoryState.npcInventories[npcId] || [])]
-  let added = false
-  for (const container of updatedContainers) {
-    if (container.slots.length < container.maxSlots) {
-      container.slots.push({
-        slotId: `slot-${itemInstanceId}-${Date.now()}`,
-        itemInstanceId,
-        quantity: 1,
-      })
-      added = true
-      break
-    }
-  }
-
-  if (!added) {
-    updatedContainers.push({
-      containerId: `npc-container-${Date.now()}`,
-      containerType: 'backpack',
-      ownerId: npcId,
-      maxSlots: 20,
-      slots: [{ slotId: `slot-${itemInstanceId}-new`, itemInstanceId, quantity: 1 }],
-      locked: false,
-    })
-  }
-
-  // Update equipment
-  const updatedEquipment = { ...npc.equipment }
-  if (slot.startsWith('accessory')) {
-    const currentAccessories = npc.equipment.accessory || []
-    if (slot === 'accessory_1' && currentAccessories.length > 0) {
-      updatedEquipment.accessory = currentAccessories.slice(1)
-    } else if (slot === 'accessory_2' && currentAccessories.length > 1) {
-      updatedEquipment.accessory = currentAccessories.slice(0, 1)
-    }
-  } else {
-    const equipSlot: 'weapon' | 'armor' = slot === 'weapon' || slot === 'armor' ? slot : 'weapon'
-    updatedEquipment[equipSlot] = null
-  }
-
-  // Remove stat bonuses
-  const updatedAttributes = { ...npc.attributes }
-  if (itemDef.category === 'weapon') {
-    const weapon = itemDef as import('../../../domain/items/contracts').WeaponDefinition
-    updatedAttributes.might = Math.max(0, updatedAttributes.might - Math.floor((weapon.damageMin + weapon.damageMax) / 20))
-    updatedAttributes.agility = Math.max(0, updatedAttributes.agility - Math.floor(weapon.accuracy / 20))
-  } else if (itemDef.category === 'armor') {
-    const armor = itemDef as import('../../../domain/items/contracts').ArmorDefinition
-    updatedAttributes.endurance = Math.max(0, updatedAttributes.endurance - Math.floor(armor.soak / 20))
-  }
-
-  const updatedRoster = [...state.roster]
-  updatedRoster[npcIndex] = {
-    ...npc,
-    equipment: updatedEquipment,
-    attributes: updatedAttributes,
-  }
-
-  appendActivityLogEntry(state, 'system', `${npc.name} unequipped ${itemDef.name} from ${formatSlotName(slot)}`)
-
-  return {
-    ...state,
-    roster: updatedRoster,
-    inventoryState: {
-      ...state.inventoryState,
-      npcInventories: {
-        ...state.inventoryState.npcInventories,
-        [npcId]: updatedContainers,
-      },
-    },
-  }
+  return unequipItemFromNpcInternal(state, npcId, slot, itemInstanceId)
 }
 
 /**

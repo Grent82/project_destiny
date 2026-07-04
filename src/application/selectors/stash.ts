@@ -1,5 +1,6 @@
 /**
  * Stash selectors for house storage.
+ * Updated to use canonical inventory model with proper instance tracking.
  */
 
 import { createSelector } from '@reduxjs/toolkit'
@@ -17,7 +18,8 @@ export const selectStash = createSelector([selectGame], (game) => game.stash)
 function getHouseStorageItems(inventoryState: GameState['inventoryState']): { instanceId: string; itemId: string; quantity: number }[] {
   const items: { instanceId: string; itemId: string; quantity: number }[] = []
   for (const container of inventoryState.sharedContainers) {
-    if (container.ownerId === 'house_storage') {
+    // Support both old 'house_storage' and new 'household:house-blackthorn:storage' patterns
+    if (container.ownerId === 'house_storage' || container.ownerId === 'household:house-blackthorn' || container.containerId === 'household:house-blackthorn:storage') {
       for (const slot of container.slots) {
         if (slot.itemInstanceId) {
           const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
@@ -35,16 +37,41 @@ function getHouseStorageItems(inventoryState: GameState['inventoryState']): { in
   return items
 }
 
+/**
+ * Select stashed weapons with full item details including instance IDs.
+ * Returns weapon definitions with the instanceId that can be used for equipping.
+ */
 export const selectStashedWeapons = createSelector([selectGame], (game) => {
   const houseStorageItems = getHouseStorageItems(game.inventoryState)
-  const stashedIds = new Set(houseStorageItems.map((o) => o.itemId))
-  return (rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number }>)
-    .filter((w) => stashedIds.has(w.id))
+  const weaponInstances = houseStorageItems.filter((item) => {
+    const def = rawWeapons.find((w) => w.id === item.itemId)
+    return def !== undefined
+  })
+
+  return weaponInstances.map((instance) => {
+    const def = rawWeapons.find((w) => w.id === instance.itemId)!
+    return {
+      ...def,
+      instanceId: instance.instanceId, // Include instanceId for equip action
+    }
+  })
 })
 
+/**
+ * Select stashed armors with full item details including instance IDs.
+ */
 export const selectStashedArmors = createSelector([selectGame], (game) => {
   const houseStorageItems = getHouseStorageItems(game.inventoryState)
-  const stashedIds = new Set(houseStorageItems.map((o) => o.itemId))
-  return (rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number }>)
-    .filter((a) => stashedIds.has(a.id))
+  const armorInstances = houseStorageItems.filter((item) => {
+    const def = rawArmor.find((a) => a.id === item.itemId)
+    return def !== undefined
+  })
+
+  return armorInstances.map((instance) => {
+    const def = rawArmor.find((a) => a.id === instance.itemId)!
+    return {
+      ...def,
+      instanceId: instance.instanceId, // Include instanceId for equip action
+    }
+  })
 })

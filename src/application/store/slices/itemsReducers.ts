@@ -9,6 +9,7 @@ import { useItem as useItemCommand } from '../../commands/useItem'
 import { sellItem as sellItemCommand } from '../../commands/sellItem'
 import { giftItemToNpc as giftItemToNpcCommand } from '../../commands/giftItem'
 import { installModule as installModuleCommand } from '../../commands/installModule'
+import { equipItem as equipItemCommand, unequipItem as unequipItemCommand } from '../../commands/inventory/equipItem'
 import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
 
 /** Simple item reference for internal use */
@@ -91,9 +92,28 @@ export const itemsReducers = {
     action: PayloadAction<{ npcId: string; slot: 'primaryWeaponId' | 'secondaryWeaponId' | 'armorId'; itemId: string | null }>,
   ) {
     const { npcId, slot, itemId } = action.payload
-    const npcState = state.roster.find((n) => n.npcId === npcId)
-    if (!npcState) return
-    npcState.loadout[slot] = itemId
+
+    // Handle unequip (itemId is null)
+    if (itemId === null) {
+      // Map loadout slot to equipment slot
+      const equipmentSlot = slot === 'primaryWeaponId' ? 'weapon'
+        : slot === 'secondaryWeaponId' ? 'accessory_1'
+        : 'armor'
+      const result = unequipItemCommand(state, { ownerId: npcId, slot: equipmentSlot })
+      Object.assign(state, result)
+      return
+    }
+
+    // Handle equip - find the item instance and equip it
+    // The itemId here is actually the item definition ID, we need to find the instance
+    // For now, we'll use the itemId as the instanceId (legacy behavior)
+    // In a full implementation, this would search accessible containers for an instance of this item
+    const equipmentSlot = slot === 'primaryWeaponId' ? 'weapon'
+      : slot === 'secondaryWeaponId' ? 'accessory_1'
+      : 'armor'
+
+    const result = equipItemCommand(state, { ownerId: npcId, itemInstanceId: itemId, slot: equipmentSlot })
+    Object.assign(state, result)
   },
 
   addToStash(state: GameState, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string; price: number }>) {
