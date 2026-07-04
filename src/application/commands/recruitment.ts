@@ -49,10 +49,8 @@ function buildRosterEntryFromOffer(
 
   const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - initialLoyaltyPenalty)
 
-  // Get clothing/armor from worldNpcStates if available, otherwise use defaults
+  // Get runtime state from worldNpcStates if available - preserve clothing, armor, health, injury, flags
   const worldNpcState = state.worldNpcStates.find((w) => w.npcId === npcId)
-  const clothing = worldNpcState?.clothing ?? { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] }
-  const armor = worldNpcState?.armor ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }
 
   return {
     npcId,
@@ -66,18 +64,21 @@ function buildRosterEntryFromOffer(
     trainingFocus: null,
     roomAssignment: null,
     dutyPostRoomId: null,
+    // Preserve world NPC state or use defaults
+    clothing: worldNpcState?.clothing ?? { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
+    armor: worldNpcState?.armor ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
     attributes: { ...npcDef.baseAttributes },
     skills: { ...npcDef.startingSkills },
     traits: { ...npcDef.startingTraits, loyalty: initialLoyalty },
     states: {
-      health: 100,
+      health: worldNpcState?.health ?? 100,
       fatigue: 0,
       stress: 0,
       morale: 50,
       fear: 0,
       anger: 0,
       hunger: 0,
-      injury: 0,
+      injury: worldNpcState?.injury ?? 0,
       intoxication: 0,
       hygiene: 70,
     },
@@ -90,8 +91,6 @@ function buildRosterEntryFromOffer(
     },
     equipment: { weapon: null, armor: null, accessory: [] },
     personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
-    clothing,
-    armor,
     arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
     npcMemory: [],
     bondStatus,
