@@ -409,6 +409,11 @@ export const gameStateSchema = z
       antagonistFactionId: 'faction-gilded-court',
       missingRelatives: [],
     })),
+    /**
+     * @deprecated Legacy stash field replaced by canonical inventory containers.
+     * Kept for save game backward compatibility only - no longer used by gameplay logic.
+     * Use household storage containers via inventoryState.sharedContainers instead.
+     */
     stash: z.object({
       weapons: z.array(z.string()),
       armors: z.array(z.string()),

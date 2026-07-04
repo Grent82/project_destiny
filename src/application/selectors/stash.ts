@@ -1,77 +1,72 @@
 /**
- * Stash selectors for house storage.
- * Updated to use canonical inventory model with proper instance tracking.
+ * @deprecated This file is deprecated. Use selectors from `./household.ts` instead.
+ * The legacy `stash` field has been replaced by canonical inventory containers.
+ *
+ * For weapons/armors in house storage, use:
+ * - `selectHouseStorageItems` from ./household
+ * - Filter by item category (weapon/armor) as needed
  */
 
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
-import type { GameState } from '../../domain'
+import { selectHouseStorageItems } from './household'
 import rawArmor from '../../../data/definitions/armor.json'
 import rawWeapons from '../../../data/definitions/weapons.json'
 
 const selectGame = (state: RootState) => state.game
 
-/** @deprecated Use selectOwnedItemsByLocation. Kept for backward compat. */
+/**
+ * @deprecated Use selectHouseStorageItems from ./household instead.
+ * This selector is kept for backward compatibility during migration.
+ */
 export const selectStash = createSelector([selectGame], (game) => game.stash)
 
-/** Helper to get items from house_storage container */
-function getHouseStorageItems(inventoryState: GameState['inventoryState']): { instanceId: string; itemId: string; quantity: number }[] {
-  const items: { instanceId: string; itemId: string; quantity: number }[] = []
-  for (const container of inventoryState.sharedContainers) {
-    // Support both old 'house_storage' and new 'household:house-blackthorn:storage' patterns
-    if (container.ownerId === 'house_storage' || container.ownerId === 'household:house-blackthorn' || container.containerId === 'household:house-blackthorn:storage') {
-      for (const slot of container.slots) {
-        if (slot.itemInstanceId) {
-          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
-          if (instanceDef) {
-            items.push({
-              instanceId: slot.itemInstanceId,
-              itemId: instanceDef.itemId,
-              quantity: slot.quantity,
-            })
-          }
-        }
-      }
-    }
-  }
-  return items
-}
-
 /**
- * Select stashed weapons with full item details including instance IDs.
- * Returns weapon definitions with the instanceId that can be used for equipping.
+ * @deprecated Use selectHouseStorageItems from ./household and filter by category.
+ * This selector is kept for backward compatibility during migration.
  */
-export const selectStashedWeapons = createSelector([selectGame], (game) => {
-  const houseStorageItems = getHouseStorageItems(game.inventoryState)
-  const weaponInstances = houseStorageItems.filter((item) => {
-    const def = rawWeapons.find((w) => w.id === item.itemId)
-    return def !== undefined
-  })
+export const selectStashedWeapons = createSelector([selectHouseStorageItems], (houseStorageItems) => {
+  const weaponInstanceIds = new Set(
+    houseStorageItems
+      .filter((item) => {
+        const def = rawWeapons.find((w) => w.id === item.itemId)
+        return def !== undefined
+      })
+      .map((item) => item.instanceId)
+  )
 
-  return weaponInstances.map((instance) => {
-    const def = rawWeapons.find((w) => w.id === instance.itemId)!
-    return {
-      ...def,
-      instanceId: instance.instanceId, // Include instanceId for equip action
-    }
-  })
+  return houseStorageItems
+    .filter((item) => weaponInstanceIds.has(item.instanceId))
+    .map((instance) => {
+      const def = rawWeapons.find((w) => w.id === instance.itemId)!
+      return {
+        ...def,
+        instanceId: instance.instanceId,
+      }
+    })
 })
 
 /**
- * Select stashed armors with full item details including instance IDs.
+ * @deprecated Use selectHouseStorageItems from ./household and filter by category.
+ * This selector is kept for backward compatibility during migration.
  */
-export const selectStashedArmors = createSelector([selectGame], (game) => {
-  const houseStorageItems = getHouseStorageItems(game.inventoryState)
-  const armorInstances = houseStorageItems.filter((item) => {
-    const def = rawArmor.find((a) => a.id === item.itemId)
-    return def !== undefined
-  })
+export const selectStashedArmors = createSelector([selectHouseStorageItems], (houseStorageItems) => {
+  const armorInstanceIds = new Set(
+    houseStorageItems
+      .filter((item) => {
+        const def = rawArmor.find((a) => a.id === item.itemId)
+        return def !== undefined
+      })
+      .map((item) => item.instanceId)
+  )
 
-  return armorInstances.map((instance) => {
-    const def = rawArmor.find((a) => a.id === instance.itemId)!
-    return {
-      ...def,
-      instanceId: instance.instanceId, // Include instanceId for equip action
-    }
-  })
+  return houseStorageItems
+    .filter((item) => armorInstanceIds.has(item.instanceId))
+    .map((instance) => {
+      const def = rawArmor.find((a) => a.id === instance.itemId)!
+      return {
+        ...def,
+        instanceId: instance.instanceId,
+      }
+    })
 })

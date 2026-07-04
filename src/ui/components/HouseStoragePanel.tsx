@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
 import {
-  selectHouseStorageInfo,
+  selectHouseholdStorageInfo,
   selectItemsByLocation,
   selectItemActions,
 } from '../../application'
@@ -19,7 +19,7 @@ import { formatMarksAbbrev } from '../../domain/game/currency'
 export function HouseStoragePanel() {
   const store = useAppStore()
   const dispatch = useAppDispatch()
-  const storageInfo = useAppSelector(selectHouseStorageInfo)
+  const storageInfo = useAppSelector(selectHouseholdStorageInfo)
   const storedItems = useAppSelector((s) => selectItemsByLocation(s, 'house_storage'))
   const inventoryItems = useAppSelector((s) => selectItemsByLocation(s, 'inventory'))
   const allVisible = [...storedItems, ...inventoryItems]
@@ -79,14 +79,14 @@ export function HouseStoragePanel() {
     }
   }
 
-  const pct = storageInfo.capacity > 0 ? (storageInfo.usedSlots / storageInfo.capacity) * 100 : 0
+  const pct = storageInfo.total > 0 ? (storageInfo.used / storageInfo.total) * 100 : 0
 
   return (
     <section className="house-storage-panel" aria-label="House Storage">
       <h2 className="house-storage-panel__title">House Storage</h2>
 
       <div className="house-storage-panel__capacity">
-        <span>Stored: {storageInfo.usedSlots} / {storageInfo.capacity}</span>
+        <span>Stored: {storageInfo.used} / {storageInfo.total}</span>
         <div className="capacity-bar">
           <div className="capacity-bar__fill" style={{ width: `${pct}%` }} />
         </div>
@@ -94,7 +94,7 @@ export function HouseStoragePanel() {
 
       <div className="house-storage-panel__items" role="list" aria-label="Stored items">
         {allVisible.length === 0 && (
-          <p className="house-storage-panel__empty">No items stored.</p>
+          <p className="house-storage-panel__empty">House Storage is empty. Items deposited here can be accessed by all household members.</p>
         )}
         {allVisible.map((owned) => {
           const def = contentCatalog.itemsById.get(owned.itemId)
@@ -113,6 +113,7 @@ export function HouseStoragePanel() {
                 primaryAction={primary}
                 onAction={(a) => handleAction(a, owned.instanceId)}
                 onOpenMenu={secondary.length > 0 ? () => setMenuForInstance(owned.instanceId) : undefined}
+                sourceLabel={storedItems.some((i) => i.instanceId === owned.instanceId) ? 'House Storage' : undefined}
               />
               {menuForInstance === owned.instanceId && (
                 <ItemActionMenu

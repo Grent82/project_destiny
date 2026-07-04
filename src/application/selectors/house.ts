@@ -1,45 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit'
 
-import rawArmor from '../../../data/definitions/armor.json'
-import rawWeapons from '../../../data/definitions/weapons.json'
 import type { RootState } from '../store/gameStore'
-import type { GameState, Heir, HeirLegitimacy, HouseExteriorTier } from '../../domain'
+import type { Heir, HeirLegitimacy, HouseExteriorTier } from '../../domain'
 
 const selectGame = (state: RootState) => state.game
 
-/** @deprecated Use selectOwnedItemsByLocation. Kept for backward compat. */
-export const selectStash = createSelector([selectGame], (game) => game.stash)
-
-/** Helper to get items from house_storage container */
-function getHouseStorageItemIds(inventoryState: GameState['inventoryState']): Set<string> {
-  const ids = new Set<string>()
-  for (const container of inventoryState.sharedContainers) {
-    if (container.ownerId === 'house_storage') {
-      for (const slot of container.slots) {
-        if (slot.itemInstanceId) {
-          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
-          if (instanceDef) {
-            ids.add(instanceDef.itemId)
-          }
-        }
-      }
-    }
-  }
-  return ids
-}
-
-export const selectStashedWeapons = createSelector([selectGame], (game) => {
-  const stashedIds = getHouseStorageItemIds(game.inventoryState)
-  return (rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number }>)
-    .filter((w) => stashedIds.has(w.id))
-})
-
-export const selectStashedArmors = createSelector([selectGame], (game) => {
-  const stashedIds = getHouseStorageItemIds(game.inventoryState)
-  return (rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number }>)
-    .filter((a) => stashedIds.has(a.id))
-})
-
+/**
+ * @deprecated This file's legacy stash selectors have been moved to `./household.ts`.
+ * Use `selectHouseStorageWeapons`, `selectHouseStorageArmors`, and `selectHouseStorageItems` from there.
+ */
 export const selectOwnedItemsByLocation = createSelector([selectGame], (game) => {
   const inventoryState = game.inventoryState
 

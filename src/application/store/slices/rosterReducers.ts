@@ -305,7 +305,7 @@ export const rosterReducers = {
     const { npcId, lastContactDay, disposition, locationOverride, addFlags, removeFlags } = action.payload
     let entry = state.worldNpcStates.find((s) => s.npcId === npcId)
     if (!entry) {
-      state.worldNpcStates.push({ npcId, lastContactDay: null, disposition: 'neutral', locationOverride: null, flags: [], intimacyStage: 'none', pregnancyState: null, health: 100, injury: 0, recovering: false })
+      state.worldNpcStates.push({ npcId, lastContactDay: null, disposition: 'neutral', locationOverride: null, flags: [], intimacyStage: 'none', pregnancyState: null, health: 100, injury: 0, recovering: false, clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] }, armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null } })
       entry = state.worldNpcStates[state.worldNpcStates.length - 1]
     }
     if (lastContactDay !== undefined) entry.lastContactDay = lastContactDay

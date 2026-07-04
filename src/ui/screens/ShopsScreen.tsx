@@ -8,7 +8,7 @@ import { getDurabilityTier } from '../../application/selectors/durability'
 import { describeFactionPriceModifier, describeMarketPressureModifier } from '../../application/selectors/shops'
 import { computeRepairCost } from '../../application/commands/durability'
 import { getWeaponRepairCost, getWeaponDurabilityMax, getArmorRepairCost, getArmorDurabilityMax } from '../../application/content/equipmentCatalog'
-import { selectStash } from '../../application/selectors/stash'
+import { selectHouseStorageWeapons, selectHouseStorageArmors } from '../../application/selectors/household'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { VenueContextBanner } from './VenueContextBanner'
 import { ConfirmationModal } from '../components/ConfirmationModal'
@@ -34,7 +34,8 @@ export function ShopsScreen() {
   const navigate = useNavigate()
   const overview = useAppSelector(selectShopOverview)
   const gameState = useAppSelector((state) => state.game)
-  const stash = useAppSelector(selectStash)
+  const houseStorageWeapons = useAppSelector(selectHouseStorageWeapons)
+  const houseStorageArmors = useAppSelector(selectHouseStorageArmors)
   const roster = gameState.roster
   const durabilities = gameState.equippedItemDurabilities
   const money = gameState.money
@@ -44,7 +45,11 @@ export function ShopsScreen() {
   type PendingSell = { kind: 'weapon' | 'armor'; id: string; name: string; approxPrice: number }
   const [pendingSell, setPendingSell] = useState<PendingSell | null>(null)
 
-  // Only show weapon/armor stash when in a district with an arms dealer or weapon_dealer shop type
+  // Build sets of owned weapon/armor IDs for quick lookup
+  const ownedWeaponIds = new Set(houseStorageWeapons.map((w) => w.itemId))
+  const ownedArmorIds = new Set(houseStorageArmors.map((a) => a.itemId))
+
+  // Only show weapon/armor House Storage when in a district with an arms dealer or weapon_dealer shop type
   const districtShopTypes = overview.shops.map((s: { shopType: string }) => s.shopType)
   const hasArmsDealer = districtShopTypes.some(
     (t: string) => t === 'weapon_dealer' || t === 'black_market' || t === 'workshop',
@@ -219,11 +224,11 @@ export function ShopsScreen() {
         <p className="summary">Acquire weapons and armor to make them available for equipping to roster members.</p>
         )}
         {hasArmsDealer && (
-        <div className="stash-catalog">
+        <div className="house-storage-catalog">
           <h3>Weapons</h3>
           <div className="shop-offer-list">
             {(rawWeapons as Array<{ id: string; name: string; weaponClass: string; damageMin: number; damageMax: number; accuracy: number; tier: number; shopPrice: number }>).map((w) => {
-              const owned = stash.weapons.includes(w.id)
+              const owned = ownedWeaponIds.has(w.id)
               const canAfford = money >= w.shopPrice
               return (
                 <div key={w.id} className="shop-offer-row">
@@ -235,7 +240,7 @@ export function ShopsScreen() {
                     {owned
                       ? (
                         <div style={{ display: 'flex', gap: '0.25rem', flexDirection: 'column', alignItems: 'flex-end' }}>
-                          <span className="badge badge-positive">In Stash</span>
+                          <span className="badge badge-positive">In House Storage</span>
                           <button
                             className="action-button action-button-sm"
                             type="button"
@@ -257,7 +262,7 @@ export function ShopsScreen() {
                           type="button"
                           disabled={!canAfford}
                           title={!canAfford ? `Not enough Marks. You need ${formatMarks(w.shopPrice - money)} more.` : undefined}
-                          onClick={() => dispatch(gameActions.addToStash({ type: 'weapon', id: w.id, price: w.shopPrice }))}
+                          onClick={() => dispatch(gameActions.purchaseWeapon({ weaponId: w.id, price: w.shopPrice }))}
                         >
                           {formatMarksAbbrev(w.shopPrice)}
                         </button>
@@ -271,7 +276,7 @@ export function ShopsScreen() {
           <h3>Armor</h3>
           <div className="shop-offer-list">
             {(rawArmor as Array<{ id: string; name: string; armorClass: string; soak: number; evasionPenalty: number; tier: number; shopPrice: number }>).map((a) => {
-              const owned = stash.armors.includes(a.id)
+              const owned = ownedArmorIds.has(a.id)
               const canAfford = money >= a.shopPrice
               return (
                 <div key={a.id} className="shop-offer-row">
@@ -283,7 +288,7 @@ export function ShopsScreen() {
                     {owned
                       ? (
                         <div style={{ display: 'flex', gap: '0.25rem', flexDirection: 'column', alignItems: 'flex-end' }}>
-                          <span className="badge badge-positive">In Stash</span>
+                          <span className="badge badge-positive">In House Storage</span>
                           <button
                             className="action-button action-button-sm"
                             type="button"
@@ -305,7 +310,7 @@ export function ShopsScreen() {
                           type="button"
                           disabled={!canAfford}
                           title={!canAfford ? `Not enough Marks. You need ${formatMarks(a.shopPrice - money)} more.` : undefined}
-                          onClick={() => dispatch(gameActions.addToStash({ type: 'armor', id: a.id, price: a.shopPrice }))}
+                          onClick={() => dispatch(gameActions.purchaseArmor({ armorId: a.id, price: a.shopPrice }))}
                         >
                           {formatMarksAbbrev(a.shopPrice)}
                         </button>
@@ -390,10 +395,14 @@ export function ShopsScreen() {
     {pendingSell && (
       <ConfirmationModal
         heading={`Sell ${pendingSell.name}?`}
-        consequence={`This will sell the item from your stash. You will receive approximately ${formatMarksAbbrev(pendingSell.approxPrice)}.`}
+        consequence={`This will sell the item from House Storage. You will receive approximately ${formatMarksAbbrev(pendingSell.approxPrice)}.`}
         confirmLabel="Sell item"
         onConfirm={() => {
-          dispatch(gameActions.sellFromStash({ type: pendingSell.kind, id: pendingSell.id }))
+          if (pendingSell.kind === 'weapon') {
+            dispatch(gameActions.sellWeapon({ weaponId: pendingSell.id }))
+          } else {
+            dispatch(gameActions.sellArmor({ armorId: pendingSell.id }))
+          }
           setPendingSell(null)
         }}
         onCancel={() => setPendingSell(null)}

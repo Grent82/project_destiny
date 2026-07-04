@@ -9,6 +9,7 @@ interface ItemCardProps {
   primaryAction?: ItemAction
   onAction: (action: ItemAction) => void
   onOpenMenu?: () => void
+  sourceLabel?: string
 }
 
 export function ItemCard({
@@ -19,12 +20,14 @@ export function ItemCard({
   primaryAction,
   onAction,
   onOpenMenu,
+  sourceLabel,
 }: ItemCardProps) {
   return (
     <div className="item-card" role="listitem">
       <div className="item-card__info">
         <span className="item-card__name">{name}</span>
         <span className="item-card__category">{category}</span>
+        {sourceLabel && <span className="item-card__source">{sourceLabel}</span>}
         {quantity > 1 && <span className="item-card__quantity">×{quantity}</span>}
         {description && <span className="item-card__description">{description}</span>}
       </div>

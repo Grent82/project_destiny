@@ -13,7 +13,7 @@ type Story = StoryObj<typeof ConfirmationModal>
 export const Default: Story = {
   args: {
     heading: 'Sell Iron Sword?',
-    consequence: 'This item will be removed from your stash permanently.',
+    consequence: 'This item will be removed from your house storage permanently.',
     onConfirm: () => {},
     onCancel: () => {},
   },

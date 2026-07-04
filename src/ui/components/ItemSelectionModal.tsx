@@ -1,29 +1,8 @@
 import { gameActions } from '../../application/store/gameSlice'
-import { selectStashedArmors, selectStashedWeapons } from '../../application/selectors/stash'
+import { selectHouseStorageArmors, selectHouseStorageWeapons } from '../../application/selectors/household'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 type EquipSlot = 'primaryWeaponId' | 'secondaryWeaponId' | 'armorId'
-
-interface WeaponEntry {
-  id: string
-  instanceId: string
-  name: string
-  weaponClass: string
-  damageMin: number
-  damageMax: number
-  accuracy: number
-  tier: number
-}
-
-interface ArmorEntry {
-  id: string
-  instanceId: string
-  name: string
-  armorClass: string
-  soak: number
-  evasionPenalty: number
-  tier: number
-}
 
 interface ItemSelectionModalProps {
   npcId: string
@@ -33,8 +12,8 @@ interface ItemSelectionModalProps {
 
 export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalProps) {
   const dispatch = useAppDispatch()
-  const weapons = useAppSelector(selectStashedWeapons) as WeaponEntry[]
-  const armors = useAppSelector(selectStashedArmors) as ArmorEntry[]
+  const weapons = useAppSelector(selectHouseStorageWeapons)
+  const armors = useAppSelector(selectHouseStorageArmors)
   const isWeaponSlot = slot === 'primaryWeaponId' || slot === 'secondaryWeaponId'
 
   function handleSelect(instanceId: string | null) {
@@ -62,7 +41,7 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
 
           {isWeaponSlot
             ? weapons.length === 0
-              ? <p className="summary">No weapons in stash. Acquire weapons from The Market.</p>
+              ? <p className="summary">No weapons in House Storage. Acquire weapons from The Market.</p>
               : weapons.map((w) => (
               <button
                 key={w.instanceId}
@@ -70,14 +49,14 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
                 type="button"
                 onClick={() => handleSelect(w.instanceId)}
               >
-                <span className="item-option-name">{w.name}</span>
+                <span className="item-option-name">{w.definition.name} <span className="item-source-label">(House Storage)</span></span>
                 <span className="item-option-meta">
-                  T{w.tier} · {w.weaponClass} · {w.damageMin}–{w.damageMax} dmg · {w.accuracy}% acc
+                  T{w.definition.tier} · {w.definition.weaponClass} · {w.definition.damageMin}–{w.definition.damageMax} dmg · {w.definition.accuracy}% acc
                 </span>
               </button>
             ))
             : armors.length === 0
-              ? <p className="summary">No armor in stash. Acquire armor from The Market.</p>
+              ? <p className="summary">No armor in House Storage. Acquire armor from The Market.</p>
               : armors.map((a) => (
               <button
                 key={a.instanceId}
@@ -85,9 +64,9 @@ export function ItemSelectionModal({ npcId, slot, onClose }: ItemSelectionModalP
                 type="button"
                 onClick={() => handleSelect(a.instanceId)}
               >
-                <span className="item-option-name">{a.name}</span>
+                <span className="item-option-name">{a.definition.name} <span className="item-source-label">(House Storage)</span></span>
                 <span className="item-option-meta">
-                  T{a.tier} · {a.armorClass} · {a.soak} soak · -{a.evasionPenalty}% evasion
+                  T{a.definition.tier} · {a.definition.armorClass} · {a.definition.soak} soak · -{a.definition.evasionPenalty}% evasion
                 </span>
               </button>
             ))}

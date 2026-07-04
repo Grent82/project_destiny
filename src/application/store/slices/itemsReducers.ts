@@ -3,14 +3,18 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type { GameState } from '../../../domain'
 import type { ContainerType } from '../../../domain/inventory/contracts'
-import { getWeaponRepairCost, getArmorRepairCost } from '../../content/equipmentCatalog'
 import { searchHouseRoom } from '../../commands/houseSearch'
 import { useItem as useItemCommand } from '../../commands/useItem'
 import { sellItem as sellItemCommand } from '../../commands/sellItem'
 import { giftItemToNpc as giftItemToNpcCommand } from '../../commands/giftItem'
 import { installModule as installModuleCommand } from '../../commands/installModule'
 import { equipItem as equipItemCommand, unequipItem as unequipItemCommand } from '../../commands/inventory/equipItem'
-import { MAX_ACTIVITY_ENTRIES } from '../../commands/activityLog'
+import {
+  purchaseWeaponToHouseStorage,
+  purchaseArmorToHouseStorage,
+  sellWeaponFromHouseStorage,
+  sellArmorFromHouseStorage,
+} from '../../commands/equipmentPurchase'
 
 /** Simple item reference for internal use */
 type ItemRef = {
@@ -56,36 +60,6 @@ function findItemByInstanceId(inventoryState: GameState['inventoryState'], insta
   return null
 }
 
-/** Helper to check if item exists in house_storage */
-function hasItemInHouseStorage(inventoryState: GameState['inventoryState'], itemId: string): boolean {
-  for (const container of inventoryState.sharedContainers) {
-    if (container.ownerId === 'house_storage') {
-      for (const slot of container.slots) {
-        if (slot.itemInstanceId) {
-          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
-          if (instanceDef && instanceDef.itemId === itemId) {
-            return true
-          }
-        }
-      }
-    }
-  }
-  return false
-}
-
-/** Helper to remove item from house_storage */
-function removeFromHouseStorage(inventoryState: GameState['inventoryState'], instanceId: string): GameState['inventoryState'] {
-  const newSharedContainers = inventoryState.sharedContainers.map((container) => {
-    if (container.ownerId !== 'house_storage') return container
-    const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === instanceId)
-    if (slotIndex === -1) return container
-    const newSlots = [...container.slots]
-    newSlots.splice(slotIndex, 1)
-    return { ...container, slots: newSlots }
-  })
-  return { ...inventoryState, sharedContainers: newSharedContainers }
-}
-
 export const itemsReducers = {
   equipItem(
     state: GameState,
@@ -116,127 +90,46 @@ export const itemsReducers = {
     Object.assign(state, result)
   },
 
-  addToStash(state: GameState, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string; price: number }>) {
-    const { type, id, price } = action.payload
-    if (state.money < price) return
-    const alreadyOwned = hasItemInHouseStorage(state.inventoryState, id)
-    if (!alreadyOwned) {
-      // Add to house_storage container
-      const newSharedContainers = state.inventoryState.sharedContainers.map((container) => {
-        if (container.ownerId !== 'house_storage') return container
-        // Find first available slot
-        for (const slot of container.slots) {
-          if (slot.itemInstanceId === null) {
-            slot.itemInstanceId = `inst-${id}-${Date.now()}`
-            slot.quantity = 1
-            return { ...container, slots: container.slots }
-          }
-        }
-        // If no empty slot, create new container
-        if (container.slots.length < container.maxSlots) {
-          const newSlots = [
-            ...container.slots,
-            {
-              slotId: `slot-${id}-${Date.now()}`,
-              itemInstanceId: `inst-${id}-${Date.now()}`,
-              quantity: 1,
-            },
-          ]
-          return { ...container, slots: newSlots }
-        }
-        return container
-      })
+  // ─── Canonical Equipment Purchase Actions ─────────────────────────────────
 
-      // If no house_storage container exists or none had space, create one
-      const hasHouseStorage = newSharedContainers.some((c) => c.ownerId === 'house_storage')
-      const finalContainers = hasHouseStorage
-        ? newSharedContainers
-        : [
-            ...newSharedContainers,
-            {
-              containerId: 'house-storage-main',
-              containerType: 'vault' as ContainerType,
-              ownerId: 'house_storage',
-              maxSlots: state.houseStorageCapacity,
-              slots: [
-                {
-                  slotId: `slot-${id}-${Date.now()}`,
-                  itemInstanceId: `inst-${id}-${Date.now()}`,
-                  quantity: 1,
-                },
-              ],
-              locked: false,
-            },
-          ]
-
-      state.inventoryState = {
-        ...state.inventoryState,
-        sharedContainers: finalContainers,
-      }
-      state.money -= price
-      if (type === 'weapon') state.stash.weapons.push(id)
-      else state.stash.armors.push(id)
-    }
+  /**
+   * Purchase a weapon and add it to household storage (canonical).
+   * This is the modern replacement for addToStash for weapons.
+   */
+  purchaseWeapon(state: GameState, action: PayloadAction<{ weaponId: string; price: number }>) {
+    const { weaponId, price } = action.payload
+    const result = purchaseWeaponToHouseStorage(state, weaponId, price)
+    Object.assign(state, result)
   },
 
-  removeFromStash(state: GameState, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
-    const { type, id } = action.payload
-    // Remove all items with this itemId from house_storage
-    const newSharedContainers = state.inventoryState.sharedContainers.map((container) => {
-      if (container.ownerId !== 'house_storage') return container
-      const newSlots = container.slots.filter((slot) => {
-        if (!slot.itemInstanceId) return true
-        const instanceDef = state.inventoryState.itemRegistry[slot.itemInstanceId]
-        return !instanceDef || instanceDef.itemId !== id
-      })
-      return { ...container, slots: newSlots }
-    })
-    state.inventoryState = {
-      ...state.inventoryState,
-      sharedContainers: newSharedContainers,
-    }
-    if (type === 'weapon') state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
-    else state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
+  /**
+   * Purchase armor and add it to household storage (canonical).
+   * This is the modern replacement for addToStash for armor.
+   */
+  purchaseArmor(state: GameState, action: PayloadAction<{ armorId: string; price: number }>) {
+    const { armorId, price } = action.payload
+    const result = purchaseArmorToHouseStorage(state, armorId, price)
+    Object.assign(state, result)
   },
 
-  sellFromStash(state: GameState, action: PayloadAction<{ type: 'weapon' | 'armor'; id: string }>) {
-    const { type, id } = action.payload
-    // Find first item with this itemId in house_storage
-    let foundInstanceId: string | null = null
-    for (const container of state.inventoryState.sharedContainers) {
-      if (container.ownerId !== 'house_storage') continue
-      for (const slot of container.slots) {
-        if (slot.itemInstanceId) {
-          const instanceDef = state.inventoryState.itemRegistry[slot.itemInstanceId]
-          if (instanceDef && instanceDef.itemId === id) {
-            foundInstanceId = slot.itemInstanceId
-            break
-          }
-        }
-      }
-      if (foundInstanceId) break
-    }
+  /**
+   * Sell a weapon from household storage (canonical).
+   * This is the modern replacement for sellFromStash for weapons.
+   */
+  sellWeapon(state: GameState, action: PayloadAction<{ weaponId: string }>) {
+    const { weaponId } = action.payload
+    const result = sellWeaponFromHouseStorage(state, weaponId)
+    Object.assign(state, result)
+  },
 
-    if (!foundInstanceId) return
-    const sellPrice = type === 'weapon'
-      ? Math.floor(getWeaponRepairCost(id) * 2.5)
-      : Math.floor(getArmorRepairCost(id) * 2.5)
-    if (type === 'weapon') {
-      state.stash.weapons = state.stash.weapons.filter((wId) => wId !== id)
-    } else {
-      state.stash.armors = state.stash.armors.filter((aId) => aId !== id)
-    }
-    // Remove the item
-    state.inventoryState = removeFromHouseStorage(state.inventoryState, foundInstanceId)
-    state.money += sellPrice
-    state.activityLog.unshift({
-      id: `log-${state.day}-${state.timeSlot}-sell-${id}`,
-      day: state.day,
-      timeSlot: state.timeSlot,
-      category: 'economy',
-      message: `Sold ${type} from stash. +${sellPrice} Marks.`,
-    })
-    if (state.activityLog.length >= MAX_ACTIVITY_ENTRIES) state.activityLog.pop()
+  /**
+   * Sell armor from household storage (canonical).
+   * This is the modern replacement for sellFromStash for armor.
+   */
+  sellArmor(state: GameState, action: PayloadAction<{ armorId: string }>) {
+    const { armorId } = action.payload
+    const result = sellArmorFromHouseStorage(state, armorId)
+    Object.assign(state, result)
   },
 
   moveItem(state: GameState, action: PayloadAction<{ instanceId: string; location: 'inventory' | 'house_storage' | 'mission_pack' }>) {
