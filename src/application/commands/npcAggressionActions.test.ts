@@ -191,7 +191,11 @@ describe('npcFortifyPosition', () => {
 })
 
 describe('npcCareForInjured', () => {
-  it('consumes a personal healing item and heals the most-injured idle/recovering target', () => {
+  // Per the canonical recovery contract (destiny-i8nc/destiny-o8mn): a generic 'heal' item effect
+  // restores health only. Injury only meaningfully reduces with real treatment support (infirmary
+  // or a medic title) — matching useItem.ts's consumable path and applyStateDecay.ts's
+  // getNpcRecoverySupport-gated recovering-NPC loop.
+  it('consumes a personal healing item and restores health, but does not reduce injury without real treatment support', () => {
     let state = addRosterEntry(initialStateWithIda, 'npc-injured-1', { assignment: 'idle' })
     state = withNpcStates(state, 'npc-injured-1', { health: 50, injury: 30 })
     state = withNpcItem(state, NPC_ID, 'item-medkit-field', 'inst-medkit-1')
@@ -200,11 +204,23 @@ describe('npcCareForInjured', () => {
 
     const target = result.roster.find((n) => n.npcId === 'npc-injured-1')!
     expect(target.states.health).toBeGreaterThan(50)
-    expect(target.states.injury).toBeLessThan(30)
+    expect(target.states.injury).toBe(30)
     expect(result.inventoryState.npcInventories[NPC_ID]![0]!.slots).toHaveLength(0)
   })
 
-  it('gives smaller bedside comfort when no healing item is available', () => {
+  it('also reduces injury when the house has real treatment support (a medic title)', () => {
+    let state = addRosterEntry(initialStateWithIda, 'npc-injured-1', { assignment: 'idle' })
+    state = withNpcStates(state, 'npc-injured-1', { health: 50, injury: 30 })
+    state = withNpcItem(state, NPC_ID, 'item-medkit-field', 'inst-medkit-1')
+    state = withNpcOverrides(state, NPC_ID, { activeTitle: 'title-medic' })
+
+    const result = npcCareForInjured(state, NPC_ID)
+
+    const target = result.roster.find((n) => n.npcId === 'npc-injured-1')!
+    expect(target.states.injury).toBeLessThan(30)
+  })
+
+  it('gives smaller bedside comfort (health only, no injury change) when no healing item or treatment support is available', () => {
     let state = addRosterEntry(initialStateWithIda, 'npc-injured-1', { assignment: 'idle' })
     state = withNpcStates(state, 'npc-injured-1', { health: 50, injury: 30 })
 
@@ -212,7 +228,7 @@ describe('npcCareForInjured', () => {
 
     const target = result.roster.find((n) => n.npcId === 'npc-injured-1')!
     expect(target.states.health).toBe(55)
-    expect(target.states.injury).toBe(27)
+    expect(target.states.injury).toBe(30)
   })
 
   it('no-ops when no one needs care', () => {

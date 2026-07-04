@@ -115,8 +115,8 @@ describe('npcDrink', () => {
 })
 
 describe('npcSleep', () => {
-  it('reduces fatigue more when the NPC has intact quarters', () => {
-    let state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80 })
+  it('reduces fatigue more when the NPC has intact quarters, and also eases stress and gives modest health recovery (destiny-i8nc contract)', () => {
+    let state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80, stress: 50, health: 80 })
     state = {
       ...state,
       roster: state.roster.map((n) => (n.npcId === NPC_ID ? { ...n, roomAssignment: 'room-quarters' } : n)),
@@ -126,26 +126,39 @@ describe('npcSleep', () => {
 
     const npc = result.roster.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.fatigue).toBe(40) // 80 - 40
+    expect(npc.states.stress).toBe(35) // 50 - 15
+    expect(npc.states.health).toBe(85) // 80 + 5
   })
 
-  it('reduces fatigue less when sleeping rough (no quarters)', () => {
-    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80 })
+  it('reduces fatigue less when sleeping rough (no quarters), with a smaller stress/health effect', () => {
+    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80, stress: 50, health: 80 })
 
     const result = npcSleep(state, NPC_ID)
 
     const npc = result.roster.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.fatigue).toBe(65) // 80 - 15
+    expect(npc.states.stress).toBe(44) // 50 - 6
+    expect(npc.states.health).toBe(82) // 80 + 2
+  })
+
+  it('does not touch injury — sleep does not treat wounds, only treatment does (destiny-i8nc contract)', () => {
+    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80, injury: 20 })
+    const result = npcSleep(state, NPC_ID)
+    const npc = result.roster.find((n) => n.npcId === NPC_ID)!
+    expect(npc.states.injury).toBe(20)
   })
 })
 
 describe('npcRest', () => {
-  it('reduces fatigue moderately, less than a full sleep', () => {
-    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 50 })
+  it('reduces fatigue moderately, less than a full sleep, and gives light stress relief but no health recovery', () => {
+    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 50, stress: 30, health: 80 })
 
     const result = npcRest(state, NPC_ID)
 
     const npc = result.roster.find((n) => n.npcId === NPC_ID)!
     expect(npc.states.fatigue).toBe(38) // 50 - 12
+    expect(npc.states.stress).toBe(26) // 30 - 4 (no quarters by default)
+    expect(npc.states.health).toBe(80) // unchanged
   })
 })
 

@@ -155,7 +155,14 @@ export function npcSleep(state: GameState, npcId: string): GameState {
 
   const hasQuarters = hasResidentQuarters(state, npc.roomAssignment)
   const reduction = hasQuarters ? 40 : 15
-  const next = updateNpcStates(state, npcId, { fatigue: clampPercent(npc.states.fatigue - reduction) })
+  // Per the canonical recovery contract (destiny-i8nc): normal sleep also lowers stress and gives
+  // modest health recovery — but does not treat injury (that's treatment's job, see
+  // npcCareForInjured).
+  const next = updateNpcStates(state, npcId, {
+    fatigue: clampPercent(npc.states.fatigue - reduction),
+    stress: clampPercent(npc.states.stress - (hasQuarters ? 15 : 6)),
+    health: clampPercent(npc.states.health + (hasQuarters ? 5 : 2)),
+  })
   const message = hasQuarters
     ? `${npc.name} sleeps soundly in their quarters.`
     : `${npc.name} sleeps rough, without proper quarters.`
@@ -169,7 +176,12 @@ export function npcRest(state: GameState, npcId: string): GameState {
 
   const hasQuarters = hasResidentQuarters(state, npc.roomAssignment)
   const reduction = hasQuarters ? 20 : 12
-  const next = updateNpcStates(state, npcId, { fatigue: clampPercent(npc.states.fatigue - reduction) })
+  // Per the canonical recovery contract (destiny-i8nc): brief rest also gives light stress
+  // relief, but no health recovery and no injury treatment (unlike full sleep).
+  const next = updateNpcStates(state, npcId, {
+    fatigue: clampPercent(npc.states.fatigue - reduction),
+    stress: clampPercent(npc.states.stress - (hasQuarters ? 8 : 4)),
+  })
   return appendActivityLogEntry(next, 'system', `${npc.name} takes a moment to rest.`)
 }
 

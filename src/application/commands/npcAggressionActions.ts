@@ -5,6 +5,7 @@ import type { Rng } from './seededRng'
 import { appendActivityLogEntry } from './activityLog'
 import { contentCatalog } from '../content/contentCatalog'
 import { getRelationship, buildRelationshipKey } from '../../domain/relationships/contracts'
+import { getNpcRecoverySupport } from './recovery'
 
 /**
  * NPC Aggression & Defense Actions (destiny-kuw0)
@@ -222,6 +223,14 @@ export function npcCareForInjured(state: GameState, npcId: string): GameState {
     .sort((a, b) => b.states.injury - a.states.injury)[0]
   if (!target) return state
 
+  // Per the canonical recovery contract (destiny-i8nc/destiny-o8mn): generic heal effects restore
+  // health only. Injury only meaningfully reduces with real treatment support (infirmary/medic),
+  // not from a medkit's generic heal effect — matching how useItem.ts's consumable path already
+  // treats 'heal' (health-only) and how applyStateDecay.ts's recovering-NPC loop gates injury
+  // reduction on getNpcRecoverySupport's tier.
+  const supportTier = getNpcRecoverySupport(state, target)
+  const injuryReduction = supportTier === 'treatment-plus-medic' ? 8 : supportTier === 'treatment' ? 5 : 0
+
   const found = findNpcInventoryItemByTag(state, npcId, 'healing')
   if (found) {
     const healEffect = found.itemDef.typedEffects.find((e) => e.type === 'heal')
@@ -230,7 +239,7 @@ export function npcCareForInjured(state: GameState, npcId: string): GameState {
     let next = consumeNpcInventoryItem(state, npcId, found)
     next = updateNpcStates(next, target.npcId, {
       health: clampPercent(target.states.health + healValue + skillBonus),
-      injury: clampPercent(target.states.injury - (15 + skillBonus)),
+      injury: clampPercent(target.states.injury - injuryReduction),
     })
     return appendActivityLogEntry(next, 'system', `${npc.name} treats ${target.name}'s injuries with ${found.itemDef.name}.`)
   }
@@ -238,7 +247,7 @@ export function npcCareForInjured(state: GameState, npcId: string): GameState {
   const empathyBonus = npc.traits.empathy >= 50 ? 2 : 0
   const next = updateNpcStates(state, target.npcId, {
     health: clampPercent(target.states.health + 5 + empathyBonus),
-    injury: clampPercent(target.states.injury - 3),
+    injury: clampPercent(target.states.injury - injuryReduction),
   })
   return appendActivityLogEntry(next, 'system', `${npc.name} tends to ${target.name} at their bedside.`)
 }
