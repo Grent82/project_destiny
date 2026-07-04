@@ -249,3 +249,191 @@ export const selectItemDefinition = createSelector(
     return itemsById.get(instance.itemId) ?? null
   },
 )
+
+// ─── Canonical Inventory Access Selectors ───────────────────────────────────
+
+/**
+ * Get all item instances in a specific NPC's inventory.
+ */
+export const selectNpcInventoryItems = createSelector(
+  [(_state: RootState, npcId: string) => npcId, (_state: RootState) => _state.game.inventoryState],
+  (_npcId: string, inventoryState: GameState['inventoryState']) => {
+    const items: ItemRef[] = []
+    const npcContainers = inventoryState.npcInventories[_npcId] || []
+
+    for (const container of npcContainers) {
+      for (const slot of container.slots) {
+        if (slot.itemInstanceId) {
+          const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+          if (instanceDef) {
+            items.push({
+              instanceId: slot.itemInstanceId,
+              itemId: instanceDef.itemId,
+              quantity: slot.quantity,
+            })
+          }
+        }
+      }
+    }
+
+    return items
+  }
+)
+
+/**
+ * Get all item instances in a shop's stock container.
+ */
+export const selectShopStockItems = createSelector(
+  [(_state: RootState, shopId: string) => shopId, (_state: RootState) => _state.game.inventoryState],
+  (_shopId: string, inventoryState: GameState['inventoryState']) => {
+    const items: ItemRef[] = []
+
+    for (const container of inventoryState.sharedContainers) {
+      // Match shop containers by containerId or ownerId starting with 'shop:'
+      if (container.containerId === _shopId || container.ownerId === _shopId || container.ownerId.startsWith('shop:')) {
+        for (const slot of container.slots) {
+          if (slot.itemInstanceId) {
+            const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]
+            if (instanceDef) {
+              items.push({
+                instanceId: slot.itemInstanceId,
+                itemId: instanceDef.itemId,
+                quantity: slot.quantity,
+              })
+            }
+          }
+        }
+      }
+    }
+
+    return items
+  }
+)
+
+/**
+ * Check if player has enough space in inventory.
+ */
+export const selectPlayerHasSpace = createSelector([(state: RootState) => state.game.inventoryState], (inventoryState: GameState['inventoryState']) => {
+  const used = inventoryState.player.usedBagSlots
+  const total = inventoryState.player.totalBagSlots
+  return { hasSpace: used < total, used, total, available: total - used }
+})
+
+/**
+ * Check if house storage has enough space.
+ */
+export const selectHouseStorageHasSpace = createSelector([(state: RootState) => state.game], (game: GameState) => {
+  const used = game.inventoryState.sharedContainers
+    .filter((c) => c.ownerId === 'house_storage' || c.ownerId.startsWith('household:'))
+    .reduce((sum, c) => sum + c.slots.length, 0)
+  const capacity = game.houseStorageCapacity
+  return { hasSpace: used < capacity, used, capacity, available: capacity - used }
+})
+
+/**
+ * Get all accessible inventory sources for the player.
+ * Returns a list of containers the player can access.
+ */
+export const selectPlayerAccessibleSources = createSelector([(state: RootState) => state.game], (game: GameState) => {
+  const sources: Array<{
+    sourceType: 'player_inventory' | 'container' | 'equipment'
+    containerId: string
+    ownerId: string
+    name: string
+    itemCount: number
+  }> = []
+
+  // Player's own bags
+  for (const container of game.inventoryState.player.bagContainers) {
+    sources.push({
+      sourceType: 'player_inventory',
+      containerId: container.containerId,
+      ownerId: 'player',
+      name: container.name ?? 'My Backpack',
+      itemCount: container.slots.length,
+    })
+  }
+
+  // House storage (if household container exists)
+  const houseStorage = game.inventoryState.sharedContainers.find((c) => c.ownerId === 'house_storage' || c.ownerId.startsWith('household:'))
+  if (houseStorage) {
+    sources.push({
+      sourceType: 'container',
+      containerId: houseStorage.containerId,
+      ownerId: houseStorage.ownerId,
+      name: houseStorage.name ?? 'House Storage',
+      itemCount: houseStorage.slots.length,
+    })
+  }
+
+  // Player equipment
+  const equippedCount = Object.values(game.inventoryState.player.equipmentSlots).filter(Boolean).length
+  if (equippedCount > 0) {
+    sources.push({
+      sourceType: 'equipment',
+      containerId: 'player:equipment',
+      ownerId: 'player',
+      name: 'My Equipment',
+      itemCount: equippedCount,
+    })
+  }
+
+  return sources
+})
+
+/**
+ * Get accessible inventory sources for an NPC.
+ */
+export const selectNpcAccessibleSources = createSelector(
+  [(_state: RootState, npcId: string) => npcId, (_state: RootState) => _state.game],
+  (_npcId: string, game: GameState) => {
+    const sources: Array<{
+      sourceType: 'npc_inventory' | 'container' | 'equipment'
+      containerId: string
+      ownerId: string
+      name: string
+      itemCount: number
+    }> = []
+
+    const npc = game.roster.find((n) => n.npcId === _npcId)
+    if (!npc) return sources
+
+    // NPC's own inventory
+    const npcContainers = game.inventoryState.npcInventories[_npcId] || []
+    for (const container of npcContainers) {
+      sources.push({
+        sourceType: 'npc_inventory',
+        containerId: container.containerId,
+        ownerId: _npcId,
+        name: container.name ?? `${npc.name}'s Backpack`,
+        itemCount: container.slots.length,
+      })
+    }
+
+    // Household storage (if NPC is in player household)
+    if (npc.roomAssignment) {
+      const houseStorage = game.inventoryState.sharedContainers.find((c) => c.ownerId === 'house_storage' || c.ownerId.startsWith('household:'))
+      if (houseStorage) {
+        sources.push({
+          sourceType: 'container',
+          containerId: houseStorage.containerId,
+          ownerId: houseStorage.ownerId,
+          name: houseStorage.name ?? 'House Storage',
+          itemCount: houseStorage.slots.length,
+        })
+      }
+    }
+
+    return sources
+  }
+)
+
+/**
+ * Get item instance from registry by ID.
+ */
+export const selectItemInstance = createSelector(
+  [(_state: RootState, instanceId: string) => instanceId, (_state: RootState) => _state.game.inventoryState],
+  (_instanceId: string, inventoryState: GameState['inventoryState']) => {
+    return inventoryState.itemRegistry[_instanceId] ?? null
+  }
+)

@@ -11,6 +11,8 @@ export const itemLocationTypeSchema = z.enum([
   'npc_equipment',
   'container',
   'player_equipment',
+  'shop_stock',
+  'equipment',
 ])
 
 export type ItemLocationType = z.infer<typeof itemLocationTypeSchema>
