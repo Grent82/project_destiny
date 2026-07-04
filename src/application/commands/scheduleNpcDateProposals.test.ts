@@ -37,6 +37,8 @@ function worldNpc(npcId: string, overrides?: Partial<WorldNpcRuntimeState>): Wor
     health: 100,
     injury: 0,
     recovering: false,
+    clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
+    armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
     ...overrides,
   }
 }

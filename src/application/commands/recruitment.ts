@@ -49,6 +49,11 @@ function buildRosterEntryFromOffer(
 
   const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - initialLoyaltyPenalty)
 
+  // Get clothing/armor from worldNpcStates if available, otherwise use defaults
+  const worldNpcState = state.worldNpcStates.find((w) => w.npcId === npcId)
+  const clothing = worldNpcState?.clothing ?? { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] }
+  const armor = worldNpcState?.armor ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }
+
   return {
     npcId,
     name: npcDef.name,
@@ -85,8 +90,8 @@ function buildRosterEntryFromOffer(
     },
     equipment: { weapon: null, armor: null, accessory: [] },
     personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
-    clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
-    armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+    clothing,
+    armor,
     arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
     npcMemory: [],
     bondStatus,

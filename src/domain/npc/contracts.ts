@@ -359,6 +359,59 @@ export type NpcIntention = z.infer<typeof npcIntentionSchema>
 
 export const worldNpcDispositionSchema = z.enum(['neutral', 'friendly', 'hostile', 'afraid', 'unknown'])
 
+// ─── NPC Clothing Schema ────────────────────────────────────────────────────
+
+/**
+ * Clothing layer types for NPC equipment.
+ * Each layer represents a distinct body area that can be clothed.
+ */
+export const CLOTHING_LAYERS = ['head', 'torso', 'arms', 'legs', 'feet', 'full', 'undergarments'] as const
+export type ClothingLayer = typeof CLOTHING_LAYERS[number]
+
+/**
+ * npcClothing tracks what clothing items an NPC is wearing, organized by layer.
+ * Allows multiple items per layer (e.g., undergarments + outerwear on torso).
+ */
+export const npcClothingSchema = z
+  .object({
+    head: entityIdSchema.nullable().default(null),
+    torso: entityIdSchema.nullable().default(null),
+    arms: entityIdSchema.nullable().default(null),
+    legs: entityIdSchema.nullable().default(null),
+    feet: entityIdSchema.nullable().default(null),
+    full: entityIdSchema.nullable().default(null), // Full-body garments override other layers
+    undergarments: entityIdSchema.nullable().default(null),
+    accessories: z.array(entityIdSchema).default([]),
+  })
+  .strict()
+
+export type NpcClothing = z.infer<typeof npcClothingSchema>
+
+// ─── NPC Armor Schema ───────────────────────────────────────────────────────
+
+/**
+ * Armor layer types for NPC equipment.
+ * Separates light and heavy armor by body area.
+ */
+export const ARMOR_LAYERS = ['light-torso', 'light-legs', 'heavy-torso', 'heavy-legs', 'shield'] as const
+export type ArmorLayer = typeof ARMOR_LAYERS[number]
+
+/**
+ * npcArmor tracks what armor items an NPC is wearing.
+ * Light and heavy armor are tracked separately as they may have different penalties/bonuses.
+ */
+export const npcArmorSchema = z
+  .object({
+    lightTorso: entityIdSchema.nullable().default(null),
+    lightLegs: entityIdSchema.nullable().default(null),
+    heavyTorso: entityIdSchema.nullable().default(null),
+    heavyLegs: entityIdSchema.nullable().default(null),
+    shield: entityIdSchema.nullable().default(null),
+  })
+  .strict()
+
+export type NpcArmor = z.infer<typeof npcArmorSchema>
+
 // ─── Captivity and pregnancy schemas ─────────────────────────────────────────
 // Moved before worldNpcRuntimeStateSchema to avoid initialization order issues
 
@@ -432,6 +485,9 @@ export const worldNpcRuntimeStateSchema = z.object({
   health: z.number().int().min(0).max(100).default(100),
   injury: z.number().int().min(0).max(100).default(0),
   recovering: z.boolean().default(false),
+  // Clothing and armor - all NPCs have basic equipment regardless of roster status
+  clothing: npcClothingSchema.default({ head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] }),
+  armor: npcArmorSchema.default({ lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }),
 }).strict()
 
 export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>
@@ -506,54 +562,6 @@ export type NpcPersonalFunds = z.infer<typeof npcPersonalFundsSchema>
 /**
  * Clothing layer types for NPC equipment.
  * Each layer represents a distinct body area that can be clothed.
- */
-export const CLOTHING_LAYERS = ['head', 'torso', 'arms', 'legs', 'feet', 'full', 'undergarments'] as const
-export type ClothingLayer = typeof CLOTHING_LAYERS[number]
-
-/**
- * npcClothing tracks what clothing items an NPC is wearing, organized by layer.
- * Allows multiple items per layer (e.g., undergarments + outerwear on torso).
- */
-export const npcClothingSchema = z
-  .object({
-    head: entityIdSchema.nullable().default(null),
-    torso: entityIdSchema.nullable().default(null),
-    arms: entityIdSchema.nullable().default(null),
-    legs: entityIdSchema.nullable().default(null),
-    feet: entityIdSchema.nullable().default(null),
-    full: entityIdSchema.nullable().default(null), // Full-body garments override other layers
-    undergarments: entityIdSchema.nullable().default(null),
-    accessories: z.array(entityIdSchema).default([]),
-  })
-  .strict()
-
-export type NpcClothing = z.infer<typeof npcClothingSchema>
-
-// ─── NPC Armor Schema ───────────────────────────────────────────────────────
-
-/**
- * Armor layer types for NPC equipment.
- * Separates light and heavy armor by body area.
- */
-export const ARMOR_LAYERS = ['light-torso', 'light-legs', 'heavy-torso', 'heavy-legs', 'shield'] as const
-export type ArmorLayer = typeof ARMOR_LAYERS[number]
-
-/**
- * npcArmor tracks what armor items an NPC is wearing.
- * Light and heavy armor are tracked separately as they may have different penalties/bonuses.
- */
-export const npcArmorSchema = z
-  .object({
-    lightTorso: entityIdSchema.nullable().default(null),
-    lightLegs: entityIdSchema.nullable().default(null),
-    heavyTorso: entityIdSchema.nullable().default(null),
-    heavyLegs: entityIdSchema.nullable().default(null),
-    shield: entityIdSchema.nullable().default(null),
-  })
-  .strict()
-
-export type NpcArmor = z.infer<typeof npcArmorSchema>
-
 // ─── Ward Personal Allowance Schema ─────────────────────────────────────────
 
 /**

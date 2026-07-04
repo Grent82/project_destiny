@@ -185,13 +185,13 @@
         "lastTipAmount": 0
       },
       "clothing": {
+        "torso": "cloth-tunic-simple",
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
         "head": null,
-        "torso": "item-tunic-simple",
         "arms": null,
-        "legs": "item-trousers-simple",
-        "feet": null,
         "full": null,
-        "undergarments": "item-undergarments-basic",
         "accessories": []
       },
       "armor": {
@@ -639,10 +639,26 @@
         "name": "Harbor Provisions Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-medkit-field-001", "itemInstanceId": "inst-medkit-field-001", "quantity": 5 },
-          { "slotId": "slot-inst-medkit-field-002", "itemInstanceId": "inst-medkit-field-002", "quantity": 3 },
-          { "slotId": "slot-inst-ledger-bureau-001", "itemInstanceId": "inst-ledger-bureau-001", "quantity": 10 },
-          { "slotId": "slot-inst-ledger-bureau-002", "itemInstanceId": "inst-ledger-bureau-002", "quantity": 5 }
+          {
+            "slotId": "slot-inst-medkit-field-001",
+            "itemInstanceId": "inst-medkit-field-001",
+            "quantity": 5
+          },
+          {
+            "slotId": "slot-inst-medkit-field-002",
+            "itemInstanceId": "inst-medkit-field-002",
+            "quantity": 3
+          },
+          {
+            "slotId": "slot-inst-ledger-bureau-001",
+            "itemInstanceId": "inst-ledger-bureau-001",
+            "quantity": 10
+          },
+          {
+            "slotId": "slot-inst-ledger-bureau-002",
+            "itemInstanceId": "inst-ledger-bureau-002",
+            "quantity": 5
+          }
         ],
         "locked": false
       },
@@ -653,8 +669,16 @@
         "name": "Ledger House Atelier Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-ledger-bureau-003", "itemInstanceId": "inst-ledger-bureau-003", "quantity": 8 },
-          { "slotId": "slot-inst-ledger-bureau-004", "itemInstanceId": "inst-ledger-bureau-004", "quantity": 12 }
+          {
+            "slotId": "slot-inst-ledger-bureau-003",
+            "itemInstanceId": "inst-ledger-bureau-003",
+            "quantity": 8
+          },
+          {
+            "slotId": "slot-inst-ledger-bureau-004",
+            "itemInstanceId": "inst-ledger-bureau-004",
+            "quantity": 12
+          }
         ],
         "locked": false
       },
@@ -665,9 +689,21 @@
         "name": "Foundry Supply Cage Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-medkit-field-003", "itemInstanceId": "inst-medkit-field-003", "quantity": 4 },
-          { "slotId": "slot-inst-spare-parts-001", "itemInstanceId": "inst-spare-parts-001", "quantity": 15 },
-          { "slotId": "slot-inst-spare-parts-002", "itemInstanceId": "inst-spare-parts-002", "quantity": 8 }
+          {
+            "slotId": "slot-inst-medkit-field-003",
+            "itemInstanceId": "inst-medkit-field-003",
+            "quantity": 4
+          },
+          {
+            "slotId": "slot-inst-spare-parts-001",
+            "itemInstanceId": "inst-spare-parts-001",
+            "quantity": 15
+          },
+          {
+            "slotId": "slot-inst-spare-parts-002",
+            "itemInstanceId": "inst-spare-parts-002",
+            "quantity": 8
+          }
         ],
         "locked": false
       },
@@ -678,11 +714,31 @@
         "name": "The Gilded Register Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-dueling-blade-001", "itemInstanceId": "inst-dueling-blade-001", "quantity": 2 },
-          { "slotId": "slot-inst-court-pistol-001", "itemInstanceId": "inst-court-pistol-001", "quantity": 1 },
-          { "slotId": "slot-inst-assessor-coat-001", "itemInstanceId": "inst-assessor-coat-001", "quantity": 3 },
-          { "slotId": "slot-inst-ledger-bureau-005", "itemInstanceId": "inst-ledger-bureau-005", "quantity": 6 },
-          { "slotId": "slot-inst-fine-ink-001", "itemInstanceId": "inst-fine-ink-001", "quantity": 4 }
+          {
+            "slotId": "slot-inst-dueling-blade-001",
+            "itemInstanceId": "inst-dueling-blade-001",
+            "quantity": 2
+          },
+          {
+            "slotId": "slot-inst-court-pistol-001",
+            "itemInstanceId": "inst-court-pistol-001",
+            "quantity": 1
+          },
+          {
+            "slotId": "slot-inst-assessor-coat-001",
+            "itemInstanceId": "inst-assessor-coat-001",
+            "quantity": 3
+          },
+          {
+            "slotId": "slot-inst-ledger-bureau-005",
+            "itemInstanceId": "inst-ledger-bureau-005",
+            "quantity": 6
+          },
+          {
+            "slotId": "slot-inst-fine-ink-001",
+            "itemInstanceId": "inst-fine-ink-001",
+            "quantity": 4
+          }
         ],
         "locked": false
       },
@@ -693,11 +749,31 @@
         "name": "The Ironmonger Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-league-chest-001", "itemInstanceId": "inst-league-chest-001", "quantity": 2 },
-          { "slotId": "slot-inst-foreman-plate-001", "itemInstanceId": "inst-foreman-plate-001", "quantity": 3 },
-          { "slotId": "slot-inst-foundry-maul-001", "itemInstanceId": "inst-foundry-maul-001", "quantity": 4 },
-          { "slotId": "slot-inst-caliper-001", "itemInstanceId": "inst-caliper-001", "quantity": 5 },
-          { "slotId": "slot-inst-spare-parts-003", "itemInstanceId": "inst-spare-parts-003", "quantity": 10 }
+          {
+            "slotId": "slot-inst-league-chest-001",
+            "itemInstanceId": "inst-league-chest-001",
+            "quantity": 2
+          },
+          {
+            "slotId": "slot-inst-foreman-plate-001",
+            "itemInstanceId": "inst-foreman-plate-001",
+            "quantity": 3
+          },
+          {
+            "slotId": "slot-inst-foundry-maul-001",
+            "itemInstanceId": "inst-foundry-maul-001",
+            "quantity": 4
+          },
+          {
+            "slotId": "slot-inst-caliper-001",
+            "itemInstanceId": "inst-caliper-001",
+            "quantity": 5
+          },
+          {
+            "slotId": "slot-inst-spare-parts-003",
+            "itemInstanceId": "inst-spare-parts-003",
+            "quantity": 10
+          }
         ],
         "locked": false
       },
@@ -708,11 +784,31 @@
         "name": "Pale Provisions Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-ration-brick-001", "itemInstanceId": "inst-ration-brick-001", "quantity": 20 },
-          { "slotId": "slot-inst-dressing-001", "itemInstanceId": "inst-dressing-001", "quantity": 15 },
-          { "slotId": "slot-inst-dagger-wasterunner-001", "itemInstanceId": "inst-dagger-wasterunner-001", "quantity": 6 },
-          { "slotId": "slot-inst-lockpick-001", "itemInstanceId": "inst-lockpick-001", "quantity": 8 },
-          { "slotId": "slot-inst-work-coat-001", "itemInstanceId": "inst-work-coat-001", "quantity": 7 }
+          {
+            "slotId": "slot-inst-ration-brick-001",
+            "itemInstanceId": "inst-ration-brick-001",
+            "quantity": 20
+          },
+          {
+            "slotId": "slot-inst-dressing-001",
+            "itemInstanceId": "inst-dressing-001",
+            "quantity": 15
+          },
+          {
+            "slotId": "slot-inst-dagger-wasterunner-001",
+            "itemInstanceId": "inst-dagger-wasterunner-001",
+            "quantity": 6
+          },
+          {
+            "slotId": "slot-inst-lockpick-001",
+            "itemInstanceId": "inst-lockpick-001",
+            "quantity": 8
+          },
+          {
+            "slotId": "slot-inst-work-coat-001",
+            "itemInstanceId": "inst-work-coat-001",
+            "quantity": 7
+          }
         ],
         "locked": false
       },
@@ -723,10 +819,26 @@
         "name": "Pale Apothecary Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-antitoxin-001", "itemInstanceId": "inst-antitoxin-001", "quantity": 12 },
-          { "slotId": "slot-inst-poultice-001", "itemInstanceId": "inst-poultice-001", "quantity": 18 },
-          { "slotId": "slot-inst-tincture-001", "itemInstanceId": "inst-tincture-001", "quantity": 10 },
-          { "slotId": "slot-inst-graydust-001", "itemInstanceId": "inst-graydust-001", "quantity": 8 }
+          {
+            "slotId": "slot-inst-antitoxin-001",
+            "itemInstanceId": "inst-antitoxin-001",
+            "quantity": 12
+          },
+          {
+            "slotId": "slot-inst-poultice-001",
+            "itemInstanceId": "inst-poultice-001",
+            "quantity": 18
+          },
+          {
+            "slotId": "slot-inst-tincture-001",
+            "itemInstanceId": "inst-tincture-001",
+            "quantity": 10
+          },
+          {
+            "slotId": "slot-inst-graydust-001",
+            "itemInstanceId": "inst-graydust-001",
+            "quantity": 8
+          }
         ],
         "locked": false
       },
@@ -737,11 +849,31 @@
         "name": "Warrens Supply Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-ration-brick-002", "itemInstanceId": "inst-ration-brick-002", "quantity": 25 },
-          { "slotId": "slot-inst-form-petition-001", "itemInstanceId": "inst-form-petition-001", "quantity": 30 },
-          { "slotId": "slot-inst-dressing-002", "itemInstanceId": "inst-dressing-002", "quantity": 12 },
-          { "slotId": "slot-inst-spear-pike-001", "itemInstanceId": "inst-spear-pike-001", "quantity": 5 },
-          { "slotId": "slot-inst-waste-vest-001", "itemInstanceId": "inst-waste-vest-001", "quantity": 6 }
+          {
+            "slotId": "slot-inst-ration-brick-002",
+            "itemInstanceId": "inst-ration-brick-002",
+            "quantity": 25
+          },
+          {
+            "slotId": "slot-inst-form-petition-001",
+            "itemInstanceId": "inst-form-petition-001",
+            "quantity": 30
+          },
+          {
+            "slotId": "slot-inst-dressing-002",
+            "itemInstanceId": "inst-dressing-002",
+            "quantity": 12
+          },
+          {
+            "slotId": "slot-inst-spear-pike-001",
+            "itemInstanceId": "inst-spear-pike-001",
+            "quantity": 5
+          },
+          {
+            "slotId": "slot-inst-waste-vest-001",
+            "itemInstanceId": "inst-waste-vest-001",
+            "quantity": 6
+          }
         ],
         "locked": false
       },
@@ -752,11 +884,31 @@
         "name": "Warrens Apothecary Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-medkit-field-004", "itemInstanceId": "inst-medkit-field-004", "quantity": 6 },
-          { "slotId": "slot-inst-antitoxin-002", "itemInstanceId": "inst-antitoxin-002", "quantity": 14 },
-          { "slotId": "slot-inst-poultice-002", "itemInstanceId": "inst-poultice-002", "quantity": 20 },
-          { "slotId": "slot-inst-tincture-002", "itemInstanceId": "inst-tincture-002", "quantity": 12 },
-          { "slotId": "slot-inst-salve-001", "itemInstanceId": "inst-salve-001", "quantity": 9 }
+          {
+            "slotId": "slot-inst-medkit-field-004",
+            "itemInstanceId": "inst-medkit-field-004",
+            "quantity": 6
+          },
+          {
+            "slotId": "slot-inst-antitoxin-002",
+            "itemInstanceId": "inst-antitoxin-002",
+            "quantity": 14
+          },
+          {
+            "slotId": "slot-inst-poultice-002",
+            "itemInstanceId": "inst-poultice-002",
+            "quantity": 20
+          },
+          {
+            "slotId": "slot-inst-tincture-002",
+            "itemInstanceId": "inst-tincture-002",
+            "quantity": 12
+          },
+          {
+            "slotId": "slot-inst-salve-001",
+            "itemInstanceId": "inst-salve-001",
+            "quantity": 9
+          }
         ],
         "locked": false
       },
@@ -767,61 +919,481 @@
         "name": "Hollows Stall Stock",
         "maxSlots": 100,
         "slots": [
-          { "slotId": "slot-inst-graydust-002", "itemInstanceId": "inst-graydust-002", "quantity": 6 },
-          { "slotId": "slot-inst-forgery-kit-001", "itemInstanceId": "inst-forgery-kit-001", "quantity": 3 },
-          { "slotId": "slot-inst-false-papers-001", "itemInstanceId": "inst-false-papers-001", "quantity": 4 },
-          { "slotId": "slot-inst-combat-stim-001", "itemInstanceId": "inst-combat-stim-001", "quantity": 5 },
-          { "slotId": "slot-inst-lockpick-002", "itemInstanceId": "inst-lockpick-002", "quantity": 7 },
-          { "slotId": "slot-inst-dagger-flicker-001", "itemInstanceId": "inst-dagger-flicker-001", "quantity": 2 }
+          {
+            "slotId": "slot-inst-graydust-002",
+            "itemInstanceId": "inst-graydust-002",
+            "quantity": 6
+          },
+          {
+            "slotId": "slot-inst-forgery-kit-001",
+            "itemInstanceId": "inst-forgery-kit-001",
+            "quantity": 3
+          },
+          {
+            "slotId": "slot-inst-false-papers-001",
+            "itemInstanceId": "inst-false-papers-001",
+            "quantity": 4
+          },
+          {
+            "slotId": "slot-inst-combat-stim-001",
+            "itemInstanceId": "inst-combat-stim-001",
+            "quantity": 5
+          },
+          {
+            "slotId": "slot-inst-lockpick-002",
+            "itemInstanceId": "inst-lockpick-002",
+            "quantity": 7
+          },
+          {
+            "slotId": "slot-inst-dagger-flicker-001",
+            "itemInstanceId": "inst-dagger-flicker-001",
+            "quantity": 2
+          }
         ],
         "locked": false
       }
     ],
     "itemRegistry": {
-      "inst-medkit-field-001": { "uniqueId": "inst-medkit-field-001", "itemId": "item-medkit-field", "quantity": 5, "locationType": "shop_stock", "locationId": "shop:shop-harbor-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-harbor-provisions", "flags": [] },
-      "inst-medkit-field-002": { "uniqueId": "inst-medkit-field-002", "itemId": "item-medkit-field", "quantity": 3, "locationType": "shop_stock", "locationId": "shop:shop-harbor-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-harbor-provisions", "flags": [] },
-      "inst-ledger-bureau-001": { "uniqueId": "inst-ledger-bureau-001", "itemId": "item-ledger-bureau", "quantity": 10, "locationType": "shop_stock", "locationId": "shop:shop-harbor-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-harbor-provisions", "flags": [] },
-      "inst-ledger-bureau-002": { "uniqueId": "inst-ledger-bureau-002", "itemId": "item-ledger-bureau", "quantity": 5, "locationType": "shop_stock", "locationId": "shop:shop-harbor-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-harbor-provisions", "flags": [] },
-      "inst-ledger-bureau-003": { "uniqueId": "inst-ledger-bureau-003", "itemId": "item-ledger-bureau", "quantity": 8, "locationType": "shop_stock", "locationId": "shop:shop-heights-ledger-house:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-heights-ledger-house", "flags": [] },
-      "inst-ledger-bureau-004": { "uniqueId": "inst-ledger-bureau-004", "itemId": "item-ledger-bureau", "quantity": 12, "locationType": "shop_stock", "locationId": "shop:shop-heights-ledger-house:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-heights-ledger-house", "flags": [] },
-      "inst-medkit-field-003": { "uniqueId": "inst-medkit-field-003", "itemId": "item-medkit-field", "quantity": 4, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-supply", "flags": [] },
-      "inst-spare-parts-001": { "uniqueId": "inst-spare-parts-001", "itemId": "item-spare-parts", "quantity": 15, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-supply", "flags": [] },
-      "inst-spare-parts-002": { "uniqueId": "inst-spare-parts-002", "itemId": "item-spare-parts", "quantity": 8, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-supply", "flags": [] },
-      "inst-dueling-blade-001": { "uniqueId": "inst-dueling-blade-001", "itemId": "weapon-sword-court-dueling-blade", "quantity": 2, "locationType": "shop_stock", "locationId": "shop:shop-gilded-register:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-gilded-register", "flags": [] },
-      "inst-court-pistol-001": { "uniqueId": "inst-court-pistol-001", "itemId": "weapon-pistol-court-calling-piece", "quantity": 1, "locationType": "shop_stock", "locationId": "shop:shop-gilded-register:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-gilded-register", "flags": [] },
-      "inst-assessor-coat-001": { "uniqueId": "inst-assessor-coat-001", "itemId": "armor-specialized-compact-assessor-coat", "quantity": 3, "locationType": "shop_stock", "locationId": "shop:shop-gilded-register:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-gilded-register", "flags": [] },
-      "inst-ledger-bureau-005": { "uniqueId": "inst-ledger-bureau-005", "itemId": "item-ledger-bureau", "quantity": 6, "locationType": "shop_stock", "locationId": "shop:shop-gilded-register:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-gilded-register", "flags": [] },
-      "inst-fine-ink-001": { "uniqueId": "inst-fine-ink-001", "itemId": "item-gift-fine-ink", "quantity": 4, "locationType": "shop_stock", "locationId": "shop:shop-gilded-register:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-gilded-register", "flags": [] },
-      "inst-league-chest-001": { "uniqueId": "inst-league-chest-001", "itemId": "armor-heavy-league-armory-chest", "quantity": 2, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-armorer:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-armorer", "flags": [] },
-      "inst-foreman-plate-001": { "uniqueId": "inst-foreman-plate-001", "itemId": "armor-medium-league-foreman-halfplate", "quantity": 3, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-armorer:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-armorer", "flags": [] },
-      "inst-foundry-maul-001": { "uniqueId": "inst-foundry-maul-001", "itemId": "weapon-hammer-foundry-maul", "quantity": 4, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-armorer:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-armorer", "flags": [] },
-      "inst-caliper-001": { "uniqueId": "inst-caliper-001", "itemId": "item-caliper-league-engineering", "quantity": 5, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-armorer:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-armorer", "flags": [] },
-      "inst-spare-parts-003": { "uniqueId": "inst-spare-parts-003", "itemId": "item-spare-parts", "quantity": 10, "locationType": "shop_stock", "locationId": "shop:shop-ironworks-armorer:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-ironworks-armorer", "flags": [] },
-      "inst-ration-brick-001": { "uniqueId": "inst-ration-brick-001", "itemId": "item-ration-compact-brick", "quantity": 20, "locationType": "shop_stock", "locationId": "shop:shop-pale-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-provisions", "flags": [] },
-      "inst-dressing-001": { "uniqueId": "inst-dressing-001", "itemId": "item-dressing-league-surplus", "quantity": 15, "locationType": "shop_stock", "locationId": "shop:shop-pale-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-provisions", "flags": [] },
-      "inst-dagger-wasterunner-001": { "uniqueId": "inst-dagger-wasterunner-001", "itemId": "weapon-dagger-wasterunner", "quantity": 6, "locationType": "shop_stock", "locationId": "shop:shop-pale-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-provisions", "flags": [] },
-      "inst-lockpick-001": { "uniqueId": "inst-lockpick-001", "itemId": "item-lockpick-ringcut", "quantity": 8, "locationType": "shop_stock", "locationId": "shop:shop-pale-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-provisions", "flags": [] },
-      "inst-work-coat-001": { "uniqueId": "inst-work-coat-001", "itemId": "armor-light-tallow-work-coat", "quantity": 7, "locationType": "shop_stock", "locationId": "shop:shop-pale-provisions:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-provisions", "flags": [] },
-      "inst-antitoxin-001": { "uniqueId": "inst-antitoxin-001", "itemId": "item-antitoxin-riverpurge", "quantity": 12, "locationType": "shop_stock", "locationId": "shop:shop-pale-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-apothecary", "flags": [] },
-      "inst-poultice-001": { "uniqueId": "inst-poultice-001", "itemId": "item-poultice-tarthatch", "quantity": 18, "locationType": "shop_stock", "locationId": "shop:shop-pale-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-apothecary", "flags": [] },
-      "inst-tincture-001": { "uniqueId": "inst-tincture-001", "itemId": "item-tincture-wound-close", "quantity": 10, "locationType": "shop_stock", "locationId": "shop:shop-pale-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-apothecary", "flags": [] },
-      "inst-graydust-001": { "uniqueId": "inst-graydust-001", "itemId": "item-graydust", "quantity": 8, "locationType": "shop_stock", "locationId": "shop:shop-pale-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-pale-apothecary", "flags": [] },
-      "inst-ration-brick-002": { "uniqueId": "inst-ration-brick-002", "itemId": "item-ration-compact-brick", "quantity": 25, "locationType": "shop_stock", "locationId": "shop:shop-warrens-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-supply", "flags": [] },
-      "inst-form-petition-001": { "uniqueId": "inst-form-petition-001", "itemId": "item-form-ward-petition", "quantity": 30, "locationType": "shop_stock", "locationId": "shop:shop-warrens-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-supply", "flags": [] },
-      "inst-dressing-002": { "uniqueId": "inst-dressing-002", "itemId": "item-dressing-league-surplus", "quantity": 12, "locationType": "shop_stock", "locationId": "shop:shop-warrens-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-supply", "flags": [] },
-      "inst-spear-pike-001": { "uniqueId": "inst-spear-pike-001", "itemId": "weapon-spear-ironworks-pike", "quantity": 5, "locationType": "shop_stock", "locationId": "shop:shop-warrens-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-supply", "flags": [] },
-      "inst-waste-vest-001": { "uniqueId": "inst-waste-vest-001", "itemId": "armor-light-waste-runner-vest", "quantity": 6, "locationType": "shop_stock", "locationId": "shop:shop-warrens-supply:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-supply", "flags": [] },
-      "inst-medkit-field-004": { "uniqueId": "inst-medkit-field-004", "itemId": "item-medkit-field", "quantity": 6, "locationType": "shop_stock", "locationId": "shop:shop-warrens-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-apothecary", "flags": [] },
-      "inst-antitoxin-002": { "uniqueId": "inst-antitoxin-002", "itemId": "item-antitoxin-riverpurge", "quantity": 14, "locationType": "shop_stock", "locationId": "shop:shop-warrens-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-apothecary", "flags": [] },
-      "inst-poultice-002": { "uniqueId": "inst-poultice-002", "itemId": "item-poultice-tarthatch", "quantity": 20, "locationType": "shop_stock", "locationId": "shop:shop-warrens-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-apothecary", "flags": [] },
-      "inst-tincture-002": { "uniqueId": "inst-tincture-002", "itemId": "item-tincture-wound-close", "quantity": 12, "locationType": "shop_stock", "locationId": "shop:shop-warrens-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-apothecary", "flags": [] },
-      "inst-salve-001": { "uniqueId": "inst-salve-001", "itemId": "item-salve-burngrade", "quantity": 9, "locationType": "shop_stock", "locationId": "shop:shop-warrens-apothecary:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-warrens-apothecary", "flags": [] },
-      "inst-graydust-002": { "uniqueId": "inst-graydust-002", "itemId": "item-graydust", "quantity": 6, "locationType": "shop_stock", "locationId": "shop:shop-hollows-stall:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-hollows-stall", "flags": [] },
-      "inst-forgery-kit-001": { "uniqueId": "inst-forgery-kit-001", "itemId": "item-forgery-scribe-kit", "quantity": 3, "locationType": "shop_stock", "locationId": "shop:shop-hollows-stall:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-hollows-stall", "flags": [] },
-      "inst-false-papers-001": { "uniqueId": "inst-false-papers-001", "itemId": "item-papers-false-citizen", "quantity": 4, "locationType": "shop_stock", "locationId": "shop:shop-hollows-stall:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-hollows-stall", "flags": [] },
-      "inst-combat-stim-001": { "uniqueId": "inst-combat-stim-001", "itemId": "item-stimulant-combat", "quantity": 5, "locationType": "shop_stock", "locationId": "shop:shop-hollows-stall:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-hollows-stall", "flags": [] },
-      "inst-lockpick-002": { "uniqueId": "inst-lockpick-002", "itemId": "item-lockpick-ringcut", "quantity": 7, "locationType": "shop_stock", "locationId": "shop:shop-hollows-stall:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-hollows-stall", "flags": [] },
-      "inst-dagger-flicker-001": { "uniqueId": "inst-dagger-flicker-001", "itemId": "weapon-dagger-ring-flicker", "quantity": 2, "locationType": "shop_stock", "locationId": "shop:shop-hollows-stall:stock", "acquiredDay": 1, "acquiredFrom": "shop:shop-hollows-stall", "flags": [] }
+      "inst-medkit-field-001": {
+        "uniqueId": "inst-medkit-field-001",
+        "itemId": "item-medkit-field",
+        "quantity": 5,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-harbor-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-harbor-provisions",
+        "flags": []
+      },
+      "inst-medkit-field-002": {
+        "uniqueId": "inst-medkit-field-002",
+        "itemId": "item-medkit-field",
+        "quantity": 3,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-harbor-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-harbor-provisions",
+        "flags": []
+      },
+      "inst-ledger-bureau-001": {
+        "uniqueId": "inst-ledger-bureau-001",
+        "itemId": "item-ledger-bureau",
+        "quantity": 10,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-harbor-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-harbor-provisions",
+        "flags": []
+      },
+      "inst-ledger-bureau-002": {
+        "uniqueId": "inst-ledger-bureau-002",
+        "itemId": "item-ledger-bureau",
+        "quantity": 5,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-harbor-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-harbor-provisions",
+        "flags": []
+      },
+      "inst-ledger-bureau-003": {
+        "uniqueId": "inst-ledger-bureau-003",
+        "itemId": "item-ledger-bureau",
+        "quantity": 8,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-heights-ledger-house:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-heights-ledger-house",
+        "flags": []
+      },
+      "inst-ledger-bureau-004": {
+        "uniqueId": "inst-ledger-bureau-004",
+        "itemId": "item-ledger-bureau",
+        "quantity": 12,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-heights-ledger-house:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-heights-ledger-house",
+        "flags": []
+      },
+      "inst-medkit-field-003": {
+        "uniqueId": "inst-medkit-field-003",
+        "itemId": "item-medkit-field",
+        "quantity": 4,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-supply",
+        "flags": []
+      },
+      "inst-spare-parts-001": {
+        "uniqueId": "inst-spare-parts-001",
+        "itemId": "item-spare-parts",
+        "quantity": 15,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-supply",
+        "flags": []
+      },
+      "inst-spare-parts-002": {
+        "uniqueId": "inst-spare-parts-002",
+        "itemId": "item-spare-parts",
+        "quantity": 8,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-supply",
+        "flags": []
+      },
+      "inst-dueling-blade-001": {
+        "uniqueId": "inst-dueling-blade-001",
+        "itemId": "weapon-sword-court-dueling-blade",
+        "quantity": 2,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-gilded-register:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-gilded-register",
+        "flags": []
+      },
+      "inst-court-pistol-001": {
+        "uniqueId": "inst-court-pistol-001",
+        "itemId": "weapon-pistol-court-calling-piece",
+        "quantity": 1,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-gilded-register:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-gilded-register",
+        "flags": []
+      },
+      "inst-assessor-coat-001": {
+        "uniqueId": "inst-assessor-coat-001",
+        "itemId": "armor-specialized-compact-assessor-coat",
+        "quantity": 3,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-gilded-register:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-gilded-register",
+        "flags": []
+      },
+      "inst-ledger-bureau-005": {
+        "uniqueId": "inst-ledger-bureau-005",
+        "itemId": "item-ledger-bureau",
+        "quantity": 6,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-gilded-register:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-gilded-register",
+        "flags": []
+      },
+      "inst-fine-ink-001": {
+        "uniqueId": "inst-fine-ink-001",
+        "itemId": "item-gift-fine-ink",
+        "quantity": 4,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-gilded-register:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-gilded-register",
+        "flags": []
+      },
+      "inst-league-chest-001": {
+        "uniqueId": "inst-league-chest-001",
+        "itemId": "armor-heavy-league-armory-chest",
+        "quantity": 2,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-armorer:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-armorer",
+        "flags": []
+      },
+      "inst-foreman-plate-001": {
+        "uniqueId": "inst-foreman-plate-001",
+        "itemId": "armor-medium-league-foreman-halfplate",
+        "quantity": 3,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-armorer:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-armorer",
+        "flags": []
+      },
+      "inst-foundry-maul-001": {
+        "uniqueId": "inst-foundry-maul-001",
+        "itemId": "weapon-hammer-foundry-maul",
+        "quantity": 4,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-armorer:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-armorer",
+        "flags": []
+      },
+      "inst-caliper-001": {
+        "uniqueId": "inst-caliper-001",
+        "itemId": "item-caliper-league-engineering",
+        "quantity": 5,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-armorer:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-armorer",
+        "flags": []
+      },
+      "inst-spare-parts-003": {
+        "uniqueId": "inst-spare-parts-003",
+        "itemId": "item-spare-parts",
+        "quantity": 10,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-ironworks-armorer:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-ironworks-armorer",
+        "flags": []
+      },
+      "inst-ration-brick-001": {
+        "uniqueId": "inst-ration-brick-001",
+        "itemId": "item-ration-compact-brick",
+        "quantity": 20,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-provisions",
+        "flags": []
+      },
+      "inst-dressing-001": {
+        "uniqueId": "inst-dressing-001",
+        "itemId": "item-dressing-league-surplus",
+        "quantity": 15,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-provisions",
+        "flags": []
+      },
+      "inst-dagger-wasterunner-001": {
+        "uniqueId": "inst-dagger-wasterunner-001",
+        "itemId": "weapon-dagger-wasterunner",
+        "quantity": 6,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-provisions",
+        "flags": []
+      },
+      "inst-lockpick-001": {
+        "uniqueId": "inst-lockpick-001",
+        "itemId": "item-lockpick-ringcut",
+        "quantity": 8,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-provisions",
+        "flags": []
+      },
+      "inst-work-coat-001": {
+        "uniqueId": "inst-work-coat-001",
+        "itemId": "armor-light-tallow-work-coat",
+        "quantity": 7,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-provisions:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-provisions",
+        "flags": []
+      },
+      "inst-antitoxin-001": {
+        "uniqueId": "inst-antitoxin-001",
+        "itemId": "item-antitoxin-riverpurge",
+        "quantity": 12,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-apothecary",
+        "flags": []
+      },
+      "inst-poultice-001": {
+        "uniqueId": "inst-poultice-001",
+        "itemId": "item-poultice-tarthatch",
+        "quantity": 18,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-apothecary",
+        "flags": []
+      },
+      "inst-tincture-001": {
+        "uniqueId": "inst-tincture-001",
+        "itemId": "item-tincture-wound-close",
+        "quantity": 10,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-apothecary",
+        "flags": []
+      },
+      "inst-graydust-001": {
+        "uniqueId": "inst-graydust-001",
+        "itemId": "item-graydust",
+        "quantity": 8,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-pale-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-pale-apothecary",
+        "flags": []
+      },
+      "inst-ration-brick-002": {
+        "uniqueId": "inst-ration-brick-002",
+        "itemId": "item-ration-compact-brick",
+        "quantity": 25,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-supply",
+        "flags": []
+      },
+      "inst-form-petition-001": {
+        "uniqueId": "inst-form-petition-001",
+        "itemId": "item-form-ward-petition",
+        "quantity": 30,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-supply",
+        "flags": []
+      },
+      "inst-dressing-002": {
+        "uniqueId": "inst-dressing-002",
+        "itemId": "item-dressing-league-surplus",
+        "quantity": 12,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-supply",
+        "flags": []
+      },
+      "inst-spear-pike-001": {
+        "uniqueId": "inst-spear-pike-001",
+        "itemId": "weapon-spear-ironworks-pike",
+        "quantity": 5,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-supply",
+        "flags": []
+      },
+      "inst-waste-vest-001": {
+        "uniqueId": "inst-waste-vest-001",
+        "itemId": "armor-light-waste-runner-vest",
+        "quantity": 6,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-supply:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-supply",
+        "flags": []
+      },
+      "inst-medkit-field-004": {
+        "uniqueId": "inst-medkit-field-004",
+        "itemId": "item-medkit-field",
+        "quantity": 6,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-apothecary",
+        "flags": []
+      },
+      "inst-antitoxin-002": {
+        "uniqueId": "inst-antitoxin-002",
+        "itemId": "item-antitoxin-riverpurge",
+        "quantity": 14,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-apothecary",
+        "flags": []
+      },
+      "inst-poultice-002": {
+        "uniqueId": "inst-poultice-002",
+        "itemId": "item-poultice-tarthatch",
+        "quantity": 20,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-apothecary",
+        "flags": []
+      },
+      "inst-tincture-002": {
+        "uniqueId": "inst-tincture-002",
+        "itemId": "item-tincture-wound-close",
+        "quantity": 12,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-apothecary",
+        "flags": []
+      },
+      "inst-salve-001": {
+        "uniqueId": "inst-salve-001",
+        "itemId": "item-salve-burngrade",
+        "quantity": 9,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-warrens-apothecary:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-warrens-apothecary",
+        "flags": []
+      },
+      "inst-graydust-002": {
+        "uniqueId": "inst-graydust-002",
+        "itemId": "item-graydust",
+        "quantity": 6,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-hollows-stall:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-hollows-stall",
+        "flags": []
+      },
+      "inst-forgery-kit-001": {
+        "uniqueId": "inst-forgery-kit-001",
+        "itemId": "item-forgery-scribe-kit",
+        "quantity": 3,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-hollows-stall:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-hollows-stall",
+        "flags": []
+      },
+      "inst-false-papers-001": {
+        "uniqueId": "inst-false-papers-001",
+        "itemId": "item-papers-false-citizen",
+        "quantity": 4,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-hollows-stall:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-hollows-stall",
+        "flags": []
+      },
+      "inst-combat-stim-001": {
+        "uniqueId": "inst-combat-stim-001",
+        "itemId": "item-stimulant-combat",
+        "quantity": 5,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-hollows-stall:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-hollows-stall",
+        "flags": []
+      },
+      "inst-lockpick-002": {
+        "uniqueId": "inst-lockpick-002",
+        "itemId": "item-lockpick-ringcut",
+        "quantity": 7,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-hollows-stall:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-hollows-stall",
+        "flags": []
+      },
+      "inst-dagger-flicker-001": {
+        "uniqueId": "inst-dagger-flicker-001",
+        "itemId": "weapon-dagger-ring-flicker",
+        "quantity": 2,
+        "locationType": "shop_stock",
+        "locationId": "shop:shop-hollows-stall:stock",
+        "acquiredDay": 1,
+        "acquiredFrom": "shop:shop-hollows-stall",
+        "flags": []
+      }
     }
   },
   "eventInstances": [],
@@ -836,7 +1408,24 @@
         "mira-custody-site:site-poi-pale-old-tannery"
       ],
       "intimacyStage": "none",
-      "pregnancyState": null
+      "pregnancyState": null,
+      "clothing": {
+        "torso": "cloth-doublet-noble",
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "undergarments": "cloth-underclothes-silk",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     },
     {
       "npcId": "npc-enemy-tomas-rell",
@@ -848,7 +1437,24 @@
         "mira-custody-site:site-poi-pale-old-tannery"
       ],
       "intimacyStage": "none",
-      "pregnancyState": null
+      "pregnancyState": null,
+      "clothing": {
+        "torso": "cloth-tunic-simple",
+        "legs": "cloth-pants-leather",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     },
     {
       "npcId": "npc-enemy-catrin-hale",
@@ -860,7 +1466,24 @@
         "mira-custody-site:site-poi-pale-old-tannery"
       ],
       "intimacyStage": "none",
-      "pregnancyState": null
+      "pregnancyState": null,
+      "clothing": {
+        "torso": "cloth-tunic-simple",
+        "legs": "cloth-pants-leather",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   ],
   "siteRuntimes": {},
