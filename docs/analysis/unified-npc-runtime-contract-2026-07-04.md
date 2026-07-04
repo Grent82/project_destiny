@@ -206,16 +206,40 @@ today) — recommended: hydrate all ambient world defs so districts actually hav
 `npcRuntimeStates` entry (via the factory, §5) with `npcType:'roster'`. No agency, no intentions for
 offers. This is intentional and stated so no future ticket "unifies" it by mistake.
 
-## 9. Migration is bridge-based (keeps the build green at every step)
+## 9. Migration mechanics (REVISED 2026-07-04 after consumer analysis)
 
-Because `roster` has ~251 references (137 non-test + 114 test), the rename is a dedicated scripted
-codemod ticket, sequenced so that:
+**Finding (verified):** there are ~406 non-test `.roster` accesses in `src/application/commands`
+alone (139 `state.roster.find(n => n.npcId === X)`, 104 `state.roster.map(n => n.npcId === X ? … : n)`,
+85 iteration/`.length`/`.filter`). Sampling confirmed:
 
-1. `selectRoster` / `selectWorldNpcs` / `findNpc` / `updateNpc` helpers land **first** and read the
-   *old* shape (`roster` + `worldNpcStates`). Consumers migrate to helpers while the old fields still
-   exist.
-2. Only after consumers use helpers do we flip the storage (rename field, fold arrays). The helpers'
-   internals change; their call sites don't. This is what makes each ticket independently green.
+- **find/map by `npcId` are rename-safe.** They target one person by id; having extra (world/captive)
+  persons in the same list does not affect a roster operation aimed at a specific id. These need only
+  the mechanical field rename — **no** semantic change.
+- The real semantics live in the **iteration / `.length` / bulk-`.map` / `.filter`** sites: some mean
+  "every person" (leave as the full list) and some mean "the player's team" (must filter
+  `playerRosterMember`, e.g. `state.roster.length >= rosterCapacity`).
+
+**Therefore the wholesale "migrate every consumer to `findNpc`/`updateNpc`" step (old C0) is dropped**
+— it would be ~350 churn edits on rename-safe sites. Owner decision (2026-07-04): the leaner path.
+
+Revised sequence (each step green):
+
+1. **C1 (rama.7) — mechanical rename.** Rename the GameState field `roster` → `npcRuntimeStates`
+   everywhere (compiler-driven: rename the field, fix every `state.roster` read/write the type checker
+   flags — exhaustive and safe; it catches both missing reads and excess-key writes). Add
+   save-migration v6→v7 step 1. Make `selectRoster`/`selectRosterNpcs` filter `playerRosterMember`.
+   After C1 the field holds only roster persons still, so all iteration sites remain correct.
+2. **C0′ (rama.6, repurposed) — targeted semantic audit.** Before world/captive persons join the list,
+   audit the ~85 iteration/`.length`/bulk-`.map`/`.filter` sites and switch the "player's team" ones to
+   `selectRosterNpcs` / a `playerRosterMember` filter. find/map-by-id sites are already correct from the
+   rename and are left alone. This MUST complete before C2 folds non-roster persons in.
+3. **C2/C3 — fold** world + captive persons into the list. Now the semantic audit pays off: iteration
+   sites that must stay player-team already filter; sites that mean "everyone" now correctly see the
+   whole population.
+
+The `findNpc`/`updateNpc`/`selectAllNpcs`/`selectRosterNpcs` bridge helpers (rama.4) remain the
+accessors D1/D2/D3 use for the intention/decay loops over the whole population; they are not forced
+onto the ~350 rename-safe id-scoped sites.
 
 ## 10. Known adjacent finding (separate bead)
 
