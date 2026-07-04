@@ -136,9 +136,11 @@
       {
         "dayOffset": -100,
         "eventType": "failed_mission",
-        "description": "Lost contact with a handler through no fault of her own — the handler was careless",
+        "description": "Lost contact with a handler through no fault of her own \u2014 the handler was careless",
         "sentiment": "negative",
-        "participants": ["npc-ghost-valdris-cargo-patron"],
+        "participants": [
+          "npc-ghost-valdris-cargo-patron"
+        ],
         "revealsOnTrustLevel": 50,
         "revealsOnIntimacy": "attachment",
         "influencesTraitDrift": {
@@ -146,7 +148,26 @@
           "empathy": -2
         }
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-ida-rhys",
@@ -252,7 +273,9 @@
         "eventType": "first_meeting",
         "description": "Met Marion in the Ironworks when both were trying to escape a collapsing furnace line",
         "sentiment": "positive",
-        "participants": ["npc-marion-vale"],
+        "participants": [
+          "npc-marion-vale"
+        ],
         "revealsOnTrustLevel": 0,
         "revealsOnIntimacy": "none",
         "influencesTraitDrift": {
@@ -286,7 +309,26 @@
           "prudence": 6
         }
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "torso": "armor-light-waste-runner-vest",
+        "legs": "cloth-trousers-sturdy",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-verek-holst",
@@ -399,10 +441,29 @@
       {
         "type": "debtor",
         "targetId": "npc-garet-doyle",
-        "note": "Owes Doyle silence and a favor from the Breach winter — Doyle sheltered him when a creditor was looking. Statutes he recites under his breath include one about shelter debts.",
+        "note": "Owes Doyle silence and a favor from the Breach winter \u2014 Doyle sheltered him when a creditor was looking. Statutes he recites under his breath include one about shelter debts.",
         "visibility": "hidden"
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "torso": "cloth-tunic-simple",
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-sable-wrent",
@@ -495,7 +556,26 @@
         "targetId": "npc-ghost-league-overseer",
         "note": "League overseer who ran the job that broke her. Name she will not say aloud."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "torso": "armor-light-tallow-work-coat",
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-aldric-vane",
@@ -588,7 +668,26 @@
         "targetId": "npc-ghost-valdris-fall",
         "note": "Former household retainer. Knows the family crest history and who took what during the fall."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-dara-slink",
@@ -683,7 +782,26 @@
         "targetId": "npc-ghost-past-crew",
         "note": "Ran with a crew before taking house service. Still owes a favor she cannot repay."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-oswin-farr",
@@ -775,7 +893,26 @@
         "targetId": "npc-ghost-past-garrison",
         "note": "Former garrison service. Lost contact with the only officer who treated him fairly."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "torso": "cloth-tunic-simple",
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-cress-aldmoor",
@@ -867,7 +1004,26 @@
         "targetId": "npc-ghost-aldmoor-patient",
         "note": "Lost a patient she knew she could not save back to where they came from. Never fully reconciled it."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "torso": "cloth-tunic-simple",
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "undergarments": "cloth-underclothes-simple",
+        "head": null,
+        "arms": null,
+        "full": null,
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-tav",
@@ -960,7 +1116,26 @@
         "targetId": "npc-bog",
         "note": "Shared a work crew for three seasons before Bog retired. Tav still checks on him."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-maret-sunne",
@@ -1051,7 +1226,26 @@
         "targetId": "npc-old-maret",
         "note": "Does not know Old Maret knows. Carries a ledger proving who profited from the fall of House Valdris."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-rutha-kael",
@@ -1145,7 +1339,26 @@
         "targetId": "npc-ghost-rutha-crew",
         "note": "The only survivor of a work crew that collapsed three seasons ago. Carries the roster list."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-lirien-ashcroft",
@@ -1235,7 +1448,26 @@
         "targetId": "npc-lira-ashcroft",
         "note": "Knows the name is not the real scandal \u2014 the blood is. May be heiress or evidence."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-mira",
@@ -1327,7 +1559,26 @@
         "targetId": "npc-cessa-rill",
         "note": "The birth record Mira was tracking leads to Cessa Rill. The final link in the maternal lineage chain."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-garet-doyle",
@@ -1445,6 +1696,25 @@
       "morning": "poi-pale-the-ash",
       "afternoon": "poi-pale-the-ash",
       "evening": "poi-pale-the-ash"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -1562,6 +1832,25 @@
       "morning": "poi-pale-wren-safe-house",
       "afternoon": "poi-pale-wren-safe-house",
       "evening": "poi-pale-wren-safe-house"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -1674,6 +1963,25 @@
       "afternoon": "poi-harbor-guild-hall",
       "evening": "poi-harbor-guild-hall",
       "night": "poi-harbor-guild-hall"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -1766,7 +2074,26 @@
         "targetId": "npc-lirien-ashcroft",
         "note": "Had Lirien outside a sanctioned marriage. Ashcroft name kept through a debt-forgiveness bargain with a surviving noble patron."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-bog",
@@ -1863,6 +2190,25 @@
       "afternoon": "poi-ironworks-slag-tavern",
       "evening": "poi-ironworks-slag-tavern",
       "night": "poi-ironworks-slag-tavern"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -1954,7 +2300,26 @@
         "targetId": "npc-ghost-pale-creditor",
         "note": "A creditor from the Pale district who owns the debt that brought Fenwick into house service."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-the-wren",
@@ -2050,6 +2415,25 @@
     "schedule": {
       "evening": "poi-warrens-ring-den",
       "night": "poi-warrens-ring-den"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -2144,7 +2528,26 @@
         "targetId": "npc-ghost-pale-court",
         "note": "Left direct Court service under duress. The Court has not stopped watching."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-cutter",
@@ -2239,6 +2642,25 @@
     "schedule": {
       "morning": "poi-hollows-pawnbrokers",
       "afternoon": "poi-hollows-pawnbrokers"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -2361,6 +2783,25 @@
       "morning": "poi-hollows-relief-station",
       "afternoon": "poi-hollows-relief-station",
       "evening": "poi-hollows-relief-station"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -2457,7 +2898,26 @@
         "targetId": "faction-house-merrow",
         "note": "Debt operations serve Merrow interests by alignment. Merrow provides cover; Voss applies the legal pressure."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-enemy-the-dockmaster",
@@ -2548,7 +3008,26 @@
         "targetId": "faction-house-merrow",
         "note": "Operates under Merrow license. The second ledger under her floor belongs to them."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-enemy-lady-sorn",
@@ -2652,7 +3131,26 @@
         "note": "Sorn and Merrow cooperate only when Valdris is the shared target. Beneath that, their harbor-access rivalry runs through their respective functionaries.",
         "visibility": "rumored"
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-dalen-morke",
@@ -2743,7 +3241,26 @@
         "targetId": "npc-ghost-morke-creditor",
         "note": "Owes a sum that cannot be repaid on a soldier's wages. House service is the arrangement."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-orren-wex",
@@ -2836,7 +3353,26 @@
         "targetId": "npc-ghost-wex-handler",
         "note": "Learned the trade from someone who taught him to survive in debt. The teacher is gone; the method remains."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-tessaly-ash",
@@ -2927,7 +3463,26 @@
         "targetId": "npc-ghost-tessaly-hunter",
         "note": "Someone is still looking for her. She is not ready to be found."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-sanna-veld",
@@ -3019,7 +3574,26 @@
         "targetId": "npc-ghost-sanna-ward",
         "note": "Responsible for someone who cannot leave on their own. The commitment is the reason she took house service."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-brand",
@@ -3110,7 +3684,26 @@
         "targetId": "npc-ghost-brand-crew",
         "note": "Came up with a group that no longer exists. Brand is the last one still working."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-orven-pell",
@@ -3206,7 +3799,26 @@
         "targetId": "npc-ghost-valdris-fall",
         "note": "Kept the one unburned ledger naming which house benefited from the Valdris erasure."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-alis-vey",
@@ -3307,7 +3919,26 @@
         "targetId": "npc-enemy-lady-sorn",
         "note": "Sorn pressured the sale. Alis has not forgiven it."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-brannic-thule",
@@ -3403,7 +4034,26 @@
         "targetId": "npc-ghost-valdris-fall",
         "note": "Served in Valdris halls before the fall. Knows where family seals and heir artifacts were hidden."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-veyran-malk",
@@ -3504,7 +4154,26 @@
         "targetId": "npc-enemy-harlen-voss",
         "note": "Coordinates pressure operations with Voss. Voss carries the legal weight; Malk provides the political signal."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-cessa-rill",
@@ -3600,7 +4269,26 @@
         "targetId": "npc-mira",
         "note": "Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-lissel-crane",
@@ -3694,7 +4382,26 @@
         "targetId": "npc-oswin-farr",
         "note": "On the periphery of his Warrens distribution network from age fifteen. He gave her tasks when she showed up without formally recruiting her. Four years of loose affiliation."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-petra-sunn",
@@ -3790,7 +4497,26 @@
         "targetId": "npc-oswin-farr",
         "note": "Worked the same Warrens food distribution network. He went legitimate when the Compact closed it; she went underground when the Compact took her. 15+ years of mutual respect and a fundamental disagreement about what survival requires."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-halvard-senn",
@@ -3885,7 +4611,26 @@
         "targetId": "npc-verek-holst",
         "note": "Overlapping garrison service for seven years. Not friends. Professional respect built under pressure. Halvard thinks Holst left a year too early; Holst thinks Halvard stayed a year too long. Neither is wrong."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-dael-morw",
@@ -3981,7 +4726,26 @@
         "targetId": "npc-verek-holst",
         "note": "Knows which Register records were altered during Holst's bribery scandal. Didn't alter them but signed the review approving them. Both carry this."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-evar-koss",
@@ -4075,7 +4839,26 @@
         "targetId": "npc-dara-slink",
         "note": "Her first handler at age eleven \u2014 set her rates, taught her the courier's code. She got better than him at the work. He knows it. 15+ years."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-irenne-brek",
@@ -4168,7 +4951,26 @@
         "targetId": "npc-dara-slink",
         "note": "Has been patching Dara since she was eleven. Maternal proximity without either naming it. Dara comes here when injured before she goes anywhere else. 15+ years."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-tessaly-wode",
@@ -4262,7 +5064,26 @@
         "targetId": "npc-sable-wrent",
         "note": "Sable cut corners on a filtration job Tessaly had spec'd. People got sick. Tessaly reported it; Sable was fined, not dismissed. The grudge runs one direction only \u2014 Sable sees an obstacle, Tessaly sees a lesson no one learned."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-elyn",
@@ -4353,7 +5174,26 @@
         "targetId": "npc-petra-sunn",
         "note": "Petra moved her. Elyn does not know the word for what Petra is to her. She knows Petra came when it mattered."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-bren-aldoth",
@@ -4447,7 +5287,26 @@
         "targetId": "npc-verek-holst",
         "note": "Both came out of Compact enforcement in different units. They know each other's names and reputation. Not friends \u2014 professional acknowledgment. Holst is one of the few people from that world Bren does not actively avoid."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-nessa-vain",
@@ -4542,7 +5401,26 @@
         "targetId": "npc-marion-vale",
         "note": "Both moved in Compact administrative channels. Marion filed; Nessa coordinated. Professional wariness \u2014 Marion recognizes someone who operates the way she herself does, and finds it uncomfortable."
       }
-    ]
+    ],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-sable-cairn-head",
@@ -4601,13 +5479,27 @@
     "quirks": [
       {
         "text": "speaks only in formal register \u2014 never contracts, never colloquialisms",
-        "tags": ["meticulous"],
-        "triggerKeywords": ["speak", "manner", "style", "register"]
+        "tags": [
+          "meticulous"
+        ],
+        "triggerKeywords": [
+          "speak",
+          "manner",
+          "style",
+          "register"
+        ]
       },
       {
         "text": "never names his creditors aloud, only refers to 'prior obligations'",
-        "tags": ["secretive"],
-        "triggerKeywords": ["debt", "creditor", "obligation", "owe"]
+        "tags": [
+          "secretive"
+        ],
+        "triggerKeywords": [
+          "debt",
+          "creditor",
+          "obligation",
+          "owe"
+        ]
       }
     ],
     "motivation": {
@@ -4627,6 +5519,25 @@
       "morning": "poi-northbank-succession-registry",
       "afternoon": "poi-northbank-succession-registry",
       "evening": "poi-northbank-succession-registry"
+    },
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-medium-compact-chainmail",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
     }
   },
   {
@@ -4634,7 +5545,7 @@
     "name": "Tomas Rell",
     "npcType": "enemy",
     "origin": "Harbor Ward",
-    "background": "Court enforcer lieutenant running muscle for House Aurevaine's enforcement contracts. Practical, not cruel — cruelty wastes time and leaves witnesses in bad moods.",
+    "background": "Court enforcer lieutenant running muscle for House Aurevaine's enforcement contracts. Practical, not cruel \u2014 cruelty wastes time and leaves witnesses in bad moods.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-gilded-court",
@@ -4674,7 +5585,26 @@
       "zeal": 15
     },
     "allowedTitleIds": [],
-    "loyalties": []
+    "loyalties": [],
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   },
   {
     "id": "npc-enemy-catrin-hale",
@@ -4730,6 +5660,25 @@
     ],
     "quirks": [],
     "loyalties": [],
-    "schedule": {}
+    "schedule": {},
+    "startingEquipment": {
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": "armor-light-waste-runner-vest",
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      }
+    }
   }
 ]

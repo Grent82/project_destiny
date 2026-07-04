@@ -325,6 +325,26 @@ export const npcDefinitionSchema = z
     authoredMemories: z.array(authoredMemorySchema).default([]),
     isShopOwner: z.boolean().default(false),
     shopId: entityIdSchema.optional(),
+    // Starting equipment for hireable NPCs - preserves clothing/armor when recruited
+    startingEquipment: z.object({
+      clothing: z.object({
+        head: entityIdSchema.nullable(),
+        torso: entityIdSchema.nullable(),
+        arms: entityIdSchema.nullable(),
+        legs: entityIdSchema.nullable(),
+        feet: entityIdSchema.nullable(),
+        full: entityIdSchema.nullable(),
+        undergarments: entityIdSchema.nullable(),
+        accessories: z.array(entityIdSchema),
+      }).optional(),
+      armor: z.object({
+        lightTorso: entityIdSchema.nullable(),
+        lightLegs: entityIdSchema.nullable(),
+        heavyTorso: entityIdSchema.nullable(),
+        heavyLegs: entityIdSchema.nullable(),
+        shield: entityIdSchema.nullable(),
+      }).optional(),
+    }).optional(),
   })
   .strict()
 

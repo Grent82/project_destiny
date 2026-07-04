@@ -49,8 +49,16 @@ function buildRosterEntryFromOffer(
 
   const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - initialLoyaltyPenalty)
 
-  // Get runtime state from worldNpcStates if available - preserve clothing, armor, health, injury, flags
+  // Get runtime state from worldNpcStates if available - preserve clothing, armor, health, injury
   const worldNpcState = state.worldNpcStates.find((w) => w.npcId === npcId)
+
+  // Priority: worldNpcStates > startingEquipment from definition > defaults
+  const clothing = worldNpcState?.clothing
+    ?? npcDef.startingEquipment?.clothing
+    ?? { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] }
+  const armor = worldNpcState?.armor
+    ?? npcDef.startingEquipment?.armor
+    ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }
 
   return {
     npcId,
@@ -64,9 +72,8 @@ function buildRosterEntryFromOffer(
     trainingFocus: null,
     roomAssignment: null,
     dutyPostRoomId: null,
-    // Preserve world NPC state or use defaults
-    clothing: worldNpcState?.clothing ?? { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
-    armor: worldNpcState?.armor ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+    clothing,
+    armor,
     attributes: { ...npcDef.baseAttributes },
     skills: { ...npcDef.startingSkills },
     traits: { ...npcDef.startingTraits, loyalty: initialLoyalty },
