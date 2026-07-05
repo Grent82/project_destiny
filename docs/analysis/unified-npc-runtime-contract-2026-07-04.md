@@ -288,6 +288,50 @@ the schema ticket. Also decide there whether to hydrate the 12 world definitions
 today) — recommended: hydrate all ambient world defs so districts actually have people. (Still open —
 tracked as destiny-rama.13 / E1, explicitly out of destiny-rama.8's scope.)
 
+**Implementation note (destiny-rama.13):**
+- Re-verified rather than trusted the "12 missing" figure above: by the time this ticket ran, **zero**
+  of the 15 `npcType:'world'` definitions had a runtime entry (the 3 pre-existing hand-authored
+  entries turned out to be `story`/`enemy`, not `world` — same drift already called out in the
+  destiny-rama.8 note above). All 15 world defs were hydrated, not 12.
+- Each hydrated entry sets `assignedDistrictId` explicitly to the definition's `districtId` (not left
+  at the factory's `null` default). This is load-bearing, not cosmetic: `npcDistance.ts` falls back to
+  the definition's `districtId` when `assignedDistrictId` is null, but several district-scoped
+  intention handlers do **not** — `npcLeadershipActions.ts` (mediate-conflict/consolidate-power),
+  `npcIntellectActions.ts` (people-watch, scout-ahead), `npcSurvivalActions.ts`, `npcSpecialActions.ts`,
+  and `applyMoneyEarningIntentions.ts` all early-return or degrade silently when
+  `npc.assignedDistrictId` is null. Leaving it unset would have hydrated 15 people who could still
+  never act on any district-scoped intention — defeating the point of the ticket.
+- **Display population (`selectWorldNpcViewsByDistrict`) was never actually empty before this
+  ticket** — that selector iterates `contentCatalog.npcs` filtered by `npcType`, resolving location
+  from `def.schedule` with `locationOverride` as a runtime override, entirely independent of whether
+  a runtime entry exists. The real gap closed here is **agency**: only `npcRuntimeStates` entries can
+  hold `currentIntention` or be selected by the intention/agency pipelines (`intentions.ts`,
+  `npcAgency/*`), which iterate `state.npcRuntimeStates` exclusively and never
+  `contentCatalog.npcs`. Before this ticket, all 15 ambient world people were decorative (visible on
+  district maps, could form soft-bonds with each other via `applyWorldNpcSocialSimulation`'s
+  definition-driven sweep) but had zero capacity for intentions, captivity, or agency-driven ambient
+  behavior. The ticket's literal "district population > 3" acceptance criterion doesn't hold verbatim
+  for every district (`district-the-pale` reaches exactly 3 ambient world residents, `district-harbor`
+  and `district-the-hollows` reach 2) — the regression test in `initialGameState.test.ts` instead
+  asserts the metric that's actually true and meaningful: every district with an ambient world def now
+  has ≥2 runtime-hydrated (intention-eligible) residents, up from 0.
+- **Regression discovered and fixed as a direct consequence of this hydration**:
+  `npcAggressionActions.test.ts`'s local `addRosterEntry` test helper unconditionally appended a
+  synthetic roster clone under a hardcoded npcId (`'npc-alis-vey'`) without checking for a
+  pre-existing entry. Since `npc-alis-vey` is one of the 15 now-hydrated ambient defs, this produced
+  **two** `npcRuntimeStates` entries sharing one npcId in three existing tests — `find()`-based
+  lookups then silently resolved to the wrong (pre-existing world) entry instead of the test's
+  intended synthetic roster clone, breaking one assertion (`raises the actor's own fear on failure`)
+  outright and leaving the other two passing only by accident (they didn't happen to assert on the
+  colliding entry's own state). Fixed by making the helper filter out any existing entry for that
+  npcId before appending — this is the exact "duplicate npcId in the unified list" bug class that
+  destiny-rama.17 already tracks for the real recruitment flow, just surfacing here in a test fixture
+  first. Any other test file building ad-hoc `npcRuntimeStates` entries under a hardcoded id should be
+  checked against the content catalog before reusing an id casually — it may now collide with a real,
+  already-hydrated ambient definition.
+- No new NPC definitions were authored (non-goal honored). No captivity/story/enemy defs were
+  touched — only the 15 `npcType:'world'` entries.
+
 ## 8. availableForHire (unchanged, documented)
 
 `HireOffer` (contracts.ts:240) = `{ npcId, wagePerDay, signingBonus, turnsAvailable, ... }`. It is a

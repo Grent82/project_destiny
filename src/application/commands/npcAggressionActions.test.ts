@@ -29,9 +29,16 @@ function withNpcStates(state: GameState, npcId: string, states: Partial<NpcRunti
 }
 
 function addRosterEntry(state: GameState, npcId: string, overrides: Partial<NpcRuntimeState> = {}): GameState {
+  // Filter out any pre-existing entry for this npcId first: several of these test-only ids (e.g.
+  // 'npc-alis-vey') now already have a hydrated world-type entry in the base fixture since
+  // destiny-rama.13, so a plain append would create two npcRuntimeStates entries sharing one
+  // npcId — the exact latent bug destiny-rama.17 tracks for the real recruitment flow.
   return {
     ...state,
-    npcRuntimeStates: [...state.npcRuntimeStates, { ...idaRhysRosterEntry, npcId, name: npcId, ...overrides }],
+    npcRuntimeStates: [
+      ...state.npcRuntimeStates.filter((n) => n.npcId !== npcId),
+      { ...idaRhysRosterEntry, npcId, name: npcId, ...overrides },
+    ],
   }
 }
 

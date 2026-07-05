@@ -729,6 +729,1806 @@
         "allowedItems": [],
         "restrictedItems": []
       }
+    },
+    {
+      "npcId": "npc-garet-doyle",
+      "name": "Garet Doyle",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-pale",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 40,
+        "agility": 30,
+        "endurance": 45,
+        "intellect": 40,
+        "perception": 55,
+        "presence": 60,
+        "resolve": 40
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 0,
+        "administration": 20,
+        "engineering": 0,
+        "negotiation": 30,
+        "survival": 0,
+        "security": 0,
+        "crafting": 0,
+        "performance": 0,
+        "academics": 0,
+        "intrigue": 25
+      },
+      "traits": {
+        "discipline": 40,
+        "ambition": 30,
+        "empathy": 50,
+        "ruthlessness": 20,
+        "prudence": 55,
+        "curiosity": 45,
+        "dominance": 30,
+        "loyalty": 35,
+        "vanity": 20,
+        "zeal": 15
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-sister-vael",
+      "name": "Sister Vael",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-pale",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 25,
+        "agility": 35,
+        "endurance": 40,
+        "intellect": 65,
+        "perception": 60,
+        "presence": 60,
+        "resolve": 50
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 45,
+        "administration": 0,
+        "engineering": 0,
+        "negotiation": 30,
+        "survival": 0,
+        "security": 0,
+        "crafting": 0,
+        "performance": 0,
+        "academics": 35,
+        "intrigue": 40
+      },
+      "traits": {
+        "discipline": 55,
+        "ambition": 35,
+        "empathy": 65,
+        "ruthlessness": 25,
+        "prudence": 60,
+        "curiosity": 70,
+        "dominance": 20,
+        "loyalty": 40,
+        "vanity": 10,
+        "zeal": 30
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-torvald-messe",
+      "name": "Torvald Messe",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-harbor",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 25,
+        "agility": 30,
+        "endurance": 35,
+        "intellect": 60,
+        "perception": 50,
+        "presence": 60,
+        "resolve": 55
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 0,
+        "administration": 55,
+        "engineering": 0,
+        "negotiation": 40,
+        "survival": 0,
+        "security": 0,
+        "crafting": 0,
+        "performance": 0,
+        "academics": 50,
+        "intrigue": 25
+      },
+      "traits": {
+        "discipline": 65,
+        "ambition": 45,
+        "empathy": 20,
+        "ruthlessness": 40,
+        "prudence": 70,
+        "curiosity": 30,
+        "dominance": 55,
+        "loyalty": 50,
+        "vanity": 60,
+        "zeal": 35
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-lira-ashcroft",
+      "name": "Lira Ashcroft",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "criminal",
+      "assignment": "idle",
+      "assignedDistrictId": "district-harbor",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 30,
+        "agility": 55,
+        "endurance": 35,
+        "intellect": 55,
+        "perception": 65,
+        "presence": 60,
+        "resolve": 45
+      },
+      "skills": {
+        "melee": 15,
+        "ranged": 20,
+        "medicine": 0,
+        "administration": 25,
+        "engineering": 0,
+        "negotiation": 50,
+        "survival": 0,
+        "security": 30,
+        "crafting": 0,
+        "performance": 35,
+        "academics": 0,
+        "intrigue": 60
+      },
+      "traits": {
+        "discipline": 50,
+        "ambition": 65,
+        "empathy": 30,
+        "ruthlessness": 55,
+        "prudence": 60,
+        "curiosity": 40,
+        "dominance": 35,
+        "loyalty": 25,
+        "vanity": 45,
+        "zeal": 20
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-bog",
+      "name": "Bog",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-ironworks",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 65,
+        "agility": 40,
+        "endurance": 70,
+        "intellect": 35,
+        "perception": 45,
+        "presence": 60,
+        "resolve": 60
+      },
+      "skills": {
+        "melee": 35,
+        "ranged": 0,
+        "medicine": 0,
+        "administration": 25,
+        "engineering": 0,
+        "negotiation": 30,
+        "survival": 30,
+        "security": 40,
+        "crafting": 0,
+        "performance": 0,
+        "academics": 0,
+        "intrigue": 20
+      },
+      "traits": {
+        "discipline": 55,
+        "ambition": 40,
+        "empathy": 25,
+        "ruthlessness": 50,
+        "prudence": 40,
+        "curiosity": 20,
+        "dominance": 70,
+        "loyalty": 45,
+        "vanity": 15,
+        "zeal": 30
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-fenwick-pale",
+      "name": "Fenwick Pale",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-ironworks",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 35,
+        "agility": 45,
+        "endurance": 40,
+        "intellect": 50,
+        "perception": 55,
+        "presence": 60,
+        "resolve": 40
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 0,
+        "administration": 35,
+        "engineering": 0,
+        "negotiation": 55,
+        "survival": 20,
+        "security": 0,
+        "crafting": 0,
+        "performance": 25,
+        "academics": 0,
+        "intrigue": 40
+      },
+      "traits": {
+        "discipline": 35,
+        "ambition": 50,
+        "empathy": 40,
+        "ruthlessness": 30,
+        "prudence": 45,
+        "curiosity": 55,
+        "dominance": 25,
+        "loyalty": 20,
+        "vanity": 50,
+        "zeal": 15
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-the-wren",
+      "name": "The Wren",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "criminal",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-warrens",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 25,
+        "agility": 60,
+        "endurance": 30,
+        "intellect": 70,
+        "perception": 75,
+        "presence": 60,
+        "resolve": 55
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 0,
+        "administration": 0,
+        "engineering": 0,
+        "negotiation": 40,
+        "survival": 35,
+        "security": 45,
+        "crafting": 0,
+        "performance": 50,
+        "academics": 30,
+        "intrigue": 75
+      },
+      "traits": {
+        "discipline": 70,
+        "ambition": 60,
+        "empathy": 20,
+        "ruthlessness": 55,
+        "prudence": 75,
+        "curiosity": 65,
+        "dominance": 30,
+        "loyalty": 10,
+        "vanity": 15,
+        "zeal": 20
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-osanna-cray",
+      "name": "Osanna Cray",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-warrens",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 30,
+        "agility": 50,
+        "endurance": 35,
+        "intellect": 55,
+        "perception": 60,
+        "presence": 60,
+        "resolve": 45
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 20,
+        "administration": 40,
+        "engineering": 0,
+        "negotiation": 30,
+        "survival": 0,
+        "security": 0,
+        "crafting": 0,
+        "performance": 35,
+        "academics": 45,
+        "intrigue": 50
+      },
+      "traits": {
+        "discipline": 50,
+        "ambition": 30,
+        "empathy": 45,
+        "ruthlessness": 25,
+        "prudence": 65,
+        "curiosity": 40,
+        "dominance": 20,
+        "loyalty": 35,
+        "vanity": 25,
+        "zeal": 20
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-cutter",
+      "name": "Cutter",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "criminal",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-hollows",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 50,
+        "agility": 55,
+        "endurance": 50,
+        "intellect": 35,
+        "perception": 60,
+        "presence": 60,
+        "resolve": 40
+      },
+      "skills": {
+        "melee": 30,
+        "ranged": 20,
+        "medicine": 0,
+        "administration": 0,
+        "engineering": 25,
+        "negotiation": 25,
+        "survival": 55,
+        "security": 30,
+        "crafting": 40,
+        "performance": 0,
+        "academics": 0,
+        "intrigue": 30
+      },
+      "traits": {
+        "discipline": 35,
+        "ambition": 40,
+        "empathy": 20,
+        "ruthlessness": 45,
+        "prudence": 35,
+        "curiosity": 60,
+        "dominance": 30,
+        "loyalty": 25,
+        "vanity": 15,
+        "zeal": 30
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-old-maret",
+      "name": "Old Maret",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-hollows",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 20,
+        "agility": 20,
+        "endurance": 30,
+        "intellect": 65,
+        "perception": 70,
+        "presence": 60,
+        "resolve": 60
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 25,
+        "administration": 0,
+        "engineering": 0,
+        "negotiation": 20,
+        "survival": 30,
+        "security": 0,
+        "crafting": 15,
+        "performance": 30,
+        "academics": 60,
+        "intrigue": 35
+      },
+      "traits": {
+        "discipline": 60,
+        "ambition": 20,
+        "empathy": 55,
+        "ruthlessness": 20,
+        "prudence": 70,
+        "curiosity": 65,
+        "dominance": 15,
+        "loyalty": 50,
+        "vanity": 10,
+        "zeal": 25
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-orven-pell",
+      "name": "Orven Pell",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-northbank",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 20,
+        "agility": 30,
+        "endurance": 35,
+        "intellect": 80,
+        "perception": 65,
+        "presence": 45,
+        "resolve": 55
+      },
+      "skills": {
+        "melee": 10,
+        "ranged": 10,
+        "medicine": 10,
+        "administration": 70,
+        "engineering": 10,
+        "negotiation": 10,
+        "survival": 10,
+        "security": 10,
+        "crafting": 10,
+        "performance": 10,
+        "academics": 85,
+        "intrigue": 50
+      },
+      "traits": {
+        "discipline": 65,
+        "ambition": 20,
+        "empathy": 40,
+        "ruthlessness": 25,
+        "prudence": 80,
+        "curiosity": 55,
+        "dominance": 30,
+        "loyalty": 60,
+        "vanity": 15,
+        "zeal": 20
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-alis-vey",
+      "name": "Alis Vey",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-northbank",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 35,
+        "agility": 45,
+        "endurance": 45,
+        "intellect": 65,
+        "perception": 60,
+        "presence": 60,
+        "resolve": 50
+      },
+      "skills": {
+        "melee": 10,
+        "ranged": 10,
+        "medicine": 10,
+        "administration": 60,
+        "engineering": 10,
+        "negotiation": 55,
+        "survival": 10,
+        "security": 10,
+        "crafting": 10,
+        "performance": 10,
+        "academics": 10,
+        "intrigue": 65
+      },
+      "traits": {
+        "discipline": 70,
+        "ambition": 35,
+        "empathy": 55,
+        "ruthlessness": 30,
+        "prudence": 75,
+        "curiosity": 50,
+        "dominance": 25,
+        "loyalty": 45,
+        "vanity": 40,
+        "zeal": 35
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-brannic-thule",
+      "name": "Brannic Thule",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-warrens",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 55,
+        "agility": 35,
+        "endurance": 60,
+        "intellect": 60,
+        "perception": 55,
+        "presence": 50,
+        "resolve": 65
+      },
+      "skills": {
+        "melee": 10,
+        "ranged": 10,
+        "medicine": 35,
+        "administration": 45,
+        "engineering": 55,
+        "negotiation": 10,
+        "survival": 50,
+        "security": 10,
+        "crafting": 10,
+        "performance": 10,
+        "academics": 10,
+        "intrigue": 10
+      },
+      "traits": {
+        "discipline": 75,
+        "ambition": 10,
+        "empathy": 60,
+        "ruthlessness": 15,
+        "prudence": 65,
+        "curiosity": 40,
+        "dominance": 40,
+        "loyalty": 90,
+        "vanity": 10,
+        "zeal": 60
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-cessa-rill",
+      "name": "Cessa Rill",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "citizen",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-pale",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 25,
+        "agility": 40,
+        "endurance": 40,
+        "intellect": 75,
+        "perception": 70,
+        "presence": 55,
+        "resolve": 60
+      },
+      "skills": {
+        "melee": 10,
+        "ranged": 10,
+        "medicine": 40,
+        "administration": 70,
+        "engineering": 10,
+        "negotiation": 10,
+        "survival": 10,
+        "security": 10,
+        "crafting": 10,
+        "performance": 10,
+        "academics": 80,
+        "intrigue": 55
+      },
+      "traits": {
+        "discipline": 80,
+        "ambition": 25,
+        "empathy": 60,
+        "ruthlessness": 20,
+        "prudence": 85,
+        "curiosity": 60,
+        "dominance": 20,
+        "loyalty": 65,
+        "vanity": 10,
+        "zeal": 40
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-sable-cairn-head",
+      "name": "Caevis Sable-Cairn",
+      "npcType": "world",
+      "playerRosterMember": false,
+      "status": "noble",
+      "assignment": "idle",
+      "assignedDistrictId": "district-the-northbank",
+      "worldDisposition": null,
+      "lastContactDay": null,
+      "locationOverride": null,
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 30,
+        "agility": 25,
+        "endurance": 35,
+        "intellect": 65,
+        "perception": 60,
+        "presence": 70,
+        "resolve": 65
+      },
+      "skills": {
+        "melee": 0,
+        "ranged": 0,
+        "medicine": 0,
+        "administration": 45,
+        "engineering": 0,
+        "negotiation": 50,
+        "survival": 0,
+        "security": 0,
+        "crafting": 0,
+        "performance": 0,
+        "academics": 35,
+        "intrigue": 40
+      },
+      "traits": {
+        "discipline": 65,
+        "ambition": 50,
+        "empathy": 40,
+        "ruthlessness": 45,
+        "prudence": 70,
+        "curiosity": 30,
+        "dominance": 60,
+        "loyalty": 30,
+        "vanity": 55,
+        "zeal": 35
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-trousers-burlap",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
     }
   ],
   "cityResources": {
