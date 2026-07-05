@@ -1,9 +1,8 @@
 import type { GameState } from '../../domain/game/contracts'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
-import type { ItemDefinition } from '../../domain/items/contracts'
 import { appendActivityLogEntry } from './activityLog'
-import { contentCatalog } from '../content/contentCatalog'
 import { hasResidentQuarters } from './recovery'
+import { findNpcInventoryItemByTag, consumeNpcInventoryItem, resolveItemStatEffect } from './npcInventoryHelpers'
 
 /**
  * NPC Survival Actions (destiny-rjwy)
@@ -29,64 +28,12 @@ function updateNpcStates(
   }
 }
 
-interface FoundInventoryItem {
-  containerIndex: number
-  slotIndex: number
-  itemInstanceId: string
-  itemDef: ItemDefinition
-}
-
-/** Finds the first item tagged with `tag` in an NPC's own personal inventory, if any. */
-function findNpcInventoryItemByTag(state: GameState, npcId: string, tag: string): FoundInventoryItem | null {
-  const containers = state.inventoryState.npcInventories[npcId] ?? []
-  for (const [containerIndex, container] of containers.entries()) {
-    for (const [slotIndex, slot] of container.slots.entries()) {
-      if (!slot.itemInstanceId) continue
-      const instance = state.inventoryState.itemRegistry[slot.itemInstanceId]
-      if (!instance) continue
-      const itemDef = contentCatalog.itemsById.get(instance.itemId)
-      if (itemDef?.tags.includes(tag)) {
-        return { containerIndex, slotIndex, itemInstanceId: slot.itemInstanceId, itemDef }
-      }
-    }
-  }
-  return null
-}
-
-/** Consumes (decrements/removes) one unit of an item found via findNpcInventoryItemByTag. */
-function consumeNpcInventoryItem(state: GameState, npcId: string, found: FoundInventoryItem): GameState {
-  const containers = state.inventoryState.npcInventories[npcId] ?? []
-  const container = containers[found.containerIndex]
-  if (!container) return state
-  const slot = container.slots[found.slotIndex]
-  if (!slot?.itemInstanceId) return state
-
-  const newSlots = [...container.slots]
-  const stillStacked = slot.quantity > 1
-  if (stillStacked) {
-    newSlots[found.slotIndex] = { ...slot, quantity: slot.quantity - 1 }
-  } else {
-    newSlots.splice(found.slotIndex, 1)
-  }
-  const newContainers = containers.map((c, i) => (i === found.containerIndex ? { ...c, slots: newSlots } : c))
-
-  const newRegistry = { ...state.inventoryState.itemRegistry }
-  if (!stillStacked) delete newRegistry[found.itemInstanceId]
-
-  return {
-    ...state,
-    inventoryState: {
-      ...state.inventoryState,
-      npcInventories: { ...state.inventoryState.npcInventories, [npcId]: newContainers },
-      itemRegistry: newRegistry,
-    },
-  }
-}
-
-function statModValue(itemDef: ItemDefinition, stat: string): number | null {
-  const effect = itemDef.typedEffects.find((e) => e.type === 'stat_mod' && e.stat === stat)
-  return effect && effect.type === 'stat_mod' ? Math.abs(effect.value) : null
-}
+// findNpcInventoryItemByTag / consumeNpcInventoryItem / resolveItemStatEffect extracted to
+// npcInventoryHelpers.ts (destiny-bkln) for reuse by economy commands (repair/craft/consume/loot).
+// resolveItemStatEffect also fixes a gap the old local statModValue had: it only matched the
+// 'stat_mod' ItemEffect variant, so real catalog items using 'reduceStat' (e.g.
+// item-ration-compact-brick) were never actually read — callers always fell back to the hardcoded
+// default below instead of the item's real defined magnitude.
 
 /** NPC eats to reduce hunger — prefers a personal food item, falls back to house food stock. */
 export function npcEatMeal(state: GameState, npcId: string): GameState {
@@ -95,7 +42,7 @@ export function npcEatMeal(state: GameState, npcId: string): GameState {
 
   const found = findNpcInventoryItemByTag(state, npcId, 'food')
   if (found) {
-    const reduction = statModValue(found.itemDef, 'hunger') ?? 30
+    const reduction = resolveItemStatEffect(found.itemDef, 'hunger') ?? 30
     let next = consumeNpcInventoryItem(state, npcId, found)
     next = updateNpcStates(next, npcId, { hunger: clampPercent(npc.states.hunger - reduction) })
     return appendActivityLogEntry(next, 'system', `${npc.name} eats ${found.itemDef.name}, easing their hunger.`)
@@ -126,8 +73,8 @@ export function npcDrink(state: GameState, npcId: string): GameState {
 
   const found = findNpcInventoryItemByTag(state, npcId, 'drink')
   if (found) {
-    const hungerReduction = statModValue(found.itemDef, 'hunger') ?? 10
-    const intoxReduction = statModValue(found.itemDef, 'intoxication') ?? 20
+    const hungerReduction = resolveItemStatEffect(found.itemDef, 'hunger') ?? 10
+    const intoxReduction = resolveItemStatEffect(found.itemDef, 'intoxication') ?? 20
     let next = consumeNpcInventoryItem(state, npcId, found)
     next = updateNpcStates(next, npcId, {
       hunger: clampPercent(npc.states.hunger - hungerReduction),
@@ -196,7 +143,7 @@ export function npcGroom(state: GameState, npcId: string): GameState {
 
   const found = findNpcInventoryItemByTag(state, npcId, 'grooming')
   if (found) {
-    const reduction = statModValue(found.itemDef, 'hygiene') ?? 30
+    const reduction = resolveItemStatEffect(found.itemDef, 'hygiene') ?? 30
     let next = consumeNpcInventoryItem(state, npcId, found)
     next = updateNpcStates(next, npcId, { hygiene: clampPercent(npc.states.hygiene - reduction) })
     return appendActivityLogEntry(next, 'system', `${npc.name} grooms with ${found.itemDef.name}.`)

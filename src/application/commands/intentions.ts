@@ -35,6 +35,7 @@ import {
 } from './npcIntellectActions'
 import { createRng } from './seededRng'
 import { intentionTypesForNpc } from './intentions/eligibility'
+import { npcRepairEquipment, npcNeedsEquipmentRepair } from './economy/npcRepairEquipment'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -189,6 +190,8 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'black-market-trade': 2,
     'beg-for-coin': 1,
     'scavenge-for-sell': 3,
+    // NPC Economy (destiny-bkln)
+    'repair-equipment': 3,
     // Macht/Kontrolle (5)
     'assert-dominance': 3,
     'spy-on': 2,
@@ -456,6 +459,10 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'seek-shelter',
   'practice-skill',
   'train-self',
+  // destiny-bkln (NPC Economy): repair-equipment. Roster-only (see intentions/eligibility.ts —
+  // deliberately absent from WORLD_ELIGIBLE_INTENTION_TYPES, matching seek-employment/seek-tips'
+  // existing precedent: this is a roster-personalFunds economy action, not a world-NPC one).
+  'repair-equipment',
 ])
 
 /**
@@ -1334,6 +1341,19 @@ const careForInjuredHandler: IntentionHandler = {
   execute: (npc, state) => npcCareForInjured(state, npc.npcId),
 }
 
+/**
+ * Repair Equipment Handler (destiny-bkln)
+ * NPC repairs their own damaged weapon/armor — materials-or-personalFunds, skill-gated success.
+ */
+const repairEquipmentHandler: IntentionHandler = {
+  canExecute: (npc, state) => {
+    if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
+    return npcNeedsEquipmentRepair(state, npc)
+  },
+  execute: (npc, state) => npcRepairEquipment(state, npc.npcId),
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // All intention handlers mapped by type
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1397,6 +1417,8 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'black-market-trade': careForInjuredHandler, // Placeholder - will be implemented later
   'beg-for-coin': careForInjuredHandler, // Placeholder - will be implemented later
   'scavenge-for-sell': careForInjuredHandler, // Placeholder - will be implemented later
+  // NPC Economy (destiny-bkln)
+  'repair-equipment': repairEquipmentHandler,
 }
 
 /**

@@ -186,6 +186,8 @@ export function getTraitDrivenIntentions(
     'black-market-trade': npc.skills.intrigue + npc.skills.security,
     'beg-for-coin': npc.attributes.presence + (npc.states.stress > 60 ? 30 : 0),
     'scavenge-for-sell': npc.skills.survival + npc.attributes.perception,
+    // NPC Economy (destiny-bkln)
+    'repair-equipment': npc.skills.crafting + npc.skills.engineering,
   }
 
   // Find intentions where NPC has decent capability (score > 130)

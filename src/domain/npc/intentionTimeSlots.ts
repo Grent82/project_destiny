@@ -79,6 +79,9 @@ export const INTENTION_TIME_SLOT_MAPPING: Record<NpcIntentionType, IntentionTime
   'beg-for-coin': { validTimeSlots: ['morning', 'afternoon'] },
   'scavenge-for-sell': { validTimeSlots: ['morning', 'afternoon'] },
 
+  // ─── NPC Economy (destiny-bkln) ──────────────────────────────────────────
+  'repair-equipment': { validTimeSlots: ['morning', 'afternoon'] },
+
   // ─── Macht/Kontrolle (5) ──────────────────────────────────────────────────
   'assert-dominance': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
   'spy-on': { validTimeSlots: ['evening', 'night'] },
