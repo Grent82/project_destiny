@@ -168,6 +168,20 @@ Each subdomain has a `contracts.ts` that exports Zod schemas and inferred types.
 
 The central aggregate is `GameState` (defined in `src/domain/game/contracts.ts`). Everything mutable lives in `GameState`. Immutable content definitions (NPC defs, item defs, faction defs) live separately in `data/definitions/*.json` and are loaded into `contentCatalog` at startup.
 
+### NPC runtime model — one unified list
+
+`GameState.npcRuntimeStates: NpcRuntimeState[]` is the **single list for every person the game simulates** — the player's roster, ambient world NPCs, story-arc NPCs, enemies, and captives all live in this one array. There is no separate `worldNpcStates` array or `npcCaptivityStates` record; both were folded into this list (see `docs/analysis/unified-npc-runtime-contract-2026-07-04.md` for the full design history).
+
+Two **independent** discriminators distinguish a person — never conflate them:
+- **`npcType`** (`'roster' | 'story' | 'world' | 'enemy'`) — the content kind from their definition. Fixed at authoring time; drives which intention types they're eligible for (`intentionTypesForNpc` in `src/application/commands/intentions/eligibility.ts`).
+- **`playerRosterMember`** (`boolean`) — the runtime relationship: does this person currently work for the player? A `npcType:'world'` person who gets recruited flips this to `true` without changing their `npcType`.
+
+`selectRosterNpcs` / `selectRosterEntries` (`src/application/selectors/roster.ts`) are the canonical "who's on the player's roster" views — filtered on `playerRosterMember`, not on the raw list or on `npcType`. Any command or selector that means "the player's team" (wage payments, roster capacity, squad selection) must filter this way; anything that means "everyone" (ambient social simulation, intention/agency pipelines) iterates `npcRuntimeStates` directly.
+
+`captivityState` (on the runtime entry) gates capability regardless of `npcType`/`playerRosterMember` — a captive or ward cannot act freely even if `playerRosterMember` is true. `createRuntimeStateFromDefinition` (`src/application/commands/createRuntimeStateFromDefinition.ts`) is the single factory that hydrates any NPC definition into a schema-valid `NpcRuntimeState`; it throws if no definition exists rather than silently defaulting.
+
+**`availableForHire` is not a list of persons.** It holds `HireOffer` records (`{ npcId, wagePerDay, signingBonus, ... }`) — contract offers, not runtime people. Recruiting (`recruitNpc`) resolves an offer into a new `npcRuntimeStates` entry via the factory. This is intentional and permanent: do not "unify" `availableForHire` into the person list, an offer has no agency, no intentions, and often refers to someone (via `npcId`) who has no runtime presence yet.
+
 **`src/application/`** — Orchestration and use cases.
 - `commands/` — Pure functions `(state: GameState, ...params) → GameState`. Name them as imperative domain actions (`endDay`, `startCombatEncounter`, `recruitNpc`). Side effects are forbidden here.
 - `selectors/` — Memoized Redux selectors that compose runtime state with content definitions to produce view models. Nothing in UI computes a view model itself.
