@@ -9,11 +9,8 @@ const MIRA_CUSTODY_GUARD_FLAG = 'mira-custody-guard'
 const MIRA_TANNERY_SITE_ID = 'site-poi-pale-old-tannery'
 
 function resolveNpcName(npcId: string): string {
-  return (
-    contentCatalog.npcsById.get(npcId)?.name ??
-    contentCatalog.enemyNpcsById.get(npcId)?.name ??
-    npcId
-  )
+  // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog to fall back to.
+  return contentCatalog.npcsById.get(npcId)?.name ?? npcId
 }
 
 export interface MiraCustodyChainPresence {

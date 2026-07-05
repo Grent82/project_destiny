@@ -31,6 +31,9 @@ const baseNpc: NpcDefinition = {
   },
   authoredMemories: [],
   isShopOwner: false,
+  isRecurring: false,
+  recruitableOnDefeat: false,
+  creatureType: 'human',
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

@@ -88,13 +88,14 @@ export const selectRosterEntries = createSelector(
   // story/enemy persons sharing the same runtime array must not appear here.
   (state: RootState) => state.game.npcRuntimeStates.filter((npc) => npc.playerRosterMember),
   (roster) => roster.map((npc) => {
+    // destiny-rama.14: enemy defs live in npcsById now too, so a single lookup covers every
+    // npcType — no more falling back to a separate enemy catalog.
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
-    const def = npcDef ?? contentCatalog.enemyNpcsById.get(npc.npcId)
     const quirks = npcDef?.quirks ?? []
     const bondSurface = describeNpcBondSurface(npc.bondStatus ?? null)
     return {
       npcId: npc.npcId,
-      name: def?.name ?? npc.npcId,
+      name: npcDef?.name ?? npc.npcId,
       status: npcDef?.status ?? 'operative',
       assignment: npc.assignment,
       activeTitle: npc.activeTitle,

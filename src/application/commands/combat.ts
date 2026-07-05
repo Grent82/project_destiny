@@ -379,8 +379,8 @@ export function concludeCombatEncounter(state: GameState): GameState {
       }
     }
 
-    // Recruitable defeated enemies
-    const recruitableDefs = contentCatalog.enemyNpcs.filter((en) => en.recruitableOnDefeat)
+    // Recruitable defeated enemies (destiny-rama.14: enemy defs live in the unified npcs catalog now)
+    const recruitableDefs = contentCatalog.npcs.filter((en) => en.npcType === 'enemy' && en.recruitableOnDefeat)
     if (recruitableDefs.length > 0) {
       const alreadyOffered = new Set(nextState.availableForHire.map((o) => o.npcId))
       const alreadyHired = new Set(nextState.npcRuntimeStates.map((r) => r.npcId))

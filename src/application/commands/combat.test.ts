@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getQuestTemplates } from '../content/contentCatalog'
+import { getQuestTemplates, contentCatalog } from '../content/contentCatalog'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { createQuestRuntime } from '../../domain/quests/contracts'
 import { initialStateWithIda } from './testFixtures'
@@ -134,6 +134,33 @@ describe('combat commands', () => {
     expect(nextState.lastEncounterSummary).not.toBeNull()
     expect(nextState.lastEncounterSummary?.outcome).toBe('victory')
     expect(nextState.lastEncounterSummary?.day).toBe(nextState.day)
+  })
+
+  it('offers a recruitable defeated enemy from the unified npcs catalog on victory (destiny-rama.14)', () => {
+    // Before destiny-rama.14 this offer's npcId came from the now-deleted separate enemy-npcs.json
+    // catalog and recruitNpc could never resolve it (it only ever read npcsById) — a silent dead
+    // end. There's no existing coverage of this path at all, so add it: a victory must be able to
+    // produce a hire offer whose npcId resolves in contentCatalog.npcsById as npcType:'enemy'.
+    const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'] }
+    const started = startCombatEncounter(state)
+    const resolved = {
+      ...started,
+      activeCombat: {
+        ...started.activeCombat!,
+        outcome: 'victory' as const,
+        activeCombatantId: null,
+        combatants: started.activeCombat!.combatants.map((c) =>
+          c.side === 'allies' ? { ...c, health: Math.max(1, c.health) } : { ...c, health: 0 }
+        ),
+      },
+    }
+    const result = concludeCombatEncounter(resolved)
+    const combatOffer = result.availableForHire.find((o) => o.source === 'combat')
+    expect(combatOffer).toBeDefined()
+    const def = contentCatalog.npcsById.get(combatOffer!.npcId)
+    expect(def).toBeDefined()
+    expect(def!.npcType).toBe('enemy')
+    expect(def!.recruitableOnDefeat).toBe(true)
   })
 
   it('applies NPC-to-NPC survival bonds on victory (affinity +8, respect +5)', () => {

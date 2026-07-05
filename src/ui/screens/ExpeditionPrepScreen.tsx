@@ -141,10 +141,8 @@ export function ExpeditionPrepScreen() {
               ) : (
                 <div className="mission-list">
                   {availableRoster.map((npc) => {
-                    const name =
-                      contentCatalog.npcsById.get(npc.npcId)?.name ??
-                      contentCatalog.enemyNpcsById.get(npc.npcId)?.name ??
-                      npc.npcId
+                    // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog.
+                    const name = contentCatalog.npcsById.get(npc.npcId)?.name ?? npc.npcId
                     return (
                       <div key={npc.npcId} className="mission-row">
                         <label className="expedition-squad-label">
@@ -240,10 +238,8 @@ export function ExpeditionPrepScreen() {
           ) : (
             <div className="mission-list">
               {availableRoster.map((npc) => {
-                const name =
-                  contentCatalog.npcsById.get(npc.npcId)?.name ??
-                  contentCatalog.enemyNpcsById.get(npc.npcId)?.name ??
-                  npc.npcId
+                // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog.
+                const name = contentCatalog.npcsById.get(npc.npcId)?.name ?? npc.npcId
                 return (
                   <div key={npc.npcId} className="mission-row">
                     <label className="expedition-squad-label">

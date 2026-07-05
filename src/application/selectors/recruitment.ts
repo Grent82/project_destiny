@@ -8,7 +8,8 @@ export const selectAvailableForHire = createSelector(
   (availableForHire, institutionalStanding) =>
     availableForHire
       .map((offer) => {
-        const def = contentCatalog.npcsById.get(offer.npcId) ?? contentCatalog.enemyNpcsById.get(offer.npcId)
+        // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog to fall back to.
+        const def = contentCatalog.npcsById.get(offer.npcId)
         const faction = def?.factionAffinityId
           ? contentCatalog.factionsById.get(def.factionAffinityId)?.name ?? null
           : null

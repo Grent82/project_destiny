@@ -7,7 +7,6 @@ import poisData from '../../../data/definitions/pois.json'
 import councilVotesData from '../../../data/definitions/council-votes.json'
 import factionAgendasData from '../../../data/definitions/faction-agendas.json'
 import dialoguesData from '../../../data/definitions/dialogues.json'
-import enemyNpcsData from '../../../data/definitions/enemy-npcs.json'
 import events from '../../../data/definitions/events.json'
 import expeditionDestinationsData from '../../../data/definitions/expedition-destinations.json'
 import factions from '../../../data/definitions/factions.json'
@@ -30,7 +29,6 @@ import {
   factionDefinitionSchema,
   itemDefinitionSchema,
   npcDefinitionSchema,
-  enemyNpcDefinitionSchema,
   shopDefinitionSchema,
   timeSlotSchema,
   type NpcDefinition,
@@ -103,7 +101,6 @@ const parsedEvents = eventTemplateSchema.array().parse(events)
 const parsedDestinations = expeditionDestinationSchema.array().parse(expeditionDestinationsData)
 const parsedRumorTemplates = rumorTemplateSchema.array().parse(rumorsData)
 const parsedEventRumorTemplates = eventRumorTemplateSchema.array().parse(eventRumorTemplatesData)
-const parsedEnemyNpcs = enemyNpcDefinitionSchema.array().parse(enemyNpcsData)
 const parsedNpcStartingRelationships = npcStartingRelationshipSchema.array().parse(npcStartingRelationshipsData)
 const parsedWorldHouseholds = worldHouseholdSchema.array().parse(worldHouseholdsData)
 
@@ -175,8 +172,6 @@ export const contentCatalog = {
   itemsById: buildItemsById(),
   npcs: parsedNpcs,
   npcsById: toMap(parsedNpcs),
-  enemyNpcs: parsedEnemyNpcs,
-  enemyNpcsById: toMap(parsedEnemyNpcs),
   encounterTablesByDistrict: new Map(parsedEncounterTables.map((t) => [t.districtId, t.enemies])),
   shops: parsedShops,
   shopsById: toMap(parsedShops),

@@ -110,6 +110,36 @@ describe('recruitNpc', () => {
     expect(next).toBe(stateWithOffers)
   })
 
+  it('recruits a combat-defeated enemy whose definition used to live only in the now-deleted enemy-npcs.json catalog (destiny-rama.14)', () => {
+    // Before destiny-rama.14, recruitNpc only ever resolved contentCatalog.npcsById — a combat
+    // "recruitable defeated enemy" hire offer (combat.ts's post-victory logic, sourced from
+    // contentCatalog.enemyNpcs) for anyone other than npc-enemy-tomas-rell (the sole entry that
+    // happened to also exist in npcs.json) would silently no-op here: npcDef would be undefined and
+    // the whole function returns state unchanged, quietly failing the recruit even though the offer
+    // existed and the player could afford it. All former enemy-npcs.json defs are merged into
+    // npcs.json now, so this must succeed.
+    const stateWithEnemyOffer = {
+      ...stateWithOffers,
+      availableForHire: [
+        {
+          npcId: 'npc-enemy-rack',
+          discoveredInDistrictId: 'district-the-pale',
+          wagePerDay: 10,
+          signingBonus: 0,
+          requiredFactionId: null,
+          requiredFactionStanding: 0,
+          turnsAvailable: 3,
+          source: 'combat' as const,
+        },
+      ],
+    }
+    const next = recruitNpc(stateWithEnemyOffer, 'npc-enemy-rack')
+    const recruited = next.npcRuntimeStates.find((r) => r.npcId === 'npc-enemy-rack')
+    expect(recruited).toBeDefined()
+    expect(recruited?.playerRosterMember).toBe(true)
+    expect(next.availableForHire.find((o) => o.npcId === 'npc-enemy-rack')).toBeUndefined()
+  })
+
   it('does nothing when player cannot afford signing bonus', () => {
     const brokeState = { ...stateWithOffers, money: 50 }
     const next = recruitNpc(brokeState, 'npc-cress-aldmoor')

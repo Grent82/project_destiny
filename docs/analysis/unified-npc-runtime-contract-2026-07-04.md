@@ -410,3 +410,45 @@ population is shared.**
 `npcs.json` contains 6 `npcType:"enemy"` entries **and** `enemy-npcs.json` is a separate enemy
 catalog with its own schema. Potential source-of-truth drift for enemies. Not part of this epic —
 file as its own bug bead and cross-link.
+
+**Resolved (destiny-rama.14):** decided in favor of full unification rather than "document and
+leave separate," for two reasons found during analysis — not just theoretical drift risk:
+
+1. **A genuine duplicate existed, not just a schema split.** `npc-enemy-tomas-rell` had two
+   independent records — one in each file — with identical stats/traits (clearly hand-kept in sync)
+   but diverging fields (the `npcs.json` copy had `startingEquipment`/`loyalties`, the
+   `enemy-npcs.json` copy had `encounterRole`/`recruitableOnDefeat`/etc.). Nothing enforced that sync;
+   it was luck, not structure.
+2. **A live, reachable bug, not a dormant one.** `combat.ts`'s post-victory "recruitable defeated
+   enemy" logic drew from `contentCatalog.enemyNpcs` (17 entries, 13 `recruitableOnDefeat:true`) to
+   generate a real `availableForHire` offer. But `recruitNpc` (`recruitment.ts`) only ever resolved
+   `contentCatalog.npcsById` — never `enemyNpcsById` — so accepting that offer silently no-opped
+   (`npcDef` undefined → early return) for every one of those 13 *except* Tomas Rell, the one
+   accidental overlap. There was zero test coverage of this path, so the bug shipped invisibly.
+   Fixed by adding a `combat.test.ts` regression test and a `recruitment.test.ts` regression test
+   (`recruitNpc` now completes for `npc-enemy-rack`, previously enemy-catalog-only).
+
+**Mechanics of the merge:**
+- `npcDefinitionSchema` gained the 8 combat-only fields from the deleted `enemyNpcDefinitionSchema`
+  (`isRecurring`, `organizationId`, `encounterRole`, `recruitableOnDefeat`, `recruitCondition`,
+  `loyaltyOnRecruit`, `lore`, `creatureType`), all optional/defaulted so every existing non-enemy def
+  is unaffected.
+- All 17 `enemy-npcs.json` entries were merged into `npcs.json` with `npcType:'enemy'`. The 16 that
+  had no prior `npcs.json` record became new entries; `npc-enemy-tomas-rell` had the 8 combat fields
+  merged into his existing, richer `npcs.json` record (kept his `startingEquipment`/`loyalties`).
+- `enemy-npcs.json` deleted. `enemyNpcDefinitionSchema`/`EnemyNpcDefinition` removed from
+  `contracts.ts`. `contentCatalog.enemyNpcs`/`enemyNpcsById` removed.
+- 4 consumers previously falling back to `enemyNpcsById` (`roster.ts`'s `selectRosterEntries`,
+  `mira.ts`'s `resolveNpcName`, `recruitment.ts`'s `selectAvailableForHire`,
+  `combat.ts`'s recruitable-defeated-enemy filter) simplified to a single `npcsById` lookup — the
+  fallback is now genuinely dead code, not just redundant. Two UI files
+  (`ExpeditionPrepScreen.tsx`, `ExpeditionTravelScreen.tsx`) had the same fallback pattern for
+  displaying squad-member names and were simplified the same way.
+- One pre-existing hand-built test fixture (`matchQuirkToContext.test.ts`'s `baseNpc`, typed directly
+  as `NpcDefinition` rather than built via `.parse()`) needed the 3 new required-with-default fields
+  (`isRecurring`, `recruitableOnDefeat`, `creatureType`) added — TypeScript's inferred output type for
+  Zod `.default()` fields is non-optional, so any hand-built literal of the full type (not run through
+  `.parse()`) breaks the same way on any future schema-default addition. Not fixed here (out of
+  scope): `compatibility.test.ts`'s `makeNpcDef` already casts `as NpcDefinition` around a
+  significantly stale, mismatched shape (`strength`/`intelligence` attributes, `status: 'available'`)
+  that predates this ticket and was unaffected by it either way.

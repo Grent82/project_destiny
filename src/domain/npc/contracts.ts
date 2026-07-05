@@ -351,6 +351,18 @@ export const npcDefinitionSchema = z
         shield: entityIdSchema.nullable(),
       }).optional(),
     }).optional(),
+    // Combat-encounter fields (destiny-rama.14 — merged in from the former enemy-npcs.json /
+    // enemyNpcDefinitionSchema catalog so every enemy has exactly one definition). Only populated
+    // on npcType:'enemy' defs meant for combat encounters; narrative-only enemies (e.g. captivity
+    // arc guards) simply omit them.
+    isRecurring: z.boolean().default(false),
+    organizationId: z.string().nullable().optional(),
+    encounterRole: z.string().nullable().optional(),
+    recruitableOnDefeat: z.boolean().default(false),
+    recruitCondition: z.string().nullable().optional(),
+    loyaltyOnRecruit: z.number().nullable().optional(),
+    lore: z.string().nullable().optional(),
+    creatureType: z.enum(['human', 'beast', 'undead', 'corrupted']).default('human'),
   })
   .strict()
 
@@ -846,30 +858,3 @@ export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>
 export type Skills = z.infer<typeof skillsSchema>
 export type States = z.infer<typeof statesSchema>
 export type Traits = z.infer<typeof traitsSchema>
-
-// ── Enemy NPC definitions ───────────────────────────────────────────────────
-
-/** Schema for enemy/adversary NPC definitions (data/definitions/enemy-npcs.json). */
-export const enemyNpcDefinitionSchema = z.object({
-  id: entityIdSchema,
-  name: z.string(),
-  origin: z.string().optional(),
-  background: z.string(),
-  rarity: z.string().optional(),
-  status: npcStatusSchema.optional(),
-  factionAffinityId: entityIdSchema.nullable().default(null),
-  baseAttributes: attributesSchema,
-  startingSkills: skillsSchema,
-  startingTraits: traitsSchema,
-  allowedTitleIds: z.array(entityIdSchema).default([]),
-  isRecurring: z.boolean().default(false),
-  organizationId: z.string().nullable().default(null),
-  encounterRole: z.string().nullable().optional(),
-  recruitableOnDefeat: z.boolean().default(false),
-  recruitCondition: z.string().nullable().optional(),
-  loyaltyOnRecruit: z.number().nullable().optional(),
-  lore: z.string().nullable().optional(),
-  creatureType: z.enum(['human', 'beast', 'undead', 'corrupted']).default('human'),
-})
-
-export type EnemyNpcDefinition = z.infer<typeof enemyNpcDefinitionSchema>

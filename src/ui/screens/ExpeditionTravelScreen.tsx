@@ -92,10 +92,8 @@ export function ExpeditionTravelScreen() {
           <h2>The Squad</h2>
           <div className="mission-list">
             {expState.squadNpcIds.map((id) => {
-              const name =
-                contentCatalog.npcsById.get(id)?.name ??
-                contentCatalog.enemyNpcsById.get(id)?.name ??
-                id
+              // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog.
+              const name = contentCatalog.npcsById.get(id)?.name ?? id
               return (
                 <div key={id} className="mission-row">
                   <strong>{name}</strong>
