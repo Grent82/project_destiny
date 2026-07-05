@@ -13,6 +13,8 @@ function createNakedNpc(
   return {
     npcId,
     name,
+    npcType: 'roster' as const,
+    playerRosterMember: true,
     status: 'citizen' as const,
     assignment: (roomAssignment ? 'working' : 'idle'),
     assignedDistrictId: roomAssignment ? null : 'district-the-pale',
@@ -52,6 +54,8 @@ function createClothedNpc(
   return {
     npcId,
     name,
+    npcType: 'roster' as const,
+    playerRosterMember: true,
     status: 'citizen' as const,
     assignment: 'idle' as const,
     assignedDistrictId: null,
@@ -223,5 +227,53 @@ describe('applyNakednessConsequences', () => {
     // Should have no npc-naked-public events
     const nakedEvents = result.worldEvents.filter((e) => e.type === 'npc-naked-public')
     expect(nakedEvents.length).toBe(0)
+  })
+
+  it('never applies penalties to a naked world/story/enemy person sharing the unified list (destiny-rama.15)', () => {
+    // Clothing is a player-managed equipment concern; world/story/enemy persons' clothing is
+    // authored/decorative. Before the unified npcRuntimeStates list this loop only ever saw roster
+    // members, so a missing playerRosterMember filter was invisible — once ambient world people
+    // (many hydrated with no clothing) joined the same array, this fired for every one of them daily.
+    const worldNaked = { ...createNakedNpc('npc-world-naked', 'Ambient Wanderer', null, 50, 30), npcType: 'world' as const, playerRosterMember: false }
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      npcRuntimeStates: [worldNaked],
+    } as unknown as GameState
+
+    const result = applyNakednessConsequences(state)
+
+    const npc = result.npcRuntimeStates[0]
+    expect(npc.states.morale).toBe(50)
+    expect(npc.states.stress).toBe(30)
+    expect(result.activityLog.length).toBe(0)
+    expect(result.worldEvents.filter((e) => e.type === 'npc-naked-public')).toHaveLength(0)
+  })
+
+  it('never treats a naked captive as "seen in public" even if they are a playerRosterMember (destiny-rama.15)', () => {
+    // roomAssignment is a house-room concept; a captive's confinement is tracked via
+    // captivityState.siteId/roomId instead, so roomAssignment === null for a captive does NOT mean
+    // "out in the city" — it must not trigger the public-sighting penalty/event/log line at all.
+    const captiveNaked = {
+      ...createNakedNpc('npc-captive-naked', 'Held Captive', null, 50, 30),
+      captivityState: {
+        status: 'captive' as const, holderId: null, siteId: 'site-poi-pale-old-tannery', roomId: null,
+        regime: 'unknown' as const, condition: 'healthy' as const, compliance: 'resistant' as const,
+        bondType: 'none' as const, timeHeldDays: 1, lastTransferDay: null, questTag: null,
+        confiscatedItems: [], confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+      },
+    }
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      npcRuntimeStates: [captiveNaked],
+    } as unknown as GameState
+
+    const result = applyNakednessConsequences(state)
+
+    const npc = result.npcRuntimeStates[0]
+    expect(npc.states.morale).toBe(50)
+    expect(npc.states.stress).toBe(30)
+    expect(result.activityLog.length).toBe(0)
+    expect(result.worldEvents.filter((e) => e.type === 'npc-naked-public')).toHaveLength(0)
   })
 })

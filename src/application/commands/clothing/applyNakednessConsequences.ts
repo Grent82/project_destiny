@@ -19,6 +19,14 @@ export function applyNakednessConsequences(state: GameState): GameState {
   let next = state
 
   for (const npc of state.npcRuntimeStates) {
+    // Player-roster only (destiny-rama.15): clothing is a player-managed equipment concern — world/
+    // story/enemy persons' clothing is authored, decorative, and never touched by this mechanic's
+    // intent. Before the unified npcRuntimeStates list, this loop only ever saw roster members, so
+    // the missing filter was invisible; once world/story/captive persons joined the same array it
+    // fired every day for anyone hydrated with no clothing (e.g. a captive stripped as part of their
+    // captivity condition), which is not a "public sighting" — they're confined, not out in the city.
+    if (!npc.playerRosterMember) continue
+    if (npc.captivityState?.status === 'captive' || npc.status === 'ward') continue
     if (!isNpcNaked(npc)) continue
 
     // Determine if NPC is in public (not in player house)

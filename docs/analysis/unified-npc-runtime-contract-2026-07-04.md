@@ -452,3 +452,52 @@ leave separate," for two reasons found during analysis — not just theoretical 
   scope): `compatibility.test.ts`'s `makeNpcDef` already casts `as NpcDefinition` around a
   significantly stale, mismatched shape (`strength`/`intelligence` attributes, `status: 'available'`)
   that predates this ticket and was unaffected by it either way.
+
+## 11. E2E verification results (destiny-rama.15)
+
+Full gate at the time of this ticket: `pnpm typecheck` clean, `pnpm test:run` 255 files / 2785 tests
+green, `pnpm test:playthrough:golden` + `:all` green (98 tests), `pnpm lint` shows only the 6
+pre-existing, unrelated errors tracked separately (destiny-67gq).
+
+**Combined v6→v7 migration fixture (new):** `localSaveSnapshot.test.ts` gained one test exercising
+the full `migrateState` chain against a single raw save carrying all three legacy shapes at once
+(`roster` field, `worldNpcStates` array, `npcCaptivityStates` record) — the prior tests each covered
+one fold in isolation. Confirms: clean upgrade to `saveVersion:7`, no legacy keys survive, no
+duplicate ids, no data loss on Marion's stats, Dalen's npcType correctly derived from his own
+definition (not hardcoded), Mira's captivityState carried over intact, and — the actual point of this
+epic — **a captive's `currentIntention` is `null` straight out of migration**, before any command
+even runs.
+
+**Playwright manual verification (fresh save, no prior localStorage):** created a new game and
+advanced ~7 in-game days via repeated "End Day". Findings:
+- World/story/enemy persons visibly generate and execute intentions daily: self-care/self-improvement
+  (`"Caevis Sable-Cairn meditates to clear their mind."`, `"Osanna Cray finds what shelter they can."`),
+  skill practice (`"Alis Vey practices melee on their own."`), and — notably — **enemy-npcType**
+  persons doing social observation (`"Tomas Rell noted Brannic Thule's reliability without saying
+  so."`, `"Catrin Hale noted Cessa Rill's reliability without saying so."`), plus
+  `applyWorldNpcSocialSimulation`'s ambient bond formation across the newly-hydrated ambient
+  population (`"X and Y are openly tied now"`, district whispers). This is live, end-to-end
+  confirmation that D1/D2/D3 (rama.10/11/12) work for the full population, not just roster.
+- Mira (captive) never appeared in the activity log across the whole run and her
+  `currentIntention` stayed `null` at every check — confirmed directly from the persisted
+  `GameState` in `localStorage`, not just inferred from log absence.
+
+**Bug found and fixed during this verification (not present in any existing test):**
+`applyNakednessConsequences` (`src/application/commands/clothing/applyNakednessConsequences.ts`)
+iterated the full `npcRuntimeStates` list with **no filter at all** — the exact "population-scan
+lacks the correct filter" class documented repeatedly in §9. Before the unified list this loop only
+ever saw roster members (clothing is a player-managed equipment concern); once world/story/enemy/
+captive persons joined the same array, it fired every day for anyone hydrated with no clothing, which
+several ambient world defs and Mira are (her nakedness is an authored captivity detail, not a bug in
+her definition). Live symptom: `"Mira was seen naked in public."` / `"...Morale -20, stress +15."`
+plus the same for Dalen Morke, Tomas Rell, and Catrin Hale, verbatim every single day, permanently
+tanking their morale/stress with zero way to stop it and firing a `npc-naked-public` world event for
+someone the player has no way to observe. Doubly wrong for a captive specifically: `isInPublic` keys
+off `roomAssignment === null`, but a captive's confinement is tracked via `captivityState.siteId`/
+`roomId`, not `roomAssignment` — so `roomAssignment === null` incorrectly reads as "out in the city"
+for someone who is, definitionally, not free to be seen anywhere. Fixed by scoping the loop to
+`playerRosterMember` (matching the established "player-house economics stays roster-only" pattern
+used elsewhere in this epic — `npcAgency/*`, wage payments) and additionally excluding captive/ward
+status even for a `playerRosterMember` who gets captured. Added 2 regression tests; no prior test
+existed covering a non-roster or captive person in this mechanic at all, so the bug had zero coverage
+until this manual E2E pass surfaced it.

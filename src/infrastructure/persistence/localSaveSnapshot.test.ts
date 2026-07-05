@@ -324,6 +324,117 @@ describe('LocalSaveSnapshotStore', () => {
     expect(marionEntries[0]!.npcType).toBe('roster')
   })
 
+  it('migrates a genuine v6 save (legacy roster + worldNpcStates + npcCaptivityStates all present) to v7 in one pass, with no data loss (destiny-rama.15)', () => {
+    // The three individual fold tests above each simulate one legacy shape in isolation. A real v6
+    // save predates all three splits at once, so this exercises the full migrateState chain
+    // (migrateRosterFieldToNpcRuntimeStates → migrateWorldNpcStatesIntoNpcRuntimeStates →
+    // migrateNpcCaptivityStatesIntoNpcRuntimeStates) against one raw save object in a single load,
+    // as the epic's end-to-end safety net (destiny-rama.15) calls for.
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    const marion = initialGameStateSnapshot.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')!
+    const legacyRoster = [(() => {
+      const legacy: Record<string, unknown> = { ...marion }
+      delete legacy.npcType
+      delete legacy.playerRosterMember
+      delete legacy.worldDisposition
+      delete legacy.lastContactDay
+      delete legacy.locationOverride
+      return legacy
+    })()]
+
+    const { npcRuntimeStates: _unusedRuntimeStates, ...restOfState } = initialGameStateSnapshot
+    void _unusedRuntimeStates
+
+    const v6Save = {
+      ...restOfState,
+      roster: legacyRoster,
+      worldNpcStates: [
+        {
+          npcId: 'npc-dalen-morke',
+          lastContactDay: 3,
+          disposition: 'unknown',
+          locationOverride: 'poi-test-location',
+          flags: ['mira-custody-handler'],
+          intimacyStage: 'none',
+          pregnancyState: null,
+          health: 80,
+          injury: 10,
+          recovering: true,
+          clothing: { head: null, torso: 'cloth-doublet-noble', arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+          armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+        },
+      ],
+      npcCaptivityStates: {
+        'npc-mira': {
+          status: 'captive',
+          holderId: 'faction-gilded-court',
+          siteId: 'site-poi-pale-old-tannery',
+          roomId: 'tannery-inner-ring',
+          regime: 'guarded',
+          condition: 'hurt',
+          compliance: 'resistant',
+          bondType: 'fear',
+          timeHeldDays: 21,
+          lastTransferDay: 0,
+          questTag: 'quest-mira-rescue',
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      },
+      saveVersion: 6,
+    }
+    storage.setItem('save-slot', JSON.stringify(v6Save))
+
+    const loaded = snapshotStore.load()
+    expect(loaded).not.toBeNull()
+
+    // Upgraded cleanly to v7, and none of the three legacy keys survive.
+    expect(loaded!.saveVersion).toBe(7)
+    const rawLoaded = loaded as unknown as Record<string, unknown>
+    expect(rawLoaded.roster).toBeUndefined()
+    expect(rawLoaded.worldNpcStates).toBeUndefined()
+    expect(rawLoaded.npcCaptivityStates).toBeUndefined()
+
+    // No duplicate ids in the merged list.
+    const ids = loaded!.npcRuntimeStates.map((n) => n.npcId)
+    expect(new Set(ids).size).toBe(ids.length)
+
+    // Marion: renamed from `roster`, stamped as a roster person, no data loss on her stats.
+    const marionAfter = loaded!.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')
+    expect(marionAfter).toBeDefined()
+    expect(marionAfter!.npcType).toBe('roster')
+    expect(marionAfter!.playerRosterMember).toBe(true)
+    expect(marionAfter!.attributes).toEqual(marion.attributes)
+    expect(marionAfter!.skills).toEqual(marion.skills)
+    expect(marionAfter!.traits).toEqual(marion.traits)
+
+    // Dalen: folded from worldNpcStates, npcType derived from his own definition (not hardcoded).
+    const dalenAfter = loaded!.npcRuntimeStates.find((n) => n.npcId === 'npc-dalen-morke')
+    expect(dalenAfter).toBeDefined()
+    expect(dalenAfter!.npcType).toBe('story')
+    expect(dalenAfter!.playerRosterMember).toBe(false)
+    expect(dalenAfter!.worldDisposition).toBe('unknown')
+    expect(dalenAfter!.flags).toEqual(['mira-custody-handler'])
+    expect(dalenAfter!.states.health).toBe(80)
+
+    // Mira: folded from npcCaptivityStates, hydrated fresh (she had no npcRuntimeStates entry at
+    // all pre-fold in this legacy shape), captivityState carries over intact.
+    const miraAfter = loaded!.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')
+    expect(miraAfter).toBeDefined()
+    expect(miraAfter!.npcType).toBe('story')
+    expect(miraAfter!.playerRosterMember).toBe(false)
+    expect(miraAfter!.captivityState?.status).toBe('captive')
+    expect(miraAfter!.captivityState?.timeHeldDays).toBe(21)
+    expect(miraAfter!.captivityState?.siteId).toBe('site-poi-pale-old-tannery')
+
+    // A captive can never generate an intention — the hard gate + defense-in-depth eligibility both
+    // key off captivityState.status, which is exactly what this migration path populates.
+    expect(miraAfter!.currentIntention).toBeNull()
+  })
+
   it('normalizes legacy pending events into concrete event instances on load', () => {
     const storage = createMemoryStorage()
     const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
