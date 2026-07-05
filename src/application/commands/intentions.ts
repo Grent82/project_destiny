@@ -34,6 +34,7 @@ import {
   npcEscapeAttempt,
 } from './npcIntellectActions'
 import { createRng } from './seededRng'
+import { intentionTypesForNpc } from './intentions/eligibility'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -458,13 +459,23 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
 ])
 
 /**
- * Generation, gated to the wired allowlist.
+ * Generation, gated to the wired allowlist AND per-person eligibility.
  *
  * calculateNpcIntention/generateNpcIntention can produce any of ~47 intention types, including
  * money-earning ones that applyMoneyEarningIntentions (already called from
  * handleSocialSimulationPhase) is waiting to react to. Writing an unrestricted intention here
  * would silently reactivate that system too — well outside this bead's "exactly 2 handlers"
  * scope. Any computed type outside the allowlist is discarded rather than written to state.
+ *
+ * destiny-rama.10: this loop already iterated `state.npcRuntimeStates` (the C1 rename made that
+ * automatic — world/story/captive persons share the list since C2/C3), but it only ever checked
+ * `WIRED_INTENTION_TYPES`, never `intentionTypesForNpc(npc)` (destiny-rama.5's positive eligibility
+ * set) — meaning a world NPC could already be assigned e.g. 'fortify-position' or 'seek-employment'
+ * (both wired, house/player-economy mechanics) purely because nothing intersected the allowlist
+ * with what that person's *kind* is even eligible to want. Composing both gates here is what
+ * actually makes npcType-based eligibility real, not just an unused helper function.
+ * isNpcBlockedFromIntention (inside calculateNpcIntention) remains the hard runtime block —
+ * intentionTypesForNpc is defense-in-depth on top of it, not a replacement.
  */
 export function processAllowlistedNpcIntentions(state: GameState): GameState {
   let next = state
@@ -474,7 +485,9 @@ export function processAllowlistedNpcIntentions(state: GameState): GameState {
     if (npc.currentDirectiveId) continue
 
     const intention = calculateNpcIntention(next, npc.npcId)
-    if (!intention || !WIRED_INTENTION_TYPES.has(intention.type)) continue
+    if (!intention) continue
+    if (!WIRED_INTENTION_TYPES.has(intention.type)) continue
+    if (!intentionTypesForNpc(npc).has(intention.type)) continue
 
     next = {
       ...next,

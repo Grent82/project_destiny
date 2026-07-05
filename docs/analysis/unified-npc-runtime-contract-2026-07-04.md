@@ -192,6 +192,14 @@ merge.
 | any with `captivityState.status==='captive'` | **blocked** by `isNpcBlockedFromIntention` except escape-attempt (`destiny-ap3s`) |
 | `enemy` | none (no runtime agency here) |
 
+**Implemented (destiny-rama.10):** `processAllowlistedNpcIntentions` (intentions.ts) already iterated
+`state.npcRuntimeStates` — the C1 rename made that automatic — but only ever checked
+`WIRED_INTENTION_TYPES`; `intentionTypesForNpc` (built in rama.5) was never actually called at the
+generation site, so npcType-based eligibility was inert. Fixed by intersecting both gates:
+`WIRED_INTENTION_TYPES.has(type) && intentionTypesForNpc(npc).has(type)`. Also found (and left alone,
+out of scope): `processNpcIntentions` — an older, unwired sibling of `processAllowlistedNpcIntentions`
+that is not called from anywhere in production (only its own tests), i.e. genuinely dead code;
+candidate for a future cleanup bead, not touched here.
 The exact per-type sets are enumerated in the eligibility ticket; this table is the intent.
 
 ## 7. Save migration v6 → v7 (`localSaveSnapshot.ts`)

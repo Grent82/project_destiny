@@ -10,6 +10,7 @@ import {
   WIRED_INTENTION_TYPES,
   intentionHandlers,
 } from './intentions'
+import { WORLD_ELIGIBLE_INTENTION_TYPES } from './intentions/eligibility'
 import type { GameState, NpcRuntimeState, NpcIntentionType } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { NPC_IDS } from '../content/ids'
@@ -607,6 +608,151 @@ describe('intentions', () => {
       const result = processAllowlistedNpcIntentions(state)
 
       expect(result.npcRuntimeStates[0]!.currentIntention).toEqual(existing)
+    })
+  })
+
+  describe('processAllowlistedNpcIntentions — per-npcType eligibility (destiny-rama.10)', () => {
+    it('generates an eligible intention for an idle World NPC', () => {
+      const state = createTestState({
+        npcRuntimeStates: [
+          {
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+            npcId: 'npc-test-world',
+            npcType: 'world',
+            playerRosterMember: false,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+            captivityState: undefined,
+            // High hunger is a strong state-driven signal for eat-meal, which is in
+            // WORLD_ELIGIBLE_INTENTION_TYPES (self-care).
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 90, fatigue: 10, stress: 10, hygiene: 10 },
+          },
+        ],
+      })
+
+      const result = processAllowlistedNpcIntentions(state)
+      const assigned = result.npcRuntimeStates[0]!.currentIntention
+
+      expect(assigned).not.toBeNull()
+      expect(WORLD_ELIGIBLE_INTENTION_TYPES.has(assigned!.type)).toBe(true)
+    })
+
+    it('discards a wired-but-ineligible (house-only) intention type for a World NPC even though a roster NPC in the identical state would keep it', () => {
+      // care-for-injured is wired (WIRED_INTENTION_TYPES) but excluded from
+      // WORLD_ELIGIBLE_INTENTION_TYPES (it acts on the player's roster, not the NPC's own life).
+      // High player-loyalty (rel.loyalty >= 70) triggers it (alongside protect-house, also
+      // house-only) via the relationship-driven pipeline stage, with all self-care needs
+      // suppressed so it isn't outranked by a state-driven candidate.
+      const baseOverrides = {
+        assignment: 'idle' as const,
+        currentDirectiveId: null,
+        currentIntention: null,
+        factionRelationships: [],
+        captivityState: undefined,
+        traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, prudence: 10, vanity: 10, curiosity: 10, ambition: 10, ruthlessness: 10, discipline: 10, dominance: 10, empathy: 60, loyalty: 10 },
+        skills: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.skills, medicine: 90 },
+        states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 5, fatigue: 5, stress: 5, hygiene: 5, anger: 5, fear: 5, morale: 60, intoxication: 0 },
+      }
+
+      const rosterEntry = { ...initialGameStateSnapshot.npcRuntimeStates[0]!, ...baseOverrides, npcType: 'roster' as const, playerRosterMember: true }
+      const worldEntry = { ...initialGameStateSnapshot.npcRuntimeStates[0]!, ...baseOverrides, npcId: 'npc-test-world', npcType: 'world' as const, playerRosterMember: false }
+
+      // getRelationshipDrivenIntentions (pipeline.ts) keys on `${playerNpcId}|${npc.npcId}`.
+      const relationshipWithPlayer = {
+        'player|npc-marion-vale': { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 75 },
+        'player|npc-test-world': { affinity: 0, respect: 0, fear: 0, trust: 0, loyalty: 75 },
+      }
+
+      const rosterState = createTestState({
+        npcRuntimeStates: [rosterEntry],
+        relationships: relationshipWithPlayer,
+      })
+      const worldState = createTestState({
+        npcRuntimeStates: [worldEntry],
+        relationships: relationshipWithPlayer,
+      })
+
+      // Sanity check: this trait/relationship profile really does make the pipeline naturally
+      // produce care-for-injured (wired, but not world-eligible) for both — confirming the *only*
+      // difference in outcome comes from the new eligibility intersection, not some other gate.
+      const naturalRoster = calculateNpcIntention(rosterState, NPC_IDS.MARION_VALE)
+      const naturalWorld = calculateNpcIntention(worldState, 'npc-test-world')
+      expect(naturalRoster?.type).toBe('care-for-injured')
+      expect(naturalWorld?.type).toBe('care-for-injured')
+      expect(WIRED_INTENTION_TYPES.has('care-for-injured')).toBe(true)
+      expect(WORLD_ELIGIBLE_INTENTION_TYPES.has('care-for-injured')).toBe(false)
+
+      const rosterResult = processAllowlistedNpcIntentions(rosterState)
+      const worldResult = processAllowlistedNpcIntentions(worldState)
+
+      expect(rosterResult.npcRuntimeStates[0]!.currentIntention?.type).toBe('care-for-injured')
+      expect(worldResult.npcRuntimeStates[0]!.currentIntention).toBeNull()
+    })
+
+    it('never generates an intention for an npcType:enemy person, even when otherwise idle and eligible by every other gate', () => {
+      const state = createTestState({
+        npcRuntimeStates: [
+          {
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+            npcId: 'npc-test-enemy',
+            npcType: 'enemy',
+            playerRosterMember: false,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+            captivityState: undefined,
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 90 },
+          },
+        ],
+      })
+
+      // Sanity check: isNpcBlockedFromIntention alone would NOT block this npc (idle, no
+      // directive, not ward, not captive) — only the npcType:'enemy' eligibility gate does.
+      const natural = calculateNpcIntention(state, 'npc-test-enemy')
+      expect(natural).not.toBeNull()
+
+      const result = processAllowlistedNpcIntentions(state)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
+    })
+
+    it('never generates an intention for a captive person, regardless of npcType', () => {
+      const state = createTestState({
+        npcRuntimeStates: [
+          {
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+            npcId: 'npc-test-captive-world',
+            npcType: 'story',
+            playerRosterMember: false,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 90 },
+            captivityState: {
+              status: 'captive',
+              condition: 'healthy',
+              compliance: 'resistant',
+              bondType: 'none',
+              regime: 'unknown',
+              holderId: null,
+              siteId: null,
+              roomId: null,
+              timeHeldDays: 1,
+              lastTransferDay: null,
+              questTag: null,
+              confiscatedItems: [],
+              confiscatedMoney: null,
+              confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+            },
+          },
+        ],
+      })
+
+      const result = processAllowlistedNpcIntentions(state)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
   })
 
