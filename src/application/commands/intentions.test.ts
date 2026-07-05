@@ -490,7 +490,6 @@ describe('intentions', () => {
   describe('processAllowlistedNpcIntentions (destiny-mbju)', () => {
     it('discards a naturally-generated intention outside the wired allowlist', () => {
       const state = createTestState({
-        cityResources: { ...initialGameStateSnapshot.cityResources, corridorStatus: 'blocked' },
         npcRuntimeStates: [
           {
             ...initialGameStateSnapshot.npcRuntimeStates[0]!,
@@ -498,11 +497,13 @@ describe('intentions', () => {
             currentDirectiveId: null,
             currentIntention: null,
             factionRelationships: [],
-            attributes: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes, presence: 80 },
-            traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, ambition: 55, discipline: 30, curiosity: 30 },
-            // lead-group (still unwired — no NPC group/squad runtime concept exists) requires a
-            // blocked corridor plus presence>=60 && ambition>=50; keep other needs low/moderate so
-            // it isn't outranked by an already-wired state-driven candidate like eat-meal/sleep.
+            // escape-attempt is the sole remaining unwired type (destiny-nid0 wired the last 4
+            // group intentions). Its trait score is agility+perception only (pipeline.ts); zero
+            // every other attribute/trait/skill so no other >130-threshold candidate can compete,
+            // and keep needs low so basic-needs candidates (eat-meal/rest/sleep) don't fire either.
+            attributes: { might: 10, agility: 90, endurance: 10, intellect: 10, perception: 90, presence: 10, resolve: 10 },
+            traits: { discipline: 10, ambition: 10, empathy: 10, ruthlessness: 10, prudence: 10, curiosity: 10, dominance: 10, loyalty: 10, vanity: 10, zeal: 10 },
+            skills: { melee: 10, ranged: 10, medicine: 10, administration: 10, engineering: 10, negotiation: 10, survival: 10, security: 10, crafting: 10, performance: 10, academics: 10, intrigue: 10 },
             states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 10, fatigue: 10, stress: 10, hygiene: 10 },
           },
         ],
@@ -838,7 +839,7 @@ describe('intentions', () => {
 
     it('does not execute or clear an intention outside the wired allowlist', () => {
       const intention = {
-        type: 'lead-group' as const,
+        type: 'escape-attempt' as const,
         targetId: 'district-the-pale',
         targetType: 'district' as const,
         priority: 3,
@@ -1391,6 +1392,107 @@ describe('intentions', () => {
       // The host is Marion (roster[0]); Ida is the only other idle NPC available to invite.
       const rel = result.relationships[`${state.npcRuntimeStates[0]!.npcId}-to-${idaId}`]
       expect(rel?.affinity ?? 0).toBeGreaterThan(0)
+    })
+
+    it('executes shop-for-goods (via npcShopForGoods) and clears the intention afterward', () => {
+      let state: GameState = stateWithMarionAndIda(makeIntention('shop-for-goods'))
+      // shopForGoodsHandler.canExecute requires negotiation or administration >= 30, plus an
+      // affordable in-stock offer in the NPC's assigned district (npcCanShopForGoods).
+      state = {
+        ...state,
+        npcRuntimeStates: [
+          {
+            ...state.npcRuntimeStates[0]!,
+            assignedDistrictId: 'district-harbor',
+            skills: { ...state.npcRuntimeStates[0]!.skills, negotiation: 40 },
+            personalFunds: { savings: 0, carriedCash: 200, lastWagePaymentDay: null, lastTipAmount: 0 },
+          },
+          state.npcRuntimeStates[1]!,
+        ],
+      }
+      const result = executeAllowlistedNpcIntentions(state)
+      const actor = result.npcRuntimeStates[0]!
+      expect(actor.personalFunds.carriedCash).toBeLessThan(200)
+      expect(actor.currentIntention).toBeNull()
+      expect(result.activityLog.some((e) => e.message.includes('buys'))).toBe(true)
+    })
+
+    it('executes lead-group (via npcLeadGroup) and clears the intention afterward', () => {
+      let state: GameState = stateWithMarionAndIda(makeIntention('lead-group'))
+      state = {
+        ...state,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-harbor' },
+          { ...state.npcRuntimeStates[1]!, assignedDistrictId: 'district-harbor' },
+        ],
+      }
+      const result = executeAllowlistedNpcIntentions(state)
+      const marionId = state.npcRuntimeStates[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      expect(result.npcGroups).toHaveLength(1)
+      expect(result.npcGroups[0]!.leaderId).toBe(marionId)
+      expect(result.npcGroups[0]!.memberIds).toContain(idaId)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes form-squad (via npcFormSquad) and clears the intention afterward', () => {
+      let state: GameState = stateWithMarionAndIda(makeIntention('form-squad'))
+      state = {
+        ...state,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-harbor' },
+          { ...state.npcRuntimeStates[1]!, assignedDistrictId: 'district-harbor' },
+        ],
+      }
+      const result = executeAllowlistedNpcIntentions(state)
+      expect(result.npcGroups).toHaveLength(1)
+      expect(result.npcGroups[0]!.purpose).toBe('squad')
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
+    })
+
+    it('executes support-group (via npcSupportGroup) and clears the intention afterward', () => {
+      // support-group's actor here is Ida (not Marion) — seed a pre-existing group led by Marion
+      // and give the intention to Ida instead of the usual Marion-carries-the-intention shape.
+      let state: GameState = stateWithMarionAndIda(null)
+      const marionId = state.npcRuntimeStates[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-harbor' },
+          {
+            ...state.npcRuntimeStates[1]!,
+            assignedDistrictId: 'district-harbor',
+            currentIntention: makeIntention('support-group'),
+            // supportGroupHandler.canExecute requires empathy >= 40 or loyalty >= 50; Ida's fixture
+            // defaults (empathy 29, loyalty 46) satisfy neither.
+            traits: { ...state.npcRuntimeStates[1]!.traits, empathy: 60 },
+          },
+        ],
+        npcGroups: [{ groupId: 'group-wire-1', leaderId: marionId, memberIds: [], purpose: 'circle' as const, districtId: 'district-harbor', formedOnDay: 1 }],
+      }
+      const result = executeAllowlistedNpcIntentions(state)
+      const group = result.npcGroups.find((g) => g.groupId === 'group-wire-1')!
+      expect(group.memberIds).toContain(idaId)
+      expect(result.npcRuntimeStates[1]!.currentIntention).toBeNull()
+    })
+
+    it('executes recruit-member (via npcRecruitMember) and clears the intention afterward', () => {
+      let state: GameState = stateWithMarionAndIda(makeIntention('recruit-member'))
+      const marionId = state.npcRuntimeStates[0]!.npcId
+      const idaId = idaRhysRosterEntry.npcId
+      state = {
+        ...state,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-harbor' },
+          { ...state.npcRuntimeStates[1]!, assignedDistrictId: 'district-harbor' },
+        ],
+        npcGroups: [{ groupId: 'group-wire-2', leaderId: marionId, memberIds: [], purpose: 'circle' as const, districtId: 'district-harbor', formedOnDay: 1 }],
+      }
+      const result = executeAllowlistedNpcIntentions(state)
+      const group = result.npcGroups.find((g) => g.groupId === 'group-wire-2')!
+      expect(group.memberIds).toContain(idaId)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('executes consolidate-power (via npcConsolidatePower) and clears the intention afterward', () => {

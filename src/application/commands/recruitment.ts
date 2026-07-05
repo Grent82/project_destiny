@@ -50,13 +50,10 @@ function buildRosterEntryFromOffer(
 
   const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - initialLoyaltyPenalty)
 
-  // Get an existing world-person runtime entry if one exists - preserve clothing, armor, health,
-  // injury (destiny-rama.8: world persons now live in the same npcRuntimeStates list). NOTE: this
-  // lookup is currently unreachable in practice — `alreadyOnRoster` above already rejects any
-  // npcId with ANY existing runtime entry, so recruiting an already-hydrated world NPC bails out
-  // before reaching here instead of upserting them. Hire offers are only generated for
-  // npcType:'roster' definitions today (generateHireOffers.ts), so this gap is dormant; filed as
-  // destiny-rama.17 so it isn't lost if that ever changes.
+  // Get an existing non-roster runtime entry if one exists - preserve clothing, armor, health,
+  // injury, and memory (destiny-rama.8: world/story persons now live in the same npcRuntimeStates
+  // list). Recruiting such a person upserts this entry in place (destiny-rama.17) rather than
+  // discarding their accumulated state.
   const worldNpcState = state.npcRuntimeStates.find((w) => w.npcId === npcId && !w.playerRosterMember)
 
   // Priority: existing world-person state > startingEquipment from definition > defaults
@@ -115,7 +112,7 @@ function buildRosterEntryFromOffer(
     equipment: { weapon: null, armor: null, accessory: [] },
     personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
     arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
-    npcMemory: [],
+    npcMemory: worldNpcState?.npcMemory ?? [],
     bondStatus,
     npcArc: npcDef.defaultArcId
       ? (() => {
@@ -148,8 +145,8 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
   const npcDef = contentCatalog.npcsById.get(npcId)
   if (!npcDef) return state
 
-  const alreadyOnRoster = state.npcRuntimeStates.some((r) => r.npcId === npcId)
-  if (alreadyOnRoster) return state
+  const existingEntry = state.npcRuntimeStates.find((r) => r.npcId === npcId)
+  if (existingEntry?.playerRosterMember) return state
 
   const renownLevel = getRenownLevel(state.playerCharacter.renown)
   if (selectRosterNpcs(state).length >= renownLevel.rosterSlots) return state
@@ -157,10 +154,16 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
   const newRosterEntry = buildRosterEntryFromOffer(state, npcId, offer.wagePerDay, 20, null)
   if (!newRosterEntry) return state
 
+  // Upsert: if a non-roster (world/story) entry already exists for this person, flip them onto the
+  // roster in place instead of appending a duplicate (destiny-rama.17).
+  const npcRuntimeStates = existingEntry
+    ? state.npcRuntimeStates.map((r) => (r.npcId === npcId ? newRosterEntry : r))
+    : [...state.npcRuntimeStates, newRosterEntry]
+
   let next: GameState = {
     ...state,
     money: state.money - offer.signingBonus,
-    npcRuntimeStates: [...state.npcRuntimeStates, newRosterEntry],
+    npcRuntimeStates,
     availableForHire: state.availableForHire.filter((o) => o.npcId !== npcId),
   }
 
@@ -197,8 +200,8 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
     if (standing < offer.requiredFactionStanding) return state
   }
 
-  const alreadyOnRoster = state.npcRuntimeStates.some((entry) => entry.npcId === npcId)
-  if (alreadyOnRoster) return state
+  const existingEntry = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
+  if (existingEntry?.playerRosterMember) return state
 
   const renownLevel = getRenownLevel(state.playerCharacter.renown)
   if (selectRosterNpcs(state).length >= renownLevel.rosterSlots) return state
@@ -227,10 +230,16 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
   )
   if (!newRosterEntry) return state
 
+  // Upsert: if a non-roster (world/story) entry already exists for this person, flip them onto the
+  // roster in place instead of appending a duplicate (destiny-rama.17).
+  const npcRuntimeStates = existingEntry
+    ? state.npcRuntimeStates.map((entry) => (entry.npcId === npcId ? newRosterEntry : entry))
+    : [...state.npcRuntimeStates, newRosterEntry]
+
   let next: GameState = {
     ...state,
     money: state.money - terms.intakeFee,
-    npcRuntimeStates: [...state.npcRuntimeStates, newRosterEntry],
+    npcRuntimeStates,
     availableForHire: state.availableForHire.filter((entry) => entry.npcId !== npcId),
   }
 
@@ -256,11 +265,15 @@ export function dismissNpc(state: GameState, npcId: string): GameState {
   // Write loss memories on related NPCs (pass state before NPC removal so roster still has them)
   let next = writeLossMemories(state, npcId, state.day)
 
-  // Now remove the NPC from roster and squad
+  // Now remove the NPC from roster, squad, and any group they led/belonged to (destiny-nid0:
+  // dismissing a group leader disbands the group; dismissing a member just drops their slot).
   next = {
     ...next,
     npcRuntimeStates: next.npcRuntimeStates.filter((r) => r.npcId !== npcId),
     selectedSquadNpcIds: next.selectedSquadNpcIds.filter((id) => id !== npcId),
+    npcGroups: next.npcGroups
+      .filter((g) => g.leaderId !== npcId)
+      .map((g) => ({ ...g, memberIds: g.memberIds.filter((id) => id !== npcId) })),
   }
 
   next = appendActivityLogEntry(

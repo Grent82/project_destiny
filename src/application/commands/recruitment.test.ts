@@ -192,6 +192,47 @@ describe('recruitNpc', () => {
     const logEntry = next.activityLog.find((e) => e.message.includes('Verek Holst'))
     expect(logEntry).toBeDefined()
   })
+
+  it('upserts a pre-existing non-roster (world) entry instead of bailing out or duplicating it (destiny-rama.17)', () => {
+    const worldEntry = {
+      ...idaRhysRosterEntry,
+      npcId: 'npc-verek-holst',
+      npcType: 'world' as const,
+      playerRosterMember: false,
+      clothing: { ...idaRhysRosterEntry.clothing, torso: 'cloth-tunic-worn' },
+      states: { ...idaRhysRosterEntry.states, health: 63, injury: 12 },
+      npcMemory: [
+        { day: 4, event: 'Scraped by in a street brawl.', eventType: 'custom' as const, visibility: 'open' as const, sentiment: 'negative' as const },
+      ],
+    }
+    const stateWithHydratedWorldNpc = {
+      ...stateWithOffers,
+      npcRuntimeStates: [...stateWithOffers.npcRuntimeStates, worldEntry],
+    }
+
+    const next = recruitNpc(stateWithHydratedWorldNpc, 'npc-verek-holst')
+
+    const matches = next.npcRuntimeStates.filter((r) => r.npcId === 'npc-verek-holst')
+    expect(matches).toHaveLength(1)
+    const recruited = matches[0]!
+    expect(recruited.playerRosterMember).toBe(true)
+    expect(recruited.clothing.torso).toBe('cloth-tunic-worn')
+    expect(recruited.states.health).toBe(63)
+    expect(recruited.states.injury).toBe(12)
+    expect(recruited.npcMemory).toEqual(worldEntry.npcMemory)
+  })
+
+  it('does nothing when the npcId is already a player-roster member', () => {
+    const alreadyRosterEntry = { ...idaRhysRosterEntry, npcId: 'npc-verek-holst', playerRosterMember: true }
+    const stateWithAlreadyRostered = {
+      ...stateWithOffers,
+      npcRuntimeStates: [...stateWithOffers.npcRuntimeStates, alreadyRosterEntry],
+    }
+
+    const next = recruitNpc(stateWithAlreadyRostered, 'npc-verek-holst')
+
+    expect(next).toBe(stateWithAlreadyRostered)
+  })
 })
 
 describe('deriveBondTermsFromHireOffer', () => {
@@ -237,6 +278,46 @@ describe('acquireBoundHireOffer', () => {
 
     expect(next.activityLog.some((entry) => entry.message.includes('debt contract'))).toBe(true)
   })
+
+  it('upserts a pre-existing non-roster (world) entry instead of bailing out or duplicating it (destiny-rama.17)', () => {
+    const worldEntry = {
+      ...idaRhysRosterEntry,
+      npcId: 'npc-cress-aldmoor',
+      npcType: 'world' as const,
+      playerRosterMember: false,
+      states: { ...idaRhysRosterEntry.states, health: 71, injury: 5 },
+      npcMemory: [
+        { day: 2, event: 'Lost a wager at the docks.', eventType: 'custom' as const, visibility: 'open' as const, sentiment: 'negative' as const },
+      ],
+    }
+    const stateWithHydratedWorldNpc = {
+      ...stateWithOffers,
+      npcRuntimeStates: [...stateWithOffers.npcRuntimeStates, worldEntry],
+    }
+
+    const next = acquireBoundHireOffer(stateWithHydratedWorldNpc, 'npc-cress-aldmoor')
+
+    const matches = next.npcRuntimeStates.filter((entry) => entry.npcId === 'npc-cress-aldmoor')
+    expect(matches).toHaveLength(1)
+    const recruited = matches[0]!
+    expect(recruited.playerRosterMember).toBe(true)
+    expect(recruited.bondStatus?.entryReason).toBe('debt-settlement')
+    expect(recruited.states.health).toBe(71)
+    expect(recruited.states.injury).toBe(5)
+    expect(recruited.npcMemory).toEqual(worldEntry.npcMemory)
+  })
+
+  it('does nothing when the npcId is already a player-roster member', () => {
+    const alreadyRosterEntry = { ...idaRhysRosterEntry, npcId: 'npc-cress-aldmoor', playerRosterMember: true }
+    const stateWithAlreadyRostered = {
+      ...stateWithOffers,
+      npcRuntimeStates: [...stateWithOffers.npcRuntimeStates, alreadyRosterEntry],
+    }
+
+    const next = acquireBoundHireOffer(stateWithAlreadyRostered, 'npc-cress-aldmoor')
+
+    expect(next).toBe(stateWithAlreadyRostered)
+  })
 })
 
 describe('dismissNpc', () => {
@@ -272,6 +353,30 @@ describe('dismissNpc', () => {
     const next = dismissNpc(stateWithRoster, 'npc-marion-vale')
     const logEntry = next.activityLog.find((e) => e.message.includes('Marion Vale'))
     expect(logEntry).toBeDefined()
+  })
+
+  it('disbands a group when the dismissed NPC was its leader (destiny-nid0)', () => {
+    const stateWithGroup = {
+      ...stateWithRoster,
+      npcGroups: [
+        { groupId: 'group-1', leaderId: 'npc-marion-vale', memberIds: ['npc-ida-rhys'], purpose: 'circle' as const, districtId: null, formedOnDay: 1 },
+      ],
+    }
+    const next = dismissNpc(stateWithGroup, 'npc-marion-vale')
+    expect(next.npcGroups.find((g) => g.groupId === 'group-1')).toBeUndefined()
+  })
+
+  it('removes the dismissed NPC from memberIds without disbanding the group', () => {
+    const stateWithGroup = {
+      ...stateWithRoster,
+      npcGroups: [
+        { groupId: 'group-1', leaderId: 'npc-marion-vale', memberIds: ['npc-ida-rhys'], purpose: 'circle' as const, districtId: null, formedOnDay: 1 },
+      ],
+    }
+    const next = dismissNpc(stateWithGroup, 'npc-ida-rhys')
+    const group = next.npcGroups.find((g) => g.groupId === 'group-1')
+    expect(group).toBeDefined()
+    expect(group?.memberIds).not.toContain('npc-ida-rhys')
   })
 })
 

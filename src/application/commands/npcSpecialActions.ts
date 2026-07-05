@@ -1,18 +1,23 @@
 import type { GameState } from '../../domain/game/contracts'
+import type { NpcRuntimeState } from '../../domain/npc/contracts'
+import type { TransferItemParams } from '../../domain/inventory/contracts'
 import type { Rng } from './seededRng'
 import { appendActivityLogEntry } from './activityLog'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { calculateMercenaryContractWage } from './wageRates'
 import { createEmployment } from './employment/createEmployment'
+import { contentCatalog } from '../content/contentCatalog'
+import { resolveShopPricingBreakdown } from '../content/shopPricing'
+import { transferItem } from './inventory/transferItem'
 
 /**
  * NPC Special Actions (destiny-ddqf)
  *
- * Real implementations for resource-gather, scavenge, seek-employment, and host-gathering.
- * shop-for-goods stays a placeholder — blocked pending destiny-su15.3/su15.4 (canonical
- * inventory transfer core + persistent shop stock), per the bead's own notes. recruit-member
- * stays a placeholder — no NPC group/squad runtime concept exists to add a member to (see
- * destiny-l2ex's lead-group/support-group for the same gap).
+ * Real implementations for resource-gather, scavenge, seek-employment, host-gathering, and
+ * shop-for-goods (destiny-2igf — built on destiny-su15.3/su15.4's canonical transfer core and
+ * persistent shop stock, once those landed). recruit-member stays a placeholder — no NPC
+ * group/squad runtime concept exists to add a member to (see destiny-l2ex's
+ * lead-group/support-group for the same gap).
  */
 
 /** NPC gathers raw materials for the house, feeding the (currently unpopulated) materialStock. */
@@ -132,4 +137,131 @@ export function npcHostGathering(state: GameState, npcId: string, rng: Rng): Gam
     ? `${npc.name} hosts a gathering in ${room.name} with ${guestNames}. A good evening.`
     : `${npc.name} hosts a gathering in ${room.name} with ${guestNames}, though it's a quiet, awkward affair.`
   return appendActivityLogEntry(next, 'system', message)
+}
+
+/** Negotiation/administration haggle down the sticker price: 0% below skill 50, up to 20% at skill 100. */
+function negotiationDiscountForSkill(npc: NpcRuntimeState): number {
+  const skill = Math.max(npc.skills.negotiation, npc.skills.administration)
+  return Math.max(0, Math.min(0.2, (skill - 50) / 250))
+}
+
+interface ShopMatch {
+  shop: (typeof contentCatalog.shops)[number]
+  shopStockContainerId: string
+  offerItemId: string
+  itemInstanceId: string
+  price: number
+}
+
+/** Mirrors shopPricing.ts's district-controlling-faction lookup (used for offer.minStanding gating). */
+function districtControlStanding(state: GameState, districtId: string): number {
+  const districtState = state.districts.find((d) => d.districtId === districtId)
+  const districtControlFactionId = districtState?.controllingFactionId
+    ?? contentCatalog.districtsById.get(districtId)?.controllingFactionId
+    ?? null
+  return districtControlFactionId ? (state.factionStandings[districtControlFactionId] ?? 0) : 0
+}
+
+/**
+ * Find the cheapest-first, in-stock, affordable offer across shops in the NPC's assigned
+ * district, skipping shops the house's faction standing does not meet.
+ */
+function findShopMatch(state: GameState, npc: NpcRuntimeState): ShopMatch | null {
+  if (!npc.assignedDistrictId) return null
+
+  const totalFunds = npc.personalFunds.carriedCash + npc.personalFunds.savings
+  if (totalFunds <= 0) return null
+
+  const discount = negotiationDiscountForSkill(npc)
+  const shopsInDistrict = contentCatalog.shops.filter((s) => s.districtId === npc.assignedDistrictId)
+  const controlStanding = districtControlStanding(state, npc.assignedDistrictId)
+
+  for (const shop of shopsInDistrict) {
+    if (shop.requiredFactionId) {
+      const standing = state.factionStandings[shop.requiredFactionId] ?? 0
+      if (standing < (shop.minFactionStanding ?? 0)) continue
+    }
+
+    const shopStockContainerId = `shop:${shop.id}:stock`
+    const shopStock = state.inventoryState.sharedContainers.find(
+      (c) => c.containerId === shopStockContainerId || c.ownerId === shopStockContainerId || c.ownerId === shop.id,
+    )
+    if (!shopStock) continue
+
+    for (const offer of shop.offers.slice().sort((a, b) => a.order - b.order)) {
+      if (offer.minStanding !== undefined && controlStanding < offer.minStanding) continue
+
+      const pricingBreakdown = resolveShopPricingBreakdown(state, shop.id, offer.itemId)
+      if (!pricingBreakdown) continue
+
+      const price = Math.max(1, Math.round(pricingBreakdown.finalPrice * (1 - discount)))
+      if (price > totalFunds) continue
+
+      const availableSlot = shopStock.slots.find((slot) => {
+        if (!slot.itemInstanceId) return false
+        const instanceDef = state.inventoryState.itemRegistry[slot.itemInstanceId]
+        return instanceDef?.itemId === offer.itemId && slot.quantity > 0
+      })
+      if (!availableSlot?.itemInstanceId) continue
+
+      return { shop, shopStockContainerId, offerItemId: offer.itemId, itemInstanceId: availableSlot.itemInstanceId, price }
+    }
+  }
+
+  return null
+}
+
+/** Whether this NPC can currently find and afford an in-stock offer at a shop in their district. */
+export function npcCanShopForGoods(state: GameState, npc: NpcRuntimeState): boolean {
+  return findShopMatch(state, npc) !== null
+}
+
+/**
+ * NPC shops for goods at a shop in their assigned district, paying from personalFunds and
+ * negotiating the price down with negotiation/administration skill. Item moves via the canonical
+ * transferItem core (shop_stock -> npc_inventory); money moves directly on personalFunds (shops
+ * have no balance of their own, matching the player's own purchaseItemFromShop).
+ */
+export function npcShopForGoods(state: GameState, npcId: string): GameState {
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
+  if (!npc) return state
+
+  const match = findShopMatch(state, npc)
+  if (!match) return state
+
+  const fromCarried = Math.min(npc.personalFunds.carriedCash, match.price)
+  const fromSavings = match.price - fromCarried
+
+  let next: GameState = {
+    ...state,
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
+      n.npcId === npcId
+        ? {
+            ...n,
+            personalFunds: {
+              ...n.personalFunds,
+              carriedCash: n.personalFunds.carriedCash - fromCarried,
+              savings: n.personalFunds.savings - fromSavings,
+            },
+          }
+        : n,
+    ),
+  }
+
+  const transferParams: TransferItemParams = {
+    fromType: 'shop_stock',
+    fromId: match.shopStockContainerId,
+    toType: 'npc_inventory',
+    toId: npcId,
+    itemInstanceId: match.itemInstanceId,
+    quantity: 1,
+  }
+  next = transferItem(next, transferParams)
+
+  const itemName = contentCatalog.itemsById.get(match.offerItemId)?.name ?? match.offerItemId
+  return appendActivityLogEntry(
+    next,
+    'economy',
+    `${npc.name} buys ${itemName} from ${match.shop.name} for ${match.price} marks.`,
+  )
 }

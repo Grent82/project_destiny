@@ -33,6 +33,7 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     },
     activityLog: overrides.activityLog ?? [],
     selectedSquadNpcIds: overrides.selectedSquadNpcIds ?? [],
+    npcGroups: overrides.npcGroups ?? [],
     activeCombat: overrides.activeCombat ?? null,
     lastEncounterSummary: overrides.lastEncounterSummary ?? null,
     lastResolvedEventSummary: overrides.lastResolvedEventSummary ?? null,

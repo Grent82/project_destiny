@@ -17,7 +17,7 @@ import {
   itemDefinitionSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
-import { attributesSchema, bondStatusSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
+import { attributesSchema, bondStatusSchema, npcDefinitionSchema, npcGroupSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema, timeSlotStateSchema } from '../shared/contracts'
@@ -323,6 +323,7 @@ export const gameStateSchema = z
     cityResources: cityResourcesSchema,
     activityLog: z.array(activityLogEntrySchema).max(100),
     selectedSquadNpcIds: z.array(entityIdSchema).max(6),
+    npcGroups: z.array(npcGroupSchema).default([]),
     activeCombat: activeCombatStateSchema.nullable(),
     lastEncounterSummary: z.object({
       outcome: z.enum(['victory', 'defeat']),

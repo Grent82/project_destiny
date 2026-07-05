@@ -30,6 +30,7 @@ const baseState: GameState = {
   cityResources: { foodSecurity: 60, foodStock: 600, foodCapacity: 1000, waterAccess: 60, materialStock: 60, corridorStatus: 'open', corridorClearanceProgressDays: 0, activeGroups: [], groupHistory: [] },
   activityLog: [],
   selectedSquadNpcIds: [],
+  npcGroups: [],
   activeCombat: null,
   lastEncounterSummary: null,
   lastResolvedEventSummary: null,

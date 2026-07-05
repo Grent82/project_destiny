@@ -857,4 +857,38 @@ export type NpcStatus = z.infer<typeof npcStatusSchema>
 export type RelationshipAxes = z.infer<typeof relationshipAxesSchema>
 export type Skills = z.infer<typeof skillsSchema>
 export type States = z.infer<typeof statesSchema>
+
+/**
+ * NPC group/squad runtime concept (destiny-nid0).
+ *
+ * A lightweight record for an NPC-led group of co-located roster operatives — the shape that
+ * lead-group/support-group/form-squad/recruit-member all read and write (src/application/
+ * commands/npcGroups.ts). Deliberately minimal: no other system reads npcGroups yet (combat/quest
+ * integration is future work), so this only needs to support formation and membership.
+ *
+ * Invariants (enforced by npcGroups.ts, not by this schema):
+ * - One group per person: a person is a leader, a member, or ungrouped — never more than one of
+ *   these at once.
+ * - Members are always playerRosterMember, idle, and co-located (same assignedDistrictId) with the
+ *   leader at the time they join. World/story NPCs never participate — intentions/eligibility.ts's
+ *   WORLD_ELIGIBLE_INTENTION_TYPES already excludes all 4 group intention types for them.
+ * - Capped at 3 members beyond the leader (mirrors npcHostGathering's guest cap and
+ *   selectedSquadNpcIds's max 6).
+ * - dismissNpc (recruitment.ts) cascades into this list: removing a member drops them from
+ *   memberIds; removing a leader disbands the group.
+ */
+export const npcGroupPurposeSchema = z.enum(['circle', 'squad'])
+export type NpcGroupPurpose = z.infer<typeof npcGroupPurposeSchema>
+
+export const npcGroupSchema = z
+  .object({
+    groupId: entityIdSchema,
+    leaderId: entityIdSchema,
+    memberIds: z.array(entityIdSchema).default([]),
+    purpose: npcGroupPurposeSchema,
+    districtId: entityIdSchema.nullable().default(null),
+    formedOnDay: nonNegativeIntegerSchema,
+  })
+  .strict()
+export type NpcGroup = z.infer<typeof npcGroupSchema>
 export type Traits = z.infer<typeof traitsSchema>

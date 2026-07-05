@@ -52,6 +52,7 @@ const baseGameState: GameState = {
   },
   activityLog: [],
   selectedSquadNpcIds: [],
+  npcGroups: [],
   activeCombat: null,
   lastEncounterSummary: null,
   lastResolvedEventSummary: null,

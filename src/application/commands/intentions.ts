@@ -13,7 +13,16 @@ import {
   npcFortifyPosition,
   npcCareForInjured,
 } from './npcAggressionActions'
-import { npcResourceGather, npcScavenge, npcSeekEmployment, npcHostGathering } from './npcSpecialActions'
+import { npcResourceGather, npcScavenge, npcSeekEmployment, npcHostGathering, npcShopForGoods, npcCanShopForGoods } from './npcSpecialActions'
+import {
+  npcLeadGroup,
+  npcFormSquad,
+  npcSupportGroup,
+  npcRecruitMember,
+  npcCanFormGroup,
+  npcCanSupportGroup,
+  npcCanRecruitMember,
+} from './npcGroups'
 import {
   npcConsolidatePower,
   npcChallengeAuthority,
@@ -439,25 +448,27 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'patrol-district',
   'fortify-position',
   'care-for-injured',
-  // destiny-ddqf (Special Actions): shop-for-goods stays excluded (blocked pending
-  // destiny-su15.3/su15.4 per its own bead notes); recruit-member stays excluded (no NPC
-  // group/squad runtime concept exists — see lead-group/support-group/form-squad below).
   'resource-gather',
   'scavenge',
   'seek-employment',
   'host-gathering',
-  // destiny-l2ex (Leadership & Social): lead-group/support-group stay excluded — same
-  // missing-group-system gap as recruit-member/form-squad.
+  'shop-for-goods',
+  // destiny-nid0: NPC group/squad runtime concept (GameState.npcGroups, npcGroups.ts) unblocked
+  // these 4 — previously excluded across destiny-ddqf/l2ex/aoy7 for lacking any group data model.
+  'recruit-member',
+  'lead-group',
+  'support-group',
+  'form-squad',
   'consolidate-power',
   'socialize',
   'gossip',
   'mediate-conflict',
   'challenge-authority',
-  // destiny-aoy7 (Intellect & Stealth): form-squad stays excluded (missing-group-system gap).
-  // escape-attempt stays excluded — isNpcBlockedFromIntention() unconditionally blocks captive
-  // NPCs from any intention, so it's structurally unreachable via this pipeline today even
-  // though npcEscapeAttempt itself is implemented and tested; unblocking it needs a deliberate
-  // carve-out in that guard, not a silent inclusion here.
+  // destiny-aoy7 (Intellect & Stealth): escape-attempt stays excluded —
+  // isNpcBlockedFromIntention() unconditionally blocks captive NPCs from any intention, so it's
+  // structurally unreachable via this pipeline today even though npcEscapeAttempt itself is
+  // implemented and tested; unblocking it needs a deliberate carve-out in that guard, not a
+  // silent inclusion here.
   'spy-on',
   'gather-leverage',
   'intercept-communication',
@@ -561,39 +572,33 @@ function canExecuteIntention(npc: NpcRuntimeState): boolean {
 }
 
 /**
- * Lead Group Handler
- * NPC attempts to form or lead a group (e.g., for corridor clearance).
+ * Lead Group Handler (destiny-nid0/c9zx)
+ * NPC gathers a social/political following from nearby idle roster operatives.
  */
 const leadGroupHandler: IntentionHandler = {
-  canExecute: (npc) => {
+  canExecute: (npc, state) => {
     if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
     // Requires high presence and ambition
-    return npc.attributes.presence >= 60 && npc.traits.ambition >= 50
+    if (!(npc.attributes.presence >= 60 && npc.traits.ambition >= 50)) return false
+    return npcCanFormGroup(state, npc)
   },
-  execute: (_npc, state) => {
-    // For now, this is a placeholder - actual group logic would go here
-    // In a full implementation, this would:
-    // - Check if a group already exists
-    // - Recruit other NPCs to join
-    // - Start a group expedition
-    return state
-  },
+  execute: (npc, state) => npcLeadGroup(state, npc.npcId),
 }
 
 /**
- * Support Group Handler
- * NPC joins an existing group as support.
+ * Support Group Handler (destiny-nid0/rjtz)
+ * NPC joins an existing co-located group as a supporting member.
  */
 const supportGroupHandler: IntentionHandler = {
-  canExecute: (npc) => {
+  canExecute: (npc, state) => {
     if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
     // Requires empathy and loyalty
-    return npc.traits.empathy >= 40 || npc.traits.loyalty >= 50
+    if (!(npc.traits.empathy >= 40 || npc.traits.loyalty >= 50)) return false
+    return npcCanSupportGroup(state, npc)
   },
-  execute: (_npc, state) => {
-    // Placeholder - would join existing group
-    return state
-  },
+  execute: (npc, state) => npcSupportGroup(state, npc.npcId),
 }
 
 /**
@@ -1026,19 +1031,17 @@ const flirtAggressivelyHandler: IntentionHandler = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Shop For Goods Handler
- * NPC shops for items/resources.
+ * Shop For Goods Handler (destiny-2igf)
+ * NPC shops for an affordable, in-stock item at a shop in their district using personalFunds.
  */
 const shopForGoodsHandler: IntentionHandler = {
-  canExecute: (npc) => {
+  canExecute: (npc, state) => {
     if (!canExecuteIntention(npc)) return false
-    // Requires negotiation or administration
-    return npc.skills.negotiation >= 30 || npc.skills.administration >= 30
+    if (!npc.playerRosterMember) return false
+    if (npc.skills.negotiation < 30 && npc.skills.administration < 30) return false
+    return npcCanShopForGoods(state, npc)
   },
-  execute: (_npc, state) => {
-    // Placeholder - would visit shop, potentially buy items
-    return state
-  },
+  execute: (npc, state) => npcShopForGoods(state, npc.npcId),
 }
 
 /**
@@ -1196,35 +1199,33 @@ const consolidatePowerHandler: IntentionHandler = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Form Squad Handler
- * NPC forms a group for joint action.
+ * Form Squad Handler (destiny-nid0/mvo9)
+ * NPC forms a tactical squad from nearby idle roster operatives.
  */
 const formSquadHandler: IntentionHandler = {
-  canExecute: (npc) => {
+  canExecute: (npc, state) => {
     if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
     // Requires presence and leadership traits
-    return npc.attributes.presence >= 50 || npc.traits.ambition >= 50
+    if (!(npc.attributes.presence >= 50 || npc.traits.ambition >= 50)) return false
+    return npcCanFormGroup(state, npc)
   },
-  execute: (_npc, state) => {
-    // Placeholder - would form squad with other NPCs
-    return state
-  },
+  execute: (npc, state) => npcFormSquad(state, npc.npcId),
 }
 
 /**
- * Recruit Member Handler
- * NPC recruits new members for their group.
+ * Recruit Member Handler (destiny-nid0/u0zl)
+ * NPC (a group leader) recruits a co-located, ungrouped roster operative into their group.
  */
 const recruitMemberHandler: IntentionHandler = {
-  canExecute: (npc) => {
+  canExecute: (npc, state) => {
     if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
     // Requires negotiation and presence
-    return npc.skills.negotiation >= 40 || npc.attributes.presence >= 40
+    if (!(npc.skills.negotiation >= 40 || npc.attributes.presence >= 40)) return false
+    return npcCanRecruitMember(state, npc)
   },
-  execute: (_npc, state) => {
-    // Placeholder - would recruit target NPC
-    return state
-  },
+  execute: (npc, state) => npcRecruitMember(state, npc.npcId),
 }
 
 /**

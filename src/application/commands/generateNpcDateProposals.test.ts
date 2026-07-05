@@ -37,6 +37,7 @@ const createTestState = (overrides?: Partial<GameState>): GameState => ({
   },
   activityLog: [],
   selectedSquadNpcIds: [],
+  npcGroups: [],
   activeCombat: null,
   lastEncounterSummary: null,
   lastResolvedEventSummary: null,
