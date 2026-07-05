@@ -571,4 +571,69 @@ describe('combat commands', () => {
       expect(result.completedQuestIds).toContain('quest-harborwatch')
     })
   })
+
+  describe('NPC combat loot (destiny-bkln.cyrd)', () => {
+    function victoryStateWithSurvivingAlly(rngSeed: number) {
+      const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'], rngSeed }
+      const started = startCombatEncounter(state)
+      return {
+        ...started,
+        activeCombat: {
+          ...started.activeCombat!,
+          outcome: 'victory' as const,
+          activeCombatantId: null,
+          combatants: started.activeCombat!.combatants.map((c) => {
+            if (c.side === 'enemies') return { ...c, health: 0 }
+            return { ...c, health: Math.max(1, c.health) }
+          }),
+        },
+      }
+    }
+
+    it('is RNG-gated: some seeds grant loot to a surviving ally, some do not', () => {
+      let anyLooted = false
+      let anySkipped = false
+      for (let seed = 0; seed < 40; seed++) {
+        const resolved = victoryStateWithSurvivingAlly(seed)
+        const result = concludeCombatEncounter(resolved)
+        const idaInventory = result.inventoryState.npcInventories['npc-ida-rhys'] ?? []
+        const gotLoot = idaInventory.some((c) => c.slots.length > 0)
+        if (gotLoot) anyLooted = true
+        else anySkipped = true
+      }
+      expect(anyLooted).toBe(true)
+      expect(anySkipped).toBe(true)
+    })
+
+    it('logs an economy activity entry naming the NPC when loot is granted', () => {
+      let found = false
+      for (let seed = 0; seed < 40; seed++) {
+        const resolved = victoryStateWithSurvivingAlly(seed)
+        const result = concludeCombatEncounter(resolved)
+        if (result.activityLog.some((e) => e.category === 'economy' && /recovers/i.test(e.message))) {
+          found = true
+          break
+        }
+      }
+      expect(found).toBe(true)
+    })
+
+    it('grants no NPC loot when there are no surviving allies with a sourceNpcId', () => {
+      const state = { ...initialStateWithIda, selectedSquadNpcIds: ['npc-marion-vale', 'npc-ida-rhys'], rngSeed: 1 }
+      const started = startCombatEncounter(state)
+      const resolved = {
+        ...started,
+        activeCombat: {
+          ...started.activeCombat!,
+          outcome: 'victory' as const,
+          activeCombatantId: null,
+          combatants: started.activeCombat!.combatants.map((c) => ({ ...c, health: 0 })),
+        },
+      }
+      const result = concludeCombatEncounter(resolved)
+      expect(Object.keys(result.inventoryState.npcInventories)).toHaveLength(
+        Object.keys(initialStateWithIda.inventoryState.npcInventories).length,
+      )
+    })
+  })
 })

@@ -16,6 +16,9 @@ import { formatMarks } from '../../domain/game/currency'
 import { computePostCombatFearDelta } from '../../domain/combat/fearModel'
 import { spawnEventRumor } from './spawnEventRumor'
 import { advanceTimeSlotInState } from './timeAdvance'
+import { grantNewItemToNpc } from './npcInventoryHelpers'
+
+const NPC_COMBAT_LOOT_CHANCE = 0.3
 import {
   FALLBACK_ENCOUNTER_POOL,
   PLAYER_MAX_HEALTH,
@@ -376,6 +379,25 @@ export function concludeCombatEncounter(state: GameState): GameState {
       if (fearDelta > 0) {
         const fearResult = applyRelationshipDelta(nextState, 'player', ally.sourceNpcId!, 'fear', fearDelta)
         nextState = fearResult.state
+      }
+    }
+
+    // NPC combat loot (destiny-bkln.cyrd): surviving ally combatants may personally recover a
+    // small item from the fallen, landing in their own inventory — reuses the ally participant
+    // tracking (sourceNpcId/side) that combatants.ts already provides, rather than inventing new
+    // tracking. Passive combat-resolution side effect (like the money-loot branch above), not
+    // intention-gated — an NPC doesn't "decide" to loot mid-fight.
+    if (defeatedEnemies.length > 0) {
+      const survivingAllies = allyCombatants.filter((a) => a.health > 0 && a.sourceNpcId)
+      const lootPool = contentCatalog.items.filter((i) => i.category === 'material' || i.category === 'tradeGood')
+      if (lootPool.length > 0) {
+        for (const ally of survivingAllies) {
+          if (rng() >= NPC_COMBAT_LOOT_CHANCE) continue
+          const item = lootPool[randomIndex(lootPool.length, rng)]!
+          nextState = grantNewItemToNpc(nextState, ally.sourceNpcId!, item.id, 1, 'combat_loot')
+          const npcName = nextState.npcRuntimeStates.find((n) => n.npcId === ally.sourceNpcId)?.name ?? ally.sourceNpcId
+          nextState = appendActivityLogEntry(nextState, 'economy', `${npcName} recovers ${item.name} from the fight.`)
+        }
       }
     }
 
