@@ -299,6 +299,11 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: { crafting: 1.4, engineering: 1.2 },
     traitWeights: { prudence: 1.0, discipline: 0.8 },
   },
+  'use-consumable': {
+    attributeWeights: { endurance: 1.0 },
+    skillWeights: { medicine: 1.1, survival: 1.0 },
+    traitWeights: { prudence: 0.8 },
+  },
 }
 
 /**

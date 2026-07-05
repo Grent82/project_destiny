@@ -53,6 +53,7 @@ export const npcIntentionTypeSchema = z.enum([
   'care-for-injured',
   // Wirtschaft / NPC Economy (destiny-bkln)
   'repair-equipment',
+  'use-consumable',
 ] as const)
 
 export const percentageSchema = z.number().finite().min(0).max(100)

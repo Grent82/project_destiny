@@ -36,6 +36,7 @@ import {
 import { createRng } from './seededRng'
 import { intentionTypesForNpc } from './intentions/eligibility'
 import { npcRepairEquipment, npcNeedsEquipmentRepair } from './economy/npcRepairEquipment'
+import { npcUseConsumable, npcCanUseConsumable } from './economy/npcUseConsumable'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -192,6 +193,7 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'scavenge-for-sell': 3,
     // NPC Economy (destiny-bkln)
     'repair-equipment': 3,
+    'use-consumable': 1,
     // Macht/Kontrolle (5)
     'assert-dominance': 3,
     'spy-on': 2,
@@ -463,6 +465,7 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   // deliberately absent from WORLD_ELIGIBLE_INTENTION_TYPES, matching seek-employment/seek-tips'
   // existing precedent: this is a roster-personalFunds economy action, not a world-NPC one).
   'repair-equipment',
+  'use-consumable',
 ])
 
 /**
@@ -1354,6 +1357,19 @@ const repairEquipmentHandler: IntentionHandler = {
   execute: (npc, state) => npcRepairEquipment(state, npc.npcId),
 }
 
+/**
+ * Use Consumable Handler (destiny-bkln)
+ * NPC uses a self-carried medkit/ration to address low health or high hunger.
+ */
+const useConsumableHandler: IntentionHandler = {
+  canExecute: (npc, state) => {
+    if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
+    return npcCanUseConsumable(state, npc)
+  },
+  execute: (npc, state) => npcUseConsumable(state, npc.npcId),
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // All intention handlers mapped by type
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1419,6 +1435,7 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'scavenge-for-sell': careForInjuredHandler, // Placeholder - will be implemented later
   // NPC Economy (destiny-bkln)
   'repair-equipment': repairEquipmentHandler,
+  'use-consumable': useConsumableHandler,
 }
 
 /**

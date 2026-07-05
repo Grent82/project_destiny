@@ -188,6 +188,7 @@ export function getTraitDrivenIntentions(
     'scavenge-for-sell': npc.skills.survival + npc.attributes.perception,
     // NPC Economy (destiny-bkln)
     'repair-equipment': npc.skills.crafting + npc.skills.engineering,
+    'use-consumable': (100 - npc.states.health) + Math.max(0, npc.states.hunger - 50),
   }
 
   // Find intentions where NPC has decent capability (score > 130)
