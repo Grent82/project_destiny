@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { applyStateDecay } from './applyStateDecay'
-import { initialStateWithIda } from './testFixtures'
+import { initialStateWithIda, idaRhysRosterEntry, worldNpcRuntimeEntry } from './testFixtures'
 import type { RoomFunction } from '../../domain/game/contracts'
 
 function withRoom(state: typeof initialStateWithIda, roomId: string, fn: RoomFunction) {
@@ -389,28 +389,18 @@ describe('player rest', () => {
   })
 })
 
-describe('World NPC recovery scaffolding (destiny-629x)', () => {
+describe('World NPC recovery (destiny-629x scaffolding, folded into the unified list in destiny-rama.8)', () => {
   const recoveringWorldNpcId = 'npc-scaffolding-test-world-npc'
 
   function stateWithRecoveringWorldNpc(health: number, injury: number) {
     return {
       ...initialStateWithIda,
-      worldNpcStates: [
-        ...initialStateWithIda.worldNpcStates,
-        {
-          npcId: recoveringWorldNpcId,
-          lastContactDay: null,
-          disposition: 'neutral' as const,
-          locationOverride: null,
-          flags: [],
-          intimacyStage: 'none' as const,
-          pregnancyState: null,
-          health,
-          injury,
-          recovering: true,
-          clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
-          armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
-        },
+      npcRuntimeStates: [
+        ...initialStateWithIda.npcRuntimeStates,
+        worldNpcRuntimeEntry(recoveringWorldNpcId, {
+          assignment: 'recovering',
+          states: { ...idaRhysRosterEntry.states, health, injury },
+        }),
       ],
     }
   }
@@ -419,10 +409,10 @@ describe('World NPC recovery scaffolding (destiny-629x)', () => {
     const state = stateWithRecoveringWorldNpc(50, 40)
     const result = applyStateDecay(state)
 
-    const worldNpc = result.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
-    expect(worldNpc!.health).toBeGreaterThan(50)
-    expect(worldNpc!.injury).toBeLessThan(40)
-    expect(worldNpc!.recovering).toBe(true)
+    const worldNpc = result.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
+    expect(worldNpc!.states.health).toBeGreaterThan(50)
+    expect(worldNpc!.states.injury).toBeLessThan(40)
+    expect(worldNpc!.assignment).toBe('recovering')
   })
 
   it('gets infirmary treatment the same way roster NPCs do', () => {
@@ -432,24 +422,34 @@ describe('World NPC recovery scaffolding (destiny-629x)', () => {
     const baseline = applyStateDecay(baseState)
     const withBonus = applyStateDecay(withInfirmary)
 
-    const baselineNpc = baseline.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
-    const bonusNpc = withBonus.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
+    const baselineNpc = baseline.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
+    const bonusNpc = withBonus.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
 
-    expect(bonusNpc!.injury).toBeLessThan(baselineNpc!.injury)
+    expect(bonusNpc!.states.injury).toBeLessThan(baselineNpc!.states.injury)
   })
 
-  it('flips recovering to false once health and injury both clear the ready threshold', () => {
+  it('flips assignment back to idle once health and injury both clear the ready threshold', () => {
     const state = stateWithRecoveringWorldNpc(90, 10)
     const result = applyStateDecay(state)
 
-    const worldNpc = result.worldNpcStates.find((w) => w.npcId === recoveringWorldNpcId)
-    expect(worldNpc!.recovering).toBe(false)
+    const worldNpc = result.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
+    expect(worldNpc!.assignment).toBe('idle')
   })
 
-  it('does not touch non-recovering World NPCs', () => {
-    const state = initialStateWithIda
+  it('does not apply the recovery-boost health/injury changes to a non-recovering World NPC', () => {
+    const state: typeof initialStateWithIda = {
+      ...initialStateWithIda,
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, worldNpcRuntimeEntry('npc-idle-test-world-npc')],
+    }
     const result = applyStateDecay(state)
 
-    expect(result.worldNpcStates).toEqual(state.worldNpcStates)
+    const worldNpc = result.npcRuntimeStates.find((w) => w.npcId === 'npc-idle-test-world-npc')
+    // Step 1's baseline hunger/fatigue/etc. decay now runs over every person in the unified list
+    // (destiny-rama.8 fold) — that's the "full needs parity" the unify epic exists to deliver
+    // (destiny-rama.12 tunes it further). Only the recovery-specific boost (Step 2b) must stay
+    // gated to assignment === 'recovering'.
+    expect(worldNpc!.assignment).toBe('idle')
+    expect(worldNpc!.states.health).toBe(idaRhysRosterEntry.states.health)
+    expect(worldNpc!.states.injury).toBe(idaRhysRosterEntry.states.injury)
   })
 })

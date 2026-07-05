@@ -67,7 +67,10 @@ export function ExpeditionPrepScreen() {
     )
   }
 
-  const availableRoster = roster.filter((npc) => npc.assignment === 'idle' && isDeployable(npc))
+  // playerRosterMember, not the raw unified list (destiny-rama.8) — only the player's own operatives
+  // can be sent on an expedition; world/story/enemy persons sharing the runtime array must not
+  // appear as deployable squad candidates.
+  const availableRoster = roster.filter((npc) => npc.playerRosterMember && npc.assignment === 'idle' && isDeployable(npc))
 
   function toggleNpc(npcId: string) {
     setSquadIds((prev) =>

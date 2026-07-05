@@ -11,7 +11,6 @@ import {
   signedStandingSchema,
   timeSlotSchema,
 } from '../shared/contracts'
-import { intimacyStageSchema } from '../relationships/contracts'
 
 export const npcStatusSchema = z.enum([
   'citizen',
@@ -496,29 +495,10 @@ export const pregnancyStateSchema = z.object({
   wanted: z.boolean().nullable().default(null), // true = wanted, false = avoided, null = neutral/unspecified
 })
 
-export const worldNpcRuntimeStateSchema = z.object({
-  npcId: entityIdSchema,
-  lastContactDay: z.number().int().nonnegative().nullable().default(null),
-  disposition: worldNpcDispositionSchema.default('neutral'),
-  locationOverride: z.string().nullable().default(null),
-  flags: z.array(z.string()).default([]),
-  // Relationship intimacy tracking for World NPCs
-  intimacyStage: intimacyStageSchema.default('none'),
-  // Pregnancy tracking for World NPCs
-  pregnancyState: pregnancyStateSchema.nullable().default(null),
-  // Recovery scaffolding (destiny-629x): nothing currently sets injury > 0 for a World NPC —
-  // no combat or incident path touches them yet (tracked separately in destiny-s97u). These
-  // fields exist so the recovery runtime can already handle a World NPC once a harm source lands.
-  health: z.number().int().min(0).max(100).default(100),
-  injury: z.number().int().min(0).max(100).default(0),
-  recovering: z.boolean().default(false),
-  // Clothing and armor - all NPCs have basic equipment regardless of roster status
-  clothing: npcClothingSchema.default({ head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] }),
-  armor: npcArmorSchema.default({ lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }),
-}).strict()
-
 export type WorldNpcDisposition = z.infer<typeof worldNpcDispositionSchema>
-export type WorldNpcRuntimeState = z.infer<typeof worldNpcRuntimeStateSchema>
+// WorldNpcRuntimeState (the thin world-only shape) was deleted in destiny-rama.8 — world persons are
+// now full NpcRuntimeState entries (npcType:'world', playerRosterMember:false) in
+// GameState.npcRuntimeStates. See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §4.1.
 
 /**
  * arousalState tracks an NPC's arousal level and related state.
@@ -801,6 +781,12 @@ export const npcRuntimeStateSchema = z
     worldDisposition: worldNpcDispositionSchema.nullable().default(null),
     lastContactDay: z.number().int().nonnegative().nullable().default(null),
     locationOverride: z.string().nullable().default(null),
+    // flags: free-form ambient tags (e.g. 'mira-custody-handler', 'patron-of:npc-x'). Folded in from
+    // the deleted worldNpcRuntimeStateSchema (destiny-rama.8) — actively read by selectors/mira.ts and
+    // written by applyWorldNpcSocialSimulation.ts, so unlike the other world-only fields it could not
+    // simply be dropped. Optional (not defaulted) like captivityState/pregnancyState below — absent
+    // for player-roster persons in practice; readers use `npc.flags ?? []`.
+    flags: z.array(z.string()).optional(),
     roomAssignment: entityIdSchema.nullable().default(null),
     // dutyPostRoomId: where this NPC is presently stationed for in-house work (e.g. kitchen
     // duty). Distinct from roomAssignment (lodging/quarters) — see

@@ -128,12 +128,12 @@ locationOverride: z.string().nullable().default(null),
 | `disposition` | `worldDisposition` | renamed to avoid clashing with roster semantics |
 | `lastContactDay` | `lastContactDay` | new optional field |
 | `locationOverride` | `locationOverride` | new optional field |
-| `flags` | *(drop)* | roster has no flags array; migrate into `npcMemory` only if any world flag is read anywhere (grep first — see ticket) |
-| `intimacyStage` | relationship axes | intimacy already lives on relationships for roster; world intimacy folds there (verify no data loss) |
-| `pregnancyState` | `pregnancyState` | already on runtime state (:806) |
+| `flags` | new `flags?: string[]` field on `NpcRuntimeState` | **grepped, actively read/written** by `selectors/mira.ts` (custody handler/guard tags), `applyWorldNpcSocialSimulation.ts` (patron-of/protecting/feud-with tags) and `rosterReducers.ts` — could not be dropped. Added as `.optional()` (no `.default()`), matching the `captivityState`/`pregnancyState` convention, specifically so existing fixtures/objects that never mention it stay schema-valid (a `.default([])` would have forced `flags: []` onto ~20 unrelated NpcRuntimeState literals across the codebase for no benefit). Readers use `npc.flags ?? []`. |
+| `intimacyStage` | *(dropped, verified dead)* | grepped: never read anywhere except at construction (always defaulted to `'none'`, never queried) — real intimacy already lives on `state.relationships` (pair-keyed) for every population. Confirmed no data loss. |
+| `pregnancyState` | `pregnancyState` | already on runtime state (:806); **note the nullability differs** — the old field was `.nullable()`, the new one is `.optional()` (no `null`). Migration code must omit the key entirely for an absent pregnancy, not pass `null`. |
 | `health` | `states.health` | |
 | `injury` | `states.injury` | |
-| `recovering` | `assignment:'recovering'` or `states` | decide in ticket per recovery contract |
+| `recovering` | `assignment:'recovering'` | **decided**: folding the separate world-recovery loop (Step 2b' in `applyStateDecay.ts`) into the existing roster recovery loop (Step 2b), since both now key off the same `assignment === 'recovering'` gate on the same unified list — keeping them as two separate loops would double-process any world person with that assignment (double health gain per day). |
 | `clothing` | `clothing` | already on runtime state (:801) |
 | `armor` | `armor` | already on runtime state (:802) |
 
@@ -188,16 +188,39 @@ The exact per-type sets are enumerated in the eligibility ticket; this table is 
 Current `saveVersion` default is 6 (contracts.ts:521). Add a v6→v7 step that:
 
 1. renames `roster` → `npcRuntimeStates` (stamp `npcType:'roster'` on each existing entry),
-2. hydrates each `worldNpcStates` entry into an `npcRuntimeStates` entry via the factory + §4.1 map
-   (stamp `npcType:'world'`), then removes `worldNpcStates`,
+2. hydrates each `worldNpcStates` entry into an `npcRuntimeStates` entry via the factory + §4.1 map,
+   then removes `worldNpcStates`,
 3. folds each `npcCaptivityStates[id]` into the matching entry's `captivityState` per §4.2 (hydrate
    from definition if the person isn't already present), then removes `npcCaptivityStates`,
 4. sets `saveVersion:7`, validates with `gameStateSchema` before returning.
 
+**Implementation note (destiny-rama.8, revises this section after landing):**
+- Step 2 does **not** stamp `npcType:'world'` — it lets the factory derive `npcType` from each
+  person's own definition, same as every other hydration path. Verified against real data: of the 3
+  shipped `worldNpcStates` entries, only `npc-dalen-morke` is `npcType:'story'`; the other two
+  (`npc-enemy-tomas-rell`, `npc-enemy-catrin-hale`) are `npcType:'enemy'` by definition despite
+  having lived in `worldNpcStates` (the §10 / destiny-rama.14 source-of-truth drift). Blanket-stamping
+  `'world'` would have planted a wrong fact into the schema instead of carrying the pre-existing drift
+  forward untouched for rama.14 to fix at its source.
+- Each migration step's guard is **array/key presence**, not `saveVersion` equality. A save can
+  already be stamped `saveVersion:7` by an earlier step's migration alone (e.g. after destiny-rama.7
+  landed but before destiny-rama.8's code existed, a save could be v7 with `roster` already renamed
+  yet `worldNpcStates`/`npcCaptivityStates` still present) — version number alone can't disambiguate
+  "fully migrated" from "partially migrated," so each step must independently detect and fold its own
+  legacy field whenever it's present, regardless of the stamped version.
+- Recruiting a person who already has a non-roster runtime entry (`playerRosterMember:false`) is not
+  yet supported — `recruitNpc`'s `alreadyOnRoster` guard rejects any npcId with an existing runtime
+  entry instead of upserting `playerRosterMember` on it. Currently unreachable in practice
+  (`generateHireOffers` only generates offers for `npcType:'roster'` definitions), so no regression
+  today, but any future path that offers a hire on a `npcType:'world'` definition needs this fixed
+  first — filed as a follow-up bead (destiny-rama.17) rather than solved inline, since it's a
+  recruitment-semantics change, not a storage fold.
+
 `data/runtime/initial-game-state.json` is updated by hand to the v7 shape (single list) as part of
 the schema ticket. Also decide there whether to hydrate the 12 world definitions that currently have
 **no** runtime entry (only `npc-dalen-morke`, `npc-enemy-tomas-rell`, `npc-enemy-catrin-hale` exist
-today) — recommended: hydrate all ambient world defs so districts actually have people.
+today) — recommended: hydrate all ambient world defs so districts actually have people. (Still open —
+tracked as destiny-rama.13 / E1, explicitly out of destiny-rama.8's scope.)
 
 ## 8. availableForHire (unchanged, documented)
 
@@ -240,6 +263,19 @@ Revised sequence (each step green):
 The `findNpc`/`updateNpc`/`selectAllNpcs`/`selectRosterNpcs` bridge helpers (rama.4) remain the
 accessors D1/D2/D3 use for the intention/decay loops over the whole population; they are not forced
 onto the ~350 rename-safe id-scoped sites.
+
+**Post-rama.8 correction to this plan:** the rama.6 audit scoped its ~85-site sweep to
+`src/application/commands/`. Landing the actual fold (rama.8) surfaced a second, disjoint category of
+"player's team" sites the audit's scope didn't cover: **selectors** (`selectors/roster.ts`'s
+`selectRosterEntries`, `selectors/dashboard.ts`, `selectors/ledger.ts`, `selectors/bondMarket.ts`,
+`selectors/house.ts`) and **UI components reading `npcRuntimeStates` directly, bypassing selectors**
+(`InvestigationScreen.tsx`, `ExpeditionPrepScreen.tsx`, `ShopsScreen.tsx`, `HouseScreen.tsx`). None of
+these were reachable by the command-layer grep, and several had no existing test to catch the
+regression at all (found by manual sweep, not a failing test, after the fold made the bug live) —
+e.g. the roster wage bill and dashboard roster count would have silently included Mira's custody
+handler/guards once the fold landed. **destiny-rama.9 (the captivity fold) must repeat this sweep**
+against `src/application/selectors/` and `src/ui/` in addition to `src/application/commands/`, not
+assume rama.6's original file list was exhaustive.
 
 ## 10. Known adjacent finding (separate bead)
 

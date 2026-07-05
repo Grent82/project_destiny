@@ -124,7 +124,6 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     rngSeed: overrides.rngSeed ?? 42,
     rumors: overrides.rumors ?? [],
     bondVisibility: overrides.bondVisibility ?? {},
-    worldNpcStates: overrides.worldNpcStates ?? [],
     siteRuntimes: overrides.siteRuntimes ?? {},
     npcCaptivityStates: overrides.npcCaptivityStates ?? {},
     npcSitePresences: overrides.npcSitePresences ?? [],

@@ -130,7 +130,6 @@ const baseState: GameState = {
   worldEvents: [],
   activeDirectives: [],
   eventInstances: [],
-  worldNpcStates: [],
   siteRuntimes: {},
   npcCaptivityStates: {},
   npcSitePresences: [],

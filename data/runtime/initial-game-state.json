@@ -217,6 +217,378 @@
         "restrictedItems": []
       },
       "currentEmployment": null
+    },
+    {
+      "npcId": "npc-dalen-morke",
+      "name": "Dalen Morke",
+      "npcType": "story",
+      "playerRosterMember": false,
+      "status": "noble",
+      "assignment": "idle",
+      "assignedDistrictId": null,
+      "worldDisposition": "unknown",
+      "lastContactDay": null,
+      "locationOverride": null,
+      "flags": [
+        "mira-custody-handler",
+        "mira-custody-site:site-poi-pale-old-tannery"
+      ],
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 32,
+        "agility": 44,
+        "endurance": 40,
+        "intellect": 71,
+        "perception": 68,
+        "presence": 74,
+        "resolve": 58
+      },
+      "skills": {
+        "melee": 18,
+        "ranged": 22,
+        "medicine": 8,
+        "administration": 74,
+        "engineering": 14,
+        "negotiation": 79,
+        "survival": 16,
+        "security": 38,
+        "crafting": 10,
+        "performance": 42,
+        "academics": 61,
+        "intrigue": 83
+      },
+      "traits": {
+        "discipline": 55,
+        "ambition": 88,
+        "empathy": 12,
+        "ruthlessness": 82,
+        "prudence": 64,
+        "curiosity": 38,
+        "dominance": 76,
+        "loyalty": 8,
+        "vanity": 71,
+        "zeal": 22
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-doublet-noble",
+        "arms": null,
+        "legs": "cloth-trousers-noble",
+        "feet": "cloth-shoes-elegant",
+        "full": null,
+        "undergarments": "cloth-underclothes-silk",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-enemy-tomas-rell",
+      "name": "Tomas Rell",
+      "npcType": "enemy",
+      "playerRosterMember": false,
+      "status": "mercenary",
+      "assignment": "idle",
+      "assignedDistrictId": null,
+      "worldDisposition": "hostile",
+      "lastContactDay": null,
+      "locationOverride": null,
+      "flags": [
+        "mira-custody-guard",
+        "mira-custody-site:site-poi-pale-old-tannery"
+      ],
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 64,
+        "agility": 58,
+        "endurance": 62,
+        "intellect": 48,
+        "perception": 55,
+        "presence": 52,
+        "resolve": 66
+      },
+      "skills": {
+        "melee": 65,
+        "ranged": 38,
+        "medicine": 20,
+        "administration": 28,
+        "engineering": 12,
+        "negotiation": 35,
+        "survival": 45,
+        "security": 60,
+        "crafting": 10,
+        "performance": 15,
+        "academics": 18,
+        "intrigue": 30
+      },
+      "traits": {
+        "discipline": 75,
+        "ambition": 45,
+        "empathy": 28,
+        "ruthlessness": 55,
+        "prudence": 60,
+        "curiosity": 30,
+        "dominance": 62,
+        "loyalty": 70,
+        "vanity": 20,
+        "zeal": 15
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-pants-leather",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
+    },
+    {
+      "npcId": "npc-enemy-catrin-hale",
+      "name": "Catrin Hale",
+      "npcType": "enemy",
+      "playerRosterMember": false,
+      "status": "mercenary",
+      "assignment": "idle",
+      "assignedDistrictId": null,
+      "worldDisposition": "hostile",
+      "lastContactDay": null,
+      "locationOverride": null,
+      "flags": [
+        "mira-custody-guard",
+        "mira-custody-site:site-poi-pale-old-tannery"
+      ],
+      "roomAssignment": null,
+      "dutyPostRoomId": null,
+      "activeTitle": null,
+      "wagesOwedDays": 0,
+      "trainingFocus": null,
+      "attributes": {
+        "might": 46,
+        "agility": 51,
+        "endurance": 55,
+        "intellect": 42,
+        "perception": 63,
+        "presence": 36,
+        "resolve": 61
+      },
+      "skills": {
+        "melee": 54,
+        "ranged": 43,
+        "medicine": 8,
+        "administration": 32,
+        "engineering": 12,
+        "negotiation": 18,
+        "survival": 27,
+        "security": 72,
+        "crafting": 11,
+        "performance": 6,
+        "academics": 14,
+        "intrigue": 31
+      },
+      "traits": {
+        "discipline": 78,
+        "ambition": 34,
+        "empathy": 16,
+        "ruthlessness": 58,
+        "prudence": 69,
+        "curiosity": 20,
+        "dominance": 61,
+        "loyalty": 47,
+        "vanity": 12,
+        "zeal": 18
+      },
+      "states": {
+        "health": 100,
+        "fatigue": 0,
+        "stress": 0,
+        "morale": 50,
+        "fear": 0,
+        "anger": 0,
+        "hunger": 0,
+        "injury": 0,
+        "intoxication": 0,
+        "hygiene": 70
+      },
+      "loadout": {
+        "primaryWeaponId": null,
+        "secondaryWeaponId": null,
+        "armorId": null,
+        "accessoryIds": [],
+        "consumableIds": []
+      },
+      "equipment": {
+        "weapon": null,
+        "armor": null,
+        "accessory": []
+      },
+      "personalFunds": {
+        "savings": 0,
+        "carriedCash": 0,
+        "lastWagePaymentDay": null,
+        "lastTipAmount": 0
+      },
+      "clothing": {
+        "head": null,
+        "torso": "cloth-tunic-simple",
+        "arms": null,
+        "legs": "cloth-pants-leather",
+        "feet": "cloth-boots-work",
+        "full": null,
+        "undergarments": "cloth-underclothes-simple",
+        "accessories": []
+      },
+      "armor": {
+        "lightTorso": null,
+        "lightLegs": null,
+        "heavyTorso": null,
+        "heavyLegs": null,
+        "shield": null
+      },
+      "npcMemory": [],
+      "arousalState": {
+        "level": 0,
+        "lastTriggerDay": null,
+        "triggerSource": null,
+        "cooldownUntilDay": null
+      },
+      "bondStatus": null,
+      "npcArc": null,
+      "currentDirectiveId": null,
+      "directiveDeadlineDay": null,
+      "currentIntention": null,
+      "currentEmployment": null,
+      "factionRelationships": [],
+      "wardPersonalAllowance": {
+        "allowancePerWeek": 2,
+        "personalSavings": 0,
+        "lastAllowanceDay": null,
+        "allowedItems": [],
+        "restrictedItems": []
+      }
     }
   ],
   "cityResources": {
@@ -1399,95 +1771,6 @@
     }
   },
   "eventInstances": [],
-  "worldNpcStates": [
-    {
-      "npcId": "npc-dalen-morke",
-      "lastContactDay": null,
-      "disposition": "unknown",
-      "locationOverride": null,
-      "flags": [
-        "mira-custody-handler",
-        "mira-custody-site:site-poi-pale-old-tannery"
-      ],
-      "intimacyStage": "none",
-      "pregnancyState": null,
-      "clothing": {
-        "torso": "cloth-doublet-noble",
-        "legs": "cloth-trousers-noble",
-        "feet": "cloth-shoes-elegant",
-        "undergarments": "cloth-underclothes-silk",
-        "head": null,
-        "arms": null,
-        "full": null,
-        "accessories": []
-      },
-      "armor": {
-        "lightTorso": null,
-        "lightLegs": null,
-        "heavyTorso": null,
-        "heavyLegs": null,
-        "shield": null
-      }
-    },
-    {
-      "npcId": "npc-enemy-tomas-rell",
-      "lastContactDay": null,
-      "disposition": "hostile",
-      "locationOverride": null,
-      "flags": [
-        "mira-custody-guard",
-        "mira-custody-site:site-poi-pale-old-tannery"
-      ],
-      "intimacyStage": "none",
-      "pregnancyState": null,
-      "clothing": {
-        "torso": "cloth-tunic-simple",
-        "legs": "cloth-pants-leather",
-        "feet": "cloth-boots-work",
-        "undergarments": "cloth-underclothes-simple",
-        "head": null,
-        "arms": null,
-        "full": null,
-        "accessories": []
-      },
-      "armor": {
-        "lightTorso": null,
-        "lightLegs": null,
-        "heavyTorso": null,
-        "heavyLegs": null,
-        "shield": null
-      }
-    },
-    {
-      "npcId": "npc-enemy-catrin-hale",
-      "lastContactDay": null,
-      "disposition": "hostile",
-      "locationOverride": null,
-      "flags": [
-        "mira-custody-guard",
-        "mira-custody-site:site-poi-pale-old-tannery"
-      ],
-      "intimacyStage": "none",
-      "pregnancyState": null,
-      "clothing": {
-        "torso": "cloth-tunic-simple",
-        "legs": "cloth-pants-leather",
-        "feet": "cloth-boots-work",
-        "undergarments": "cloth-underclothes-simple",
-        "head": null,
-        "arms": null,
-        "full": null,
-        "accessories": []
-      },
-      "armor": {
-        "lightTorso": null,
-        "lightLegs": null,
-        "heavyTorso": null,
-        "heavyLegs": null,
-        "shield": null
-      }
-    }
-  ],
   "siteRuntimes": {},
   "npcCaptivityStates": {
     "npc-mira": {

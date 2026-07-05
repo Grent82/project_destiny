@@ -26,23 +26,17 @@ function isDateTemplateEligible(template: DateTemplate, intimacyStage: IntimacyS
 }
 
 /**
- * Check if a Roster NPC is eligible to propose a date.
- * Idle NPCs (not deployed, not captive, not ward) are eligible.
+ * Check if an NPC is eligible to propose a date: idle (not deployed, not captive, not ward).
+ * Applies uniformly to every person in the unified list (destiny-rama.8) — World NPCs used to skip
+ * this check entirely only because the old thin WorldNpcRuntimeState had no assignment/captivity/
+ * ward concept at all (a technical limitation, not a design choice); now that they're full
+ * NpcRuntimeState entries the same eligibility rule applies to everyone.
  */
-function isRosterNpcDateEligible(npc: { assignment: string; captivityState?: { status: string } | undefined; status: string }): boolean {
+function isNpcDateEligible(npc: { assignment: string; captivityState?: { status: string } | undefined; status: string }): boolean {
   if (npc.assignment === 'deployed') return false
   if (npc.captivityState?.status === 'captive') return false
   if (npc.captivityState?.status === 'missing') return false
   if (npc.status === 'ward') return false
-  return true
-}
-
-/**
- * World NPCs are always eligible for dating.
- * No assignment/captivity/ward concepts for World NPCs.
- */
-function isWorldNpcDateEligible(): boolean {
-  // World NPCs are always eligible for dating
   return true
 }
 
@@ -114,16 +108,19 @@ function advanceSeed(seed: number): number {
 export function generateNpcDateProposals(state: GameState, rng: Rng): GameState {
   let nextState = state
 
-  // Collect all eligible NPCs (Roster + World)
+  // Collect all eligible NPCs (Roster + World). playerRosterMember is the sole discriminator
+  // (destiny-rama.8 contract §2.1) — without it a world entry would be found by BOTH filters below
+  // (it lives in the same list now) and appear twice in allEligible, producing a nonsensical
+  // self-pair once the nested loop below reaches it against itself.
   const rosterEligible = state.npcRuntimeStates
-    .filter(isRosterNpcDateEligible)
+    .filter((npc) => npc.playerRosterMember && isNpcDateEligible(npc))
     .map((npc) => ({ npcId: npc.npcId, name: npc.name, isWorldNpc: false }))
 
-  const worldEligible = state.worldNpcStates
-    .filter(() => isWorldNpcDateEligible())
+  const worldEligible = state.npcRuntimeStates
+    .filter((npc) => !npc.playerRosterMember && isNpcDateEligible(npc))
     .map((npc) => {
       const def = contentCatalog.npcsById.get(npc.npcId)
-      return { npcId: npc.npcId, name: def?.name ?? 'An NPC', isWorldNpc: true }
+      return { npcId: npc.npcId, name: def?.name ?? npc.name, isWorldNpc: true }
     })
 
   // Combine into single pool for cross-type pairing

@@ -14,7 +14,10 @@ import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
 const selectGame = (state: RootState) => state.game
 
 export const selectDashboardSummary = createSelector([selectGame], (game) => {
-  const roster = game.npcRuntimeStates
+  // playerRosterMember, not the raw unified list (destiny-rama.8) — this dashboard summarizes the
+  // player's OWN operatives (how many are deployed/recovering), not every world/story/enemy person
+  // who now shares the same runtime array.
+  const roster = game.npcRuntimeStates.filter((npc) => npc.playerRosterMember)
 
   return {
     day: game.day,

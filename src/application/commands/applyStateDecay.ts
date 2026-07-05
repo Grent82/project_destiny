@@ -167,26 +167,15 @@ export function applyStateDecay(state: GameState): GameState {
     }
   }
 
-  // Step 2b'. Recovering World NPCs regain health and shed injury the same way roster NPCs do.
-  // Scaffolding only — nothing currently sets a World NPC's injury above 0 (no combat/incident
-  // path touches them yet, tracked in destiny-s97u), and there's no player-facing surface for
-  // this yet either, so no activity-log entry is written here.
-  for (const worldNpc of next.worldNpcStates.filter((w) => w.recovering)) {
-    const hasInfirmary = hasInfirmarySupport(next)
-    const hasMedic = hasMedicSupport(next)
-    const newHealth = Math.min(100, worldNpc.health + 15 + (hasInfirmary ? 3 : 0) + (hasMedic ? 10 : 0))
-    const newInjury = Math.max(0, worldNpc.injury - (1 + (hasInfirmary ? 2 : 0) + (hasMedic ? 2 : 0)))
-    const fullyRecovered = isReadyForDuty(newHealth, newInjury)
-
-    next = {
-      ...next,
-      worldNpcStates: next.worldNpcStates.map((w) =>
-        w.npcId === worldNpc.npcId
-          ? { ...w, health: newHealth, injury: newInjury, recovering: !fullyRecovered }
-          : w,
-      ),
-    }
-  }
+  // Step 2b' (destiny-629x world-recovery scaffolding) was folded into Step 2b above in
+  // destiny-rama.8: World/story persons are now full NpcRuntimeState entries in the same
+  // `npcRuntimeStates` list, so a world person with `assignment:'recovering'` is already picked up
+  // by Step 2b's unfiltered `next.npcRuntimeStates.filter(r => r.assignment === 'recovering')` — a
+  // second, separately-targeted loop here would double-process the same entries (double health
+  // gain per day). `hasLodging` naturally resolves to false for world persons since their
+  // `roomAssignment` stays null (they were never assigned house quarters), matching the old
+  // world-only behavior exactly. Still scaffolding in practice: nothing currently sets a World
+  // NPC's injury above 0 (no combat/incident path touches them yet, tracked in destiny-s97u).
 
   // Step 2c: The player rests through the house's lodging/treatment support each night.
   const playerCombatState = next.playerCharacter.combatState

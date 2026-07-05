@@ -1,23 +1,9 @@
 import { describe, it, expect } from 'vitest'
 
-import { initialStateWithIda, idaRhysRosterEntry } from './testFixtures'
-import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
+import { initialStateWithIda, idaRhysRosterEntry, worldNpcRuntimeEntry } from './testFixtures'
 import { getNpcRecoverySupport } from './recovery'
 
-const worldNpcFixture: WorldNpcRuntimeState = {
-  npcId: 'npc-scaffolding-test-world-npc',
-  lastContactDay: null,
-  disposition: 'neutral',
-  locationOverride: null,
-  flags: [],
-  intimacyStage: 'none',
-  pregnancyState: null,
-  health: 100,
-  injury: 0,
-  recovering: false,
-  clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
-  armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
-}
+const worldNpcFixture = worldNpcRuntimeEntry('npc-scaffolding-test-world-npc')
 
 function withRoom(roomId: string, roomFunction: 'quarters' | 'infirmary') {
   return {

@@ -1,7 +1,9 @@
 import { gameStateSchema, type GameState } from '../../domain'
+import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import type { SaveGameStore } from '../../application/ports/saveGameStore'
 import { createEmptyChronicle } from '../../domain/chronicle/contracts'
 import { normalizePendingEventInstances } from '../../application/commands/eventInstances'
+import { createRuntimeStateFromDefinition } from '../../application/commands/createRuntimeStateFromDefinition'
 
 interface StorageLike {
   getItem(key: string): string | null
@@ -57,8 +59,91 @@ function migrateRosterFieldToNpcRuntimeStates(raw: unknown): unknown {
   return { ...rest, npcRuntimeStates }
 }
 
+/**
+ * v6/v7(pre-C2) → v7(current) fold (destiny-rama.8 / unified-npc-runtime-contract §7 step 2): the
+ * separate `worldNpcStates` array is folded into `npcRuntimeStates` via the definition-driven
+ * factory (§4.1 field map), then removed. `npcType` deliberately comes from each npc's own
+ * definition rather than being stamped 'world' — two of the three shipped runtime entries
+ * (npc-enemy-tomas-rell, npc-enemy-catrin-hale) are npcType:'enemy' by definition despite having
+ * lived in worldNpcStates (a pre-existing source-of-truth drift tracked separately in
+ * destiny-rama.14); stamping them 'world' here would plant a wrong fact into the schema instead of
+ * just carrying the drift forward untouched.
+ *
+ * Guarded on array presence (not saveVersion), matching migrateRosterFieldToNpcRuntimeStates above:
+ * a save can already be stamped saveVersion:7 by the C1-era migration alone (which only renamed
+ * roster -> npcRuntimeStates before C2 existed, leaving worldNpcStates untouched), so version
+ * number alone can't tell us whether the fold has actually happened. A no-op once worldNpcStates is
+ * already gone.
+ */
+function migrateWorldNpcStatesIntoNpcRuntimeStates(raw: unknown): unknown {
+  if (raw === null || typeof raw !== 'object') return raw
+  const record = raw as Record<string, unknown>
+  if (!Array.isArray(record.worldNpcStates)) return raw
+
+  const existingRuntimeStates = Array.isArray(record.npcRuntimeStates)
+    ? (record.npcRuntimeStates as Record<string, unknown>[])
+    : []
+  const existingIds = new Set(existingRuntimeStates.map((entry) => entry?.npcId))
+
+  const hydrated: Record<string, unknown>[] = []
+  for (const legacyEntry of record.worldNpcStates as Record<string, unknown>[]) {
+    if (!legacyEntry || typeof legacyEntry !== 'object') continue
+    const npcId = legacyEntry.npcId as string | undefined
+    // Never overwrite or duplicate a person who already has a runtime entry under the new name.
+    if (!npcId || existingIds.has(npcId)) continue
+
+    const overrides: Partial<NpcRuntimeState> = {
+      playerRosterMember: false,
+      worldDisposition: (legacyEntry.disposition as NpcRuntimeState['worldDisposition']) ?? 'neutral',
+      lastContactDay: (legacyEntry.lastContactDay as number | null | undefined) ?? null,
+      locationOverride: (legacyEntry.locationOverride as string | null | undefined) ?? null,
+      assignment: legacyEntry.recovering ? 'recovering' : 'idle',
+      states: {
+        health: (legacyEntry.health as number | undefined) ?? 100,
+        fatigue: 0,
+        stress: 0,
+        morale: 50,
+        fear: 0,
+        anger: 0,
+        hunger: 0,
+        injury: (legacyEntry.injury as number | undefined) ?? 0,
+        intoxication: 0,
+        hygiene: 70,
+      },
+    }
+    if (Array.isArray(legacyEntry.flags) && legacyEntry.flags.length > 0) {
+      overrides.flags = legacyEntry.flags as string[]
+    }
+    if (legacyEntry.clothing && typeof legacyEntry.clothing === 'object') {
+      overrides.clothing = legacyEntry.clothing as NpcRuntimeState['clothing']
+    }
+    if (legacyEntry.armor && typeof legacyEntry.armor === 'object') {
+      overrides.armor = legacyEntry.armor as NpcRuntimeState['armor']
+    }
+    // Old worldNpcRuntimeStateSchema used `pregnancyState: nullable()`; the new field is
+    // `optional()` (no null) — omit entirely rather than pass an explicit null.
+    if (legacyEntry.pregnancyState && typeof legacyEntry.pregnancyState === 'object') {
+      overrides.pregnancyState = legacyEntry.pregnancyState as NpcRuntimeState['pregnancyState']
+    }
+    // legacyEntry.intimacyStage is deliberately dropped — verified dead/unread on the old world
+    // shape (see destiny-rama.8 closing notes); real intimacy already lives on `state.relationships`.
+
+    try {
+      hydrated.push(createRuntimeStateFromDefinition(npcId, overrides) as unknown as Record<string, unknown>)
+    } catch (err) {
+      // A legacy save referencing a definition that no longer exists — drop this one person rather
+      // than fail the whole load (matches the store's existing graceful-degradation contract).
+      console.warn(`[SaveStore] Dropping legacy worldNpcStates entry for unknown npc '${npcId}':`, err)
+    }
+  }
+
+  const rest: Record<string, unknown> = { ...record }
+  delete rest.worldNpcStates
+  return { ...rest, npcRuntimeStates: [...existingRuntimeStates, ...hydrated] }
+}
+
 function migrateState(rawInput: unknown): GameState | null {
-  const raw = migrateRosterFieldToNpcRuntimeStates(rawInput)
+  const raw = migrateWorldNpcStatesIntoNpcRuntimeStates(migrateRosterFieldToNpcRuntimeStates(rawInput))
   const version = (raw as Record<string, unknown>)?.saveVersion ?? 0
 
   if (version === 0) {

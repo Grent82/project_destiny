@@ -117,7 +117,6 @@ const createBaseState = (roster: NpcRuntimeState[] = [idaRhysRosterEntry]): Game
   chronicle: { version: 1, entriesByDay: {} },
   rumors: [],
   bondVisibility: {},
-  worldNpcStates: [],
   siteRuntimes: {},
   npcCaptivityStates: {},
   npcSitePresences: [],

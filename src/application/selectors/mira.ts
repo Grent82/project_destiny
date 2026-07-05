@@ -40,8 +40,8 @@ export const selectMiraCustodyChain = createSelector(
     const runtime = resolveSiteRuntime(game, MIRA_TANNERY_SITE_ID)
     if (!runtime) return null
 
-    const handlerStates = game.worldNpcStates.filter((entry) =>
-      entry.flags.includes(MIRA_CUSTODY_HANDLER_FLAG),
+    const handlerStates = game.npcRuntimeStates.filter((entry) =>
+      (entry.flags ?? []).includes(MIRA_CUSTODY_HANDLER_FLAG),
     )
     if (handlerStates.length !== 1) return null
 
@@ -49,8 +49,8 @@ export const selectMiraCustodyChain = createSelector(
     if (!handler) return null
 
     const guardIds = new Set(
-      game.worldNpcStates
-        .filter((entry) => entry.flags.includes(MIRA_CUSTODY_GUARD_FLAG))
+      game.npcRuntimeStates
+        .filter((entry) => (entry.flags ?? []).includes(MIRA_CUSTODY_GUARD_FLAG))
         .map((entry) => entry.npcId),
     )
     const roomNames = new Map(runtime.roomInstances.map((room) => [room.roomId, room.name]))

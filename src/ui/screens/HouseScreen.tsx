@@ -117,7 +117,13 @@ export function HouseScreen() {
             vaultUnlocked={vaultUnlocked}
             justSearched={selectedRoom?.roomId === justSearchedId}
             occupants={selectedOccupants}
-            roster={roster.map((npc) => ({ npcId: npc.npcId, name: npc.name, roomAssignment: npc.roomAssignment }))}
+            // playerRosterMember, not the raw unified list (destiny-rama.8) — only the player's own
+            // operatives can be quartered in house rooms; world/story/enemy persons sharing the
+            // runtime array default to roomAssignment:null and would otherwise always appear
+            // "assignable" here.
+            roster={roster
+              .filter((npc) => npc.playerRosterMember)
+              .map((npc) => ({ npcId: npc.npcId, name: npc.name, roomAssignment: npc.roomAssignment }))}
             assignable={selectedRoom != null && assignableRooms.some((room) => room.roomId === selectedRoom.roomId)}
             onRepair={(roomId) => dispatch(gameActions.repairRoom(roomId))}
             onSearch={(roomId) => {

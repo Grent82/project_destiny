@@ -30,6 +30,7 @@ import { createEventInstance, createPendingEvent } from '../../commands/eventIns
 import { getNpcCaptivityState, setNpcCaptivityState } from '../../commands/captivityRegistry'
 import { MAX_ACTIVITY_ENTRIES, generateActivityLogId } from '../../commands/activityLog'
 import { contentCatalog } from '../../content/contentCatalog'
+import { createRuntimeStateFromDefinition } from '../../commands/createRuntimeStateFromDefinition'
 
 export const rosterReducers = {
   addNpcToSelectedSquad(state: GameState, action: PayloadAction<string>) {
@@ -302,22 +303,27 @@ export const rosterReducers = {
       removeFlags?: string[]
     }>,
   ) {
+    // destiny-rama.8: world persons are full NpcRuntimeState entries in the unified npcRuntimeStates
+    // list now — hydrate via the definition-driven factory instead of a bare placeholder object.
     const { npcId, lastContactDay, disposition, locationOverride, addFlags, removeFlags } = action.payload
-    let entry = state.worldNpcStates.find((s) => s.npcId === npcId)
+    let entry = state.npcRuntimeStates.find((s) => s.npcId === npcId)
     if (!entry) {
-      state.worldNpcStates.push({ npcId, lastContactDay: null, disposition: 'neutral', locationOverride: null, flags: [], intimacyStage: 'none', pregnancyState: null, health: 100, injury: 0, recovering: false, clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] }, armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null } })
-      entry = state.worldNpcStates[state.worldNpcStates.length - 1]
+      entry = createRuntimeStateFromDefinition(npcId, {
+        clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
+      })
+      state.npcRuntimeStates.push(entry)
     }
     if (lastContactDay !== undefined) entry.lastContactDay = lastContactDay
-    if (disposition !== undefined) entry.disposition = disposition
+    if (disposition !== undefined) entry.worldDisposition = disposition
     if (locationOverride !== undefined) entry.locationOverride = locationOverride
     if (addFlags) {
+      entry.flags = entry.flags ?? []
       for (const f of addFlags) {
         if (!entry.flags.includes(f)) entry.flags.push(f)
       }
     }
     if (removeFlags) {
-      entry.flags = entry.flags.filter((f) => !removeFlags.includes(f))
+      entry.flags = (entry.flags ?? []).filter((f) => !removeFlags.includes(f))
     }
   },
 }

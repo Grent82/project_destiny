@@ -15,11 +15,18 @@ import type { CaptivityState, NpcRuntimeState, PregnancyState } from '../../doma
 import { getAllNpcCaptivityStates, getNpcCaptivityState } from '../commands/captivityRegistry'
 
 /**
- * Canonical player-roster selector. BRIDGE (destiny-rama.4): `state.game.npcRuntimeStates` currently holds
- * only player-roster members, so this raw input is correct today and stays memoization-friendly.
- * When world/captive persons join the unified list (C2/C3), this flips to filter
- * `playerRosterMember` on `state.game.npcRuntimeStates`. World NPCs are read via selectWorldNpcStates
- * (selectors/worldNpcs.ts). See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1/§9.
+ * Raw input selector for THIS file's captivity/pregnancy views. Despite the name (kept for backward
+ * compatibility with existing call sites), this deliberately does NOT filter `playerRosterMember`
+ * (destiny-rama.8 revises the original bridge-era plan here, which assumed the flip should happen
+ * once world/captive persons joined the list — verified against the actual consumers below and
+ * found to be wrong): captivityState is orthogonal to roster membership. A captive is not
+ * necessarily a player-roster member (e.g. Mira, once destiny-rama.9 folds `npcCaptivityStates`
+ * entries into this same list, will very likely be playerRosterMember:false) — filtering here would
+ * make non-roster captives invisible to selectCaptiveNpcs/selectRescuedNpcs/
+ * selectKnownCaptivityNpcIds below. World-NPC *display* views are separately read via
+ * selectWorldNpcStates (selectors/worldNpcs.ts), which is playerRosterMember-filtered because that
+ * one IS about "who's an ambient world presence, not on my team". See
+ * docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1/§9.
  */
 export const selectRoster = (state: RootState) => state.game.npcRuntimeStates
 export const selectNpcCaptivityRegistry = (state: RootState) => state.game.npcCaptivityStates

@@ -50,10 +50,16 @@ function buildRosterEntryFromOffer(
 
   const initialLoyalty = Math.max(0, (npcDef.startingTraits.loyalty ?? 50) - initialLoyaltyPenalty)
 
-  // Get runtime state from worldNpcStates if available - preserve clothing, armor, health, injury
-  const worldNpcState = state.worldNpcStates.find((w) => w.npcId === npcId)
+  // Get an existing world-person runtime entry if one exists - preserve clothing, armor, health,
+  // injury (destiny-rama.8: world persons now live in the same npcRuntimeStates list). NOTE: this
+  // lookup is currently unreachable in practice — `alreadyOnRoster` above already rejects any
+  // npcId with ANY existing runtime entry, so recruiting an already-hydrated world NPC bails out
+  // before reaching here instead of upserting them. Hire offers are only generated for
+  // npcType:'roster' definitions today (generateHireOffers.ts), so this gap is dormant; filed as
+  // destiny-rama.17 so it isn't lost if that ever changes.
+  const worldNpcState = state.npcRuntimeStates.find((w) => w.npcId === npcId && !w.playerRosterMember)
 
-  // Priority: worldNpcStates > startingEquipment from definition > defaults
+  // Priority: existing world-person state > startingEquipment from definition > defaults
   const clothing = worldNpcState?.clothing
     ?? npcDef.startingEquipment?.clothing
     ?? { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] }
@@ -88,14 +94,14 @@ function buildRosterEntryFromOffer(
     skills: { ...npcDef.startingSkills },
     traits: { ...npcDef.startingTraits, loyalty: initialLoyalty },
     states: {
-      health: worldNpcState?.health ?? 100,
+      health: worldNpcState?.states.health ?? 100,
       fatigue: 0,
       stress: 0,
       morale: 50,
       fear: 0,
       anger: 0,
       hunger: 0,
-      injury: worldNpcState?.injury ?? 0,
+      injury: worldNpcState?.states.injury ?? 0,
       intoxication: 0,
       hygiene: 70,
     },

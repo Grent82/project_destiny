@@ -14,18 +14,16 @@ export function createEmployment(
   state: GameState,
   params: CreateEmploymentParams,
 ): GameState {
-  // Validate employee exists in roster
+  // Validate employee exists in the unified runtime list (roster and World NPCs alike share it now
+  // — destiny-rama.8; the old separate worldNpcStates lookup is gone, and with it a pre-existing
+  // bug where employing a World NPC never actually persisted currentEmployment below).
   const employee = state.npcRuntimeStates.find((npc) => npc.npcId === params.employeeId)
   if (!employee) {
-    // Try world NPCs
-    const worldNpc = state.worldNpcStates.find((npc) => npc.npcId === params.employeeId)
-    if (!worldNpc) {
-      return state
-    }
+    return state
   }
 
   // Priority check: Faction Directive > NPC Employment
-  if (employee && employee.currentDirectiveId !== null) {
+  if (employee.currentDirectiveId !== null) {
     // NPC has a faction directive - employment cannot override
     return state
   }
@@ -50,16 +48,13 @@ export function createEmployment(
   })
 
   // Update employee state
-  let newState = state
-  if (employee) {
-    newState = {
-      ...state,
-      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
-        npc.npcId === params.employeeId
-          ? { ...npc, currentEmployment: newEmployment }
-          : npc,
-      ),
-    }
+  let newState: GameState = {
+    ...state,
+    npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
+      npc.npcId === params.employeeId
+        ? { ...npc, currentEmployment: newEmployment }
+        : npc,
+    ),
   }
 
   // Log activity

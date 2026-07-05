@@ -30,15 +30,20 @@ function estimateTitleIncome(npc: { activeTitle: string | null; skills: Record<s
 }
 
 export const selectDailyIncomeBreakdown = createSelector([selectGame], (game) => {
-  const wages = game.npcRuntimeStates.reduce((sum, npc) => sum + wageForStatus(npc.status), 0)
+  // playerRosterMember, not the raw unified list (destiny-rama.8) — this is the player's wage bill
+  // and income estimate; world/story/enemy persons sharing the same runtime array are not on
+  // payroll and must not inflate it (the same gap already fixed for the real command in
+  // applyWages.ts during the rama.6 audit — this UI-facing estimate selector needs the same fix).
+  const roster = game.npcRuntimeStates.filter((npc) => npc.playerRosterMember)
+  const wages = roster.reduce((sum, npc) => sum + wageForStatus(npc.status), 0)
 
-  const workingNpcIncome = game.npcRuntimeStates
+  const workingNpcIncome = roster
     .filter((npc) => npc.assignment === 'working')
     .reduce((sum, npc) => sum + computeWorkingIncome(npc.skills), 0)
 
   // House baseline: +5 Marks/day always
   const HOUSE_BASELINE = 5
-  const titleIncome = game.npcRuntimeStates.reduce((sum, npc) => sum + estimateTitleIncome(npc), 0) + HOUSE_BASELINE
+  const titleIncome = roster.reduce((sum, npc) => sum + estimateTitleIncome(npc), 0) + HOUSE_BASELINE
 
   const net = workingNpcIncome + titleIncome - wages
 

@@ -1,5 +1,4 @@
 import type { GameState } from '../../domain/game/contracts'
-import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import type { IntimacyStage } from '../../domain/relationships/contracts'
 import { buildRelationshipKey, getRelationship } from '../../domain/relationships/contracts'
@@ -91,29 +90,27 @@ function meetsAdvanceCondition(
 /**
  * Check compatibility between two NPCs for pairing.
  * Returns true if they pass compatibility, dominance, and fear gates.
+ *
+ * Every person in the unified list (destiny-rama.8) has real traits now — World NPCs used to be
+ * skipped here only because the old thin WorldNpcRuntimeState had no traits field at all (a
+ * technical limitation, not a design choice), so the check now runs uniformly for every pair.
  */
 function checkPairingCompatibility(
   state: GameState,
-  npcA: NpcRuntimeState | WorldNpcRuntimeState,
-  npcB: NpcRuntimeState | WorldNpcRuntimeState,
+  npcA: NpcRuntimeState,
+  npcB: NpcRuntimeState,
 ): boolean {
-  // Roster NPCs have traits, World NPCs don't - skip compatibility check for World pairs
-  const isRosterA = 'traits' in npcA
-  const isRosterB = 'traits' in npcB
+  // Compatibility gate
+  const compatScore = calculateBaseCompatibility(npcA.traits, npcB.traits)
+  if (compatScore < COMPATIBILITY_THRESHOLD) return false
 
-  if (isRosterA && isRosterB) {
-    // Compatibility gate
-    const compatScore = calculateBaseCompatibility(npcA.traits, npcB.traits)
-    if (compatScore < COMPATIBILITY_THRESHOLD) return false
+  // Dominance imbalance gate
+  if (Math.abs(npcA.traits.dominance - npcB.traits.dominance) > DOMINANCE_IMBALANCE_LIMIT) return false
 
-    // Dominance imbalance gate
-    if (Math.abs(npcA.traits.dominance - npcB.traits.dominance) > DOMINANCE_IMBALANCE_LIMIT) return false
-
-    // Fear bond gate
-    const abFear = getRelationship(state.relationships, npcA.npcId, npcB.npcId).fear
-    const baFear = getRelationship(state.relationships, npcB.npcId, npcA.npcId).fear
-    if (abFear < FEAR_BLOCK_THRESHOLD || baFear < FEAR_BLOCK_THRESHOLD) return false
-  }
+  // Fear bond gate
+  const abFear = getRelationship(state.relationships, npcA.npcId, npcB.npcId).fear
+  const baFear = getRelationship(state.relationships, npcB.npcId, npcA.npcId).fear
+  if (abFear < FEAR_BLOCK_THRESHOLD || baFear < FEAR_BLOCK_THRESHOLD) return false
 
   return true
 }
@@ -127,8 +124,8 @@ function checkPairingCompatibility(
  */
 export function tryAdvanceIntimacyStage(
   state: GameState,
-  npcA: NpcRuntimeState | WorldNpcRuntimeState,
-  npcB: NpcRuntimeState | WorldNpcRuntimeState,
+  npcA: NpcRuntimeState,
+  npcB: NpcRuntimeState,
   policy: 'open' | 'discouraged' | 'forbidden',
 ): GameState {
   let next = state
@@ -140,7 +137,7 @@ export function tryAdvanceIntimacyStage(
   // Forbidden policy blocks all new bond formation
   if (policy === 'forbidden' && currentStage === 'none') return next
 
-  // Check compatibility (only for roster-roster pairs)
+  // Check compatibility
   if (!checkPairingCompatibility(next, npcA, npcB)) return next
 
   if (currentStage === 'committed') return next
@@ -156,8 +153,10 @@ export function tryAdvanceIntimacyStage(
   next = setIntimacyOnBothEdges(next, npcAId, npcBId, targetStage)
   next = { ...next, lastFiredDay: { ...next.lastFiredDay, [key]: next.day } }
 
-  // Fire noticed event at attachment stage (only for roster NPCs)
-  if (targetStage === 'attachment' && 'traits' in npcA && 'traits' in npcB) {
+  // Fire noticed event at attachment stage (only for pairs who are both player-roster members —
+  // see the isRosterRosterPair discriminator in applyPairingToPair below for why playerRosterMember
+  // is the correct check post destiny-rama.8, not a structural 'traits in npc' probe).
+  if (targetStage === 'attachment' && npcA.playerRosterMember && npcB.playerRosterMember) {
     const eventKey = EVENT_IDS.NPC_PAIRING_NOTICED
     const alreadyPending = next.pendingEvents.some((pe) => pe.eventId === eventKey)
     if (!alreadyPending) {
@@ -175,14 +174,19 @@ export function tryAdvanceIntimacyStage(
 function applyPairingToPair(
   state: GameState,
   rng: Rng,
-  npcA: NpcRuntimeState | WorldNpcRuntimeState,
-  npcB: NpcRuntimeState | WorldNpcRuntimeState,
+  npcA: NpcRuntimeState,
+  npcB: NpcRuntimeState,
   policy: 'open' | 'discouraged' | 'forbidden',
 ): GameState {
   let next = state
   const npcAId = npcA.npcId
   const npcBId = npcB.npcId
-  const isRosterRosterPair = 'traits' in npcA && 'traits' in npcB
+  // "Roster<->roster" means both sides currently work for the player — playerRosterMember is the
+  // sole correct discriminator (destiny-rama.8 contract §2.1). Before the unify fold this was
+  // (wrongly, in hindsight) approximated via `'traits' in npc`, which only worked because the old
+  // thin WorldNpcRuntimeState had no traits field; now every person has traits, so that check would
+  // always be true and silently stop the world-involving blanket sweep from ever running.
+  const isRosterRosterPair = npcA.playerRosterMember && npcB.playerRosterMember
 
   // Roster<->roster stage progression is intention-driven (courtRomanticallyHandler) — World NPCs
   // have no currentIntention, so world-involving pairs still advance through this blanket sweep.
@@ -193,7 +197,7 @@ function applyPairingToPair(
   const currentStage = getSharedIntimacyStage(next, npcAId, npcBId)
 
   // Pregnancy check at committed stage (only for roster-roster pairs)
-  if (currentStage === 'committed' && policy === 'open' && 'traits' in npcA && 'traits' in npcB) {
+  if (currentStage === 'committed' && policy === 'open' && isRosterRosterPair) {
     const pregnancyKey = pairingKey(npcAId, npcBId, 'pregnancy')
     const alreadyPregnant = npcA.pregnancyState || npcB.pregnancyState
     if (!alreadyPregnant && !isOnCooldown(next, pregnancyKey, 30) && rng() < PREGNANCY_DAILY_PROBABILITY) {
@@ -239,11 +243,18 @@ function applyPairingToPair(
 export function applyNpcPairing(state: GameState, rng: Rng): GameState {
   const policy = state.house.npcPairingPolicy
 
-  // Roster NPCs (existing logic)
-  const rosterEligible = state.npcRuntimeStates.filter((npc) => isEligibleForHouseholdTogetherness(npc, state.houseDistrictId))
+  // Roster NPCs (existing logic). playerRosterMember is required explicitly (destiny-rama.8): now
+  // that world persons share the same list, isEligibleForHouseholdTogetherness alone is not enough
+  // to exclude them — an idle world NPC with no assignedDistrictId would otherwise pass it too and
+  // get double-counted in both this loop and the world loop below.
+  const rosterEligible = state.npcRuntimeStates.filter(
+    (npc) => npc.playerRosterMember && isEligibleForHouseholdTogetherness(npc, state.houseDistrictId),
+  )
 
-  // World NPCs (new) - all are eligible
-  const worldEligible = state.worldNpcStates
+  // World NPCs (new) - all non-player-roster persons are eligible, matching the old worldNpcStates
+  // array's "all are eligible" behavior (which included story/enemy-typed custody-chain persons who
+  // happened to have a runtime entry there — preserved here via playerRosterMember, not npcType).
+  const worldEligible = state.npcRuntimeStates.filter((npc) => !npc.playerRosterMember)
 
   let next = state
 

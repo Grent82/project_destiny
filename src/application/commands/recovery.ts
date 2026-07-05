@@ -1,5 +1,4 @@
 import type { GameState, NpcRuntimeState } from '../../domain'
-import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
 import { ROOM_IDS, TITLE_IDS } from '../content/ids'
 import { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
 
@@ -47,13 +46,14 @@ export function isReadyForDuty(health: number, injury: number): boolean {
 
 export function getNpcRecoverySupport(
   state: GameState,
-  npc: NpcRuntimeState | WorldNpcRuntimeState,
+  npc: NpcRuntimeState,
 ): RecoverySupportTier {
   const hasMedic = hasMedicSupport(state)
   const hasInfirmary = hasInfirmarySupport(state)
-  // World NPCs have no roomAssignment/lodging concept — they aren't house residents, so they can
-  // only ever reach 'none', 'treatment', or 'treatment-plus-medic'.
-  const hasLodging = 'roomAssignment' in npc && hasResidentQuarters(state, npc.roomAssignment)
+  // World NPCs have roomAssignment:null (never assigned house quarters — they aren't house
+  // residents), so hasResidentQuarters naturally returns false for them and they can only ever
+  // reach 'none', 'treatment', or 'treatment-plus-medic'.
+  const hasLodging = hasResidentQuarters(state, npc.roomAssignment)
 
   if (hasMedic && hasInfirmary) return 'treatment-plus-medic'
   if (hasMedic || hasInfirmary) return 'treatment'

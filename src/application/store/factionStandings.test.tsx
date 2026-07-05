@@ -19,6 +19,7 @@ vi.mock('../content/contentCatalog', () => {
       itemsById: new Map(),
       npcs: [],
       npcsById: new Map(),
+      npcStartingRelationshipsByNpcId: new Map(),
       shops: [],
       shopsById: new Map(),
       eventRumorTemplates: [],

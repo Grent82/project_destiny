@@ -59,7 +59,7 @@ function simulateCombatRound(
 function calculateCoalitionPower(coalition: GameState['cityResources']['activeGroups'][0]): number {
   let power = 0
   for (const member of coalition.members) {
-    // Find NPC in roster or worldNpcStates
+    // Find member in this coalition's own member list
     const npc = coalition.members.find(m => m.npcId === member.npcId)
     if (npc) {
       // Use role bonus + base stats

@@ -81,8 +81,11 @@ describe('formalizeHeir', () => {
   })
 
   it('logs capacity block and does not add NPC when roster is full', () => {
-    // Renown=0 → 4 slots, rosterBonus=0 → capacity 4
-    // Fill the roster with 4 NPCs (1 starting + 3 fillers)
+    // Renown=0 → 4 slots, rosterBonus=0 → capacity 4. Capacity is counted via playerRosterMember
+    // (selectRosterNpcs), not raw array length (destiny-rama.8 — world/story persons share the same
+    // list now but must not consume roster slots). Fill the PLAYER ROSTER with 4 members
+    // (1 starting + 3 fillers) — the base snapshot's 3 world/story entries (playerRosterMember:false)
+    // ride along in the array but don't count toward the cap.
     const fullRoster: NpcRuntimeState[] = [
       ...initialGameStateSnapshot.npcRuntimeStates,
       makeFillerNpc('filler-1'),
@@ -91,8 +94,8 @@ describe('formalizeHeir', () => {
     ]
     const state = stateWithHeir(heirBase({}), fullRoster)
     const result = formalizeHeir(state, 'heir-test')
-    // Heir should NOT be added to the roster
-    expect(result.npcRuntimeStates.length).toBe(4)
+    // Heir should NOT be added — array length is unchanged from the full-roster input.
+    expect(result.npcRuntimeStates.length).toBe(fullRoster.length)
     // Heir should remain in houseHeirs
     expect(result.house.houseHeirs).toHaveLength(1)
     // Activity log should explain why

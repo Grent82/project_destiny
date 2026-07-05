@@ -61,7 +61,6 @@ describe('formCorridorGroup', () => {
       },
       // No eligible NPCs (all have low melee/security)
       npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates,
-      worldNpcStates: [],
     }
     const rng = makeRng(42)
     const result = formCorridorGroup(state, rng)
@@ -95,7 +94,6 @@ describe('formCorridorGroup', () => {
           traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 70 },
         },
       ],
-      worldNpcStates: [],
     }
     const rng = makeRng(42)
     const result = formCorridorGroup(state, rng)
@@ -123,7 +121,6 @@ describe('formCorridorGroup', () => {
           traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 80 },
         },
       ],
-      worldNpcStates: [],
     }
     const rng = makeRng(42)
     const result = formCorridorGroup(state, rng)
@@ -150,7 +147,6 @@ describe('formCorridorGroup', () => {
           traits: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.traits, discipline: 60 },
         },
       ],
-      worldNpcStates: [],
     })
 
     const rng1 = makeRng(42)

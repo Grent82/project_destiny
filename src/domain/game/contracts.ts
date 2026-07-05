@@ -17,7 +17,7 @@ import {
   itemDefinitionSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
-import { attributesSchema, bondStatusSchema, captivityStateSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema, worldNpcRuntimeStateSchema } from '../npc/contracts'
+import { attributesSchema, bondStatusSchema, captivityStateSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema, timeSlotStateSchema } from '../shared/contracts'
@@ -534,7 +534,9 @@ export const gameStateSchema = z
     })),
     rumors: z.array(rumorSchema).default([]),
     bondVisibility: z.record(z.string(), bondVisibilitySchema).default({}),
-    worldNpcStates: z.array(worldNpcRuntimeStateSchema).default([]),
+    // worldNpcStates was deleted in destiny-rama.8 — world persons are now npcType:'world',
+    // playerRosterMember:false entries in npcRuntimeStates. See
+    // docs/analysis/unified-npc-runtime-contract-2026-07-04.md §4.1.
     siteRuntimes: z.record(z.string(), siteRuntimeSchema).default({}),
     npcCaptivityStates: z.record(z.string(), captivityStateSchema).default({}),
     npcSitePresences: z.array(npcSitePresenceSchema).default([]),

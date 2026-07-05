@@ -1,5 +1,18 @@
 import { describe, it, expect } from 'vitest'
-import { computeWorkingIncome } from './roster'
+import { computeWorkingIncome, selectRosterEntries } from './roster'
+import { createGameStore } from '../store/gameStore'
+
+describe('selectRosterEntries', () => {
+  it('excludes world/story/enemy persons sharing the unified runtime list (destiny-rama.8)', () => {
+    // The base save now hydrates 3 non-player-roster persons (Mira's custody handler + 2 guards)
+    // into the same npcRuntimeStates array as Marion Vale (see data/runtime/initial-game-state.json).
+    // selectRosterEntries must show only the player's own roster, not the whole population.
+    const store = createGameStore()
+    const entries = selectRosterEntries(store.getState())
+    expect(entries.map((e) => e.npcId)).toEqual(['npc-marion-vale'])
+    expect(entries.some((e) => e.npcId === 'npc-dalen-morke')).toBe(false)
+  })
+})
 
 describe('computeWorkingIncome', () => {
   it('returns minimum 3 when all skills are zero', () => {

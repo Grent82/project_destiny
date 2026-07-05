@@ -9,17 +9,15 @@ interface DateParticipant {
 
 /**
  * Resolve a date-proposal participant to their eligibility-relevant state.
- * Recognizes the player (always eligible), Roster NPCs (assignment/captivity gated),
- * and World NPCs (always eligible, no assignment/captivity concept) — the same three
- * participant kinds generateNpcDateProposals.ts already supports. Returns null if the
- * participant no longer exists in any of those pools.
+ * Recognizes the player (always eligible) and every person in the unified runtime list — roster and
+ * World NPCs alike now share the same assignment/captivity gating (destiny-rama.8; World NPCs used
+ * to be unconditionally eligible only because the old thin shape had no such fields at all). Returns
+ * null if the participant no longer exists in the list.
  */
 function findDateParticipant(state: GameState, npcId: string): DateParticipant | null {
   if (npcId === 'player') return {}
-  const roster = state.npcRuntimeStates.find((r) => r.npcId === npcId)
-  if (roster) return { assignment: roster.assignment, captivityStatus: roster.captivityState?.status }
-  const world = state.worldNpcStates.find((w) => w.npcId === npcId)
-  if (world) return {}
+  const npc = state.npcRuntimeStates.find((r) => r.npcId === npcId)
+  if (npc) return { assignment: npc.assignment, captivityStatus: npc.captivityState?.status }
   return null
 }
 

@@ -83,7 +83,10 @@ export function selectEstimatedNpcIncome(npcId: string) {
 }
 
 export const selectRosterEntries = createSelector(
-  (state: RootState) => state.game.npcRuntimeStates,
+  // playerRosterMember, not the raw unified list (destiny-rama.8) — this is the canonical "who's on
+  // the player's roster" view (RosterScreen, MissionPrepScreen's available-squad pool, etc.); world/
+  // story/enemy persons sharing the same runtime array must not appear here.
+  (state: RootState) => state.game.npcRuntimeStates.filter((npc) => npc.playerRosterMember),
   (roster) => roster.map((npc) => {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const def = npcDef ?? contentCatalog.enemyNpcsById.get(npc.npcId)

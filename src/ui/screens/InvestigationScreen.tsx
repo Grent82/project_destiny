@@ -133,8 +133,11 @@ export function InvestigationScreen() {
     ? investigationApproaches.find((a) => a.id === chosenApproachId)
     : undefined
 
+  // playerRosterMember, not the raw unified list (destiny-rama.8) — only the player's own operatives
+  // can be assigned to run an investigation; world/story/enemy persons sharing the runtime array
+  // must not appear as assignable investigators.
   const idleRoster = roster.filter(
-    (npc) => npc.assignment === 'idle' || npc.assignment === 'working',
+    (npc) => npc.playerRosterMember && (npc.assignment === 'idle' || npc.assignment === 'working'),
   )
 
   const districtMismatch =

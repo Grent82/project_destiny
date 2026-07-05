@@ -130,8 +130,8 @@ describe('applyWorldNpcSocialSimulation', () => {
     }
 
     const result = applyWorldNpcSocialSimulation(state, () => 0)
-    const patron = result.worldNpcStates.find((entry) => entry.npcId === 'npc-orven-pell')
-    const client = result.worldNpcStates.find((entry) => entry.npcId === 'npc-alis-vey')
+    const patron = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-orven-pell')
+    const client = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-alis-vey')
 
     expect(result.relationships[key]?.bondType).toBe('patronage')
     expect(result.relationships[reverse]?.bondType).toBe('dependency')
@@ -185,7 +185,7 @@ describe('applyWorldNpcSocialSimulation', () => {
 
     const result = applyWorldNpcSocialSimulation(state, () => 0)
     const captivity = result.npcCaptivityStates['npc-orren-wex']
-    const protector = result.worldNpcStates.find((entry) => entry.npcId === 'npc-old-maret')
+    const protector = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-old-maret')
 
     expect(captivity?.condition).toBe('healthy')
     expect(captivity?.bondType).toBe('dependency')
@@ -219,8 +219,8 @@ describe('applyWorldNpcSocialSimulation', () => {
     }
 
     const result = applyWorldNpcSocialSimulation(state, () => 0)
-    const torvald = result.worldNpcStates.find((entry) => entry.npcId === 'npc-torvald-messe')
-    const lira = result.worldNpcStates.find((entry) => entry.npcId === 'npc-lira-ashcroft')
+    const torvald = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-torvald-messe')
+    const lira = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-lira-ashcroft')
 
     expect(result.relationships[key]?.bondType).toBe('feud')
     expect(result.relationships[reverse]?.bondType).toBe('feud')

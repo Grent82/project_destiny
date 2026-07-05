@@ -114,7 +114,6 @@ const baseState: GameState = {
   chronicle: { entriesByDay: {}, version: 1 },
   rumors: [],
   bondVisibility: {},
-  worldNpcStates: [],
   siteRuntimes: {},
   npcCaptivityStates: {},
   npcSitePresences: [],

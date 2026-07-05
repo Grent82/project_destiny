@@ -109,8 +109,47 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
   wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
 }
 
-/** Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members */
+/**
+ * Game state snapshot with Ida Rhys already hired — use for tests that need 2 roster members.
+ *
+ * Ida is inserted at index 1 (right after Marion at index 0), NOT appended at the end. Since
+ * destiny-rama.8 folded the 3 world/story runtime entries (Dalen Morke, Tomas Rell, Catrin Hale)
+ * into `initialGameStateSnapshot.npcRuntimeStates` too, appending Ida after them would silently
+ * shift her to index 4 — breaking every test across the codebase that reads
+ * `initialStateWithIda.npcRuntimeStates[1]` expecting Ida (a long-standing, widely-relied-on
+ * convention predating the unify epic). Keeping her at a fixed index 1 preserves that convention
+ * without touching every call site.
+ */
 export const initialStateWithIda: GameState = {
   ...initialGameStateSnapshot,
-  npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, idaRhysRosterEntry],
+  npcRuntimeStates: [
+    initialGameStateSnapshot.npcRuntimeStates[0]!,
+    idaRhysRosterEntry,
+    ...initialGameStateSnapshot.npcRuntimeStates.slice(1),
+  ],
+}
+
+/**
+ * A world-person runtime entry (npcType:'world', playerRosterMember:false) for tests that need pure
+ * state-transition math and don't need a real content-catalog definition (unlike
+ * createRuntimeStateFromDefinition, this never throws on an unknown/fixture-only npcId). Use for
+ * World NPC coverage in applyStateDecay/applyNpcPairing/recovery-style tests
+ * (destiny-rama.8 — world persons are full NpcRuntimeState entries now).
+ */
+export function worldNpcRuntimeEntry(npcId: string, overrides: Partial<NpcRuntimeState> = {}): NpcRuntimeState {
+  return {
+    ...idaRhysRosterEntry,
+    npcId,
+    name: npcId,
+    npcType: 'world',
+    playerRosterMember: false,
+    worldDisposition: 'neutral',
+    lastContactDay: null,
+    locationOverride: null,
+    flags: [],
+    roomAssignment: null,
+    dutyPostRoomId: null,
+    npcArc: null,
+    ...overrides,
+  }
 }

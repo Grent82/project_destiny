@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { scheduleAcceptedNpcDateProposals } from './scheduleNpcDateProposals'
-import { initialStateWithIda } from './testFixtures'
+import { initialStateWithIda, worldNpcRuntimeEntry } from './testFixtures'
 import { NPC_IDS } from '../content/ids/npcIds'
 import type { GameState } from '../../domain/game/contracts'
 import type { DateProposal } from '../../domain/game/contracts'
-import type { WorldNpcRuntimeState } from '../../domain/npc/contracts'
+import type { NpcRuntimeState } from '../../domain/npc/contracts'
 
 const MARION = NPC_IDS.MARION_VALE
 const IDA = NPC_IDS.IDA_RHYS
@@ -25,22 +25,8 @@ function acceptedProposal(overrides: Partial<DateProposal>): DateProposal {
   }
 }
 
-function worldNpc(npcId: string, overrides?: Partial<WorldNpcRuntimeState>): WorldNpcRuntimeState {
-  return {
-    npcId,
-    lastContactDay: null,
-    disposition: 'neutral',
-    locationOverride: null,
-    flags: [],
-    intimacyStage: 'affinity',
-    pregnancyState: null,
-    health: 100,
-    injury: 0,
-    recovering: false,
-    clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
-    armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
-    ...overrides,
-  }
+function worldNpc(npcId: string, overrides?: Partial<NpcRuntimeState>): NpcRuntimeState {
+  return worldNpcRuntimeEntry(npcId, overrides)
 }
 
 describe('scheduleAcceptedNpcDateProposals', () => {
@@ -101,7 +87,7 @@ describe('scheduleAcceptedNpcDateProposals', () => {
     const state: GameState = {
       ...initialStateWithIda,
       day: 10,
-      worldNpcStates: [...initialStateWithIda.worldNpcStates, worldA, worldB],
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, worldA, worldB],
       pendingDateProposals: [
         acceptedProposal({
           proposalId: 'proposal-world',
@@ -123,7 +109,7 @@ describe('scheduleAcceptedNpcDateProposals', () => {
     const state: GameState = {
       ...initialStateWithIda,
       day: 10,
-      worldNpcStates: [...initialStateWithIda.worldNpcStates, world],
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, world],
       pendingDateProposals: [
         acceptedProposal({
           proposalId: 'proposal-cross',

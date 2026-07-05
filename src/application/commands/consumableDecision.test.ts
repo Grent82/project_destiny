@@ -40,11 +40,6 @@ describe('consumable mission use', () => {
 
   describe('resolveConsumableUse', () => {
     it('applies heal and removes item from inventory', () => {
-      const store = createGameStore()
-      // Manually set a pending decision
-      store.dispatch(
-        gameActions.updateWorldNpcState({ npcId: 'npc-test' }) // dummy dispatch to prime
-      )
       // Directly set state with a pending decision
       const stateWithDecision: GameState = {
         ...initialGameStateSnapshot,

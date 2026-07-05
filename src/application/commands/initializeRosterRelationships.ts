@@ -21,7 +21,12 @@ import {
  * Pairs that already have a relationship entry in state are skipped.
  */
 export function initializeRosterRelationships(state: GameState, rng: Rng = Math.random): GameState {
-  const { npcRuntimeStates: roster } = state
+  // Scoped to playerRosterMember (destiny-rama.8): this seeds "people who've worked together" bonds
+  // for the player's OWN operatives specifically (per this function's doc above) — not ambient
+  // world/story/enemy persons who now share the same runtime list but have no such history with the
+  // house. Without this filter, every hydrated world person (e.g. Mira's custody handler/guards)
+  // would get a compatibility-derived relationship seeded against Marion at game-init time.
+  const roster = state.npcRuntimeStates.filter((n) => n.playerRosterMember)
   if (roster.length < 2) return state
 
   const relationships = { ...state.relationships }

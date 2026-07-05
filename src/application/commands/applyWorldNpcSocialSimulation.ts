@@ -1,4 +1,4 @@
-import type { CaptivityState, GameState, NpcDefinition, Rumor } from '../../domain'
+import type { CaptivityState, GameState, NpcDefinition, NpcRuntimeState, Rumor } from '../../domain'
 import { calculateBaseCompatibility, getFactionFamiliarityBonus, getOriginProximityBonus } from '../../domain/npc/compatibility'
 import { buildRelationshipKey, type RelationshipAxes, type SoftBondState } from '../../domain/relationships/contracts'
 import { appendActivityLogEntry } from './activityLog'
@@ -6,6 +6,7 @@ import type { Rng } from './seededRng'
 import { contentCatalog } from '../content/contentCatalog'
 import { adjustDistrictTension } from './economicConsequences'
 import { getNpcCaptivityState, setNpcCaptivityState } from './captivityRegistry'
+import { createRuntimeStateFromDefinition } from './createRuntimeStateFromDefinition'
 import { DISTRICT_IDS } from '../content/ids'
 
 const SOFT_BOND_CAP = 5
@@ -218,33 +219,32 @@ function promoteRumorVisibility(
   return nextState
 }
 
-function ensureWorldNpcState(state: GameState, npcId: string) {
-  let entry = state.worldNpcStates.find((worldNpcState) => worldNpcState.npcId === npcId)
-  if (entry) return entry
+/**
+ * Finds this person's unified runtime entry, hydrating one via the definition-driven factory
+ * (destiny-rama.8 — world/story persons are full NpcRuntimeState entries now) if they don't have a
+ * runtime presence yet. Only ever called with npcIds drawn from `contentCatalog.npcs` filtered to
+ * npcType 'world'/'story' (see the caller below), so a definition always exists.
+ */
+function ensureWorldNpcState(state: GameState, npcId: string): NpcRuntimeState {
+  const existing = state.npcRuntimeStates.find((n) => n.npcId === npcId)
+  if (existing) return existing
 
-  entry = {
-    npcId,
-    lastContactDay: null,
-    disposition: 'neutral',
-    locationOverride: null,
-    flags: [],
-    intimacyStage: 'none',
-    pregnancyState: null,
-    health: 100,
-    injury: 0,
-    recovering: false,
+  const entry = createRuntimeStateFromDefinition(npcId, {
+    // Matches the old worldNpcRuntimeStateSchema's default outfit for a newly-discovered world
+    // person (basic peasant clothing), rather than the factory's all-null schema default.
     clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
-    armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
-  }
-  state.worldNpcStates = [...state.worldNpcStates, entry]
+  })
+  state.npcRuntimeStates = [...state.npcRuntimeStates, entry]
   return entry
 }
 
 function addWorldNpcFlag(state: GameState, npcId: string, flag: string) {
   const entry = ensureWorldNpcState(state, npcId)
-  if (!entry.flags.includes(flag)) {
-    entry.flags = [...entry.flags, flag]
-  }
+  const flags = entry.flags ?? []
+  if (flags.includes(flag)) return
+  state.npcRuntimeStates = state.npcRuntimeStates.map((n) =>
+    n.npcId === npcId ? { ...n, flags: [...flags, flag] } : n,
+  )
 }
 
 function appendGeneratedRumor(
@@ -450,7 +450,6 @@ export function applyWorldNpcSocialSimulation(state: GameState, rng: Rng = Math.
   const eligiblePairs = new Set<string>()
   let nextState: GameState = {
     ...state,
-    worldNpcStates: state.worldNpcStates.map((entry) => ({ ...entry, flags: [...entry.flags] })),
     npcCaptivityStates: { ...state.npcCaptivityStates },
     rumors: [...state.rumors],
     districtTension: { ...state.districtTension },

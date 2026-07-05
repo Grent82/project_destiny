@@ -4,7 +4,7 @@ import { setNpcPairingPolicy } from './setHousePolicy'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain/game/contracts'
-import type { NpcRuntimeState, WorldNpcRuntimeState } from '../../domain/npc/contracts'
+import type { NpcRuntimeState } from '../../domain/npc/contracts'
 
 const noopRng = () => 0.5
 const alwaysRng = () => 0   // triggers pregnancy (< 0.02) when used
@@ -68,32 +68,29 @@ function stateWithPair(npcA: NpcRuntimeState, npcB: NpcRuntimeState, relOverride
   }
 }
 
-function worldNpcBase(overrides: Partial<WorldNpcRuntimeState>): WorldNpcRuntimeState {
-  return {
+/**
+ * A World-person runtime entry (npcType:'world', playerRosterMember:false). Post destiny-rama.8,
+ * every person in the unified list is a full NpcRuntimeState, so this just reuses npcBase with the
+ * world-relevant fields overridden rather than a separate thin shape.
+ */
+function worldNpcBase(overrides: Partial<NpcRuntimeState>): NpcRuntimeState {
+  return npcBase({
     npcId: 'npc-world-a',
-    lastContactDay: null,
-    disposition: 'neutral',
-    locationOverride: null,
-    flags: [],
-    intimacyStage: 'none',
-    pregnancyState: null,
-    health: 100,
-    injury: 0,
-    recovering: false,
-    clothing: { head: null, torso: 'cloth-tunic-simple', arms: null, legs: 'cloth-trousers-burlap', feet: 'cloth-boots-work', full: null, undergarments: 'cloth-underclothes-simple', accessories: [] },
-    armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+    npcType: 'world',
+    playerRosterMember: false,
+    worldDisposition: 'neutral',
     ...overrides,
-  }
+  })
 }
 
 function stateWithWorldPair(
-  npcA: WorldNpcRuntimeState,
-  npcB: WorldNpcRuntimeState,
+  npcA: NpcRuntimeState,
+  npcB: NpcRuntimeState,
   relOverrides?: Record<string, unknown>,
 ): GameState {
   return {
     ...initialGameStateSnapshot,
-    worldNpcStates: [...initialGameStateSnapshot.worldNpcStates, npcA, npcB],
+    npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, npcA, npcB],
     relationships: {
       ...initialGameStateSnapshot.relationships,
       [buildRelationshipKey(npcA.npcId, npcB.npcId)]: {
@@ -138,8 +135,7 @@ describe('applyNpcPairing — stage progression', () => {
     const worldNpc = worldNpcBase({ npcId: 'npc-world-a' })
     const state: GameState = {
       ...initialGameStateSnapshot,
-      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, rosterNpc],
-      worldNpcStates: [...initialGameStateSnapshot.worldNpcStates, worldNpc],
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, rosterNpc, worldNpc],
       relationships: {
         ...initialGameStateSnapshot.relationships,
         [buildRelationshipKey('npc-a', 'npc-world-a')]: { affinity: 35, respect: 0, fear: 0, trust: 25, loyalty: 0 },

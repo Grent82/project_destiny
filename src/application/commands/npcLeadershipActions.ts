@@ -185,12 +185,18 @@ export function npcGossip(state: GameState, npcId: string): GameState {
   return appendActivityLogEntry(next, 'system', message)
 }
 
-/** NPC mediates a conflict between the two idle roster NPCs with the worst relationship. */
+/**
+ * NPC mediates a conflict between the two idle roster NPCs with the worst relationship. Scoped to
+ * `playerRosterMember` (destiny-rama.8): unlike npcSocialize/npcGossip below (which intentionally
+ * reach across the whole population — social full parity is the point of the unify epic), this
+ * mediates *house* conflict specifically, per this function's own long-standing "roster NPCs" doc
+ * comment above. World/story persons sharing the unified list must not be candidates here.
+ */
 export function npcMediateConflict(state: GameState, npcId: string): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const others = state.npcRuntimeStates.filter((r) => r.npcId !== npcId && r.assignment === 'idle')
+  const others = state.npcRuntimeStates.filter((r) => r.npcId !== npcId && r.playerRosterMember && r.assignment === 'idle')
   let worstPair: { a: string; b: string; affinity: number } | null = null
   for (const a of others) {
     for (const b of others) {

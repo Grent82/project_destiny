@@ -118,6 +118,122 @@ describe('LocalSaveSnapshotStore', () => {
     }
   })
 
+  it('migrates a legacy `worldNpcStates` array (destiny-rama.8) into npcRuntimeStates, deriving npcType from each definition', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    // Reconstruct a save shaped like the C1-only migration result: roster already renamed to
+    // npcRuntimeStates, but worldNpcStates still holds the old thin per-person shape (this is
+    // exactly what a saveVersion:7 save produced by the rama.7-only code looked like, before rama.8
+    // added the fold — the guard in migrateWorldNpcStatesIntoNpcRuntimeStates is array-presence
+    // based, not version based, specifically so this shape gets folded too).
+    const legacyWorldNpcStates = [
+      {
+        npcId: 'npc-dalen-morke',
+        lastContactDay: 3,
+        disposition: 'unknown',
+        locationOverride: 'poi-test-location',
+        flags: ['mira-custody-handler'],
+        intimacyStage: 'none',
+        pregnancyState: null,
+        health: 80,
+        injury: 10,
+        recovering: true,
+        clothing: { head: null, torso: 'cloth-doublet-noble', arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+        armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+      },
+      {
+        npcId: 'npc-nonexistent-legacy-world-npc',
+        lastContactDay: null,
+        disposition: 'neutral',
+        locationOverride: null,
+        flags: [],
+        intimacyStage: 'none',
+        pregnancyState: null,
+        health: 100,
+        injury: 0,
+        recovering: false,
+        clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+        armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+      },
+    ]
+    const { npcRuntimeStates, ...rest } = initialGameStateSnapshot
+    // Simulate the pre-rama.8 state: the 3 world entries live only under the legacy key, not yet in
+    // npcRuntimeStates (which here holds only Marion — npcRuntimeStates[0]).
+    const rosterOnly = [npcRuntimeStates[0]!]
+    storage.setItem(
+      'save-slot',
+      JSON.stringify({ ...rest, npcRuntimeStates: rosterOnly, worldNpcStates: legacyWorldNpcStates, saveVersion: 7 }),
+    )
+
+    const loaded = snapshotStore.load()
+    expect(loaded).not.toBeNull()
+    expect(loaded?.saveVersion).toBe(7)
+    expect((loaded as unknown as Record<string, unknown>).worldNpcStates).toBeUndefined()
+
+    const dalen = loaded!.npcRuntimeStates.find((n) => n.npcId === 'npc-dalen-morke')
+    expect(dalen).toBeDefined()
+    // npcType comes from Dalen's own definition ('story'), NOT hardcoded 'world' — two of the three
+    // shipped world entries are npcType:'enemy' by definition (destiny-rama.14 drift), so blanket
+    // stamping 'world' would plant a wrong fact into the schema.
+    expect(dalen!.npcType).toBe('story')
+    expect(dalen!.playerRosterMember).toBe(false)
+    expect(dalen!.worldDisposition).toBe('unknown')
+    expect(dalen!.lastContactDay).toBe(3)
+    expect(dalen!.locationOverride).toBe('poi-test-location')
+    expect(dalen!.flags).toEqual(['mira-custody-handler'])
+    expect(dalen!.states.health).toBe(80)
+    expect(dalen!.states.injury).toBe(10)
+    expect(dalen!.assignment).toBe('recovering')
+    expect(dalen!.clothing.torso).toBe('cloth-doublet-noble')
+
+    // A legacy entry whose definition no longer exists is dropped, not fatal to the whole load.
+    expect(loaded!.npcRuntimeStates.some((n) => n.npcId === 'npc-nonexistent-legacy-world-npc')).toBe(false)
+
+    // Marion (already present under the new name) is untouched, not duplicated.
+    expect(loaded!.npcRuntimeStates.filter((n) => n.npcId === npcRuntimeStates[0]!.npcId)).toHaveLength(1)
+  })
+
+  it('does not duplicate or overwrite a legacy worldNpcStates entry whose npcId already has a npcRuntimeStates entry', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    const { npcRuntimeStates, ...rest } = initialGameStateSnapshot
+    const dalenAlreadyPresent = npcRuntimeStates.find((n) => n.npcId === 'npc-dalen-morke')!
+    storage.setItem(
+      'save-slot',
+      JSON.stringify({
+        ...rest,
+        npcRuntimeStates,
+        worldNpcStates: [
+          {
+            npcId: 'npc-dalen-morke',
+            lastContactDay: null,
+            disposition: 'hostile', // deliberately different from the already-present entry
+            locationOverride: null,
+            flags: [],
+            intimacyStage: 'none',
+            pregnancyState: null,
+            health: 50,
+            injury: 50,
+            recovering: false,
+            clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
+            armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+          },
+        ],
+        saveVersion: 7,
+      }),
+    )
+
+    const loaded = snapshotStore.load()
+    const dalenEntries = loaded!.npcRuntimeStates.filter((n) => n.npcId === 'npc-dalen-morke')
+    expect(dalenEntries).toHaveLength(1)
+    // The already-present entry wins untouched — the legacy duplicate (disposition:'hostile',
+    // health:50) is discarded rather than overwriting it.
+    expect(dalenEntries[0]!.worldDisposition).toBe(dalenAlreadyPresent.worldDisposition)
+    expect(dalenEntries[0]!.states.health).toBe(dalenAlreadyPresent.states.health)
+  })
+
   it('normalizes legacy pending events into concrete event instances on load', () => {
     const storage = createMemoryStorage()
     const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')

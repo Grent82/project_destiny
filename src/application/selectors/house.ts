@@ -273,7 +273,10 @@ export const selectDefenseRating = createSelector([selectGame], (game): number =
   const DEFENSE_RENOWN_LEVEL_DIVISOR = 20
 
   const fortScore = game.house.fortificationLevel * DEFENSE_FORTIFICATION_WEIGHT
-  const guardCount = game.npcRuntimeStates.filter((n) => n.assignment === 'defense').length
+  // playerRosterMember (destiny-rama.8): house defense is staffed by the player's own operatives —
+  // a world/story person sharing the runtime list must not count toward guarding the house even if
+  // some future system ever sets assignment:'defense' on one.
+  const guardCount = game.npcRuntimeStates.filter((n) => n.playerRosterMember && n.assignment === 'defense').length
   const crewScore = guardCount * DEFENSE_GUARD_CREW_WEIGHT
 
   // Renown level from progression (uses getRenownLevel via prestige)

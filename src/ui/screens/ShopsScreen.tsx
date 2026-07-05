@@ -36,7 +36,10 @@ export function ShopsScreen() {
   const gameState = useAppSelector((state) => state.game)
   const houseStorageWeapons = useAppSelector(selectHouseStorageWeapons)
   const houseStorageArmors = useAppSelector(selectHouseStorageArmors)
-  const roster = gameState.npcRuntimeStates
+  // playerRosterMember, not the raw unified list (destiny-rama.8) — equipment repair and the
+  // quartermaster discount are the player's own operatives' concern; world/story/enemy persons
+  // sharing the runtime array must not show up as repairable "roster members" here.
+  const roster = gameState.npcRuntimeStates.filter((npc) => npc.playerRosterMember)
   const durabilities = gameState.equippedItemDurabilities
   const money = gameState.money
   const hasQuartermaster = roster.some((r) => r.activeTitle === 'title-quartermaster')

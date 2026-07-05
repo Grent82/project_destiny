@@ -116,7 +116,6 @@ const createTestState = (overrides?: Partial<GameState>): GameState => ({
   chronicle: { entriesByDay: {}, version: 1 },
   rumors: [],
   bondVisibility: {},
-  worldNpcStates: [],
   siteRuntimes: {},
   npcCaptivityStates: {},
   npcSitePresences: [],
@@ -132,6 +131,9 @@ const createTestNpc = (id: string, name: string, overrides?: Partial<NpcRuntimeS
   name,
   status: 'retainer' as const,
   assignment: 'idle' as const,
+  // These fixtures represent the player's roster NPCs (Marion, Ida, etc.) by default — tests that
+  // want a World-person fixture instead should override this explicitly.
+  playerRosterMember: true,
   ...overrides,
 } as unknown as NpcRuntimeState)
 
@@ -345,5 +347,32 @@ describe('generateNpcDateProposals', () => {
     const result = generateNpcDateProposals(state, rng)
     // At 'none' intimacy, no proposals should be created anyway
     expect(result.pendingDateProposals).toHaveLength(0)
+  })
+
+  it('does not list a World NPC in both the roster and world eligible pools (destiny-rama.8 regression)', () => {
+    // Before playerRosterMember-based filtering, a world entry sharing npcRuntimeStates would pass
+    // BOTH isRosterNpcDateEligible-derived pools (since a bare assignment/captivity/status check
+    // can't tell "world" from "roster" once everyone lives in the same list), appearing twice in
+    // allEligible and forming a nonsensical self-pair once the nested loop reached it against itself.
+    const worldNpc = createTestNpc('npc-world-regression', 'World NPC', { playerRosterMember: false })
+    const state = createTestState({
+      npcRuntimeStates: [
+        createTestNpc('npc-1', 'NPC One'),
+        worldNpc,
+      ],
+      relationships: {
+        'npc-1->npc-world-regression': { affinity: 50, respect: 40, fear: 10, trust: 45, loyalty: 30, intimacyStage: 'affinity' },
+        'npc-world-regression->npc-1': { affinity: 55, respect: 45, fear: 8, trust: 50, loyalty: 35, intimacyStage: 'affinity' },
+      },
+      lastFiredDay: {},
+      day: 10,
+      rngSeed: 42,
+    })
+    const rng = createRng(42).rng
+    // Must not throw and must not propose a self-pair (proposer === target).
+    const result = generateNpcDateProposals(state, rng)
+    for (const proposal of result.pendingDateProposals) {
+      expect(proposal.proposerNpcId).not.toBe(proposal.targetNpcId)
+    }
   })
 })

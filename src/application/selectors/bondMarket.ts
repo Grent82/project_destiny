@@ -326,10 +326,14 @@ export const selectBrokerageOverview = createSelector(
         npc.bondStatus.holderId === 'player' &&
         npc.assignment === 'working',
     )
+    // playerRosterMember (destiny-rama.8): "free workers" and "empathic witnesses" describe the
+    // player's OWN household — bonded vs. free operatives working side by side, and roster-mates who
+    // might object to coercive holds. World/story/enemy persons sharing the runtime list (who also
+    // default to bondStatus:null) are not part of this household and must not inflate these counts.
     const freeWorkers = game.npcRuntimeStates.filter(
-      (npc) => npc.assignment === 'working' && !(npc.bondStatus?.ownerType === 'player' && npc.bondStatus.holderId === 'player'),
+      (npc) => npc.playerRosterMember && npc.assignment === 'working' && !(npc.bondStatus?.ownerType === 'player' && npc.bondStatus.holderId === 'player'),
     )
-    const empathicWitnessCount = game.npcRuntimeStates.filter((npc) => !npc.bondStatus && npc.traits.empathy > 55).length
+    const empathicWitnessCount = game.npcRuntimeStates.filter((npc) => npc.playerRosterMember && !npc.bondStatus && npc.traits.empathy > 55).length
     const equalityNoticeDaysRemaining =
       workingBoundNpcs.length > 0 && freeWorkers.length > 0
         ? Math.max(
