@@ -3,7 +3,7 @@ import type { ItemDefinition, ItemEffect } from '../../domain/items/contracts'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { applyRelationshipDelta } from './adjustRelationship'
-import { appendActivityLogEntry, MAX_ACTIVITY_ENTRIES } from './activityLog'
+import { appendActivityLogEntry } from './activityLog'
 import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
 import { transferItem } from './inventory/transferItem'
 import type { TransferItemParams } from '../../domain/inventory/contracts'
@@ -174,14 +174,7 @@ export function giftItemToNpc(state: GameState, payload: { instanceId: string; n
     }
   }
 
-  next.activityLog.unshift({
-    id: `gift::${npcId}::${item.id}::${state.day}::${state.timeSlot}`,
-    day: state.day,
-    timeSlot: state.timeSlot,
-    category: 'system',
-    message: `You gave ${item.name} to ${npc.name}. ${outcome.reaction}`,
-  })
-  if (next.activityLog.length > MAX_ACTIVITY_ENTRIES) next.activityLog.pop()
+  next = appendActivityLogEntry(next, 'system', `You gave ${item.name} to ${npc.name}. ${outcome.reaction}`)
 
   return next
 }

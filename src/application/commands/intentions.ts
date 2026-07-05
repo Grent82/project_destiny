@@ -37,6 +37,7 @@ import { createRng } from './seededRng'
 import { intentionTypesForNpc } from './intentions/eligibility'
 import { npcRepairEquipment, npcNeedsEquipmentRepair } from './economy/npcRepairEquipment'
 import { npcUseConsumable, npcCanUseConsumable } from './economy/npcUseConsumable'
+import { npcGiveGift, npcCanGiveGift } from './economy/npcGiveGift'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -194,6 +195,7 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     // NPC Economy (destiny-bkln)
     'repair-equipment': 3,
     'use-consumable': 1,
+    'give-gift': 6,
     // Macht/Kontrolle (5)
     'assert-dominance': 3,
     'spy-on': 2,
@@ -466,6 +468,7 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   // existing precedent: this is a roster-personalFunds economy action, not a world-NPC one).
   'repair-equipment',
   'use-consumable',
+  'give-gift',
 ])
 
 /**
@@ -1370,6 +1373,19 @@ const useConsumableHandler: IntentionHandler = {
   execute: (npc, state) => npcUseConsumable(state, npc.npcId),
 }
 
+/**
+ * Give Gift Handler (destiny-bkln)
+ * NPC gives a gift item from their own inventory to the co-located roster NPC they like most.
+ */
+const giveGiftHandler: IntentionHandler = {
+  canExecute: (npc, state) => {
+    if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
+    return npcCanGiveGift(state, npc)
+  },
+  execute: (npc, state) => npcGiveGift(state, npc.npcId),
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // All intention handlers mapped by type
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1436,6 +1452,7 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   // NPC Economy (destiny-bkln)
   'repair-equipment': repairEquipmentHandler,
   'use-consumable': useConsumableHandler,
+  'give-gift': giveGiftHandler,
 }
 
 /**

@@ -154,7 +154,8 @@ describe('giftItemToNpc', () => {
       (after.trust - before.trust) +
       (after.loyalty - before.loyalty)
     expect(totalDelta).toBeGreaterThan(0)
-    expect(next.activityLog[0]?.id.startsWith(`gift::${TARGET_NPC_ID}::item-gift-pressed-flower-fold`)).toBe(true)
+    expect(next.activityLog[0]?.category).toBe('system')
+    expect(next.activityLog[0]?.message).toMatch(/gave .+ to /i)
   })
 
   it('does nothing when the NPC is not colocated with the player', () => {

@@ -304,6 +304,11 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: { medicine: 1.1, survival: 1.0 },
     traitWeights: { prudence: 0.8 },
   },
+  'give-gift': {
+    attributeWeights: { presence: 1.1 },
+    skillWeights: {},
+    traitWeights: { empathy: 1.3, loyalty: 1.0 },
+  },
 }
 
 /**
