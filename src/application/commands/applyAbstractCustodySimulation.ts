@@ -30,7 +30,6 @@ function cloneState(state: GameState): GameState {
   return {
     ...state,
     npcRuntimeStates: state.npcRuntimeStates.map((npc) => ({ ...npc, states: { ...npc.states } })),
-    npcCaptivityStates: { ...state.npcCaptivityStates },
     pendingEvents: [...state.pendingEvents],
     eventInstances: [...state.eventInstances],
     rumors: [...state.rumors],

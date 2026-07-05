@@ -117,14 +117,10 @@ function applyMiraRescueResolution(state: GameState, questId: string): GameState
 function applyOrrenRescueResolution(state: GameState, questId: string): GameState {
   if (questId !== QUEST_IDS.ORREN_WEX_RESCUE) return state
 
-  // Handle captivity state removal immutably
-  let nextState: GameState = {
-    ...state,
-    npcCaptivityStates: { ...state.npcCaptivityStates },
-  }
-  delete nextState.npcCaptivityStates[NPC_IDS.ORREN_WEX]
+  let nextState: GameState = state
 
-  // Update roster if applicable
+  // Update roster if applicable (captivityState lived only here since destiny-rama.9 folded the
+  // separate npcCaptivityStates record in)
   const rosterIndex = nextState.npcRuntimeStates.findIndex((npc) => npc.npcId === NPC_IDS.ORREN_WEX)
   if (rosterIndex >= 0) {
     const updatedRoster = [...nextState.npcRuntimeStates]

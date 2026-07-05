@@ -4,6 +4,7 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { applyWorldNpcSocialSimulation } from './applyWorldNpcSocialSimulation'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
+import { createRuntimeStateFromDefinition } from './createRuntimeStateFromDefinition'
 
 function makeState() {
   return {
@@ -164,27 +165,31 @@ describe('applyWorldNpcSocialSimulation', () => {
         softBond: { strength: 74, since: 3, visibility: 'known' },
       },
     }
-    state.npcCaptivityStates = {
-      'npc-orren-wex': {
-        status: 'captive',
-        condition: 'hurt',
-        compliance: 'resistant',
-        bondType: 'fear',
-        regime: 'penal',
-        holderId: 'faction-civic-compact',
-        siteId: 'site-poi-hollows-detention-house',
-        roomId: null,
-        timeHeldDays: 4,
-        lastTransferDay: 1,
-        questTag: null,
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-      },
-    }
+    state.npcRuntimeStates = [
+      ...state.npcRuntimeStates,
+      createRuntimeStateFromDefinition('npc-orren-wex', {
+        playerRosterMember: false,
+        captivityState: {
+          status: 'captive',
+          condition: 'hurt',
+          compliance: 'resistant',
+          bondType: 'fear',
+          regime: 'penal',
+          holderId: 'faction-civic-compact',
+          siteId: 'site-poi-hollows-detention-house',
+          roomId: null,
+          timeHeldDays: 4,
+          lastTransferDay: 1,
+          questTag: null,
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      }),
+    ]
 
     const result = applyWorldNpcSocialSimulation(state, () => 0)
-    const captivity = result.npcCaptivityStates['npc-orren-wex']
+    const captivity = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-orren-wex')?.captivityState
     const protector = result.npcRuntimeStates.find((entry) => entry.npcId === 'npc-old-maret')
 
     expect(captivity?.condition).toBe('healthy')

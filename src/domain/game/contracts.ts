@@ -17,7 +17,7 @@ import {
   itemDefinitionSchema,
   weaponDefinitionSchema,
 } from '../items/contracts'
-import { attributesSchema, bondStatusSchema, captivityStateSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
+import { attributesSchema, bondStatusSchema, npcDefinitionSchema, npcRuntimeStateSchema, skillsSchema, traitsSchema } from '../npc/contracts'
 import { questLeadRuntimeSchema, questRuntimeSchema } from '../quests/contracts'
 import { shopDefinitionSchema } from '../shops/contracts'
 import { entityIdSchema, nonNegativeIntegerSchema, positiveIntegerSchema, timeSlotSchema, timeSlotStateSchema } from '../shared/contracts'
@@ -538,7 +538,9 @@ export const gameStateSchema = z
     // playerRosterMember:false entries in npcRuntimeStates. See
     // docs/analysis/unified-npc-runtime-contract-2026-07-04.md §4.1.
     siteRuntimes: z.record(z.string(), siteRuntimeSchema).default({}),
-    npcCaptivityStates: z.record(z.string(), captivityStateSchema).default({}),
+    // npcCaptivityStates was deleted in destiny-rama.9 — a captive is any npcRuntimeStates person
+    // with captivityState.status==='captive'/'missing'; captivityState is the single home for
+    // captivity data now. See docs/analysis/unified-npc-runtime-contract-2026-07-04.md §4.2.
     npcSitePresences: z.array(npcSitePresenceSchema).default([]),
     bondedPersonsRegistry: z.record(z.string(), z.array(z.string())).default({}),
     worldEvents: z.array(worldEventSchema).max(100).default([]),

@@ -17,25 +17,6 @@ const SQUAD_NPC = 'npc-marion-vale'
 function makeStateWithCaptive(captivityOverride?: object): GameState {
   return {
     ...initialGameStateSnapshot,
-    npcCaptivityStates: {
-      [SQUAD_NPC]: {
-        status: 'captive' as const,
-        holderId: 'faction-syndicate',
-        siteId: 'site-poi-pale-old-tannery',
-        roomId: 'tannery-holding-floor',
-        regime: 'guarded' as const,
-        condition: 'healthy' as const,
-        compliance: 'resistant' as const,
-        bondType: 'none' as const,
-        timeHeldDays: 0,
-        lastTransferDay: null,
-        questTag: null,
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-        ...captivityOverride,
-      },
-    },
     npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
       npc.npcId === SQUAD_NPC
         ? {
@@ -158,7 +139,6 @@ describe('setCaptivityState action', () => {
     )
     const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.status).toBe('missing')
-    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.siteId).toBe('site-poi-pale-old-tannery')
   })
 
   it('clears captivityState when null is passed', () => {
@@ -166,10 +146,11 @@ describe('setCaptivityState action', () => {
     store.dispatch(gameActions.setCaptivityState({ npcId: SQUAD_NPC, captivityState: null }))
     const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState).toBeUndefined()
-    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]).toBeUndefined()
   })
 
-  it('stores captivity for a non-roster NPC in the canonical registry', () => {
+  it('updates captivity on Mira, who already has a runtime entry in the base save', () => {
+    // destiny-rama.9: Mira is hydrated into npcRuntimeStates in the base save now (the separate
+    // npcCaptivityStates registry is gone), so this takes the "existing entry" path, not hydration.
     const store = createGameStore()
     store.dispatch(
       gameActions.setCaptivityState({
@@ -193,7 +174,43 @@ describe('setCaptivityState action', () => {
       }),
     )
 
-    expect(store.getState().game.npcCaptivityStates['npc-mira']?.roomId).toBe('tannery-inner-ring')
+    const mira = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')
+    expect(mira?.captivityState?.roomId).toBe('tannery-inner-ring')
+  })
+
+  it('hydrates a brand-new runtime entry for a captive who has no prior runtime presence', () => {
+    // Exercises setNpcCaptivityState's hydrate-via-factory fallback (captivityRegistry.ts) — the
+    // path that replaced the old npcCaptivityStates registry's "no roster entry yet" case.
+    const store = createGameStore()
+    expect(store.getState().game.npcRuntimeStates.some((n) => n.npcId === 'npc-orren-wex')).toBe(false)
+
+    store.dispatch(
+      gameActions.setCaptivityState({
+        npcId: 'npc-orren-wex',
+        captivityState: {
+          status: 'captive',
+          holderId: 'faction-civic-compact',
+          siteId: 'site-poi-hollows-detention-house',
+          roomId: null,
+          regime: 'penal',
+          condition: 'hurt',
+          compliance: 'resistant',
+          bondType: 'fear',
+          timeHeldDays: 4,
+          lastTransferDay: 1,
+          questTag: null,
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      }),
+    )
+
+    const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-orren-wex')
+    expect(npc).toBeDefined()
+    expect(npc?.playerRosterMember).toBe(false)
+    expect(npc?.captivityState?.status).toBe('captive')
+    expect(npc?.captivityState?.siteId).toBe('site-poi-hollows-detention-house')
   })
 })
 
@@ -271,7 +288,6 @@ describe('captivity degradation in endDay', () => {
     store.dispatch(gameActions.endDay())
     const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === SQUAD_NPC)
     expect(npc?.captivityState?.timeHeldDays).toBe(4)
-    expect(store.getState().game.npcCaptivityStates[SQUAD_NPC]?.timeHeldDays).toBe(4)
   })
 
   it('degrades condition from healthy→hurt at 7 days', () => {
@@ -305,30 +321,40 @@ describe('captivity degradation in endDay', () => {
     expect(npc?.captivityState).toBeUndefined()
   })
 
-  it('increments captivity time for non-roster captives in the registry', () => {
+  it("increments Mira's own captivity time via her dedicated routine (not the generic degradation loop, which explicitly excludes her)", () => {
+    // destiny-rama.9: Mira is a npcRuntimeStates person now — the separate npcCaptivityStates
+    // registry this test used to exercise is gone. Her timeHeldDays advances through
+    // applyMiraCustodyRoutine specifically (endDay/legacy.ts's applyCaptivityDegradation explicitly
+    // skips npcId 'npc-mira', since she has her own routine).
     const store = createGameStore({
       ...initialGameStateSnapshot,
-      npcCaptivityStates: {
-        'npc-mira': {
-          status: 'captive',
-          holderId: 'faction-gilded-court',
-          siteId: 'site-poi-pale-old-tannery',
-          roomId: null,
-          regime: 'hidden',
-          condition: 'healthy',
-          compliance: 'resistant',
-          bondType: 'none',
-          timeHeldDays: 2,
-          lastTransferDay: 1,
-          questTag: 'quest-mira-rescue',
-          confiscatedItems: [],
-          confiscatedMoney: null,
-          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-        },
-      },
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-mira'
+          ? {
+              ...npc,
+              captivityState: {
+                status: 'captive' as const,
+                holderId: 'faction-gilded-court',
+                siteId: 'site-poi-pale-old-tannery',
+                roomId: null,
+                regime: 'hidden' as const,
+                condition: 'healthy' as const,
+                compliance: 'resistant' as const,
+                bondType: 'none' as const,
+                timeHeldDays: 2,
+                lastTransferDay: 1,
+                questTag: 'quest-mira-rescue',
+                confiscatedItems: [],
+                confiscatedMoney: null,
+                confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+              },
+            }
+          : npc,
+      ),
     })
 
     store.dispatch(gameActions.endDay())
-    expect(store.getState().game.npcCaptivityStates['npc-mira']?.timeHeldDays).toBe(3)
+    const mira = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')
+    expect(mira?.captivityState?.timeHeldDays).toBe(3)
   })
 })

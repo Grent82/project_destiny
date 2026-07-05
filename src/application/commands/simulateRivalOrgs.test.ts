@@ -131,7 +131,6 @@ const baseState: GameState = {
   activeDirectives: [],
   eventInstances: [],
   siteRuntimes: {},
-  npcCaptivityStates: {},
   npcSitePresences: [],
   pendingConsumableDecision: null,
   houseWardSeats: 0,

@@ -117,7 +117,6 @@ const createTestState = (overrides?: Partial<GameState>): GameState => ({
   rumors: [],
   bondVisibility: {},
   siteRuntimes: {},
-  npcCaptivityStates: {},
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],

@@ -86,7 +86,6 @@ function cloneState(state: GameState): GameState {
   return {
     ...state,
     npcRuntimeStates: state.npcRuntimeStates.map((npc) => ({ ...npc, states: { ...npc.states } })),
-    npcCaptivityStates: { ...state.npcCaptivityStates },
     eventInstances: [...state.eventInstances],
     activityLog: [...state.activityLog],
     lastFiredDay: { ...state.lastFiredDay },
@@ -186,7 +185,7 @@ function queueMiraTransferEvent(
  * have earned access to this truth through investigation/clues.
  */
 export function getMiraCustodySchedule(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day'>,
 ): {
   currentRoom: string | null
   nextRoom: string | null

@@ -767,6 +767,14 @@ const groomHandler: IntentionHandler = {
 // mechanic. The blanket sweeps are gone (simulateNpcNpcRomance deleted); world-involving
 // pairs (which can't hold an Intention) still advance via applyNpcPairing's remaining
 // blanket path for stage progression only.
+//
+// destiny-rama.9: target-candidate filtering below uses !isNpcBlockedFromIntention(r) instead of
+// a bare r.assignment === 'idle' check. World/story/captive persons now share npcRuntimeStates with
+// roster NPCs, so a plain idle check would let a roster NPC's daily romance intention target a
+// captive (e.g. Mira, whose hydrated entry defaults to assignment:'idle') or a ward - the same
+// hard captivity/ward/directive block already enforced for the ACTING npc must also gate who can
+// be a valid TARGET of that action. This intentionally does NOT restrict to playerRosterMember -
+// world NPCs remain valid romance/social targets by design (per the unify epic's full-parity goal).
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -780,7 +788,7 @@ const flirtWithHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     const targetEntry = state.npcRuntimeStates
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .filter((r) => r.npcId !== npc.npcId && !isNpcBlockedFromIntention(r))
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
         const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
@@ -808,7 +816,7 @@ const courtRomanticallyHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     const targetEntry = state.npcRuntimeStates
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .filter((r) => r.npcId !== npc.npcId && !isNpcBlockedFromIntention(r))
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]
         const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]
@@ -853,7 +861,7 @@ const visitLoverHandler: IntentionHandler = {
   execute: (npc, state) => {
     // Find romantic partner (highest intimacy stage)
     const partnerEntry = state.npcRuntimeStates
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .filter((r) => r.npcId !== npc.npcId && !isNpcBlockedFromIntention(r))
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.intimacyStage ?? 'none'
         const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.intimacyStage ?? 'none'
@@ -893,7 +901,7 @@ const spendTimeWithHandler: IntentionHandler = {
   execute: (npc, state) => {
     // Find a friend/companion to spend time with (high affinity, any intimacy stage)
     const targetEntry = state.npcRuntimeStates
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .filter((r) => r.npcId !== npc.npcId && !isNpcBlockedFromIntention(r))
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
         const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0
@@ -938,7 +946,7 @@ const seekIntimacyHandler: IntentionHandler = {
   execute: (npc, state) => {
     // Find the most trusted idle partner (deep-trust gate is enforced inside tryNpcNpcSeekIntimacy)
     const targetEntry = state.npcRuntimeStates
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .filter((r) => r.npcId !== npc.npcId && !isNpcBlockedFromIntention(r))
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.trust ?? 0
         const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.trust ?? 0
@@ -965,7 +973,7 @@ const flirtAggressivelyHandler: IntentionHandler = {
   },
   execute: (npc, state) => {
     const targetEntry = state.npcRuntimeStates
-      .filter((r) => r.npcId !== npc.npcId && r.assignment === 'idle')
+      .filter((r) => r.npcId !== npc.npcId && !isNpcBlockedFromIntention(r))
       .sort((a, b) => {
         const relA = state.relationships[`${npc.npcId}-to-${a.npcId}`]?.affinity ?? 0
         const relB = state.relationships[`${npc.npcId}-to-${b.npcId}`]?.affinity ?? 0

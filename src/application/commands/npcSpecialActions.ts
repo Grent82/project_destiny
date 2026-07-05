@@ -81,7 +81,9 @@ export function npcSeekEmployment(state: GameState, npcId: string): GameState {
 /**
  * NPC hosts a small gathering among other idle roster NPCs — an autonomous, NPC-to-NPC
  * counterpart to hostGathering.ts (which is player-initiated only). Requires an intact
- * reception/quarters/study room, matching hostGathering.ts's room requirement.
+ * reception/quarters/study room, matching hostGathering.ts's room requirement. Scoped to
+ * playerRosterMember (destiny-rama.9) — a house gathering invites the player's own operatives,
+ * not world/story/captive persons sharing the unified runtime list.
  */
 export function npcHostGathering(state: GameState, npcId: string, rng: Rng): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
@@ -93,7 +95,7 @@ export function npcHostGathering(state: GameState, npcId: string, rng: Rng): Gam
   if (!room) return state
 
   const guests = state.npcRuntimeStates
-    .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
+    .filter((r) => r.npcId !== npcId && r.playerRosterMember && r.assignment === 'idle')
     .sort((a, b) => {
       const relA = state.relationships[buildRelationshipKey(npcId, a.npcId)]?.affinity ?? 0
       const relB = state.relationships[buildRelationshipKey(npcId, b.npcId)]?.affinity ?? 0

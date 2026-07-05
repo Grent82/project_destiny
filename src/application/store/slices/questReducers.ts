@@ -60,7 +60,6 @@ export const questReducers = {
       // Use shared helper for consistent beat application
       applyMidQuestBeats(
         {
-          npcCaptivityStates: state.npcCaptivityStates,
           npcRuntimeStates: state.npcRuntimeStates,
           completedQuestIds: state.completedQuestIds,
           activeQuests: state.activeQuests,
@@ -187,7 +186,6 @@ export const questReducers = {
       // Apply mid-quest beats FIRST (for generic quests)
       applyMidQuestBeats(
         {
-          npcCaptivityStates: state.npcCaptivityStates,
           npcRuntimeStates: state.npcRuntimeStates,
           completedQuestIds: state.completedQuestIds,
           activeQuests: state.activeQuests,

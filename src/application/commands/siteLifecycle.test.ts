@@ -27,34 +27,39 @@ describe('site lifecycle', () => {
     const concretized = concretizeSite(initialGameStateSnapshot, 'site-world-house-sorn')
     const withCaptive = {
       ...concretized,
-      npcCaptivityStates: {
-        ...concretized.npcCaptivityStates,
-        'npc-mira': {
-          status: 'captive' as const,
-          holderId: 'faction-gilded-court',
-          siteId: 'site-world-house-sorn',
-          roomId: 'cellar',
-          regime: 'guarded' as const,
-          condition: 'hurt' as const,
-          compliance: 'resistant' as const,
-          bondType: 'fear' as const,
-          timeHeldDays: 5,
-          lastTransferDay: 2,
-          questTag: 'quest-mira-rescue',
-          confiscatedItems: [],
-          confiscatedMoney: null,
-          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-        },
-      },
+      npcRuntimeStates: concretized.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-mira'
+          ? {
+              ...npc,
+              captivityState: {
+                status: 'captive' as const,
+                holderId: 'faction-gilded-court',
+                siteId: 'site-world-house-sorn',
+                roomId: 'cellar',
+                regime: 'guarded' as const,
+                condition: 'hurt' as const,
+                compliance: 'resistant' as const,
+                bondType: 'fear' as const,
+                timeHeldDays: 5,
+                lastTransferDay: 2,
+                questTag: 'quest-mira-rescue',
+                confiscatedItems: [],
+                confiscatedMoney: null,
+                confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+              },
+            }
+          : npc,
+      ),
     }
 
     const collapsed = collapseSite(withCaptive, 'site-world-house-sorn')
     const runtime = resolveSiteRuntime(collapsed, 'site-world-house-sorn')
+    const mira = collapsed.npcRuntimeStates.find((npc) => npc.npcId === 'npc-mira')
 
     expect(runtime?.mode).toBe('abstract')
     expect(runtime?.knownRoomIds).toContain('cellar')
     expect(runtime?.lastCollapsedDay).toBe(initialGameStateSnapshot.day)
-    expect(collapsed.npcCaptivityStates['npc-mira']?.siteId).toBe('site-world-house-sorn')
-    expect(collapsed.npcCaptivityStates['npc-mira']?.roomId).toBe('cellar')
+    expect(mira?.captivityState?.siteId).toBe('site-world-house-sorn')
+    expect(mira?.captivityState?.roomId).toBe('cellar')
   })
 })

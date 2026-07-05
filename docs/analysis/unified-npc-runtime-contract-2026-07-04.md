@@ -148,6 +148,17 @@ The record value **is** a `CaptivityState` already. For each `[npcId, captivityS
 find/create the matching `npcRuntimeStates` entry (hydrate from definition if absent) and set its
 `captivityState` field. Delete the record.
 
+**Implemented (destiny-rama.9):** `captivityRegistry.ts`'s three functions
+(`getNpcCaptivityState`/`getAllNpcCaptivityStates`/`setNpcCaptivityState`) already merged registry +
+runtime reads before this ticket (the registry was always a *fallback* for persons without a runtime
+entry) — they were simplified to read/write `npcRuntimeStates` exclusively.
+`setNpcCaptivityState(state, npcId, captivityState)` now hydrates a brand-new runtime entry via
+`createRuntimeStateFromDefinition` (npcType from definition, `playerRosterMember:false`) when the
+target has no existing entry, instead of silently falling back to the (now-deleted) registry — this
+is the exact scenario the registry existed to handle, so it had to move into the live function, not
+just the one-time migration. Mira is hydrated into `data/runtime/initial-game-state.json` directly
+(npcType `'story'`, `playerRosterMember:false`, `captivityState.status:'captive'`).
+
 ## 5. Factory (keystone, zero blast radius)
 
 New pure helper, unit-tested in isolation:
@@ -276,6 +287,24 @@ e.g. the roster wage bill and dashboard roster count would have silently include
 handler/guards once the fold landed. **destiny-rama.9 (the captivity fold) must repeat this sweep**
 against `src/application/selectors/` and `src/ui/` in addition to `src/application/commands/`, not
 assume rama.6's original file list was exhaustive.
+
+**Post-rama.9 addendum:** the repeated sweep found the same class of gap *again*, in a third
+category the previous sweeps didn't cover: "pick one candidate from the whole population"
+target-selection idioms inside individual command functions (`npcMediateConflict`,
+`npcAssertDominance`, `npcCareForInjured` in `npcAggressionActions.ts`/`npcLeadershipActions.ts`,
+`npcHostGathering` in `npcSpecialActions.ts`) whose own doc comments already said "roster NPC" but
+whose `.filter(...).sort(...)[0]` target logic had no `playerRosterMember` check — each was dormant
+until the fold actually landed (previously `npcRuntimeStates` held only roster persons, so the
+missing filter was unreachable). Separately, `intentions.ts`'s 6 romance/social handlers
+(flirt-with, court-romantically, visit-lover, spend-time-with, seek-intimacy, flirt-aggressively)
+selected a target via a bare `assignment === 'idle'` check — captives (e.g. Mira, whose hydrated
+entry defaults to idle) and wards were never excluded as targets, only as actors. Fixed by reusing
+`isNpcBlockedFromIntention` on the candidate, not by adding `playerRosterMember` — those handlers
+correctly stay whole-population by design (world NPCs are valid romance targets per the epic's full
+social parity goal); only captivity/ward/directive exclusion was missing. **Any future ticket
+touching a "find the best/worst/nearest NPC" pattern must check target eligibility explicitly — a
+doc comment saying "roster" or "idle" is not evidence the code actually enforces it once the
+population is shared.**
 
 ## 10. Known adjacent finding (separate bead)
 

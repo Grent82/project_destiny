@@ -332,7 +332,6 @@ function maybeApplyProtectiveIntervention(state: GameState, a: NpcDefinition, b:
 
   const nextState: GameState = {
     ...state,
-    npcCaptivityStates: { ...state.npcCaptivityStates },
   }
   setNpcCaptivityState(nextState, b.id, nextCaptivity)
   addWorldNpcFlag(nextState, a.id, `protecting:${b.id}`)
@@ -450,7 +449,6 @@ export function applyWorldNpcSocialSimulation(state: GameState, rng: Rng = Math.
   const eligiblePairs = new Set<string>()
   let nextState: GameState = {
     ...state,
-    npcCaptivityStates: { ...state.npcCaptivityStates },
     rumors: [...state.rumors],
     districtTension: { ...state.districtTension },
   }

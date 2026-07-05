@@ -76,27 +76,29 @@ describe('applyNpcRoomInteractions', () => {
       {
         ...state,
         npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
-          npc.npcId === captiveId ? { ...npc, states: { ...npc.states, fear: 10 } } : npc,
+          npc.npcId === captiveId
+            ? {
+                ...npc,
+                states: { ...npc.states, fear: 10 },
+                captivityState: {
+                  status: 'captive' as const,
+                  holderId: 'faction-civic-compact',
+                  siteId: 'site-world-house-sorn',
+                  roomId: 'sorn-locked-cellar',
+                  regime: 'guarded' as const,
+                  condition: 'healthy' as const,
+                  compliance: 'resistant' as const,
+                  bondType: 'fear' as const,
+                  timeHeldDays: 4,
+                  lastTransferDay: 2,
+                  questTag: null,
+                  confiscatedItems: [],
+                  confiscatedMoney: null,
+                  confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+                },
+              }
+            : npc,
         ),
-        npcCaptivityStates: {
-          ...state.npcCaptivityStates,
-          [captiveId]: {
-            status: 'captive' as const,
-            holderId: 'faction-civic-compact',
-            siteId: 'site-world-house-sorn',
-            roomId: 'sorn-locked-cellar',
-            regime: 'guarded' as const,
-            condition: 'healthy' as const,
-            compliance: 'resistant' as const,
-            bondType: 'fear' as const,
-            timeHeldDays: 4,
-            lastTransferDay: 2,
-            questTag: null,
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
         npcSitePresences: [
           {
             occupancyId: 'occ-guard-sorn',
@@ -113,7 +115,7 @@ describe('applyNpcRoomInteractions', () => {
       () => 0.25,
     )
 
-    expect(next.npcCaptivityStates[captiveId]?.compliance).toBe('conflicted')
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.captivityState?.compliance).toBe('conflicted')
     expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(10)
   })
 
@@ -129,27 +131,29 @@ describe('applyNpcRoomInteractions', () => {
       {
         ...state,
         npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
-          npc.npcId === captiveId ? { ...npc, states: { ...npc.states, fear: 35 } } : npc,
+          npc.npcId === captiveId
+            ? {
+                ...npc,
+                states: { ...npc.states, fear: 35 },
+                captivityState: {
+                  status: 'captive' as const,
+                  holderId: 'npc-sister-vael',
+                  siteId: 'site-world-chapel-saint-vey',
+                  roomId: 'chapel-infirmary',
+                  regime: 'medical' as const,
+                  condition: 'broken' as const,
+                  compliance: 'conflicted' as const,
+                  bondType: 'dependency' as const,
+                  timeHeldDays: 6,
+                  lastTransferDay: 2,
+                  questTag: null,
+                  confiscatedItems: [],
+                  confiscatedMoney: null,
+                  confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+                },
+              }
+            : npc,
         ),
-        npcCaptivityStates: {
-          ...state.npcCaptivityStates,
-          [captiveId]: {
-            status: 'captive' as const,
-            holderId: 'npc-sister-vael',
-            siteId: 'site-world-chapel-saint-vey',
-            roomId: 'chapel-infirmary',
-            regime: 'medical' as const,
-            condition: 'broken' as const,
-            compliance: 'conflicted' as const,
-            bondType: 'dependency' as const,
-            timeHeldDays: 6,
-            lastTransferDay: 2,
-            questTag: null,
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
         npcSitePresences: [
           {
             occupancyId: 'occ-healer-chapel',
@@ -166,7 +170,7 @@ describe('applyNpcRoomInteractions', () => {
       () => 0.25,
     )
 
-    expect(next.npcCaptivityStates[captiveId]?.condition).toBe('hurt')
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.captivityState?.condition).toBe('hurt')
     expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeLessThan(35)
     expect(next.relationships[buildRelationshipKey('player', captiveId)]?.trust ?? 0).toBeGreaterThan(0)
   })
@@ -182,25 +186,29 @@ describe('applyNpcRoomInteractions', () => {
     const interacted = applyNpcRoomInteractions(
       {
         ...concretized,
-        npcCaptivityStates: {
-          ...concretized.npcCaptivityStates,
-          [captiveId]: {
-            status: 'captive' as const,
-            holderId: 'faction-civic-compact',
-            siteId: 'site-world-house-sorn',
-            roomId: 'sorn-locked-cellar',
-            regime: 'guarded' as const,
-            condition: 'hurt' as const,
-            compliance: 'resistant' as const,
-            bondType: 'fear' as const,
-            timeHeldDays: 5,
-            lastTransferDay: 2,
-            questTag: 'quest-orren-wex-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
+        npcRuntimeStates: concretized.npcRuntimeStates.map((npc) =>
+          npc.npcId === captiveId
+            ? {
+                ...npc,
+                captivityState: {
+                  status: 'captive' as const,
+                  holderId: 'faction-civic-compact',
+                  siteId: 'site-world-house-sorn',
+                  roomId: 'sorn-locked-cellar',
+                  regime: 'guarded' as const,
+                  condition: 'hurt' as const,
+                  compliance: 'resistant' as const,
+                  bondType: 'fear' as const,
+                  timeHeldDays: 5,
+                  lastTransferDay: 2,
+                  questTag: 'quest-orren-wex-rescue',
+                  confiscatedItems: [],
+                  confiscatedMoney: null,
+                  confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+                },
+              }
+            : npc,
+        ),
         npcSitePresences: [
           {
             occupancyId: 'occ-visitor-sorn',
@@ -222,6 +230,6 @@ describe('applyNpcRoomInteractions', () => {
     expect(collapsed.rumors.some((rumor) => rumor.eventSource === `room-observation:${captiveId}:site-world-house-sorn:sorn-locked-cellar`)).toBe(
       true,
     )
-    expect(collapsed.npcCaptivityStates[captiveId]?.roomId).toBe('sorn-locked-cellar')
+    expect(collapsed.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.captivityState?.roomId).toBe('sorn-locked-cellar')
   })
 })

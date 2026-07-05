@@ -19,7 +19,7 @@ describe('game store integration', () => {
 
   it('seeds Mira as a hidden live captive in the canonical tannery runtime', () => {
     const store = createGameStore()
-    const captivity = store.getState().game.npcCaptivityStates['npc-mira']
+    const captivity = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')?.captivityState
 
     expect(captivity).toMatchObject({
       status: 'captive',

@@ -142,8 +142,60 @@ function migrateWorldNpcStatesIntoNpcRuntimeStates(raw: unknown): unknown {
   return { ...rest, npcRuntimeStates: [...existingRuntimeStates, ...hydrated] }
 }
 
+/**
+ * v6/v7(pre-C3) → v7(current) fold (destiny-rama.9 / unified-npc-runtime-contract §7 step 3, §4.2):
+ * the separate `npcCaptivityStates` record is folded into the matching person's
+ * `npcRuntimeStates[].captivityState`, then removed. `npcType` again comes from each person's own
+ * definition (e.g. Mira is npcType:'story') rather than being assumed.
+ *
+ * Guarded on key presence (not saveVersion), matching the two migrations above — a save can already
+ * be stamped saveVersion:7 by an earlier partial migration while still holding
+ * `npcCaptivityStates`. A no-op once the key is already gone.
+ */
+function migrateNpcCaptivityStatesIntoNpcRuntimeStates(raw: unknown): unknown {
+  if (raw === null || typeof raw !== 'object') return raw
+  const record = raw as Record<string, unknown>
+  if (record.npcCaptivityStates === undefined || record.npcCaptivityStates === null) return raw
+  if (typeof record.npcCaptivityStates !== 'object') return raw
+
+  const existingRuntimeStates = Array.isArray(record.npcRuntimeStates)
+    ? (record.npcRuntimeStates as Record<string, unknown>[])
+    : []
+
+  const nextRuntimeStates = [...existingRuntimeStates]
+  for (const [npcId, captivityState] of Object.entries(
+    record.npcCaptivityStates as Record<string, unknown>,
+  )) {
+    const existingIndex = nextRuntimeStates.findIndex((entry) => entry?.npcId === npcId)
+    if (existingIndex >= 0) {
+      // Already has a runtime entry — set/overwrite captivityState on it, never duplicate.
+      nextRuntimeStates[existingIndex] = { ...nextRuntimeStates[existingIndex], captivityState }
+      continue
+    }
+
+    try {
+      nextRuntimeStates.push(
+        createRuntimeStateFromDefinition(npcId, {
+          playerRosterMember: false,
+          captivityState: captivityState as NpcRuntimeState['captivityState'],
+        }) as unknown as Record<string, unknown>,
+      )
+    } catch (err) {
+      // A legacy captivity record referencing a definition that no longer exists — drop this one
+      // person rather than fail the whole load.
+      console.warn(`[SaveStore] Dropping legacy npcCaptivityStates entry for unknown npc '${npcId}':`, err)
+    }
+  }
+
+  const rest: Record<string, unknown> = { ...record }
+  delete rest.npcCaptivityStates
+  return { ...rest, npcRuntimeStates: nextRuntimeStates }
+}
+
 function migrateState(rawInput: unknown): GameState | null {
-  const raw = migrateWorldNpcStatesIntoNpcRuntimeStates(migrateRosterFieldToNpcRuntimeStates(rawInput))
+  const raw = migrateNpcCaptivityStatesIntoNpcRuntimeStates(
+    migrateWorldNpcStatesIntoNpcRuntimeStates(migrateRosterFieldToNpcRuntimeStates(rawInput)),
+  )
   const version = (raw as Record<string, unknown>)?.saveVersion ?? 0
 
   if (version === 0) {

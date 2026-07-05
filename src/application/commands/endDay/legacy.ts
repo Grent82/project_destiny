@@ -63,7 +63,6 @@ export function applyCaptivityDegradation(state: GameState): GameState {
   const next: GameState = {
     ...state,
     npcRuntimeStates: state.npcRuntimeStates.map((npc) => ({ ...npc })),
-    npcCaptivityStates: { ...state.npcCaptivityStates },
   }
 
   for (const [npcId, cap] of activeEntries) {

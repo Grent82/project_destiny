@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { GameState } from '../../domain'
-import { initialGameStateSnapshot } from '../store/initialGameState'
+import { createRuntimeStateFromDefinition } from '../commands/createRuntimeStateFromDefinition'
 import {
   getMiraCustodyTruthForPlayer,
   getMiraSiteDescription,
@@ -13,38 +13,42 @@ import {
 
 import type { QuestRuntime } from '../../domain/quests/contracts'
 
-function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'> {
-  return {
-    ...initialGameStateSnapshot,
-    npcCaptivityStates: {
-      ...initialGameStateSnapshot.npcCaptivityStates,
-      'npc-mira': {
-        status: 'captive',
-        holderId: 'faction-gilded-court',
-        siteId: 'site-poi-pale-old-tannery',
-        roomId: 'tannery-inner-ring',
-        regime: 'guarded',
-        condition: 'hurt',
-        compliance: 'resistant',
-        bondType: 'fear',
-        timeHeldDays: 21,
-        lastTransferDay: null,
-        questTag: 'quest-mira-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-      },
+function createBaseState(overrides: Partial<GameState> = {}): Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'> {
+  const mira = createRuntimeStateFromDefinition('npc-mira', {
+    playerRosterMember: false,
+    captivityState: {
+      status: 'captive',
+      holderId: 'faction-gilded-court',
+      siteId: 'site-poi-pale-old-tannery',
+      roomId: 'tannery-inner-ring',
+      regime: 'guarded',
+      condition: 'hurt',
+      compliance: 'resistant',
+      bondType: 'fear',
+      timeHeldDays: 21,
+      lastTransferDay: null,
+      questTag: 'quest-mira-rescue',
+      confiscatedItems: [],
+      confiscatedMoney: null,
+      confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
     },
+  })
+  return {
     completedQuestIds: overrides.completedQuestIds ?? [],
     activeQuests: overrides.activeQuests ?? [],
-    npcRuntimeStates: overrides.npcRuntimeStates ?? [],
+    npcRuntimeStates: overrides.npcRuntimeStates ?? [mira],
   }
+}
+
+/** Finds Mira's captivityState in the fixture state built by createBaseState, for test mutation. */
+function miraCaptivity(state: Pick<GameState, 'npcRuntimeStates'>) {
+  return state.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')!.captivityState!
 }
 
 describe('getMiraCustodyTruthForPlayer', () => {
   it('returns null when Mira is not in captivity', () => {
     const state = createBaseState()
-    state.npcCaptivityStates['npc-mira']!.status = 'rescued'
+    miraCaptivity(state).status = 'rescued'
 
     expect(getMiraCustodyTruthForPlayer(state)).toBeNull()
   })
@@ -122,7 +126,7 @@ describe('getMiraSiteDescription', () => {
 
   it('returns null when Mira has no siteId', () => {
     const state = createBaseState({ completedQuestIds: ['quest-mira-act1-wren-favor'] })
-    state.npcCaptivityStates['npc-mira']!.siteId = null
+    miraCaptivity(state).siteId = null
 
     expect(getMiraSiteDescription(state)).toBeNull()
   })
@@ -173,7 +177,7 @@ describe('getMiraConditionDescription', () => {
     const state = createBaseState({
       completedQuestIds: ['quest-mira-rescue'],
     })
-    state.npcCaptivityStates['npc-mira']!.condition = 'broken'
+    miraCaptivity(state).condition = 'broken'
 
     const description = getMiraConditionDescription(state)
     expect(description).toContain('flinches at sudden movements')
@@ -183,7 +187,7 @@ describe('getMiraConditionDescription', () => {
     const state = createBaseState({
       completedQuestIds: ['quest-mira-rescue'],
     })
-    state.npcCaptivityStates['npc-mira']!.condition = 'altered'
+    miraCaptivity(state).condition = 'altered'
 
     const description = getMiraConditionDescription(state)
     expect(description).toContain('something fundamental has shifted')
@@ -193,7 +197,7 @@ describe('getMiraConditionDescription', () => {
     const state = createBaseState({
       completedQuestIds: ['quest-mira-rescue'],
     })
-    state.npcCaptivityStates['npc-mira']!.condition = 'healthy'
+    miraCaptivity(state).condition = 'healthy'
 
     const description = getMiraConditionDescription(state)
     expect(description).toContain('physically intact')
@@ -210,7 +214,7 @@ describe('getMiraQuestBeats', () => {
 
   it('returns empty array when Mira is not in captivity', () => {
     const state = createBaseState()
-    state.npcCaptivityStates['npc-mira']!.status = 'rescued'
+    miraCaptivity(state).status = 'rescued'
 
     const beats = getMiraQuestBeats(state, 'quest-mira-rescue')
     expect(beats).toEqual([])

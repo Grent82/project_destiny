@@ -22,7 +22,7 @@ export type MirroredCustodyTruth = {
  * too much on a fresh save.
  */
 export function getMiraCustodyTruthForPlayer(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
 ): MirroredCustodyTruth | null {
   const captivity = getAllNpcCaptivityStates(state)['npc-mira']
   if (!captivity || (captivity.status !== 'captive' && captivity.status !== 'missing')) {
@@ -53,7 +53,7 @@ export function getMiraCustodyTruthForPlayer(
  * Returns a text description of Mira's current site if the player has earned that truth.
  */
 export function getMiraSiteDescription(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
 ): string | null {
   const truth = getMiraCustodyTruthForPlayer(state)
   if (!truth || !truth.siteKnown) return null
@@ -73,7 +73,7 @@ export function getMiraSiteDescription(
  * Returns a text description of Mira's room route if the player has earned that truth.
  */
 export function getMiraRoomRouteDescription(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
 ): string | null {
   const truth = getMiraCustodyTruthForPlayer(state)
   if (!truth || !truth.roomRouteKnown) return null
@@ -85,7 +85,7 @@ export function getMiraRoomRouteDescription(
  * Returns the handler/signer name if the player has earned that truth.
  */
 export function getMiraHandlerName(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
 ): string | null {
   const truth = getMiraCustodyTruthForPlayer(state)
   if (!truth || !truth.handlerKnown) return null
@@ -98,7 +98,7 @@ export function getMiraHandlerName(
  * Returns a description of what captivity has done to Mira if the player has earned that truth.
  */
 export function getMiraConditionDescription(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
 ): string | null {
   const truth = getMiraCustodyTruthForPlayer(state)
   if (!truth || !truth.conditionKnown) return null
@@ -137,7 +137,7 @@ export type MidQuestBeat = {
  * Returns empty array if no Mira-specific beats are earned yet.
  */
 export function getMiraQuestBeats(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests'>,
   questId: string,
 ): MidQuestBeat[] {
   // Only generate beats for Mira quests

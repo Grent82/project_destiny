@@ -125,7 +125,6 @@ function createMinimalState(overrides: Partial<GameState> = {}): GameState {
     rumors: overrides.rumors ?? [],
     bondVisibility: overrides.bondVisibility ?? {},
     siteRuntimes: overrides.siteRuntimes ?? {},
-    npcCaptivityStates: overrides.npcCaptivityStates ?? {},
     npcSitePresences: overrides.npcSitePresences ?? [],
     bondedPersonsRegistry: overrides.bondedPersonsRegistry ?? {},
     worldEvents: overrides.worldEvents ?? [],

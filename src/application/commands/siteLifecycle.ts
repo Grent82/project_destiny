@@ -1,6 +1,7 @@
 import type { GameState, SiteRuntime } from '../../domain'
 
 import { contentCatalog } from '../content/contentCatalog'
+import { getAllNpcCaptivityStates } from './captivityRegistry'
 import {
   PLAYER_HOUSE_SITE_ID,
   buildPlayerHouseSiteRuntime,
@@ -10,7 +11,7 @@ import {
 
 function unionRoomIds(
   runtime: SiteRuntime,
-  state?: Pick<GameState, 'npcSitePresences' | 'npcCaptivityStates'>,
+  state?: Pick<GameState, 'npcSitePresences' | 'npcRuntimeStates'>,
 ): string[] {
   const ids = new Set(runtime.knownRoomIds)
   for (const room of runtime.roomInstances) ids.add(room.roomId)
@@ -18,7 +19,7 @@ function unionRoomIds(
     for (const presence of state.npcSitePresences) {
       if (presence.siteId === runtime.siteId && presence.roomId) ids.add(presence.roomId)
     }
-    for (const captivity of Object.values(state.npcCaptivityStates)) {
+    for (const captivity of Object.values(getAllNpcCaptivityStates(state))) {
       if (captivity.siteId === runtime.siteId && captivity.roomId) ids.add(captivity.roomId)
     }
   }

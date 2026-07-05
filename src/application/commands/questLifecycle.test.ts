@@ -6,6 +6,7 @@ import { gameStateSchema } from '../../domain'
 import { createQuestLeadRuntime, createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
 import { getQuestTemplates } from '../content/contentCatalog'
 import { canDiscoverQuest, applyMidQuestBeats } from './questLifecycle'
+import { createRuntimeStateFromDefinition } from './createRuntimeStateFromDefinition'
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialGameStateSnapshot, ...overrides })
@@ -255,13 +256,36 @@ describe('failed quest archiving and rediscovery prevention', () => {
 
 describe('applyMidQuestBeats', () => {
   const mockState = {
-    npcCaptivityStates: {},
     npcRuntimeStates: [],
     completedQuestIds: [],
     activeQuests: [],
     day: 1,
     timeSlot: 'morning' as const,
     activityLog: [],
+  }
+
+  /** Mira hydrated as a captive npcRuntimeStates entry (destiny-rama.9 — the separate
+   * npcCaptivityStates record is gone; captivity lives solely on captivityState now). */
+  function miraCaptiveEntry() {
+    return createRuntimeStateFromDefinition('npc-mira', {
+      playerRosterMember: false,
+      captivityState: {
+        status: 'captive' as const,
+        holderId: 'faction-gilded-court',
+        siteId: 'site-poi-pale-old-tannery',
+        roomId: 'tannery-inner-ring',
+        regime: 'guarded' as const,
+        condition: 'hurt' as const,
+        compliance: 'resistant' as const,
+        bondType: 'fear' as const,
+        timeHeldDays: 21,
+        lastTransferDay: null,
+        questTag: 'quest-mira-rescue',
+        confiscatedItems: [],
+        confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+      },
+    })
   }
 
   it('applies beat label and journal entry when transitioning to beat stage', () => {
@@ -361,24 +385,7 @@ describe('applyMidQuestBeats', () => {
   it('applies runtime-backed Mira beats when captivity state is present and quest truth is earned', () => {
     const stateWithCaptivity = {
       ...mockState,
-      npcCaptivityStates: {
-        'npc-mira': {
-          status: 'captive' as const,
-          holderId: 'faction-gilded-court',
-          siteId: 'site-poi-pale-old-tannery',
-          roomId: 'tannery-inner-ring',
-          regime: 'guarded' as const,
-          condition: 'hurt' as const,
-          compliance: 'resistant' as const,
-          bondType: 'fear' as const,
-          timeHeldDays: 21,
-          lastTransferDay: null,
-          questTag: 'quest-mira-rescue',
-          confiscatedItems: [],
-          confiscatedMoney: null,
-          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-        },
-      },
+      npcRuntimeStates: [miraCaptiveEntry()],
       completedQuestIds: ['quest-mira-act2-tannery-watch'], // Act 2 completed = handler and room-route known
     }
 
@@ -406,24 +413,7 @@ describe('applyMidQuestBeats', () => {
   it('does not leak Mira custody info on fresh save (no active/completed quests)', () => {
     const stateFreshSave = {
       ...mockState,
-      npcCaptivityStates: {
-        'npc-mira': {
-          status: 'captive' as const,
-          holderId: 'faction-gilded-court',
-          siteId: 'site-poi-pale-old-tannery',
-          roomId: 'tannery-inner-ring',
-          regime: 'guarded' as const,
-          condition: 'hurt' as const,
-          compliance: 'resistant' as const,
-          bondType: 'fear' as const,
-          timeHeldDays: 21,
-          lastTransferDay: null,
-          questTag: 'quest-mira-rescue',
-          confiscatedItems: [],
-          confiscatedMoney: null,
-          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-        },
-      },
+      npcRuntimeStates: [miraCaptiveEntry()],
       completedQuestIds: [], // No quests completed
       activeQuests: [], // No quests active
     }

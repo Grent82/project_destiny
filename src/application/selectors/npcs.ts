@@ -29,7 +29,6 @@ import { getAllNpcCaptivityStates, getNpcCaptivityState } from '../commands/capt
  * docs/analysis/unified-npc-runtime-contract-2026-07-04.md §2.1/§9.
  */
 export const selectRoster = (state: RootState) => state.game.npcRuntimeStates
-export const selectNpcCaptivityRegistry = (state: RootState) => state.game.npcCaptivityStates
 
 /** All roster NPCs who are currently missing or captive. */
 export const selectCaptiveNpcs = createSelector(selectRoster, (roster) =>
@@ -48,9 +47,9 @@ export function selectNpcCaptivityState(
 }
 
 export const selectKnownCaptivityNpcIds = createSelector(
-  [selectNpcCaptivityRegistry, selectRoster],
-  (registry, roster) =>
-    Object.entries(getAllNpcCaptivityStates({ npcCaptivityStates: registry, npcRuntimeStates: roster }))
+  [selectRoster],
+  (roster) =>
+    Object.entries(getAllNpcCaptivityStates({ npcRuntimeStates: roster }))
       .filter(([, captivity]) => captivity.status === 'missing' || captivity.status === 'captive')
       .map(([npcId]) => npcId),
 )

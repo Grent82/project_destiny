@@ -1,32 +1,37 @@
 import { describe, expect, it } from 'vitest'
 
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { createRuntimeStateFromDefinition } from './createRuntimeStateFromDefinition'
 import { applySiteStateHooks, SITE_PRESSURE_EVENT_ID } from './applySiteStateHooks'
 import { collapseSite, concretizeSite } from './siteLifecycle'
+
+function orrenWexCaptive(overrides: { timeHeldDays: number; lastTransferDay: number }) {
+  return createRuntimeStateFromDefinition('npc-orren-wex', {
+    playerRosterMember: false,
+    captivityState: {
+      status: 'captive' as const,
+      holderId: 'faction-civic-compact',
+      siteId: 'site-world-house-sorn',
+      roomId: 'sorn-locked-cellar',
+      regime: 'guarded' as const,
+      condition: 'hurt' as const,
+      compliance: 'resistant' as const,
+      bondType: 'fear' as const,
+      timeHeldDays: overrides.timeHeldDays,
+      lastTransferDay: overrides.lastTransferDay,
+      questTag: 'quest-orren-wex-rescue',
+      confiscatedItems: [],
+      confiscatedMoney: null,
+      confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+    },
+  })
+}
 
 describe('applySiteStateHooks', () => {
   it('surfaces a generated rumor when captivity is anchored to an abstract site but the room is not yet known', () => {
     const state = {
       ...initialGameStateSnapshot,
-      npcCaptivityStates: {
-        ...initialGameStateSnapshot.npcCaptivityStates,
-        'npc-orren-wex': {
-          status: 'captive' as const,
-          holderId: 'faction-civic-compact',
-          siteId: 'site-world-house-sorn',
-          roomId: 'sorn-locked-cellar',
-          regime: 'guarded' as const,
-          condition: 'hurt' as const,
-          compliance: 'resistant' as const,
-          bondType: 'fear' as const,
-          timeHeldDays: 3,
-          lastTransferDay: 1,
-          questTag: 'quest-orren-wex-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-        },
-      },
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, orrenWexCaptive({ timeHeldDays: 3, lastTransferDay: 1 })],
     }
 
     const next = applySiteStateHooks(state)
@@ -42,25 +47,7 @@ describe('applySiteStateHooks', () => {
     const collapsed = collapseSite(
       {
         ...concretized,
-        npcCaptivityStates: {
-          ...concretized.npcCaptivityStates,
-          'npc-orren-wex': {
-            status: 'captive' as const,
-            holderId: 'faction-civic-compact',
-            siteId: 'site-world-house-sorn',
-            roomId: 'sorn-locked-cellar',
-            regime: 'guarded' as const,
-            condition: 'hurt' as const,
-            compliance: 'resistant' as const,
-            bondType: 'fear' as const,
-            timeHeldDays: 5,
-            lastTransferDay: 2,
-            questTag: 'quest-orren-wex-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
+        npcRuntimeStates: [...concretized.npcRuntimeStates, orrenWexCaptive({ timeHeldDays: 5, lastTransferDay: 2 })],
       },
       'site-world-house-sorn',
     )

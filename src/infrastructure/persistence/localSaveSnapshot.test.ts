@@ -234,6 +234,96 @@ describe('LocalSaveSnapshotStore', () => {
     expect(dalenEntries[0]!.states.health).toBe(dalenAlreadyPresent.states.health)
   })
 
+  it('migrates a legacy `npcCaptivityStates` record (destiny-rama.9) into npcRuntimeStates[].captivityState, hydrating a person who has no prior runtime entry', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    // Mira has no npcRuntimeStates entry in this legacy shape — only the registry knows about her,
+    // matching the pre-rama.9 save format.
+    const { npcRuntimeStates } = initialGameStateSnapshot
+    const withoutMira = npcRuntimeStates.filter((n) => n.npcId !== 'npc-mira')
+    storage.setItem(
+      'save-slot',
+      JSON.stringify({
+        ...initialGameStateSnapshot,
+        npcRuntimeStates: withoutMira,
+        npcCaptivityStates: {
+          'npc-mira': {
+            status: 'captive',
+            holderId: 'faction-gilded-court',
+            siteId: 'site-poi-pale-old-tannery',
+            roomId: 'tannery-inner-ring',
+            regime: 'guarded',
+            condition: 'hurt',
+            compliance: 'resistant',
+            bondType: 'fear',
+            timeHeldDays: 21,
+            lastTransferDay: 0,
+            questTag: 'quest-mira-rescue',
+            confiscatedItems: [],
+            confiscatedMoney: null,
+            confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+          },
+        },
+        saveVersion: 7,
+      }),
+    )
+
+    const loaded = snapshotStore.load()
+    expect(loaded).not.toBeNull()
+    expect((loaded as unknown as Record<string, unknown>).npcCaptivityStates).toBeUndefined()
+
+    const mira = loaded!.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')
+    expect(mira).toBeDefined()
+    // npcType comes from Mira's own definition ('story'), not an assumed value.
+    expect(mira!.npcType).toBe('story')
+    expect(mira!.playerRosterMember).toBe(false)
+    expect(mira!.captivityState?.status).toBe('captive')
+    expect(mira!.captivityState?.siteId).toBe('site-poi-pale-old-tannery')
+    expect(mira!.captivityState?.timeHeldDays).toBe(21)
+  })
+
+  it('folds a legacy `npcCaptivityStates` entry onto an EXISTING npcRuntimeStates person instead of creating a duplicate', () => {
+    const storage = createMemoryStorage()
+    const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')
+
+    // Marion already has a runtime entry (she's the starting roster member) — simulate her being
+    // captured, with captivity recorded only in the legacy registry (pre-rama.9 shape).
+    storage.setItem(
+      'save-slot',
+      JSON.stringify({
+        ...initialGameStateSnapshot,
+        npcCaptivityStates: {
+          'npc-marion-vale': {
+            status: 'captive',
+            holderId: 'faction-gilded-court',
+            siteId: 'site-poi-pale-old-tannery',
+            roomId: null,
+            regime: 'guarded',
+            condition: 'healthy',
+            compliance: 'resistant',
+            bondType: 'none',
+            timeHeldDays: 1,
+            lastTransferDay: null,
+            questTag: null,
+            confiscatedItems: [],
+            confiscatedMoney: null,
+            confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+          },
+        },
+        saveVersion: 7,
+      }),
+    )
+
+    const loaded = snapshotStore.load()
+    const marionEntries = loaded!.npcRuntimeStates.filter((n) => n.npcId === 'npc-marion-vale')
+    expect(marionEntries).toHaveLength(1)
+    expect(marionEntries[0]!.captivityState?.status).toBe('captive')
+    // Her existing roster identity (playerRosterMember, npcType) is untouched by the fold.
+    expect(marionEntries[0]!.playerRosterMember).toBe(true)
+    expect(marionEntries[0]!.npcType).toBe('roster')
+  })
+
   it('normalizes legacy pending events into concrete event instances on load', () => {
     const storage = createMemoryStorage()
     const snapshotStore = new LocalSaveSnapshotStore(storage, 'save-slot')

@@ -75,14 +75,17 @@ export function npcConfrontRival(state: GameState, npcId: string, rng: Rng): Gam
 
 /**
  * NPC asserts dominance over the weakest-willed idle roster NPC available, shifting the target's
- * relationship toward them (more fear, less genuine respect) on success.
+ * relationship toward them (more fear, less genuine respect) on success. Scoped to
+ * playerRosterMember (destiny-rama.9): world/story persons sharing the unified list (some, like
+ * Mira, with zeroed-out traits) must not become "weakest dominance" targets for a house mechanic
+ * that's about the player's own operatives.
  */
 export function npcAssertDominance(state: GameState, npcId: string, rng: Rng): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const target = state.npcRuntimeStates
-    .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
+    .filter((r) => r.npcId !== npcId && r.playerRosterMember && r.assignment === 'idle')
     .sort((a, b) => a.traits.dominance - b.traits.dominance)[0]
   if (!target) return state
 
@@ -211,14 +214,16 @@ export function npcFortifyPosition(state: GameState, npcId: string, rng: Rng): G
 
 /**
  * NPC cares for the most injured other idle/recovering roster NPC. Prefers a personal
- * healing-tagged item (consumed); falls back to bedside comfort with a smaller effect.
+ * healing-tagged item (consumed); falls back to bedside comfort with a smaller effect. Scoped to
+ * playerRosterMember (destiny-rama.9) — matches this function's own "roster NPC" doc above; world/
+ * story persons sharing the unified list must not become care targets for a house mechanic.
  */
 export function npcCareForInjured(state: GameState, npcId: string): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const target = state.npcRuntimeStates
-    .filter((r) => r.npcId !== npcId && (r.assignment === 'idle' || r.assignment === 'recovering'))
+    .filter((r) => r.npcId !== npcId && r.playerRosterMember && (r.assignment === 'idle' || r.assignment === 'recovering'))
     .filter((r) => r.states.injury > 0 || r.states.health < 80)
     .sort((a, b) => b.states.injury - a.states.injury)[0]
   if (!target) return state

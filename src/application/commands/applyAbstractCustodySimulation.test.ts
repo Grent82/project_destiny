@@ -57,32 +57,33 @@ describe('applyAbstractCustodySimulation', () => {
     const captiveId = 'npc-captive'
     const actorId = 'npc-guard'
     const state = stateWithActors(
-      npcBase({ npcId: captiveId, name: 'Captive', states: { ...npcBase({}).states, fear: 14 } }),
+      npcBase({
+        npcId: captiveId,
+        name: 'Captive',
+        states: { ...npcBase({}).states, fear: 14 },
+        captivityState: {
+          status: 'captive' as const,
+          holderId: 'faction-gilded-court',
+          siteId: 'site-world-house-sorn',
+          roomId: 'sorn-locked-cellar',
+          regime: 'guarded' as const,
+          condition: 'hurt' as const,
+          compliance: 'resistant' as const,
+          bondType: 'fear' as const,
+          timeHeldDays: 6,
+          lastTransferDay: 2,
+          questTag: 'quest-mira-rescue',
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      }),
       npcBase({ npcId: actorId, name: 'Guard', traits: { ...npcBase({}).traits, ruthlessness: 80, empathy: 10 } }),
     )
 
     const next = applyAbstractCustodySimulation(
       {
         ...state,
-        npcCaptivityStates: {
-          ...state.npcCaptivityStates,
-          [captiveId]: {
-            status: 'captive' as const,
-            holderId: 'faction-gilded-court',
-            siteId: 'site-world-house-sorn',
-            roomId: 'sorn-locked-cellar',
-            regime: 'guarded' as const,
-            condition: 'hurt' as const,
-            compliance: 'resistant' as const,
-            bondType: 'fear' as const,
-            timeHeldDays: 6,
-            lastTransferDay: 2,
-            questTag: 'quest-mira-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
         npcSitePresences: [
           {
             occupancyId: 'occ-guard-sorn-abstract',
@@ -99,7 +100,7 @@ describe('applyAbstractCustodySimulation', () => {
       () => 0,
     )
 
-    expect(next.npcCaptivityStates[captiveId]?.condition).toBe('broken')
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.captivityState?.condition).toBe('broken')
     expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeGreaterThan(14)
     expect(next.pendingEvents.some((event) => event.eventId === ABSTRACT_CUSTODY_ALERT_EVENT_ID)).toBe(true)
     expect(
@@ -111,32 +112,33 @@ describe('applyAbstractCustodySimulation', () => {
     const captiveId = 'npc-captive'
     const actorId = 'npc-healer'
     const state = stateWithActors(
-      npcBase({ npcId: captiveId, name: 'Captive', states: { ...npcBase({}).states, fear: 36 } }),
+      npcBase({
+        npcId: captiveId,
+        name: 'Captive',
+        states: { ...npcBase({}).states, fear: 36 },
+        captivityState: {
+          status: 'captive' as const,
+          holderId: 'npc-sister-vael',
+          siteId: 'site-world-chapel-saint-vey',
+          roomId: 'chapel-infirmary',
+          regime: 'medical' as const,
+          condition: 'broken' as const,
+          compliance: 'conflicted' as const,
+          bondType: 'dependency' as const,
+          timeHeldDays: 5,
+          lastTransferDay: 2,
+          questTag: null,
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      }),
       npcBase({ npcId: actorId, name: 'Healer', traits: { ...npcBase({}).traits, empathy: 85, ruthlessness: 5 } }),
     )
 
     const next = applyAbstractCustodySimulation(
       {
         ...state,
-        npcCaptivityStates: {
-          ...state.npcCaptivityStates,
-          [captiveId]: {
-            status: 'captive' as const,
-            holderId: 'npc-sister-vael',
-            siteId: 'site-world-chapel-saint-vey',
-            roomId: 'chapel-infirmary',
-            regime: 'medical' as const,
-            condition: 'broken' as const,
-            compliance: 'conflicted' as const,
-            bondType: 'dependency' as const,
-            timeHeldDays: 5,
-            lastTransferDay: 2,
-            questTag: null,
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
         npcSitePresences: [
           {
             occupancyId: 'occ-healer-chapel-abstract',
@@ -153,7 +155,7 @@ describe('applyAbstractCustodySimulation', () => {
       () => 0,
     )
 
-    expect(next.npcCaptivityStates[captiveId]?.condition).toBe('hurt')
+    expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.captivityState?.condition).toBe('hurt')
     expect(next.npcRuntimeStates.find((npc) => npc.npcId === captiveId)?.states.fear).toBeLessThan(36)
   })
 
@@ -161,32 +163,32 @@ describe('applyAbstractCustodySimulation', () => {
     const captiveId = 'npc-captive'
     const actorId = 'npc-guard'
     const state = stateWithActors(
-      npcBase({ npcId: captiveId, name: 'Captive' }),
+      npcBase({
+        npcId: captiveId,
+        name: 'Captive',
+        captivityState: {
+          status: 'captive' as const,
+          holderId: 'faction-gilded-court',
+          siteId: 'site-world-house-sorn',
+          roomId: 'sorn-locked-cellar',
+          regime: 'guarded' as const,
+          condition: 'hurt' as const,
+          compliance: 'resistant' as const,
+          bondType: 'fear' as const,
+          timeHeldDays: 6,
+          lastTransferDay: 2,
+          questTag: null,
+          confiscatedItems: [],
+          confiscatedMoney: null,
+          confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+        },
+      }),
       npcBase({ npcId: actorId, name: 'Guard', traits: { ...npcBase({}).traits, ruthlessness: 80, empathy: 10 } }),
     )
 
     const simulated = applyAbstractCustodySimulation(
       {
         ...state,
-        npcCaptivityStates: {
-          ...state.npcCaptivityStates,
-          [captiveId]: {
-            status: 'captive' as const,
-            holderId: 'faction-gilded-court',
-            siteId: 'site-world-house-sorn',
-            roomId: 'sorn-locked-cellar',
-            regime: 'guarded' as const,
-            condition: 'hurt' as const,
-            compliance: 'resistant' as const,
-            bondType: 'fear' as const,
-            timeHeldDays: 6,
-            lastTransferDay: 2,
-            questTag: null,
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-          },
-        },
         npcSitePresences: [
           {
             occupancyId: 'occ-guard-sorn-abstract',
@@ -205,8 +207,9 @@ describe('applyAbstractCustodySimulation', () => {
 
     const concretized = concretizeSite(simulated, 'site-world-house-sorn')
 
-    expect(concretized.npcCaptivityStates[captiveId]?.condition).toBe('broken')
-    expect(concretized.npcCaptivityStates[captiveId]?.bondType).toBe('fear')
+    const concretizedCaptive = concretized.npcRuntimeStates.find((npc) => npc.npcId === captiveId)
+    expect(concretizedCaptive?.captivityState?.condition).toBe('broken')
+    expect(concretizedCaptive?.captivityState?.bondType).toBe('fear')
     expect(concretized.siteRuntimes['site-world-house-sorn']?.mode).toBe('concrete')
   })
 })

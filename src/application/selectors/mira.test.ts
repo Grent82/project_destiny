@@ -22,7 +22,7 @@ describe('Mira custody chain selector', () => {
   it('links all seeded guards to valid old tannery rooms and the same captivity site as Mira', () => {
     const store = createGameStore()
     const chain = selectMiraCustodyChain(store.getState())
-    const captivity = store.getState().game.npcCaptivityStates['npc-mira']
+    const captivity = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')?.captivityState
 
     expect(chain).not.toBeNull()
     if (!chain) throw new Error('expected Mira custody chain')

@@ -33,7 +33,7 @@ function pushSystemLog(state: GameState, message: string): GameState {
  * For other quests, uses template hard-coded beats.
  */
 export function applyMidQuestBeats(
-  state: Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day' | 'timeSlot' | 'activityLog'>,
+  state: Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day' | 'timeSlot' | 'activityLog'>,
   runtime: { questId: string; stageId: string; journalEntries: string[]; currentObjectiveLabel: string | null },
   template: { midQuestBeats?: Array<{ atStageId: string; label: string; journalEntry: string }> } | null,
   newStageId: string,
@@ -218,7 +218,6 @@ export function advanceToOnSiteStep(state: GameState, questId: string): GameStat
   // Apply mid-quest beats for the 'on-site' stage
   applyMidQuestBeats(
     {
-      npcCaptivityStates: state.npcCaptivityStates,
       npcRuntimeStates: state.npcRuntimeStates,
       completedQuestIds: state.completedQuestIds,
       activeQuests: state.activeQuests,

@@ -188,7 +188,6 @@ const baseGameState: GameState = {
   rumors: [],
   bondVisibility: {},
   siteRuntimes: {},
-  npcCaptivityStates: {},
   npcSitePresences: [],
   bondedPersonsRegistry: {},
   worldEvents: [],

@@ -14,6 +14,31 @@ import {
 import { gameStateSchema } from '../../domain'
 import { createQuestRuntime, type QuestRuntime } from '../../domain/quests/contracts'
 import { getQuestTemplates } from '../content/contentCatalog'
+import { createRuntimeStateFromDefinition } from './createRuntimeStateFromDefinition'
+
+/** Orren Wex hydrated as a captive npcRuntimeStates entry (destiny-rama.9 — the separate
+ * npcCaptivityStates registry is gone; captivity lives solely on captivityState now). */
+function orrenWexCaptiveEntry() {
+  return createRuntimeStateFromDefinition('npc-orren-wex', {
+    playerRosterMember: false,
+    captivityState: {
+      status: 'captive',
+      condition: 'hurt',
+      compliance: 'resistant',
+      bondType: 'fear',
+      regime: 'guarded',
+      holderId: 'faction-civic-compact',
+      siteId: 'site-world-house-sorn',
+      roomId: 'sorn-locked-cellar',
+      timeHeldDays: 6,
+      lastTransferDay: 1,
+      questTag: 'quest-orren-wex-rescue',
+      confiscatedItems: [],
+      confiscatedMoney: null,
+      confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+    },
+  })
+}
 
 function makeStore(overrides: Partial<typeof initialGameStateSnapshot> = {}) {
   const state = gameStateSchema.parse({ ...initialStateWithIda, ...overrides })
@@ -486,25 +511,7 @@ describe('resolveInvestigation', () => {
       rngSeed: 42,
       activeInvestigation: readyInvestigation('quest-orren-wex-rescue', 'district-the-hollows', 'surveillance'),
       activeQuests: [makeActiveQuest('quest-orren-wex-rescue')],
-      npcCaptivityStates: {
-        ...initialGameStateSnapshot.npcCaptivityStates,
-        'npc-orren-wex': {
-          status: 'captive',
-          condition: 'hurt',
-          compliance: 'resistant',
-          bondType: 'fear',
-          regime: 'guarded',
-          holderId: 'faction-civic-compact',
-          siteId: 'site-world-house-sorn',
-          roomId: 'sorn-locked-cellar',
-          timeHeldDays: 6,
-          lastTransferDay: 1,
-          questTag: 'quest-orren-wex-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-        },
-      },
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, orrenWexCaptiveEntry()],
       npcSitePresences: [
         ...initialGameStateSnapshot.npcSitePresences,
         {
@@ -524,7 +531,7 @@ describe('resolveInvestigation', () => {
 
     const state = store.getState().game
     expect(state.completedQuestIds).toContain('quest-orren-wex-rescue')
-    expect(state.npcCaptivityStates['npc-orren-wex']).toBeUndefined()
+    expect(state.npcRuntimeStates.find((n) => n.npcId === 'npc-orren-wex')?.captivityState).toBeUndefined()
     expect(state.npcSitePresences.some((presence) => presence.npcId === 'npc-orren-wex' && presence.role === 'captive')).toBe(false)
   })
 
@@ -533,25 +540,7 @@ describe('resolveInvestigation', () => {
       rngSeed: 7,
       activeInvestigation: readyInvestigation('quest-orren-wex-rescue', 'district-the-hollows', 'records'),
       activeQuests: [makeActiveQuest('quest-orren-wex-rescue')],
-      npcCaptivityStates: {
-        ...initialGameStateSnapshot.npcCaptivityStates,
-        'npc-orren-wex': {
-          status: 'captive',
-          condition: 'hurt',
-          compliance: 'resistant',
-          bondType: 'fear',
-          regime: 'guarded',
-          holderId: 'faction-civic-compact',
-          siteId: 'site-world-house-sorn',
-          roomId: 'sorn-locked-cellar',
-          timeHeldDays: 6,
-          lastTransferDay: 1,
-          questTag: 'quest-orren-wex-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-        },
-      },
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, orrenWexCaptiveEntry()],
     })
 
     store.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-ida-rhys'] }))
@@ -562,7 +551,7 @@ describe('resolveInvestigation', () => {
     expect(
       state.activeQuests.find((quest) => quest.questId === 'quest-orren-wex-rescue')?.stageId,
     ).toBe('setback')
-    expect(state.npcCaptivityStates['npc-orren-wex']?.status).toBe('captive')
+    expect(state.npcRuntimeStates.find((n) => n.npcId === 'npc-orren-wex')?.captivityState?.status).toBe('captive')
   })
 
   it('keeps Old Ledgers active on a partial result because Orren is not out yet', () => {
@@ -570,25 +559,7 @@ describe('resolveInvestigation', () => {
       rngSeed: 7,
       activeInvestigation: readyInvestigation('quest-orren-wex-rescue', 'district-the-hollows', 'bribe'),
       activeQuests: [makeActiveQuest('quest-orren-wex-rescue')],
-      npcCaptivityStates: {
-        ...initialGameStateSnapshot.npcCaptivityStates,
-        'npc-orren-wex': {
-          status: 'captive',
-          condition: 'hurt',
-          compliance: 'resistant',
-          bondType: 'fear',
-          regime: 'guarded',
-          holderId: 'faction-civic-compact',
-          siteId: 'site-world-house-sorn',
-          roomId: 'sorn-locked-cellar',
-          timeHeldDays: 6,
-          lastTransferDay: 1,
-          questTag: 'quest-orren-wex-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-        },
-      },
+      npcRuntimeStates: [...initialGameStateSnapshot.npcRuntimeStates, orrenWexCaptiveEntry()],
     })
 
     store.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-marion-vale'] }))
@@ -602,7 +573,7 @@ describe('resolveInvestigation', () => {
     expect(runtime?.journalEntries.some((entry) => entry.includes('breakout window closed'))).toBe(
       true,
     )
-    expect(state.npcCaptivityStates['npc-orren-wex']?.status).toBe('captive')
+    expect(state.npcRuntimeStates.find((n) => n.npcId === 'npc-orren-wex')?.captivityState?.status).toBe('captive')
   })
 
   it('writes quest-specific archive success text for The Restored Ask a Favor', () => {

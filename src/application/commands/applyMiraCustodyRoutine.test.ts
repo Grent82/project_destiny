@@ -94,6 +94,13 @@ describe('isMiraCaptive', () => {
 })
 
 describe('applyMiraCustodyRoutine', () => {
+  // destiny-rama.9: Mira is a npcRuntimeStates person with captivityState set (the separate
+  // npcCaptivityStates record is gone). initialGameStateSnapshot already hydrates her; these helpers
+  // override her captivityState for each scenario.
+  function miraCaptivity(state: Pick<GameState, 'npcRuntimeStates'>) {
+    return state.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')?.captivityState
+  }
+
   function createMiraState(overrides: Partial<{
     day: number
     timeHeldDays: number
@@ -106,24 +113,29 @@ describe('applyMiraCustodyRoutine', () => {
     return {
       ...initialGameStateSnapshot,
       day: overrides.day ?? 1,
-      npcCaptivityStates: {
-        'npc-mira': {
-          status: 'captive',
-          holderId: 'faction-gilded-court',
-          siteId: 'site-poi-pale-old-tannery',
-          roomId: overrides.roomId ?? 'tannery-inner-ring',
-          regime: 'guarded',
-          condition: overrides.condition ?? 'hurt',
-          compliance: overrides.compliance ?? 'resistant',
-          bondType: overrides.bondType ?? 'fear',
-          timeHeldDays: overrides.timeHeldDays ?? 0,
-          lastTransferDay: overrides.lastTransferDay ?? null,
-          questTag: 'quest-mira-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
-        },
-      },
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-mira'
+          ? {
+              ...npc,
+              captivityState: {
+                status: 'captive' as const,
+                holderId: 'faction-gilded-court',
+                siteId: 'site-poi-pale-old-tannery',
+                roomId: overrides.roomId ?? 'tannery-inner-ring',
+                regime: 'guarded' as const,
+                condition: overrides.condition ?? 'hurt',
+                compliance: overrides.compliance ?? 'resistant',
+                bondType: overrides.bondType ?? 'fear',
+                timeHeldDays: overrides.timeHeldDays ?? 0,
+                lastTransferDay: overrides.lastTransferDay ?? null,
+                questTag: 'quest-mira-rescue',
+                confiscatedItems: [],
+                confiscatedMoney: null,
+                confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+              },
+            }
+          : npc,
+      ),
     }
   }
 
@@ -131,7 +143,7 @@ describe('applyMiraCustodyRoutine', () => {
     const state = createMiraState({ timeHeldDays: 5 })
     const next = applyMiraCustodyRoutine(state, () => 0)
 
-    expect(next.npcCaptivityStates['npc-mira']?.timeHeldDays).toBe(6)
+    expect(miraCaptivity(next)?.timeHeldDays).toBe(6)
   })
 
   it('updates roomId on transfer days', () => {
@@ -139,8 +151,8 @@ describe('applyMiraCustodyRoutine', () => {
     const state = createMiraState({ timeHeldDays: 2, roomId: 'tannery-inner-ring' })
     const next = applyMiraCustodyRoutine(state, () => 0)
 
-    expect(next.npcCaptivityStates['npc-mira']?.roomId).toBe('tannery-holding-floor')
-    expect(next.npcCaptivityStates['npc-mira']?.lastTransferDay).toBe(state.day)
+    expect(miraCaptivity(next)?.roomId).toBe('tannery-holding-floor')
+    expect(miraCaptivity(next)?.lastTransferDay).toBe(state.day)
   })
 
   it('updates roomId back to inner-ring on day 8 (new cycle)', () => {
@@ -148,15 +160,15 @@ describe('applyMiraCustodyRoutine', () => {
     const state = createMiraState({ timeHeldDays: 6, roomId: 'tannery-holding-floor' })
     const next = applyMiraCustodyRoutine(state, () => 0)
 
-    expect(next.npcCaptivityStates['npc-mira']?.roomId).toBe('tannery-inner-ring')
+    expect(miraCaptivity(next)?.roomId).toBe('tannery-inner-ring')
   })
 
   it('does not change room on non-transfer days', () => {
     const state = createMiraState({ timeHeldDays: 1, roomId: 'tannery-inner-ring' })
     const next = applyMiraCustodyRoutine(state, () => 0)
 
-    expect(next.npcCaptivityStates['npc-mira']?.roomId).toBe('tannery-inner-ring')
-    expect(next.npcCaptivityStates['npc-mira']?.lastTransferDay).toBeNull()
+    expect(miraCaptivity(next)?.roomId).toBe('tannery-inner-ring')
+    expect(miraCaptivity(next)?.lastTransferDay).toBeNull()
   })
 
   it('stops routine when rescue quest is completed', () => {
@@ -168,34 +180,33 @@ describe('applyMiraCustodyRoutine', () => {
     const next = applyMiraCustodyRoutine(completedState, () => 0)
 
     // State should not change when rescue is complete
-    expect(next.npcCaptivityStates['npc-mira']?.timeHeldDays).toBe(5)
+    expect(miraCaptivity(next)?.timeHeldDays).toBe(5)
   })
 
   it('stops routine when Mira is freed', () => {
     const state = createMiraState({ timeHeldDays: 5 })
     const freedState: GameState = {
       ...state,
-      npcCaptivityStates: {
-        'npc-mira': {
-          ...state.npcCaptivityStates['npc-mira']!,
-          status: 'returned',
-        },
-      },
+      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-mira' ? { ...npc, captivityState: { ...npc.captivityState!, status: 'returned' as const } } : npc,
+      ),
     }
     const next = applyMiraCustodyRoutine(freedState, () => 0)
 
-    expect(next.npcCaptivityStates['npc-mira']?.timeHeldDays).toBe(5)
+    expect(miraCaptivity(next)?.timeHeldDays).toBe(5)
   })
 
   it('does nothing when Mira captivity state does not exist', () => {
     const state = createMiraState()
     const noMiraState: GameState = {
       ...state,
-      npcCaptivityStates: {},
+      npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-mira' ? { ...npc, captivityState: undefined } : npc,
+      ),
     }
     const next = applyMiraCustodyRoutine(noMiraState, () => 0)
 
-    expect(next.npcCaptivityStates['npc-mira']).toBeUndefined()
+    expect(miraCaptivity(next)).toBeUndefined()
   })
 
   it('applies condition worsening after 5 days with high probability', () => {
@@ -204,7 +215,7 @@ describe('applyMiraCustodyRoutine', () => {
     const next = applyMiraCustodyRoutine(state, () => 0.5)
 
     // At day 5 (timeHeldDays 4 -> 5), condition should worsen from hurt to broken
-    expect(next.npcCaptivityStates['npc-mira']?.condition).toBe('broken')
+    expect(miraCaptivity(next)?.condition).toBe('broken')
   })
 
   it('does not worsen condition below altered', () => {
@@ -214,21 +225,21 @@ describe('applyMiraCustodyRoutine', () => {
     const next = applyMiraCustodyRoutine(state, () => 0)
 
     // altered is the max condition, should stay at altered
-    expect(next.npcCaptivityStates['npc-mira']?.condition).toBe('altered')
+    expect(miraCaptivity(next)?.condition).toBe('altered')
   })
 
   it('applies compliance shift after 7 days', () => {
     const state = createMiraState({ timeHeldDays: 6, compliance: 'resistant' })
     const next = applyMiraCustodyRoutine(state, () => 0.3) // Below 0.4 threshold
 
-    expect(next.npcCaptivityStates['npc-mira']?.compliance).toBe('conflicted')
+    expect(miraCaptivity(next)?.compliance).toBe('conflicted')
   })
 
   it('applies bondType shift after 10 days', () => {
     const state = createMiraState({ timeHeldDays: 9, bondType: 'fear' })
     const next = applyMiraCustodyRoutine(state, () => 0.3) // Below 0.35 threshold
 
-    expect(next.npcCaptivityStates['npc-mira']?.bondType).toBe('dependency')
+    expect(miraCaptivity(next)?.bondType).toBe('dependency')
   })
 
   it('does not progress bondType when RNG is above threshold', () => {
@@ -237,7 +248,7 @@ describe('applyMiraCustodyRoutine', () => {
     const state = createMiraState({ timeHeldDays: 19, bondType: 'dependency' })
     const next = applyMiraCustodyRoutine(state, () => 0.5) // Above threshold, should not change
 
-    expect(next.npcCaptivityStates['npc-mira']?.bondType).toBe('dependency')
+    expect(miraCaptivity(next)?.bondType).toBe('dependency')
   })
 
   it('progresses to affection when RNG allows', () => {
@@ -245,7 +256,7 @@ describe('applyMiraCustodyRoutine', () => {
     const state = createMiraState({ timeHeldDays: 19, bondType: 'dependency' })
     const next = applyMiraCustodyRoutine(state, () => 0.2) // Above 0.35 threshold, should progress
 
-    expect(next.npcCaptivityStates['npc-mira']?.bondType).toBe('affection')
+    expect(miraCaptivity(next)?.bondType).toBe('affection')
   })
 
   it('runs deterministically with same RNG seed', () => {
@@ -254,7 +265,7 @@ describe('applyMiraCustodyRoutine', () => {
     const next1 = applyMiraCustodyRoutine(state, () => 0.5)
     const next2 = applyMiraCustodyRoutine(state, () => 0.5)
 
-    expect(next1.npcCaptivityStates['npc-mira']).toEqual(next2.npcCaptivityStates['npc-mira'])
+    expect(miraCaptivity(next1)).toEqual(miraCaptivity(next2))
   })
 })
 
@@ -264,36 +275,39 @@ describe('getMiraCustodySchedule', () => {
     timeHeldDays: number
     roomId: string
     lastTransferDay: number | null
-  }> = {}): Pick<GameState, 'npcCaptivityStates' | 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day'> {
+  }> = {}): Pick<GameState, 'npcRuntimeStates' | 'completedQuestIds' | 'activeQuests' | 'day'> {
+    const mira = initialGameStateSnapshot.npcRuntimeStates.find((n) => n.npcId === 'npc-mira')!
     return {
       day: overrides.day ?? 1,
       completedQuestIds: [],
       activeQuests: [],
-      npcRuntimeStates: [],
-      npcCaptivityStates: {
-        'npc-mira': {
-          status: 'captive',
-          holderId: 'faction-gilded-court',
-          siteId: 'site-poi-pale-old-tannery',
-          roomId: overrides.roomId ?? 'tannery-inner-ring',
-          regime: 'guarded',
-          condition: 'hurt',
-          compliance: 'resistant',
-          bondType: 'fear',
-          timeHeldDays: overrides.timeHeldDays ?? 0,
-          lastTransferDay: overrides.lastTransferDay ?? null,
-          questTag: 'quest-mira-rescue',
-        confiscatedItems: [],
-        confiscatedMoney: null,
-        confiscatedEquipment: { weapon: null, armor: null, accessory: [] }
+      npcRuntimeStates: [
+        {
+          ...mira,
+          captivityState: {
+            status: 'captive',
+            holderId: 'faction-gilded-court',
+            siteId: 'site-poi-pale-old-tannery',
+            roomId: overrides.roomId ?? 'tannery-inner-ring',
+            regime: 'guarded',
+            condition: 'hurt',
+            compliance: 'resistant',
+            bondType: 'fear',
+            timeHeldDays: overrides.timeHeldDays ?? 0,
+            lastTransferDay: overrides.lastTransferDay ?? null,
+            questTag: 'quest-mira-rescue',
+            confiscatedItems: [],
+            confiscatedMoney: null,
+            confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+          },
         },
-      },
+      ],
     }
   }
 
   it('returns null when Mira is not captive', () => {
     const state = createScheduleState()
-    state.npcCaptivityStates['npc-mira']!.status = 'returned'
+    state.npcRuntimeStates[0]!.captivityState!.status = 'returned'
 
     expect(getMiraCustodySchedule(state)).toBeNull()
   })
