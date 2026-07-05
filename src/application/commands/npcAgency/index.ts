@@ -32,10 +32,19 @@ function buildAgencyPool(npc: { traits: { ruthlessness: number; prudence: number
   return pool
 }
 
-/** Apply all NPC agency actions in a single pass. */
+/**
+ * Apply all NPC agency actions in a single pass.
+ *
+ * playerRosterMember-scoped (destiny-rama.12 full-parity audit): every sub-module here is
+ * player-house-specific (contacts/incidents/factions/loyalty-bonds/spending/movement driven by the
+ * PLAYER's own operatives being sent to work a district job) — `assignment==='working'` is
+ * currently reachable only by roster members in practice (the work-assignment UI is gated to
+ * selectRosterEntries), but this and every sub-module's own `workingNpcs` filter now say so
+ * explicitly rather than relying on that being true by coincidence.
+ */
 export function applyAllNpcAgency(state: GameState, rng: Rng = Math.random): GameState {
   let next = state
-  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.playerRosterMember && r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

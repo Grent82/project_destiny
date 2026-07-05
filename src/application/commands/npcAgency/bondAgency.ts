@@ -4,16 +4,23 @@ import { buildRelationshipKey } from '../../../domain/relationships/contracts'
 import { appendActivityLogEntry } from '../activityLog'
 import { applyRelationshipDelta } from '../adjustRelationship'
 
-/** NPC bond agency: NPCs build loyalty with fellow roster members through shared work. */
+/**
+ * NPC bond agency: NPCs build loyalty with fellow roster members through shared work.
+ * playerRosterMember-scoped throughout (destiny-rama.12): `assignment==='working'` is currently
+ * reachable only by roster members (the assignment UI is gated to selectRosterEntries), but the
+ * bond-partner pick (`others`) had NO population filter at all — a working roster NPC could
+ * randomly "grow closer" and gain loyalty with a captive or an enemy-typed person sharing the
+ * unified list. Fixed explicitly rather than relying on the workingNpcs gate alone.
+ */
 export function applyBondAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.playerRosterMember && r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue
 
     const npcName = npc.name
-    const others = next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId)
+    const others = next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId && r.playerRosterMember)
 
     // Only trigger bond-building for a subset of NPCs
     if (rng() >= 0.5) continue

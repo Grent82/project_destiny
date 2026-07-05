@@ -7,10 +7,16 @@ import { adjustCityDial } from '../economicConsequences'
 import { TRAIT_DOMINANT, TRAIT_MODERATE } from '../../../domain/npc/traitThresholds'
 import type { InitiativeAction } from './types'
 
-/** Initiative agency module: arc-initiator NPCs take weekly strategic actions. */
+/**
+ * Initiative agency module: arc-initiator NPCs take weekly strategic actions.
+ * playerRosterMember-scoped (destiny-rama.12): the only authored 'arc-initiator' definition
+ * (npc-nessa-vain) is npcType:'roster' and only ever reaches npcRuntimeStates once recruited, so
+ * this is currently safe by coincidence — made explicit since `resource_move` directly adds to the
+ * player's house money, a player-house-specific effect that must never apply to a non-roster person.
+ */
 export function applyInitiativeAgency(state: GameState, rng: Rng): GameState {
   const initiatorNpcs = state.npcRuntimeStates.filter(
-    (npc) => npc.npcArc?.arcId === 'arc-initiator' && state.day % 7 === 0,
+    (npc) => npc.playerRosterMember && npc.npcArc?.arcId === 'arc-initiator' && state.day % 7 === 0,
   )
   if (initiatorNpcs.length === 0) return state
 
@@ -36,7 +42,11 @@ export function applyInitiativeAgency(state: GameState, rng: Rng): GameState {
       }
       next = appendActivityLogEntry(next, 'system', `${npc.name} has been working a contact in ${districtName}. Tension there has ${delta < 0 ? 'eased' : 'increased'}.`)
     } else if (action === 'npc_approach') {
-      const others = next.npcRuntimeStates.filter((r) => r.npcId !== npc.npcId)
+      // Excludes captives/wards (destiny-rama.12) — an initiator "spending time with, observing"
+      // someone must not target a captive.
+      const others = next.npcRuntimeStates.filter(
+        (r) => r.npcId !== npc.npcId && r.captivityState?.status !== 'captive' && r.status !== 'ward',
+      )
       if (others.length > 0) {
         const other = others[Math.floor(rng() * others.length)]!
         const relKey = buildRelationshipKey(npc.npcId, other.npcId)

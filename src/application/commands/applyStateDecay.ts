@@ -36,7 +36,22 @@ const AGE_BAND_MODIFIERS = {
   elder:  { accum: 1.08, recovery: 0.95 },
 } as const
 
-/** Steps 2, 2b: hunger/fatigue/stress decay and health recovery for recovering NPCs. */
+/**
+ * Steps 2, 2b: hunger/fatigue/stress decay and health recovery for recovering NPCs.
+ *
+ * destiny-rama.12 (full parity): this loop already ran over every person in the unified
+ * npcRuntimeStates list unconditionally (no npcType gate at all) — the fold itself already gave
+ * world/story persons the same survival-need accumulation as roster, which is the whole point of
+ * "full parity". The one thing genuinely missing was excluding npcType:'enemy' persons (no runtime
+ * agency, belongs to the combat system) — added below. Captives are NOT excluded here: they still
+ * accumulate hunger/fatigue/stress like anyone else (a captive still gets hungry), on top of —
+ * not instead of — their separate custody-specific state (condition/compliance/bondType) handled
+ * by applyAbstractCustodySimulation/applyMiraCustodyRoutine/applyNpcRoomInteractions. Those systems
+ * touch different concerns (custody condition, not survival needs) even where both happen to adjust
+ * `states.stress` — that's two independent contributions to the same field, the same layering every
+ * roster NPC already gets from passive decay plus active player-triggered effects, not a duplicate
+ * application of the same mechanic.
+ */
 export function applyStateDecay(state: GameState): GameState {
   const waterScarcity = (state.cityResources?.waterAccess ?? 100) < 30
   const anger_morale_threshold = 30
@@ -51,6 +66,8 @@ export function applyStateDecay(state: GameState): GameState {
   let next: GameState = {
     ...state,
     npcRuntimeStates: state.npcRuntimeStates.map((npc) => {
+      if (npc.npcType === 'enemy') return npc
+
       const isResting = npc.assignment !== 'deployed'
       const highAnger = (npc.states.anger ?? 0) > ANGER_PENALTY_THRESHOLD
       const highHygiene = (npc.states.hygiene ?? 0) > HYGIENE_PENALTY_THRESHOLD
@@ -121,8 +138,10 @@ export function applyStateDecay(state: GameState): GameState {
     )
   }
 
-  // Step 2b: Recovering NPCs regain health and shed injury each day.
-  for (const npc of next.npcRuntimeStates.filter((r) => r.assignment === 'recovering')) {
+  // Step 2b: Recovering NPCs regain health and shed injury each day. npcType:'enemy' excluded
+  // (destiny-rama.12), matching Step 1 above — currently a no-op in practice since nothing sets
+  // assignment:'recovering' on an enemy-typed person, but kept consistent for defense-in-depth.
+  for (const npc of next.npcRuntimeStates.filter((r) => r.assignment === 'recovering' && r.npcType !== 'enemy')) {
     const npcDef = contentCatalog.npcsById.get(npc.npcId)
     const npcName = npcDef?.name ?? npc.npcId
     const ageBand = npcDef?.ageBand ?? 'adult'

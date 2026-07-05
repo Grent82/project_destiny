@@ -226,6 +226,29 @@ selection needed per-function judgment):
   `state.privateCorrespondence` message participants, not an `npcRuntimeStates` population scan; no
   fix needed (out of this bug class entirely).
 
+**Implemented (destiny-rama.12 — full needs-decay parity):** `applyStateDecay.ts`'s Step 1
+(hunger/fatigue/stress/morale/anger/hygiene/intoxication) already ran unconditionally over the
+whole `npcRuntimeStates` list — the fold itself already delivered "full parity" for world/story
+persons with zero extra code. The only gap: `npcType:'enemy'` persons were getting this decay too
+(no runtime agency, belongs to the combat system) — both Step 1 and Step 2b (recovering-NPC health
+regen) now skip them explicitly. Captives are deliberately NOT excluded — they still accumulate
+survival needs like anyone else, layered with (not replacing) their separate custody-state handling
+in the dedicated custody commands.
+
+`src/application/commands/npcAgency/*` (the district-work side-effect modules: bond/contact/
+faction/incident/initiative/movement/rumor/spending agency) all key off `assignment==='working'`,
+which is currently reachable only by roster members in practice (the work-assignment UI
+(`setNpcAssignment`) is only ever dispatched from `RosterScreen`/`NpcDetailPanel`, both scoped to
+`selectRosterEntries`). Made this explicit with a `playerRosterMember` filter in all 8 modules
+(previously implicit/coincidental) since several have real player-house economic effects (spending
+deducts house money, initiative-agency's `resource_move` adds house money) that must never apply to
+a non-roster person. Also found and fixed two "pick a random OTHER npc" target selections
+(`bondAgency.ts`'s loyalty-building partner, `initiativeAgency.ts`'s `npc_approach` action) that had
+**no population filter at all** — a working roster NPC could randomly "grow closer" (gain loyalty)
+with captive Mira or an enemy-typed guard. Both now exclude captives/wards (bondAgency additionally
+requires `playerRosterMember`, matching its "fellow roster members" doc comment; initiativeAgency's
+own population is already roster-gated at the `arc-initiator` filter).
+
 ## 7. Save migration v6 → v7 (`localSaveSnapshot.ts`)
 
 Current `saveVersion` default is 6 (contracts.ts:521). Add a v6→v7 step that:

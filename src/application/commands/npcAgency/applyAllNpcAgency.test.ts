@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { applyAllNpcAgency } from './index'
-import { initialStateWithIda } from '../testFixtures'
+import { initialStateWithIda, idaRhysRosterEntry, worldNpcRuntimeEntry } from '../testFixtures'
 import { createRng } from '../seededRng'
 
 describe('applyAllNpcAgency', () => {
@@ -50,5 +50,27 @@ describe('applyAllNpcAgency', () => {
       expect(result.day).toBe(state.day)
       expect(result.npcRuntimeStates.length).toBe(state.npcRuntimeStates.length)
     }
+  })
+
+  it('never spends house money or logs agency activity for a working World NPC, even a "greedy" one (destiny-rama.12 — player-house economics stay roster-only)', () => {
+    const greedyWorldNpc = worldNpcRuntimeEntry('npc-test-world-greedy', {
+      assignment: 'working',
+      traits: { ...idaRhysRosterEntry.traits, ambition: 90, discipline: 10 }, // isGreedy in spendingAgency.ts
+    })
+    const state = {
+      ...initialStateWithIda,
+      // Only the World NPC is working — no roster member can trigger any agency action here.
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, greedyWorldNpc],
+      money: 1000,
+    }
+
+    // Force every probability gate to succeed (all thresholds in the agency modules are `rng() < X`
+    // with X <= 0.5, so 0 always passes) to maximize the chance a bug would surface.
+    const alwaysTrigger = () => 0
+    const result = applyAllNpcAgency(state, alwaysTrigger)
+
+    expect(result.money).toBe(1000)
+    const worldNpc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-test-world-greedy')!
+    expect(worldNpc.states).toEqual(greedyWorldNpc.states)
   })
 })

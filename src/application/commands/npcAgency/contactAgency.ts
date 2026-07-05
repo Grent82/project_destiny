@@ -9,7 +9,7 @@ import { adjustCityDial, adjustDistrictTension } from '../economicConsequences'
 /** NPC contact agency: diplomatic/charming NPCs make useful contacts that ease trade friction. */
 export function applyContactAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.playerRosterMember && r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

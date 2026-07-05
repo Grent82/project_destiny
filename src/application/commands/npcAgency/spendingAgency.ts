@@ -8,7 +8,7 @@ import { applyRelationshipDelta } from '../adjustRelationship'
 /** NPC spending agency: greedy NPCs spend marks on personal business, benefiting local markets. */
 export function applySpendingAgency(state: GameState, rng: Rng): GameState {
   let next = state
-  const workingNpcs = next.npcRuntimeStates.filter((r) => r.assignment === 'working')
+  const workingNpcs = next.npcRuntimeStates.filter((r) => r.playerRosterMember && r.assignment === 'working')
 
   for (const npc of workingNpcs) {
     if (rng() >= 0.15) continue

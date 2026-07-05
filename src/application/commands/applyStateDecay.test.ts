@@ -453,3 +453,58 @@ describe('World NPC recovery (destiny-629x scaffolding, folded into the unified 
     expect(worldNpc!.states.injury).toBe(idaRhysRosterEntry.states.injury)
   })
 })
+
+describe('full needs-decay parity for world/story persons (destiny-rama.12)', () => {
+  it("a World NPC's hunger rises over an endDay-style applyStateDecay call, same as a roster NPC", () => {
+    const worldNpc = worldNpcRuntimeEntry('npc-test-world-hunger', { states: { ...idaRhysRosterEntry.states, hunger: 20 } })
+    const state = {
+      ...initialStateWithIda,
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, worldNpc],
+    }
+    const result = applyStateDecay(state)
+
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-test-world-hunger')!
+    expect(npc.states.hunger).toBeGreaterThan(20)
+  })
+
+  it('excludes npcType:enemy persons from decay entirely — states are byte-for-byte unchanged', () => {
+    const enemyNpc = {
+      ...worldNpcRuntimeEntry('npc-test-enemy-decay'),
+      npcType: 'enemy' as const,
+    }
+    const state = {
+      ...initialStateWithIda,
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, enemyNpc],
+    }
+    const result = applyStateDecay(state)
+
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-test-enemy-decay')!
+    expect(npc.states).toEqual(enemyNpc.states)
+    expect(npc.assignment).toBe(enemyNpc.assignment)
+  })
+
+  it('a captive person still accumulates survival needs (hunger) alongside their separate custody state — not double-decayed, not skipped', () => {
+    const captiveNpc = worldNpcRuntimeEntry('npc-test-captive-decay', {
+      states: { ...idaRhysRosterEntry.states, hunger: 20, stress: 40 },
+      captivityState: {
+        status: 'captive', holderId: 'faction-gilded-court', siteId: 'site-poi-pale-old-tannery',
+        roomId: 'tannery-inner-ring', regime: 'guarded', condition: 'hurt', compliance: 'resistant',
+        bondType: 'fear', timeHeldDays: 5, lastTransferDay: null, questTag: null,
+        confiscatedItems: [], confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+      },
+    })
+    const state = {
+      ...initialStateWithIda,
+      npcRuntimeStates: [...initialStateWithIda.npcRuntimeStates, captiveNpc],
+    }
+    const result = applyStateDecay(state)
+
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === 'npc-test-captive-decay')!
+    // Survival needs still accumulate exactly once (Step 1's single pass) — a captive still gets
+    // hungry. Their captivityState (a separate concern, driven by dedicated custody commands, not
+    // applyStateDecay) is untouched by this function.
+    expect(npc.states.hunger).toBeGreaterThan(20)
+    expect(npc.captivityState).toEqual(captiveNpc.captivityState)
+  })
+})

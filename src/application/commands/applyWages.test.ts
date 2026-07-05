@@ -245,5 +245,17 @@ describe('applyWages', () => {
       expect(idaAfterDay2.personalFunds.carriedCash).toBe(12)
       expect(idaAfterDay2.personalFunds.lastWagePaymentDay).toBe(2)
     })
+
+    it('does not pay wages to world/story/enemy persons sharing the unified list (destiny-rama.12)', () => {
+      // initialStateWithIda's base snapshot carries Mira, Dalen, Tomas, and Catrin alongside
+      // Marion/Ida — none of them are on the player's payroll.
+      const state = { ...initialStateWithIda, money: 1000 }
+      const result = applyWages(state)
+      for (const npc of result.npcRuntimeStates) {
+        if (npc.playerRosterMember) continue
+        expect(npc.personalFunds.savings).toBe(0)
+        expect(npc.personalFunds.lastWagePaymentDay).toBeNull()
+      }
+    })
   })
 })
