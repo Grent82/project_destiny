@@ -1585,4 +1585,38 @@ describe('intentions', () => {
       expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
   })
+
+  describe('world NPC end-to-end intention lifecycle (destiny-rama.11)', () => {
+    it('generates, executes, and clears an eligible intention for a World NPC across a full day (processAllowlistedNpcIntentions -> executeAllowlistedNpcIntentions)', () => {
+      const worldNpc: NpcRuntimeState = {
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+        npcId: 'npc-test-world-e2e',
+        npcType: 'world',
+        playerRosterMember: false,
+        assignment: 'idle',
+        currentDirectiveId: null,
+        currentIntention: null,
+        factionRelationships: [],
+        captivityState: undefined,
+        // High hunger reliably produces eat-meal (state-driven, highest priority stage), which is
+        // both WIRED_INTENTION_TYPES and WORLD_ELIGIBLE_INTENTION_TYPES.
+        states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 90, fatigue: 10, stress: 10, hygiene: 10 },
+      }
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        npcRuntimeStates: [worldNpc],
+      }
+
+      const generated = processAllowlistedNpcIntentions(state)
+      const assignedIntention = generated.npcRuntimeStates[0]!.currentIntention
+      expect(assignedIntention).not.toBeNull()
+      expect(WORLD_ELIGIBLE_INTENTION_TYPES.has(assignedIntention!.type)).toBe(true)
+
+      const executed = executeAllowlistedNpcIntentions(generated)
+      const finalNpc = executed.npcRuntimeStates.find((n) => n.npcId === 'npc-test-world-e2e')!
+      // Executing eat-meal (npcEatMeal) reduces hunger; whichever eligible type actually won,
+      // the intention must be cleared afterward so the NPC can generate a fresh one tomorrow.
+      expect(finalNpc.currentIntention).toBeNull()
+    })
+  })
 })

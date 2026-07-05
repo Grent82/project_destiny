@@ -11,7 +11,7 @@ import {
   npcTrainSelf,
   npcEscapeAttempt,
 } from './npcIntellectActions'
-import { initialStateWithIda, idaRhysRosterEntry } from './testFixtures'
+import { initialStateWithIda, idaRhysRosterEntry, worldNpcRuntimeEntry } from './testFixtures'
 import type { GameState } from '../../domain/game/contracts'
 import type { NpcRuntimeState } from '../../domain/npc/contracts'
 import type { CorrespondenceMessage } from '../../domain/correspondence/contracts'
@@ -75,6 +75,24 @@ describe('npcSpyOn', () => {
 
   it('no-ops when there is no other idle NPC', () => {
     const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [initialStateWithIda.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!] }
+    const result = npcSpyOn(state, NPC_ID, alwaysSucceed)
+    expect(result).toBe(state)
+  })
+
+  it('never targets a captive person (destiny-rama.11 regression) — no-ops when the only other idle NPC is captive', () => {
+    const captive = worldNpcRuntimeEntry('npc-test-captive', {
+      assignment: 'idle',
+      captivityState: {
+        status: 'captive', holderId: null, siteId: null, roomId: null, regime: 'unknown',
+        condition: 'healthy', compliance: 'resistant', bondType: 'none', timeHeldDays: 1,
+        lastTransferDay: null, questTag: null, confiscatedItems: [], confiscatedMoney: null,
+        confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
+      },
+    })
+    const state: GameState = {
+      ...initialStateWithIda,
+      npcRuntimeStates: [initialStateWithIda.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!, captive],
+    }
     const result = npcSpyOn(state, NPC_ID, alwaysSucceed)
     expect(result).toBe(state)
   })

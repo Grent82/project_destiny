@@ -202,6 +202,30 @@ that is not called from anywhere in production (only its own tests), i.e. genuin
 candidate for a future cleanup bead, not touched here.
 The exact per-type sets are enumerated in the eligibility ticket; this table is the intent.
 
+**Implemented (destiny-rama.11):** `executeAllowlistedNpcIntentions` already iterated the unified
+list (same C1-rename effect as generation). The real work was auditing every handler's own
+actor/target resolution in `npcSurvivalActions.ts`/`npcAggressionActions.ts`/`npcSpecialActions.ts`/
+`npcLeadershipActions.ts`/`npcIntellectActions.ts`/`npcNpcRomance.ts` for population-agnostic
+correctness (self-scoped and id-by-content-data lookups were already fine; population-scan target
+selection needed per-function judgment):
+- `npcSpyOn` (spy-on) — target selection is now deliberately population-agnostic (per this doc's own
+  §6 note that "roster-coupled intrigue" mechanics needed D2 to generalize their target selection
+  before they could ever be widened to world eligibility), but excludes captives/wards.
+- `npcSocialize`/`npcGossip` — already population-agnostic by design (destiny-rama.8/9), but were
+  missing a captive/ward exclusion entirely; a roster or world NPC's daily socializing could target
+  captive Mira. Fixed.
+- `npcMediateConflict` — refined from "always roster-only" (destiny-rama.8's regression fix) to
+  "same population bucket as the acting NPC" — necessary because `mediate-conflict` **is**
+  `WORLD_ELIGIBLE`, so a World NPC can already be assigned it as their own intention; without this
+  refinement a World mediator would search the roster pool and almost always find no eligible pair.
+- `npcAssertDominance`/`npcCareForInjured`/`npcHostGathering` — left as `playerRosterMember`-only
+  (destiny-rama.8/9's fix already correct here): none of `assert-dominance`/`care-for-injured`/
+  `host-gathering` are in `WORLD_ELIGIBLE_INTENTION_TYPES`, so their actor can only ever be roster
+  today; no change needed.
+- `npcGatherLeverage`/`npcInterceptCommunication` — target resolution is driven by
+  `state.privateCorrespondence` message participants, not an `npcRuntimeStates` population scan; no
+  fix needed (out of this bug class entirely).
+
 ## 7. Save migration v6 → v7 (`localSaveSnapshot.ts`)
 
 Current `saveVersion` default is 6 (contracts.ts:521). Add a v6→v7 step that:

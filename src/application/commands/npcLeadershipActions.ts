@@ -118,13 +118,19 @@ export function npcChallengeAuthority(state: GameState, npcId: string): GameStat
   return appendActivityLogEntry(next, 'system', `${npc.name} openly challenges ${target.factionId}'s authority.`)
 }
 
-/** NPC socializes with a nearby idle NPC — light affinity/trust gain, deterministic. */
+/**
+ * NPC socializes with a nearby idle NPC — light affinity/trust gain, deterministic. Target
+ * selection deliberately reaches across the whole population (social full parity is the point of
+ * the unify epic — destiny-rama.8/9), but still excludes captives/wards (destiny-rama.11): a
+ * captive is not a valid social partner for anyone's daily socializing, whichever population the
+ * acting NPC belongs to.
+ */
 export function npcSocialize(state: GameState, npcId: string): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const target = state.npcRuntimeStates
-    .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
+    .filter((r) => r.npcId !== npcId && r.assignment === 'idle' && r.captivityState?.status !== 'captive' && r.status !== 'ward')
     .sort((a, b) => {
       const relA = getRelationship(state.relationships, npcId, a.npcId).affinity
       const relB = getRelationship(state.relationships, npcId, b.npcId).affinity
@@ -150,13 +156,17 @@ export function npcSocialize(state: GameState, npcId: string): GameState {
   return appendActivityLogEntry(next, 'system', `${npc.name} socializes with ${target.name}.`)
 }
 
-/** NPC gossips with a nearby idle NPC, sharing a rumor if the house knows any. */
+/**
+ * NPC gossips with a nearby idle NPC, sharing a rumor if the house knows any. Target selection
+ * deliberately reaches across the whole population (destiny-rama.8/9), but still excludes
+ * captives/wards (destiny-rama.11) — same reasoning as npcSocialize above.
+ */
 export function npcGossip(state: GameState, npcId: string): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
   const target = state.npcRuntimeStates
-    .filter((r) => r.npcId !== npcId && r.assignment === 'idle')
+    .filter((r) => r.npcId !== npcId && r.assignment === 'idle' && r.captivityState?.status !== 'captive' && r.status !== 'ward')
     .sort((a, b) => {
       const relA = getRelationship(state.relationships, npcId, a.npcId).affinity
       const relB = getRelationship(state.relationships, npcId, b.npcId).affinity
@@ -186,17 +196,24 @@ export function npcGossip(state: GameState, npcId: string): GameState {
 }
 
 /**
- * NPC mediates a conflict between the two idle roster NPCs with the worst relationship. Scoped to
- * `playerRosterMember` (destiny-rama.8): unlike npcSocialize/npcGossip below (which intentionally
- * reach across the whole population — social full parity is the point of the unify epic), this
- * mediates *house* conflict specifically, per this function's own long-standing "roster NPCs" doc
- * comment above. World/story persons sharing the unified list must not be candidates here.
+ * NPC mediates a conflict between the two idle NPCs (of the mediator's own kind) with the worst
+ * relationship. Scoped to the acting NPC's own `playerRosterMember` value (destiny-rama.8 first
+ * restricted this to roster-only to stop world/story persons leaking into house-conflict
+ * mediation; destiny-rama.11 refined it further): unlike npcSocialize/npcGossip below (which
+ * intentionally reach across the whole population), this stays *within* one population bucket —
+ * a roster mediator eases tension among roster-mates (house harmony), a world/story mediator eases
+ * tension among other world/story persons (their own social circle, not the player's house) —
+ * because 'mediate-conflict' is WORLD_ELIGIBLE (destiny-rama.5); a world NPC really can be assigned
+ * this intention, and it must resolve to something meaningful for them rather than silently finding
+ * no eligible pair every time (roster and world persons are rarely both "idle" together).
  */
 export function npcMediateConflict(state: GameState, npcId: string): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const others = state.npcRuntimeStates.filter((r) => r.npcId !== npcId && r.playerRosterMember && r.assignment === 'idle')
+  const others = state.npcRuntimeStates.filter(
+    (r) => r.npcId !== npcId && r.playerRosterMember === npc.playerRosterMember && r.assignment === 'idle',
+  )
   let worstPair: { a: string; b: string; affinity: number } | null = null
   for (const a of others) {
     for (const b of others) {

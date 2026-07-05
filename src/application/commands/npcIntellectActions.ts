@@ -71,12 +71,21 @@ function gainSkillXp(state: GameState, npcId: string, skillKey: keyof Skills, ba
   }
 }
 
-/** NPC spies on another idle NPC, learning their authored private need. Risks being caught. */
+/**
+ * NPC spies on another idle NPC, learning their authored private need. Risks being caught. Target
+ * selection is intentionally population-agnostic (destiny-rama.11 — D2 generalizes this beyond
+ * "roster only" per the eligibility doc's note that this mechanic was excluded from
+ * WORLD_ELIGIBLE_INTENTION_TYPES only because target selection needed generalizing first); a
+ * captive or ward is still excluded as a target, matching the "captives stay captive" protection
+ * every other population-scan handler already enforces.
+ */
 export function npcSpyOn(state: GameState, npcId: string, rng: Rng): GameState {
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return state
 
-  const target = state.npcRuntimeStates.filter((r) => r.npcId !== npcId && r.assignment === 'idle')[0]
+  const target = state.npcRuntimeStates.filter(
+    (r) => r.npcId !== npcId && r.assignment === 'idle' && r.captivityState?.status !== 'captive' && r.status !== 'ward',
+  )[0]
   if (!target) return state
 
   const successChance = Math.max(
