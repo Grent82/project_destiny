@@ -314,6 +314,11 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: { negotiation: 1.3 },
     traitWeights: { ambition: 1.1, prudence: 0.8 },
   },
+  'craft-item': {
+    attributeWeights: {},
+    skillWeights: { crafting: 1.5, engineering: 1.1 },
+    traitWeights: { discipline: 0.9 },
+  },
 }
 
 /**

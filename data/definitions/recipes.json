@@ -1,0 +1,19 @@
+[
+  {
+    "id": "recipe-lamp-signal-expedition",
+    "outputItemId": "item-lamp-signal-expedition",
+    "requiredMaterials": [
+      { "itemId": "item-spare-parts", "quantity": 1 },
+      { "itemId": "item-material-scrap-cloth", "quantity": 1 }
+    ],
+    "minCraftingSkill": 30
+  },
+  {
+    "id": "recipe-caliper-league-engineering",
+    "outputItemId": "item-caliper-league-engineering",
+    "requiredMaterials": [
+      { "itemId": "item-spare-parts", "quantity": 2 }
+    ],
+    "minCraftingSkill": 50
+  }
+]

@@ -22,6 +22,7 @@ import eventRumorTemplatesData from '../../../data/definitions/event-rumor-templ
 import shops from '../../../data/definitions/shops.json'
 import titlesData from '../../../data/definitions/titles.json'
 import datesData from '../../../data/definitions/dates.json'
+import recipesData from '../../../data/definitions/recipes.json'
 import { z } from 'zod'
 import {
   districtDefinitionSchema,
@@ -36,6 +37,7 @@ import {
 import {
   weaponDefinitionSchema,
   armorDefinitionSchema,
+  craftingRecipeSchema,
   type WeaponDefinition,
   type ArmorDefinition,
 } from '../../domain/items/contracts'
@@ -94,6 +96,7 @@ const parsedDistricts = districtDefinitionSchema.array().parse(districts)
 const parsedFactions = factionDefinitionSchema.array().parse(factions)
 const parsedPois = poiSchema.array().parse(poisData)
 const parsedItems = itemDefinitionSchema.array().parse(items)
+const parsedRecipes = craftingRecipeSchema.array().parse(recipesData)
 const parsedWeapons = weaponDefinitionSchema.array().parse(weapons)
 const parsedArmor = armorDefinitionSchema.array().parse(armor)
 const parsedShops = shopDefinitionSchema.array().parse(shops)
@@ -165,6 +168,8 @@ export const contentCatalog = {
   factions: parsedFactions,
   factionsById: toMap(parsedFactions),
   items: parsedItems,
+  recipes: parsedRecipes,
+  recipesById: toMap(parsedRecipes),
   weapons: parsedWeapons,
   armor: parsedArmor,
   clothingItems: parsedClothingItems,

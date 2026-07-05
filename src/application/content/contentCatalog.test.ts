@@ -158,3 +158,21 @@ describe('Enemy NPC catalog unification (destiny-rama.14)', () => {
     expect(recruitable.map((n) => n.id)).toContain('npc-enemy-rack')
   })
 })
+
+describe('Crafting recipe catalog (destiny-bkln.7law)', () => {
+  it('loads recipes with resolvable output and material item ids', () => {
+    expect(contentCatalog.recipes.length).toBeGreaterThan(0)
+    for (const recipe of contentCatalog.recipes) {
+      expect(contentCatalog.itemsById.has(recipe.outputItemId)).toBe(true)
+      for (const material of recipe.requiredMaterials) {
+        expect(contentCatalog.itemsById.has(material.itemId)).toBe(true)
+      }
+    }
+  })
+
+  it('exposes recipesById for direct lookup', () => {
+    const recipe = contentCatalog.recipesById.get('recipe-lamp-signal-expedition')
+    expect(recipe).toBeDefined()
+    expect(recipe!.outputItemId).toBe('item-lamp-signal-expedition')
+  })
+})

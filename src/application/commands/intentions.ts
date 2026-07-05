@@ -39,6 +39,7 @@ import { npcRepairEquipment, npcNeedsEquipmentRepair } from './economy/npcRepair
 import { npcUseConsumable, npcCanUseConsumable } from './economy/npcUseConsumable'
 import { npcGiveGift, npcCanGiveGift } from './economy/npcGiveGift'
 import { npcTradeWithNpc, npcCanTradeWithNpc } from './economy/npcTradeWithNpc'
+import { npcCraftItem, npcCanCraftItem } from './economy/npcCraftItem'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -198,6 +199,7 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'use-consumable': 1,
     'give-gift': 6,
     'trade-with-npc': 4,
+    'craft-item': 3,
     // Macht/Kontrolle (5)
     'assert-dominance': 3,
     'spy-on': 2,
@@ -472,6 +474,7 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'use-consumable',
   'give-gift',
   'trade-with-npc',
+  'craft-item',
 ])
 
 /**
@@ -1402,6 +1405,19 @@ const tradeWithNpcHandler: IntentionHandler = {
   execute: (npc, state) => npcTradeWithNpc(state, npc.npcId),
 }
 
+/**
+ * Craft Item Handler (destiny-bkln)
+ * NPC crafts an item from a satisfiable recipe using their own materials + crafting skill.
+ */
+const craftItemHandler: IntentionHandler = {
+  canExecute: (npc, state) => {
+    if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
+    return npcCanCraftItem(state, npc)
+  },
+  execute: (npc, state) => npcCraftItem(state, npc.npcId),
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // All intention handlers mapped by type
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1470,6 +1486,7 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'use-consumable': useConsumableHandler,
   'give-gift': giveGiftHandler,
   'trade-with-npc': tradeWithNpcHandler,
+  'craft-item': craftItemHandler,
 }
 
 /**

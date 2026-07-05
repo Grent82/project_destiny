@@ -190,6 +190,22 @@ export type Loadout = z.infer<typeof loadoutSchema>
 export type UseActionType = z.infer<typeof useActionTypeSchema>
 export type WeaponDefinition = z.infer<typeof weaponDefinitionSchema>
 
+/**
+ * Crafting recipe (destiny-bkln.7law): minimal, deliberately small content — proves the mechanic
+ * (NPC crafting skill -> consumes materials -> produces an output item) rather than building a
+ * large recipe library. Both inputs and outputs reference existing itemDefinitionSchema ids.
+ */
+export const craftingRecipeSchema = z
+  .object({
+    id: entityIdSchema,
+    outputItemId: entityIdSchema,
+    requiredMaterials: z.array(z.object({ itemId: entityIdSchema, quantity: positiveIntegerSchema })).min(1),
+    minCraftingSkill: percentageSchema,
+  })
+  .strict()
+
+export type CraftingRecipe = z.infer<typeof craftingRecipeSchema>
+
 export interface WeaponProfile {
   id: string
   damageMin: number
