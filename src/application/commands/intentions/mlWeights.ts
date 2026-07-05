@@ -309,6 +309,11 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: {},
     traitWeights: { empathy: 1.3, loyalty: 1.0 },
   },
+  'trade-with-npc': {
+    attributeWeights: {},
+    skillWeights: { negotiation: 1.3 },
+    traitWeights: { ambition: 1.1, prudence: 0.8 },
+  },
 }
 
 /**

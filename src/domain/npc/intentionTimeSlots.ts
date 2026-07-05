@@ -83,6 +83,7 @@ export const INTENTION_TIME_SLOT_MAPPING: Record<NpcIntentionType, IntentionTime
   'repair-equipment': { validTimeSlots: ['morning', 'afternoon'] },
   'use-consumable': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
   'give-gift': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
+  'trade-with-npc': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
 
   // ─── Macht/Kontrolle (5) ──────────────────────────────────────────────────
   'assert-dominance': { validTimeSlots: ['morning', 'afternoon', 'evening'] },

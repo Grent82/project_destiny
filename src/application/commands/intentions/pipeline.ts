@@ -190,6 +190,7 @@ export function getTraitDrivenIntentions(
     'repair-equipment': npc.skills.crafting + npc.skills.engineering,
     'use-consumable': (100 - npc.states.health) + Math.max(0, npc.states.hunger - 50),
     'give-gift': npc.traits.empathy + npc.attributes.presence,
+    'trade-with-npc': npc.skills.negotiation + npc.traits.ambition,
   }
 
   // Find intentions where NPC has decent capability (score > 130)

@@ -55,6 +55,7 @@ export const npcIntentionTypeSchema = z.enum([
   'repair-equipment',
   'use-consumable',
   'give-gift',
+  'trade-with-npc',
 ] as const)
 
 export const percentageSchema = z.number().finite().min(0).max(100)

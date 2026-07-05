@@ -38,6 +38,7 @@ import { intentionTypesForNpc } from './intentions/eligibility'
 import { npcRepairEquipment, npcNeedsEquipmentRepair } from './economy/npcRepairEquipment'
 import { npcUseConsumable, npcCanUseConsumable } from './economy/npcUseConsumable'
 import { npcGiveGift, npcCanGiveGift } from './economy/npcGiveGift'
+import { npcTradeWithNpc, npcCanTradeWithNpc } from './economy/npcTradeWithNpc'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -196,6 +197,7 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'repair-equipment': 3,
     'use-consumable': 1,
     'give-gift': 6,
+    'trade-with-npc': 4,
     // Macht/Kontrolle (5)
     'assert-dominance': 3,
     'spy-on': 2,
@@ -469,6 +471,7 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'repair-equipment',
   'use-consumable',
   'give-gift',
+  'trade-with-npc',
 ])
 
 /**
@@ -1386,6 +1389,19 @@ const giveGiftHandler: IntentionHandler = {
   execute: (npc, state) => npcGiveGift(state, npc.npcId),
 }
 
+/**
+ * Trade With NPC Handler (destiny-bkln)
+ * NPC buys an item they want from a co-located roster partner's inventory using personalFunds.
+ */
+const tradeWithNpcHandler: IntentionHandler = {
+  canExecute: (npc, state) => {
+    if (!canExecuteIntention(npc)) return false
+    if (!npc.playerRosterMember) return false
+    return npcCanTradeWithNpc(state, npc)
+  },
+  execute: (npc, state) => npcTradeWithNpc(state, npc.npcId),
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // All intention handlers mapped by type
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1453,6 +1469,7 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'repair-equipment': repairEquipmentHandler,
   'use-consumable': useConsumableHandler,
   'give-gift': giveGiftHandler,
+  'trade-with-npc': tradeWithNpcHandler,
 }
 
 /**
