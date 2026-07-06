@@ -2447,6 +2447,61 @@ strong { color: var(--text-secondary); }
   fill: none;
 }
 
+.standing-blacklist-icon {
+  font-size: 0.85rem;
+  cursor: help;
+}
+
+.standing-bar {
+  position: relative;
+  flex: 1;
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.standing-bar__segment {
+  flex: 1;
+  height: 100%;
+}
+
+.standing-bar__segment:first-child { border-radius: 4px 0 0 4px; }
+.standing-bar__segment:last-child { border-radius: 0 4px 4px 0; }
+
+.standing-bar__dot {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  transition: left 200ms ease;
+}
+
+.standing-bar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.8em;
+  color: var(--color-text-muted, #666);
+  margin-bottom: 1rem;
+}
+
+.standing-bar-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.standing-bar-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 .faction-badge {
   display: inline-block;
   padding: 0.1rem 0.4rem;
