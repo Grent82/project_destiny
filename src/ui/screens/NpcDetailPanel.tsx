@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { selectRosterDetail } from '../../application'
 import { formatNpcAssignmentLabel, formatWorkingIncomePerDay, getNpcAssignmentDetail } from '../../application/content/assignmentDisplay'
 import { getJobForNpc } from '../../application/content/jobCatalog'
-import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState, selectNpcSocialReachability, selectNpcRecoveryStatus } from '../../application'
+import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibilityForNpc, selectDurabilityTierForNpc, selectGiftHistoryWithPlayer, selectCourtshipHistoryWithPlayer, selectDeepConversationHistoryWithPlayer, selectNpcHasNewDialogueTopics, selectNpcCharacterDescription, selectEstimatedNpcIncome, selectNpcBondSurface, selectIntimacyStageWithPlayer, selectNpcCaptivityState, selectNpcSocialReachability, selectNpcSocialCooldowns, selectNpcRecoveryStatus } from '../../application'
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
@@ -708,6 +708,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const deepConversationHistory = useAppSelector(selectDeepConversationHistoryWithPlayer(detail.npcId))
   const giftItems = useAppSelector(selectGiftInventoryItems)
   const reachability = useAppSelector(selectNpcSocialReachability(detail.npcId))
+  const cooldowns = useAppSelector(selectNpcSocialCooldowns(detail.npcId))
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -734,10 +735,16 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
   const giftUnavailableReason =
     socialPresenceReason ?? (giftItems.length === 0 ? 'Carry a gift item in player inventory to offer one here.' : null)
 
-  const deepConversationTitle = canUsePrivateSocialActions
+  const deepConversationOnCooldown = canUsePrivateSocialActions && cooldowns.deepConversationOnCooldown
+  const courtshipOnCooldown = canUsePrivateSocialActions && cooldowns.courtshipOnCooldown
+  const deepConversationTitle = deepConversationOnCooldown
+    ? `You already had a deep conversation with ${detail.name} today. Available again: tomorrow morning.`
+    : canUsePrivateSocialActions
     ? 'Share a meaningful conversation about values, fears, dreams, or past. This action does not consume time slots.'
     : socialPresenceReason ?? 'Talk Deeply is unavailable right now.'
-  const courtTitle = canUsePrivateSocialActions
+  const courtTitle = courtshipOnCooldown
+    ? `You already courted ${detail.name} today. Available again: tomorrow morning.`
+    : canUsePrivateSocialActions
     ? 'Spend time courting this NPC directly. No time slot cost.'
     : socialPresenceReason ?? 'Court is unavailable right now.'
   const proposeDateTitle = !canUsePrivateSocialActions
@@ -880,21 +887,31 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                     className="action-button action-button--secondary"
                     type="button"
                     onClick={() => handleSocialAftermath(() => dispatch(gameActions.deepConversation({ npcId: detail.npcId })))}
-                    disabled={!canUsePrivateSocialActions}
+                    disabled={!canUsePrivateSocialActions || deepConversationOnCooldown}
                     title={deepConversationTitle}
                   >
-                    Talk Deeply
+                    {deepConversationOnCooldown ? '🔒 Talk Deeply' : 'Talk Deeply'}
                   </button>
                   <button
                     className="action-button action-button--primary"
                     type="button"
                     onClick={() => handleSocialAftermath(() => dispatch(gameActions.courtNpc({ npcId: detail.npcId })))}
-                    disabled={!canUsePrivateSocialActions}
+                    disabled={!canUsePrivateSocialActions || courtshipOnCooldown}
                     title={courtTitle}
                   >
-                    Court
+                    {courtshipOnCooldown ? '🔒 Court' : 'Court'}
                   </button>
                 </div>
+                {(deepConversationOnCooldown || courtshipOnCooldown) && (
+                  <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
+                    🔒 {deepConversationOnCooldown && courtshipOnCooldown
+                      ? 'Already spent private time together today.'
+                      : deepConversationOnCooldown
+                        ? 'Already had a deep conversation today.'
+                        : 'Already courted today.'}{' '}
+                    Available again: tomorrow morning.
+                  </p>
+                )}
                 <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.4rem' }}>
                   {canUsePrivateSocialActions
                     ? 'Talk Deeply and Court do not consume time slots.'

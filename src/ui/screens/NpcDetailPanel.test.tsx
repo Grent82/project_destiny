@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore, selectRosterDetail } from '../../application'
+import { gameActions } from '../../application/store/gameSlice'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
 import { initialStateWithIda } from '../../application/commands/testFixtures'
 import { isDialogueChoiceAvailable } from '../../application/commands/dialogue'
@@ -598,5 +599,67 @@ describe('NpcDetailPanel — tab warning/notification indicators and keyboard na
 
     await user.keyboard('{Control>}1{/Control}')
     expect(screen.getByRole('tab', { name: /Attributes/ })).toHaveAttribute('aria-selected', 'true')
+  })
+})
+
+describe('NpcDetailPanel — cooldown countdown feedback on Talk Deeply / Court (destiny-twzj)', () => {
+  it('shows both buttons enabled, with no lock icon, before either action has been used today', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel()
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.getByRole('button', { name: 'Talk Deeply' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Court' })).toBeEnabled()
+  })
+
+  it('disables Talk Deeply with a lock icon and explanatory tooltip after it has already fired today, without touching Court', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel()
+    store.dispatch(gameActions.deepConversation({ npcId: 'npc-ida-rhys' }))
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    const lockedButton = screen.getByRole('button', { name: /🔒 Talk Deeply/ })
+    expect(lockedButton).toBeDisabled()
+    expect(lockedButton).toHaveAttribute('title', expect.stringContaining('Available again: tomorrow morning'))
+    expect(screen.getByText(/Already had a deep conversation today\. Available again: tomorrow morning\./)).toBeInTheDocument()
+
+    expect(screen.getByRole('button', { name: 'Court' })).toBeEnabled()
+  })
+
+  it('disables Court with a lock icon and explanatory tooltip after it has already fired today, without touching Talk Deeply', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel()
+    store.dispatch(gameActions.courtNpc({ npcId: 'npc-ida-rhys' }))
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    const lockedButton = screen.getByRole('button', { name: /🔒 Court/ })
+    expect(lockedButton).toBeDisabled()
+    expect(lockedButton).toHaveAttribute('title', expect.stringContaining('Available again: tomorrow morning'))
+    expect(screen.getByText(/Already courted today\. Available again: tomorrow morning\./)).toBeInTheDocument()
+
+    expect(screen.getByRole('button', { name: 'Talk Deeply' })).toBeEnabled()
+  })
+
+  it('shows a combined cooldown note when both actions have already fired today', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel()
+    store.dispatch(gameActions.deepConversation({ npcId: 'npc-ida-rhys' }))
+    store.dispatch(gameActions.courtNpc({ npcId: 'npc-ida-rhys' }))
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.getByText(/Already spent private time together today\. Available again: tomorrow morning\./)).toBeInTheDocument()
+  })
+
+  it('does not carry a cooldown across days once endDay resets it', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel()
+    store.dispatch(gameActions.deepConversation({ npcId: 'npc-ida-rhys' }))
+    expect(store.getState().game.day).toBe(1)
+
+    store.dispatch(gameActions.endDay())
+    expect(store.getState().game.day).toBe(2)
+
+    await user.click(screen.getByRole('button', { name: 'Talk' }))
+    expect(screen.getByRole('button', { name: 'Talk Deeply' })).toBeEnabled()
   })
 })
