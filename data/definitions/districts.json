@@ -418,7 +418,7 @@
     "id": "district-the-northbank",
     "name": "The Northbank",
     "summary": "The city that thinks of itself as the city.",
-    "controllingFactionId": "faction-house-sorn",
+    "controllingFactionId": "faction-house-merrow",
     "contestedByFactionIds": [],
     "shopTypes": [
       "legal-registry",

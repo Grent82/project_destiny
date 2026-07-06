@@ -182,3 +182,26 @@ describe('Content Catalog - Items by ID Integration', () => {
     })
   })
 })
+
+describe('Content Catalog - District faction references (destiny-e9tt)', () => {
+  it('every district controllingFactionId resolves to a real faction definition', () => {
+    for (const district of contentCatalog.districts) {
+      if (!district.controllingFactionId) continue
+      expect(
+        contentCatalog.factionsById.has(district.controllingFactionId),
+        `${district.id} references controllingFactionId "${district.controllingFactionId}", which has no matching faction definition`,
+      ).toBe(true)
+    }
+  })
+
+  it('every district contestedByFactionIds entry resolves to a real faction definition', () => {
+    for (const district of contentCatalog.districts) {
+      for (const factionId of district.contestedByFactionIds ?? []) {
+        expect(
+          contentCatalog.factionsById.has(factionId),
+          `${district.id} lists contesting faction "${factionId}", which has no matching faction definition`,
+        ).toBe(true)
+      }
+    }
+  })
+})

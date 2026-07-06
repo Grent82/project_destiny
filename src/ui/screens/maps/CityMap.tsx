@@ -29,7 +29,6 @@ const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-tallow-ring': 'the Tallow Ring',
   'faction-restored': 'the Restored',
   'faction-house-merrow': 'House Merrow',
-  'faction-house-sorn': 'House Sorn',
 }
 
 export interface CityMapEntry {

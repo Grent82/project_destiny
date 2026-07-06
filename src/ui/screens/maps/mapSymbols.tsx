@@ -79,6 +79,15 @@ const FACTION_EMBLEMS: Record<string, ReactNode> = {
       <path strokeWidth="1.2" d="M9.6 19.4 L8.6 21.6 M14.4 19.4 L15.4 21.6 M7 21.6 H17" />
     </>
   ),
+  'faction-house-merrow': (
+    <>
+      <rect strokeWidth="1.4" x="8" y="3" width="8" height="7" rx="0.6" />
+      <path strokeWidth="1.1" d="M9.4 5.2 H14.6 M9.4 7.4 H14.6" />
+      <path strokeWidth="1.2" d="M12 10 V13.4" />
+      <path strokeWidth="1.4" d="M4 15 Q8 11 12 15 Q16 19 20 15" />
+      <path strokeWidth="1.1" d="M4 18.4 Q8 14.4 12 18.4 Q16 22.4 20 18.4" />
+    </>
+  ),
 }
 
 /** A worn stamp ring: broken double circle, pressed at a slight angle. */

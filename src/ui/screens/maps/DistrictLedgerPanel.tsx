@@ -9,7 +9,6 @@ const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-tallow-ring': 'Ring',
   'faction-restored': 'Restored',
   'faction-house-merrow': 'House Merrow',
-  'faction-house-sorn': 'House Sorn',
 }
 
 function tensionLabel(tension: number): string {
