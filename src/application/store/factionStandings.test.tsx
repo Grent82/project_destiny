@@ -152,7 +152,7 @@ describe('FactionsScreen', () => {
     // faction-gilded-court: -65 → Hostile
     // faction-civic-compact: 10 → Neutral
     expect(screen.getAllByText('Neutral').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getAllByText('Hostile').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('Hostile')).toBeInTheDocument()
   })
 
   it('renders city dials section', () => {

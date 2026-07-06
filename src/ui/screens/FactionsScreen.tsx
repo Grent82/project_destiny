@@ -1,10 +1,10 @@
+import type React from 'react'
 import { useState } from 'react'
 import { EmptyState } from '../components/EmptyState'
 
 import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions, selectFactionAgendas, getCouncilVoteTemplates } from '../../application'
 import type { InstitutionalTier } from '../../domain'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { STANDING_TIER_BANDS, standingTier, standingTierColor, standingDotPercent, formatStandingValue, FACTION_STANDING_TOOLTIP } from './factionStanding'
 
 const COUNCIL_FACTIONS = [
   { id: 'faction-civic-compact', name: 'Civic Compact', shortName: 'Compact' },
@@ -27,6 +27,27 @@ const TIER_DESCRIPTIONS: Record<InstitutionalTier, string> = {
   hostile: 'Institutional arm actively obstructs. Fines and harassment.',
   blacklisted: 'Active enforcement. Arrests and asset seizure may follow.',
 }
+
+function standingTier(standing: number): string {
+  if (standing <= -60) return 'Hostile'
+  if (standing <= -20) return 'Cold'
+  if (standing <= 20) return 'Neutral'
+  if (standing <= 60) return 'Warm'
+  return 'Allied'
+}
+
+function standingBarStyle(standing: number): React.CSSProperties {
+  const normalized = ((standing + 100) / 200) * 100
+  let color: string
+  if (standing > 20) color = 'rgba(74, 222, 128, 0.7)'
+  else if (standing >= -20) color = 'rgba(148, 163, 184, 0.45)'
+  else if (standing >= -40) color = 'rgba(251, 191, 36, 0.65)'
+  else if (standing >= -50) color = 'rgba(249, 115, 22, 0.75)'
+  else color = 'rgba(239, 68, 68, 0.8)'
+  return { width: `${normalized}%`, background: color }
+}
+
+const FACTION_STANDING_TOOLTIP = 'Standing range: Hostile ≤ −60 · Cold −59 to −20 · Neutral −19 to 20 · Warm 21 to 60 · Allied > 60. Standing shifts with every choice.'
 
 const CITY_DIAL_TOOLTIPS: Record<string, string> = {
   control: 'Control — degree of civic order. High control reduces crime and faction conflict.',
@@ -99,20 +120,10 @@ export function FactionsScreen() {
         <span className="stability-label">{cityStability}/100</span>
       </div>
 
-      <div className="standing-bar-legend" role="group" aria-label="Faction standing legend">
-        {STANDING_TIER_BANDS.map((band) => (
-          <span key={band.tier} className="standing-bar-legend__item">
-            <span className="standing-bar-legend__dot" style={{ background: band.color }} />
-            {band.tier}
-          </span>
-        ))}
-      </div>
-
       <div className="overview-grid">
         {factions.map((faction) => {
           const tier = standingTier(faction.standing)
           const agendaData = factionAgendas.find((a) => a.factionId === faction.factionId)
-          const isBlacklisted = institutionalStanding[faction.factionId] === 'blacklisted'
           return (
             <article key={faction.factionId}>
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -120,14 +131,6 @@ export function FactionsScreen() {
                   <use href={`/icons.svg#icon-${faction.factionId}`} />
                 </svg>
                 {faction.name}
-                {isBlacklisted && (
-                  <span
-                    className="standing-blacklist-icon"
-                    title={`Blacklisted by ${faction.name} — shops closed. ${TIER_DESCRIPTIONS.blacklisted}`}
-                  >
-                    ⛔
-                  </span>
-                )}
               </h2>
               <p style={{ fontStyle: 'italic', fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary, #999)', fontSize: '0.9em', marginBottom: '0.25rem' }}>
                 {faction.primer}
@@ -137,19 +140,11 @@ export function FactionsScreen() {
               </p>
               <div className="stat-row">
                 <span className="stat-label" title={FACTION_STANDING_TOOLTIP}>Standing</span>
-                <span className="stat-value">{formatStandingValue(faction.standing)}</span>
-                <div
-                  className="standing-bar"
-                  role="img"
-                  aria-label={`Standing ${formatStandingValue(faction.standing)}, ${tier}`}
-                  title={FACTION_STANDING_TOOLTIP}
-                >
-                  {STANDING_TIER_BANDS.map((band) => (
-                    <span key={band.tier} className="standing-bar__segment" style={{ background: band.color }} />
-                  ))}
-                  <span
-                    className="standing-bar__dot"
-                    style={{ left: `${standingDotPercent(faction.standing)}%`, background: standingTierColor(faction.standing) }}
+                <span className="stat-value">{faction.standing}</span>
+                <div className="stat-bar">
+                  <div
+                    className="stat-bar-fill"
+                    style={standingBarStyle(faction.standing)}
                   />
                 </div>
                 <span className="badge">{tier}</span>
@@ -165,6 +160,16 @@ export function FactionsScreen() {
                     ))}
                   </div>
                 </div>
+              )}
+              {faction.standing < -50 && (
+                <p className="summary" style={{ color: 'rgba(239,68,68,0.9)', fontSize: '0.85em', marginTop: '0.25rem' }}>
+                  ⛔ Blacklisted — shops closed
+                </p>
+              )}
+              {faction.standing < -40 && faction.standing >= -50 && (
+                <p className="summary" style={{ color: 'rgba(249,115,22,0.9)', fontSize: '0.85em', marginTop: '0.25rem' }}>
+                  ⚠ Hostile — district travel restricted
+                </p>
               )}
             </article>
           )
