@@ -552,3 +552,51 @@ describe('NpcDetailPanel — bond status visibility', () => {
     expect(ida?.dutyPostRoomId).toBe('room-kitchen')
   })
 })
+
+function stateWithCriticalFatigueIda() {
+  return {
+    ...initialStateWithIda,
+    npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
+      npc.npcId === 'npc-ida-rhys' ? { ...npc, states: { ...npc.states, fatigue: 90 } } : npc,
+    ),
+  }
+}
+
+describe('NpcDetailPanel — tab warning/notification indicators and keyboard nav (destiny-qak9)', () => {
+  it('shows no States badge and no Relations badge when nothing is critical or new', () => {
+    renderIdaPanel()
+    const statesTab = screen.getByRole('tab', { name: /States/ })
+    const relationsTab = screen.getByRole('tab', { name: /Relations/ })
+    expect(within(statesTab).queryByText('⚠')).toBeNull()
+    expect(within(relationsTab).queryByText('🔔')).toBeNull()
+  })
+
+  it('shows a warning badge on the States tab when a state exceeds its threshold', () => {
+    renderIdaPanel(stateWithCriticalFatigueIda())
+    const statesTab = screen.getByRole('tab', { name: /States/ })
+    expect(within(statesTab).getByText('⚠')).toBeInTheDocument()
+  })
+
+  it('shows a notification badge on the Relations tab when new dialogue topics are available', () => {
+    renderMarionPanel([{ itemId: 'item-chit-ledger-removal' }])
+    const relationsTab = screen.getByRole('tab', { name: /Relations/ })
+    expect(within(relationsTab).getByText('🔔')).toBeInTheDocument()
+  })
+
+  it('switches tabs via Ctrl+1 through Ctrl+5 keyboard shortcuts', async () => {
+    const user = userEvent.setup()
+    renderIdaPanel()
+
+    expect(screen.getByRole('tab', { name: /Attributes/ })).toHaveAttribute('aria-selected', 'true')
+
+    await user.keyboard('{Control>}3{/Control}')
+    expect(screen.getByRole('tab', { name: /States/ })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByText('Hunger')).toBeInTheDocument()
+
+    await user.keyboard('{Control>}5{/Control}')
+    expect(screen.getByRole('tab', { name: /Relations/ })).toHaveAttribute('aria-selected', 'true')
+
+    await user.keyboard('{Control>}1{/Control}')
+    expect(screen.getByRole('tab', { name: /Attributes/ })).toHaveAttribute('aria-selected', 'true')
+  })
+})

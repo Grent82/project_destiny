@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { selectRosterDetail } from '../../application'
@@ -40,6 +40,29 @@ const STATE_TOOLTIPS: Record<string, string> = {
   Fear: 'Fear — rises in dangerous situations. Above threshold: NPC may refuse to advance.',
   Stress: 'Stress — rises from hardship. Above threshold: morale decay accelerates.',
   Fatigue: 'Fatigue — rises from activity. Above threshold: accuracy penalties apply.',
+}
+
+const TAB_SHORTCUT_KEYS: Record<Tab, string> = {
+  Attributes: '1',
+  Skills: '2',
+  States: '3',
+  Traits: '4',
+  Relations: '5',
+}
+
+function isNpcStateCritical(key: string, value: number): boolean {
+  switch (key) {
+    case 'hunger':
+      return value > NPC_STATE_THRESHOLDS.HUNGER_COMBAT_PENALTY_THRESHOLD
+    case 'fear':
+      return value > NPC_STATE_THRESHOLDS.FEAR_REFUSE_ADVANCE_THRESHOLD
+    case 'stress':
+      return value > NPC_STATE_THRESHOLDS.STRESS_MORALE_DECAY_THRESHOLD
+    case 'fatigue':
+      return value > NPC_STATE_THRESHOLDS.FATIGUE_ACCURACY_PENALTY_THRESHOLD
+    default:
+      return false
+  }
 }
 
 function StatRow({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
@@ -690,6 +713,21 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
 
   const dialogueTree = contentCatalog.dialoguesByNpcId.get(detail.npcId)
   const hasNewTopics = useAppSelector(selectNpcHasNewDialogueTopics(detail.npcId))
+  const hasCriticalState = Object.entries(detail.states).some(([key, val]) => isNpcStateCritical(key, val))
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (!e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) return
+      const target = e.target as HTMLElement | null
+      if (target && ['INPUT', 'TEXTAREA'].includes(target.tagName)) return
+      const tab = TABS.find((candidate) => TAB_SHORTCUT_KEYS[candidate] === e.key)
+      if (!tab) return
+      e.preventDefault()
+      setActiveTab(tab)
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
   const canUsePrivateSocialActions = reachability.canUsePrivateActions
   const socialPresenceReason = reachability.blockerMessage
   const canOfferGift = canUsePrivateSocialActions
@@ -950,11 +988,23 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
             key={tab}
             role="tab"
             aria-selected={activeTab === tab}
+            aria-keyshortcuts={`Control+${TAB_SHORTCUT_KEYS[tab]}`}
+            title={`${tab} (Ctrl+${TAB_SHORTCUT_KEYS[tab]})`}
             className={activeTab === tab ? 'npc-tab npc-tab-active' : 'npc-tab'}
             onClick={() => setActiveTab(tab)}
             type="button"
           >
             {tab}
+            {tab === 'States' && hasCriticalState && (
+              <span className="npc-tab-badge badge-warning" title="A stat is in critical range" aria-label="Warning: critical stat">
+                ⚠
+              </span>
+            )}
+            {tab === 'Relations' && hasNewTopics && (
+              <span className="npc-tab-badge badge-positive" title="New dialogue topics available" aria-label="New dialogue topics available">
+                🔔
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -972,11 +1022,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
 
         {activeTab === 'States' &&
           Object.entries(detail.states).map(([key, val]) => {
-            const warn =
-              (key === 'hunger' && val > NPC_STATE_THRESHOLDS.HUNGER_COMBAT_PENALTY_THRESHOLD) ||
-              (key === 'fear' && val > NPC_STATE_THRESHOLDS.FEAR_REFUSE_ADVANCE_THRESHOLD) ||
-              (key === 'stress' && val > NPC_STATE_THRESHOLDS.STRESS_MORALE_DECAY_THRESHOLD) ||
-              (key === 'fatigue' && val > NPC_STATE_THRESHOLDS.FATIGUE_ACCURACY_PENALTY_THRESHOLD)
+            const warn = isNpcStateCritical(key, val)
             const negativePolarity = ['fatigue', 'stress', 'hunger', 'fear', 'anger', 'injury', 'intoxication'].includes(key)
             return (
               <StateStatRow
