@@ -65,6 +65,44 @@ describe('house discoveries', () => {
     expect(state.mainQuest.lastClue).toContain('sealed envelope addressed to Mira')
   })
 
+  it('does not regress mainQuest.lastClue when the vault is searched after the story has already advanced past "searching" (destiny-q80n.1)', () => {
+    const advancedClue = "Orren points you toward Tessaly Ash at the Magpie Safe House in the Pale. She knows where Mira was moved and why the Court still keeps her breathing."
+    const store = makeStore({
+      mainQuest: { stage: 'lead-found', lastClue: advancedClue },
+      house: {
+        ...initialGameStateSnapshot.house,
+        vaultUnlocked: true,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-vault' ? { ...room, state: 'intact' as const, searched: false } : room,
+        ),
+      },
+    })
+
+    store.dispatch(gameActions.searchRoom('room-vault'))
+
+    const state = store.getState().game
+    expect(state.mainQuest.stage).toBe('lead-found')
+    expect(state.mainQuest.lastClue).toBe(advancedClue)
+  })
+
+  it('still sets mainQuest.lastClue from a house discovery while the story is in the initial "searching" stage', () => {
+    const store = makeStore({
+      house: {
+        ...initialGameStateSnapshot.house,
+        vaultUnlocked: true,
+        rooms: initialGameStateSnapshot.house.rooms.map((room) =>
+          room.roomId === 'room-vault' ? { ...room, state: 'intact' as const, searched: false } : room,
+        ),
+      },
+    })
+
+    store.dispatch(gameActions.searchRoom('room-vault'))
+
+    const state = store.getState().game
+    expect(state.mainQuest.stage).toBe('searching')
+    expect(state.mainQuest.lastClue).toContain('before she was taken')
+  })
+
   it('keeps the house debt ledger, removal chit, and recovered bureau ledger operationally distinct', () => {
     const houseLedger = contentCatalog.itemsById.get('item-ledger-house-debt')
     const removalChit = contentCatalog.itemsById.get('item-chit-ledger-removal')

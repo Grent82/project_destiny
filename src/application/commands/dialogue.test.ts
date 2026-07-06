@@ -90,7 +90,28 @@ describe('dialogue consequence resolution', () => {
   })
 
   it('still resumes a non-terminal conversation node with visible choices', () => {
-    const store = makeStore()
+    // marion-choice-early-game requires hasItem: item-chit-ledger-removal (destiny-q80n.1: gated
+    // as the single entry point into the ledger/Orren-hook thread instead of a bare dayMax window).
+    const store = makeStore({
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        player: {
+          ...initialGameStateSnapshot.inventoryState.player,
+          bagContainers: [
+            {
+              containerId: 'container-test',
+              containerType: 'backpack' as const,
+              ownerId: 'player',
+              maxSlots: 20,
+              slots: [{ slotId: 'slot-chit', itemInstanceId: 'item-chit-ledger-removal', quantity: 1 }],
+              locked: false,
+            },
+          ],
+          usedBagSlots: 1,
+          equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+        },
+      },
+    })
 
     store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
     store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-early-game' }))

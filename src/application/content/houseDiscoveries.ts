@@ -128,7 +128,7 @@ const BASE_DISCOVERIES: Record<string, HouseDiscovery> = {
 
 const VAULT_DISCOVERY: HouseDiscovery = {
   marks: 0,
-  message: "The vault yields a hidden letter in Mira's hand. She left willingly — but not freely.",
+  message: "The vault yields a hidden letter in Mira's hand, written days before the men came for her, never sent.",
   flavorFinds: [],
   actionableFinds: [
     {
@@ -137,7 +137,7 @@ const VAULT_DISCOVERY: HouseDiscovery = {
     },
   ],
   followUp: 'Keep the surviving bureau ledger as evidence. The letter points to Mira; the ledger proves records survived the seizure.',
-  mainQuestHint: "A letter from Mira, hidden in the vault. She left willingly — but not freely.",
+  mainQuestHint: 'A letter from Mira, hidden in the vault, written before she was taken. She did not choose to go.',
 }
 
 export function getHouseDiscovery(roomId: string, vaultUnlocked: boolean): HouseDiscovery | null {

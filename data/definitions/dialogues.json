@@ -28,8 +28,8 @@
             "label": "Talk about the books.",
             "nextNodeId": "marion-node-early-intro",
             "condition": {
-              "type": "dayMax",
-              "value": 7
+              "type": "hasItem",
+              "value": "item-chit-ledger-removal"
             }
           },
           {

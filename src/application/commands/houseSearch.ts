@@ -80,23 +80,15 @@ export function searchHouseRoom(
 
   let afterSearch = appendActivityLogEntry(next, 'system', discovery.message)
 
-  if (discovery.mainQuestHint) {
+  // Only update the active clue while still in the initial searching phase -- once the story has
+  // moved past it (e.g. via Orren Wex's rescue resolution), house-search flavor discoveries must
+  // not silently regress the player-visible clue back to an earlier, less-advanced one.
+  if (discovery.mainQuestHint && afterSearch.mainQuest.stage === 'searching') {
     afterSearch = {
       ...afterSearch,
       mainQuest: {
         ...afterSearch.mainQuest,
         lastClue: discovery.mainQuestHint,
-      },
-    }
-  }
-
-  if (nextRoom.roomId === ROOM_IDS.VAULT && afterSearch.house.vaultUnlocked) {
-    afterSearch = {
-      ...afterSearch,
-      mainQuest: {
-        ...afterSearch.mainQuest,
-        stage: 'lead-found',
-        lastClue: discovery.mainQuestHint ?? afterSearch.mainQuest.lastClue,
       },
     }
   }
