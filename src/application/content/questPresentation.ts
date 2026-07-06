@@ -219,6 +219,38 @@ const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
     employerIntent: 'Force Cassia Vorne to answer for a case she considers closed, correct, and entirely legal.',
     likelyConsequence: 'No conviction follows — she operated within the law at every step — but the house makes clear it will not be an easy target again.',
   },
+  'quest-cessa-unspoken-mercy': {
+    categoryLabel: 'Personal favor',
+    originLabel: 'Cessa Rill, keeper of the Pale archive chapel',
+    stakeholderLabel: 'A woman who has no idea her own birth record was ever touched.',
+    whyNow: 'Cessa has carried the not-knowing for years. She finally trusts someone enough to ask for the answer.',
+    employerIntent: 'Find out, quietly, what became of the child Cessa Rill saved through a falsified record.',
+    likelyConsequence: 'Closure for Cessa either way — the not-knowing was always harder on her than either answer could be.',
+  },
+  'quest-daels-insurance': {
+    categoryLabel: 'Personal favor',
+    originLabel: 'Dael Morw, a former Compact Register assessor',
+    stakeholderLabel: 'The assessor who ordered Dael to falsify records, and everyone else that assessor has leaned on since.',
+    whyNow: 'Dael has held onto this leverage for years. He is finally willing to spend it, but only with someone he trusts to be careful.',
+    employerIntent: "Use Dael's kept documentation to end one man's career in Register corruption without exposing Dael as the source.",
+    likelyConsequence: 'Corruption in the Register recedes slightly; Dael gets a version of consequence he can live with, even if it falls short of justice.',
+  },
+  'quest-borrowed-crest': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Old Maret traced the ring to a River Ward jeweler',
+    stakeholderLabel: 'Whoever commissioned a false crest specifically to make Mira trust a stranger.',
+    whyNow: 'The ring proves premeditation. Tracing the order proves who did the planning.',
+    employerIntent: "Find out who paid to have Mira's trust engineered before the raid ever happened.",
+    likelyConsequence: 'Confirms the Gilded Hand targeted Mira specifically, well before the night of the seizure — planning, not opportunity.',
+  },
+  'quest-who-watched-the-house': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Sanna Veld recognised the garret sight lines in the watch sketch',
+    stakeholderLabel: 'Sanna Veld, carrying guilt for not reporting what she saw before the raid.',
+    whyNow: 'The sketch has sat unexplained since it was found. Sanna is the first person who can actually read it.',
+    employerIntent: 'Confirm the house was surveilled for days before the raid, and by whom.',
+    likelyConsequence: 'The raid is revealed as rehearsed and deliberate rather than opportunistic — and Sanna finally says the thing she has been avoiding since that night.',
+  },
 }
 
 function fallbackIssuerLabel(template: QuestTemplate) {

@@ -198,7 +198,8 @@
     "actions": [
       "contracts",
       "hire"
-    ]
+    ],
+    "npcId": "npc-sanna-veld"
   },
   {
     "id": "poi-ironworks-the-forge",
@@ -379,6 +380,18 @@
       "shop",
       "contracts"
     ]
+  },
+  {
+    "id": "poi-pale-archive-chapel",
+    "districtId": "district-the-pale",
+    "name": "Pale Archive Chapel",
+    "type": "court",
+    "description": "A small chapel room given over to record-keeping -- baptisms, adoptions, and death names filed in neat rows. Cessa Rill keeps it, and keeps more than she files.",
+    "factionId": null,
+    "actions": [
+      "contracts"
+    ],
+    "npcId": "npc-cessa-rill"
   },
   {
     "id": "poi-warrens-ring-den",
@@ -726,7 +739,8 @@
     "type": "guild",
     "description": "Sealed correspondence and small parcels moved between the noble estates. Couriers hear things. Some are willing to share.",
     "factionId": null,
-    "actions": ["hire", "contracts"]
+    "actions": ["hire", "contracts"],
+    "npcId": "npc-dael-morw"
   },
   {
     "id": "poi-northbank-private-club",

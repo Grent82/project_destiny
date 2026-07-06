@@ -3520,6 +3520,7 @@
     "allowedTitleIds": [
       "title-quartermaster"
     ],
+    "dialogueId": "dialogue-sanna-veld",
     "ageBand": "adult",
     "sex": "woman",
     "appearanceTags": [
@@ -4209,6 +4210,7 @@
       "zeal": 40
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-cessa-rill",
     "ageBand": "middle",
     "sex": "woman",
     "appearanceTags": [
@@ -4617,6 +4619,8 @@
   {
     "id": "npc-dael-morw",
     "name": "Dael Morw",
+    "npcType": "world",
+    "districtId": "district-the-northbank",
     "origin": "Civic Quarter",
     "background": "Twelve years as a Register compliance assessor for the Civic Compact. He personally processed hundreds of Register audits, bond assessments, and permit applications. He knows the form numbers, the loopholes, the assessors who can be persuaded, and the ones who cannot. He left after a senior assessor directed him to falsify a noble family's birth records. He complied. He kept copies. He then submitted a quiet resignation and walked out carrying documentation that multiple powerful people would prefer did not exist. He is not a hero. He is not a villain. He is a man who made one wrong choice and then made one correct choice, and cannot fully decide which one he is living with.",
     "rarity": "rare",
@@ -4661,6 +4665,7 @@
       "title-steward",
       "title-quartermaster"
     ],
+    "dialogueId": "dialogue-dael",
     "ageBand": "adult",
     "sex": "man",
     "appearanceTags": [

@@ -872,6 +872,15 @@
               "type": "mainQuestHint",
               "value": "Old Maret ties the crest ring to Gilded Court river factors using Compact intermediaries. Mira was courted before the house was broken."
             }
+          },
+          {
+            "id": "maret-choice-ring-investigate",
+            "label": "Let's find out who ordered it made.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-borrowed-crest"
+            }
           }
         ]
       }
@@ -1698,6 +1707,15 @@
               "type": "trust",
               "value": 6
             }
+          },
+          {
+            "id": "cessa-choice-confession-find",
+            "label": "Do you want to know what happened to her?",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-cessa-unspoken-mercy"
+            }
           }
         ]
       }
@@ -2489,6 +2507,15 @@
               "type": "activityLog",
               "value": "Dael Morw, a former Compact Register assessor, holds copies of falsified records naming several powerful people -- leverage he has kept for the day it matters."
             }
+          },
+          {
+            "id": "dael-choice-why-use",
+            "label": "Show me what you kept.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-daels-insurance"
+            }
           }
         ]
       }
@@ -2919,6 +2946,54 @@
             "outcome": {
               "type": "loyalty",
               "value": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-sanna-veld",
+    "npcId": "npc-sanna-veld",
+    "openingNodeId": "sanna-node-1",
+    "nodes": [
+      {
+        "id": "sanna-node-1",
+        "npcId": "npc-sanna-veld",
+        "text": "Sanna Veld doesn't stop moving while she talks, like standing still might let the guilt catch up with her. \"House Valdris,\" she says, not quite meeting your eyes. \"I ran, that night. I want you to know I know that.\"",
+        "choices": [
+          {
+            "id": "sanna-choice-nothing",
+            "label": "You're here now.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
+          },
+          {
+            "id": "sanna-choice-sketch",
+            "label": "Someone was watching the house before the raid. Recognise this?",
+            "nextNodeId": "sanna-node-sketch",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-sketch-watch-lane"
+            }
+          }
+        ]
+      },
+      {
+        "id": "sanna-node-sketch",
+        "npcId": "npc-sanna-veld",
+        "text": "She goes still for the first time since you've met her. \"That's the garret angle. I used to air linens from that window.\" A long pause. \"There was a man on the lane for three evenings running, before it happened. I told myself he was waiting for someone else. I didn't want it to be about us.\"",
+        "choices": [
+          {
+            "id": "sanna-choice-sketch-close",
+            "label": "Tell me everything you remember about him.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-who-watched-the-house"
             }
           }
         ]

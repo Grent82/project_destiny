@@ -1692,5 +1692,185 @@
     "corridorTollRate": 0.05,
     "riskLevel": "high",
     "retryBehavior": "retryable"
+  },
+  {
+    "id": "quest-cessa-unspoken-mercy",
+    "title": "The Unspoken Mercy",
+    "employerFactionId": null,
+    "enemyFactionId": null,
+    "districtId": "district-the-pale",
+    "briefing": "Years ago Cessa Rill altered a birth entry to save a child from a law that would have destroyed her by paperwork alone. She has never learned what became of that child, and has never let herself ask. She's asking now.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-cessa-rill",
+    "riskLevel": "low",
+    "questType": "story",
+    "openingText": "Cessa doesn't look up from her ledger of names. \"Her name isn't in any record I can show you -- that was the point. But there are other ways to trace a person who was never supposed to be traceable. If you find her, I don't need to meet her. I need to know she's alive, and whether she'd call what I did mercy.\"",
+    "aftermathText": "She is alive. Married into a tannery family, two children of her own, no idea her birth record was ever anything but ordinary. When you tell Cessa, she is quiet for a long moment. \"Then it was mercy,\" she says, testing the word like she doesn't trust it to hold her weight. \"I can live with not being thanked for it. I couldn't have lived with the other answer.\"",
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-cessa-rill",
+        "trust": 8,
+        "respect": 5
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The altered entry itself is a dead end by design. Cessa made sure of that.",
+        "journalEntry": "Whatever else Cessa Rill is, she is thorough. The record trail she left behind was built to end exactly where it ends."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "A tannery family with an unremarkable daughter, unremarkably married, unremarkably alive.",
+        "journalEntry": "No one in this household has ever wondered about their mother's birth record. That was always the entire point of what Cessa did."
+      }
+    ]
+  },
+  {
+    "id": "quest-daels-insurance",
+    "title": "The Insurance Policy",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-civic-compact",
+    "districtId": "district-the-northbank",
+    "briefing": "Dael Morw kept copies of Register corruption he was ordered to help commit, and has been waiting years for someone he trusts enough to use them. He's decided that's you.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-northbank",
+    "sourceNpcId": "npc-dael-morw",
+    "riskLevel": "medium",
+    "questType": "story",
+    "openingText": "Dael lays out three folios, each a duplicate of the others by habit rather than need. \"The assessor who gave the order is still working. Still assessing. If these get to the right desk in the Compact, that ends.\" He hesitates. \"It also ends me, professionally, the moment anyone traces the copies back. I need to know you'll use them carefully.\"",
+    "aftermathText": "The assessor is quietly reassigned within the week -- no trial, no public accounting, just a name removed from a roster and a case closed without ever being opened. Dael watches it happen from a safe distance and doesn't celebrate. \"It's not justice,\" he says. \"But it's the shape of consequence I was able to get. I've made my peace with that being enough, some days more than others.\"",
+    "rewardCityDialId": "corruption",
+    "rewardCityDialDelta": -2,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-dael-morw",
+        "trust": 6,
+        "respect": 4
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The documents name the assessor plainly, but naming him is not the same as removing him.",
+        "journalEntry": "Dael's copies are damning on their own terms. What they lack is a route to someone who will act on them without also burying Dael."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "A quiet contact inside the Register agrees to move the documents, on the condition Dael's name never appears.",
+        "journalEntry": "Not everyone in the Compact is what the Compact made them. Some of them are still keeping their own kind of ledger."
+      }
+    ]
+  },
+  {
+    "id": "quest-borrowed-crest",
+    "title": "The Borrowed Crest",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-harbor",
+    "briefing": "Someone paid River Ward jewelers to forge a crest ring convincing enough to make Mira trust a stranger. Old Maret has traced the metalwork. Now someone needs to trace the order.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-hollows",
+    "sourceNpcId": "npc-old-maret",
+    "riskLevel": "medium",
+    "questType": "story",
+    "openingText": "The River Ward jeweler who cast the ring is easy enough to find and terrified enough to talk without much persuading. \"A woman commissioned it. Paid in Court coin, spoke like Compact.\" He won't give a name. He gives a description, and the description matches someone the Gilded Hand has used before.",
+    "aftermathText": "The commission traces to a Gilded Hand intermediary working under Commander Fell's authority -- confirmation that Mira's abduction was planned around her specifically, down to which stranger's face she'd be willing to trust. It is not a comfortable thing to know about your own sister. It is, at least, no longer a guess.",
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-old-maret",
+        "trust": 4,
+        "respect": 3
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The jeweler's memory is better than his nerve. He remembers the coin purse before he remembers the face.",
+        "journalEntry": "Court coin spent by someone who talks like the Compact. Whoever placed the order wanted it to look like ordinary noble business."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The description matches a Gilded Hand courier already flagged from the tannery watch.",
+        "journalEntry": "This was never a random ring. It was a tool, sized and shaped for exactly one target."
+      }
+    ]
+  },
+  {
+    "id": "quest-who-watched-the-house",
+    "title": "Three Evenings on the Lane",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-the-pale",
+    "briefing": "Sanna Veld recognises the garret sight lines in the watch sketch -- and remembers a man standing on the lane for three evenings before the raid. She thought he was waiting for someone else.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-ironworks",
+    "sourceNpcId": "npc-sanna-veld",
+    "riskLevel": "medium",
+    "questType": "story",
+    "openingText": "Sanna's description is precise in the way only guilt makes memory precise: build, coat, the way he stood like he was counting something. \"Three evenings. Then the fourth, it happened.\" She won't say it was her fault for not reporting him. She doesn't have to. It's in every word she chooses instead.",
+    "aftermathText": "The lane-watcher was a Gilded Hand scout, confirmed by a Pale Market stallholder who'd sold him the same meal three evenings running. The raid wasn't opportunistic and it wasn't sudden -- it was rehearsed, timed, and walked through in advance by someone who wanted no surprises on the night. Sanna hears the confirmation and says nothing for a long time. \"I could have said something,\" she finally says. \"I didn't know that yet, but I could have.\"",
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sanna-veld",
+        "trust": 7,
+        "respect": 3
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "A Pale Market stallholder remembers feeding the same stranger three evenings running.",
+        "journalEntry": "Small vendors remember faces better than anyone gives them credit for. This one remembers exactly which evenings, and exactly how the man paid."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The timeline lines up precisely with the raid -- three nights of watching, then the fourth night, action.",
+        "journalEntry": "This was not a raid of opportunity. Someone walked the lane, learned its rhythm, and waited for the night that suited them best."
+      }
+    ]
   }
 ]
