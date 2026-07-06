@@ -859,6 +859,101 @@
     ]
   },
   {
+    "id": "quest-mira-reintegration-1",
+    "title": "Days Since Open Sky",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": null,
+    "districtId": null,
+    "briefing": "Mira counts the days aloud, still, like a habit she can't put down. Marion thinks the house is handling her return the wrong way — too many questions, not enough patience.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": null,
+    "sourceNpcId": "npc-marion-vale",
+    "riskLevel": "low",
+    "prerequisiteQuestId": "quest-mira-rescue",
+    "successorQuestId": "quest-mira-reintegration-2",
+    "flavorNote": "Marion has watched people come back from worse than the tannery. She has never watched it go well when the house pretended nothing happened.",
+    "openingText": "\"She flinches at doors closing. She's stopped answering anything directly, even things she used to just say plainly.\" Marion isn't asking you to fix it. \"I want to know what she actually needs, instead of what's easiest for the rest of us to give her.\"",
+    "aftermathText": "You don't get a clean answer — nobody does, from someone who spent eighteen months learning that direct answers cost something. But you learn what she needs isn't reassurance. It's a task, however small, that is entirely hers to finish or fail on her own terms. She asks for exactly one thing: a door she can close from the inside.",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-mira",
+        "trust": 8,
+        "affinity": 5
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "She recites the count without being asked — forty-one days, then a correction, then silence.",
+        "journalEntry": "The number changes each time she says it, as if she is still deciding which day the counting should have started."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "She answers a direct question directly, once, and immediately looks like she regrets it.",
+        "journalEntry": "It cost her something to say it plainly. Whatever this house does next should not make her pay that price twice."
+      }
+    ]
+  },
+  {
+    "id": "quest-mira-reintegration-2",
+    "title": "What She Needs Now",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": null,
+    "districtId": null,
+    "briefing": "Mira wants work. Not comfort, not watching, not being managed — a real task the house actually needs done, with her name on the outcome.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": null,
+    "sourceNpcId": "npc-mira",
+    "riskLevel": "low",
+    "prerequisiteQuestId": "quest-mira-reintegration-1",
+    "successorQuestId": null,
+    "flavorNote": "Curiosity was always her sharpest trait. Eighteen months of captivity didn't remove it. It just gave it somewhere darker to point.",
+    "openingText": "She finds you instead of waiting to be found — a small thing, but the first time she's chosen to. \"I want something to do that isn't being watched recover.\" She doesn't ask permission for what comes next. She states it. \"Give me something real, and I'll tell you if I can still do it.\"",
+    "aftermathText": "She finishes the task cleanly, without announcing it, and only mentions it afterward because you asked. It isn't a return to who she was before the tannery — that person may not come back at all. It's something else: proof, to herself first and the house second, that whatever she is now is still capable of finishing what she starts.",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-mira",
+        "trust": 12,
+        "loyalty": 10
+      },
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 3,
+        "respect": 2
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "She's already found the flaw in the plan before you finished explaining it.",
+        "journalEntry": "Whatever the Court did to her, they didn't touch the part of her mind that finds the gap in an argument before anyone else notices it's there."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "For the length of the task, she doesn't count anything. Not days, not exits, not risks out loud.",
+        "journalEntry": "It's the first time since she came back that she's been entirely present instead of half-braced for something."
+      }
+    ]
+  },
+  {
     "id": "quest-mira-act4-court-answer",
     "title": "The Court's Answer",
     "questType": "story",
