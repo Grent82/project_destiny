@@ -3051,48 +3051,6 @@ a:focus-visible,
 .ledger-empty { font-style: italic; color: var(--text-secondary, #9e8c6e); font-size: 0.9rem; }
 .text-danger { color: #e05050; }
 .text-warning { color: #d4820a; }
-.text-success { color: #7ab464; }
-
-.ledger-runway-block { margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.5rem; }
-
-.ledger-runway-alert {
-  background: rgba(244, 67, 54, 0.15);
-  border: 1px solid #f44336;
-  color: #f44336;
-  padding: 0.6rem 0.9rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.ledger-runway-row { display: flex; align-items: center; gap: 0.75rem; }
-.ledger-runway-label { font-size: 0.85rem; color: var(--text-secondary, #9e8c6e); white-space: nowrap; }
-
-.ledger-runway-bar {
-  flex: 1;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.ledger-runway-bar__fill { height: 100%; border-radius: 4px; transition: width 200ms ease; }
-
-.ledger-runway--safe { background: #4caf50; }
-.ledger-runway--caution { background: #ff9800; }
-.ledger-runway--warning { background: #ff5722; }
-.ledger-runway--critical { background: #f44336; }
-
-.ledger-runway-days {
-  font-size: 0.85rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  min-width: 4.5rem;
-  text-align: right;
-}
-
-.ledger-runway-deadline { margin: 0; font-size: 0.85rem; color: var(--text-secondary, #9e8c6e); }
-.ledger-runway-shortfall { color: #f44336; font-weight: 600; }
 
 /* Burn rate panel on RecruitmentScreen */
 .burn-rate-panel {

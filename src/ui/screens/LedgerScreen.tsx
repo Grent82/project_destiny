@@ -2,7 +2,6 @@ import { gameActions, selectFactionSummaries, selectLedgerSummary, selectDailyIn
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { formatMarks, formatMarksPerDay } from '../../domain/game/currency'
 import { EmptyState } from '../components/EmptyState'
-import { runwayBarClass, runwayBarPercent } from './runwayIndicator'
 
 const QUEST_STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -32,7 +31,6 @@ function standingClass(standing: number): string {
   return 'ledger-standing--negative'
 }
 
-
 export function LedgerScreen() {
   const ledger = useAppSelector(selectLedgerSummary)
   const income = useAppSelector(selectDailyIncomeBreakdown)
@@ -40,11 +38,6 @@ export function LedgerScreen() {
   const dispatch = useAppDispatch()
 
   const debtUrgent = !ledger.debtPaid && ledger.daysRemaining <= 5
-  const debtActive = !ledger.debtPaid && !ledger.debtCrisisTriggered
-  const runwayIsUnbounded = ledger.daysOfRunwayAtCurrentRate >= 999
-  const runwayBarPct = runwayBarPercent(ledger.daysOfRunwayAtCurrentRate, runwayIsUnbounded)
-  const runwayClass = runwayIsUnbounded ? 'ledger-runway--safe' : runwayBarClass(ledger.daysOfRunwayAtCurrentRate)
-  const debtShortfall = ledger.debtAmount - ledger.projectedMarksByDebt
 
   return (
     <section className="screen-panel">
@@ -107,38 +100,6 @@ export function LedgerScreen() {
         )}
       </div>
 
-      {(ledger.dailyExpenses > 0 || debtActive) && (
-        <div className="ledger-runway-block">
-          {debtActive && !ledger.willMeetDebt && (
-            <div className="ledger-runway-alert" role="alert">
-              ⚠ CRITICAL: Cannot meet debt obligation — short {formatMarks(debtShortfall)}
-            </div>
-          )}
-          {ledger.dailyExpenses > 0 && (
-            <div className="ledger-runway-row">
-              <span className="ledger-runway-label" title="Days until marks run out at current net daily burn rate">
-                Runway
-              </span>
-              <div className="ledger-runway-bar">
-                <div className={`ledger-runway-bar__fill ${runwayClass}`} style={{ width: `${runwayBarPct}%` }} />
-              </div>
-              <span className="ledger-runway-days">
-                {runwayIsUnbounded ? 'No burn' : `${ledger.daysOfRunwayAtCurrentRate} days`}
-              </span>
-            </div>
-          )}
-          {debtActive && (
-            <p className="ledger-runway-deadline">
-              Debt due: Day {ledger.debtDueDay} ({ledger.daysRemaining} day{ledger.daysRemaining !== 1 ? 's' : ''}{' '}
-              remaining)
-              {!ledger.willMeetDebt && (
-                <span className="ledger-runway-shortfall"> — Shortfall: {formatMarks(debtShortfall)} needed</span>
-              )}
-            </p>
-          )}
-        </div>
-      )}
-
       {/* Daily P&L */}
       <div className="ledger-section">
         <h2>Daily Accounts</h2>
@@ -176,6 +137,20 @@ export function LedgerScreen() {
                 >
                   {formatMarks(ledger.projectedMarksByDebt)}{' '}
                   {ledger.willMeetDebt ? '✓ on track' : '✗ shortfall'}
+                </td>
+              </tr>
+            )}
+            {ledger.dailyExpenses > 0 && (
+              <tr>
+                <td title="Days until marks run out at current net daily burn rate">
+                  Runway
+                </td>
+                <td
+                  className={`ledger-table__value ${ledger.daysOfRunwayAtCurrentRate < 10 ? 'text-danger' : ''}`}
+                >
+                  {ledger.daysOfRunwayAtCurrentRate === 999
+                    ? '—'
+                    : `${ledger.daysOfRunwayAtCurrentRate} days`}
                 </td>
               </tr>
             )}
