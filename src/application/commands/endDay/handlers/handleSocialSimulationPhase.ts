@@ -10,6 +10,7 @@ import { applyAllNpcAgency } from "../../npcAgency"
 import { applyInitiativeAgency } from "../../npcAgency/initiativeAgency"
 import { applyFactionActivity } from "../../applyFactionActivity"
 import { applyWorldNpcSocialSimulation } from "../../applyWorldNpcSocialSimulation"
+import { applyWorldNpcDangerExposure } from "../../npcAgency/worldNpcDangerExposure"
 import { applyRumorSpread } from "../../applyRumorSpread"
 import { applyMoneyEarningIntentions } from "../../intentions/moneyEarning/applyMoneyEarningIntentions"
 import { createRumorForNakedNpc } from "../../createRumorForNakedNpc"
@@ -37,6 +38,9 @@ export function handleSocialSimulationPhase(state: GameState, rng: Rng): GameSta
   next = applyInitiativeAgency(next, rng)
   next = applyFactionActivity(next)
   next = applyWorldNpcSocialSimulation(next, rng)
+  // Runs after social simulation so a feud escalated to strength >= 70 this same day is already
+  // flagged and immediately eligible for path 2 (destiny-s97u/destiny-m916.1).
+  next = applyWorldNpcDangerExposure(next, rng)
   next = applyRumorSpread(next, rng)
 
   // NPC Intention system: generation gated to the wired allowlist (destiny-7ekd/destiny-mbju and
