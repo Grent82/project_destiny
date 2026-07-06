@@ -97,6 +97,82 @@
               "npcId": "npc-marion-vale",
               "value": 50
             }
+          },
+          {
+            "id": "marion-choice-mira-home",
+            "label": "How is Mira settling in?",
+            "nextNodeId": "marion-node-mira-home",
+            "condition": {
+              "type": "mainQuestStage",
+              "value": "rescued"
+            }
+          },
+          {
+            "id": "marion-choice-withheld-knowledge",
+            "label": "You know more about the Court than you've told me.",
+            "nextNodeId": "marion-node-withheld-knowledge",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-marion-vale",
+              "value": 65
+            }
+          },
+          {
+            "id": "marion-choice-forn-offer",
+            "label": "Any word from outside the Court's reach?",
+            "nextNodeId": "marion-node-forn-offer",
+            "condition": {
+              "type": "mainQuestStage",
+              "value": "lead-found"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-mira-home",
+        "npcId": "npc-marion-vale",
+        "text": "\"She counts the days since open sky, still. Doesn't announce it, but I've learned to notice.\" Marion sets down whatever she was holding, the way she does when a thing has stopped being administrative. \"She's alive and she's home. Neither of those means she's all right. That's a separate project, and it starts now, if you're willing to make the time for it.\"",
+        "choices": [
+          {
+            "id": "marion-choice-mira-home-close",
+            "label": "Then let's start.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-mira-reintegration-1"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-withheld-knowledge",
+        "npcId": "npc-marion-vale",
+        "text": "Marion is quiet for longer than the question warrants. \"Six years administering this house's contracts. I know things about how the Court moves money and evidence that they don't know I know.\" She meets your eyes. \"I've been keeping it close until I understood what you intended to do with it. I don't wait indefinitely. I think I've waited long enough.\"",
+        "choices": [
+          {
+            "id": "marion-choice-withheld-knowledge-close",
+            "label": "Tell me everything.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-marions-reckoning"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-forn-offer",
+        "npcId": "npc-marion-vale",
+        "text": "\"A letter came through a courier who wouldn't say who paid him.\" Marion hands it over without comment. It's from Mael Forn, Director of the Ashen Compact — once, briefly, a Valdris man himself, though he doesn't say what changed. He is offering resources, quietly, in exchange for a foothold you'd have to grant him. \"Nothing about it is illegal,\" Marion says. \"That's not the same as nothing about it costing us something.\"",
+        "choices": [
+          {
+            "id": "marion-choice-forn-offer-close",
+            "label": "Let's hear the rest of it.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-ashen-compact-overture"
+            }
           }
         ]
       },
@@ -1011,15 +1087,24 @@
       {
         "id": "tessaly-node-mira-a",
         "npcId": "npc-tessaly-ash",
-        "text": "\"Taken isn't the word,\" Tessaly says. \"Moved, hidden, watched, and nearly traded. The Court keeps her in the old tannery on the Pale's eastern edge. If you go, go hard and go now. They haven't decided what she's worth yet.\"",
+        "text": "\"Taken isn't the word,\" Tessaly says. \"Moved, hidden, watched, and nearly traded. Knowing where she's kept and getting her out alive are different problems, and I don't hand the second one to strangers.\" She studies you. \"Do something for me first. Then I'll close the gap for you.\"",
         "choices": [
           {
             "id": "tessaly-choice-mira-confirm",
-            "label": "Then put the lead in my hand.",
+            "label": "Name it.",
             "nextNodeId": null,
             "outcome": {
               "type": "questUnlock",
-              "value": "quest-mira-rescue"
+              "value": "quest-mira-act1-wren-favor"
+            }
+          },
+          {
+            "id": "tessaly-choice-mira-guards",
+            "label": "Who's actually guarding her?",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-gilded-hand-contract"
             }
           }
         ]
@@ -2873,46 +2958,6 @@
     ]
   },
   {
-    "id": "dialogue-sanna",
-    "npcId": "npc-sanna-veld",
-    "openingNodeId": "sanna-node-1",
-    "nodes": [
-      {
-        "id": "sanna-node-1",
-        "npcId": "npc-sanna-veld",
-        "text": "Sanna Veld carries only what she can run with -- nothing more, not since the night the house fell and she ran. \"House Valdris.\" She has a prepared answer ready before you've even asked anything.",
-        "choices": [
-          {
-            "id": "sanna-choice-nothing",
-            "label": "At ease.",
-            "nextNodeId": null
-          },
-          {
-            "id": "sanna-choice-ran",
-            "label": "You ran, when the house fell.",
-            "nextNodeId": "sanna-node-ran"
-          }
-        ]
-      },
-      {
-        "id": "sanna-node-ran",
-        "npcId": "npc-sanna-veld",
-        "text": "The prepared answer doesn't come. For once. \"I did. I was loyal, and skilled, and I ran anyway.\" She looks at you directly. \"I'm not asking you to forgive that. I'm asking to not run again.\"",
-        "choices": [
-          {
-            "id": "sanna-choice-ran-close",
-            "label": "Then don't.",
-            "nextNodeId": null,
-            "outcome": {
-              "type": "loyalty",
-              "value": 6
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "dialogue-brand",
     "npcId": "npc-brand",
     "openingNodeId": "brand-node-1",
@@ -2947,6 +2992,15 @@
               "type": "loyalty",
               "value": 4
             }
+          },
+          {
+            "id": "brand-choice-purpose-witness",
+            "label": "Start by telling me what you saw the night the house fell.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-brands-watch"
+            }
           }
         ]
       }
@@ -2972,12 +3026,42 @@
             }
           },
           {
+            "id": "sanna-choice-ran",
+            "label": "You ran, when the house fell.",
+            "nextNodeId": "sanna-node-ran"
+          },
+          {
             "id": "sanna-choice-sketch",
             "label": "Someone was watching the house before the raid. Recognise this?",
             "nextNodeId": "sanna-node-sketch",
             "condition": {
               "type": "hasItem",
               "value": "item-sketch-watch-lane"
+            }
+          }
+        ]
+      },
+      {
+        "id": "sanna-node-ran",
+        "npcId": "npc-sanna-veld",
+        "text": "The prepared answer doesn't come. For once. \"I did. I was loyal, and skilled, and I ran anyway.\" She looks at you directly. \"I'm not asking you to forgive that. I'm asking to not run again.\"",
+        "choices": [
+          {
+            "id": "sanna-choice-ran-close",
+            "label": "Then don't.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 6
+            }
+          },
+          {
+            "id": "sanna-choice-ran-prove-it",
+            "label": "Then prove it. There's something I need done, and it won't be easy.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "questUnlock",
+              "value": "quest-sannas-return"
             }
           }
         ]

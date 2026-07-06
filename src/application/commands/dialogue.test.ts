@@ -294,7 +294,7 @@ describe('dialogue consequence resolution', () => {
     store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'tessaly-choice-mira-confirm' }))
 
     state = store.getState().game
-    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-rescue')).toBe(true)
-    expect(state.activityLog[0]?.message).toContain('New lead discovered: The Pale Cage.')
+    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-mira-act1-wren-favor')).toBe(true)
+    expect(state.activityLog[0]?.message).toContain('New lead discovered: A Name in the Magpie\'s Ledger.')
   })
 })

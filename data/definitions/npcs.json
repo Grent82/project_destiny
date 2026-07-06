@@ -3630,6 +3630,7 @@
       "zeal": 46
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-brand",
     "ageBand": "adult",
     "sex": "man",
     "appearanceTags": [

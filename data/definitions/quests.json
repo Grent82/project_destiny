@@ -1166,6 +1166,7 @@
     "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him — the copy, not the original — and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question — one he is too tired to answer tonight.",
     "unlocksNpcId": "npc-orren-wex",
     "rewardDebtReduction": 80,
+    "successorQuestId": "quest-cael-cold-case",
     "rewardCityDialId": null,
     "rewardCityDialDelta": 0,
     "rewardRelationshipDeltas": [
@@ -1210,6 +1211,7 @@
     "penaltyStandingDelta": 0,
     "timeLimitDays": null,
     "prerequisiteQuestId": "quest-orren-wex-rescue",
+    "successorQuestId": "quest-forged-note-origin",
     "linkedQuestId": null,
     "requiredFactionStanding": null,
     "discoverySource": "npc",
@@ -1870,6 +1872,188 @@
         "atStageId": "on-site",
         "label": "The timeline lines up precisely with the raid -- three nights of watching, then the fourth night, action.",
         "journalEntry": "This was not a raid of opportunity. Someone walked the lane, learned its rhythm, and waited for the night that suited them best."
+      }
+    ]
+  },
+  {
+    "id": "quest-ashen-compact-overture",
+    "title": "An Offer From the Warrens",
+    "employerFactionId": null,
+    "enemyFactionId": null,
+    "districtId": "district-the-warrens",
+    "briefing": "Mael Forn, Director of the Ashen Compact and once, briefly, a Valdris man himself, has sent an offer through Marion: resources and protection in exchange for a foothold on the house's diminished territory. Nothing about it is illegal. That isn't the same as it being free.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-marion-vale",
+    "riskLevel": "medium",
+    "questType": "story",
+    "openingText": "Forn's letter is precise and unsentimental: warehouse access, a standing line of credit, and quiet protection from Compact debt collectors, in exchange for allowing Ashen Compact couriers to route through Valdris-held ground without challenge. He doesn't threaten. He doesn't need to. He simply notes that the offer expires the day someone else takes the territory instead.",
+    "aftermathText": "The arrangement goes through, and it helps — the credit line is real, the protection holds, and for the first time in months the house isn't the only thing standing between its people and the Compact. It also means Ashen Compact couriers now move through streets that used to answer only to House Valdris, and Forn's name is quietly attached to the house's recovery in a way that will need explaining later, to people who will not be generous about it. Marion doesn't say she told you so. She doesn't have to.",
+    "rewardCityDialId": "control",
+    "rewardCityDialDelta": 3,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 3,
+        "respect": -1
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The terms are generous enough to be suspicious, and specific enough to have been drafted by someone who knows exactly what the house needs right now.",
+        "journalEntry": "Forn didn't guess what the house was short on. Someone told him, or he's been watching closely enough to know without being told."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Marion has already run the numbers and doesn't like what accepting says about the house's position.",
+        "journalEntry": "Marion's objection isn't moral. It's professional: taking this deal means admitting, on the record, that the house needs it."
+      }
+    ]
+  },
+  {
+    "id": "quest-marions-reckoning",
+    "title": "What Marion Knows",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-the-pale",
+    "briefing": "Six years administering House Valdris's contracts left Marion with more knowledge of the Gilded Court's methods and finances than they know she has. She's decided you've finally earned it.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": "quest-house-fall-reckoning",
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-marion-vale",
+    "riskLevel": "low",
+    "questType": "story",
+    "openingText": "Marion lays out six years of contract memory in an evening: which Court officers can be bought, which can't, which magistrates owe favors they haven't collected yet, and which financial instruments the Court uses to launder a manufactured claim into something that survives an audit. \"I kept this because knowledge with no plan behind it is just gossip with better sourcing,\" she says. \"You have a plan now. That's the only reason you're hearing this.\"",
+    "aftermathText": "It isn't a weapon by itself, but it's a map of where the weapons are kept. Marion watches you absorb it with the particular satisfaction of someone whose patience has finally paid a professional dividend. \"I wasn't protecting a secret,\" she says. \"I was protecting the timing of it. Those aren't the same thing, whatever it looked like from outside.\"",
+    "rewardCityDialId": "corruption",
+    "rewardCityDialDelta": -2,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 10,
+        "respect": 6
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "Marion's knowledge is organized like a ledger, not a confession -- names, dates, and the specific financial instrument each one touched.",
+        "journalEntry": "This isn't gossip. It's six years of contract administration turned into something closer to a map of the Court's actual machinery."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "She has been waiting to see whether you'd use this to build something or to settle a score.",
+        "journalEntry": "Marion never said she doubted you. She also never said she didn't. The waiting was the test, not any question she actually asked."
+      }
+    ]
+  },
+  {
+    "id": "quest-brands-watch",
+    "title": "What Brand Saw",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-the-warrens",
+    "briefing": "Brand has been waiting months for a reason, or permission to stop waiting for one. Both are available now, if he's willing to talk about the night he disappeared into the Warrens instead of standing his ground.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-warrens",
+    "sourceNpcId": "npc-brand",
+    "riskLevel": "medium",
+    "questType": "story",
+    "openingText": "\"I didn't run like Sanna ran,\" Brand says, like the distinction matters more to him than it should. \"I fought two of them at the gate. Lost, obviously. Woke up in the Warrens three days later with no memory of getting there and a debt to whoever dragged me.\" He rolls his shoulder, an old injury talking. \"I can tell you what they looked like. I can tell you it wasn't the Court's usual muscle.\"",
+    "aftermathText": "Brand's description matches the Gilded Hand's known roster closely enough to confirm what the tannery watch already suggested: professionals, not Court regulars, ran the operation from the first night. He tells it flatly, without asking for credit, and when he's done he straightens like something's been set down that he's been carrying since the gate. \"That's the reason,\" he says. \"Didn't need a new one. Just needed to say the old one out loud.\"",
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-brand",
+        "trust": 8,
+        "loyalty": 5
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "Brand's account of the gate fight is specific in ways a fabricated story usually isn't -- the number of attackers, the order they came at him.",
+        "journalEntry": "Brand remembers the fight in the exact disordered way real memory works, not the way a rehearsed excuse would."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The debt he woke up owing traces to a Warrens fixer who has done work for the Gilded Hand before.",
+        "journalEntry": "Brand's three lost days weren't an accident of the Warrens. Someone with Gilded Hand connections collected him, patched him up, and left a bill."
+      }
+    ]
+  },
+  {
+    "id": "quest-sannas-return",
+    "title": "Not Running This Time",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-ironworks",
+    "briefing": "Sanna Veld asked for a chance to not run again. There's a dangerous errand that needs doing in Court-watched territory, and she's asked to be the one who does it.",
+    "objectiveType": "delivery",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": "quest-who-watched-the-house",
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-ironworks",
+    "sourceNpcId": "npc-sanna-veld",
+    "riskLevel": "medium",
+    "questType": "story",
+    "openingText": "Sanna is already packed by the time you agree. \"I know the Pale better than anyone you'd send instead. I know where the Court patrols thin out and where they don't.\" She isn't asking for reassurance. She's asking to be trusted with something that matters, in a district she once fled through in the opposite direction.",
+    "aftermathText": "She gets it done -- quietly, competently, exactly as promised, and comes back through the same streets she ran through the night the house fell. She doesn't say anything about that on the way in. She says something about it, briefly, on the way out, and then never brings it up again. Whatever she needed to prove, to you or to herself, reads as settled.",
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "executionDurationWatches": 2,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-sanna-veld",
+        "trust": 12,
+        "respect": 8,
+        "loyalty": 8
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "Sanna's route avoids every patrol pattern the house has logged so far -- she genuinely does know the Pale's blind spots.",
+        "journalEntry": "Sanna wasn't exaggerating. Her knowledge of the district's patrol gaps is better than anything in the house's own notes."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "She passes within sight of the old house without slowing down, without looking away from the job either.",
+        "journalEntry": "She walked past House Valdris and didn't run. That was never going to be in the mission report, but it happened, and it mattered."
       }
     ]
   }

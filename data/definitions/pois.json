@@ -437,8 +437,10 @@
     "description": "A fortified squat in the deep Warrens. Brand Holde maintains it as a holdout.",
     "factionId": null,
     "actions": [
-      "hire"
-    ]
+      "hire",
+      "contracts"
+    ],
+    "npcId": "npc-brand"
   },
   {
     "id": "poi-warrens-the-restored",

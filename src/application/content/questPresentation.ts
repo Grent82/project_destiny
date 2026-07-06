@@ -251,6 +251,38 @@ const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
     employerIntent: 'Confirm the house was surveilled for days before the raid, and by whom.',
     likelyConsequence: 'The raid is revealed as rehearsed and deliberate rather than opportunistic — and Sanna finally says the thing she has been avoiding since that night.',
   },
+  'quest-ashen-compact-overture': {
+    categoryLabel: 'House obligation',
+    originLabel: 'A letter delivered through Marion Vale',
+    stakeholderLabel: 'Mael Forn, Director of the Ashen Compact and once, briefly, a Valdris man himself.',
+    whyNow: 'Forn made the offer expire on his own timeline, not the house\'s. Waiting is itself a choice here.',
+    employerIntent: 'Decide whether to accept resources and protection from a rival organization in exchange for a foothold on Valdris ground.',
+    likelyConsequence: 'The house gains real, immediate relief — and a debt of a kind that doesn\'t show up on any ledger Marion keeps.',
+  },
+  'quest-marions-reckoning': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Brought to the house by Marion Vale',
+    stakeholderLabel: 'Marion Vale, who has been sitting on this deliberately, not by accident.',
+    whyNow: 'She said she would not wait indefinitely. This is her deciding the wait is over.',
+    employerIntent: "Learn what six years of contract administration taught Marion about how the Gilded Court actually operates.",
+    likelyConsequence: 'A working map of Court corruption the house can act on — and confirmation that Marion\'s loyalty was always a considered choice, not an assumption.',
+  },
+  'quest-brands-watch': {
+    categoryLabel: 'House obligation',
+    originLabel: "Brand, still waiting in the Warrens for a reason",
+    stakeholderLabel: 'Brand, who fought at the gate and lost, and has never said so out loud until now.',
+    whyNow: "He has both a reason and permission now. Waiting any longer serves nobody, least of all him.",
+    employerIntent: 'Learn what Brand saw the night the house fell, and who he fought before he went down.',
+    likelyConsequence: "Confirms the Gilded Hand was already running the operation on night one — and gives Brand back something he lost at that gate.",
+  },
+  'quest-sannas-return': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Sanna Veld asked for this herself',
+    stakeholderLabel: 'Sanna Veld, who ran once and is asking for a chance not to run again.',
+    whyNow: 'She asked directly, after the watch-sketch investigation. Turning her down now would mean the offer was never real.',
+    employerIntent: 'Send Sanna into Court-watched territory on an errand only someone with her knowledge of the Pale can manage.',
+    likelyConsequence: "The errand succeeds, and Sanna gets to walk past the house that broke her without running from it a second time.",
+  },
 }
 
 function fallbackIssuerLabel(template: QuestTemplate) {
