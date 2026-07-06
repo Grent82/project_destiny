@@ -113,6 +113,19 @@ describe('Intention Generation Pipeline', () => {
       const intentions = getPersonalityDrivenIntentions(createTestNpc({}, { ambition: 70 }))
       expect(intentions).toContain('seek-employment')
     })
+    it('returns travel-district for high curiosity combined with low prudence (destiny-q80n.10.1)', () => {
+      const intentions = getPersonalityDrivenIntentions(createTestNpc({}, { curiosity: 75, prudence: 30 }))
+      expect(intentions).toContain('travel-district')
+    })
+    it('does not return travel-district for high curiosity alone when prudence is also high', () => {
+      // A curious-but-cautious person people-watches/investigates in place instead of relocating.
+      const intentions = getPersonalityDrivenIntentions(createTestNpc({}, { curiosity: 75, prudence: 70 }))
+      expect(intentions).not.toContain('travel-district')
+    })
+    it('does not return travel-district for low curiosity even with low prudence', () => {
+      const intentions = getPersonalityDrivenIntentions(createTestNpc({}, { curiosity: 40, prudence: 20 }))
+      expect(intentions).not.toContain('travel-district')
+    })
   })
 
   describe('getTraitDrivenIntentions', () => {

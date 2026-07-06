@@ -106,6 +106,9 @@ export const INTENTION_TIME_SLOT_MAPPING: Record<NpcIntentionType, IntentionTime
   'escape-attempt': { validTimeSlots: ['morning', 'afternoon', 'night'] },
   'seek-shelter': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
   'care-for-injured': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
+
+  // ─── NPC cross-district travel (destiny-q80n.10.1) ───────────────────────
+  'travel-district': { validTimeSlots: ['morning', 'afternoon'] },
 }
 
 /**

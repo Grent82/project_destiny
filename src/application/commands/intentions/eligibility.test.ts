@@ -32,6 +32,13 @@ describe('intentionTypesForNpc', () => {
     }
   })
 
+  it('world NPCs are eligible for travel-district at the npcType level (destiny-q80n.10.1)', () => {
+    // The further per-individual poi.npcId-link exclusion happens in
+    // processAllowlistedNpcIntentions, not here -- this set is purely npcType-based.
+    const result = intentionTypesForNpc(npc({ npcType: 'world' }))
+    expect(result.has('travel-district')).toBe(true)
+  })
+
   it('story NPCs share the world subset', () => {
     expect(intentionTypesForNpc(npc({ npcType: 'story' }))).toBe(WORLD_ELIGIBLE_INTENTION_TYPES)
   })

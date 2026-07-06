@@ -106,6 +106,16 @@ export function getPersonalityDrivenIntentions(npc: NpcRuntimeState): NpcIntenti
   if (npc.traits.ambition >= 65) {
     intentions.push('seek-employment', 'consolidate-power', 'form-squad')
   }
+  // NPC cross-district travel (destiny-q80n.10.1): wanderlust requires both high curiosity AND
+  // low prudence -- a curious-but-cautious person people-watches/investigates in place (line
+  // above) rather than actually relocating. Deliberately a narrower gate than the other
+  // curiosity-driven push so this stays rare, not constant ambient churn. Target validity
+  // (adjacency, access restriction, no static dialogue/POI link) is resolved downstream in
+  // calculateNpcIntention/processAllowlistedNpcIntentions, not here -- this stage only answers
+  // "would this personality ever want to."
+  if (npc.traits.curiosity >= 70 && npc.traits.prudence < 50) {
+    intentions.push('travel-district')
+  }
 
   // Remove duplicates
   return [...new Set(intentions)]
@@ -192,6 +202,11 @@ export function getTraitDrivenIntentions(
     'give-gift': npc.traits.empathy + npc.attributes.presence,
     'trade-with-npc': npc.skills.negotiation + npc.traits.ambition,
     'craft-item': npc.skills.crafting + npc.skills.engineering,
+    // NPC cross-district travel (destiny-q80n.10.1): wanderlust reads on perception + curiosity,
+    // same shape as scout-ahead/investigate-threat above. Deliberately excludes prudence (a
+    // cautious person is less likely to want to relocate, unlike e.g. resource-gather where
+    // prudence is a capability, not a desire-suppressor here).
+    'travel-district': npc.attributes.perception + npc.traits.curiosity,
   }
 
   // Find intentions where NPC has decent capability (score > 130)

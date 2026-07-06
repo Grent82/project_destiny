@@ -82,6 +82,9 @@ export const CONTEXT_MULTIPLIERS: Record<string, Record<string, number>> = {
     'shop-for-goods': 0.5,
     'patrol-district': 1.2,
     'confront-rival': 1.3,
+    // An unsafe home district is exactly when a curious/incautious NPC's wanderlust makes the
+    // most sense -- reasons to leave, not just tolerate it (destiny-q80n.10.1).
+    'travel-district': 1.3,
   },
   safe: {
     'socialize': 1.3,

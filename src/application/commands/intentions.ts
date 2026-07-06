@@ -12,6 +12,7 @@ import {
   npcPatrolDistrict,
   npcFortifyPosition,
   npcCareForInjured,
+  npcTravelDistrict,
 } from './npcAggressionActions'
 import { npcResourceGather, npcScavenge, npcSeekEmployment, npcHostGathering, npcShopForGoods, npcCanShopForGoods } from './npcSpecialActions'
 import {
@@ -49,6 +50,7 @@ import { npcUseConsumable, npcCanUseConsumable } from './economy/npcUseConsumabl
 import { npcGiveGift, npcCanGiveGift } from './economy/npcGiveGift'
 import { npcTradeWithNpc, npcCanTradeWithNpc } from './economy/npcTradeWithNpc'
 import { npcCraftItem, npcCanCraftItem } from './economy/npcCraftItem'
+import { contentCatalog } from '../content/contentCatalog'
 
 /**
  * Guard conditions that prevent an NPC from forming an intention.
@@ -151,6 +153,14 @@ function calculateIntentionConfidence(npc: NpcRuntimeState, intentionType: NpcIn
       confidence += (npc.traits.empathy - 50) / 3
       confidence += (npc.skills.performance - 50) / 4
       break
+
+    case 'travel-district':
+      // Cross-district travel requires perception (knowing safe routes) and survival; caution
+      // (prudence) works against it, matching the generation-side gate in pipeline.ts.
+      confidence += (npc.attributes.perception - 50) / 3
+      confidence += (npc.skills.survival - 50) / 4
+      confidence += (50 - npc.traits.prudence) / 4
+      break
   }
 
   // Clamp to 0-100
@@ -227,6 +237,8 @@ function calculateUrgencyDays(intentionType: NpcIntentionType, state: GameState)
     'escape-attempt': 1,
     'seek-shelter': 1,
     'care-for-injured': 2,
+    // NPC cross-district travel (destiny-q80n.10.1): not time-critical, unlike survival needs.
+    'travel-district': 6,
   }
 
   let urgency = baseUrgency[intentionType]
@@ -292,6 +304,38 @@ function calculateIntentionPriority(npc: NpcRuntimeState, intentionType: NpcInte
 }
 
 /**
+ * Resolves a deterministic (but not fixed-forever) destination district for a travel-district
+ * intention: a candidate must be adjacent to the NPC's current district and not accessRestricted.
+ * Returns null if the NPC has no assignedDistrictId, that district is unknown, or no adjacent
+ * district qualifies -- callers must treat null as "do not offer this intention," not fall back
+ * to a default target (see docs/analysis/npc-cross-district-travel-design-2026-07-06.md).
+ *
+ * Deliberately does not use createRng/state.rngSeed: calculateNpcIntention has no way to persist
+ * an advanced seed back to state (it returns a bare intention, not a GameState), so threading a
+ * mutable seed through here would silently violate this project's "advance the seed in the
+ * returned state" rule the moment two NPCs rolled a destination in the same processing pass.
+ * Instead this derives a checksum from the NPC id + day + candidate set, matching the existing
+ * precedent in simulateRivalOrgs.ts's resolveLeadDelayDays -- deterministic, varies per NPC and
+ * per day, without any state mutation to thread through.
+ */
+export function resolveTravelDestination(state: GameState, npc: NpcRuntimeState): string | null {
+  if (!npc.assignedDistrictId) return null
+
+  const homeDistrict = contentCatalog.districtsById.get(npc.assignedDistrictId)
+  if (!homeDistrict) return null
+
+  const candidates = homeDistrict.adjacentDistrictIds.filter((districtId) => {
+    const candidate = contentCatalog.districtsById.get(districtId)
+    return candidate != null && !candidate.accessRestricted
+  })
+  if (candidates.length === 0) return null
+
+  const signature = `${npc.npcId}:${state.day}:${candidates.join(',')}`
+  const checksum = Array.from(signature).reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  return candidates[checksum % candidates.length]!
+}
+
+/**
  * Calculates an NPC's personal intention if they are free to act.
  *
  * Guard conditions (must ALL pass):
@@ -316,6 +360,19 @@ export function calculateNpcIntention(state: GameState, npcId: string): NpcInten
   const intentionType = generateNpcIntention(state, npc)
   if (!intentionType) return null
 
+  // travel-district's target is a computed destination, never the player's own district (see
+  // resolveTravelDestination) -- every other type keeps the existing generic assignment below.
+  // A null result means no legal destination exists right now; discard rather than falling back
+  // to a wrong target.
+  let targetId: string
+  if (intentionType === 'travel-district') {
+    const destination = resolveTravelDestination(state, npc)
+    if (!destination) return null
+    targetId = destination
+  } else {
+    targetId = state.currentDistrictId ?? 'district-the-pale'
+  }
+
   // Calculate intention parameters (legacy functions still work for priority/confidence/urgency)
   const priority = calculateIntentionPriority(npc, intentionType, state)
   const confidence = calculateIntentionConfidence(npc, intentionType)
@@ -323,7 +380,7 @@ export function calculateNpcIntention(state: GameState, npcId: string): NpcInten
 
   const intention: NpcIntention = {
     type: intentionType,
-    targetId: state.currentDistrictId ?? 'district-the-pale',
+    targetId,
     targetType: 'district',
     priority,
     urgencyDays,
@@ -486,7 +543,25 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'give-gift',
   'trade-with-npc',
   'craft-item',
+  // destiny-q80n.10.1/.10.2: NPC cross-district travel. World/story only in practice -- see
+  // WORLD_ELIGIBLE_INTENTION_TYPES's comment for the poi-link exclusion and
+  // resolveTravelDestination for why a roster member essentially never qualifies (they either
+  // have no assignedDistrictId to travel from, or a meaningful one that already means they're
+  // not idle and are blocked by isNpcBlockedFromIntention before this ever matters).
+  'travel-district',
 ])
+
+/**
+ * True if this NPC is statically linked to a POI (pois.json's npcId field) -- i.e. their dialogue
+ * reachability depends on their poi.districtId matching where the player can find them. Relocating
+ * such an NPC via travel-district would silently go stale against that link (destiny-gyvi fixed 12
+ * NPCs this way; see docs/analysis/npc-cross-district-travel-design-2026-07-06.md). Only relevant
+ * to travel-district today, but kept as a standalone predicate rather than inlined so any future
+ * relocation-capable intention reuses the same check instead of re-deriving it.
+ */
+export function npcHasStaticPoiLink(npcId: string): boolean {
+  return contentCatalog.pois.some((poi) => poi.npcId === npcId)
+}
 
 /**
  * Generation, gated to the wired allowlist AND per-person eligibility.
@@ -518,6 +593,7 @@ export function processAllowlistedNpcIntentions(state: GameState): GameState {
     if (!intention) continue
     if (!WIRED_INTENTION_TYPES.has(intention.type)) continue
     if (!intentionTypesForNpc(npc).has(intention.type)) continue
+    if (intention.type === 'travel-district' && npcHasStaticPoiLink(npc.npcId)) continue
 
     next = {
       ...next,
@@ -693,6 +769,19 @@ const patrolDistrictHandler: IntentionHandler = {
     const next = npcPatrolDistrict(state, npc.npcId, rng.rng)
     return { ...next, rngSeed: rng.getSeed?.() ?? state.rngSeed }
   },
+}
+
+/**
+ * Travel District Handler (destiny-q80n.10.2)
+ * NPC relocates to the destination chosen for their travel-district intention.
+ */
+const travelDistrictHandler: IntentionHandler = {
+  canExecute: (npc) => {
+    if (!canExecuteIntention(npc)) return false
+    // Requires some baseline sense of the world, or a strong enough pull to go anyway
+    return npc.attributes.perception >= 40 || npc.traits.curiosity >= 60
+  },
+  execute: (npc, state) => npcTravelDistrict(state, npc.npcId),
 }
 
 /**
@@ -1488,6 +1577,8 @@ export const intentionHandlers: Record<NpcIntentionType, IntentionHandler> = {
   'give-gift': giveGiftHandler,
   'trade-with-npc': tradeWithNpcHandler,
   'craft-item': craftItemHandler,
+  // NPC cross-district travel (destiny-q80n.10.2)
+  'travel-district': travelDistrictHandler,
 }
 
 /**

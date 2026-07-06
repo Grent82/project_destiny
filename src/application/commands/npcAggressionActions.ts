@@ -174,6 +174,43 @@ export function npcPatrolDistrict(state: GameState, npcId: string, rng: Rng): Ga
   return appendActivityLogEntry(next, 'system', message)
 }
 
+/**
+ * NPC relocates from their assigned district to the destination chosen when their travel-district
+ * intention was generated (intentions.ts's resolveTravelDestination -- already validated adjacent
+ * and non-restricted at that time). Re-validates the destination here too (defense-in-depth,
+ * matching this file's other handlers' guard style): the world can change between the day an
+ * intention is created and the day it resolves, e.g. the destination could have since become
+ * accessRestricted. No-ops (no state change, no log entry) if not assigned anywhere, if the
+ * current intention isn't actually a travel-district one, or if the destination no longer
+ * qualifies -- see docs/analysis/npc-cross-district-travel-design-2026-07-06.md.
+ */
+export function npcTravelDistrict(state: GameState, npcId: string): GameState {
+  const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
+  if (!npc || !npc.assignedDistrictId) return state
+
+  const destinationId = npc.currentIntention?.type === 'travel-district' ? npc.currentIntention.targetId : null
+  if (!destinationId) return state
+
+  const destination = contentCatalog.districtsById.get(destinationId)
+  if (!destination || destination.accessRestricted) return state
+
+  const originId = npc.assignedDistrictId
+  const originName = contentCatalog.districtsById.get(originId)?.name ?? originId
+
+  const next: GameState = {
+    ...state,
+    npcRuntimeStates: state.npcRuntimeStates.map((n) =>
+      n.npcId === npcId ? { ...n, assignedDistrictId: destinationId } : n,
+    ),
+  }
+
+  return appendActivityLogEntry(
+    next,
+    'system',
+    `${npc.name} has relocated from ${originName} to ${destination.name}.`,
+  )
+}
+
 const FORTIFY_COST = 20
 
 /**

@@ -9,6 +9,8 @@ import {
   executeAllowlistedNpcIntentions,
   WIRED_INTENTION_TYPES,
   intentionHandlers,
+  resolveTravelDestination,
+  npcHasStaticPoiLink,
 } from './intentions'
 import { WORLD_ELIGIBLE_INTENTION_TYPES } from './intentions/eligibility'
 import type { GameState, NpcRuntimeState, NpcIntentionType } from '../../domain'
@@ -1275,6 +1277,35 @@ describe('intentions', () => {
       expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
+    it('executes travel-district (via npcTravelDistrict) and clears the intention afterward', () => {
+      const intention = {
+        type: 'travel-district' as const,
+        targetId: 'district-harbor',
+        targetType: 'district' as const,
+        priority: 3,
+        urgencyDays: 6,
+        confidence: 50,
+        createdAtDay: 1,
+        expiresAtDay: 7,
+        validTimeSlots: ['morning', 'afternoon'] as Array<'morning' | 'afternoon' | 'evening' | 'night'>,
+      }
+      let state: GameState = stateWithMarionAndIda(intention)
+      const marionId = state.npcRuntimeStates[0]!.npcId
+      state = {
+        ...state,
+        npcRuntimeStates: [
+          { ...state.npcRuntimeStates[0]!, assignedDistrictId: 'district-the-pale', attributes: { ...state.npcRuntimeStates[0]!.attributes, perception: 60 } },
+          state.npcRuntimeStates[1]!,
+        ],
+      }
+
+      const result = executeAllowlistedNpcIntentions(state)
+
+      const actor = result.npcRuntimeStates.find((n) => n.npcId === marionId)!
+      expect(actor.assignedDistrictId).toBe('district-harbor')
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
+    })
+
     it('executes fortify-position (via npcFortifyPosition) and clears the intention afterward', () => {
       const intention = {
         type: 'fortify-position' as const,
@@ -1719,6 +1750,63 @@ describe('intentions', () => {
       // Executing eat-meal (npcEatMeal) reduces hunger; whichever eligible type actually won,
       // the intention must be cleared afterward so the NPC can generate a fresh one tomorrow.
       expect(finalNpc.currentIntention).toBeNull()
+    })
+  })
+
+  describe('resolveTravelDestination (destiny-q80n.10.1)', () => {
+    it('returns null when the NPC has no assignedDistrictId', () => {
+      const npc: NpcRuntimeState = { ...initialGameStateSnapshot.npcRuntimeStates[0]!, assignedDistrictId: null }
+      expect(resolveTravelDestination(initialGameStateSnapshot, npc)).toBeNull()
+    })
+
+    it('returns null when the assigned district is unknown', () => {
+      const npc: NpcRuntimeState = { ...initialGameStateSnapshot.npcRuntimeStates[0]!, assignedDistrictId: 'district-does-not-exist' }
+      expect(resolveTravelDestination(initialGameStateSnapshot, npc)).toBeNull()
+    })
+
+    it('only ever picks a destination that is adjacent to the NPC\'s district and not accessRestricted', () => {
+      // district-the-pale's adjacentDistrictIds includes two accessRestricted neighbors
+      // (district-gilded-heights, district-the-hollows) alongside three open ones -- confirmed via
+      // data/definitions/districts.json. A correct implementation must never return either
+      // restricted neighbor, across many different NPCs/days (the destination is a deterministic
+      // checksum of npcId + day + candidate set, so varying both exercises the whole candidate range).
+      const forbidden = new Set(['district-gilded-heights', 'district-the-hollows'])
+      const allowed = new Set(['district-harbor', 'district-ironworks', 'district-the-warrens', 'district-the-northbank'])
+      for (let i = 0; i < 20; i++) {
+        const npc: NpcRuntimeState = {
+          ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+          npcId: `npc-test-travel-${i}`,
+          assignedDistrictId: 'district-the-pale',
+        }
+        const state: GameState = { ...initialGameStateSnapshot, day: i }
+        const destination = resolveTravelDestination(state, npc)
+        expect(destination).not.toBeNull()
+        expect(forbidden.has(destination!)).toBe(false)
+        expect(allowed.has(destination!)).toBe(true)
+      }
+    })
+
+    it('is deterministic for the same NPC, day, and district', () => {
+      const npc: NpcRuntimeState = {
+        ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+        npcId: 'npc-test-travel-deterministic',
+        assignedDistrictId: 'district-the-pale',
+      }
+      const state: GameState = { ...initialGameStateSnapshot, day: 5 }
+      const first = resolveTravelDestination(state, npc)
+      const second = resolveTravelDestination(state, npc)
+      expect(first).toBe(second)
+    })
+  })
+
+  describe('npcHasStaticPoiLink (destiny-q80n.10.1)', () => {
+    it('returns true for an NPC statically linked to a POI', () => {
+      // npc-cutter was linked to poi-hollows-the-sink in destiny-gyvi this session.
+      expect(npcHasStaticPoiLink('npc-cutter')).toBe(true)
+    })
+
+    it('returns false for an NPC with no POI link', () => {
+      expect(npcHasStaticPoiLink('npc-definitely-not-a-real-npc-id')).toBe(false)
     })
   })
 })

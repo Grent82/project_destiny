@@ -57,6 +57,8 @@ export const npcIntentionTypeSchema = z.enum([
   'give-gift',
   'trade-with-npc',
   'craft-item',
+  // NPC cross-district travel (destiny-q80n.10.1)
+  'travel-district',
 ] as const)
 
 export const percentageSchema = z.number().finite().min(0).max(100)

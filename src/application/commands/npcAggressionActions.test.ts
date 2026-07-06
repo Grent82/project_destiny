@@ -6,6 +6,7 @@ import {
   npcPatrolDistrict,
   npcFortifyPosition,
   npcCareForInjured,
+  npcTravelDistrict,
 } from './npcAggressionActions'
 import { initialStateWithIda, idaRhysRosterEntry } from './testFixtures'
 import type { GameState } from '../../domain/game/contracts'
@@ -161,6 +162,72 @@ describe('npcPatrolDistrict', () => {
   it('no-ops when the NPC has no assigned district', () => {
     const state = withNpcOverrides(initialStateWithIda, NPC_ID, { assignedDistrictId: null })
     const result = npcPatrolDistrict(state, NPC_ID, alwaysFail)
+    expect(result).toBe(state)
+  })
+})
+
+describe('npcTravelDistrict (destiny-q80n.10.2)', () => {
+  const travelIntention = (targetId: string): NpcRuntimeState['currentIntention'] => ({
+    type: 'travel-district',
+    targetId,
+    targetType: 'district',
+    priority: 3,
+    urgencyDays: 6,
+    confidence: 50,
+    createdAtDay: 1,
+    expiresAtDay: 7,
+    validTimeSlots: ['morning', 'afternoon'],
+  })
+
+  it('relocates the NPC to the intention\'s destination and logs the move', () => {
+    const state = withNpcOverrides(initialStateWithIda, NPC_ID, {
+      assignedDistrictId: 'district-the-pale',
+      currentIntention: travelIntention('district-harbor'),
+    })
+
+    const result = npcTravelDistrict(state, NPC_ID)
+
+    const actor = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(actor.assignedDistrictId).toBe('district-harbor')
+    expect(result.activityLog[0]?.message).toContain('relocated')
+    expect(result.activityLog[0]?.message).toContain('Harbor')
+  })
+
+  it('no-ops when the NPC has no assigned district', () => {
+    const state = withNpcOverrides(initialStateWithIda, NPC_ID, {
+      assignedDistrictId: null,
+      currentIntention: travelIntention('district-harbor'),
+    })
+    const result = npcTravelDistrict(state, NPC_ID)
+    expect(result).toBe(state)
+  })
+
+  it('no-ops when the current intention is not a travel-district one', () => {
+    const state = withNpcOverrides(initialStateWithIda, NPC_ID, {
+      assignedDistrictId: 'district-the-pale',
+      currentIntention: null,
+    })
+    const result = npcTravelDistrict(state, NPC_ID)
+    expect(result).toBe(state)
+  })
+
+  it('re-validates the destination at execution time and no-ops if it has since become accessRestricted', () => {
+    // district-gilded-heights is accessRestricted in content -- simulates the world changing
+    // between when the intention was generated and the day it resolves.
+    const state = withNpcOverrides(initialStateWithIda, NPC_ID, {
+      assignedDistrictId: 'district-the-pale',
+      currentIntention: travelIntention('district-gilded-heights'),
+    })
+    const result = npcTravelDistrict(state, NPC_ID)
+    expect(result).toBe(state)
+  })
+
+  it('no-ops for an unknown destination district', () => {
+    const state = withNpcOverrides(initialStateWithIda, NPC_ID, {
+      assignedDistrictId: 'district-the-pale',
+      currentIntention: travelIntention('district-does-not-exist'),
+    })
+    const result = npcTravelDistrict(state, NPC_ID)
     expect(result).toBe(state)
   })
 })

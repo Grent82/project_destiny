@@ -319,6 +319,11 @@ export const DEFAULT_INTENTION_WEIGHTS: Record<NpcIntentionType, IntentionWeight
     skillWeights: { crafting: 1.5, engineering: 1.1 },
     traitWeights: { discipline: 0.9 },
   },
+  'travel-district': {
+    attributeWeights: { perception: 1.1 },
+    skillWeights: { survival: 1.0 },
+    traitWeights: { curiosity: 1.3, prudence: 0.7 },
+  },
 }
 
 /**

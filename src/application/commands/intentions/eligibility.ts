@@ -75,6 +75,15 @@ export const WORLD_ELIGIBLE_INTENTION_TYPES: ReadonlySet<NpcIntentionType> = new
   'consolidate-power',
   'mediate-conflict',
   'challenge-authority',
+  // Cross-district travel (destiny-q80n.10.1): world/story NPCs may want to relocate their
+  // assignedDistrictId. A further, per-individual gate (not expressible here, since this set is
+  // purely npcType-based) excludes any NPC whose id has a static poi.npcId link in pois.json --
+  // relocating them would go stale against that link and silently break the "Speak with the
+  // contact" dialogue reachability path (see destiny-gyvi and
+  // docs/analysis/npc-cross-district-travel-design-2026-07-06.md). That check lives in
+  // processAllowlistedNpcIntentions (intentions.ts), the same composition point that already
+  // layers every other type-specific eligibility gate on top of this static set.
+  'travel-district',
 ])
 
 /**
