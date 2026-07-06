@@ -88,9 +88,17 @@ export function DialogueScreen() {
                   className={`dialogue-choice-button dialogue-choice-button--${choice.kind}`}
                   type="button"
                   onClick={() => handleChoice(choice)}
+                  title={choice.effectNotes.map((note) => note.text).join(' ')}
                 >
                   <span className="dialogue-choice-label">{choice.label}</span>
-                  <span className="dialogue-choice-preview">{choice.effectNotes[0]}</span>
+                  {choice.effectNotes.map((note, index) => (
+                    <span
+                      key={index}
+                      className={`dialogue-choice-preview dialogue-choice-preview--${note.tone}`}
+                    >
+                      {note.text}
+                    </span>
+                  ))}
                 </button>
               ))}
 
