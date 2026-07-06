@@ -203,6 +203,14 @@ const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
     employerIntent: 'Confirm the Gilded Hand, not the Court itself, is running Mira\'s custody on contract.',
     likelyConsequence: 'A cleaner picture of the opposition before the rescue attempt, at the cost of the Hand knowing someone is asking questions.',
   },
+  'quest-forged-note-origin': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Dael Morw, a former Compact Register assessor',
+    stakeholderLabel: 'Whoever in the Register still forges documents to order for the Gilded Court.',
+    whyNow: 'The confrontation with whoever ordered the house destroyed will need more than suspicion to matter.',
+    employerIntent: 'Trace the forged promissory note back to the clerk who made it, and the fixer who commissioned it.',
+    likelyConsequence: 'Confirms the note was manufactured to order rather than merely exaggerated — evidence, not proof, but evidence that holds up.',
+  },
   'quest-vorne-confrontation': {
     categoryLabel: 'House obligation',
     originLabel: 'Brought to the house by Marion Vale',

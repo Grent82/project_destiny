@@ -1001,6 +1001,53 @@
     ]
   },
   {
+    "id": "quest-forged-note-origin",
+    "title": "The Forger's Hand",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-the-northbank",
+    "briefing": "Dael Morw left the Compact Register the day they told him to falsify a birth record, but he kept his contacts. He knows how a document like the note that broke House Valdris gets made to survive scrutiny — and who in the Register still does that kind of work.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-northbank",
+    "sourceNpcId": "npc-dael-morw",
+    "riskLevel": "medium",
+    "prerequisiteQuestId": "quest-cael-cold-case",
+    "successorQuestId": null,
+    "flavorNote": "Dael isn't proud of what he knows. He is certain it's the only useful thing he has left.",
+    "openingText": "\"A note that survives a magistrate's first look isn't drawn by an amateur. There's a house style to good forgery, same as any other trade.\" Dael says it like a man describing a wound that never quite closed. \"I can tell you whose style this is. I can't promise you'll like knowing.\"",
+    "aftermathText": "The hand belongs to a Register clerk who has done this kind of work for the Court twice before, always through an intermediary, never with a signature that survives. It isn't proof that reaches Cassia Vorne directly — she is too careful for that — but it is proof the note was manufactured to order, not simply mistaken or exaggerated. Dael hands over the last copy he has and doesn't ask what you'll do with it. \"I kept it long enough,\" he says. \"It's yours to carry now.\"",
+    "rewardCityDialId": "corruption",
+    "rewardCityDialDelta": -3,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-dael-morw",
+        "trust": 8,
+        "respect": 5
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The clerk's technique is distinctive: aged ink over fresh paper, a filing date backdated by exactly the right margin to avoid audit.",
+        "journalEntry": "This is careful, practiced work. Whoever did this has done it enough times to know precisely how much backdating a Register audit will tolerate."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The clerk works alone but reports through a fixer who never gives a name.",
+        "journalEntry": "The chain stops at the fixer, same as it always does with work like this. That's the whole design — deniability built in from the start."
+      }
+    ]
+  },
+  {
     "id": "quest-vorne-confrontation",
     "title": "The Weight of Paper",
     "questType": "story",
