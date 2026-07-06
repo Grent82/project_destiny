@@ -881,6 +881,7 @@
     "sourceNpcId": "npc-sister-vael",
     "riskLevel": "extreme",
     "prerequisiteQuestId": "quest-mira-rescue",
+    "successorQuestId": "quest-vorne-confrontation",
     "rewardCityDialId": "control",
     "rewardCityDialDelta": -5,
     "rewardRelationshipDeltas": [
@@ -903,6 +904,53 @@
         "journalEntry": "A probe attack confirms they know where we are. The real assault is coming."
       }
     ]
+  },
+  {
+    "id": "quest-vorne-confrontation",
+    "title": "The Weight of Paper",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "enemyNpcId": "npc-enemy-cassia-vorne",
+    "districtId": "district-gilded-heights",
+    "briefing": "The forged note, the staged robbery, the manufactured claim — you have enough now to say the name out loud. Cassia Vorne built the case that ended House Valdris. She will meet with you. She always meets. It costs her nothing, because everything she did was, on paper, entirely correct.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-gilded-heights",
+    "sourceNpcId": "npc-marion-vale",
+    "riskLevel": "high",
+    "prerequisiteQuestId": "quest-mira-act4-court-answer",
+    "successorQuestId": null,
+    "flavorNote": "There is no writ for what she did. Every document is in order. That is the entire point of her.",
+    "rewardCityDialId": "corruption",
+    "rewardCityDialDelta": -4,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 5,
+        "respect": 5
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "Every document you bring, she has already read. She filed half of them herself.",
+        "journalEntry": "She isn't surprised by anything you show her. She built the case; she remembers every page of it better than you do."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "She listens to the accusation the way she listens to a filing she already expects to win.",
+        "journalEntry": "Nothing you say changes her expression. Whatever this costs her, it isn't fear."
+      }
+    ],
+    "aftermathText": "She doesn't deny any of it. Why would she — nothing you're holding would survive a magistrate's review, and she knows it before you do. \"You did the work properly,\" she says, and it sounds like professional respect, because it is. \"I'll allow that the note was ambitious. I'll allow that the timing was unkind.\" She stands. \"I won't allow that it was wrong. House Valdris was becoming a problem I was paid to solve, and I solved it.\" What you leave with isn't a confession or a conviction. It's her attention — she will not underestimate this house again, and she will do this again to the next one that grows inconveniently large. That is not a victory. It's the only kind of answer someone like her was ever going to give."
   },
   {
     "id": "quest-house-fall-reckoning",

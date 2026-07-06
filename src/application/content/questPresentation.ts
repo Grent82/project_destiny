@@ -187,6 +187,30 @@ const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
     employerIntent: 'Confirm the seizure was targeted, not random, and decide whether to act on what that implies.',
     likelyConsequence: 'This is the decision that starts everything else — the debt investigation, the search for Mira, and whatever the house becomes because of both.',
   },
+  'quest-cael-cold-case': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Brought to the house by Marion Vale',
+    stakeholderLabel: 'Cael Valdris, whoever staged his death, and whoever ordered it.',
+    whyNow: "Orren's proof reopened one closed door in the case files. This one has been waiting since before you knew there was a case.",
+    employerIntent: "Prove Cael's death was made to look like an accident, and find out what he knew that made it necessary.",
+    likelyConsequence: "The trail stops short of naming who gave the order, but it confirms the house's ruin was planned further and further back than anyone admitted.",
+  },
+  'quest-gilded-hand-contract': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Tessaly Ash noticed the pattern first',
+    stakeholderLabel: 'Whoever is paying professionals to guard a hostage the Court will not officially acknowledge holding.',
+    whyNow: 'Knowing who actually guards the tannery changes what the rescue will require.',
+    employerIntent: 'Confirm the Gilded Hand, not the Court itself, is running Mira\'s custody on contract.',
+    likelyConsequence: 'A cleaner picture of the opposition before the rescue attempt, at the cost of the Hand knowing someone is asking questions.',
+  },
+  'quest-vorne-confrontation': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Brought to the house by Marion Vale',
+    stakeholderLabel: 'Cassia Vorne, the Court interrogator who built the case that ended House Valdris.',
+    whyNow: 'Every piece of evidence the house has gathered points at one name. Waiting longer does not make the confrontation safer.',
+    employerIntent: 'Force Cassia Vorne to answer for a case she considers closed, correct, and entirely legal.',
+    likelyConsequence: 'No conviction follows — she operated within the law at every step — but the house makes clear it will not be an easy target again.',
+  },
 }
 
 function fallbackIssuerLabel(template: QuestTemplate) {
