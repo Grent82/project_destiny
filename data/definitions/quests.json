@@ -957,6 +957,52 @@
     ]
   },
   {
+    "id": "quest-cael-cold-case",
+    "title": "Three Days After",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "districtId": "district-harbor",
+    "briefing": "Cael died in the Harbor Ward three days after your father — officially a street robbery. Nothing was taken but his signet, and no one was ever charged. Marion never believed the report. Neither do you, not anymore.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "prerequisiteQuestId": "quest-orren-wex-rescue",
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-harbor",
+    "sourceNpcId": "npc-marion-vale",
+    "riskLevel": "medium",
+    "flavorNote": "Orren's proof reopened one door. Marion has been waiting to ask about this one since before you knew there was a debt to prove.",
+    "questType": "story",
+    "openingText": "\"A street robbery took his signet and nothing else, three days after your father died, in a ward with a Compact patrol every quarter hour.\" Marion says it the way she says numbers that don't balance. \"Nobody investigated it as anything but bad luck. I want to know who decided that was the story.\"",
+    "aftermathText": "The report was filed by a clerk who no longer works the ward, closed by a magistrate who never saw the body. What's left points to a name Cael must have found before whoever silenced him could stop him from writing it down: the same forged promissory note that broke the house. He didn't die for nothing. He died for looking at exactly the right piece of paper — and whoever gave the order was careful enough that it still can't be proven past a hired hand who is already gone.",
+    "rewardCityDialId": "unrest",
+    "rewardCityDialDelta": 3,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 6,
+        "respect": 4
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The original report is thin, procedural, and closed in under a day. Too fast for a Harbor Ward robbery.",
+        "journalEntry": "Robbery cases in the Harbor Ward take weeks to close, when they close at all. This one was signed off before the body was cold."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Whoever did it was a professional, not a mugger. The wound pattern says so; the missing signet was staged.",
+        "journalEntry": "This wasn't a robbery gone wrong. It was made to look like one — competently, and by someone with no personal stake in it."
+      }
+    ]
+  },
+  {
     "id": "quest-harborwatch-followup",
     "title": "The Harborwatch Reckoning",
     "questType": "contract",
