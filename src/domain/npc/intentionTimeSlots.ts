@@ -54,37 +54,37 @@ export const INTENTION_TIME_SLOT_MAPPING: Record<NpcIntentionType, IntentionTime
   // ─── Sozial/Romantik (5) ──────────────────────────────────────────────────
   'flirt-with': { validTimeSlots: ['afternoon', 'evening'] },
   'court-romantically': { validTimeSlots: ['afternoon', 'evening'] },
-  'visit-lover': { validTimeSlots: ['afternoon', 'evening'] },
-  'jealousy-check': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
-  'spend-time-with': { validTimeSlots: ['afternoon', 'evening'] },
+  'visit-lover': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
+  'jealousy-check': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
+  'spend-time-with': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
 
-  // ─── Romantik/SexualitÃ¤t (3) ──────────────────────────────────────────────
+  // ─── Romantik/Sexualität (3) ──────────────────────────────────────────────
   'seek-intimacy': { validTimeSlots: ['evening', 'night'] },
   'flirt-aggressively': { validTimeSlots: ['afternoon', 'evening'] },
   'visit-romantic-partner': { validTimeSlots: ['evening', 'night'] },
 
-  // ─── AlltagsaktivitÃ¤ten (4) ───────────────────────────────────────────────
-  'shop-for-goods': { validTimeSlots: ['morning', 'afternoon'] },
-  'train-self': { validTimeSlots: ['morning', 'afternoon'] },
+  // ─── Alltagsaktivitäten (4) ───────────────────────────────────────────────
+  'shop-for-goods': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
+  'train-self': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
   'meditate': { validTimeSlots: ['morning', 'night'] },
-  'practice-skill': { validTimeSlots: ['morning', 'afternoon'] },
+  'practice-skill': { validTimeSlots: ['morning', 'evening'] },
 
   // ─── Spezial/Quirky (2) ───────────────────────────────────────────────────
-  'people-watch': { validTimeSlots: ['afternoon', 'evening'] },
-  'gossip': { validTimeSlots: ['afternoon', 'evening'] },
+  'people-watch': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
+  'gossip': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
 
   // ─── Geld verdienen (4) ───────────────────────────────────────────────────
-  'seek-tips': { validTimeSlots: ['afternoon', 'evening'] },
+  'seek-tips': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
   'black-market-trade': { validTimeSlots: ['evening', 'night'] },
-  'beg-for-coin': { validTimeSlots: ['morning', 'afternoon'] },
-  'scavenge-for-sell': { validTimeSlots: ['morning', 'afternoon'] },
+  'beg-for-coin': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
+  'scavenge-for-sell': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
 
   // ─── NPC Economy (destiny-bkln) ──────────────────────────────────────────
   'repair-equipment': { validTimeSlots: ['morning', 'afternoon'] },
   'use-consumable': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
   'give-gift': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
   'trade-with-npc': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
-  'craft-item': { validTimeSlots: ['morning', 'afternoon'] },
+  'craft-item': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
 
   // ─── Macht/Kontrolle (5) ──────────────────────────────────────────────────
   'assert-dominance': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
@@ -94,13 +94,13 @@ export const INTENTION_TIME_SLOT_MAPPING: Record<NpcIntentionType, IntentionTime
   'consolidate-power': { validTimeSlots: ['evening', 'night'] },
 
   // ─── Gruppen/Dynamik (5) ──────────────────────────────────────────────────
-  'form-squad': { validTimeSlots: ['morning', 'afternoon'] },
+  'form-squad': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
   'recruit-member': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
   'host-gathering': { validTimeSlots: ['evening'] },
-  'mediate-conflict': { validTimeSlots: ['morning', 'afternoon'] },
+  'mediate-conflict': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
   'challenge-authority': { validTimeSlots: ['afternoon', 'evening'] },
 
-  // ─── Ãberleben/Existenz (5) ───────────────────────────────────────────────
+  // ─── Überleben/Existenz (5) ───────────────────────────────────────────────
   'scavenge': { validTimeSlots: ['morning', 'afternoon'] },
   'fortify-position': { validTimeSlots: ['morning', 'afternoon', 'evening'] },
   'escape-attempt': { validTimeSlots: ['morning', 'afternoon', 'night'] },
@@ -108,7 +108,7 @@ export const INTENTION_TIME_SLOT_MAPPING: Record<NpcIntentionType, IntentionTime
   'care-for-injured': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
 
   // ─── NPC cross-district travel (destiny-q80n.10.1) ───────────────────────
-  'travel-district': { validTimeSlots: ['morning', 'afternoon'] },
+  'travel-district': { validTimeSlots: ['morning', 'afternoon', 'evening', 'night'] },
 }
 
 /**
