@@ -81,6 +81,21 @@ export function DistrictLedgerPanel({
 
   return (
     <aside className="map-ledger-panel" aria-label="District ledger">
+      <div className="map-ledger-thumbnail">
+        <img
+          src={`/districts/${entry.id.replace(/^district-/, '')}.jpg`}
+          alt={`${entry.name} district`}
+          loading="lazy"
+          onError={(event) => {
+            const img = event.currentTarget
+            if (img.src.endsWith('/districts/_fallback.jpg')) {
+              img.style.display = 'none'
+              return
+            }
+            img.src = '/districts/_fallback.jpg'
+          }}
+        />
+      </div>
       <h2>
         {entry.controllingFactionId && (
           <svg viewBox="0 0 28 28" width="26" height="26" className="map-ledger-stamp" aria-hidden>

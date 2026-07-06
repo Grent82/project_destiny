@@ -90,6 +90,21 @@ export function DistrictInteriorScreen() {
       </p>
 
       <h1>{district.name}</h1>
+      <div className="district-header-banner">
+        <img
+          src={`/districts/${district.id.replace(/^district-/, '')}.jpg`}
+          alt={`${district.name} district`}
+          loading="lazy"
+          onError={(event) => {
+            const img = event.currentTarget
+            if (img.src.endsWith('/districts/_fallback.jpg')) {
+              img.style.display = 'none'
+              return
+            }
+            img.src = '/districts/_fallback.jpg'
+          }}
+        />
+      </div>
       <p className="summary">{district.narrativeSummary}</p>
 
       {!isHere && !district.accessRestricted && (

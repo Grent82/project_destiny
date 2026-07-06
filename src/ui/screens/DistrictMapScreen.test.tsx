@@ -92,4 +92,14 @@ describe('DistrictMapScreen — city map and ledger panel', () => {
     renderDistrictMap()
     expect(screen.getByRole('button', { name: /The Ashfields — expedition territory/ })).toBeInTheDocument()
   })
+
+  it('shows a district thumbnail using the district-id-based naming convention (destiny-k9xa)', async () => {
+    const user = userEvent.setup()
+    renderDistrictMap()
+
+    await user.click(screen.getByRole('button', { name: 'The Warrens' }))
+    const panel = districtLedger()
+    const thumbnail = within(panel).getByRole('img', { name: 'The Warrens district' })
+    expect(thumbnail).toHaveAttribute('src', '/districts/the-warrens.jpg')
+  })
 })

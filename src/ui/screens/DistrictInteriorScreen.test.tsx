@@ -97,4 +97,10 @@ describe('DistrictInteriorScreen — district map and place ledger', () => {
     expect(within(panel).getByText('Closed at this hour')).toBeInTheDocument()
     expect(within(panel).getByText(/Keeps hours: evening, night/i)).toBeInTheDocument()
   })
+
+  it('shows a header banner image using the district-id-based naming convention (destiny-k9xa)', () => {
+    renderInterior('district-harbor', 'district-the-pale')
+    const banner = screen.getByRole('img', { name: 'Harbor Ward district' })
+    expect(banner).toHaveAttribute('src', '/districts/harbor.jpg')
+  })
 })
