@@ -700,7 +700,51 @@
         "journalEntry": "The courier reached for a signal before you had to show yourself. Tessaly's price for information is trust — and she is testing whether you can earn it."
       }
     ],
-    "aftermathText": "The contract is settled. The house bears the cost or collects the reward."
+    "aftermathText": "The proof is exactly what Tessaly said it would be — nothing dramatic, just a record that survives being checked. She reads it once, folds it away, and looks at you the way someone looks at a door they weren't sure would open. \"All right,\" she says. \"Now we talk about Mira.\""
+  },
+  {
+    "id": "quest-gilded-hand-contract",
+    "title": "No Names, No Grudges",
+    "questType": "story",
+    "employerFactionId": null,
+    "enemyFactionId": "faction-gilded-court",
+    "enemyNpcId": "npc-enemy-commander-fell",
+    "districtId": "district-the-pale",
+    "briefing": "The men watching the tannery don't move like Court muscle. They move like a paid crew that trains together. Find one, and find out who signs their contract.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-tessaly-ash",
+    "riskLevel": "high",
+    "prerequisiteQuestId": "quest-mira-act1-wren-favor",
+    "flavorNote": "Tessaly recognized the formation before you did. She has seen the Gilded Hand work before.",
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-tessaly-ash",
+        "trust": 5,
+        "respect": 3
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "One of the watchers breaks from the pattern to make a drop. Deniable, clean, professional.",
+        "journalEntry": "Whoever they are, they don't improvise. Every movement has a reason, and none of the reasons are personal."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Cornered, the operative gives up nothing about Mira — only the name of who's paying.",
+        "journalEntry": "\"Gilded Hand. Contract work. Ask Fell if you want more than that, and he won't give it to you either.\" It isn't defiance. It's simply the truth: there is nothing more to give."
+      }
+    ],
+    "aftermathText": "The Gilded Hand doesn't hold grudges and doesn't need to be told twice why a job matters. That is what makes them worse than the Court's own people: nobody guarding Mira has any reason to let her go, and nobody guarding her has any reason to hurt her either. It's a contract. It ends when someone pays it off or ends it by force. You now know which one this will be."
   },
   {
     "id": "quest-mira-act2-tannery-watch",
@@ -708,6 +752,7 @@
     "questType": "story",
     "employerFactionId": null,
     "enemyFactionId": "faction-gilded-court",
+    "enemyNpcId": "npc-enemy-commander-fell",
     "districtId": "district-the-pale",
     "briefing": "Tessaly has given you the tannery's guard pattern. Chart it for three watches without being seen. Mira is moved between two rooms on a schedule — and that schedule is signed. You need to know who signed it before you make your move.",
     "objectiveType": "investigation",
@@ -741,9 +786,14 @@
         "atStageId": "on-site",
         "label": "The schedule is signed by Dalen Morke. This is not a holding — it is a transfer.",
         "journalEntry": "Mira is being moved in two days. Dalen Morke's name is on the order, which means someone inside the Court's transport chain is managing this personally."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "The rotation itself is the giveaway. This isn't a Court garrison pattern — it's a contract crew's discipline.",
+        "journalEntry": "No Court guard stands a post like that. Whoever is actually holding this building is being paid to do it well, not ordered to do it at all."
       }
     ],
-    "aftermathText": "The contract is settled. The house bears the cost or collects the reward."
+    "aftermathText": "Three watches, and the pattern holds: professional, unhurried, and never once careless. Whoever is running this tannery isn't afraid of you yet. That will have to change."
   },
   {
     "id": "quest-mira-rescue",
