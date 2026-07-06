@@ -1674,28 +1674,29 @@
             "nextNodeId": null
           },
           {
-            "id": "cessa-choice-letter",
-            "label": "Show her Mira's sealed envelope.",
-            "nextNodeId": "cessa-node-reveal",
+            "id": "cessa-choice-mistake",
+            "label": "You've kept these records a long time. Ever make one you couldn't undo?",
+            "nextNodeId": "cessa-node-confession",
             "condition": {
-              "type": "hasItem",
-              "value": "item-letter-mira-sealed"
+              "type": "minNpcTrust",
+              "npcId": "npc-cessa-rill",
+              "value": 40
             }
           }
         ]
       },
       {
-        "id": "cessa-node-reveal",
+        "id": "cessa-node-confession",
         "npcId": "npc-cessa-rill",
-        "text": "Cessa takes the envelope and goes very still. \"She found the entry, then.\" She doesn't hand it back right away. \"I altered one birth record, years ago, to save a child from an inheritance law that would have killed her by paperwork. I have lived with not knowing if that was mercy or theft ever since.\" She meets your eyes. \"Your sister's line was erased the same way. I know, because I was the one holding the pen.\"",
+        "text": "Cessa goes very still, the way she does when a name is wrong and she is deciding whether to say so. \"Once. Years ago. I altered a birth entry to save a child from an inheritance law that would have destroyed her by paperwork alone -- not anyone you'd know, not anyone with a house name.\" She corrects nothing about how she says it, which is its own kind of admission. \"I have never known if that was mercy or theft. I don't expect to, before I die.\"",
         "choices": [
           {
-            "id": "cessa-choice-press",
-            "label": "Then you can prove what happened to her.",
+            "id": "cessa-choice-confession-close",
+            "label": "You saved her. That has to count for something.",
             "nextNodeId": null,
             "outcome": {
-              "type": "mainQuestHint",
-              "value": "Cessa Rill altered the birth record herself -- she is the final link proving the Valdris maternal line was erased, not extinguished."
+              "type": "trust",
+              "value": 6
             }
           }
         ]
@@ -2485,8 +2486,8 @@
             "label": "It might matter sooner than you think.",
             "nextNodeId": null,
             "outcome": {
-              "type": "mainQuestHint",
-              "value": "Dael Morw, a former Compact Register assessor, holds copies of falsified birth records -- possibly connected to the Valdris succession question."
+              "type": "activityLog",
+              "value": "Dael Morw, a former Compact Register assessor, holds copies of falsified records naming several powerful people -- leverage he has kept for the day it matters."
             }
           }
         ]

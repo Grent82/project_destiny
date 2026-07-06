@@ -1474,7 +1474,7 @@
     "name": "Mira",
     "npcType": "story",
     "origin": "House Valdris",
-    "background": "The player's younger sister. Last seen three months before the Breach in The Pale District, cross-referencing chapel birth records with legal succession grants from the Compact Registry. She had located a maternity ledger that she believed proved Valdris heirship passed through the maternal line \u2014 a line deliberately erased from the public record. Her disappearance is the reason the player fights to rebuild House Valdris. She was close to the ledger when she vanished.",
+    "background": "The player's elder sister \u2014 sharp, politically capable, the one their father was grooming as heir. Witnesses describe armed men in unmarked livery taking her the same night Edric died, eighteen months ago, during the Gilded Court's manufactured debt claim against the house. She was not incidental to the seizure. She was the piece worth keeping alive: proof the Court could produce if the family ever mounted a real legal challenge, and a warning to anyone who might have helped them try. She has been held somewhere in the Pale since, kept as leverage rather than a person.",
     "rarity": "rare",
     "status": "family",
     "factionAffinityId": null,
@@ -1550,16 +1550,10 @@
     ],
     "motivation": {
       "publicGoal": "Unknown.",
-      "privateNeed": "She was tracking a maternity ledger \u2014 a chapel birth registry from The Pale, cross-referenced with Compact Registry succession grants \u2014 that proves the Valdris maternal line was erased, not extinguished. The final link in the chain is a woman named Cessa Rill.",
+      "privateNeed": "To survive whatever eighteen months of captivity have made her into, and to find out whether the sister who comes home is someone the house can still recognize.",
       "immediatePressure": "Captivity, or something that looks like it. She has been altered by it. She guards something \u2014 or no longer speaks from the same self."
     },
-    "loyalties": [
-      {
-        "type": "witness",
-        "targetId": "npc-cessa-rill",
-        "note": "The birth record Mira was tracking leads to Cessa Rill. The final link in the maternal lineage chain."
-      }
-    ],
+    "loyalties": [],
     "startingEquipment": {
       "clothing": {
         "head": null,
@@ -4181,7 +4175,7 @@
     "npcType": "world",
     "districtId": "district-the-pale",
     "origin": "Pale archive chapel",
-    "background": "Quiet keeper of baptisms, adoptions, and death names in the Pale archive chapel. Can prove or erase a maternal lineage. She altered one noble birth entry years ago to save a child from inheritance law \u2014 a decision she has lived with since. Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain.",
+    "background": "Quiet keeper of baptisms, adoptions, and death names in the Pale archive chapel. Years ago she altered one birth entry \u2014 an unrelated family, no house name attached \u2014 to save a child from an inheritance law that would have destroyed her by paperwork alone. She has never told anyone. She still does not know if it was mercy or theft, and the not-knowing is the only part of that decision she still has any control over.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": null,
@@ -4263,13 +4257,7 @@
       "privateNeed": "To know whether the alteration she made saved or condemned.",
       "lineTheyWontCross": "Destroying a birth record, regardless of the political consequence of keeping it."
     },
-    "loyalties": [
-      {
-        "type": "witness",
-        "targetId": "npc-mira",
-        "note": "Holds or altered the birth record Mira was tracking. May be the final link in the maternal lineage chain."
-      }
-    ],
+    "loyalties": [],
     "startingEquipment": {
       "clothing": {
         "head": null,
