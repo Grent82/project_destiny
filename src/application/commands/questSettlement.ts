@@ -144,14 +144,14 @@ function applyOrrenRescueResolution(state: GameState, questId: string): GameStat
       ...nextState.mainQuest,
       stage: 'lead-found',
       lastClue:
-        "Orren points you toward Tessaly Ash at the Wren Safe House in the Pale. She knows where Mira was moved and why the Court still keeps her breathing.",
+        "Orren points you toward Tessaly Ash at the Magpie Safe House in the Pale. She knows where Mira was moved and why the Court still keeps her breathing.",
     },
   }
 
   return pushActivityLog(
     nextState,
     'system',
-    '◆ Orren names Tessaly Ash as the next living link in Mira’s trail. The Wren Safe House in the Pale is now your next stop.',
+    '◆ Orren names Tessaly Ash as the next living link in Mira’s trail. The Magpie Safe House in the Pale is now your next stop.',
     `orren-lead-${questId}`,
   )
 }

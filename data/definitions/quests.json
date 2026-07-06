@@ -662,7 +662,7 @@
   },
   {
     "id": "quest-mira-act1-wren-favor",
-    "title": "A Name in the Wren's Ledger",
+    "title": "A Name in the Magpie's Ledger",
     "questType": "story",
     "employerFactionId": null,
     "enemyFactionId": "faction-gilded-court",

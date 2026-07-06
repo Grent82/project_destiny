@@ -185,56 +185,24 @@ For each dialogue tree, ask:
 6. Would a fresh player understand why this branch matters?
 7. Swap test: does at least one line survive being swapped onto another NPC of the same archetype, or would it read wrong for them? If it would read fine for anyone, ground it in this NPC's quirks/motivation instead.
 
-## Current state (audit 2026-07-03)
+## Current state (audit 2026-07-03, resolved 2026-07-06)
 
 This section is a living record of where the dialogue set stands against the criteria above. Update it whenever dialogue coverage or quality changes materially — don't let it silently go stale.
 
 ### Coverage
 
-17 of 49 NPCs in `data/definitions/npcs.json` have a tree in `data/definitions/dialogues.json`. 32 have none. Priority for filling gaps:
+All 49 NPCs in `data/definitions/npcs.json` now have a tree in `data/definitions/dialogues.json` (49 trees total, up from 17). The 32-NPC coverage gap identified in the 2026-07-03 audit (destiny-zldh epic, F1) is closed.
 
-**Highest priority — plot-relevant, currently silent:**
-- `npc-cessa-rill` — named in `npc-mira`'s `motivation.privateNeed` as the final link proving the Valdris maternal line was erased; referenced in `data/lore/valdris-succession-question.md` and `src/application/selectors/dialogue.ts`, but has zero dialogue. The single most urgent gap.
-- `npc-lady-sorn` (rare, noble, Gilded Court antagonist tier)
-- `npc-lirien-ashcroft` (rare, noble — Lira Ashcroft's daughter per Lira's own background)
-- `npc-veyran-malk` (uncommon, noble, House Merrow — Merrow is the central debt counterparty referenced by Marion and Orven, but no one from the house itself has a voice)
+### Known writing issues (resolved)
 
-**Medium priority — rare, faction-bound or antagonist-tier:**
-`npc-oswin-farr`, `npc-tav`, `npc-maret-sunne`, `npc-rutha-kael`, `npc-petra-sunn`, `npc-tessaly-wode`, `npc-enemy-tomas-rell`, `npc-enemy-catrin-hale`, `npc-enemy-harlen-voss`, `npc-enemy-the-dockmaster`, `npc-sable-cairn-head`
+The 11 trees flagged for generic/contradictory voice against the criteria in §7 (`npc-mira`, `npc-sister-vael`, `npc-orven-pell`, `npc-torvald-messe`, `npc-brannic-thule`, `npc-dalen-morke`, `npc-sable-wrent`, `npc-bog`, `npc-garet-doyle`, `npc-verek-holst`, `npc-lira-ashcroft`) were rewritten to use each NPC's own quirks/motivation as a concrete speech pattern or beat (destiny-zldh F2, tickets zldh.3–zldh.13). Reference-quality examples (still the bar): `npc-marion-vale` (34 nodes, trust-gated courtship arc), `npc-ida-rhys` (12 nodes, same pattern), `npc-old-maret` (the crest-ring scene).
 
-**Lower priority — rare/uncommon, no faction binding, roster fill:**
-`npc-cress-aldmoor`, `npc-dael-morw`, `npc-irenne-brek`, `npc-elyn`, `npc-bren-aldoth`, `npc-nessa-vain`, `npc-aldric-vane`, `npc-dara-slink`, `npc-osanna-cray`, `npc-sanna-veld`, `npc-brand`, `npc-alis-vey`, `npc-lissel-crane`, `npc-halvard-senn`, `npc-evar-koss`
+### Known structural issues (resolved)
 
-**Lowest priority — common rarity, flavor:**
-`npc-fenwick-pale`, `npc-cutter`
-
-### Known writing issues in existing trees
-
-Reference-quality examples (use these as the bar): `npc-marion-vale` (34 nodes, trust-gated courtship arc), `npc-ida-rhys` (12 nodes, same pattern), `npc-old-maret` (the crest-ring scene actively uses her background).
-
-Trees that fail the voice-specificity check (§7) — generic register, defined quirks/motivation unused:
-
-| NPC | Issue | Fix using the character's own sheet |
-|---|---|---|
-| `npc-mira` | Quirk contradiction, not just genericness: written to "never answer a direct question directly," but her dialogue answers directly | Make the answer evasive/coded, or explicitly flag the directness as a broken pattern the player notices |
-| `npc-sister-vael` | Pure info-dump, quirks unused | Use "lights a second candle when she lies" or "leaves exactly when she has what she came for" as a beat |
-| `npc-orven-pell` | Generic cautious-informant voice | Use "answers questions about records with the filing date first" as an actual speech pattern |
-| `npc-torvald-messe` | Mentions the copy but not his defining habit | Use "quotes the relevant statute before any decision" as literal phrasing |
-| `npc-brannic-thule` | Never uses his defining quirk | "Addresses the player by the correct honorific from the first meeting" is absent from the text |
-| `npc-dalen-morke` | Generic smooth-broker tone | `motivation`: "apologises before delivering bad news," "has not slept well in years" — neither shows up |
-| `npc-sable-wrent` | Generic mercenary | "Keeps a tally of every favour," "will not say the League's name aloud" — unused |
-| `npc-bog` | Generic "man of few words" | "Knows every dock worker by name and rotation" — unused |
-| `npc-garet-doyle` | Generic bartender, wasted hook | The locked box of Valdris relics (`privateNeed`) is never mentioned, despite being quest bait |
-| `npc-verek-holst` | Generic info-broker | "Recites statutes under his breath when nervous" fits his ex-Compact background well but is unused |
-| `npc-lira-ashcroft` | Partially generic | "Never raises her voice" is passively respected but never used as a deliberate contrast beat |
-
-### Known structural issues
-
-- **State reactivity**: 12 of the 15 non-flagship trees have zero `condition` on any node — always available, no "why now."
-- **Consequence legibility**: most flat trees resolve to a numeric `outcome` (`trust+X`/`loyalty+X`) with no visible NPC reaction.
-- **Quote-style inconsistency**: `'single quotes'` (Verek, Garet, Bog, Lira, Torvald, Orven, Brannic, Dalen, Sable) vs. `"double quotes"` (Marion, Ida, Mira, Tessaly, Vael, Maret) — signals separate, unreconciled authoring passes.
-- **Naming collision**: `npc-the-wren` (a standalone, nameless info-broker) coexists with `npc-tessaly-ash`, whose background states she lives under the alias "Wren." Unclear if intentional; currently unresolved in the text either way.
-- **No repeat/callback layer** in flat trees: unlike Marion/Ida, there's no second state-gated node once the single exchange is spent.
+- **Quote-style inconsistency**: fixed — `dialogue-orren-wex` and `dialogue-the-wren` converted to double quotes, matching the rest of the file (destiny-zldh F3 / zldh.2).
+- **Naming collision**: resolved — Tessaly Ash's alias was renamed from "Wren" to "Magpie" across `npc-tessaly-ash.background`, the `poi-pale-wren-safe-house` POI (name + description), `poi-pale-the-ash`'s description, the `quest-mira-act1-wren-favor` quest title, and 2 narrative hint strings (`applyPolitics.ts`, `questSettlement.ts`). `npc-the-wren` is confirmed unrelated (separate POI, separate district) and untouched (destiny-zldh F4 / zldh.1).
+- **State reactivity**: most new/rewritten trees now carry at least one `condition` (item, trust, renown, day, quest stage, or choice-taken gates); several use cross-NPC `minNpcTrust` conditions to make family/mentor relationships (Lirien↔Lira, Maret Sunne↔Old Maret, Elyn↔Petra Sunn) mechanically felt.
+- **No repeat/callback layer**: still true for the new single-scene trees (by design — most non-flagship NPCs get one grounded scene, not a Marion/Ida-scale arc). Revisit only if a specific NPC's story role grows.
 
 ## Helpful papers and references
 

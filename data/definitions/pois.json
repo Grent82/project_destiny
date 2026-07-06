@@ -297,7 +297,7 @@
     "districtId": "district-the-pale",
     "name": "The Ash",
     "type": "tavern",
-    "description": "A quiet tavern frequented by Wren informants and off-grid contacts. Tessaly Ash uses this name.",
+    "description": "A quiet tavern frequented by Magpie informants and off-grid contacts. Tessaly Ash uses this name.",
     "factionId": "faction-tallow-ring",
     "actions": [
       "hire",
@@ -338,7 +338,7 @@
   {
     "id": "poi-pale-wren-safe-house",
     "districtId": "district-the-pale",
-    "name": "Wren Safe House",
+    "name": "Magpie Safe House",
     "type": "residence",
     "description": "A Tallow Ring safe house where Tessaly Ash hides under borrowed names and keeps one eye on the Pale.",
     "factionId": "faction-tallow-ring",

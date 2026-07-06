@@ -265,7 +265,7 @@
       {
         "id": "marion-node-debt-stop-b",
         "npcId": "npc-marion-vale",
-        "text": "She nods once. She turns back to the window. Whatever she had planned stays unspoken. But you get the sense she's already done the thinking \u2014 she just won't burden you with it yet.",
+        "text": "She nods once. She turns back to the window. Whatever she had planned stays unspoken. But you get the sense she's already done the thinking — she just won't burden you with it yet.",
         "choices": []
       },
       {
@@ -315,7 +315,7 @@
       {
         "id": "marion-node-renown-careful-a",
         "npcId": "npc-marion-vale",
-        "text": "Marion looks at you with something that is not quite surprise. \"Yes.\" She sits down. \"I've already started thinking about who might want to test it.\" She opens the ledger to a different page \u2014 names, not numbers. \"I'll keep watching.\"",
+        "text": "Marion looks at you with something that is not quite surprise. \"Yes.\" She sits down. \"I've already started thinking about who might want to test it.\" She opens the ledger to a different page — names, not numbers. \"I'll keep watching.\"",
         "choices": []
       },
       {
@@ -327,7 +327,7 @@
       {
         "id": "marion-node-trust-intro",
         "npcId": "npc-marion-vale",
-        "text": "Marion finds you before supper. She has a question \u2014 you can tell by the way she's standing, hands clasped behind her back. \"Can I ask you something that isn't about the household?\"",
+        "text": "Marion finds you before supper. She has a question — you can tell by the way she's standing, hands clasped behind her back. \"Can I ask you something that isn't about the household?\"",
         "choices": [
           {
             "id": "marion-choice-trust-yes",
@@ -543,7 +543,7 @@
       {
         "id": "verek-node-1",
         "npcId": "npc-verek-holst",
-        "text": "What'll it be? News costs the same as ale around here.",
+        "text": "Verek Holst has already chosen the seat facing the door, same as always. \"What'll it be? News costs the same as ale around here.\"",
         "choices": [
           {
             "id": "verek-choice-hear",
@@ -564,7 +564,7 @@
       {
         "id": "verek-node-2",
         "npcId": "npc-verek-holst",
-        "text": "He leans in. 'Collectors were asking about the old Valdris accounts last night.'",
+        "text": "He leans in, and for a moment his mouth moves through half a statute number before he catches himself -- old habit, old job. \"Collectors were asking about the old Valdris accounts last night.\"",
         "choices": []
       }
     ]
@@ -577,12 +577,22 @@
       {
         "id": "garet-node-1",
         "npcId": "npc-garet-doyle",
-        "text": "Garet Doyle leans across the bar, wiping a glass that hasn't been clean in years. 'House Valdris. You're still standing, then. What'll it be?'",
+        "text": "Garet Doyle leans across the bar, wiping a glass that hasn't been clean in years. \"House Valdris. You're still standing, then.\" He's already decided what to call you in his head -- he never uses real names until they've paid twice. \"What'll it be?\"",
         "choices": [
           {
             "id": "garet-choice-rumours",
             "label": "What's moving through the district?",
             "nextNodeId": "garet-node-rumours"
+          },
+          {
+            "id": "garet-choice-box",
+            "label": "What's in the locked box behind the bar?",
+            "nextNodeId": "garet-node-box",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-garet-doyle",
+              "value": 40
+            }
           },
           {
             "id": "garet-choice-nothing",
@@ -594,7 +604,7 @@
       {
         "id": "garet-node-rumours",
         "npcId": "npc-garet-doyle",
-        "text": "'Compact's been asking questions about the old families. Not the kind of asking where they want answers. The kind where they already have them.' He sets the glass down. 'You didn't hear it here.'",
+        "text": "\"Compact's been asking questions about the old families. Not the kind of asking where they want answers. The kind where they already have them.\" He sets the glass down. \"You didn't hear it here.\"",
         "choices": [
           {
             "id": "garet-choice-thanks",
@@ -603,6 +613,22 @@
             "outcome": {
               "type": "trust",
               "value": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "garet-node-box",
+        "npcId": "npc-garet-doyle",
+        "text": "Garet's hand stops on the glass. \"Old things. Service tokens. Ring fragments. A few writs nobody's paid in years.\" He doesn't reach for it. \"All from your house, before the Breach. I've been waiting for someone who'd know what to do with them without making me responsible for whatever happens next.\"",
+        "choices": [
+          {
+            "id": "garet-choice-box-close",
+            "label": "I'll take that responsibility, when I'm ready.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Garet Doyle keeps a locked box of pre-Breach Valdris relics behind the bar -- service tokens, ring fragments, unpaid writs. He's waiting for you to decide what happens to them."
             }
           }
         ]
@@ -617,7 +643,7 @@
       {
         "id": "lira-node-1",
         "npcId": "npc-lira-ashcroft",
-        "text": "Lira Ashcroft doesn't look up from the scale she's adjusting. 'Goods or gossip. I don't deal in anything else.' She finally meets your eye. 'Which is it?'",
+        "text": "Lira Ashcroft doesn't look up from the scale she's adjusting. \"Goods or gossip. I don't deal in anything else.\" She finally meets your eye. \"Which is it?\"",
         "choices": [
           {
             "id": "lira-choice-sell",
@@ -630,6 +656,16 @@
             "nextNodeId": "lira-node-info"
           },
           {
+            "id": "lira-choice-district",
+            "label": "You never talk about where you're from.",
+            "nextNodeId": "lira-node-district",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-lira-ashcroft",
+              "value": 45
+            }
+          },
+          {
             "id": "lira-choice-nothing",
             "label": "Neither, for now.",
             "nextNodeId": null
@@ -639,7 +675,7 @@
       {
         "id": "lira-node-sell",
         "npcId": "npc-lira-ashcroft",
-        "text": "'Bring it by the stall tomorrow. No names, no ledger.' She slides a card across the table \u2014 a time and a dock number. 'Don't be late. I'm not sentimental.'",
+        "text": "\"Bring it by the stall tomorrow. No names, no ledger.\" She slides a card across the table -- a time and a dock number. \"Don't be late. I'm not sentimental.\"",
         "choices": [
           {
             "id": "lira-choice-sell-ok",
@@ -651,7 +687,7 @@
       {
         "id": "lira-node-info",
         "npcId": "npc-lira-ashcroft",
-        "text": "'Information costs more than goods.' She names a price with her eyes. 'What's it worth to you?'",
+        "text": "\"Information costs more than goods.\" She names a price with her eyes. \"What's it worth to you?\"",
         "choices": [
           {
             "id": "lira-choice-info-pay",
@@ -668,6 +704,22 @@
             "nextNodeId": null
           }
         ]
+      },
+      {
+        "id": "lira-node-district",
+        "npcId": "npc-lira-ashcroft",
+        "text": "Lira doesn't raise her voice. She never does -- not even now, and this is the closest anything has come to it. \"I haven't been back to the old district in years.\" A long pause. \"I'm not going to start explaining why today.\"",
+        "choices": [
+          {
+            "id": "lira-choice-district-close",
+            "label": "Fair enough.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 4
+            }
+          }
+        ]
       }
     ]
   },
@@ -679,7 +731,7 @@
       {
         "id": "bog-node-1",
         "npcId": "npc-bog",
-        "text": "Bog doesn't waste words. He looks at you the way a man looks at a problem that hasn't become inconvenient yet. 'Speak.'",
+        "text": "Bog doesn't waste words. He offers a handshake before anything else -- firm, testing, the way he tests every stranger who wants dock work. Whatever he reads there decides the rest of the conversation. \"Speak.\"",
         "choices": [
           {
             "id": "bog-choice-work",
@@ -696,7 +748,7 @@
       {
         "id": "bog-node-work",
         "npcId": "npc-bog",
-        "text": "'Three Marks a head, up front. They work, they get paid. They don't work, they don't come back.' He holds out a hand, palm up. 'Simple as that.'",
+        "text": "\"Three Marks a head, up front.\" He's already running names in his head -- who's on rotation, who owes him a shift, who can be spared. \"They work, they get paid. They don't work, they don't come back.\" He holds out the same hand again, palm up. \"Simple as that.\"",
         "choices": [
           {
             "id": "bog-choice-deal",
@@ -724,7 +776,7 @@
       {
         "id": "wren-node-1",
         "npcId": "npc-the-wren",
-        "text": "There's a figure in the corner that you almost missed. 'I know why you're here,' The Wren says. No greeting. No name. 'The question is whether what I have is worth what you'll pay.'",
+        "text": "There's a figure in the corner that you almost missed. \"I know why you're here,\" The Wren says. No greeting. No name. \"The question is whether what I have is worth what you'll pay.\"",
         "choices": [
           {
             "id": "wren-choice-ask",
@@ -745,7 +797,7 @@
       {
         "id": "wren-node-pale",
         "npcId": "npc-the-wren",
-        "text": "'They move assets through the Harbor on the second and fourth nights of each month. What those assets are, I won't say here.' The Wren slides a folded paper across the table. 'Read it. Burn it.'",
+        "text": "\"They move assets through the Harbor on the second and fourth nights of each month. What those assets are, I won't say here.\" The Wren slides a folded paper across the table. \"Read it. Burn it.\"",
         "choices": [
           {
             "id": "wren-choice-thanks",
@@ -802,7 +854,7 @@
             "nextNodeId": null,
             "outcome": {
               "type": "mainQuestHint",
-              "value": "Old Maret suggests the Breach may not have been the first \u2014 and your grandfather knew."
+              "value": "Old Maret suggests the Breach may not have been the first — and your grandfather knew."
             }
           }
         ]
@@ -833,7 +885,7 @@
       {
         "id": "vael-node-1",
         "npcId": "npc-sister-vael",
-        "text": "Sister Vael glances up from a stack of tightly-folded notes. 'House Valdris. I've been wondering when you'd come.' She folds her hands. 'Remedies or rumours?'",
+        "text": "Sister Vael glances up from a stack of tightly-folded notes. \"House Valdris. I've been wondering when you'd come.\" She folds her hands. \"Remedies or rumours?\"",
         "choices": [
           {
             "id": "vael-choice-info",
@@ -846,6 +898,16 @@
             "nextNodeId": "vael-node-healing"
           },
           {
+            "id": "vael-choice-why",
+            "label": "Why do you really do this work?",
+            "nextNodeId": "vael-node-sister",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-sister-vael",
+              "value": 45
+            }
+          },
+          {
             "id": "vael-choice-leave",
             "label": "Neither. I'll return.",
             "nextNodeId": null
@@ -855,7 +917,7 @@
       {
         "id": "vael-node-info",
         "npcId": "npc-sister-vael",
-        "text": "'The Compact has been moving injured men out of sight \u2014 quietly, from the Detention House. They're not criminals.' She pauses. 'They're not from the city at all. Whatever is happening beyond the gates is closer than anyone is saying.'",
+        "text": "She lights a second candle before she answers -- a habit she's never explained. \"The Compact has been moving injured men out of sight, quietly, from the Detention House. They're not criminals.\" She blows out the second candle the instant she's said it. \"Whatever is happening beyond the gates is closer than anyone is saying.\" And then she is already moving toward the door -- she never stays past the point where she's said her piece.",
         "choices": [
           {
             "id": "vael-choice-info-thanks",
@@ -871,7 +933,7 @@
       {
         "id": "vael-node-healing",
         "npcId": "npc-sister-vael",
-        "text": "'Send them by tonight. I'll see what I can do. I don't charge the Pale folk what I charge the Heights.' She writes something on a slip of paper. 'Give them this.'",
+        "text": "\"Send them by tonight. I'll see what I can do. I don't charge the Pale folk what I charge the Heights.\" She writes something on a slip of paper. \"Give them this.\"",
         "choices": [
           {
             "id": "vael-choice-healing-thanks",
@@ -880,6 +942,22 @@
             "outcome": {
               "type": "loyalty",
               "value": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "vael-node-sister",
+        "npcId": "npc-sister-vael",
+        "text": "Sister Vael doesn't light a candle this time -- she blows one out instead. \"I had a sister. The temple erased her from its own records after the Breach, smuggled out under plague blankets by someone whose name I have been hunting since.\" She looks at you evenly. \"I don't do this for penance. I do it so no one else's sister disappears from a book and stays disappeared.\"",
+        "choices": [
+          {
+            "id": "vael-choice-sister-help",
+            "label": "I'll help you find the name if I can.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 7
             }
           }
         ]
@@ -1154,7 +1232,7 @@
       {
         "id": "mira-node-1",
         "npcId": "npc-mira",
-        "text": "Mira is quiet for longer than is comfortable. When she speaks, it is careful. 'I want to know what the house needs from me. Before anything else. That's not ingratitude. That's how I survived.'",
+        "text": "Mira is quiet for longer than is comfortable. When she speaks, it is careful. \"I want to know what the house needs from me. Before anything else. That's not ingratitude. That's how I survived.\"",
         "choices": [
           {
             "id": "mira-choice-nothing",
@@ -1164,14 +1242,18 @@
           {
             "id": "mira-choice-information",
             "label": "Tell me what you know about the Court's arrangement.",
-            "nextNodeId": "mira-node-court"
+            "nextNodeId": "mira-node-court-deflect",
+            "condition": {
+              "type": "choiceTaken",
+              "value": "mira-choice-nothing"
+            }
           }
         ]
       },
       {
         "id": "mira-node-rest",
         "npcId": "npc-mira",
-        "text": "She nods. Just once. 'All right.' There is something in the way she says it that suggests she did not expect that answer.",
+        "text": "She nods. Just once. \"All right.\" There is something in the way she says it that suggests she did not expect that answer.",
         "choices": [
           {
             "id": "mira-choice-rest-close",
@@ -1185,9 +1267,42 @@
         ]
       },
       {
-        "id": "mira-node-court",
+        "id": "mira-node-court-deflect",
         "npcId": "npc-mira",
-        "text": "'They didn't want me for information. They wanted me as a record — something they could produce if the debt dispute moved into formal channels.' She pauses. 'There is a letter. I kept it. I don't know if it changes anything.'",
+        "text": "She doesn't answer at first. \"Forty-one days,\" she says instead. \"That's how long since I saw open sky, before they let me onto the tannery roof once, in the dark, so I wouldn't run.\" Only then, quieter: \"They didn't want me for information. They wanted me as a record.\"",
+        "choices": [
+          {
+            "id": "mira-choice-court-press",
+            "label": "Mira. Just tell me plainly.",
+            "nextNodeId": "mira-node-court-press-fail"
+          },
+          {
+            "id": "mira-choice-court-wait",
+            "label": "Take your time.",
+            "nextNodeId": "mira-node-court-reveal"
+          }
+        ]
+      },
+      {
+        "id": "mira-node-court-press-fail",
+        "npcId": "npc-mira",
+        "text": "Mira's jaw tightens. She gives you the shape of it -- a Court record, nothing more -- and stops there. Whatever else there was to tell, she keeps.",
+        "choices": [
+          {
+            "id": "mira-choice-press-close",
+            "label": "Understood.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Mira answered only the least of what she knows -- pressed too soon."
+            }
+          }
+        ]
+      },
+      {
+        "id": "mira-node-court-reveal",
+        "npcId": "npc-mira",
+        "text": "She unfolds slowly, on her own time. \"They didn't want me for information. They wanted me as a record -- something they could produce if the debt dispute moved into formal channels.\" A longer pause than before. \"There is a letter. I kept it. I don't know if it changes anything.\"",
         "choices": [
           {
             "id": "mira-choice-court-close",
@@ -1195,7 +1310,7 @@
             "nextNodeId": null,
             "outcome": {
               "type": "mainQuestHint",
-              "value": "Mira mentions a letter — the Court kept her as a document, not leverage."
+              "value": "Mira mentions a letter -- the Court kept her as a document, not leverage."
             }
           }
         ]
@@ -1210,7 +1325,7 @@
       {
         "id": "orren-node-1",
         "npcId": "npc-orren-wex",
-        "text": "Orren Wex looks like a man still counting things up. 'I owe you an explanation and a ledger entry,' he says. 'Which would you prefer first?'",
+        "text": "Orren Wex looks like a man still counting things up. \"I owe you an explanation and a ledger entry,\" he says. \"Which would you prefer first?\"",
         "choices": [
           {
             "id": "orren-choice-ledger",
@@ -1220,14 +1335,18 @@
           {
             "id": "orren-choice-explanation",
             "label": "The explanation.",
-            "nextNodeId": "orren-node-explanation"
+            "nextNodeId": "orren-node-explanation",
+            "condition": {
+              "type": "mainQuestStage",
+              "value": "location-known"
+            }
           }
         ]
       },
       {
         "id": "orren-node-ledger",
         "npcId": "npc-orren-wex",
-        "text": "'The original debt entry was altered after it was recorded. Not erased — altered. The kind of change that looks legitimate to anyone who does not know what the original said.' He spreads his hands. 'I know what it said.'",
+        "text": "\"The original debt entry was altered after it was recorded. Not erased — altered. The kind of change that looks legitimate to anyone who does not know what the original said.\" He spreads his hands. \"I know what it said.\"",
         "choices": [
           {
             "id": "orren-choice-ledger-close",
@@ -1243,7 +1362,7 @@
       {
         "id": "orren-node-explanation",
         "npcId": "npc-orren-wex",
-        "text": "'I stayed quiet because I thought quiet was safer. For me, and for the house. I was wrong about that — six weeks in a Compact holding room proved it.' He pauses. 'I am not wrong about the debt. The numbers were changed.'",
+        "text": "\"I stayed quiet because I thought quiet was safer. For me, and for the house. I was wrong about that — six weeks in a Compact holding room proved it.\" He pauses. \"I am not wrong about the debt. The numbers were changed.\"",
         "choices": [
           {
             "id": "orren-choice-explanation-close",
@@ -1266,7 +1385,7 @@
       {
         "id": "torvald-node-1",
         "npcId": "npc-torvald-messe",
-        "text": "Torvald Messe keeps his copy of the ledger close. Not hidden — close. There's a difference. 'I know what you're going to ask,' he says. 'Ask it properly and we'll see.'",
+        "text": "Torvald Messe keeps his copy of the ledger close. Not hidden -- close. There's a difference. \"Filing Statute 44 dash 7,\" he says first, out of habit, before anything else. \"Now: I know what you're going to ask. Ask it properly and we'll see.\"",
         "choices": [
           {
             "id": "torvald-choice-ledger",
@@ -1283,7 +1402,7 @@
       {
         "id": "torvald-node-ledger",
         "npcId": "npc-torvald-messe",
-        "text": "'The copy exists because someone anticipated the original would be tampered with.' He studies you. 'That someone was careful. The house should be equally careful about how it uses this.'",
+        "text": "\"The copy exists because someone anticipated the original would be tampered with.\" He sets three identical folios on the table, though only one matters today. \"My father lost everything to a single forged paper. I don't deal in single papers anymore.\" He studies you. \"The house should be equally careful about how it uses this.\"",
         "choices": [
           {
             "id": "torvald-choice-ledger-close",
@@ -1299,7 +1418,7 @@
       {
         "id": "torvald-node-wait",
         "npcId": "npc-torvald-messe",
-        "text": "He takes that in. 'Knowing the house knows means you're not fishing.' A small nod. 'Come back when you need it. I'll have it ready.'",
+        "text": "He takes that in. \"Knowing the house knows means you're not fishing.\" A small nod. \"Come back when you need it. I'll have it ready -- in triplicate, as always.\"",
         "choices": [
           {
             "id": "torvald-choice-wait-close",
@@ -1322,7 +1441,7 @@
       {
         "id": "orven-node-1",
         "npcId": "npc-orven-pell",
-        "text": "Orven Pell does not greet you by name. 'If you know who I am,' he says, 'you know what I'm holding. If Merrow knows the same, this conversation has a clock on it.'",
+        "text": "Orven Pell doesn't greet you by name. When he finally speaks, he starts, as always, with a date. \"Filed the ninth of Ashfall, the year of the Breach.\" Only then does he look up. \"If you know who I am, you know what I'm holding. If Merrow knows the same, this conversation has a clock on it.\"",
         "choices": [
           {
             "id": "orven-choice-merrow",
@@ -1339,7 +1458,7 @@
       {
         "id": "orven-node-merrow",
         "npcId": "npc-orven-pell",
-        "text": "'They know the ledger exists. They do not know where. That will change.' He does not elaborate on when.",
+        "text": "\"They know the ledger exists. They do not know where. That will change.\" He does not elaborate on when.",
         "choices": [
           {
             "id": "orven-choice-merrow-close",
@@ -1355,7 +1474,7 @@
       {
         "id": "orven-node-ledger",
         "npcId": "npc-orven-pell",
-        "text": "'Names and transactions that Merrow has spent considerable effort keeping out of the Register. Some of the names are Compact. Some are Gilded Court.' He pauses. 'That is what makes it dangerous.'",
+        "text": "\"Filed the ninth of Ashfall.\" He says it again, like a citation. \"Names and transactions Merrow has spent considerable effort keeping out of the Register. Some names are Compact. Some are Gilded Court.\" He pauses. \"I know which ledgers burned that week, and which merely vanished. This one vanished. That's worse for Merrow.\"",
         "choices": [
           {
             "id": "orven-choice-ledger-close",
@@ -1378,7 +1497,7 @@
       {
         "id": "brannic-node-1",
         "npcId": "npc-brannic-thule",
-        "text": "Brannic Thule watches you the way a man watches the door. 'I was told,' he says, 'that testifying would be protected. I'm still waiting to see what protected looks like.'",
+        "text": "Brannic Thule watches you the way a man watches the door. \"My lord,\" he says -- he has never once gotten the address wrong, not from the first day. \"I was told testifying would be protected. I'm still waiting to see what protected looks like.\"",
         "choices": [
           {
             "id": "brannic-choice-protect",
@@ -1395,7 +1514,7 @@
       {
         "id": "brannic-node-protect",
         "npcId": "npc-brannic-thule",
-        "text": "He takes a breath. 'All right. Because I don't have better options.' He straightens. 'Ask your questions. I'll answer what I saw.'",
+        "text": "He takes a breath. \"All right. Because I don't have better options.\" He straightens. \"Ask your questions, my lord. I'll answer what I saw.\"",
         "choices": [
           {
             "id": "brannic-choice-protect-close",
@@ -1411,7 +1530,7 @@
       {
         "id": "brannic-node-testimony",
         "npcId": "npc-brannic-thule",
-        "text": "'I saw the transaction. I saw who countersigned it. I know the signature was not Orren Wex's.' He meets your eyes for the first time. 'I have been waiting for someone to ask.'",
+        "text": "\"I saw the transaction. I saw who countersigned it. I know the signature was not Orren Wex's.\" He meets your eyes for the first time. \"I was steward's assistant in what you'd call the receiving hall -- I still call it that, though it's been an armory for years now. I have been waiting for someone to ask.\"",
         "choices": [
           {
             "id": "brannic-choice-testimony-close",
@@ -1434,7 +1553,7 @@
       {
         "id": "dalen-node-1",
         "npcId": "npc-dalen-morke",
-        "text": "Dalen Morke makes conversation sound like negotiation. 'House Valdris,' he says, as if appraising something. 'The name still opens certain doors. Fewer than it did. What brings you to this one?'",
+        "text": "Dalen Morke makes conversation sound like negotiation, though his eyes are shadowed in a way negotiation doesn't explain. \"House Valdris,\" he says, as if appraising something. \"The name still opens certain doors. Fewer than it did. What brings you to this one?\"",
         "choices": [
           {
             "id": "dalen-choice-debt",
@@ -1451,7 +1570,7 @@
       {
         "id": "dalen-node-debt",
         "npcId": "npc-dalen-morke",
-        "text": "'Falsified records are interesting only if you can prove it before the Court moves on them. After that, they become historical facts.' He smooths his sleeve. 'Do you have a timeline?'",
+        "text": "\"I'm sorry,\" he says first -- he always says it first, before the rest arrives. \"Falsified records are interesting only if you can prove it before the Court moves on them. After that, they become historical facts.\" He smooths his sleeve. \"Do you have a timeline?\"",
         "choices": [
           {
             "id": "dalen-choice-debt-close",
@@ -1467,7 +1586,7 @@
       {
         "id": "dalen-node-alliance",
         "npcId": "npc-dalen-morke",
-        "text": "'That kind of understanding has a cost. Not necessarily coin.' He looks at you for a moment longer than is comfortable. 'Come back when you have something to offer.'",
+        "text": "\"That kind of understanding has a cost. Not necessarily coin.\" He looks at you for a moment longer than is comfortable -- longer than he's slept, probably. \"Come back when you have something to offer.\"",
         "choices": [
           {
             "id": "dalen-choice-alliance-close",
@@ -1491,7 +1610,7 @@
       {
         "id": "sable-node-1",
         "npcId": "npc-sable-wrent",
-        "text": "Sable Wrent doesn't waste words. 'New contract, new house. Same work. I've got questions if you've got answers. Otherwise tell me where I'm needed.'",
+        "text": "Sable Wrent doesn't waste words. \"New contract, new house. Same work.\" She's already counting something on her fingers -- favours owed, maybe, though she's never once written one down. \"I've got questions if you've got answers. Otherwise tell me where I'm needed.\"",
         "choices": [
           {
             "id": "sable-choice-questions",
@@ -1508,7 +1627,7 @@
       {
         "id": "sable-node-questions",
         "npcId": "npc-sable-wrent",
-        "text": "'Payment schedule. Rules of engagement. Who I report to when the house is not around.' She waits. 'The last house I worked for didn't answer the third one until it was a problem.'",
+        "text": "\"Payment schedule. Rules of engagement. Who I report to when the house is not around.\" She waits. \"The last outfit I worked for\" -- she doesn't name it, she never names it -- \"didn't answer the third one until it was a problem.\"",
         "choices": [
           {
             "id": "sable-choice-questions-close",
@@ -1524,7 +1643,7 @@
       {
         "id": "sable-node-assign",
         "npcId": "npc-sable-wrent",
-        "text": "'Right.' She nods once, reading something in that response. 'I'll be ready.'",
+        "text": "\"Right.\" She nods once, reading something in that response, and marks it down in the tally only she can see. \"I'll be ready.\"",
         "choices": [
           {
             "id": "sable-choice-assign-close",
@@ -1533,6 +1652,1448 @@
             "outcome": {
               "type": "trust",
               "value": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-cessa-rill",
+    "npcId": "npc-cessa-rill",
+    "openingNodeId": "cessa-node-1",
+    "nodes": [
+      {
+        "id": "cessa-node-1",
+        "npcId": "npc-cessa-rill",
+        "text": "Cessa Rill doesn't look up from the ledger of names. \"Baptisms, adoptions, deaths. That's what I keep. If you're here about something else, you're in the wrong chapel room.\"",
+        "choices": [
+          {
+            "id": "cessa-choice-leave",
+            "label": "Just looking.",
+            "nextNodeId": null
+          },
+          {
+            "id": "cessa-choice-letter",
+            "label": "Show her Mira's sealed envelope.",
+            "nextNodeId": "cessa-node-reveal",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-letter-mira-sealed"
+            }
+          }
+        ]
+      },
+      {
+        "id": "cessa-node-reveal",
+        "npcId": "npc-cessa-rill",
+        "text": "Cessa takes the envelope and goes very still. \"She found the entry, then.\" She doesn't hand it back right away. \"I altered one birth record, years ago, to save a child from an inheritance law that would have killed her by paperwork. I have lived with not knowing if that was mercy or theft ever since.\" She meets your eyes. \"Your sister's line was erased the same way. I know, because I was the one holding the pen.\"",
+        "choices": [
+          {
+            "id": "cessa-choice-press",
+            "label": "Then you can prove what happened to her.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Cessa Rill altered the birth record herself -- she is the final link proving the Valdris maternal line was erased, not extinguished."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-sorn",
+    "npcId": "npc-enemy-lady-sorn",
+    "openingNodeId": "sorn-node-1",
+    "nodes": [
+      {
+        "id": "sorn-node-1",
+        "npcId": "npc-enemy-lady-sorn",
+        "text": "Lady Sorn asks a question she plainly already knows the answer to. \"And how is the debt settling, House Valdris?\" She doesn't wait for surprise. \"I ask the ones I already know the answer to. It tells me whether you'll lie to someone who can check.\"",
+        "choices": [
+          {
+            "id": "sorn-choice-honest",
+            "label": "Badly. You already know that.",
+            "nextNodeId": "sorn-node-honest"
+          },
+          {
+            "id": "sorn-choice-guarded",
+            "label": "Well enough.",
+            "nextNodeId": "sorn-node-guarded",
+            "condition": {
+              "type": "minRenown",
+              "value": 25
+            }
+          }
+        ]
+      },
+      {
+        "id": "sorn-node-honest",
+        "npcId": "npc-enemy-lady-sorn",
+        "text": "Something that might be approval crosses her face. \"Good. I remember the names of everyone's dead, House Valdris. I'd rather not add yours to a list I keep for people who wasted my time.\"",
+        "choices": [
+          {
+            "id": "sorn-choice-honest-close",
+            "label": "Noted.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "respect",
+              "value": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "sorn-node-guarded",
+        "npcId": "npc-enemy-lady-sorn",
+        "text": "\"Well enough,\" she repeats, testing the words. \"That's a Court answer. I collect those too.\"",
+        "choices": [
+          {
+            "id": "sorn-choice-guarded-close",
+            "label": "It's the only one I have today.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": 2,
+              "targetId": "faction-gilded-court"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-lirien",
+    "npcId": "npc-lirien-ashcroft",
+    "openingNodeId": "lirien-node-1",
+    "nodes": [
+      {
+        "id": "lirien-node-1",
+        "npcId": "npc-lirien-ashcroft",
+        "text": "Lirien Ashcroft marks the date on her wrist in ink before she even looks up -- she does it every morning, the way some people check the weather. \"You're the house Mother mentioned,\" she says. \"She thinks I don't listen at the stall. I listen to everything.\"",
+        "choices": [
+          {
+            "id": "lirien-choice-nothing",
+            "label": "Good to meet you.",
+            "nextNodeId": null
+          },
+          {
+            "id": "lirien-choice-press",
+            "label": "Your mother trusts me. Do you?",
+            "nextNodeId": "lirien-node-trust",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-lira-ashcroft",
+              "value": 40
+            }
+          }
+        ]
+      },
+      {
+        "id": "lirien-node-trust",
+        "npcId": "npc-lirien-ashcroft",
+        "text": "Lirien is quiet for a moment. \"She doesn't tell me things. Not the important ones.\" Her hand moves toward her wrist, then stops. \"I don't know yet if I'm her heiress or just the evidence of something she'd rather forget. Maybe it doesn't matter which.\"",
+        "choices": [
+          {
+            "id": "lirien-choice-trust-close",
+            "label": "It matters. You matter.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "affinity",
+              "value": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-veyran",
+    "npcId": "npc-veyran-malk",
+    "openingNodeId": "veyran-node-1",
+    "nodes": [
+      {
+        "id": "veyran-node-1",
+        "npcId": "npc-veyran-malk",
+        "text": "Ser Veyran Malk thanks you for your time before he's said anything else -- a courtesy that costs him nothing and warns you everything. \"House Valdris. I trust the accounts are in order.\"",
+        "choices": [
+          {
+            "id": "veyran-choice-fine",
+            "label": "They will be.",
+            "nextNodeId": null
+          },
+          {
+            "id": "veyran-choice-debt",
+            "label": "We know the debt was shaped before it reached us.",
+            "nextNodeId": "veyran-node-warn",
+            "condition": {
+              "type": "debtPaid",
+              "value": false
+            }
+          }
+        ]
+      },
+      {
+        "id": "veyran-node-warn",
+        "npcId": "npc-veyran-malk",
+        "text": "He doesn't raise his voice. He never has to. \"That would be an interesting claim to make publicly.\" A pause, precisely timed. \"I don't repeat a warning. Once is sufficient.\"",
+        "choices": [
+          {
+            "id": "veyran-choice-warn-close",
+            "label": "Understood.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": -3,
+              "targetId": "faction-house-merrow"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-alis",
+    "npcId": "npc-alis-vey",
+    "openingNodeId": "alis-node-1",
+    "nodes": [
+      {
+        "id": "alis-node-1",
+        "npcId": "npc-alis-vey",
+        "text": "Alis Vey speaks of her house in the past tense, without affect, the way she speaks of everything from before. \"House Valdris. My family was a cadet ally of yours, once. I sold your property under coercion during the Breach.\" She says it plainly, like a filed fact, not a confession.",
+        "choices": [
+          {
+            "id": "alis-choice-nothing",
+            "label": "That's in the past.",
+            "nextNodeId": null
+          },
+          {
+            "id": "alis-choice-restitution",
+            "label": "What would restitution look like to you?",
+            "nextNodeId": "alis-node-restitution",
+            "condition": {
+              "type": "minRenown",
+              "value": 20
+            }
+          }
+        ]
+      },
+      {
+        "id": "alis-node-restitution",
+        "npcId": "npc-alis-vey",
+        "text": "She keeps a record of every favor she's received since the Breach -- this would be one more line in it, if she let it. \"I hold the original transfer documents. The same ones that could void the claim built on my coercion.\" A pause. \"I want to give something back before I confess to holding them. Not the other way around.\"",
+        "choices": [
+          {
+            "id": "alis-choice-restitution-close",
+            "label": "Then let's find a way to give something back.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Alis Vey holds the original coerced-sale transfer documents that could void Harlen Voss's foreclosure claim -- but wants to make restitution before surrendering them."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-oswin",
+    "npcId": "npc-oswin-farr",
+    "openingNodeId": "oswin-node-1",
+    "nodes": [
+      {
+        "id": "oswin-node-1",
+        "npcId": "npc-oswin-farr",
+        "text": "Oswin Farr is pricing your boots before he's finished the greeting -- an old habit from six years of running a food line on nothing. \"House Valdris. Here about the Warrens, or just passing through?\"",
+        "choices": [
+          {
+            "id": "oswin-choice-passing",
+            "label": "Just passing through.",
+            "nextNodeId": null
+          },
+          {
+            "id": "oswin-choice-help",
+            "label": "What does the Warrens actually need?",
+            "nextNodeId": "oswin-node-need"
+          }
+        ]
+      },
+      {
+        "id": "oswin-node-need",
+        "npcId": "npc-oswin-farr",
+        "text": "\"Food security that doesn't wait on Compact permission.\" He produces a folded ration from his coat without thinking -- he always carries emergency rations, has since the shutdown. \"Someone's been undercutting my supply arrangements. I have a list of every Compact official who's ever obstructed a delivery. I'm not asking you to fix it. I'm asking you to know it's happening.\"",
+        "choices": [
+          {
+            "id": "oswin-choice-close",
+            "label": "Noted. I'll keep an eye out.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-tav",
+    "npcId": "npc-tav",
+    "openingNodeId": "tav-node-1",
+    "nodes": [
+      {
+        "id": "tav-node-1",
+        "npcId": "npc-tav",
+        "text": "Tav reads the contract you hand him fully before answering anything, the way he reads every document -- however long it takes. \"Walking contract. Limited movement. No family formation rights. Quarterly check-in with the Register.\" He hands it back. \"Ask your question.\"",
+        "choices": [
+          {
+            "id": "tav-choice-fight",
+            "label": "Are you good in a fight?",
+            "nextNodeId": "tav-node-fight"
+          },
+          {
+            "id": "tav-choice-ownership",
+            "label": "This isn't ownership, if that's what worries you.",
+            "nextNodeId": "tav-node-ownership",
+            "condition": {
+              "type": "dayMax",
+              "value": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "tav-node-fight",
+        "npcId": "npc-tav",
+        "text": "\"I learned by surviving. Not by being taught. That's different.\" He says it flatly, not looking for sympathy.",
+        "choices": [
+          {
+            "id": "tav-choice-fight-close",
+            "label": "Understood.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "tav-node-ownership",
+        "npcId": "npc-tav",
+        "text": "Something in him eases, fractionally. \"Good. That's the one thing I won't sign under, in any form.\" He doesn't thank you. But he doesn't leave either.",
+        "choices": [
+          {
+            "id": "tav-choice-ownership-close",
+            "label": "Good to have you.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-sunne",
+    "npcId": "npc-maret-sunne",
+    "openingNodeId": "sunne-node-1",
+    "nodes": [
+      {
+        "id": "sunne-node-1",
+        "npcId": "npc-maret-sunne",
+        "text": "Maret Sunne corrects a misfiled date on the counter without looking up, then catches herself. \"Sorry. Habit.\" She finally meets your eyes. \"House Valdris. What do you need archived -- or un-archived?\"",
+        "choices": [
+          {
+            "id": "sunne-choice-nothing",
+            "label": "Just a question, not a filing.",
+            "nextNodeId": null
+          },
+          {
+            "id": "sunne-choice-ledger",
+            "label": "I hear you keep a very old ledger.",
+            "nextNodeId": "sunne-node-ledger",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-old-maret",
+              "value": 50
+            }
+          }
+        ]
+      },
+      {
+        "id": "sunne-node-ledger",
+        "npcId": "npc-maret-sunne",
+        "text": "Maret goes very still. \"Who told you that.\" Not quite a question. She doesn't deny it. \"I don't know yet what it means, or who I'd become if I used it. I keep a log no one has seen either. Maybe that's a family trait.\"",
+        "choices": [
+          {
+            "id": "sunne-choice-ledger-close",
+            "label": "Whatever it means, you don't have to face it alone.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Maret Sunne holds a ledger proving who profited from House Valdris's fall -- and doesn't yet know she is Old Maret's granddaughter, or that Old Maret knows."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-rutha",
+    "npcId": "npc-rutha-kael",
+    "openingNodeId": "rutha-node-1",
+    "nodes": [
+      {
+        "id": "rutha-node-1",
+        "npcId": "npc-rutha-kael",
+        "text": "Rutha Kael asks her three questions before you've finished introducing yourself: who's paying, who else knows, what happens if it goes wrong. \"Answer those honestly and we'll talk terms.\"",
+        "choices": [
+          {
+            "id": "rutha-choice-honest",
+            "label": "House Valdris. Few people. It's already gone wrong once.",
+            "nextNodeId": "rutha-node-hired"
+          },
+          {
+            "id": "rutha-choice-vague",
+            "label": "Does it matter?",
+            "nextNodeId": "rutha-node-refuse"
+          }
+        ]
+      },
+      {
+        "id": "rutha-node-hired",
+        "npcId": "npc-rutha-kael",
+        "text": "She nods slowly. \"Terms that don't change after deployment. I've had that happen once. I'm still cataloguing what it cost.\"",
+        "choices": [
+          {
+            "id": "rutha-choice-hired-close",
+            "label": "They won't change on you here.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "rutha-node-refuse",
+        "npcId": "npc-rutha-kael",
+        "text": "\"It matters to me.\" She doesn't soften it. \"I don't work for people who won't answer three questions.\"",
+        "choices": [
+          {
+            "id": "rutha-choice-refuse-close",
+            "label": "Fair enough.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Rutha Kael declined the contract -- she vets every employer with three questions first, no exceptions."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-petra",
+    "npcId": "npc-petra-sunn",
+    "openingNodeId": "petra-node-1",
+    "nodes": [
+      {
+        "id": "petra-node-1",
+        "npcId": "npc-petra-sunn",
+        "text": "Petra Sunn has already mapped every exit in the room by the time you've sat down -- sound and shadow, before she ever uses a door. \"House Valdris. Elyn's mentioned you.\"",
+        "choices": [
+          {
+            "id": "petra-choice-elyn",
+            "label": "How is she settling in?",
+            "nextNodeId": "petra-node-elyn"
+          },
+          {
+            "id": "petra-choice-bond",
+            "label": "The Compact still has a file on you.",
+            "nextNodeId": "petra-node-bond",
+            "condition": {
+              "type": "dayMin",
+              "value": 5
+            }
+          }
+        ]
+      },
+      {
+        "id": "petra-node-elyn",
+        "npcId": "npc-petra-sunn",
+        "text": "Something in Petra's posture loosens, just slightly. \"Better than I did, at her age. That's the whole point.\"",
+        "choices": [
+          {
+            "id": "petra-choice-elyn-close",
+            "label": "Good.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "petra-node-bond",
+        "npcId": "npc-petra-sunn",
+        "text": "\"I know the number,\" she says flatly. \"I found it myself.\" She doesn't ask how you know. \"Six years of bond service. I didn't fight it, because I didn't know you could. Now I make it so other people know they can.\"",
+        "choices": [
+          {
+            "id": "petra-choice-bond-close",
+            "label": "That's worth doing.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "affinity",
+              "value": 6
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-wode",
+    "npcId": "npc-tessaly-wode",
+    "openingNodeId": "wode-node-1",
+    "nodes": [
+      {
+        "id": "wode-node-1",
+        "npcId": "npc-tessaly-wode",
+        "text": "Tessaly Wode holds a small lens up to the light before she answers, measuring you the way she measures a flaw in glass. \"Ironworks work, or house work? I don't do both in the same conversation.\"",
+        "choices": [
+          {
+            "id": "wode-choice-work",
+            "label": "Ironworks.",
+            "nextNodeId": null
+          },
+          {
+            "id": "wode-choice-craft",
+            "label": "You trained a dozen engineers who don't credit you for it.",
+            "nextNodeId": "wode-node-craft"
+          }
+        ]
+      },
+      {
+        "id": "wode-node-craft",
+        "npcId": "npc-tessaly-wode",
+        "text": "She measures twice before she answers, same as always. \"I don't hold it against them. I hold it against the institution that taught them not to.\" She turns the lens over once. \"I'd like to be remembered as someone who built things. Not just someone who was used to.\"",
+        "choices": [
+          {
+            "id": "wode-choice-craft-close",
+            "label": "You will be.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "affinity",
+              "value": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-tomas",
+    "npcId": "npc-enemy-tomas-rell",
+    "openingNodeId": "tomas-node-1",
+    "nodes": [
+      {
+        "id": "tomas-node-1",
+        "npcId": "npc-enemy-tomas-rell",
+        "text": "Tomas Rell doesn't reach for a weapon first. He never does -- it wastes time and leaves witnesses in a bad mood. \"House Valdris. I've got a job. You're not making it harder, are you?\"",
+        "choices": [
+          {
+            "id": "tomas-choice-cooperate",
+            "label": "No trouble here.",
+            "nextNodeId": null
+          },
+          {
+            "id": "tomas-choice-resist",
+            "label": "Depends what the job is.",
+            "nextNodeId": "tomas-node-resist"
+          }
+        ]
+      },
+      {
+        "id": "tomas-node-resist",
+        "npcId": "npc-enemy-tomas-rell",
+        "text": "\"Then we've got a problem, and I'd rather not have one today.\" He says it evenly, not as a threat -- as a scheduling complaint.",
+        "choices": [
+          {
+            "id": "tomas-choice-resist-close",
+            "label": "We'll see.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": -2,
+              "targetId": "faction-gilded-court"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-catrin",
+    "npcId": "npc-enemy-catrin-hale",
+    "openingNodeId": "catrin-node-1",
+    "nodes": [
+      {
+        "id": "catrin-node-1",
+        "npcId": "npc-enemy-catrin-hale",
+        "text": "Catrin Hale checks a signed paper twice before she checks your face once. \"Paper doesn't lie to me the way people do. What's your business at this door?\"",
+        "choices": [
+          {
+            "id": "catrin-choice-business",
+            "label": "Official house business.",
+            "nextNodeId": null
+          },
+          {
+            "id": "catrin-choice-press",
+            "label": "Who's actually held here?",
+            "nextNodeId": "catrin-node-press"
+          }
+        ]
+      },
+      {
+        "id": "catrin-node-press",
+        "npcId": "npc-enemy-catrin-hale",
+        "text": "She counts her keys before answering -- a habit, not a delay. \"Names I don't say to people without paper of their own.\"",
+        "choices": [
+          {
+            "id": "catrin-choice-press-close",
+            "label": "Understood.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Catrin Hale: warder at a deniable holding site. Won't name detainees without proper documentation."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-harlen",
+    "npcId": "npc-enemy-harlen-voss",
+    "openingNodeId": "harlen-node-1",
+    "nodes": [
+      {
+        "id": "harlen-node-1",
+        "npcId": "npc-enemy-harlen-voss",
+        "text": "Harlen Voss names the principal before the interest, always -- it's how he was raised to talk about debt. \"House Valdris. Let's start with what you actually owe, before we get to what it's grown into.\"",
+        "choices": [
+          {
+            "id": "harlen-choice-pay",
+            "label": "We're aware of the number.",
+            "nextNodeId": null
+          },
+          {
+            "id": "harlen-choice-origin",
+            "label": "That claim started with a coerced signature.",
+            "nextNodeId": "harlen-node-origin",
+            "condition": {
+              "type": "debtPaid",
+              "value": false
+            }
+          }
+        ]
+      },
+      {
+        "id": "harlen-node-origin",
+        "npcId": "npc-enemy-harlen-voss",
+        "text": "He doesn't raise his voice -- he never does when threatening. \"That would be a very expensive thing to prove.\" A pause. \"Merrow is watching how fast I close this. I'd rather not be slow.\"",
+        "choices": [
+          {
+            "id": "harlen-choice-origin-close",
+            "label": "Then you should hurry.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": -3,
+              "targetId": "faction-tallow-ring"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-dockmaster",
+    "npcId": "npc-enemy-the-dockmaster",
+    "openingNodeId": "dockmaster-node-1",
+    "nodes": [
+      {
+        "id": "dockmaster-node-1",
+        "npcId": "npc-enemy-the-dockmaster",
+        "text": "The Dockmaster is already at the boards before the sun is up, same as every morning. He writes your name down twice before he's said a word. \"Everyone pays a cut on the morning queue. Coin, silence, or a favor owed. Which is it going to be?\"",
+        "choices": [
+          {
+            "id": "dockmaster-choice-coin",
+            "label": "Coin.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Paid the Dockmaster's cut in coin."
+            }
+          },
+          {
+            "id": "dockmaster-choice-refuse",
+            "label": "We don't pay cuts.",
+            "nextNodeId": "dockmaster-node-refuse"
+          }
+        ]
+      },
+      {
+        "id": "dockmaster-node-refuse",
+        "npcId": "npc-enemy-the-dockmaster",
+        "text": "He doesn't look up from his second copy of the assignment sheet. \"Then you don't work these docks. That's fair market rate, the way I run it.\"",
+        "choices": [
+          {
+            "id": "dockmaster-choice-refuse-close",
+            "label": "Noted.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": -2,
+              "targetId": "faction-civic-compact"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-caevis",
+    "npcId": "npc-sable-cairn-head",
+    "openingNodeId": "caevis-node-1",
+    "nodes": [
+      {
+        "id": "caevis-node-1",
+        "npcId": "npc-sable-cairn-head",
+        "text": "Caevis Sable-Cairn speaks only in formal register, never a contraction, never a colloquialism. \"House Valdris. I am given to understand you are managing a considerable debt of your own. We have that, at least, in common.\"",
+        "choices": [
+          {
+            "id": "caevis-choice-brush",
+            "label": "We're managing.",
+            "nextNodeId": null
+          },
+          {
+            "id": "caevis-choice-press",
+            "label": "What obligations are you carrying?",
+            "nextNodeId": "caevis-node-press",
+            "condition": {
+              "type": "minRenown",
+              "value": 20
+            }
+          }
+        ]
+      },
+      {
+        "id": "caevis-node-press",
+        "npcId": "npc-sable-cairn-head",
+        "text": "\"I do not name my creditors aloud,\" he says, unhurried. \"I refer to them only as prior obligations. It is a discipline. I recommend it.\" He does not elaborate further today.",
+        "choices": [
+          {
+            "id": "caevis-choice-press-close",
+            "label": "Noted.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "respect",
+              "value": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-cress",
+    "npcId": "npc-cress-aldmoor",
+    "openingNodeId": "cress-node-1",
+    "nodes": [
+      {
+        "id": "cress-node-1",
+        "npcId": "npc-cress-aldmoor",
+        "text": "Cress Aldmoor checks your pulse at the wrist before she's finished her greeting -- she does it to everyone who sits close, without thinking. \"You're not bleeding. Good. What do you need, then?\"",
+        "choices": [
+          {
+            "id": "cress-choice-nothing",
+            "label": "Nothing today.",
+            "nextNodeId": null
+          },
+          {
+            "id": "cress-choice-past",
+            "label": "You trained under a Court physician.",
+            "nextNodeId": "cress-node-past"
+          }
+        ]
+      },
+      {
+        "id": "cress-node-past",
+        "npcId": "npc-cress-aldmoor",
+        "text": "She doesn't lose count of anything, including this conversation. \"I did work I didn't ask about, for silence I gave freely. I left when I couldn't rationalise it anymore.\" She meets your eyes. \"Now I treat anyone who can pay. It's not virtue. It's an improvement over what I was.\"",
+        "choices": [
+          {
+            "id": "cress-choice-past-close",
+            "label": "That's more honest than most confessions.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-dael",
+    "npcId": "npc-dael-morw",
+    "openingNodeId": "dael-node-1",
+    "nodes": [
+      {
+        "id": "dael-node-1",
+        "npcId": "npc-dael-morw",
+        "text": "Dael Morw reads whatever you hand him twice before responding -- a habit from twelve years assessing Register filings. \"You'll want to know why a compliance assessor is willing to talk to House Valdris. Fair question.\"",
+        "choices": [
+          {
+            "id": "dael-choice-why",
+            "label": "Why, then?",
+            "nextNodeId": "dael-node-why"
+          },
+          {
+            "id": "dael-choice-skip",
+            "label": "Not today.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "dael-node-why",
+        "npcId": "npc-dael-morw",
+        "text": "\"A senior assessor once told me to falsify a noble family's birth record. I complied. Then I kept copies and walked out with documents several powerful people would prefer didn't exist.\" He recites the form number without needing to check. \"I am not proud of the first thing. I am counting on the second to matter, when it matters.\"",
+        "choices": [
+          {
+            "id": "dael-choice-why-close",
+            "label": "It might matter sooner than you think.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Dael Morw, a former Compact Register assessor, holds copies of falsified birth records -- possibly connected to the Valdris succession question."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-evar",
+    "npcId": "npc-evar-koss",
+    "openingNodeId": "evar-node-1",
+    "nodes": [
+      {
+        "id": "evar-node-1",
+        "npcId": "npc-evar-koss",
+        "text": "Evar Koss stores what you tell him by who said it, not by what it was -- he's built that way after twenty years of cargo ledgers. \"House Valdris. I take no sides. I take percentages. What's the arrangement?\"",
+        "choices": [
+          {
+            "id": "evar-choice-info",
+            "label": "Information, for a fair cut.",
+            "nextNodeId": "evar-node-info"
+          },
+          {
+            "id": "evar-choice-nothing",
+            "label": "Not today.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "evar-node-info",
+        "npcId": "npc-evar-koss",
+        "text": "\"Fair,\" he repeats, testing the word like currency. \"I carry nothing I can't explain if searched. Keep that in mind about whatever you're about to hand me.\"",
+        "choices": [
+          {
+            "id": "evar-choice-info-close",
+            "label": "Noted.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-irenne",
+    "npcId": "npc-irenne-brek",
+    "openingNodeId": "irenne-node-1",
+    "nodes": [
+      {
+        "id": "irenne-node-1",
+        "npcId": "npc-irenne-brek",
+        "text": "Irenne Brek is already watching how you breathe before she's looked at anything else -- she diagnoses by listening, not looking. \"You're not hurt. Good. What brings a house lord to a shop with no permit?\"",
+        "choices": [
+          {
+            "id": "irenne-choice-nothing",
+            "label": "Just looking.",
+            "nextNodeId": null
+          },
+          {
+            "id": "irenne-choice-help",
+            "label": "Someone in my household needs care.",
+            "nextNodeId": "irenne-node-help"
+          }
+        ]
+      },
+      {
+        "id": "irenne-node-help",
+        "npcId": "npc-irenne-brek",
+        "text": "She's already counting -- she keeps a running tally of everyone she's treated and how they fared. \"Send them. I ask no questions about how injuries happen. I never have.\"",
+        "choices": [
+          {
+            "id": "irenne-choice-help-close",
+            "label": "Thank you.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-elyn",
+    "npcId": "npc-elyn",
+    "openingNodeId": "elyn-node-1",
+    "nodes": [
+      {
+        "id": "elyn-node-1",
+        "npcId": "npc-elyn",
+        "text": "Elyn goes quiet and still when you come in -- not frightened exactly, just watching, the way she does with anything new. She doesn't run. She never runs. She just watches until she's decided something.",
+        "choices": [
+          {
+            "id": "elyn-choice-gentle",
+            "label": "You don't have to talk if you don't want to.",
+            "nextNodeId": "elyn-node-gentle"
+          },
+          {
+            "id": "elyn-choice-ask",
+            "label": "Is this a place you want to stay?",
+            "nextNodeId": "elyn-node-stay",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-petra-sunn",
+              "value": 40
+            }
+          }
+        ]
+      },
+      {
+        "id": "elyn-node-gentle",
+        "npcId": "npc-elyn",
+        "text": "She considers this for a long moment, the way she considers everything -- only after everyone else has stopped talking. Then, quietly: \"Okay.\" It's the most she's said to you yet.",
+        "choices": [
+          {
+            "id": "elyn-choice-gentle-close",
+            "label": "Okay.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "affinity",
+              "value": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "elyn-node-stay",
+        "npcId": "npc-elyn",
+        "text": "Elyn is quiet for long enough that you almost think she won't answer. Then: \"I don't know yet.\" A pause. \"Petra says I get to decide. I don't know if I believe that yet either.\"",
+        "choices": [
+          {
+            "id": "elyn-choice-stay-close",
+            "label": "You do get to decide. Take your time.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-bren",
+    "npcId": "npc-bren-aldoth",
+    "openingNodeId": "bren-node-1",
+    "nodes": [
+      {
+        "id": "bren-node-1",
+        "npcId": "npc-bren-aldoth",
+        "text": "Bren Aldoth counts exits and headcounts before he relaxes into any room, same as he's done since the unit. \"House Valdris. I don't need to know why you need muscle. I need to know if the job comes back on me the way the last one did.\"",
+        "choices": [
+          {
+            "id": "bren-choice-honest",
+            "label": "I can't promise it won't.",
+            "nextNodeId": "bren-node-honest"
+          },
+          {
+            "id": "bren-choice-safe",
+            "label": "It's straightforward work.",
+            "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "bren-node-honest",
+        "npcId": "npc-bren-aldoth",
+        "text": "He's quiet for a moment. \"Three of my unit didn't come back from the last one that wasn't supposed to go wrong.\" He doesn't elaborate. \"I appreciate you not promising otherwise.\"",
+        "choices": [
+          {
+            "id": "bren-choice-honest-close",
+            "label": "You'll know what you're walking into, every time.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-nessa",
+    "npcId": "npc-nessa-vain",
+    "openingNodeId": "nessa-node-1",
+    "nodes": [
+      {
+        "id": "nessa-node-1",
+        "npcId": "npc-nessa-vain",
+        "text": "Nessa Vain is pricing the replacement cost of your doorframe before you've said a word -- eight years of Compact resource work does that to a person. \"House Valdris. I don't ask for permission on small things. I report outcomes instead. I'd like to discuss what counts as small.\"",
+        "choices": [
+          {
+            "id": "nessa-choice-caution",
+            "label": "Let's define that carefully.",
+            "nextNodeId": null
+          },
+          {
+            "id": "nessa-choice-trust",
+            "label": "I trust your judgment on it.",
+            "nextNodeId": "nessa-node-trust",
+            "condition": {
+              "type": "minRenown",
+              "value": 15
+            }
+          }
+        ]
+      },
+      {
+        "id": "nessa-node-trust",
+        "npcId": "npc-nessa-vain",
+        "text": "Something settles in her. \"Good. I want this house standing after I'm no longer relevant to it. That only works if someone lets me actually build.\"",
+        "choices": [
+          {
+            "id": "nessa-choice-trust-close",
+            "label": "Build, then.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-aldric",
+    "npcId": "npc-aldric-vane",
+    "openingNodeId": "aldric-node-1",
+    "nodes": [
+      {
+        "id": "aldric-node-1",
+        "npcId": "npc-aldric-vane",
+        "text": "Aldric Vane addresses you by full title before anything else, the way he addresses everyone, even the stable hands. \"House Valdris. My lord.\" He's drinking water. He's always drinking water, since the fall.",
+        "choices": [
+          {
+            "id": "aldric-choice-nothing",
+            "label": "Aldric.",
+            "nextNodeId": null
+          },
+          {
+            "id": "aldric-choice-ask",
+            "label": "What happened to House Vane?",
+            "nextNodeId": "aldric-node-fall"
+          }
+        ]
+      },
+      {
+        "id": "aldric-node-fall",
+        "npcId": "npc-aldric-vane",
+        "text": "\"A debt collapse. Four years ago.\" He says it plainly, no self-pity. \"I have manners, diction, and no money, and I am acutely aware of what the first two are worth without the third.\" He sets the water down. \"I intend to restore the name. I will not sell the crest to do it.\"",
+        "choices": [
+          {
+            "id": "aldric-choice-fall-close",
+            "label": "That says something about you.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "respect",
+              "value": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-dara",
+    "npcId": "npc-dara-slink",
+    "openingNodeId": "dara-node-1",
+    "nodes": [
+      {
+        "id": "dara-node-1",
+        "npcId": "npc-dara-slink",
+        "text": "Dara Slink has already counted the exits in this room before unpacking anything -- a habit from running packages since she was eleven. \"Something to move, or just talking?\"",
+        "choices": [
+          {
+            "id": "dara-choice-talk",
+            "label": "Just talking.",
+            "nextNodeId": null
+          },
+          {
+            "id": "dara-choice-move",
+            "label": "Something to move quietly.",
+            "nextNodeId": "dara-node-move"
+          }
+        ]
+      },
+      {
+        "id": "dara-node-move",
+        "npcId": "npc-dara-slink",
+        "text": "\"I don't ask what's in the packages. Consider that a virtue.\" She names a dock and a time. \"I've memorised three ways in and out of everywhere between here and the Ironworks boundary. Whatever it is, it'll get there.\"",
+        "choices": [
+          {
+            "id": "dara-choice-move-close",
+            "label": "Good enough.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": 2,
+              "targetId": "faction-tallow-ring"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-osanna",
+    "npcId": "npc-osanna-cray",
+    "openingNodeId": "osanna-node-1",
+    "nodes": [
+      {
+        "id": "osanna-node-1",
+        "npcId": "npc-osanna-cray",
+        "text": "Osanna Cray never mentions the Court directly -- always obliquely, always sideways. \"You're House Valdris. I used to work somewhere with a similar problem with paperwork.\" She doesn't say where.",
+        "choices": [
+          {
+            "id": "osanna-choice-nothing",
+            "label": "Understood.",
+            "nextNodeId": null
+          },
+          {
+            "id": "osanna-choice-press",
+            "label": "What did you see there?",
+            "nextNodeId": "osanna-node-press",
+            "condition": {
+              "type": "minNpcTrust",
+              "npcId": "npc-osanna-cray",
+              "value": 45
+            }
+          }
+        ]
+      },
+      {
+        "id": "osanna-node-press",
+        "npcId": "npc-osanna-cray",
+        "text": "She's quiet for a long moment -- she's already mapped the exits from this room, same as every room she frequents. \"Something I shouldn't have. I don't need to describe it. I need to know if it was exceptional, or if it's just how they operate.\"",
+        "choices": [
+          {
+            "id": "osanna-choice-press-close",
+            "label": "I intend to find out.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 6
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-sanna",
+    "npcId": "npc-sanna-veld",
+    "openingNodeId": "sanna-node-1",
+    "nodes": [
+      {
+        "id": "sanna-node-1",
+        "npcId": "npc-sanna-veld",
+        "text": "Sanna Veld carries only what she can run with -- nothing more, not since the night the house fell and she ran. \"House Valdris.\" She has a prepared answer ready before you've even asked anything.",
+        "choices": [
+          {
+            "id": "sanna-choice-nothing",
+            "label": "At ease.",
+            "nextNodeId": null
+          },
+          {
+            "id": "sanna-choice-ran",
+            "label": "You ran, when the house fell.",
+            "nextNodeId": "sanna-node-ran"
+          }
+        ]
+      },
+      {
+        "id": "sanna-node-ran",
+        "npcId": "npc-sanna-veld",
+        "text": "The prepared answer doesn't come. For once. \"I did. I was loyal, and skilled, and I ran anyway.\" She looks at you directly. \"I'm not asking you to forgive that. I'm asking to not run again.\"",
+        "choices": [
+          {
+            "id": "sanna-choice-ran-close",
+            "label": "Then don't.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 6
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-brand",
+    "npcId": "npc-brand",
+    "openingNodeId": "brand-node-1",
+    "nodes": [
+      {
+        "id": "brand-node-1",
+        "npcId": "npc-brand",
+        "text": "Brand repeats your greeting back before responding to it, like he's expecting it to change if he waits. \"House Valdris.\" His weapon is clean. His plans, if he has any, are not.",
+        "choices": [
+          {
+            "id": "brand-choice-nothing",
+            "label": "Just checking in.",
+            "nextNodeId": null
+          },
+          {
+            "id": "brand-choice-purpose",
+            "label": "What are you waiting for, exactly?",
+            "nextNodeId": "brand-node-purpose"
+          }
+        ]
+      },
+      {
+        "id": "brand-node-purpose",
+        "npcId": "npc-brand",
+        "text": "He's quiet long enough that you think he won't answer. \"A reason. Any reason.\" He repeats it, like an order he's testing. \"Or permission to stop waiting for one.\"",
+        "choices": [
+          {
+            "id": "brand-choice-purpose-close",
+            "label": "Consider it given.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-lissel",
+    "npcId": "npc-lissel-crane",
+    "openingNodeId": "lissel-node-1",
+    "nodes": [
+      {
+        "id": "lissel-node-1",
+        "npcId": "npc-lissel-crane",
+        "text": "Lissel Crane is already reading the room before she says anything -- who's most afraid, who's in charge, who's neither. She's nineteen and has no framework yet for how good her instincts already are. \"House Valdris. I don't have anything useful yet. I'm still watching.\"",
+        "choices": [
+          {
+            "id": "lissel-choice-nothing",
+            "label": "That's fine.",
+            "nextNodeId": null
+          },
+          {
+            "id": "lissel-choice-encourage",
+            "label": "Watching is useful.",
+            "nextNodeId": "lissel-node-encourage"
+          }
+        ]
+      },
+      {
+        "id": "lissel-node-encourage",
+        "npcId": "npc-lissel-crane",
+        "text": "She writes something down, the way she always does after a conversation, to read back to herself later. \"I keep wondering why people like Petra or Oswin keep doing what costs them everything.\" She looks up. \"I don't want to make the mistake that proves I wasn't ready. So I watch first.\"",
+        "choices": [
+          {
+            "id": "lissel-choice-encourage-close",
+            "label": "You'll know when you're ready.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "affinity",
+              "value": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-halvard",
+    "npcId": "npc-halvard-senn",
+    "openingNodeId": "halvard-node-1",
+    "nodes": [
+      {
+        "id": "halvard-node-1",
+        "npcId": "npc-halvard-senn",
+        "text": "Halvard Senn notes the exits and choke points in the room before anything else about it, twenty-two years of garrison habit. \"House Valdris. I want a clear command structure and a clear objective. Tell me you have both.\"",
+        "choices": [
+          {
+            "id": "halvard-choice-yes",
+            "label": "You'll have both.",
+            "nextNodeId": "halvard-node-yes"
+          },
+          {
+            "id": "halvard-choice-unsure",
+            "label": "We're still figuring some of it out.",
+            "nextNodeId": "halvard-node-unsure"
+          }
+        ]
+      },
+      {
+        "id": "halvard-node-yes",
+        "npcId": "npc-halvard-senn",
+        "text": "He nods once, satisfied in the way a man is satisfied by a correct answer, not a comforting one. \"Then we'll get along.\"",
+        "choices": [
+          {
+            "id": "halvard-choice-yes-close",
+            "label": "Good.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "loyalty",
+              "value": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "halvard-node-unsure",
+        "npcId": "npc-halvard-senn",
+        "text": "He recites unit protocol under his breath, an old reflex when observing something not yet running clean. \"Then let's fix that before it costs someone.\"",
+        "choices": [
+          {
+            "id": "halvard-choice-unsure-close",
+            "label": "Agreed.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Halvard Senn: uneasy about unclear command structure. Wants it resolved before it costs someone."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-fenwick",
+    "npcId": "npc-fenwick-pale",
+    "openingNodeId": "fenwick-node-1",
+    "nodes": [
+      {
+        "id": "fenwick-node-1",
+        "npcId": "npc-fenwick-pale",
+        "text": "Fenwick Pale is cheerful about brokering berths the port registry would rather not log. \"House Valdris! What's moving -- or what needs to not be seen moving?\"",
+        "choices": [
+          {
+            "id": "fenwick-choice-nothing",
+            "label": "Nothing today.",
+            "nextNodeId": null
+          },
+          {
+            "id": "fenwick-choice-test",
+            "label": "Name a ship you haven't worked with in years.",
+            "nextNodeId": "fenwick-node-test"
+          }
+        ]
+      },
+      {
+        "id": "fenwick-node-test",
+        "npcId": "npc-fenwick-pale",
+        "text": "He rattles one off without hesitating -- a little memory test he runs on himself, unprompted. Then, switching to past tense the way he does when an arrangement is closing: \"That one was a good client. Was.\" He grins. \"My official client list is shorter than my real one, if that answers whatever you were actually asking.\"",
+        "choices": [
+          {
+            "id": "fenwick-choice-test-close",
+            "label": "It does.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dialogue-cutter",
+    "npcId": "npc-cutter",
+    "openingNodeId": "cutter-node-1",
+    "nodes": [
+      {
+        "id": "cutter-node-1",
+        "npcId": "npc-cutter",
+        "text": "Cutter is sharpening his blade, same time as always, no exceptions -- he'll finish before he answers anything. \"Digging through Breach wreckage. Sometimes what I find is worth more as a secret than as scrap.\" He doesn't look up yet.",
+        "choices": [
+          {
+            "id": "cutter-choice-nothing",
+            "label": "Carry on.",
+            "nextNodeId": null
+          },
+          {
+            "id": "cutter-choice-secret",
+            "label": "What's the most valuable secret you've found?",
+            "nextNodeId": "cutter-node-secret"
+          }
+        ]
+      },
+      {
+        "id": "cutter-node-secret",
+        "npcId": "npc-cutter",
+        "text": "He finishes the blade before answering -- he never starts a fight, but he's always ready to finish one, and answering too fast feels the same to him. \"Something worth the cost of my past, maybe. I'm trying to stop accumulating regrets before the price gets any higher.\" He doesn't say what it was.",
+        "choices": [
+          {
+            "id": "cutter-choice-secret-close",
+            "label": "Fair enough.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Cutter digs Breach wreckage for secrets worth more than scrap. Holds something back, deliberately."
             }
           }
         ]

@@ -488,7 +488,7 @@ export function applyPolitics(state: GameState, rng: Rng = Math.random): GameSta
       next = appendActivityLogEntry(
         next,
         'system',
-        'If Orren was right, Tessaly Ash is still waiting at the Wren Safe House in the Pale. The lead will not walk itself to your door.',
+        'If Orren was right, Tessaly Ash is still waiting at the Magpie Safe House in the Pale. The lead will not walk itself to your door.',
       )
     }
   }
