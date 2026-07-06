@@ -1,4 +1,5 @@
 import { FactionStamp } from './mapSymbols'
+import { dangerLabel, dangerBadgeClass, restrictionReason } from './dangerLevel'
 import './maps.css'
 
 const FACTION_SHORT_NAMES: Record<string, string> = {
@@ -7,14 +8,8 @@ const FACTION_SHORT_NAMES: Record<string, string> = {
   'faction-foundry-league': 'League',
   'faction-tallow-ring': 'Ring',
   'faction-restored': 'Restored',
-}
-
-const DANGER_LABELS: Record<number, string> = {
-  1: 'Low',
-  2: 'Moderate',
-  3: 'Elevated',
-  4: 'High',
-  5: 'Severe',
+  'faction-house-merrow': 'House Merrow',
+  'faction-house-sorn': 'House Sorn',
 }
 
 function tensionLabel(tension: number): string {
@@ -36,6 +31,8 @@ export interface DistrictLedgerEntry {
   contestedByFactionIds: string[]
   dangerLevel: number
   accessRestricted: boolean
+  minControlFactionStanding: number | null
+  tags: string[]
   narrativeSummary: string
   narrativeHook?: string
   hooks?: string[]
@@ -68,14 +65,12 @@ export function DistrictLedgerPanel({
     )
   }
 
+  const shortFactionName = (factionId: string) => FACTION_SHORT_NAMES[factionId] ?? factionId
   const factionName = entry.controllingFactionId
-    ? (FACTION_SHORT_NAMES[entry.controllingFactionId] ?? entry.controllingFactionId)
+    ? shortFactionName(entry.controllingFactionId)
     : entry.contestedByFactionIds.length > 0
-      ? `Contested — ${entry.contestedByFactionIds
-          .map((factionId) => FACTION_SHORT_NAMES[factionId] ?? factionId)
-          .join(' · ')}`
+      ? `Contested — ${entry.contestedByFactionIds.map(shortFactionName).join(' · ')}`
       : 'Open'
-  const dangerLabel = DANGER_LABELS[entry.dangerLevel] ?? String(entry.dangerLevel)
   const enforcementActive =
     isCompactBlacklisted && entry.controllingFactionId === 'faction-civic-compact' && !entry.accessRestricted
 
@@ -106,8 +101,11 @@ export function DistrictLedgerPanel({
       </h2>
       <div className="map-ledger-tags">
         <span className="badge">{factionName}</span>
-        <span className="badge">
-          {'▲'.repeat(entry.dangerLevel)} {dangerLabel}
+        <span
+          className={`badge danger-badge ${dangerBadgeClass(entry.dangerLevel)}`}
+          title={entry.tags.length > 0 ? entry.tags.join(', ') : undefined}
+        >
+          {'▲'.repeat(entry.dangerLevel)} {dangerLabel(entry.dangerLevel)} ({entry.dangerLevel}/5)
         </span>
         {entry.tension !== null && (
           <span className={`badge tension-badge ${tensionBadgeClass(entry.tension)}`}>
@@ -131,8 +129,12 @@ export function DistrictLedgerPanel({
             Compact enforcement active — travel is dangerous.
           </p>
         )}
-        {entry.accessRestricted && (
-          <p className="map-ledger-note">The gate wants clearance the house does not hold yet.</p>
+        {entry.accessRestricted && entry.minControlFactionStanding != null && entry.controllingFactionId && (
+          // Only add a separate note when there's a real, distinct mechanical requirement --
+          // districts restricted for narrative-only reasons (condemned, unofficial) already have
+          // that explanation in narrativeSummary above; repeating it verbatim here would be a
+          // redundant duplicate line, not a genuine second piece of information.
+          <p className="map-ledger-note">{restrictionReason(entry, shortFactionName)}</p>
         )}
       </div>
 

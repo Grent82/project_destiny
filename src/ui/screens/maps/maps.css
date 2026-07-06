@@ -133,14 +133,30 @@
   outline: none;
 }
 
-/* danger reads as a deepening ink wash */
+/* danger reads as a deepening ink wash -- kept subtle/parchment-toned rather than switching the
+   whole polygon to saturated traffic-light colors (see the small map-danger-dot marker below for
+   the legible, color-coded-per-tier indicator instead; destiny-s9iy). */
+.map-district--danger-1 { fill: rgba(70, 90, 60, 0.05); }
+.map-district--danger-2 { fill: rgba(99, 90, 40, 0.07); }
 .map-district--danger-3 { fill: rgba(99, 58, 28, 0.1); }
 .map-district--danger-4 { fill: rgba(112, 48, 26, 0.14); }
 .map-district--danger-5 { fill: rgba(112, 40, 24, 0.18); }
 
+.map-district--danger-1:hover { fill: rgba(70, 90, 60, 0.14); }
+.map-district--danger-2:hover { fill: rgba(99, 90, 40, 0.16); }
 .map-district--danger-3:hover { fill: rgba(99, 58, 28, 0.2); }
 .map-district--danger-4:hover { fill: rgba(112, 48, 26, 0.24); }
 .map-district--danger-5:hover { fill: rgba(112, 40, 24, 0.28); }
+
+/* Small color-coded danger marker on the city map label (destiny-s9iy) -- same tiers/colors as
+   the danger-badge-- classes in App.css, translated to SVG fill. */
+.map-danger-dot { stroke: rgba(0, 0, 0, 0.4); stroke-width: 0.75; }
+.danger-dot--low { fill: #4caf50; }
+.danger-dot--moderate { fill: #ff9800; }
+.danger-dot--elevated { fill: #ff5722; }
+.danger-dot--high { fill: #f44336; }
+.danger-dot--severe { fill: #b71c1c; }
+.danger-dot--restricted { fill: #9e9e9e; }
 
 /* the house hand: rougher, slightly fainter line */
 .map-district--hand {
@@ -668,6 +684,13 @@
 .map-legend-dot--people {
   background: #34506b;
 }
+
+.map-legend-dot--low { background: #4caf50; }
+.map-legend-dot--moderate { background: #ff9800; }
+.map-legend-dot--elevated { background: #ff5722; }
+.map-legend-dot--high { background: #f44336; }
+.map-legend-dot--severe { background: #b71c1c; }
+.map-legend-dot--restricted { background: #9e9e9e; }
 
 .map-legend-item--house {
   color: #a05a4a;

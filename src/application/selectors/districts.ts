@@ -89,6 +89,8 @@ export const selectDistrictMapEntries = createSelector(
       contestedByFactionIds: def.contestedByFactionIds,
       dangerLevel: def.dangerLevel,
       accessRestricted: def.accessRestricted,
+      minControlFactionStanding: def.minControlFactionStanding,
+      tags: def.tags,
       narrativeSummary: def.narrativeSummary,
       narrativeHook: def.narrativeHook,
       hooks: def.hooks,

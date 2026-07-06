@@ -11,6 +11,7 @@ import {
   cityWaterFeatures,
 } from './cityGeometry'
 import { CompassRose, FactionStamp, FerryMark, GateMark, HouseStampMark, ShaftMark, WaxSeal } from './mapSymbols'
+import { dangerLabel, dangerBadgeClass, restrictionReason } from './dangerLevel'
 import './maps.css'
 
 const BORDER_TITLES: Record<string, string> = {
@@ -21,11 +22,24 @@ const BORDER_TITLES: Record<string, string> = {
   restricted_gate: 'Restricted — clearance required',
 }
 
+const FACTION_SHORT_NAMES: Record<string, string> = {
+  'faction-civic-compact': 'the Civic Compact',
+  'faction-gilded-court': 'the Gilded Court',
+  'faction-foundry-league': 'the Foundry League',
+  'faction-tallow-ring': 'the Tallow Ring',
+  'faction-restored': 'the Restored',
+  'faction-house-merrow': 'House Merrow',
+  'faction-house-sorn': 'House Sorn',
+}
+
 export interface CityMapEntry {
   id: string
   name: string
   dangerLevel: number
   accessRestricted: boolean
+  minControlFactionStanding: number | null
+  tags: string[]
+  narrativeSummary: string
   isCurrent: boolean
   controllingFactionId: string | null
   borderTypes: Record<string, string>
@@ -144,6 +158,12 @@ export function CityMap({
             .filter(Boolean)
             .join(' ')
           const handDrawn = shape.surveyLayer === 'hand'
+          const dangerTooltip = `${dangerLabel(entry.dangerLevel)} danger (${entry.dangerLevel}/5)${
+            entry.tags.length > 0 ? ` — ${entry.tags.join(', ')}` : ''
+          }`
+          const restrictedTooltip = entry.accessRestricted
+            ? restrictionReason(entry, (factionId) => FACTION_SHORT_NAMES[factionId] ?? factionId)
+            : null
           return (
             <g key={shape.id} className={handDrawn ? 'map-layer-hand' : 'map-layer-official'}>
               <polygon
@@ -164,11 +184,10 @@ export function CityMap({
               >
                 <title>
                   {entry.name}
-                  {entry.accessRestricted
-                    ? ' — access restricted'
-                    : entry.isCurrent
-                      ? ' — you are here'
-                      : ''}
+                  {entry.isCurrent ? ' — you are here' : ''}
+                  {' — '}
+                  {dangerTooltip}
+                  {entry.accessRestricted ? ` — access restricted: ${restrictedTooltip}` : ''}
                 </title>
               </polygon>
               <text x={shape.label.x} y={shape.label.y} className="map-district-name">
@@ -183,8 +202,14 @@ export function CityMap({
                   className="map-faction-stamp"
                 />
               )}
+              <circle
+                cx={shape.label.x - 40}
+                cy={shape.label.y + 14}
+                r="4"
+                className={`map-danger-dot ${entry.accessRestricted ? 'danger-dot--restricted' : dangerBadgeClass(entry.dangerLevel).replace('danger-badge', 'danger-dot')}`}
+              />
               <text x={shape.label.x} y={shape.label.y + 18} className="map-district-meta">
-                {'▲'.repeat(entry.dangerLevel)}
+                {'▲'.repeat(entry.dangerLevel)} {entry.dangerLevel}/5
                 {entry.accessRestricted ? ' ✕' : ''}
               </text>
               {shape.id === houseDistrictId && (
@@ -293,12 +318,20 @@ export function CityMap({
         <span className="map-legend-item">⚷ House Valdris</span>
         <span className="map-legend-item">gate · bridge · ferry drawn as marked</span>
         <span className="map-legend-item">◆ expedition territory</span>
-        <span className="map-legend-item">▲ danger</span>
-        <span className="map-legend-item">✕ restricted</span>
+        <span className="map-legend-item">✕ restricted (blocked by faction clearance, decree, or condemnation)</span>
         <span className="map-legend-item">
           travel costs {travelTimeCost} time slot{travelTimeCost === 1 ? '' : 's'}
         </span>
         <span className="map-legend-item map-legend-item--hand">italic entries: added in the house hand</span>
+      </figcaption>
+      <figcaption className="map-legend map-legend--danger" role="group" aria-label="Danger level legend">
+        <span className="map-legend-item map-legend-item--house">Danger:</span>
+        {[1, 2, 3, 4, 5].map((level) => (
+          <span className="map-legend-item" key={level}>
+            <span className={`map-legend-dot ${dangerBadgeClass(level).replace('danger-badge', 'map-legend-dot')}`} />
+            {'▲'.repeat(level)} {dangerLabel(level)} ({level}/5)
+          </span>
+        ))}
       </figcaption>
     </figure>
   )

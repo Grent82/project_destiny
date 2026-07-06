@@ -2307,6 +2307,38 @@ strong { color: var(--text-secondary); }
   color: #fff;
 }
 
+/* ── District danger badges (destiny-s9iy) ──────────────────
+   1-5 authored dangerLevel scale, distinct from tension above. */
+.danger-badge--low {
+  background: rgba(76, 175, 80, 0.85);
+  color: #fff;
+}
+
+.danger-badge--moderate {
+  background: rgba(255, 152, 0, 0.85);
+  color: #fff;
+}
+
+.danger-badge--elevated {
+  background: rgba(255, 87, 34, 0.85);
+  color: #fff;
+}
+
+.danger-badge--high {
+  background: rgba(244, 67, 54, 0.85);
+  color: #fff;
+}
+
+.danger-badge--severe {
+  background: rgba(183, 28, 28, 0.9);
+  color: #fff;
+}
+
+.danger-badge--restricted {
+  background: rgba(158, 158, 158, 0.85);
+  color: #fff;
+}
+
 /* ── Contract board ──────────────────────────────────────── */
 
 /* Quest lead card chips (narrative-first layout) */

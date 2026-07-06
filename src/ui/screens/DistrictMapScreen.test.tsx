@@ -84,7 +84,9 @@ describe('DistrictMapScreen — city map and ledger panel', () => {
     await user.click(screen.getByRole('button', { name: /Gilded Heights — access restricted/ }))
     const panel = districtLedger()
     expect(within(panel).getByText('Access restricted')).toBeInTheDocument()
-    expect(within(panel).getByText(/clearance the house does not hold yet/i)).toBeInTheDocument()
+    // Grounded, per-district reason (destiny-s9iy) rather than a generic placeholder --
+    // Gilded Heights has an authored minControlFactionStanding requirement.
+    expect(within(panel).getByText(/Requires standing 20\+ with/i)).toBeInTheDocument()
     expect(within(panel).queryByRole('button', { name: /Travel/ })).toBeNull()
   })
 
@@ -101,5 +103,36 @@ describe('DistrictMapScreen — city map and ledger panel', () => {
     const panel = districtLedger()
     const thumbnail = within(panel).getByRole('img', { name: 'The Warrens district' })
     expect(thumbnail).toHaveAttribute('src', '/districts/the-warrens.jpg')
+  })
+})
+
+describe('DistrictMapScreen — danger legend and numeric display (destiny-s9iy)', () => {
+  it('shows a danger legend explaining all 5 tiers with their numeric scale', () => {
+    renderDistrictMap()
+    const legend = screen.getByRole('group', { name: 'Danger level legend' })
+    expect(within(legend).getByText(/▲ Low \(1\/5\)/)).toBeInTheDocument()
+    expect(within(legend).getByText(/▲▲ Moderate \(2\/5\)/)).toBeInTheDocument()
+    expect(within(legend).getByText(/▲▲▲ Elevated \(3\/5\)/)).toBeInTheDocument()
+    expect(within(legend).getByText(/▲▲▲▲ High \(4\/5\)/)).toBeInTheDocument()
+    expect(within(legend).getByText(/▲▲▲▲▲ Severe \(5\/5\)/)).toBeInTheDocument()
+  })
+
+  it('shows the numeric danger value next to the ▲ symbols in the ledger panel', () => {
+    renderDistrictMap()
+    // The Pale is current, dangerLevel 3
+    const panel = districtLedger()
+    expect(within(panel).getByText(/▲▲▲ Elevated \(3\/5\)/)).toBeInTheDocument()
+  })
+
+  it('explains a structurally-condemned restricted district with its real narrative reason, not a generic placeholder', async () => {
+    const user = userEvent.setup()
+    renderDistrictMap()
+
+    // The Hollows has accessRestricted:true but no minControlFactionStanding -- its restriction
+    // is narrative (condemned after structural collapse), not a faction-standing gate.
+    await user.click(screen.getByRole('button', { name: /The Hollows — access restricted/ }))
+    const panel = districtLedger()
+    expect(within(panel).getByText(/what Valdenmoor looks like when nobody is watching/i)).toBeInTheDocument()
+    expect(within(panel).queryByText(/Requires standing/i)).toBeNull()
   })
 })
