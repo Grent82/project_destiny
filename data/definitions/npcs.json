@@ -441,7 +441,7 @@
       {
         "type": "debtor",
         "targetId": "npc-garet-doyle",
-        "note": "Owes Doyle silence and a favor from the Breach winter \u2014 Doyle sheltered him when a creditor was looking. Statutes he recites under his breath include one about shelter debts.",
+        "note": "Owes Doyle silence and a favor from a hard winter, not long after the house fell \u2014 Doyle sheltered him when a creditor was looking. Statutes he recites under his breath include one about shelter debts.",
         "visibility": "hidden"
       }
     ],
@@ -662,13 +662,7 @@
       "privateNeed": "To stop being the man who let it fall.",
       "lineTheyWontCross": "Selling the family crest or serving those who destroyed it."
     },
-    "loyalties": [
-      {
-        "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Former household retainer. Knows the family crest history and who took what during the fall."
-      }
-    ],
+    "loyalties": [],
     "startingEquipment": {
       "clothing": {
         "head": null,
@@ -1581,7 +1575,7 @@
     "districtId": "district-the-pale",
     "description": "Innkeeper of The Ashen Cup. Knows everyone who passes through, and owes a few debts to The Collectors.",
     "origin": "The Pale",
-    "background": "Son of an innkeeper whose establishment served Valdris retainers before the Breach. The locked box behind the bar contains service tokens, ring fragments, and unpaid writs from the old house. Memorises orders because his father memorised noble table habits for a Valdris patron who later vanished. Has been waiting for someone to ask about the box for years.",
+    "background": "Son of an innkeeper whose establishment served Valdris retainers for years before the house fell. The locked box behind the bar contains service tokens, ring fragments, and unpaid writs from before the seizure. Memorises orders because his father memorised noble table habits for a Valdris patron who never came back once the house was seized. Has been waiting for someone to ask about the box for years.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -1676,13 +1670,13 @@
     "loyalties": [
       {
         "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Father ran inn serving Valdris retainers. Locked box contains service tokens and unpaid writs from the old house."
+        "targetId": "npc-mira",
+        "note": "Father ran the inn serving Valdris retainers for years. Locked box contains service tokens and unpaid writs from before the house fell."
       },
       {
         "type": "old-comrade",
         "targetId": "npc-verek-holst",
-        "note": "Sheltered Verek from a creditor during the Breach winter. Verek has never fully repaid it. Garet has not asked.",
+        "note": "Sheltered Verek from a creditor during a hard winter, not long after the house fell. Verek has never fully repaid it. Garet has not asked.",
         "visibility": "rumored"
       }
     ],
@@ -1718,7 +1712,7 @@
     "districtId": "district-the-pale",
     "description": "A healer who trades in information as readily as remedies.",
     "origin": "The Pale",
-    "background": "Her foreknowledge comes from reading confessions, not visions. Has a dead sister erased from temple records after the Breach \u2014 smuggled out under plague blankets by a patron whose name she has been hunting ever since. Her information network is built entirely on confessions she was never meant to keep. The shrine is as much an archive as a place of worship.",
+    "background": "Her foreknowledge comes from reading confessions, not visions. Has a dead sister erased from temple records years ago \u2014 smuggled out under plague blankets by a patron whose name she has been hunting ever since. Her information network is built entirely on confessions she was never meant to keep. The shrine is as much an archive as a place of worship.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -1813,12 +1807,12 @@
       {
         "type": "dead-spouse",
         "targetId": "npc-ghost-dead-sister-vael",
-        "note": "Sister erased from temple records after the Breach \u2014 smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
+        "note": "Sister erased from temple records years ago \u2014 smuggled out under plague blankets. Source of Vael's information network: confessions, not visions."
       },
       {
         "type": "witness",
         "targetId": "npc-old-maret",
-        "note": "Both present at the same Breach event. Vael does not acknowledge this publicly. She confesses it when Maret is threatened.",
+        "note": "Both present during the same hard winter, years ago. Vael does not acknowledge this publicly. She confesses it when Maret is threatened.",
         "visibility": "hidden"
       }
     ],
@@ -1854,7 +1848,7 @@
     "districtId": "district-harbor",
     "description": "Guild registrar. Officious by nature, he can unlock contract access \u2014 for a price.",
     "origin": "Harbor Ward",
-    "background": "Son of a municipal notary who copied all noble grants before the Breach. Three copies of every document exist because his family lost everything to forged records. Knows which legal form erased House Valdris the first time \u2014 and has kept a copy of that form. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
+    "background": "Son of a municipal notary who copied all noble grants for the city registry. Three copies of every document exist because his family lost everything to a single forged paper, years ago. Knows which document was used to seize House Valdris \u2014 and has kept a copy of it. Has been waiting for the right person to hand it to for years. His nerve is not infinite.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -1949,8 +1943,8 @@
     "loyalties": [
       {
         "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Father copied all noble grants before the Breach. Holds copy of the legal form that erased Valdris the first time."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Father copied all noble grants for the registry. Holds a copy of the forged promissory note used to seize House Valdris."
       }
     ],
     "schedule": {
@@ -2664,7 +2658,7 @@
     "districtId": "district-the-hollows",
     "description": "Remembers the city before the Breach. Not all of her memories are safe.",
     "origin": "The Hollows",
-    "background": "Lower household accounts keeper for House Valdris before the Breach. Survived by knowing who was starving before they admitted it. Falsified grain ledgers during a pre-Breach winter riot to keep the house fed. Last living witness to the Valdris servants hall. Has not spoken the house name aloud in years, but refers to the old rooms by name as if she still works there.",
+    "background": "Lower household accounts keeper for House Valdris for decades, going back to the founder's own generation. Survived by knowing who was starving before they admitted it. Falsified grain ledgers during a hard winter riot years ago to keep the house fed. Last living witness to the Valdris servants hall as it was before the Court seized it. Has not spoken the house name aloud since the fall, but refers to the old rooms by name as if she still works there.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -2763,13 +2757,13 @@
       },
       {
         "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Was lower household accounts keeper. Falsified grain ledgers during pre-Breach winter riot. Last living witness to the servants hall."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Was lower household accounts keeper. Falsified grain ledgers during a hard winter riot years ago. Last living witness to the servants hall as it stood before Vorne's case seized the house."
       },
       {
         "type": "witness",
         "targetId": "npc-sister-vael",
-        "note": "Knows what Vael saw at the Breach. Has kept silence for years. Calls it a debt she has not collected.",
+        "note": "Knows what Vael saw during that same hard winter. Has kept silence for years. Calls it a debt she has not collected.",
         "visibility": "hidden"
       }
     ],
@@ -2803,7 +2797,7 @@
     "name": "Harlen Voss",
     "npcType": "enemy",
     "origin": "The Warrens",
-    "background": "Generational creditor lineage. His house loaned into ruin before the Breach and survived by purchasing Valdris arrears at collapse price. He is the descendant of the man who purchased the Valdris default and turned it into a standing claim. His family wealth began with a coerced signature obtained under duress \u2014 making his entire legal claim void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests \u2014 not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
+    "background": "Generational creditor lineage. His house rebuilt itself over the generations by purchasing distressed debt at collapse price. When House Valdris's arrears went up for private sale eighteen months ago, he was the one who bought the claim and turned it into a standing debt. His family's method began with a coerced signature obtained under duress from an earlier mark \u2014 the same method used against Valdris, and just as void if anyone can prove the circumstances. His debt collection operations serve House Merrow's interests \u2014 not always by contract, but by alignment. Merrow provides him cover; he provides Merrow the legal pressure they cannot apply directly.",
     "rarity": "uncommon",
     "status": "mercenary",
     "factionAffinityId": "faction-tallow-ring",
@@ -2884,8 +2878,8 @@
     "loyalties": [
       {
         "type": "creditor",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Grandfather purchased Valdris arrears after the Breach. Wealth began with a coerced default. Claim is legally void if duress can be proven."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Bought the Valdris claim once her case against the house went through. Wealth began with a coerced default. Claim is legally void if duress can be proven."
       },
       {
         "type": "handler",
@@ -3111,8 +3105,8 @@
     "loyalties": [
       {
         "type": "rival",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "House stood by while Valdris was stripped. Legitimacy structurally depends on Valdris staying fallen. Keeps the list of who was taken."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Watched Vorne build the case that stripped House Valdris and said nothing. Legitimacy structurally depends on Valdris staying fallen. Keeps the list of who was taken."
       },
       {
         "type": "rival",
@@ -3705,7 +3699,7 @@
     "npcType": "world",
     "districtId": "district-the-northbank",
     "origin": "Municipal archive quarter, Northbank",
-    "background": "A bent record-keeper who can recite old property lines and burial permissions from memory. Survived the Breach by being too useful to remove. Kept the one unburned ledger naming which house benefited from the Valdris erasure. Has been waiting for someone to ask the right question.",
+    "background": "A bent record-keeper who can recite old property lines and burial permissions from memory. Survived decades of municipal purges by being too useful to remove. Kept the one unburned ledger naming which house benefited from House Valdris's seizure. Has been waiting for someone to ask the right question.",
     "rarity": "rare",
     "status": "citizen",
     "factionAffinityId": "faction-civic-compact",
@@ -3790,8 +3784,8 @@
     "loyalties": [
       {
         "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Kept the one unburned ledger naming which house benefited from the Valdris erasure."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Kept the one unburned ledger naming which house benefited from House Valdris's seizure."
       }
     ],
     "startingEquipment": {
@@ -3820,7 +3814,7 @@
     "npcType": "world",
     "districtId": "district-the-northbank",
     "origin": "Former noble quarter, now the Northbank margins",
-    "background": "Her house once served as a cadet ally to House Valdris. Sold Valdris property under coercion during the Breach. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale \u2014 the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
+    "background": "Her house once served as a cadet ally to House Valdris. Sold Valdris property under coercion when the house fell, eighteen months ago. Now lives like a clerk and claims no servants. Holds the original transfer documents from the coerced sale \u2014 the same documents that make Harlen Voss's claim potentially void. She wants restitution before she can confess.",
     "rarity": "uncommon",
     "status": "citizen",
     "factionAffinityId": null,
@@ -3883,7 +3877,7 @@
         ]
       },
       {
-        "text": "keeps a record of every favor she has received since the Breach",
+        "text": "keeps a record of every favor she has received since the house fell",
         "tags": [
           "meticulous",
           "compulsive"
@@ -3905,8 +3899,8 @@
     "loyalties": [
       {
         "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Sold Valdris property under coercion. Holds the original transfer documents."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Sold Valdris property under coercion when the case closed. Holds the original transfer documents."
       },
       {
         "type": "rival",
@@ -4025,7 +4019,7 @@
     "loyalties": [
       {
         "type": "witness",
-        "targetId": "npc-ghost-valdris-fall",
+        "targetId": "npc-mira",
         "note": "Served in Valdris halls before the fall. Knows where family seals and heir artifacts were hidden."
       }
     ],
@@ -4055,7 +4049,7 @@
     "npcType": "enemy",
     "districtId": "district-the-northbank",
     "origin": "Credit-house district, Northbank",
-    "background": "A debt enforcer from a family ruined by House Valdris in pre-Breach power games. Hates the return of Valdris as historical revenge, not ideology. Polite always. Never loud. His father forged the paper trail that destroyed the old house \u2014 which means if anyone finds that paper, Malk's grievance becomes an embarrassment and his methods a crime.",
+    "background": "A debt enforcer from a family that lost a bitter rivalry with House Valdris a generation ago, in ordinary trade disputes gone bad. Hates the house on old, personal grounds, not ideology. Polite always. Never loud. Quietly helped grease the political groundwork behind the foreclosure that took House Valdris eighteen months ago \u2014 which means if that becomes known, his grievance becomes an embarrassment and his methods a crime.",
     "rarity": "uncommon",
     "status": "noble",
     "factionAffinityId": "faction-house-merrow",
@@ -4134,14 +4128,14 @@
     ],
     "motivation": {
       "publicGoal": "Collection of legitimate outstanding accounts.",
-      "privateNeed": "To see House Valdris fail again, quietly, with paperwork.",
-      "lineTheyWontCross": "Allowing anyone to find the forged paper trail his father left."
+      "privateNeed": "To see House Valdris fail for good, quietly, with paperwork.",
+      "lineTheyWontCross": "Allowing anyone to trace the foreclosure's political groundwork back to him."
     },
     "loyalties": [
       {
         "type": "rival",
-        "targetId": "npc-ghost-valdris-fall",
-        "note": "Family ruined by Valdris in pre-Breach dealings. Father forged the paper trail that destroyed the house."
+        "targetId": "npc-enemy-cassia-vorne",
+        "note": "Family lost a rivalry with Valdris a generation ago. Quietly helped grease the groundwork for the foreclosure Vorne built the case for."
       },
       {
         "type": "handler",

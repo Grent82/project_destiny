@@ -620,7 +620,7 @@
       {
         "id": "garet-node-box",
         "npcId": "npc-garet-doyle",
-        "text": "Garet's hand stops on the glass. \"Old things. Service tokens. Ring fragments. A few writs nobody's paid in years.\" He doesn't reach for it. \"All from your house, before the Breach. I've been waiting for someone who'd know what to do with them without making me responsible for whatever happens next.\"",
+        "text": "Garet's hand stops on the glass. \"Old things. Service tokens. Ring fragments. A few writs nobody's paid.\" He doesn't reach for it. \"All from your house, from before it fell. I've been waiting for someone who'd know what to do with them without making me responsible for whatever happens next.\"",
         "choices": [
           {
             "id": "garet-choice-box-close",
@@ -628,7 +628,7 @@
             "nextNodeId": null,
             "outcome": {
               "type": "activityLog",
-              "value": "Garet Doyle keeps a locked box of pre-Breach Valdris relics behind the bar -- service tokens, ring fragments, unpaid writs. He's waiting for you to decide what happens to them."
+              "value": "Garet Doyle keeps a locked box of Valdris relics from before the house fell behind the bar -- service tokens, ring fragments, unpaid writs. He's waiting for you to decide what happens to them."
             }
           }
         ]
@@ -846,7 +846,7 @@
       {
         "id": "maret-node-promise",
         "npcId": "npc-old-maret",
-        "text": "'He said if it ever happened again, the family would be there. Be ready.' She looks out the window at something you can't see. 'The Breach wasn't the first. He knew that. I think you're starting to understand it too.'",
+        "text": "'He said if trouble ever came for this family, he'd be there. Be ready.' She looks out the window at something you can't see. 'He knew what growing too fast in this city costs a house. He warned your father it would come to this eventually. I think you're starting to understand it too.'",
         "choices": [
           {
             "id": "maret-choice-listen",
@@ -854,7 +854,7 @@
             "nextNodeId": null,
             "outcome": {
               "type": "mainQuestHint",
-              "value": "Old Maret suggests the Breach may not have been the first — and your grandfather knew."
+              "value": "Old Maret says your grandfather warned this would happen eventually -- a house growing too fast always draws the attention of whoever it's growing past."
             }
           }
         ]
@@ -949,7 +949,7 @@
       {
         "id": "vael-node-sister",
         "npcId": "npc-sister-vael",
-        "text": "Sister Vael doesn't light a candle this time -- she blows one out instead. \"I had a sister. The temple erased her from its own records after the Breach, smuggled out under plague blankets by someone whose name I have been hunting since.\" She looks at you evenly. \"I don't do this for penance. I do it so no one else's sister disappears from a book and stays disappeared.\"",
+        "text": "Sister Vael doesn't light a candle this time -- she blows one out instead. \"I had a sister. The temple erased her from its own records years ago, smuggled out under plague blankets by someone whose name I have been hunting since.\" She looks at you evenly. \"I don't do this for penance. I do it so no one else's sister disappears from a book and stays disappeared.\"",
         "choices": [
           {
             "id": "vael-choice-sister-help",
@@ -1441,7 +1441,7 @@
       {
         "id": "orven-node-1",
         "npcId": "npc-orven-pell",
-        "text": "Orven Pell doesn't greet you by name. When he finally speaks, he starts, as always, with a date. \"Filed the ninth of Ashfall, the year of the Breach.\" Only then does he look up. \"If you know who I am, you know what I'm holding. If Merrow knows the same, this conversation has a clock on it.\"",
+        "text": "Orven Pell doesn't greet you by name. When he finally speaks, he starts, as always, with a date. \"Filed the ninth of Ashfall, eighteen months back.\" Only then does he look up. \"If you know who I am, you know what I'm holding. If Merrow knows the same, this conversation has a clock on it.\"",
         "choices": [
           {
             "id": "orven-choice-merrow",
@@ -1862,7 +1862,7 @@
       {
         "id": "alis-node-1",
         "npcId": "npc-alis-vey",
-        "text": "Alis Vey speaks of her house in the past tense, without affect, the way she speaks of everything from before. \"House Valdris. My family was a cadet ally of yours, once. I sold your property under coercion during the Breach.\" She says it plainly, like a filed fact, not a confession.",
+        "text": "Alis Vey speaks of her house in the past tense, without affect, the way she speaks of everything from before. \"House Valdris. My family was a cadet ally of yours, once. I sold your property under coercion when your house fell.\" She says it plainly, like a filed fact, not a confession.",
         "choices": [
           {
             "id": "alis-choice-nothing",
@@ -1883,7 +1883,7 @@
       {
         "id": "alis-node-restitution",
         "npcId": "npc-alis-vey",
-        "text": "She keeps a record of every favor she's received since the Breach -- this would be one more line in it, if she let it. \"I hold the original transfer documents. The same ones that could void the claim built on my coercion.\" A pause. \"I want to give something back before I confess to holding them. Not the other way around.\"",
+        "text": "She keeps a record of every favor she's received since the house fell -- this would be one more line in it, if she let it. \"I hold the original transfer documents. The same ones that could void the claim built on my coercion.\" A pause. \"I want to give something back before I confess to holding them. Not the other way around.\"",
         "choices": [
           {
             "id": "alis-choice-restitution-close",
