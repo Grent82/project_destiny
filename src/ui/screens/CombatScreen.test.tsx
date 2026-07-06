@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import { createGameStore, gameActions } from '../../application'
+import type { ActiveCombatState } from '../../domain'
 import { AppProviders } from '../app/AppProviders'
 import { CombatScreen } from './CombatScreen'
 
@@ -46,7 +47,7 @@ describe('CombatScreen', () => {
         .length,
     ).toBeGreaterThan(0)
 
-    await user.click(screen.getByRole('button', { name: 'Attack' }))
+    await user.click(screen.getByRole('button', { name: /^Attack/ }))
 
     expect(screen.getAllByText(/strikes|lands a blow|connects|goes wide|misses|deflected/i).length).toBeGreaterThan(0)
   })
@@ -192,5 +193,85 @@ describe('CombatScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Conclude and Return to Work Board' }))
 
     expect(screen.getByText('Work Board destination')).toBeInTheDocument()
+  })
+})
+
+describe('CombatScreen — target preview and risk assessment (destiny-8s3n)', () => {
+  function renderActiveEncounter(mutate?: (activeCombat: ActiveCombatState) => ActiveCombatState) {
+    const store = createGameStore()
+    store.dispatch(gameActions.startCombatEncounter())
+    const activeCombat = store.getState().game.activeCombat
+    if (!activeCombat) throw new Error('Expected seeded combat encounter to exist in test setup.')
+
+    if (mutate) {
+      store.dispatch(gameActions.replaceGameState({ ...store.getState().game, activeCombat: mutate(activeCombat) }))
+    }
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <CombatScreen />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+    return store
+  }
+
+  it('shows an auto-target preview with expected damage and hit chance on the Attack button', () => {
+    renderActiveEncounter()
+    const attackButton = screen.getByRole('button', { name: /^Attack/ })
+    expect(attackButton).toHaveTextContent(/Auto-target: .+ \(HP \d+\/\d+\)/)
+    expect(attackButton).toHaveTextContent(/Expected: \d+-\d+ damage/)
+    expect(attackButton).toHaveTextContent(/\d+% hit chance/)
+  })
+
+  it('shows the real -30% mitigation and expiration on the Guard button', () => {
+    renderActiveEncounter()
+    const guardButton = screen.getByRole('button', { name: /^Guard/ })
+    expect(guardButton).toHaveTextContent('🛡')
+    expect(guardButton).toHaveTextContent('−30% damage taken')
+    expect(guardButton).toHaveTextContent('Expires when you act again')
+  })
+
+  it('shows a directional arrow on Advance and Retreat previews', () => {
+    renderActiveEncounter((activeCombat) => ({ ...activeCombat, range: 'medium' }))
+    expect(screen.getByRole('button', { name: /^Advance/ })).toHaveTextContent('→')
+    expect(screen.getByRole('button', { name: /^Retreat/ })).toHaveTextContent('←')
+  })
+
+  it('disables Advance and explains why when already at the closest range', () => {
+    renderActiveEncounter((activeCombat) => ({ ...activeCombat, range: 'close' }))
+    const advanceButton = screen.getByRole('button', { name: /^Advance/ })
+    expect(advanceButton).toBeDisabled()
+    expect(advanceButton).toHaveAttribute('title', expect.stringMatching(/already at closest range/i))
+  })
+
+  it('disables Retreat and explains why when already at the farthest range', () => {
+    renderActiveEncounter((activeCombat) => ({ ...activeCombat, range: 'distant' }))
+    const retreatButton = screen.getByRole('button', { name: /^Retreat/ })
+    expect(retreatButton).toBeDisabled()
+    expect(retreatButton).toHaveAttribute('title', expect.stringMatching(/already at farthest range/i))
+  })
+
+  it('disables Guard and explains why when the active ally already braced this round', () => {
+    renderActiveEncounter((activeCombat) => ({
+      ...activeCombat,
+      combatants: activeCombat.combatants.map((c) =>
+        c.combatantId === activeCombat.activeCombatantId ? { ...c, guardCooldown: true } : c,
+      ),
+    }))
+    const guardButton = screen.getByRole('button', { name: /^Guard/ })
+    expect(guardButton).toBeDisabled()
+    expect(guardButton).toHaveAttribute('title', expect.stringMatching(/already braced this round/i))
+  })
+
+  it('explains disabled buttons with a "not your turn" reason when it is not the ally turn', () => {
+    renderActiveEncounter((activeCombat) => ({
+      ...activeCombat,
+      activeCombatantId: activeCombat.combatants.find((c) => c.side === 'enemies')!.combatantId,
+    }))
+    const attackButton = screen.getByRole('button', { name: /^Attack/ })
+    expect(attackButton).toBeDisabled()
+    expect(attackButton).toHaveAttribute('title', expect.stringContaining('Not your turn'))
   })
 })

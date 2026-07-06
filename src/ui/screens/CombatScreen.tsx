@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { gameActions, selectCombatScreenState, selectLastEncounterSummary } from '../../application'
+import { gameActions, selectCombatScreenState, selectCombatActionPreviews, selectLastEncounterSummary } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const RANGE_LABELS: Record<string, { label: string; description: string }> = {
@@ -44,6 +44,7 @@ export function CombatScreen() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const combat = useAppSelector(selectCombatScreenState)
+  const actionPreviews = useAppSelector(selectCombatActionPreviews)
   const lastEncounterSummary = useAppSelector(selectLastEncounterSummary)
   const inactiveReturnRoute = lastEncounterSummary?.linkedQuestId ? '/contracts' : '/dashboard'
   const inactiveReturnLabel = lastEncounterSummary?.linkedQuestId ? 'Return to Work Board' : 'Return to Dashboard'
@@ -56,6 +57,9 @@ export function CombatScreen() {
         : combat.activeCombatantName
           ? `${combat.activeCombatantName} is not under player control right now. Enemy turns and skipped turns resolve automatically.`
           : 'The encounter is resolving automatically.'
+  const notYourTurnReason = combat.activeCombatantName
+    ? `Not your turn — ${combat.activeCombatantName} is acting now.`
+    : 'Not your turn — the encounter is resolving automatically.'
 
   return (
     <section className="screen-panel">
@@ -162,17 +166,36 @@ export function CombatScreen() {
           </div>
 
           <div className="combat-action-row">
-            {ACTION_BRIEFS.map((action) => (
-              <button
-                key={action.id}
-                className="action-button"
-                disabled={!combat.canAct}
-                onClick={() => dispatch(gameActions.performCombatAction(action.id))}
-                type="button"
-              >
-                {action.label}
-              </button>
-            ))}
+            {ACTION_BRIEFS.map((action) => {
+              const preview = actionPreviews.find((p) => p.id === action.id) ?? null
+              const disabled = !combat.canAct || preview?.wasteful === true
+              const title = !combat.canAct
+                ? notYourTurnReason
+                : (preview?.disabledReason ?? preview?.tooltip ?? action.detail)
+              return (
+                <button
+                  key={action.id}
+                  className="action-button combat-action-button"
+                  disabled={disabled}
+                  onClick={() => dispatch(gameActions.performCombatAction(action.id))}
+                  title={title}
+                  type="button"
+                >
+                  <span className="combat-action-label">{action.label}</span>
+                  {combat.canAct && preview?.disabledReason && (
+                    <span className="combat-action-preview combat-action-preview--locked">
+                      🔒 {preview.disabledReason}
+                    </span>
+                  )}
+                  {combat.canAct && !preview?.disabledReason && preview?.previewLine && (
+                    <span className="combat-action-preview">{preview.previewLine}</span>
+                  )}
+                  {combat.canAct && !preview?.disabledReason && preview?.riskLine && (
+                    <span className="combat-action-risk">{preview.riskLine}</span>
+                  )}
+                </button>
+              )
+            })}
           </div>
           <dl className="combat-action-briefs">
             {ACTION_BRIEFS.map((action) => (

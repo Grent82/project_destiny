@@ -154,6 +154,53 @@ function buildMissMessage(actorName: string, targetName: string, rng: Rng): stri
   return `${actorName} ${phrases[randomIndex(phrases.length, rng)]} ${targetName}`
 }
 
+/**
+ * Hit chance for `actor` attacking `target` at the given range — the exact formula `attack()`
+ * rolls against. Exposed so the UI can preview accuracy before the player commits to an action,
+ * without duplicating (and risking drift from) the resolution math.
+ */
+export function computeAttackAccuracy(
+  actor: CombatantState,
+  target: CombatantState,
+  range: CombatRange,
+): number {
+  const weapon = getWeaponProfile(actor.equippedWeaponId)
+  const armor = getArmorProfile(target.equippedArmorId)
+  const rangeOffset = getRangeModifier(actor.equippedWeaponId, range)
+  const weaponAccuracyModifier = weapon.accuracy - UNARMED_PROFILE.accuracy
+  return Math.min(
+    99,
+    Math.max(1, actor.accuracy + weaponAccuracyModifier + rangeOffset - armor.evasionPenalty),
+  )
+}
+
+/**
+ * Post-mitigation damage bounds (min/max, pre-crit) for `actor` hitting `target` — the same
+ * effectiveDamageMin/Max/soak/guard math `attack()` uses to roll actual damage. Exposed for
+ * UI preview for the same reason as computeAttackAccuracy above.
+ */
+export function computeAttackDamageRange(
+  actor: CombatantState,
+  target: CombatantState,
+): { min: number; max: number } {
+  const weapon = getWeaponProfile(actor.equippedWeaponId)
+  const armor = getArmorProfile(target.equippedArmorId)
+  const effectiveDamageMin = Math.max(
+    1,
+    actor.damageMin + (weapon.damageMin - UNARMED_PROFILE.damageMin),
+  )
+  const effectiveDamageMax = Math.max(
+    effectiveDamageMin,
+    actor.damageMax + (weapon.damageMax - UNARMED_PROFILE.damageMax),
+  )
+  const effectiveSoak = Math.max(0, armor.soak - weapon.armorPiercing)
+  const guardMitigation = target.guarding ? 0.7 : 1
+  return {
+    min: Math.max(0, Math.round((effectiveDamageMin - effectiveSoak) * guardMitigation)),
+    max: Math.max(0, Math.round((effectiveDamageMax - effectiveSoak) * guardMitigation)),
+  }
+}
+
 export function attack(encounter: ActiveCombatState, actorId: string, rng: Rng): ActiveCombatState {
   const actor = getCombatantById(encounter, actorId)
 

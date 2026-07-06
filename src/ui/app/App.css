@@ -1025,6 +1025,37 @@ strong { color: var(--text-secondary); }
   margin-top: 1.5rem;
 }
 
+.combat-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  text-align: left;
+  min-width: 11rem;
+}
+
+.combat-action-label {
+  font-weight: 600;
+}
+
+.combat-action-preview {
+  font-size: 0.75em;
+  font-weight: 400;
+  color: var(--text-muted);
+  white-space: normal;
+}
+
+.combat-action-preview--locked {
+  color: var(--text-muted);
+}
+
+.combat-action-risk {
+  font-size: 0.75em;
+  font-weight: 400;
+  color: #e0a030;
+  white-space: normal;
+}
+
 .combat-action-briefs {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
