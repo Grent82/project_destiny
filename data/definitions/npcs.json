@@ -1817,9 +1817,9 @@
       }
     ],
     "schedule": {
-      "morning": "poi-pale-wren-safe-house",
-      "afternoon": "poi-pale-wren-safe-house",
-      "evening": "poi-pale-wren-safe-house"
+      "morning": "poi-mireward-shrine",
+      "afternoon": "poi-mireward-shrine",
+      "evening": "poi-mireward-shrine"
     },
     "startingEquipment": {
       "clothing": {
@@ -1888,6 +1888,7 @@
       "zeal": 35
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-torvald-messe",
     "ageBand": "middle",
     "sex": "man",
     "appearanceTags": [
@@ -2204,9 +2205,9 @@
     "name": "Fenwick Pale",
     "npcType": "world",
     "districtId": "district-ironworks",
-    "description": "Ship broker who knows which captains ask no questions.",
+    "description": "Barge broker who knows which captains ask no questions.",
     "origin": "Ironworks",
-    "background": "Fenwick brokers berths and routes for vessels the port registry prefers not to log. He is cheerful about it.",
+    "background": "Fenwick brokers berths and river routes for the barges that haul Ironworks ore and scrap — the ones the port registry prefers not to log. He is cheerful about it.",
     "rarity": "common",
     "status": "citizen",
     "factionAffinityId": null,
@@ -2246,6 +2247,7 @@
       "zeal": 15
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-fenwick",
     "ageBand": "adult",
     "sex": "man",
     "appearanceTags": [
@@ -2471,6 +2473,7 @@
       "zeal": 20
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-osanna",
     "ageBand": "adult",
     "sex": "woman",
     "appearanceTags": [
@@ -2584,6 +2587,7 @@
       "zeal": 30
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-cutter",
     "ageBand": "adult",
     "sex": "man",
     "appearanceTags": [
@@ -3146,7 +3150,7 @@
     "npcType": "story",
     "districtId": "district-gilded-heights",
     "origin": "Gilded Heights",
-    "background": "Former House Valdris factor and senior advisor. Sold the house to the Gilded Court three months before the collapse. Now operates as a Court liaison.",
+    "background": "Former House Valdris factor and senior advisor. Quietly let the Court's forged debt claim go unchallenged when he recognized it three months before the seizure, in exchange for a soft landing as their liaison afterward. Now operates as a Court liaison.",
     "rarity": "rare",
     "status": "noble",
     "factionAffinityId": "faction-gilded-court",
@@ -3186,6 +3190,7 @@
       "zeal": 22
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-dalen-morke",
     "ageBand": "adult",
     "sex": "man",
     "appearanceTags": [
@@ -3741,6 +3746,7 @@
       "zeal": 20
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-orven-pell",
     "ageBand": "elder",
     "sex": "man",
     "appearanceTags": [
@@ -3856,6 +3862,7 @@
       "zeal": 35
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-alis",
     "ageBand": "middle",
     "sex": "woman",
     "appearanceTags": [
@@ -3976,6 +3983,7 @@
       "zeal": 60
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-brannic-thule",
     "ageBand": "elder",
     "sex": "man",
     "appearanceTags": [
@@ -5457,6 +5465,7 @@
       "zeal": 35
     },
     "allowedTitleIds": [],
+    "dialogueId": "dialogue-caevis",
     "ageBand": "elder",
     "sex": "man",
     "appearanceTags": [

@@ -222,6 +222,7 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
       { id: 'poi-pale-house-valdris', x: 300, y: 188 },
       { id: 'poi-pale-old-tannery', x: 318, y: 84 },
       { id: 'poi-pale-archive-chapel', x: 148, y: 64 },
+      { id: 'poi-mireward-shrine', x: 90, y: 108 },
     ],
   },
   'district-the-warrens': {
@@ -375,7 +376,6 @@ export const districtMapGeometry: Record<string, DistrictMapGeometry> = {
     pois: [
       { id: 'poi-mireward-apothecary', x: 108, y: 118 },
       { id: 'poi-mireward-pawn-fence', x: 88, y: 190 },
-      { id: 'poi-mireward-shrine', x: 180, y: 66 },
       { id: 'poi-mireward-low-water-tavern', x: 248, y: 128 },
       { id: 'poi-mireward-physician', x: 290, y: 192 },
     ],

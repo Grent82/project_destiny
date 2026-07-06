@@ -13,7 +13,8 @@
     "availableSlots": [
       "morning",
       "afternoon"
-    ]
+    ],
+    "npcId": "npc-torvald-messe"
   },
   {
     "id": "poi-harbor-salt-market",
@@ -155,7 +156,8 @@
     "type": "residence",
     "description": "Dalen Morke's current place of operations. Guarded. He receives visitors by arrangement.",
     "factionId": "faction-gilded-court",
-    "actions": []
+    "actions": ["contracts"],
+    "npcId": "npc-dalen-morke"
   },
   {
     "id": "poi-gilded-armory-row",
@@ -267,8 +269,10 @@
     "description": "Ring-adjacent goods exchange hidden in a disused foundry wing. Better equipment, worse questions.",
     "factionId": "faction-tallow-ring",
     "actions": [
-      "shop"
-    ]
+      "shop",
+      "contracts"
+    ],
+    "npcId": "npc-fenwick-pale"
   },
   {
     "id": "poi-ironworks-watch-post",
@@ -426,8 +430,10 @@
     "description": "A rotating market of scavenged and stolen goods. Prices are low; provenance is questionable.",
     "factionId": null,
     "actions": [
-      "shop"
-    ]
+      "shop",
+      "contracts"
+    ],
+    "npcId": "npc-brannic-thule"
   },
   {
     "id": "poi-warrens-brands-block",
@@ -474,8 +480,10 @@
     "description": "Collapsed buildings repurposed as shelter. Desperate people end up here. Occasionally useful contacts too.",
     "factionId": null,
     "actions": [
-      "hire"
-    ]
+      "hire",
+      "contracts"
+    ],
+    "npcId": "npc-osanna-cray"
   },
   {
     "id": "poi-warrens-pack-runners",
@@ -544,7 +552,8 @@
     "actions": [
       "shop",
       "contracts"
-    ]
+    ],
+    "npcId": "npc-cutter"
   },
   {
     "id": "poi-hollows-relief-station",
@@ -627,8 +636,8 @@
   },
   {
     "id": "poi-mireward-shrine",
-    "districtId": "district-the-mireward",
-    "name": "The Mireward Shrine",
+    "districtId": "district-the-pale",
+    "name": "The Pale Shrine",
     "type": "court",
     "description": "An old shrine, still tended. People come here to confess things they cannot say elsewhere. Sister Vael hears them all.",
     "factionId": null,
@@ -723,7 +732,8 @@
     "type": "court",
     "description": "Claims on estates, noble title disputes, and inheritance filings. Moving slowly is how the Registry earns its fees.",
     "factionId": "faction-gilded-court",
-    "actions": ["contracts"]
+    "actions": ["contracts"],
+    "npcId": "npc-orven-pell"
   },
   {
     "id": "poi-northbank-advocates-row",
@@ -751,7 +761,8 @@
     "type": "faction_hq",
     "description": "A private club affiliated with Gilded Court interests. Membership is unstated. Business is conducted over wine and carefully chosen words.",
     "factionId": "faction-gilded-court",
-    "actions": ["contracts"]
+    "actions": ["contracts"],
+    "npcId": "npc-sable-cairn-head"
   },
   {
     "id": "poi-northbank-estate-gate",
@@ -760,7 +771,8 @@
     "type": "residence",
     "description": "The visible face of old money. Stewards and household staff move between the gates. Some are looking for something better.",
     "factionId": null,
-    "actions": ["hire"]
+    "actions": ["hire", "contracts"],
+    "npcId": "npc-alis-vey"
   },
   {
     "id": "poi-below-debtors-room",
