@@ -125,6 +125,41 @@
               "type": "mainQuestStage",
               "value": "lead-found"
             }
+          },
+          {
+            "id": "marion-choice-house-debt-advice",
+            "label": "Get her advice on negotiating with Harlen Voss.",
+            "nextNodeId": "marion-node-house-debt-advice",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-ledger-house-debt"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-ledger-house-debt"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "marion-choice-house-debt-advice"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "marion-node-house-debt-advice",
+        "npcId": "npc-marion-vale",
+        "text": "Marion has the house debt ledger open before you've finished asking. \"Voss wants to look immovable. He isn't -- Merrow needs this closed quietly, and quiet has a price he can't set alone.\" She turns a page. \"Offer him the schedule before he offers you the principal. Let him think slowing it down was his idea.\"",
+        "choices": [
+          {
+            "id": "marion-choice-house-debt-advice-close",
+            "label": "Understood. I'll let him think that.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "trust",
+              "value": 3
+            }
           }
         ]
       },
@@ -200,6 +235,31 @@
             "outcome": {
               "type": "mainQuestHint",
               "value": "The bureau chit proves the ledgers were selected, not looted at random. The debt may have been shaped before it reached your name."
+            }
+          },
+          {
+            "id": "marion-choice-ledger-chit-who-signed",
+            "label": "Who has the authority to sign off on a removal like this?",
+            "nextNodeId": "marion-node-ledger-chit-who-signed",
+            "condition": {
+              "type": "choiceNotTaken",
+              "value": "marion-choice-ledger-chit-who-signed"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marion-node-ledger-chit-who-signed",
+        "npcId": "npc-marion-vale",
+        "text": "\"A clerk of record, for the bureau's own copies. A registry official for anything filed twice.\" She hands the chit back. \"This only carries one signature, which is either sloppy or deliberate. Torvald Messe still keeps registry hours -- he'd know whose hand that is faster than I would.\"",
+        "choices": [
+          {
+            "id": "marion-choice-ledger-chit-who-signed-close",
+            "label": "Then Torvald Messe is our next stop.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Marion points toward Torvald Messe as the person who could identify the missing signature on the ledger removal chit."
             }
           }
         ]
@@ -913,9 +973,44 @@
             }
           },
           {
+            "id": "maret-choice-bureau-ledger",
+            "label": "Show her the bureau ledger.",
+            "nextNodeId": "maret-node-bureau-ledger",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-ledger-bureau"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-ledger-bureau"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "maret-choice-bureau-ledger"
+              }
+            ]
+          },
+          {
             "id": "maret-choice-leave",
             "label": "I don't have time for old stories.",
             "nextNodeId": null
+          }
+        ]
+      },
+      {
+        "id": "maret-node-bureau-ledger",
+        "npcId": "npc-old-maret",
+        "text": "Old Maret takes the ledger the way she'd take something warm from an oven -- careful, both hands. She doesn't need long. \"I kept these numbers for thirty years. That's my hand in the corrections, there and there.\" She traces two lines that mean nothing to you. \"This entry.\" Her finger stops. \"That's the winter I lied about the grain count to keep the kitchen staff fed. Nobody was ever meant to see this page again.\"",
+        "choices": [
+          {
+            "id": "maret-choice-bureau-ledger-understood",
+            "label": "Then you can tell me what's real in here.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Old Maret recognizes her own decades-old corrections in the bureau ledger -- pages from House Valdris's true household accounts, including her own falsified grain entry from a hard winter. This is not a copy. It is the genuine record."
+            }
           }
         ]
       },
@@ -1490,6 +1585,76 @@
             "id": "torvald-choice-wait",
             "label": "Not yet. I wanted you to know we know it exists.",
             "nextNodeId": "torvald-node-wait"
+          },
+          {
+            "id": "torvald-choice-bureau-ledger",
+            "label": "Do you recognize this bureau ledger?",
+            "nextNodeId": "torvald-node-bureau-ledger",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-ledger-bureau"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-ledger-bureau"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "torvald-choice-bureau-ledger"
+              }
+            ]
+          },
+          {
+            "id": "torvald-choice-removal-chit",
+            "label": "Was this removal ever authorized?",
+            "nextNodeId": "torvald-node-removal-chit",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-chit-ledger-removal"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-chit-ledger-removal"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "torvald-choice-removal-chit"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "torvald-node-bureau-ledger",
+        "npcId": "npc-torvald-messe",
+        "text": "He turns it over once, checking the binding before he even reads a page. \"Bureau stock, registry-office stamp.\" He runs a thumb down the margin. \"These codes are ours -- filing codes, not house codes. Someone with registry access pulled this, not a burglar.\" He looks up. \"Statute 44 dash 7 again: bureau documents may only leave the registry through a clerk of record. I'd like to know which clerk.\"",
+        "choices": [
+          {
+            "id": "torvald-choice-bureau-ledger-close",
+            "label": "Find out who signed for it.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Torvald Messe confirms the bureau ledger left the registry through a clerk of record, not by theft. Someone with legitimate access removed it."
+            }
+          }
+        ]
+      },
+      {
+        "id": "torvald-node-removal-chit",
+        "npcId": "npc-torvald-messe",
+        "text": "He reads the chit twice, the second time slower. \"Two ledgers, one signature, no counter-mark.\" He sets it down like it might still be evidence someone wants back. \"An authorized removal carries two signatures where the seizure is contested -- always has, since my father's time. This carries one.\" He taps it once. \"Whoever pulled these books skipped a step they knew to skip.\"",
+        "choices": [
+          {
+            "id": "torvald-choice-removal-chit-close",
+            "label": "So it wasn't authorized at all.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Torvald Messe confirms the ledger removal chit is missing the second signature a contested seizure requires. The removal was never properly authorized."
+            }
           }
         ]
       },
@@ -1658,6 +1823,51 @@
             "id": "dalen-choice-alliance",
             "label": "We're looking for allies who understand what the Court does when it moves quietly.",
             "nextNodeId": "dalen-node-alliance"
+          },
+          {
+            "id": "dalen-choice-removal-chit",
+            "label": "Two ledgers were pulled the night the house fell. You'd know why those two.",
+            "nextNodeId": "dalen-node-removal-chit",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-chit-ledger-removal"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-chit-ledger-removal"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "dalen-choice-removal-chit"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dalen-node-removal-chit",
+        "npcId": "npc-dalen-morke",
+        "text": "\"I'm sorry,\" he says, first, as always. Then nothing, for long enough that the apology starts to look like an answer on its own. \"I recognized what the claim was three months before it moved. I said nothing, and I was given a soft landing for saying nothing.\" He finally looks at the chit rather than you. \"I didn't choose which ledgers. I chose not to ask. There's a difference, though I understand if it doesn't feel like one from where you're standing.\"",
+        "choices": [
+          {
+            "id": "dalen-choice-removal-chit-press",
+            "label": "Whose hand was on the actual removal, then?",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Dalen Morke admits he recognized the forged claim months before the seizure and stayed silent for a soft landing -- but insists he did not choose which two ledgers were pulled, only declined to ask who did."
+            }
+          },
+          {
+            "id": "dalen-choice-removal-chit-close",
+            "label": "Silence has a cost too. Remember that.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "factionStanding",
+              "value": -2,
+              "targetId": "faction-gilded-court"
+            }
           }
         ]
       },
@@ -2406,6 +2616,44 @@
               "type": "debtPaid",
               "value": false
             }
+          },
+          {
+            "id": "harlen-choice-bureau-ledger",
+            "label": "This bureau ledger doesn't match your numbers.",
+            "nextNodeId": "harlen-node-bureau-ledger",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-ledger-bureau"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-ledger-bureau"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "harlen-choice-bureau-ledger"
+              }
+            ]
+          },
+          {
+            "id": "harlen-choice-house-debt-negotiate",
+            "label": "Let's negotiate these terms against our own accounts.",
+            "nextNodeId": "harlen-node-house-debt-negotiate",
+            "condition": {
+              "type": "hasItem",
+              "value": "item-ledger-house-debt"
+            },
+            "conditionAll": [
+              {
+                "type": "hasItem",
+                "value": "item-ledger-house-debt"
+              },
+              {
+                "type": "choiceNotTaken",
+                "value": "harlen-choice-house-debt-negotiate"
+              }
+            ]
           }
         ]
       },
@@ -2422,6 +2670,38 @@
               "type": "factionStanding",
               "value": -3,
               "targetId": "faction-tallow-ring"
+            }
+          }
+        ]
+      },
+      {
+        "id": "harlen-node-bureau-ledger",
+        "npcId": "npc-enemy-harlen-voss",
+        "text": "He takes his time reading it, unhurried on principle. \"Registry paper. Interesting.\" He sets it down between you, precisely squared to the table edge. \"It doesn't undo what's owed. It does mean this conversation now has witnesses who aren't in the room.\" For the first time, a flicker of calculation that isn't about you at all. \"Merrow won't enjoy that part.\"",
+        "choices": [
+          {
+            "id": "harlen-choice-bureau-ledger-close",
+            "label": "Then we understand each other.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "mainQuestHint",
+              "value": "Harlen Voss acknowledges the bureau ledger creates a paper trail outside his control -- and that House Merrow, his backer, will not welcome the exposure."
+            }
+          }
+        ]
+      },
+      {
+        "id": "harlen-node-house-debt-negotiate",
+        "npcId": "npc-enemy-harlen-voss",
+        "text": "He studies your ledger the way he studies everything -- for the number first, the story after. \"Your accounts are honest, which is unusual enough to be worth something.\" He names a revised figure, lower than before, still not low. \"I can move the schedule. I can't move the principal without a reason Merrow will accept, and 'you asked nicely' isn't one.\"",
+        "choices": [
+          {
+            "id": "harlen-choice-house-debt-negotiate-close",
+            "label": "The schedule is a start.",
+            "nextNodeId": null,
+            "outcome": {
+              "type": "activityLog",
+              "value": "Harlen Voss agrees to revise the repayment schedule after reviewing House Valdris's own debt ledger, though the principal stands."
             }
           }
         ]
