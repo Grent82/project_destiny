@@ -194,12 +194,14 @@ describe('dialogue consequence resolution', () => {
     store.dispatch(gameActions.selectDialogueChoice({ choiceId: 'marion-choice-orren-act' }))
 
     const state = store.getState().game
-    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-orren-wex-rescue')).toBe(true)
+    // destiny-q80n.2: this now unlocks quest-house-fall-reckoning first (the formal single entry
+    // point), which successors into quest-orren-wex-rescue on its own completion.
+    expect(state.availableQuestLeads.some((lead) => lead.questId === 'quest-house-fall-reckoning')).toBe(true)
     expect(state.resolvedDialogueChoices['dialogue-marion-vale']).toEqual(
       expect.arrayContaining(['marion-choice-early-orren', 'marion-choice-orren-act']),
     )
     expect(state.activeDialogueId).toBeNull()
-    expect(state.activityLog[0]?.message).toContain('New lead discovered: Old Ledgers.')
+    expect(state.activityLog[0]?.message).toContain('New lead discovered: What Was Taken.')
   })
 
   it('can grant an item from dialogue through typed outcome handling', () => {

@@ -179,6 +179,14 @@ const QUEST_PRESENTATION: Record<string, QuestPresentationMetadata> = {
     employerIntent: 'Reach Orren before the Compact or Court uses him to lock the debt permanently around the house.',
     likelyConsequence: 'If Orren stays lost, the debt hardens into official truth; if he gets out, the house regains proof and loyalty.',
   },
+  'quest-house-fall-reckoning': {
+    categoryLabel: 'House obligation',
+    originLabel: 'Brought to the house by Marion Vale',
+    stakeholderLabel: 'The house itself, and whoever chose which ledgers to take the night it fell.',
+    whyNow: 'The evidence is already in hand. Sitting on it changes nothing; deciding what to do with it is the first real choice of the fight.',
+    employerIntent: 'Confirm the seizure was targeted, not random, and decide whether to act on what that implies.',
+    likelyConsequence: 'This is the decision that starts everything else — the debt investigation, the search for Mira, and whatever the house becomes because of both.',
+  },
 }
 
 function fallbackIssuerLabel(template: QuestTemplate) {

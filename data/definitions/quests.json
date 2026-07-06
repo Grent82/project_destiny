@@ -855,6 +855,52 @@
     ]
   },
   {
+    "id": "quest-house-fall-reckoning",
+    "title": "What Was Taken",
+    "employerFactionId": null,
+    "enemyFactionId": null,
+    "districtId": null,
+    "briefing": "The removal chit and the margin note agree: the ledgers were not lost in the seizure. They were chosen. Someone knew exactly which pages would matter before the debt claim was even filed. Marion wants to know what you intend to do with that.",
+    "objectiveType": "investigation",
+    "rewardMarks": 0,
+    "rewardStandingFactionId": null,
+    "rewardStandingDelta": 0,
+    "penaltyStandingDelta": 0,
+    "timeLimitDays": null,
+    "linkedQuestId": null,
+    "requiredFactionStanding": null,
+    "discoverySource": "npc",
+    "discoveryDistrictId": "district-the-pale",
+    "sourceNpcId": "npc-marion-vale",
+    "riskLevel": "low",
+    "questType": "story",
+    "openingText": "Marion turns the household ledger around so you can see the gap yourself. \"You need a job done that isn't on any list I keep.\" She taps the removal chit against the table, once. \"Someone chose which of our books to take, the night the house fell. That is not what a random seizure looks like. That is what a targeted one looks like.\"",
+    "aftermathText": "Marion doesn't wait for you to ask the next question. \"Orren Wex kept the originals. If the tally was bent before it ever reached your name, he's the only one left who'd know how.\" She says his name the way she says everything that costs her something — flatly, and only once.",
+    "prerequisiteQuestId": null,
+    "successorQuestId": "quest-orren-wex-rescue",
+    "rewardCityDialId": null,
+    "rewardCityDialDelta": 0,
+    "rewardRelationshipDeltas": [
+      {
+        "npcId": "npc-marion-vale",
+        "trust": 3,
+        "respect": 2
+      }
+    ],
+    "midQuestBeats": [
+      {
+        "atStageId": "investigating",
+        "label": "The removal chit and the arrangement note describe the same night from two different rooms.",
+        "journalEntry": "Bureau and study both point the same direction: whoever stripped the house that night had a list, not an appetite."
+      },
+      {
+        "atStageId": "on-site",
+        "label": "Marion has already decided what she thinks you should do. She is waiting to see if you agree.",
+        "journalEntry": "She hasn't said Orren's name yet. She is deciding whether you're the kind of person she can say it to."
+      }
+    ]
+  },
+  {
     "id": "quest-orren-wex-rescue",
     "title": "Old Ledgers",
     "employerFactionId": null,
@@ -867,6 +913,7 @@
     "rewardStandingDelta": 0,
     "penaltyStandingDelta": 10,
     "timeLimitDays": null,
+    "prerequisiteQuestId": "quest-house-fall-reckoning",
     "linkedQuestId": null,
     "requiredFactionStanding": null,
     "discoverySource": "npc",
@@ -877,7 +924,6 @@
     "questType": "story",
     "openingText": "Marion does not sit when she brings this to you. She stands near the door, as if she is not certain you will want her in the room when she is done. 'Orren Wex is in Compact custody. He has been for six weeks. They are not charging him — they are keeping him available. He knows every number in the house's original accounts. If they let him talk to the right people, the debt becomes very clearly yours.'",
     "aftermathText": "Orren is older than you remembered. He holds the ledger you brought him — the copy, not the original — and spends a long time looking at the first page. 'The original debt was manipulated,' he says. 'I suspected. I could not prove it.' He can prove it now, or something close to it. What you do with that proof is a separate question — one he is too tired to answer tonight.",
-    "prerequisiteQuestId": null,
     "unlocksNpcId": "npc-orren-wex",
     "rewardDebtReduction": 80,
     "rewardCityDialId": null,
