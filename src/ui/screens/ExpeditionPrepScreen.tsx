@@ -12,6 +12,64 @@ import { isDeployable } from '../../application/commands/isDeployable'
 import { EmptyState } from '../components/EmptyState'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { EnvironsMap } from './maps/EnvironsMap'
+import type { NpcRuntimeState } from '../../domain/npc/contracts'
+
+const SKILL_LABELS: Record<keyof NpcRuntimeState['skills'], string> = {
+  melee: 'Melee',
+  ranged: 'Ranged',
+  medicine: 'Medicine',
+  administration: 'Administration',
+  engineering: 'Engineering',
+  negotiation: 'Negotiation',
+  survival: 'Survival',
+  security: 'Security',
+  crafting: 'Crafting',
+  performance: 'Performance',
+  academics: 'Academics',
+  intrigue: 'Intrigue',
+}
+
+function topSkillSummary(skills: NpcRuntimeState['skills'], count = 3): string {
+  return Object.entries(skills)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, count)
+    .map(([key, value]) => `${SKILL_LABELS[key as keyof NpcRuntimeState['skills']]} ${value}`)
+    .join(' · ')
+}
+
+function squadMemberStatus(states: NpcRuntimeState['states']): { icon: string; label: string } {
+  if (states.health <= 60) return { icon: '⚠', label: 'Low health' }
+  if (states.stress >= 60) return { icon: '⚠', label: 'High stress' }
+  return { icon: '✓', label: 'Ready' }
+}
+
+function ExpeditionSquadRow({
+  npc,
+  name,
+  checked,
+  onToggle,
+}: {
+  npc: NpcRuntimeState
+  name: string
+  checked: boolean
+  onToggle: () => void
+}) {
+  const status = squadMemberStatus(npc.states)
+  return (
+    <div className="mission-row">
+      <label className="expedition-squad-label">
+        <input type="checkbox" checked={checked} onChange={onToggle} />
+        {' '}{name}
+      </label>
+      <p className="text-muted" style={{ fontSize: '0.78rem', margin: '0.2rem 0 0' }}>
+        {status.icon} {status.label} · Health {npc.states.health} · Morale {npc.states.morale}
+      </p>
+      <p className="text-muted" style={{ fontSize: '0.78rem', margin: '0.15rem 0 0' }}>
+        {topSkillSummary(npc.skills)}
+      </p>
+    </div>
+  )
+}
 
 export function ExpeditionPrepScreen() {
   const dispatch = useAppDispatch()
@@ -144,22 +202,19 @@ export function ExpeditionPrepScreen() {
                     // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog.
                     const name = contentCatalog.npcsById.get(npc.npcId)?.name ?? npc.npcId
                     return (
-                      <div key={npc.npcId} className="mission-row">
-                        <label className="expedition-squad-label">
-                          <input
-                            type="checkbox"
-                            checked={squadIds.includes(npc.npcId)}
-                            onChange={() => toggleNpc(npc.npcId)}
-                          />
-                          {' '}{name}
-                        </label>
-                      </div>
+                      <ExpeditionSquadRow
+                        key={npc.npcId}
+                        npc={npc}
+                        name={name}
+                        checked={squadIds.includes(npc.npcId)}
+                        onToggle={() => toggleNpc(npc.npcId)}
+                      />
                     )
                   })}
                 </div>
               )}
               <p className="summary text-muted" style={{ marginTop: '0.5rem' }}>
-                Required: 2+ operatives
+                Selected: {squadIds.length} · Required: 2+ operatives
               </p>
             </article>
 
@@ -241,21 +296,20 @@ export function ExpeditionPrepScreen() {
                 // destiny-rama.14: enemy defs live in npcsById now too, no separate enemy catalog.
                 const name = contentCatalog.npcsById.get(npc.npcId)?.name ?? npc.npcId
                 return (
-                  <div key={npc.npcId} className="mission-row">
-                    <label className="expedition-squad-label">
-                      <input
-                        type="checkbox"
-                        checked={squadIds.includes(npc.npcId)}
-                        onChange={() => toggleNpc(npc.npcId)}
-                      />
-                      {' '}
-                      {name}
-                    </label>
-                  </div>
+                  <ExpeditionSquadRow
+                    key={npc.npcId}
+                    npc={npc}
+                    name={name}
+                    checked={squadIds.includes(npc.npcId)}
+                    onToggle={() => toggleNpc(npc.npcId)}
+                  />
                 )
               })}
             </div>
           )}
+          <p className="summary text-muted" style={{ marginTop: '0.5rem' }}>
+            Selected: {squadIds.length} · Required: 1+ operative
+          </p>
         </article>
 
         <article className="detail-panel">
