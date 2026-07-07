@@ -106,6 +106,11 @@ export function HouseScreen() {
         <span>
           On hand: <strong>{formatMarks(debt.marks)}</strong>
         </span>
+        {summary.totalRepairCost > debt.marks && (
+          <span>
+            Short: <strong className="text-danger">{formatMarks(summary.totalRepairCost - debt.marks)}</strong>
+          </span>
+        )}
       </div>
 
       <div className="map-with-ledger">

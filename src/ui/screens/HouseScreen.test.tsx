@@ -114,6 +114,26 @@ describe('HouseScreen — repair outcomes', () => {
     expect(within(panel).getByText(/Repair to track debts/i)).toBeInTheDocument()
   })
 
+  it('shows the repair duration alongside cost on the repair button (destiny-fvoa)', async () => {
+    const user = userEvent.setup()
+    // Bureau is 'damaged' (repairCost: 15) -- REPAIR_DAYS_BY_STATE maps damaged -> 3 days.
+    const richState = { ...initialGameStateSnapshot, money: 100 }
+    renderHouseScreen(richState)
+
+    await selectRoomOnPlan(user, /^Bureau —/)
+    expect(within(roomLedger()).getByRole('button', { name: /Repair — 15 Mk · 3 days/i })).toBeInTheDocument()
+  })
+
+  it('shows the repair duration in the shortfall note when the room cannot be afforded yet (destiny-fvoa)', async () => {
+    const user = userEvent.setup()
+    // Study is 'stripped' (repairCost: 35) -- REPAIR_DAYS_BY_STATE maps stripped -> 7 days.
+    const poorState = { ...initialGameStateSnapshot, money: 0 }
+    renderHouseScreen(poorState)
+
+    await selectRoomOnPlan(user, /^Study —/)
+    expect(within(roomLedger()).getByText(/Needs 35 Mk \(short 35 Mk\) · 7 days to repair/i)).toBeInTheDocument()
+  })
+
   it('shows post-repair follow-up link for bureau after repair', async () => {
     const user = userEvent.setup()
     // Give player enough money to afford bureau repair (15 Mk)
@@ -149,6 +169,24 @@ describe('HouseScreen — repair outcomes', () => {
     renderHouseScreen()
     await selectRoomOnPlan(user, /^Master's Chamber —/)
     expect(within(roomLedger()).getByText(/faction contacts/i)).toBeInTheDocument()
+  })
+
+  it('shows a Short figure on the status bar when total repair cost exceeds marks on hand (destiny-fvoa)', () => {
+    const poorState = { ...initialGameStateSnapshot, money: 100 }
+    renderHouseScreen(poorState)
+
+    // initial-game-state.json's total repair cost across all rooms is well above 100 Mk on hand.
+    expect(screen.getByText(/^Short:/)).toBeInTheDocument()
+  })
+
+  it('does not show a Short figure once total repair cost is fully affordable', () => {
+    const richState = {
+      ...initialGameStateSnapshot,
+      money: 100000,
+    }
+    renderHouseScreen(richState)
+
+    expect(screen.queryByText(/^Short:/)).toBeNull()
   })
 
   it('shows assigned room function effect summaries when a purpose is set', async () => {

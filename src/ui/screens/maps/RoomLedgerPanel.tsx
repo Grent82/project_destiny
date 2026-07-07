@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HOUSE_ROOM_FUNCTION_EFFECT_SUMMARIES } from '../../../application/commands/houseRoomFunctions'
+import { getRoomRepairDays } from '../../../application/commands/houseRepairs'
 import { getHouseDiscovery } from '../../../application/content/houseDiscoveries'
 import { formatMarksAbbrev } from '../../../domain/game/currency'
 import type { HouseRoom, RoomState } from '../../../domain/game/contracts'
@@ -87,6 +88,7 @@ export function RoomLedgerPanel({
     marks >= room.repairCost
   const canSearch =
     !room.searched && room.state !== 'locked' && room.state !== 'collapsed' && room.state !== 'destroyed'
+  const repairDays = getRoomRepairDays(room)
   const discovery = room.searched ? getHouseDiscovery(room.roomId, vaultUnlocked) : null
   const hasUnresolvedLeads = (discovery?.actionableFinds.length ?? 0) > 0
   const followUp = room.state === 'intact' ? ROOM_INTACT_FOLLOWUP[room.roomId] : undefined
@@ -169,13 +171,13 @@ export function RoomLedgerPanel({
       <div className="map-ledger-actions">
         {canRepair && (
           <button className="action-button action-button--primary" type="button" onClick={() => onRepair(room.roomId)}>
-            Repair — {formatMarksAbbrev(room.repairCost)}
+            Repair — {formatMarksAbbrev(room.repairCost)} · {repairDays} day{repairDays !== 1 ? 's' : ''}
           </button>
         )}
         {room.repairCost > 0 && !canRepair && room.state !== 'intact' && room.repairDaysRemaining === 0 && (
           <p className="map-ledger-note">
             {marks < room.repairCost
-              ? `Needs ${formatMarksAbbrev(room.repairCost)} (short ${formatMarksAbbrev(room.repairCost - marks)})`
+              ? `Needs ${formatMarksAbbrev(room.repairCost)} (short ${formatMarksAbbrev(room.repairCost - marks)}) · ${repairDays} day${repairDays !== 1 ? 's' : ''} to repair`
               : STATE_LABELS[room.state]}
           </p>
         )}
