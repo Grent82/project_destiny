@@ -3051,6 +3051,7 @@ a:focus-visible,
 .ledger-empty { font-style: italic; color: var(--text-secondary, #9e8c6e); font-size: 0.9rem; }
 .text-danger { color: #e05050; }
 .text-warning { color: #d4820a; }
+.text-success { color: #7ab464; }
 
 /* Burn rate panel on RecruitmentScreen */
 .burn-rate-panel {
