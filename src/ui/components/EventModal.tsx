@@ -1,11 +1,14 @@
+import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { gameActions, selectEventPresentation, selectLastResolvedEventSummary, selectPendingEvents } from '../../application'
 
 export function EventModal() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const pendingEvents = useAppSelector(selectPendingEvents)
   const lastResolvedEventSummary = useAppSelector(selectLastResolvedEventSummary)
   const presentation = useAppSelector(selectEventPresentation)
+  const latestActivityEntry = useAppSelector((state) => state.game.activityLog[0] ?? null)
 
   if (pendingEvents.length === 0 && !lastResolvedEventSummary) return null
 
@@ -49,12 +52,26 @@ export function EventModal() {
               +{pendingEvents.length} more event{pendingEvents.length > 1 ? 's' : ''} pending
             </p>
           )}
+          {latestActivityEntry && (
+            <p className="event-modal-meta">
+              Day {latestActivityEntry.day} · {latestActivityEntry.timeSlot}: {latestActivityEntry.message}
+            </p>
+          )}
           <div className="event-modal-choices">
             <button
               className="event-modal-choice-btn"
               onClick={() => dispatch(gameActions.dismissResolvedEventSummary())}
             >
               Continue
+            </button>
+            <button
+              className="event-modal-choice-btn"
+              onClick={() => {
+                dispatch(gameActions.dismissResolvedEventSummary())
+                navigate('/event-log')
+              }}
+            >
+              View Journal →
             </button>
           </div>
         </div>

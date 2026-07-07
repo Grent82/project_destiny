@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
 import { contentCatalog } from '../../application/content/contentCatalog'
@@ -137,5 +137,78 @@ describe('EventModal', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }))
 
     expect(store.getState().game.lastResolvedEventSummary).toBeNull()
+  })
+
+  describe('consequence summary extras (destiny-9vze)', () => {
+    function stateWithResolvedSummary() {
+      return {
+        ...initialGameStateSnapshot,
+        pendingEvents: [],
+        activityLog: [
+          { id: 'log-1', day: 2, timeSlot: 'evening' as const, category: 'system' as const, message: "Marion Vale's respect rises." },
+        ],
+        lastResolvedEventSummary: {
+          eventId: 'event-marion-first-success',
+          title: 'Marion Takes Note',
+          choiceLabel: 'Nod in passing.',
+          day: 2,
+          timeSlot: 'evening' as const,
+          sourceNpcName: 'Marion Vale',
+          narrativeOutcome: 'Marion watches you pass.',
+          playerEffects: [],
+          npcEffects: ["Marion Vale's respect rises."],
+          worldEffects: [],
+        },
+      }
+    }
+
+    it('shows the latest activity log entry with its day and time slot', () => {
+      const store = createGameStore(stateWithResolvedSummary())
+
+      render(
+        <AppProviders store={store}>
+          <MemoryRouter>
+            <EventModal />
+          </MemoryRouter>
+        </AppProviders>,
+      )
+
+      expect(screen.getByText(/Day 2 · evening: Marion Vale's respect rises\./i)).toBeInTheDocument()
+    })
+
+    it('does not render an activity log line when the log is empty', () => {
+      const store = createGameStore({ ...stateWithResolvedSummary(), activityLog: [] })
+
+      render(
+        <AppProviders store={store}>
+          <MemoryRouter>
+            <EventModal />
+          </MemoryRouter>
+        </AppProviders>,
+      )
+
+      expect(screen.queryByText(/^Day \d+ ·/)).not.toBeInTheDocument()
+    })
+
+    it('"View Journal" dismisses the summary and navigates to the event log', async () => {
+      const user = userEvent.setup()
+      const store = createGameStore(stateWithResolvedSummary())
+
+      render(
+        <AppProviders store={store}>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <Routes>
+              <Route path="/dashboard" element={<EventModal />} />
+              <Route path="/event-log" element={<div>Event Log Screen</div>} />
+            </Routes>
+          </MemoryRouter>
+        </AppProviders>,
+      )
+
+      await user.click(screen.getByRole('button', { name: /View Journal/i }))
+
+      expect(store.getState().game.lastResolvedEventSummary).toBeNull()
+      expect(screen.getByText('Event Log Screen')).toBeInTheDocument()
+    })
   })
 })
