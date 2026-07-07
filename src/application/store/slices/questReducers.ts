@@ -18,6 +18,7 @@ import {
   computeApproachSkillValue,
   rollInvestigationOutcome,
   buildInvestigationOperativeResults,
+  computeFiledEvidenceBonus,
 } from '../../commands/investigation'
 import {
   applyInvestigationApproachQuestState,
@@ -246,7 +247,8 @@ export const questReducers = {
     const bestSkillValue = approach
       ? computeApproachSkillValue(state, action.payload.npcIds, approach.primarySkills)
       : computeBestInvestigationSkill(state, action.payload.npcIds)
-    const difficultyModifier = approach?.difficultyModifier ?? 0
+    const difficultyModifier =
+      (approach?.difficultyModifier ?? 0) + computeFiledEvidenceBonus(state, chosenApproachId)
 
     const { outcome, roll, nextSeed } = rollInvestigationOutcome(
       state.rngSeed,

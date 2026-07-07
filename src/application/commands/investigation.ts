@@ -73,6 +73,24 @@ export function getInvestigationApproach(approachId: string): InvestigationAppro
   return INVESTIGATION_APPROACHES.find((a) => a.id === approachId)
 }
 
+const RECORDS_APPROACH_ID = 'records'
+const FILED_EVIDENCE_BONUS_PER_ITEM = 5
+const FILED_EVIDENCE_BONUS_CAP = 15
+
+/**
+ * Filed evidence (state.evidenceInventory, disposition 'filed') strengthens the 'records'
+ * (Paper Trail) approach specifically -- thematically the one about ledgers/manifests/official
+ * records, which is what gets filed. Resolves destiny-b47h.
+ */
+export function computeFiledEvidenceBonus(
+  state: GameState,
+  approachId: string | null | undefined,
+): number {
+  if (approachId !== RECORDS_APPROACH_ID) return 0
+  const filedCount = state.evidenceInventory.filter((entry) => entry.disposition === 'filed').length
+  return Math.min(filedCount * FILED_EVIDENCE_BONUS_PER_ITEM, FILED_EVIDENCE_BONUS_CAP)
+}
+
 export function computeBestInvestigationSkill(state: GameState, npcIds: string[]) {
   let bestSkillValue = 0
 

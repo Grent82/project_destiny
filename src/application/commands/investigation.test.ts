@@ -9,6 +9,7 @@ import {
   computeApproachSkillValue,
   buildInvestigationOperativeResults,
   rollInvestigationOutcome,
+  computeFiledEvidenceBonus,
   INVESTIGATION_APPROACHES,
 } from './investigation'
 import { gameStateSchema } from '../../domain'
@@ -111,6 +112,50 @@ describe('investigation helpers', () => {
     expect(ids).toContain('bribe')
     expect(ids).toContain('surveillance')
     expect(ids).toContain('records')
+  })
+
+  // destiny-b47h: filed evidence strengthens the 'records' (Paper Trail) approach specifically.
+  it('computeFiledEvidenceBonus only applies to the records approach', () => {
+    const stateWithFiledEvidence = {
+      ...initialStateWithIda,
+      evidenceInventory: [
+        { instanceId: 'inst-1', itemId: 'item-permit-reproduction', disposition: 'filed' as const },
+      ],
+    }
+    expect(computeFiledEvidenceBonus(stateWithFiledEvidence, 'records')).toBe(5)
+    expect(computeFiledEvidenceBonus(stateWithFiledEvidence, 'bribe')).toBe(0)
+    expect(computeFiledEvidenceBonus(stateWithFiledEvidence, 'surveillance')).toBe(0)
+    expect(computeFiledEvidenceBonus(stateWithFiledEvidence, null)).toBe(0)
+  })
+
+  it('computeFiledEvidenceBonus counts only filed (not presented/burned) evidence, capped at 15', () => {
+    const stateWithMixedEvidence = {
+      ...initialStateWithIda,
+      evidenceInventory: [
+        { instanceId: 'inst-1', itemId: 'item-permit-reproduction', disposition: 'filed' as const },
+        { instanceId: 'inst-2', itemId: 'item-papers-false-citizen', disposition: 'filed' as const },
+        { instanceId: 'inst-3', itemId: 'item-tally-debt-instrument', disposition: 'presented' as const },
+        { instanceId: 'inst-4', itemId: 'item-form-ward-petition', disposition: 'burned' as const },
+      ],
+    }
+    // only 2 of the 4 entries are 'filed' -> 2 * 5 = 10, under the 15 cap
+    expect(computeFiledEvidenceBonus(stateWithMixedEvidence, 'records')).toBe(10)
+
+    const stateWithManyFiled = {
+      ...initialStateWithIda,
+      evidenceInventory: [
+        { instanceId: 'inst-1', itemId: 'item-permit-reproduction', disposition: 'filed' as const },
+        { instanceId: 'inst-2', itemId: 'item-papers-false-citizen', disposition: 'filed' as const },
+        { instanceId: 'inst-3', itemId: 'item-tally-debt-instrument', disposition: 'filed' as const },
+        { instanceId: 'inst-4', itemId: 'item-form-ward-petition', disposition: 'filed' as const },
+      ],
+    }
+    // 4 * 5 = 20, capped at 15
+    expect(computeFiledEvidenceBonus(stateWithManyFiled, 'records')).toBe(15)
+  })
+
+  it('computeFiledEvidenceBonus is 0 with no filed evidence', () => {
+    expect(computeFiledEvidenceBonus(initialStateWithIda, 'records')).toBe(0)
   })
 
   it('builds per-operative breakdown from the shared investigation roll', () => {
@@ -375,6 +420,36 @@ describe('resolveInvestigation', () => {
     expect(state.completedQuestIds).toContain('quest-ledger-recovery')
     expect(state.activeQuests.find((q) => q.questId === 'quest-ledger-recovery')).toBeUndefined()
     expect(state.activityLog.some((e) => e.message.match(/investigation concludes/i))).toBe(true)
+  })
+
+  it('records approach difficulty modifier increases with filed evidence (destiny-b47h)', () => {
+    const baseOverrides = {
+      rngSeed: 42,
+      activeInvestigation: readyInvestigation('quest-ledger-recovery', 'district-the-pale', 'records'),
+      activeQuests: [makeActiveQuest('quest-ledger-recovery')],
+      money: 0,
+    }
+
+    const storeWithoutEvidence = makeStore({ ...baseOverrides, evidenceInventory: [] })
+    storeWithoutEvidence.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-marion-vale'] }))
+    const withoutEvidenceResult = storeWithoutEvidence.getState().game.lastInvestigationResult
+    const effectiveRollWithout = withoutEvidenceResult?.operativeResults[0]?.effectiveRoll
+
+    const storeWithEvidence = makeStore({
+      ...baseOverrides,
+      evidenceInventory: [
+        { instanceId: 'inst-1', itemId: 'item-permit-reproduction', disposition: 'filed' as const },
+        { instanceId: 'inst-2', itemId: 'item-papers-false-citizen', disposition: 'filed' as const },
+      ],
+    })
+    storeWithEvidence.dispatch(gameActions.resolveInvestigation({ npcIds: ['npc-marion-vale'] }))
+    const withEvidenceResult = storeWithEvidence.getState().game.lastInvestigationResult
+    const effectiveRollWith = withEvidenceResult?.operativeResults[0]?.effectiveRoll
+
+    expect(effectiveRollWithout).toBeDefined()
+    // same rngSeed/npc/approach -> identical roll; only the evidence-driven modifier differs.
+    // 2 filed items * +5 bonus each = +10.
+    expect(effectiveRollWith).toBe((effectiveRollWithout ?? 0) + 10)
   })
 
   it('produces success with surveillance approach (no marks bonus)', () => {
