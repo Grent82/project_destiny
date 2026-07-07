@@ -205,6 +205,8 @@ function buildRosterDetail(root: RootState, npcId: string) {
     trainingFocus: runtime.trainingFocus,
     rarity: definition?.rarity ?? 'common',
     signature: definition ? selectCharacterSignature(root, npcId) : '',
+    isPrimary: definition?.isPrimary ?? false,
+    hasHouseSeal: definition?.hasHouseSeal ?? false,
   }
 }
 

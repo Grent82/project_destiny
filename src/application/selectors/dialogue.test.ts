@@ -2,6 +2,32 @@ import { selectActiveDialoguePresentation } from './dialogue'
 import { createGameStore } from '../store/gameStore'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 
+describe('selectActiveDialoguePresentation isPrimary (destiny-zxzz)', () => {
+  it('reads isPrimary from the NPC definition instead of a hardcoded npc-marion-vale check', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-pale',
+      activeDialogueId: 'dialogue-marion-vale',
+      activeDialogueNodeId: 'marion-node-early-intro',
+    })
+
+    const presentation = selectActiveDialoguePresentation(store.getState())
+    expect(presentation?.isPrimary).toBe(true)
+  })
+
+  it('defaults isPrimary to false for NPCs without the flag authored', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      currentDistrictId: 'district-the-pale',
+      activeDialogueId: 'dialogue-dalen-morke',
+      activeDialogueNodeId: 'dalen-node-alliance',
+    })
+
+    const presentation = selectActiveDialoguePresentation(store.getState())
+    expect(presentation?.isPrimary).toBe(false)
+  })
+})
+
 describe('selectActiveDialoguePresentation effect notes (destiny-pbsw)', () => {
   it('describes an affinity outcome instead of silently falling back to generic closing text', () => {
     const store = createGameStore({

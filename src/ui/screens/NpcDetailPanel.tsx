@@ -807,7 +807,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 npcId={detail.npcId}
                 factionId={detail.factionAffinityId}
                 nameOverride={detail.name}
-                isPrimary={detail.npcId === 'npc-marion-vale'}
+                isPrimary={detail.isPrimary}
                 style={{ display: 'none' }}
               />
             </>
@@ -816,10 +816,10 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               npcId={detail.npcId}
               factionId={detail.factionAffinityId}
               nameOverride={detail.name}
-              isPrimary={detail.npcId === 'npc-marion-vale'}
+              isPrimary={detail.isPrimary}
             />
           )}
-          {detail.npcId === 'npc-marion-vale' && <span className="muster-portrait-seal" title="Sworn to the house" />}
+          {detail.hasHouseSeal && <span className="muster-portrait-seal" title="Sworn to the house" />}
         </div>
 
         <div className="muster-identity">

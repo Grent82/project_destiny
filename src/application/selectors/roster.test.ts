@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeWorkingIncome, selectRosterEntries } from './roster'
+import { computeWorkingIncome, selectRosterDetail, selectRosterEntries } from './roster'
 import { createGameStore } from '../store/gameStore'
 
 describe('selectRosterEntries', () => {
@@ -11,6 +11,22 @@ describe('selectRosterEntries', () => {
     const entries = selectRosterEntries(store.getState())
     expect(entries.map((e) => e.npcId)).toEqual(['npc-marion-vale'])
     expect(entries.some((e) => e.npcId === 'npc-dalen-morke')).toBe(false)
+  })
+})
+
+describe('selectRosterDetail isPrimary/hasHouseSeal (destiny-zxzz)', () => {
+  it('reads isPrimary and hasHouseSeal from the NPC definition for Marion Vale', () => {
+    const store = createGameStore()
+    const detail = selectRosterDetail(store.getState(), 'npc-marion-vale')
+    expect(detail?.isPrimary).toBe(true)
+    expect(detail?.hasHouseSeal).toBe(true)
+  })
+
+  it('defaults isPrimary and hasHouseSeal to false for an NPC without those flags authored', () => {
+    const store = createGameStore()
+    const detail = selectRosterDetail(store.getState(), 'npc-dalen-morke')
+    expect(detail?.isPrimary).toBe(false)
+    expect(detail?.hasHouseSeal).toBe(false)
   })
 })
 

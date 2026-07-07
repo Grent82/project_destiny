@@ -66,7 +66,7 @@ export function DialogueScreen() {
                 npcId={presentation.npcId}
                 factionId={presentation.factionId}
                 nameOverride={presentation.npcName}
-                isPrimary={presentation.npcId === 'npc-marion-vale'}
+                isPrimary={presentation.isPrimary}
                 size="large"
                 style={{ display: 'none' }}
               />

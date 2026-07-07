@@ -6,6 +6,8 @@
     "background": "'Before the docks' means she survived the taking of the old harbor. Her family handled illicit cargo for a noble house and she knows which house shipped people \u2014 not goods \u2014 out of Valdenmoor during the first panic. The dock work is legitimate cover for a network built on that original contract. Her supply chain runs partly through a noble hand she will not name.",
     "rarity": "uncommon",
     "status": "retainer",
+    "isPrimary": true,
+    "hasHouseSeal": true,
     "factionAffinityId": "faction-civic-compact",
     "baseAttributes": {
       "might": 38,

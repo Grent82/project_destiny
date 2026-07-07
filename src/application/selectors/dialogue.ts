@@ -85,6 +85,7 @@ export type ActiveDialoguePresentation = {
   npcName: string
   portraitSrc: string | null
   factionId: string | null
+  isPrimary: boolean
   sceneLocation: string
   stageDirection: string
   lineText: string
@@ -236,6 +237,7 @@ export const selectActiveDialoguePresentation = createSelector(
     npcName: npcDef?.name ?? tree.npcId,
     portraitSrc: hasPortraitAvailable(tree.npcId) ? `/portraits/${portraitId}.jpg` : null,
     factionId: npcDef?.factionAffinityId ?? null,
+    isPrimary: npcDef?.isPrimary ?? false,
     sceneLocation: resolveDialogueSceneLocation(game, tree.id, tree.npcId),
     stageDirection: resolveStageDirection(visibleChoices.length, node.stageDirection),
     lineText: node.text,

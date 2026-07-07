@@ -34,6 +34,8 @@ const baseNpc: NpcDefinition = {
   isRecurring: false,
   recruitableOnDefeat: false,
   creatureType: 'human',
+  isPrimary: false,
+  hasHouseSeal: false,
   quirks: [
     {
       text: 'checks every beam before trusting a structure',

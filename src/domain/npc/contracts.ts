@@ -363,6 +363,10 @@ export const npcDefinitionSchema = z
     loyaltyOnRecruit: z.number().nullable().optional(),
     lore: z.string().nullable().optional(),
     creatureType: z.enum(['human', 'beast', 'undead', 'corrupted']).default('human'),
+    // UI story-weight flags (destiny-zxzz) -- let the UI ask the domain "is this a main
+    // character" instead of hardcoding specific NPC IDs (e.g. npcId === 'npc-marion-vale').
+    isPrimary: z.boolean().default(false),
+    hasHouseSeal: z.boolean().default(false),
   })
   .strict()
 
