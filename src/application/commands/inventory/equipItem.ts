@@ -150,14 +150,14 @@ function equipItemToPlayer(state: GameState, itemInstanceId: string, slot: Equip
     }
   }
 
-  appendActivityLogEntry(finalState, 'system', `Equipped ${itemName} in ${formatSlotName(slot)}`)
+  finalState = appendActivityLogEntry(finalState, 'system', `Equipped ${itemName} in ${formatSlotName(slot)}`)
 
   return {
-    ...newState,
+    ...finalState,
     inventoryState: {
-      ...newState.inventoryState,
+      ...finalState.inventoryState,
       player: {
-        ...newState.inventoryState.player,
+        ...finalState.inventoryState.player,
         equipmentSlots: updatedEquipment,
         bagContainers: updatedContainers,
         usedBagSlots: usedSlots,
@@ -197,7 +197,7 @@ function unequipItemFromPlayer(state: GameState, slot: EquipmentSlotType): GameS
     }
   }
 
-  appendActivityLogEntry(finalState, 'system', `Unequipped ${itemName} from ${formatSlotName(slot)}`)
+  finalState = appendActivityLogEntry(finalState, 'system', `Unequipped ${itemName} from ${formatSlotName(slot)}`)
 
   return {
     ...finalState,

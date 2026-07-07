@@ -69,7 +69,9 @@ describe('useItem — consume heal', () => {
     const npc = result.npcRuntimeStates.find((n) => n.npcId === targetId)!
     expect(npc.states.health).toBe(66) // 60 + 6
     expect(result.inventoryState.player.bagContainers).toHaveLength(0)
-    expect(result.activityLog[0]?.message).toContain('+6 health')
+    // Salve also carries a removeStatus(burn) effect (destiny-y7jx content fix) — most recent log entry is first.
+    expect(result.activityLog.some((entry) => entry.message.includes('+6 health'))).toBe(true)
+    expect(result.activityLog[0]?.message).toContain("Status 'burn' removed")
   })
 
   it('caps heal at 100', () => {

@@ -165,6 +165,10 @@
       {
         "type": "heal",
         "value": 15
+      },
+      {
+        "type": "removeStatus",
+        "value": "bleeding"
       }
     ]
   },
@@ -260,6 +264,10 @@
         "type": "stat_mod",
         "stat": "stress",
         "value": -40
+      },
+      {
+        "type": "addStatus",
+        "value": "mild-impairment"
       }
     ]
   },
@@ -295,6 +303,10 @@
         "type": "stat_mod",
         "stat": "toxin",
         "value": -20
+      },
+      {
+        "type": "removeStatus",
+        "value": "fouled-water-sickness"
       }
     ]
   },
@@ -332,6 +344,16 @@
         "stat": "strength",
         "value": 8,
         "duration": 3
+      },
+      {
+        "type": "boostStat",
+        "stat": "strength",
+        "value": 8,
+        "duration": 3
+      },
+      {
+        "type": "addStatus",
+        "value": "combat-stimulated"
       }
     ]
   },
@@ -365,6 +387,10 @@
       {
         "type": "heal",
         "value": 5
+      },
+      {
+        "type": "addStatus",
+        "value": "infection-risk"
       }
     ]
   },
@@ -397,6 +423,10 @@
       {
         "type": "heal",
         "value": 6
+      },
+      {
+        "type": "removeStatus",
+        "value": "burn"
       }
     ]
   },
@@ -423,7 +453,13 @@
     ],
     "description": "Seven picks, two tension bars, and a rake, ground from high-carbon steel wire by a Ring-affiliated locksmith who does not write receipts — the case is a folded strip of soft leather that makes no sound.",
     "shopPrice": 35,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "skillBonus",
+        "skill": "lockpicking",
+        "value": 15
+      }
+    ]
   },
   {
     "id": "item-caliper-league-engineering",
@@ -448,7 +484,13 @@
     ],
     "description": "A vernier caliper in a fitted wooden case, stamped with the Foundry League's calibration mark — used for precision measurement in workshop fitting, structural assessment, and mechanical repair.",
     "shopPrice": 30,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "skillBonus",
+        "skill": "engineering",
+        "value": 12
+      }
+    ]
   },
   {
     "id": "item-forgery-scribe-kit",
@@ -474,7 +516,13 @@
     ],
     "description": "A flat case containing four nib sizes, three ink blends matched to Compact paper stock, a wax-seal press with interchangeable dies, and a folded reference sheet of official document layouts.",
     "shopPrice": 80,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "skillBonus",
+        "skill": "forgery",
+        "value": 20
+      }
+    ]
   },
   {
     "id": "item-lamp-signal-expedition",

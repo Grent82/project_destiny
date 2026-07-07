@@ -93,6 +93,46 @@ describe('DashboardScreen', () => {
     expect(screen.getByText(/Gilded Court/i)).toBeInTheDocument()
   })
 
+  it('shows the Active Effects panel with an empty-state message on a fresh game (destiny-y7jx)', () => {
+    render(
+      <AppProviders store={createGameStore(initialGameStateSnapshot)}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Active Effects' })).toBeInTheDocument()
+    expect(screen.getByText(/No active statuses, boosts, or bonuses right now\./i)).toBeInTheDocument()
+  })
+
+  it('lists active statuses, stat boosts, training bonuses, and equipped tools on the Active Effects panel', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      day: 5,
+      playerStatuses: [{ statusId: 'mild-impairment', source: 'Gray Dust (Powdered)', duration: 2 }],
+      tempStatBoosts: [{ stat: 'strength', value: 8, expiresDay: 8 }],
+      activeTrainingBonuses: [{ skill: 'medicine', value: 5, source: 'Herb Garden Module (Windowbox Cultivation)' }],
+      equippedTools: [{ itemId: 'item-lockpick-ringcut', skill: 'lockpicking', value: 15 }],
+    })
+
+    render(
+      <AppProviders store={store}>
+        <MemoryRouter>
+          <DashboardScreen saveStore={createMemorySaveStore()} />
+        </MemoryRouter>
+      </AppProviders>,
+    )
+
+    expect(screen.getByText('mild-impairment')).toBeInTheDocument()
+    expect(screen.getByText('2d left')).toBeInTheDocument()
+    expect(screen.getByText('strength +8')).toBeInTheDocument()
+    expect(screen.getByText('3d left')).toBeInTheDocument()
+    expect(screen.getByText('medicine training +5')).toBeInTheDocument()
+    expect(screen.getByText('Ring-Cut Lockpick Set')).toBeInTheDocument()
+    expect(screen.getByText('lockpicking +15')).toBeInTheDocument()
+  })
+
   it('keeps load disabled until a snapshot exists', async () => {
     const user = userEvent.setup()
     const store = createGameStore()

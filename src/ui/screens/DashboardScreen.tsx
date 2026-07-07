@@ -17,6 +17,7 @@ import {
 } from '../../application'
 import { createBrowserSaveSnapshotStore } from '../../infrastructure/persistence/localSaveSnapshot'
 import { useAppDispatch, useAppSelector, useAppStore } from '../app/hooks'
+import { ActiveEffectsPanel } from '../components/ActiveEffectsPanel'
 import { ResourceStatusPanel } from '../components/ResourceStatusPanel'
 import { formatMarks, formatMarksAbbrev } from '../../domain/game/currency'
 
@@ -239,6 +240,7 @@ export function DashboardScreen(props: DashboardScreenProps) {
               </article>
             )}
           </div>
+          <ActiveEffectsPanel />
         </>
       )}
 
