@@ -46,7 +46,7 @@
     "name": "Foundry Supply Cage",
     "shopType": "workshop",
     "summary": "A hard-edged counter for repair stock, field consumables, and workshop extras.",
-    "offerItemIds": ["item-medkit-field", "item-spare-parts"],
+    "offerItemIds": ["item-medkit-field", "item-spare-parts", "item-module-lock-reinforcement"],
     "offers": [
       {
         "itemId": "item-medkit-field",
@@ -57,6 +57,11 @@
         "itemId": "item-spare-parts",
         "price": 70,
         "order": 1
+      },
+      {
+        "itemId": "item-module-lock-reinforcement",
+        "price": 15,
+        "order": 2
       },
       {
         "itemId": "item-league-tool-set-precision",
@@ -182,14 +187,18 @@
       "item-antitoxin-riverpurge",
       "item-poultice-tarthatch",
       "item-tincture-wound-close",
-      "item-salve-burngrade"
+      "item-salve-burngrade",
+      "item-module-water-purifier",
+      "item-module-herb-garden"
     ],
     "offers": [
       { "itemId": "item-medkit-field", "price": 90, "order": 0 },
       { "itemId": "item-antitoxin-riverpurge", "price": 14, "order": 1 },
       { "itemId": "item-poultice-tarthatch", "price": 7, "order": 2 },
       { "itemId": "item-tincture-wound-close", "price": 22, "order": 3 },
-      { "itemId": "item-salve-burngrade", "price": 11, "order": 4 }
+      { "itemId": "item-salve-burngrade", "price": 11, "order": 4 },
+      { "itemId": "item-module-water-purifier", "price": 55, "order": 5 },
+      { "itemId": "item-module-herb-garden", "price": 20, "order": 6 }
     ]
   },
   {
