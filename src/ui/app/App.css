@@ -758,14 +758,6 @@ strong { color: var(--text-secondary); }
   font-size: var(--size-sm);
 }
 
-.dialogue-choice-preview--positive {
-  color: rgba(92, 168, 117, 0.9);
-}
-
-.dialogue-choice-preview--negative {
-  color: rgba(186, 103, 88, 0.9);
-}
-
 .screen-panel {
   width: min(100%, 62rem);
   margin: 0 auto;
@@ -3059,8 +3051,6 @@ a:focus-visible,
 .ledger-empty { font-style: italic; color: var(--text-secondary, #9e8c6e); font-size: 0.9rem; }
 .text-danger { color: #e05050; }
 .text-warning { color: #d4820a; }
-.text-success { color: #7ab464; }
-
 
 /* Burn rate panel on RecruitmentScreen */
 .burn-rate-panel {

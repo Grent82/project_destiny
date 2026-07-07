@@ -71,23 +71,12 @@ function hasPortraitAvailable(npcId: string): boolean {
 
 export type DialogueChoiceKind = 'ask' | 'push' | 'commit' | 'leave'
 
-/**
- * 'positive'/'negative' drive the UI's muted color coding; 'neutral' covers informational
- * outcomes (a new lead, an item, flavor text) that aren't a relationship or standing delta.
- */
-export type DialogueEffectTone = 'neutral' | 'positive' | 'negative'
-
-export type DialogueEffectNote = {
-  text: string
-  tone: DialogueEffectTone
-}
-
 export type DialogueChoicePresentation = {
   id: string
   label: string
   kind: DialogueChoiceKind
   nextNodeId: string | null
-  effectNotes: DialogueEffectNote[]
+  effectNotes: string[]
 }
 
 export type ActiveDialoguePresentation = {
@@ -153,76 +142,42 @@ function classifyDialogueChoiceKind(choice: DialogueChoice): DialogueChoiceKind 
   return 'push'
 }
 
-const RELATIONSHIP_OUTCOME_LABELS: Record<'loyalty' | 'trust' | 'respect' | 'affinity', string> = {
-  loyalty: 'Loyalty',
-  trust: 'Trust',
-  respect: 'Respect',
-  affinity: 'Affinity',
-}
-
-function formatSignedDelta(value: number): string {
-  return value > 0 ? `+${value}` : `${value}`
-}
-
-function neutralNote(text: string): DialogueEffectNote[] {
-  return [{ text, tone: 'neutral' }]
-}
-
-function closingNote(choice: DialogueChoice): DialogueEffectNote[] {
-  return neutralNote(
-    choice.nextNodeId === null
-      ? 'The exchange closes for now.'
-      : 'The topic shifts under the pressure of your answer.',
-  )
-}
-
-function formatDialogueOutcomeNote(npcId: string, choice: DialogueChoice): DialogueEffectNote[] {
+function formatDialogueOutcomeNote(npcId: string, choice: DialogueChoice) {
   const outcome = choice.outcome
-  if (!outcome) return closingNote(choice)
+  if (!outcome) {
+    return choice.nextNodeId === null
+      ? ['The exchange closes for now.']
+      : ['The topic shifts under the pressure of your answer.']
+  }
 
   switch (outcome.type) {
     case 'loyalty':
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} grow more loyal.`]
     case 'trust':
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} trust you more.`]
     case 'respect':
-    case 'affinity': {
-      if (typeof outcome.value !== 'number') return closingNote(choice)
-      const npcName = contentCatalog.npcsById.get(npcId)?.name ?? 'them'
-      const label = RELATIONSHIP_OUTCOME_LABELS[outcome.type]
-      const arrow = outcome.value >= 0 ? '⬆' : '⚠ ⬇'
-      return [
-        {
-          text: `${arrow} ${label} ${formatSignedDelta(outcome.value)} with ${npcName}`,
-          tone: outcome.value >= 0 ? 'positive' : 'negative',
-        },
-      ]
-    }
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} revise their measure of you upward.`]
     case 'questUnlock': {
       const questTitle = contentCatalog.questsById.get(String(outcome.value))?.title ?? 'A new lead'
-      return [{ text: `New lead surfaced: ${questTitle}.`, tone: 'positive' }]
+      return [`New lead surfaced: ${questTitle}.`]
     }
     case 'mainQuestHint':
-      return [{ text: 'A fresh clue is entered into the house memory.', tone: 'positive' }]
+      return ['A fresh clue is entered into the house memory.']
     case 'item': {
       const itemName = contentCatalog.itemsById.get(String(outcome.value))?.name ?? 'An item'
-      return [{ text: `Item gained: ${itemName}.`, tone: 'positive' }]
+      return [`Item gained: ${itemName}.`]
     }
     case 'factionStanding': {
-      if (typeof outcome.value !== 'number' || !outcome.targetId) {
-        return neutralNote('Standing shifts with a faction.')
-      }
-      const factionName = contentCatalog.factionsById.get(outcome.targetId)?.name ?? 'A faction'
-      const arrow = outcome.value >= 0 ? '⬆' : '⚠ ⬇'
-      return [
-        {
-          text: `${arrow} ${factionName} standing ${formatSignedDelta(outcome.value)}`,
-          tone: outcome.value >= 0 ? 'positive' : 'negative',
-        },
-      ]
+      const factionName =
+        contentCatalog.factionsById.get(outcome.targetId ?? '')?.name ?? 'A faction'
+      return [`Standing shifts with ${factionName}.`]
     }
     case 'activityLog':
-      return neutralNote(String(outcome.value))
+      return [String(outcome.value)]
     default:
-      return closingNote(choice)
+      return choice.nextNodeId === null
+        ? ['The exchange closes for now.']
+        : ['The topic shifts under the pressure of your answer.']
   }
 }
 
