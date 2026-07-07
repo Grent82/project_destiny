@@ -3371,3 +3371,175 @@ a:focus-visible,
     margin-left: 0;
   }
 }
+
+/* ── Inventory drawer (House Storage / Mission Pack) ─────────
+   destiny-4d1u: InventoryDrawer/HouseStoragePanel existed but were never mounted or styled.
+   Minimal, theme-consistent styling only -- a full visual pass is tracked separately. */
+.inventory-drawer__trigger {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 40;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 1px solid var(--gold-muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.inventory-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  background: var(--bg-surface);
+  border-left: 1px solid var(--gold-muted);
+  color: var(--text-primary);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.inventory-drawer__header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--gold-muted);
+}
+
+.inventory-drawer__tab {
+  flex: 1;
+  padding: 0.85rem 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--size-sm);
+  cursor: pointer;
+}
+
+.inventory-drawer__tab--active {
+  color: var(--text-accent, var(--gold-warm));
+  border-bottom: 2px solid var(--gold-warm);
+}
+
+.inventory-drawer__close {
+  padding: 0.85rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.inventory-drawer__body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.house-storage-panel,
+.mission-pack-panel {
+  color: var(--text-primary);
+  font-size: var(--size-sm);
+}
+
+.house-storage-panel__capacity {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.capacity-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.capacity-bar__fill {
+  height: 100%;
+  background: var(--gold-warm);
+}
+
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(138, 110, 58, 0.25);
+}
+
+.item-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.item-card__name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.item-card__category,
+.item-card__source,
+.item-card__quantity {
+  color: var(--text-muted);
+  font-size: var(--size-xs);
+}
+
+.item-card__description {
+  color: var(--text-secondary);
+  font-size: var(--size-xs);
+}
+
+.item-card__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.item-card__primary-btn,
+.item-card__menu-btn {
+  background: var(--bg-raised);
+  border: 1px solid var(--gold-muted);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.6rem;
+  font-size: var(--size-xs);
+  cursor: pointer;
+}
+
+.item-action-menu {
+  position: absolute;
+  right: 0;
+  background: var(--bg-raised);
+  border: 1px solid var(--gold-muted);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+  min-width: 140px;
+}
+
+.item-action-menu__item,
+.item-action-menu__close {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--size-xs);
+  cursor: pointer;
+}
+
+.item-action-menu__item:hover,
+.item-action-menu__close:hover {
+  background: rgba(201, 168, 76, 0.12);
+}

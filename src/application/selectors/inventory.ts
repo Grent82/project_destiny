@@ -14,7 +14,7 @@ type ItemRef = {
 }
 
 export type ItemAction = {
-  type: 'use' | 'give' | 'install' | 'sell' | 'open' | 'equip' | 'pack' | 'unpack'
+  type: 'use' | 'give' | 'install' | 'sell' | 'open' | 'equip' | 'pack' | 'unpack' | 'archive' | 'file-evidence'
   label: string
   requiresTarget: boolean
 }
@@ -239,6 +239,15 @@ export function selectItemActions(state: RootState, instanceId: string): ItemAct
   const actions: ItemAction[] = []
   const primary = CATEGORY_PRIMARY_ACTION[def.category]
   if (primary) actions.push(primary)
+
+  // Documents that unlock a follow-up action or serve as evidence need an explicit
+  // disposal action -- 'open' alone only previews them and never writes enabledActions/evidenceInventory.
+  if (def.typedEffects?.some((effect) => effect.type === 'enableAction')) {
+    actions.push({ type: 'archive', label: 'Archive', requiresTarget: false })
+  }
+  if (def.typedEffects?.some((effect) => effect.type === 'evidence_use')) {
+    actions.push({ type: 'file-evidence', label: 'File as Evidence', requiresTarget: false })
+  }
 
   // Secondary: pack/unpack between inventory and mission_pack
   const isInInventoryOrHouseStorage = inventoryState.player.bagContainers.some((c) =>

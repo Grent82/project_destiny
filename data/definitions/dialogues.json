@@ -28,8 +28,8 @@
             "label": "Talk about the books.",
             "nextNodeId": "marion-node-early-intro",
             "condition": {
-              "type": "hasItem",
-              "value": "item-chit-ledger-removal"
+              "type": "hasEnabledAction",
+              "value": "examine-ledger-chit"
             }
           },
           {
@@ -37,13 +37,13 @@
             "label": "Show her the bureau chit.",
             "nextNodeId": "marion-node-ledger-chit",
             "condition": {
-              "type": "hasItem",
-              "value": "item-chit-ledger-removal"
+              "type": "hasEnabledAction",
+              "value": "examine-ledger-chit"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-chit-ledger-removal"
+                "type": "hasEnabledAction",
+                "value": "examine-ledger-chit"
               },
               {
                 "type": "choiceNotTaken",
@@ -56,13 +56,13 @@
             "label": "Ask about the note on \"the arrangement below.\"",
             "nextNodeId": "marion-node-arrangement-below",
             "condition": {
-              "type": "hasItem",
-              "value": "item-note-arrangement-below"
+              "type": "hasEnabledAction",
+              "value": "examine-vault-note"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-note-arrangement-below"
+                "type": "hasEnabledAction",
+                "value": "examine-vault-note"
               },
               {
                 "type": "choiceNotTaken",
@@ -131,13 +131,13 @@
             "label": "Get her advice on negotiating with Harlen Voss.",
             "nextNodeId": "marion-node-house-debt-advice",
             "condition": {
-              "type": "hasItem",
-              "value": "item-ledger-house-debt"
+              "type": "hasEnabledAction",
+              "value": "review-house-accounts"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-ledger-house-debt"
+                "type": "hasEnabledAction",
+                "value": "review-house-accounts"
               },
               {
                 "type": "choiceNotTaken",
@@ -977,13 +977,13 @@
             "label": "Show her the bureau ledger.",
             "nextNodeId": "maret-node-bureau-ledger",
             "condition": {
-              "type": "hasItem",
-              "value": "item-ledger-bureau"
+              "type": "hasEnabledAction",
+              "value": "use-as-cover-document"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-ledger-bureau"
+                "type": "hasEnabledAction",
+                "value": "use-as-cover-document"
               },
               {
                 "type": "choiceNotTaken",
@@ -1168,8 +1168,8 @@
             "label": "Show her Mira's sealed envelope.",
             "nextNodeId": "tessaly-node-letter-a",
             "condition": {
-              "type": "hasItem",
-              "value": "item-letter-mira-sealed"
+              "type": "hasEnabledAction",
+              "value": "read-mira-letter"
             }
           },
           {
@@ -1591,13 +1591,13 @@
             "label": "Do you recognize this bureau ledger?",
             "nextNodeId": "torvald-node-bureau-ledger",
             "condition": {
-              "type": "hasItem",
-              "value": "item-ledger-bureau"
+              "type": "hasEnabledAction",
+              "value": "use-as-cover-document"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-ledger-bureau"
+                "type": "hasEnabledAction",
+                "value": "use-as-cover-document"
               },
               {
                 "type": "choiceNotTaken",
@@ -1610,13 +1610,13 @@
             "label": "Was this removal ever authorized?",
             "nextNodeId": "torvald-node-removal-chit",
             "condition": {
-              "type": "hasItem",
-              "value": "item-chit-ledger-removal"
+              "type": "hasEnabledAction",
+              "value": "examine-ledger-chit"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-chit-ledger-removal"
+                "type": "hasEnabledAction",
+                "value": "examine-ledger-chit"
               },
               {
                 "type": "choiceNotTaken",
@@ -1829,13 +1829,13 @@
             "label": "Two ledgers were pulled the night the house fell. You'd know why those two.",
             "nextNodeId": "dalen-node-removal-chit",
             "condition": {
-              "type": "hasItem",
-              "value": "item-chit-ledger-removal"
+              "type": "hasEnabledAction",
+              "value": "examine-ledger-chit"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-chit-ledger-removal"
+                "type": "hasEnabledAction",
+                "value": "examine-ledger-chit"
               },
               {
                 "type": "choiceNotTaken",
@@ -2622,13 +2622,13 @@
             "label": "This bureau ledger doesn't match your numbers.",
             "nextNodeId": "harlen-node-bureau-ledger",
             "condition": {
-              "type": "hasItem",
-              "value": "item-ledger-bureau"
+              "type": "hasEnabledAction",
+              "value": "use-as-cover-document"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-ledger-bureau"
+                "type": "hasEnabledAction",
+                "value": "use-as-cover-document"
               },
               {
                 "type": "choiceNotTaken",
@@ -2641,13 +2641,13 @@
             "label": "Let's negotiate these terms against our own accounts.",
             "nextNodeId": "harlen-node-house-debt-negotiate",
             "condition": {
-              "type": "hasItem",
-              "value": "item-ledger-house-debt"
+              "type": "hasEnabledAction",
+              "value": "review-house-accounts"
             },
             "conditionAll": [
               {
-                "type": "hasItem",
-                "value": "item-ledger-house-debt"
+                "type": "hasEnabledAction",
+                "value": "review-house-accounts"
               },
               {
                 "type": "choiceNotTaken",

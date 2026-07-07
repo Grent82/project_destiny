@@ -29,6 +29,7 @@ import { ShopsScreen } from '../screens/ShopsScreen'
 import { screenCatalog } from '../screens/screenCatalog'
 import { EventModal } from '../components/EventModal'
 import { MorningReport } from '../components/MorningReport'
+import { InventoryDrawer } from '../components/InventoryDrawer'
 import { selectHasSeenOpening } from '../../application'
 
 function ScreenPlaceholder(props: { title: string; summary: string }) {
@@ -64,6 +65,7 @@ export function App() {
     <div className="app-shell">
       <MorningReport />
       <EventModal />
+      <InventoryDrawer />
       <aside className="sidebar">
         <p className="sidebar-brand">House Valdris</p>
 

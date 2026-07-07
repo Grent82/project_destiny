@@ -129,10 +129,31 @@ export function addPlayerItem(state: GameState, uniqueId: string, quantity = 1):
 
   const usedSlots = finalContainers.reduce((sum, c) => sum + c.slots.length, 0)
 
+  // Without a registry entry, this item is invisible to selectItemsByLocation/selectItemActions
+  // (the House Storage / Mission Pack panels) even though it is physically in bagContainers --
+  // useItem.ts's findPlayerItem synthesizes an ItemInstance from the slot directly and doesn't
+  // need this, but the display selectors read itemRegistry exclusively.
+  const existingRegistryEntry = state.inventoryState.itemRegistry[uniqueId]
+  const registryEntry: ItemInstance = existingRegistryEntry
+    ? { ...existingRegistryEntry, quantity: existingRegistryEntry.quantity + quantity }
+    : {
+        uniqueId,
+        itemId: uniqueId,
+        quantity,
+        locationType: 'player_inventory',
+        locationId: 'player',
+        acquiredDay: state.day,
+        flags: [],
+      }
+
   return {
     ...state,
     inventoryState: {
       ...state.inventoryState,
+      itemRegistry: {
+        ...state.inventoryState.itemRegistry,
+        [uniqueId]: registryEntry,
+      },
       player: {
         ...state.inventoryState.player,
         bagContainers: finalContainers,

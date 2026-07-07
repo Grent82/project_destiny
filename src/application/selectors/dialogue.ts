@@ -242,12 +242,15 @@ export const selectActiveDialoguePresentation = createSelector(
   }
 })
 
+const NEW_TOPIC_TRIGGER_CONDITION_TYPES = new Set(['hasItem', 'hasEnabledAction'])
+
 /**
- * Returns true when an NPC's dialogue tree has at least one hasItem-conditioned
- * choice that is newly available (player holds the item) and has not been taken yet.
+ * Returns true when an NPC's dialogue tree has at least one hasItem- or
+ * hasEnabledAction-conditioned choice that is newly available (player holds the item, or
+ * has examined a document that granted the matching enabledAction) and has not been taken yet.
  *
  * Used to surface "Marion has something to discuss" signals without exposing
- * which specific item triggered it — the player is expected to discover that
+ * which specific item/document triggered it — the player is expected to discover that
  * by talking.
  */
 export function selectNpcHasNewDialogueTopics(npcId: string) {
@@ -260,7 +263,7 @@ export function selectNpcHasNewDialogueTopics(npcId: string) {
       if (!rootNode) return false
       const resolved = game.resolvedDialogueChoices[tree.id] ?? []
       return rootNode.choices.some((choice) => {
-        if (!choice.condition || choice.condition.type !== 'hasItem') return false
+        if (!choice.condition || !NEW_TOPIC_TRIGGER_CONDITION_TYPES.has(choice.condition.type)) return false
         if (resolved.includes(choice.id)) return false
         return meetsDialogueCondition(game, tree.id, choice.condition)
       })

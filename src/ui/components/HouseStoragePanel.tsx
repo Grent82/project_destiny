@@ -62,6 +62,12 @@ export function HouseStoragePanel() {
       case 'install':
         dispatch(gameActions.installModuleItem({ instanceId }))
         break
+      case 'archive':
+        dispatch(gameActions.useItem({ instanceId, action: 'archive' }))
+        break
+      case 'file-evidence':
+        dispatch(gameActions.useItem({ instanceId, action: 'consume' }))
+        break
       case 'pack':
         dispatch(gameActions.moveItem({ instanceId, location: 'mission_pack' }))
         break

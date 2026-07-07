@@ -3,8 +3,8 @@ import { createGameStore } from '../store/gameStore'
 import { gameActions } from '../store/gameSlice'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { contentCatalog } from '../content/contentCatalog'
-import { addPlayerItem } from './inventory/inventoryHelpers'
 import { isDialogueChoiceAvailable, resolveDialogueChoice } from './dialogue'
+import type { GameState } from '../../domain'
 
 function findChoice(dialogueId: string, choiceId: string) {
   const tree = contentCatalog.dialoguesById.get(dialogueId)
@@ -14,34 +14,41 @@ function findChoice(dialogueId: string, choiceId: string) {
   return choice
 }
 
+// destiny-4d1u: these choices used to gate on hasItem, which broke once the document was
+// archived (the only way to actually examine it). They now gate on hasEnabledAction, keyed
+// on the action the document's own enableAction typedEffect grants.
+function withEnabledAction(action: string): GameState {
+  return { ...initialGameStateSnapshot, enabledActions: [action] }
+}
+
 describe('item-gated dialogue reactions for ledger evidence (destiny-z3oz)', () => {
-  const cases: Array<{ dialogueId: string; choiceId: string; itemId: string }> = [
-    { dialogueId: 'dialogue-torvald-messe', choiceId: 'torvald-choice-bureau-ledger', itemId: 'item-ledger-bureau' },
-    { dialogueId: 'dialogue-torvald-messe', choiceId: 'torvald-choice-removal-chit', itemId: 'item-chit-ledger-removal' },
-    { dialogueId: 'dialogue-old-maret', choiceId: 'maret-choice-bureau-ledger', itemId: 'item-ledger-bureau' },
-    { dialogueId: 'dialogue-harlen', choiceId: 'harlen-choice-bureau-ledger', itemId: 'item-ledger-bureau' },
-    { dialogueId: 'dialogue-harlen', choiceId: 'harlen-choice-house-debt-negotiate', itemId: 'item-ledger-house-debt' },
-    { dialogueId: 'dialogue-marion-vale', choiceId: 'marion-choice-house-debt-advice', itemId: 'item-ledger-house-debt' },
-    { dialogueId: 'dialogue-dalen-morke', choiceId: 'dalen-choice-removal-chit', itemId: 'item-chit-ledger-removal' },
+  const cases: Array<{ dialogueId: string; choiceId: string; action: string }> = [
+    { dialogueId: 'dialogue-torvald-messe', choiceId: 'torvald-choice-bureau-ledger', action: 'use-as-cover-document' },
+    { dialogueId: 'dialogue-torvald-messe', choiceId: 'torvald-choice-removal-chit', action: 'examine-ledger-chit' },
+    { dialogueId: 'dialogue-old-maret', choiceId: 'maret-choice-bureau-ledger', action: 'use-as-cover-document' },
+    { dialogueId: 'dialogue-harlen', choiceId: 'harlen-choice-bureau-ledger', action: 'use-as-cover-document' },
+    { dialogueId: 'dialogue-harlen', choiceId: 'harlen-choice-house-debt-negotiate', action: 'review-house-accounts' },
+    { dialogueId: 'dialogue-marion-vale', choiceId: 'marion-choice-house-debt-advice', action: 'review-house-accounts' },
+    { dialogueId: 'dialogue-dalen-morke', choiceId: 'dalen-choice-removal-chit', action: 'examine-ledger-chit' },
   ]
 
-  it.each(cases)('$choiceId is unavailable without $itemId and available once the player holds it', ({ dialogueId, choiceId, itemId }) => {
+  it.each(cases)('$choiceId is unavailable without $action and available once the player has examined the document', ({ dialogueId, choiceId, action }) => {
     const choice = findChoice(dialogueId, choiceId)
 
     expect(isDialogueChoiceAvailable(initialGameStateSnapshot, dialogueId, choice)).toBe(false)
 
-    const withItem = addPlayerItem(initialGameStateSnapshot, itemId, 1)
-    expect(isDialogueChoiceAvailable(withItem, dialogueId, choice)).toBe(true)
+    const withAction = withEnabledAction(action)
+    expect(isDialogueChoiceAvailable(withAction, dialogueId, choice)).toBe(true)
   })
 
   it('Marion Vale expanded ledger-chit reaction: the follow-up choice is available once, then resolved, without needing the item a second time', () => {
-    const withItem = addPlayerItem(initialGameStateSnapshot, 'item-chit-ledger-removal', 1)
+    const withAction = withEnabledAction('examine-ledger-chit')
     const choice = findChoice('dialogue-marion-vale', 'marion-choice-ledger-chit-who-signed')
 
-    expect(isDialogueChoiceAvailable(withItem, 'dialogue-marion-vale', choice)).toBe(true)
+    expect(isDialogueChoiceAvailable(withAction, 'dialogue-marion-vale', choice)).toBe(true)
 
     const store = createGameStore({
-      ...withItem,
+      ...withAction,
       activeDialogueId: 'dialogue-marion-vale',
       activeDialogueNodeId: 'marion-node-ledger-chit',
     })
@@ -53,9 +60,9 @@ describe('item-gated dialogue reactions for ledger evidence (destiny-z3oz)', () 
   })
 
   it('resolving the Torvald bureau-ledger choice surfaces the real mainQuestHint outcome', () => {
-    const withItem = addPlayerItem(initialGameStateSnapshot, 'item-ledger-bureau', 1)
+    const withAction = withEnabledAction('use-as-cover-document')
     const next = resolveDialogueChoice(
-      { ...withItem, activeDialogueId: 'dialogue-torvald-messe', activeDialogueNodeId: 'torvald-node-1' },
+      { ...withAction, activeDialogueId: 'dialogue-torvald-messe', activeDialogueNodeId: 'torvald-node-1' },
       'torvald-choice-bureau-ledger',
     )
 
@@ -63,9 +70,9 @@ describe('item-gated dialogue reactions for ledger evidence (destiny-z3oz)', () 
   })
 
   it('resolving the Old Maret bureau-ledger choice sets the mainQuestHint clue in state', () => {
-    const withItem = addPlayerItem(initialGameStateSnapshot, 'item-ledger-bureau', 1)
+    const withAction = withEnabledAction('use-as-cover-document')
     let next = resolveDialogueChoice(
-      { ...withItem, activeDialogueId: 'dialogue-old-maret', activeDialogueNodeId: 'maret-node-1' },
+      { ...withAction, activeDialogueId: 'dialogue-old-maret', activeDialogueNodeId: 'maret-node-1' },
       'maret-choice-bureau-ledger',
     )
     next = resolveDialogueChoice(next, 'maret-choice-bureau-ledger-understood')

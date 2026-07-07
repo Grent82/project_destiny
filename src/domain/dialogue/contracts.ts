@@ -11,6 +11,7 @@ export const dialogueConditionSchema = z
       'minNpcLoyalty',
       'mainQuestStage',
       'hasItem',
+      'hasEnabledAction',
       'choiceTaken',
       'choiceNotTaken',
     ]),

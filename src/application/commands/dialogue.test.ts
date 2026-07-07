@@ -54,6 +54,46 @@ describe('dialogue conditions', () => {
     expect(isDialogueChoiceAvailable(state, 'dialogue-marion-vale', stageChoice)).toBe(true)
     expect(isDialogueChoiceAvailable(state, 'dialogue-marion-vale', memoryChoice)).toBe(true)
   })
+
+  it('hasEnabledAction gates on state.enabledActions rather than inventory (destiny-4d1u)', () => {
+    const withoutAction = gameStateSchema.parse({ ...initialGameStateSnapshot, enabledActions: [] })
+    const withAction = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      enabledActions: ['examine-ledger-chit'],
+    })
+
+    const choice: DialogueChoice = {
+      id: 'test-enabled-action',
+      label: 'Enabled-action gated',
+      nextNodeId: null,
+      condition: { type: 'hasEnabledAction', value: 'examine-ledger-chit' },
+    }
+
+    expect(isDialogueChoiceAvailable(withoutAction, 'dialogue-marion-vale', choice)).toBe(false)
+    expect(isDialogueChoiceAvailable(withAction, 'dialogue-marion-vale', choice)).toBe(true)
+  })
+
+  it('hasEnabledAction stays available after the granting document is removed from inventory (the lockout trap this replaces)', () => {
+    // Simulates archiving item-chit-ledger-removal: the item leaves inventory, but the
+    // enabledActions entry it granted persists -- unlike the old hasItem gate.
+    const state = gameStateSchema.parse({
+      ...initialGameStateSnapshot,
+      enabledActions: ['examine-ledger-chit'],
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        player: { ...initialGameStateSnapshot.inventoryState.player, bagContainers: [] },
+      },
+    })
+
+    const choice: DialogueChoice = {
+      id: 'test-enabled-action-post-archive',
+      label: 'Enabled-action gated',
+      nextNodeId: null,
+      condition: { type: 'hasEnabledAction', value: 'examine-ledger-chit' },
+    }
+
+    expect(isDialogueChoiceAvailable(state, 'dialogue-marion-vale', choice)).toBe(true)
+  })
 })
 
 describe('dialogue consequence resolution', () => {
@@ -90,27 +130,10 @@ describe('dialogue consequence resolution', () => {
   })
 
   it('still resumes a non-terminal conversation node with visible choices', () => {
-    // marion-choice-early-game requires hasItem: item-chit-ledger-removal (destiny-q80n.1: gated
-    // as the single entry point into the ledger/Orren-hook thread instead of a bare dayMax window).
+    // marion-choice-early-game requires hasEnabledAction: examine-ledger-chit (destiny-4d1u: swapped
+    // from hasItem so the choice survives archiving the document, not just holding it).
     const store = makeStore({
-      inventoryState: {
-        ...initialGameStateSnapshot.inventoryState,
-        player: {
-          ...initialGameStateSnapshot.inventoryState.player,
-          bagContainers: [
-            {
-              containerId: 'container-test',
-              containerType: 'backpack' as const,
-              ownerId: 'player',
-              maxSlots: 20,
-              slots: [{ slotId: 'slot-chit', itemInstanceId: 'item-chit-ledger-removal', quantity: 1 }],
-              locked: false,
-            },
-          ],
-          usedBagSlots: 1,
-          equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
-        },
-      },
+      enabledActions: ['examine-ledger-chit'],
     })
 
     store.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-marion-vale', nodeId: 'marion-node-1' }))
@@ -127,34 +150,10 @@ describe('dialogue consequence resolution', () => {
   })
 
   it('consumes Marion one-shot clue topics after the first discussion', () => {
-    // Helper to create inventoryState with items
-    const createInventoryWithItems = () => ({
-      ...initialGameStateSnapshot.inventoryState,
-      player: {
-        ...initialGameStateSnapshot.inventoryState.player,
-        bagContainers: [
-          {
-            containerId: 'container-test',
-            containerType: 'backpack' as const,
-            ownerId: 'player',
-            maxSlots: 20,
-            slots: [
-              { slotId: 'slot-chit', itemInstanceId: 'item-chit-ledger-removal' as string | null, quantity: 1 },
-              { slotId: 'slot-note', itemInstanceId: 'item-note-arrangement-below' as string | null, quantity: 1 },
-            ],
-            locked: false,
-          },
-        ],
-        usedBagSlots: 2,
-        equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
-      },
-      npcInventories: {},
-      sharedContainers: [],
-      itemRegistry: {},
-    })
-
+    // marion-choice-ledger-chit/arrangement-below require hasEnabledAction, not hasItem
+    // (destiny-4d1u) -- the document may already be archived by the time these are shown.
     const store = makeStore({
-      inventoryState: createInventoryWithItems(),
+      enabledActions: ['examine-ledger-chit', 'examine-vault-note'],
     })
 
     const visibleChoicesAtRoot = () =>

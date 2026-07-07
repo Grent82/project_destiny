@@ -170,6 +170,28 @@ describe('selectItemActions', () => {
     expect(types).toContain('unpack')
     expect(types).not.toContain('pack')
   })
+
+  // destiny-4d1u: 'open' alone only previews a document, it never writes enabledActions/
+  // evidenceInventory -- these documents need an explicit disposal action to be reachable at all.
+  it('returns an archive action for a document with an enableAction typedEffect', () => {
+    const state = stateWithPlayerItems([{ instanceId: suspiciousLetterInstanceId, itemId: suspiciousLetterItemId, quantity: 1 }])
+    const store = createGameStore(state)
+    const actions = selectItemActions(store.getState(), suspiciousLetterInstanceId)
+    const types = actions.map((a) => a.type)
+    expect(types).toContain('open')
+    expect(types).toContain('archive')
+    expect(types).not.toContain('file-evidence')
+  })
+
+  it('returns a file-evidence action for a document with an evidence_use typedEffect', () => {
+    const state = stateWithPlayerItems([{ instanceId: 'inst-permit-01', itemId: 'item-permit-reproduction', quantity: 1 }])
+    const store = createGameStore(state)
+    const actions = selectItemActions(store.getState(), 'inst-permit-01')
+    const types = actions.map((a) => a.type)
+    expect(types).toContain('open')
+    expect(types).toContain('file-evidence')
+    expect(types).not.toContain('archive')
+  })
 })
 
 describe('moveItem action', () => {

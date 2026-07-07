@@ -68,6 +68,8 @@ export function meetsDialogueCondition(
       return state.inventoryState.player.bagContainers.some((c) =>
         c.slots.some((s) => s.itemInstanceId === cond.value)
       )
+    case 'hasEnabledAction':
+      return state.enabledActions.includes(cond.value as string)
     case 'choiceTaken':
       return (state.resolvedDialogueChoices[dialogueId] ?? []).includes(cond.value as string)
     case 'choiceNotTaken':

@@ -13,32 +13,10 @@ import { NpcDetailPanel } from './NpcDetailPanel'
 
 const MARION_ID = 'npc-marion-vale'
 
-function createInventoryWithItems(items: Array<{ itemId: string }>) {
-  return {
-    ...initialGameStateSnapshot.inventoryState,
-    player: {
-      ...initialGameStateSnapshot.inventoryState.player,
-      bagContainers: [
-        {
-          containerId: 'container-test',
-          containerType: 'backpack' as const,
-          ownerId: 'player',
-          maxSlots: 20,
-          slots: items.map((item, i) => ({ slotId: `slot-${i}`, itemInstanceId: item.itemId as string | null, quantity: 1 })),
-          locked: false,
-        },
-      ],
-      usedBagSlots: items.length,
-      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
-    },
-    npcInventories: {},
-    sharedContainers: [],
-    itemRegistry: {},
-  }
-}
-
-function renderMarionPanel(ownedItems: Array<{ itemId: string }> = []) {
-  const store = createGameStore({ ...initialGameStateSnapshot, inventoryState: createInventoryWithItems(ownedItems) })
+// destiny-4d1u: Marion's ledger/vault-note choices gate on hasEnabledAction now, not hasItem
+// (the document may already be archived by the time the House screen prompts these choices).
+function renderMarionPanel(enabledActions: string[] = []) {
+  const store = createGameStore({ ...initialGameStateSnapshot, enabledActions })
   const detail = selectRosterDetail(store.getState(), MARION_ID)
   if (!detail) throw new Error('Marion not on roster in initial state')
   render(
@@ -140,99 +118,44 @@ describe('NpcDetailPanel — Marion clue discoverability', () => {
     expect(screen.queryByText(/Something on your mind worth raising/i)).toBeNull()
   })
 
-  it('shows a new-topic hint when the bureau ledger chit is in inventory', () => {
-    renderMarionPanel([
-      {
-        itemId: 'item-chit-ledger-removal',
-      },
-    ])
+  it('shows a new-topic hint when the bureau ledger chit has been examined', () => {
+    renderMarionPanel(['examine-ledger-chit'])
     expect(screen.getByText(/Something on your mind worth raising/i)).toBeInTheDocument()
   })
 
-  it('shows a new-topic hint when the arrangement note is in inventory', () => {
-    renderMarionPanel([
-      {
-        itemId: 'item-note-arrangement-below',
-      },
-    ])
+  it('shows a new-topic hint when the arrangement note has been examined', () => {
+    renderMarionPanel(['examine-vault-note'])
     expect(screen.getByText(/Something on your mind worth raising/i)).toBeInTheDocument()
   })
 })
 
 describe('Marion clue → dialogue choice availability', () => {
-  it('ledger chit choice is gated behind hasItem and unavailable without the item', () => {
+  it('ledger chit choice is gated behind hasEnabledAction and unavailable before the document is examined', () => {
     const tree = contentCatalog.dialoguesByNpcId.get(MARION_ID)!
     const chitChoice = tree.nodes
       .flatMap((n) => n.choices)
       .find((c) => c.id === 'marion-choice-ledger-chit')!
 
-    const stateWithout = { ...initialGameStateSnapshot, ownedItems: [] }
-    expect(isDialogueChoiceAvailable(stateWithout, tree.id, chitChoice)).toBe(false)
+    expect(isDialogueChoiceAvailable(initialGameStateSnapshot, tree.id, chitChoice)).toBe(false)
   })
 
-  it('ledger chit choice becomes available when the item is in inventory', () => {
+  it('ledger chit choice becomes available once the document has been examined (archived)', () => {
     const tree = contentCatalog.dialoguesByNpcId.get(MARION_ID)!
     const chitChoice = tree.nodes
       .flatMap((n) => n.choices)
       .find((c) => c.id === 'marion-choice-ledger-chit')!
 
-    const stateWith = {
-      ...initialGameStateSnapshot,
-      inventoryState: {
-        ...initialGameStateSnapshot.inventoryState,
-        player: {
-          ...initialGameStateSnapshot.inventoryState.player,
-          bagContainers: [
-            {
-              containerId: 'container-test',
-              containerType: 'backpack' as const,
-              ownerId: 'player',
-              maxSlots: 20,
-              slots: [{ slotId: 'slot-chit', itemInstanceId: 'item-chit-ledger-removal' as string | null, quantity: 1 }],
-              locked: false,
-            },
-          ],
-          usedBagSlots: 1,
-          equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
-        },
-        npcInventories: {},
-        sharedContainers: [],
-        itemRegistry: {},
-      },
-    }
+    const stateWith = { ...initialGameStateSnapshot, enabledActions: ['examine-ledger-chit'] }
     expect(isDialogueChoiceAvailable(stateWith, tree.id, chitChoice)).toBe(true)
   })
 
-  it('arrangement note choice becomes available when the item is in inventory', () => {
+  it('arrangement note choice becomes available once the document has been examined (archived)', () => {
     const tree = contentCatalog.dialoguesByNpcId.get(MARION_ID)!
     const noteChoice = tree.nodes
       .flatMap((n) => n.choices)
       .find((c) => c.id === 'marion-choice-arrangement-below')!
 
-    const stateWith = {
-      ...initialGameStateSnapshot,
-      inventoryState: {
-        ...initialGameStateSnapshot.inventoryState,
-        player: {
-          ...initialGameStateSnapshot.inventoryState.player,
-          bagContainers: [
-            {
-              containerId: 'container-test',
-              containerType: 'backpack' as const,
-              ownerId: 'player',
-              maxSlots: 20,
-              slots: [{ slotId: 'slot-note', itemInstanceId: 'item-note-arrangement-below' as string | null, quantity: 1 }],
-              locked: false,
-            },
-          ],
-          usedBagSlots: 1,
-          equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
-        },
-        npcInventories: {},
-        sharedContainers: [],
-        itemRegistry: {},
-      },
-    }
+    const stateWith = { ...initialGameStateSnapshot, enabledActions: ['examine-vault-note'] }
     expect(isDialogueChoiceAvailable(stateWith, tree.id, noteChoice)).toBe(true)
   })
 })
@@ -579,7 +502,7 @@ describe('NpcDetailPanel — tab warning/notification indicators and keyboard na
   })
 
   it('shows a notification badge on the Relations tab when new dialogue topics are available', () => {
-    renderMarionPanel([{ itemId: 'item-chit-ledger-removal' }])
+    renderMarionPanel(['examine-ledger-chit'])
     const relationsTab = screen.getByRole('tab', { name: /Relations/ })
     expect(within(relationsTab).getByText('🔔')).toBeInTheDocument()
   })
