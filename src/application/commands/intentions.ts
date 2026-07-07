@@ -353,11 +353,19 @@ export function calculateNpcIntention(state: GameState, npcId: string): NpcInten
   const npc = state.npcRuntimeStates.find((n) => n.npcId === npcId)
   if (!npc) return null
 
-  // Check guard conditions
-  if (isNpcBlockedFromIntention(npc)) return null
+  const isCaptive = npc.captivityState?.status === 'captive'
 
-  // Use the new 5-stage pipeline to determine intention type
-  const intentionType = generateNpcIntention(state, npc)
+  // Deliberate carve-out (destiny-ap3s): isNpcBlockedFromIntention() also gates every other
+  // intention's candidate/target selection (see the many `!isNpcBlockedFromIntention(r)` filters
+  // below), so it must keep blocking captives THERE. Bypassing it only here, for the captive's
+  // own intention, is what lets a captive want exactly one thing -- escaping -- without making
+  // them a valid target for anyone else's intention.
+  if (!isCaptive && isNpcBlockedFromIntention(npc)) return null
+
+  // Use the new 5-stage pipeline to determine intention type. Captives skip the pipeline entirely:
+  // intentionTypesForNpc(npc) already restricts them to escape-attempt alone, so there is nothing
+  // else the pipeline could legally choose.
+  const intentionType = isCaptive ? 'escape-attempt' : generateNpcIntention(state, npc)
   if (!intentionType) return null
 
   // travel-district's target is a computed destination, never the player's own district (see
@@ -521,11 +529,10 @@ export const WIRED_INTENTION_TYPES = new Set<NpcIntentionType>([
   'gossip',
   'mediate-conflict',
   'challenge-authority',
-  // destiny-aoy7 (Intellect & Stealth): escape-attempt stays excluded —
-  // isNpcBlockedFromIntention() unconditionally blocks captive NPCs from any intention, so it's
-  // structurally unreachable via this pipeline today even though npcEscapeAttempt itself is
-  // implemented and tested; unblocking it needs a deliberate carve-out in that guard, not a
-  // silent inclusion here.
+  // destiny-ap3s: escape-attempt is wired now that calculateNpcIntention() carves out a captive
+  // exception to isNpcBlockedFromIntention() -- intentionTypesForNpc(npc) restricts captives to
+  // this one type, so composing both gates here does not open anything else for them.
+  'escape-attempt',
   'spy-on',
   'gather-leverage',
   'intercept-communication',
@@ -1405,11 +1412,8 @@ const escapeAttemptHandler: IntentionHandler = {
     if (npc.captivityState?.status !== 'captive') return false
     return npc.attributes.agility >= 50 || npc.attributes.perception >= 50
   },
-  // npcEscapeAttempt is implemented and tested (see npcIntellectActions.ts), but 'escape-attempt'
-  // is deliberately NOT in WIRED_INTENTION_TYPES — isNpcBlockedFromIntention() unconditionally
-  // blocks captive NPCs from ANY intention, so this can never actually be generated/executed via
-  // the normal pipeline today. Wired here anyway so it's correct and ready once that guard is
-  // revisited, without silently reactivating anything (the allowlist gate still blocks it).
+  // npcEscapeAttempt is implemented and tested (see npcIntellectActions.ts). Wired via
+  // WIRED_INTENTION_TYPES + calculateNpcIntention's captive carve-out (destiny-ap3s).
   execute: (npc, state) => {
     const rng = createRng(state.rngSeed)
     const next = npcEscapeAttempt(state, npc.npcId, rng.rng)

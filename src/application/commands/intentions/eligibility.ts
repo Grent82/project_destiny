@@ -34,9 +34,11 @@ import type { NpcRuntimeState } from '../../../domain/npc/contracts'
  *   generalised the relevant handlers; it is expensive to ship a world NPC silently mutating the
  *   player's house or economy.
  * - Enemy runtime NPCs: no personal agency here (they belong to the combat system).
- * - Captives: empty — they are hard-blocked by isNpcBlockedFromIntention; this is defense-in-depth so
- *   a caller that forgets the hard gate still cannot hand a captive an intention. (escape-attempt is a
- *   deliberate future carve-out handled in that guard, not routed through this positive set.)
+ * - Captives: exactly one type, escape-attempt (destiny-ap3s). calculateNpcIntention() carves out a
+ *   captive exception to isNpcBlockedFromIntention() and hands them that type directly, bypassing
+ *   this positive set entirely for type SELECTION -- but this function is still consulted as
+ *   defense-in-depth by processAllowlistedNpcIntentions, so it must actually contain escape-attempt
+ *   rather than EMPTY, or the carve-out above would be silently discarded again.
  */
 
 const EMPTY: ReadonlySet<NpcIntentionType> = new Set()
@@ -90,9 +92,12 @@ export const WORLD_ELIGIBLE_INTENTION_TYPES: ReadonlySet<NpcIntentionType> = new
  * Returns the set of intention types this person is, by kind and status, eligible to want. Compose
  * with WIRED_INTENTION_TYPES (and isNpcBlockedFromIntention) at the generation site.
  */
+const CAPTIVE_ELIGIBLE_INTENTION_TYPES: ReadonlySet<NpcIntentionType> = new Set<NpcIntentionType>(['escape-attempt'])
+
 export function intentionTypesForNpc(npc: NpcRuntimeState): ReadonlySet<NpcIntentionType> {
-  // Defense-in-depth: captives get nothing here even though isNpcBlockedFromIntention is the runtime gate.
-  if (npc.captivityState?.status === 'captive') return EMPTY
+  // A captive may want exactly one thing: to escape. calculateNpcIntention() is the actual carve-out
+  // in isNpcBlockedFromIntention (the runtime gate); this set is defense-in-depth on top of it.
+  if (npc.captivityState?.status === 'captive') return CAPTIVE_ELIGIBLE_INTENTION_TYPES
 
   switch (npc.npcType) {
     case 'roster':
