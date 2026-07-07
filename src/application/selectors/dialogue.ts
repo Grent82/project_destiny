@@ -157,6 +157,8 @@ function formatDialogueOutcomeNote(npcId: string, choice: DialogueChoice) {
       return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} trust you more.`]
     case 'respect':
       return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} revise their measure of you upward.`]
+    case 'affinity':
+      return [`${contentCatalog.npcsById.get(npcId)?.name ?? 'They'} warm to you.`]
     case 'questUnlock': {
       const questTitle = contentCatalog.questsById.get(String(outcome.value))?.title ?? 'A new lead'
       return [`New lead surfaced: ${questTitle}.`]
@@ -170,7 +172,12 @@ function formatDialogueOutcomeNote(npcId: string, choice: DialogueChoice) {
     case 'factionStanding': {
       const factionName =
         contentCatalog.factionsById.get(outcome.targetId ?? '')?.name ?? 'A faction'
-      return [`Standing shifts with ${factionName}.`]
+      const isNegative = typeof outcome.value === 'number' && outcome.value < 0
+      return [
+        isNegative
+          ? `⚠ Standing weakens with ${factionName}.`
+          : `Standing strengthens with ${factionName}.`,
+      ]
     }
     case 'activityLog':
       return [String(outcome.value)]
