@@ -59,14 +59,10 @@ export function RecruitmentScreen() {
       <button
         className="action-button action-button--secondary"
         type="button"
-        onClick={() =>
-          venueContext
-            ? navigate(`/district/${venueContext.districtId}/poi/${venueContext.poiId}`)
-            : navigate('/roster')
-        }
+        onClick={() => navigate('/roster')}
         style={{ marginBottom: '1rem' }}
       >
-        ← {venueContext ? `Back to ${venueContext.poiName}` : 'Back to Roster'}
+        ← Back to Roster
       </button>
 
       <div className="burn-rate-panel">
