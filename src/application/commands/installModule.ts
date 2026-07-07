@@ -18,6 +18,12 @@ import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { removePlayerItem } from './inventory/inventoryHelpers'
 
+const BASE_IMPROVEMENT_LOG_LABELS: Record<string, string> = {
+  waterQuality: 'Water Quality',
+  herbSupply: 'Herb Supply',
+  entrySecurity: 'Entry Security',
+}
+
 export type InstallModuleResult =
   | { success: true; state: GameState }
   | { success: false; reason: 'item_not_found' | 'not_a_module' | 'already_installed' }
@@ -118,7 +124,7 @@ export function installModule(
     if (effect.type === 'baseImprovement') {
       const stat = effect.stat
       const value = typeof effect.value === 'number' ? effect.value : 0
-      logLines.push(`${stat} +${value}.`)
+      logLines.push(`${BASE_IMPROVEMENT_LOG_LABELS[stat] ?? stat} +${value}.`)
     }
   }
 

@@ -264,6 +264,28 @@ describe('HouseScreen — room occupancy', () => {
   })
 })
 
+describe('HouseScreen — house improvements (destiny-h8hz)', () => {
+  it('shows zeroed improvements and an empty-state message with no modules installed', () => {
+    renderHouseScreen()
+    expect(screen.getByRole('heading', { name: 'House Improvements' })).toBeInTheDocument()
+    expect(screen.getByText('Water Quality:')).toBeInTheDocument()
+    expect(screen.getByText(/No household modules installed yet\./i)).toBeInTheDocument()
+  })
+
+  it('lists an installed module with its resolved name and effect breakdown', () => {
+    renderHouseScreen({
+      ...initialGameStateSnapshot,
+      installedHouseModules: [{ moduleItemId: 'item-module-water-purifier', installedAtDay: 3 }],
+      houseImprovements: { waterQuality: 2, herbSupply: 0, entrySecurity: 0 },
+      sleepQualityBonus: 10,
+    })
+
+    expect(screen.getByText('Clay-Char Water Purifier Stack')).toBeInTheDocument()
+    expect(screen.getByText('Water Quality +2')).toBeInTheDocument()
+    expect(screen.getByText('Sleep Quality +10')).toBeInTheDocument()
+  })
+})
+
 describe('HouseScreen — evidence filed (destiny-23qg)', () => {
   it('shows the empty-state message when no evidence has been filed', () => {
     renderHouseScreen()

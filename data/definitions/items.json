@@ -905,19 +905,17 @@
       "health",
       "base-improvement"
     ],
-    "effects": [
-      {
-        "type": "baseImprovement",
-        "stat": "water-quality",
-        "value": 2
-      }
-    ],
     "description": "A three-stage ceramic filtration stack packed with activated char and clean sand — installed over a collection basin, it removes the primary contaminants from fouled-source water well enough to drink without antitoxin.",
     "shopPrice": 55,
     "typedEffects": [
       {
         "type": "rest_quality_bonus",
         "value": 10
+      },
+      {
+        "type": "baseImprovement",
+        "stat": "waterQuality",
+        "value": 2
       }
     ]
   },
@@ -935,13 +933,6 @@
       "medicine",
       "base-improvement"
     ],
-    "effects": [
-      {
-        "type": "baseImprovement",
-        "stat": "herb-supply",
-        "value": 1
-      }
-    ],
     "description": "A deep window-mounted planting box with a soil mix already conditioned — grows medicinal and culinary herbs from seed in a south-facing opening, producing enough to meaningfully supplement consumable costs per season.",
     "shopPrice": 20,
     "typedEffects": [
@@ -953,6 +944,11 @@
         "type": "training_bonus",
         "skill": "medicine",
         "value": 5
+      },
+      {
+        "type": "baseImprovement",
+        "stat": "herbSupply",
+        "value": 1
       }
     ]
   },
@@ -969,19 +965,17 @@
       "security",
       "base-improvement"
     ],
-    "effects": [
-      {
-        "type": "baseImprovement",
-        "stat": "entry-security",
-        "value": 1
-      }
-    ],
     "description": "A fitted iron bar that brackets across a door frame on the interior, preventing forced entry without cutting through the wall — sold at League ironmongers and installed in about an hour.",
     "shopPrice": 15,
     "typedEffects": [
       {
         "type": "storage_expand",
         "value": 8
+      },
+      {
+        "type": "baseImprovement",
+        "stat": "entrySecurity",
+        "value": 1
       }
     ]
   },

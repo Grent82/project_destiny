@@ -5,6 +5,7 @@ import {
   selectDebtStatus,
   selectFiledEvidence,
   selectHouseHeirs,
+  selectHouseImprovementsSummary,
   selectLastDomesticRelationshipBeat,
   selectHouseRepairSummary,
   selectHouseRoomOccupancy,
@@ -55,6 +56,7 @@ export function HouseScreen() {
   const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)
   const filedEvidence = useAppSelector(selectFiledEvidence)
+  const houseImprovementsSummary = useAppSelector(selectHouseImprovementsSummary)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>('room-entrance-hall')
 
@@ -212,6 +214,46 @@ export function HouseScreen() {
                   <p className="quest-briefing" style={{ fontSize: '0.8rem', opacity: 0.8 }}>
                     {heir.originStory}
                   </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="house-wards-section">
+        <h2>House Improvements</h2>
+        <p className="summary">Standing effects from installed household modules.</p>
+        <div className="house-status-bar">
+          <span>
+            Water Quality: <strong>+{houseImprovementsSummary.houseImprovements.waterQuality}</strong>
+          </span>
+          <span>
+            Herb Supply: <strong>+{houseImprovementsSummary.houseImprovements.herbSupply}</strong>
+          </span>
+          <span>
+            Entry Security: <strong>+{houseImprovementsSummary.houseImprovements.entrySecurity}</strong>
+          </span>
+          <span>
+            Sleep Quality: <strong>+{houseImprovementsSummary.sleepQualityBonus}</strong>
+          </span>
+        </div>
+        {houseImprovementsSummary.installedModules.length === 0 ? (
+          <p className="quest-briefing">No household modules installed yet.</p>
+        ) : (
+          <div className="mission-list">
+            {houseImprovementsSummary.installedModules.map((module) => (
+              <div key={module.moduleItemId} className="mission-row">
+                <div className="mission-row-header">
+                  <strong>{module.name}</strong>
+                  <span className="badge">Day {module.installedAtDay}</span>
+                </div>
+                {module.effectDescriptions.length > 0 && (
+                  <ul className="quest-journal-list">
+                    {module.effectDescriptions.map((description) => (
+                      <li key={description}>{description}</li>
+                    ))}
+                  </ul>
                 )}
               </div>
             ))}

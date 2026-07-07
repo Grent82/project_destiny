@@ -118,6 +118,52 @@ describe('installModule command', () => {
   })
 })
 
+describe('installModule — baseImprovement + rest_quality_bonus effects (destiny-h8hz)', () => {
+  it('applies waterQuality baseImprovement and sleepQualityBonus from the water purifier', () => {
+    const WATER_PURIFIER_ID = 'item-module-water-purifier'
+    const state = stateWithModule(WATER_PURIFIER_ID, WATER_PURIFIER_ID)
+    const result = installModule(state, WATER_PURIFIER_ID)
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.state.houseImprovements).toEqual({ waterQuality: 2, herbSupply: 0, entrySecurity: 0 })
+    expect(result.state.sleepQualityBonus).toBe(10)
+    expect(result.state.activityLog[0]?.message).toContain('Water Quality +2.')
+  })
+
+  it('applies herbSupply baseImprovement and sleepQualityBonus from the herb garden', () => {
+    const HERB_GARDEN_ID = 'item-module-herb-garden'
+    const state = stateWithModule(HERB_GARDEN_ID, HERB_GARDEN_ID)
+    const result = installModule(state, HERB_GARDEN_ID)
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.state.houseImprovements).toEqual({ waterQuality: 0, herbSupply: 1, entrySecurity: 0 })
+    expect(result.state.sleepQualityBonus).toBe(5)
+    expect(result.state.activityLog[0]?.message).toContain('Herb Supply +1.')
+  })
+
+  it('applies entrySecurity baseImprovement from the lock reinforcement bar', () => {
+    const state = stateWithModule(MODULE_ITEM_ID, MODULE_INSTANCE_ID)
+    const result = installModule(state, MODULE_INSTANCE_ID)
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.state.houseImprovements).toEqual({ waterQuality: 0, herbSupply: 0, entrySecurity: 1 })
+    expect(result.state.activityLog[0]?.message).toContain('Entry Security +1.')
+  })
+
+  it('accumulates houseImprovements across multiple installed modules', () => {
+    const WATER_PURIFIER_ID = 'item-module-water-purifier'
+    const stateWithBoth: GameState = {
+      ...stateWithModule(WATER_PURIFIER_ID, WATER_PURIFIER_ID),
+      installedHouseModules: [{ moduleItemId: MODULE_ITEM_ID, installedAtDay: 1 }],
+      houseImprovements: { waterQuality: 0, herbSupply: 0, entrySecurity: 1 },
+    }
+    const result = installModule(stateWithBoth, WATER_PURIFIER_ID)
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.state.houseImprovements).toEqual({ waterQuality: 2, herbSupply: 0, entrySecurity: 1 })
+  })
+})
+
 describe('selectHouseStorageInfo', () => {
   it('reports correct base capacity', () => {
     // Note: This test still uses the selector which may need migration

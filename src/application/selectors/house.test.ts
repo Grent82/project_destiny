@@ -5,6 +5,7 @@ import {
   selectExteriorTier,
   selectComputedExteriorTier,
   selectExteriorTierAdvanceable,
+  selectHouseImprovementsSummary,
   selectHousePrestige,
 } from './house'
 import type { GameState } from '../../domain/game/contracts'
@@ -115,6 +116,53 @@ describe('house exterior state selectors', () => {
       const store = createGameStore()
       store.dispatch(gameActions.advanceExteriorState({ targetTier: 'restored' }))
       expect(selectHousePrestige(store.getState()).score).toBeGreaterThan(0)
+    })
+  })
+
+  describe('selectHouseImprovementsSummary (destiny-h8hz)', () => {
+    it('reports zeroed improvements and no modules on a fresh house', () => {
+      const store = createGameStore()
+      const summary = selectHouseImprovementsSummary(store.getState())
+      expect(summary.houseImprovements).toEqual({ waterQuality: 0, herbSupply: 0, entrySecurity: 0 })
+      expect(summary.sleepQualityBonus).toBe(0)
+      expect(summary.installedModules).toEqual([])
+    })
+
+    it('resolves an installed module to its name and effect descriptions', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        installedHouseModules: [{ moduleItemId: 'item-module-water-purifier', installedAtDay: 3 }],
+        houseImprovements: { waterQuality: 2, herbSupply: 0, entrySecurity: 0 },
+        sleepQualityBonus: 10,
+      }
+      const store = createGameStore(state)
+      const summary = selectHouseImprovementsSummary(store.getState())
+      expect(summary.houseImprovements).toEqual({ waterQuality: 2, herbSupply: 0, entrySecurity: 0 })
+      expect(summary.sleepQualityBonus).toBe(10)
+      expect(summary.installedModules).toEqual([
+        {
+          moduleItemId: 'item-module-water-purifier',
+          name: 'Clay-Char Water Purifier Stack',
+          installedAtDay: 3,
+          effectDescriptions: ['Sleep Quality +10', 'Water Quality +2'],
+        },
+      ])
+    })
+
+    it('describes training_bonus and storage_expand effects on other modules', () => {
+      const state: GameState = {
+        ...initialGameStateSnapshot,
+        installedHouseModules: [
+          { moduleItemId: 'item-module-herb-garden', installedAtDay: 1 },
+          { moduleItemId: 'item-module-lock-reinforcement', installedAtDay: 2 },
+        ],
+      }
+      const store = createGameStore(state)
+      const summary = selectHouseImprovementsSummary(store.getState())
+      const herbGarden = summary.installedModules.find((m) => m.moduleItemId === 'item-module-herb-garden')
+      const lockBar = summary.installedModules.find((m) => m.moduleItemId === 'item-module-lock-reinforcement')
+      expect(herbGarden?.effectDescriptions).toEqual(['Sleep Quality +5', 'medicine training +5', 'Herb Supply +1'])
+      expect(lockBar?.effectDescriptions).toEqual(['Storage +8', 'Entry Security +1'])
     })
   })
 })

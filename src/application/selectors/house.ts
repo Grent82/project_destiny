@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store/gameStore'
 import type { Heir, HeirLegitimacy, HouseExteriorTier } from '../../domain'
+import { contentCatalog } from '../content/contentCatalog'
 
 const selectGame = (state: RootState) => state.game
 
@@ -327,4 +328,60 @@ export const selectHeirLegitimacyWeight = createSelector([selectGame], (game): n
     const status = heir.legitimacyStatus ?? 'unknown'
     return sum + (LEGITIMACY_WEIGHT[status] ?? 0)
   }, 0)
+})
+
+const BASE_IMPROVEMENT_LABELS: Record<string, string> = {
+  waterQuality: 'Water Quality',
+  herbSupply: 'Herb Supply',
+  entrySecurity: 'Entry Security',
+}
+
+export interface HouseImprovementModuleSummary {
+  moduleItemId: string
+  name: string
+  installedAtDay: number
+  effectDescriptions: string[]
+}
+
+export interface HouseImprovementsSummary {
+  houseImprovements: { waterQuality: number; herbSupply: number; entrySecurity: number }
+  sleepQualityBonus: number
+  installedModules: HouseImprovementModuleSummary[]
+}
+
+/**
+ * Surfaces houseImprovements/sleepQualityBonus (destiny-h8hz) alongside which installed
+ * module produced which effect, so the player can see why the numbers are what they are.
+ */
+export const selectHouseImprovementsSummary = createSelector([selectGame], (game): HouseImprovementsSummary => {
+  const installedModules = game.installedHouseModules.map((entry) => {
+    const def = contentCatalog.itemsById.get(entry.moduleItemId)
+    const effectDescriptions = (def?.typedEffects ?? []).flatMap((effect) => {
+      switch (effect.type) {
+        case 'baseImprovement':
+          return [`${BASE_IMPROVEMENT_LABELS[effect.stat] ?? effect.stat} +${effect.value}`]
+        case 'rest_quality_bonus':
+          return [`Sleep Quality +${effect.value}`]
+        case 'storage_expand':
+          return [`Storage +${effect.value}`]
+        case 'training_bonus':
+          return [`${effect.skill} training +${effect.value}`]
+        default:
+          return []
+      }
+    })
+
+    return {
+      moduleItemId: entry.moduleItemId,
+      name: def?.name ?? entry.moduleItemId,
+      installedAtDay: entry.installedAtDay,
+      effectDescriptions,
+    }
+  })
+
+  return {
+    houseImprovements: game.houseImprovements,
+    sleepQualityBonus: game.sleepQualityBonus,
+    installedModules,
+  }
 })
