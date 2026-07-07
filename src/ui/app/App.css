@@ -3543,3 +3543,91 @@ a:focus-visible,
 .item-action-menu__close:hover {
   background: rgba(201, 168, 76, 0.12);
 }
+
+/* IntimacyOptionsModal (destiny-w5tv) */
+.intimacy-section {
+  border: 1px solid rgba(138, 110, 58, 0.35);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.85rem;
+  transition: border-color 0.15s ease;
+}
+
+.intimacy-section--checked {
+  border-color: rgba(201, 168, 76, 0.55);
+}
+
+.intimacy-section-heading {
+  margin: 0 0 0.4rem;
+  font-size: var(--size-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.intimacy-section-copy {
+  margin: 0 0 0.5rem;
+  font-size: var(--size-sm);
+  color: var(--text-secondary);
+}
+
+.intimacy-section-note {
+  margin: 0.5rem 0 0;
+  font-size: var(--size-xs);
+  color: var(--text-muted);
+}
+
+.intimacy-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.intimacy-checkbox-row input {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
+
+.intimacy-info-icon {
+  font-size: var(--size-xs);
+  color: var(--text-muted);
+  cursor: help;
+  border: 1px solid var(--text-muted);
+  border-radius: 50%;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.intimacy-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.intimacy-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.intimacy-radio-row input {
+  cursor: pointer;
+}
+
+.intimacy-radio-hint {
+  color: var(--text-muted);
+  font-size: var(--size-xs);
+}
