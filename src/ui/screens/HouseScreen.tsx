@@ -10,6 +10,7 @@ import {
   selectHouseRepairSummary,
   selectHouseRoomOccupancy,
   selectHouseRooms,
+  selectUnlockedActions,
 } from '../../application'
 import { getHouseDiscovery } from '../../application/content/houseDiscoveries'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -57,6 +58,7 @@ export function HouseScreen() {
   const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)
   const filedEvidence = useAppSelector(selectFiledEvidence)
   const houseImprovementsSummary = useAppSelector(selectHouseImprovementsSummary)
+  const unlockedActions = useAppSelector(selectUnlockedActions)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>('room-entrance-hall')
 
@@ -274,6 +276,30 @@ export function HouseScreen() {
                   <strong>{entry.itemName}</strong>
                   <span className="badge">{entry.disposition}</span>
                 </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="house-wards-section">
+        <h2>Unlocked Actions</h2>
+        <p className="summary">Actions your documents have made available.</p>
+        {unlockedActions.length === 0 ? (
+          <p className="quest-briefing">No documents have unlocked an action yet.</p>
+        ) : (
+          <div className="mission-list">
+            {unlockedActions.map((entry) => (
+              <div key={entry.action} className="mission-row">
+                <div className="mission-row-header">
+                  <strong>{entry.label}</strong>
+                  {entry.grantedByItemNames.map((name) => (
+                    <span key={name} className="badge">
+                      {name}
+                    </span>
+                  ))}
+                </div>
+                <p className="quest-briefing">{entry.context}</p>
               </div>
             ))}
           </div>

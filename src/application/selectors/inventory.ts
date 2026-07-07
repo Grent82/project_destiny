@@ -140,6 +140,42 @@ export const selectFiledEvidence = createSelector(
     })),
 )
 
+function humanizeActionId(action: string): string {
+  return action
+    .split('-')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+export interface UnlockedActionSummary {
+  action: string
+  label: string
+  grantedByItemNames: string[]
+  context: string
+}
+
+/**
+ * Surfaces state.enabledActions (destiny-vyr6) — actions unlocked by 'enableAction' document
+ * effects. Resolves each action id back to whichever item(s) grant it via their own typedEffects,
+ * using that item's own authored description as the context text rather than inventing new copy.
+ */
+export const selectUnlockedActions = createSelector(
+  [(state: RootState) => state.game.enabledActions],
+  (enabledActions): UnlockedActionSummary[] =>
+    enabledActions.map((action) => {
+      const grantingItems = contentCatalog.items.filter((item) =>
+        item.typedEffects?.some((effect) => effect.type === 'enableAction' && effect.action === action),
+      )
+      return {
+        action,
+        label: humanizeActionId(action),
+        grantedByItemNames: grantingItems.map((item) => item.name),
+        context: grantingItems[0]?.description ?? 'Unlocked by a document you used.',
+      }
+    }),
+)
+
 /** Returns all available actions for a given owned item instance */
 export function selectItemActions(state: RootState, instanceId: string): ItemAction[] {
   const inventoryState = state.game.inventoryState

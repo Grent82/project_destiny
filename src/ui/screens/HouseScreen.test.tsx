@@ -286,6 +286,25 @@ describe('HouseScreen — house improvements (destiny-h8hz)', () => {
   })
 })
 
+describe('HouseScreen — unlocked actions (destiny-vyr6)', () => {
+  it('shows the empty-state message when no actions have been unlocked', () => {
+    renderHouseScreen()
+    expect(screen.getByRole('heading', { name: 'Unlocked Actions' })).toBeInTheDocument()
+    expect(screen.getByText(/No documents have unlocked an action yet\./i)).toBeInTheDocument()
+  })
+
+  it('lists an unlocked action with its label, granting document, and context', () => {
+    renderHouseScreen({
+      ...initialGameStateSnapshot,
+      enabledActions: ['review-house-accounts'],
+    })
+
+    expect(screen.getByText('Review House Accounts')).toBeInTheDocument()
+    expect(screen.getByText('House Debt Ledger')).toBeInTheDocument()
+    expect(screen.getByText(/Your working house ledger/i)).toBeInTheDocument()
+  })
+})
+
 describe('HouseScreen — evidence filed (destiny-23qg)', () => {
   it('shows the empty-state message when no evidence has been filed', () => {
     renderHouseScreen()

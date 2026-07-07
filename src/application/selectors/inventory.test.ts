@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { selectItemsByLocation, selectItemActions, selectFiledEvidence } from './inventory'
+import { selectItemsByLocation, selectItemActions, selectFiledEvidence, selectUnlockedActions } from './inventory'
 import { createGameStore } from '../store/gameStore'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import type { GameState } from '../../domain/game/contracts'
@@ -210,6 +210,48 @@ describe('selectFiledEvidence (destiny-23qg)', () => {
     expect(result).toEqual([
       { instanceId: 'inst-1', itemName: 'Debt Instrument (Tally, Bearer-Payable)', disposition: 'filed' },
       { instanceId: 'inst-2', itemName: 'False Citizen Papers (Compact Seal Forgery)', disposition: 'burned' },
+    ])
+  })
+})
+
+describe('selectUnlockedActions (destiny-vyr6)', () => {
+  it('returns an empty array when no actions have been unlocked', () => {
+    const store = createGameStore(initialGameStateSnapshot)
+    expect(selectUnlockedActions(store.getState())).toEqual([])
+  })
+
+  it('humanizes the action id, resolves the granting item name, and uses its description as context', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      enabledActions: ['review-house-accounts'],
+    })
+
+    const result = selectUnlockedActions(store.getState())
+    expect(result).toEqual([
+      {
+        action: 'review-house-accounts',
+        label: 'Review House Accounts',
+        grantedByItemNames: ['House Debt Ledger'],
+        context:
+          'Your working house ledger: current debts, promised wages, and what still comes in. It keeps House Valdris solvent, but it is not the missing bureau evidence Marion is looking for.',
+      },
+    ])
+  })
+
+  it('falls back to a generic context when no item defines the action (should not happen for real content, but the action list is a flat string array with no other provenance)', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      enabledActions: ['some-unmapped-action'],
+    })
+
+    const result = selectUnlockedActions(store.getState())
+    expect(result).toEqual([
+      {
+        action: 'some-unmapped-action',
+        label: 'Some Unmapped Action',
+        grantedByItemNames: [],
+        context: 'Unlocked by a document you used.',
+      },
     ])
   })
 })
