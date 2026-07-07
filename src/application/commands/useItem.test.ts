@@ -125,6 +125,37 @@ describe('useItem — document disposition', () => {
   })
 })
 
+describe('useItem — evidence use (destiny-23qg)', () => {
+  it('consuming an evidence_use item removes it from inventory and records it in evidenceInventory', () => {
+    const state = stateWithItem('item-tally-debt-instrument')
+    const result = useItem(state, { instanceId: 'test-inst-item-tally-debt-instrument', action: 'consume' })
+
+    expect(result.inventoryState.player.bagContainers).toHaveLength(0)
+    expect(result.evidenceInventory).toHaveLength(1)
+    expect(result.evidenceInventory[0]).toEqual({
+      instanceId: 'test-inst-item-tally-debt-instrument',
+      itemId: 'item-tally-debt-instrument',
+      disposition: 'filed',
+    })
+    expect(result.activityLog[0]?.message).toContain('Used')
+    expect(result.activityLog[0]?.message).toContain('as evidence (filed)')
+  })
+
+  it('appends to evidenceInventory rather than replacing prior entries', () => {
+    const state = stateWithItem('item-tally-debt-instrument')
+    const withPriorEntry: GameState = {
+      ...state,
+      evidenceInventory: [{ instanceId: 'earlier-instance', itemId: 'item-permit-reproduction', disposition: 'presented' }],
+    }
+
+    const result = useItem(withPriorEntry, { instanceId: 'test-inst-item-tally-debt-instrument', action: 'consume' })
+
+    expect(result.evidenceInventory).toHaveLength(2)
+    expect(result.evidenceInventory[0]?.itemId).toBe('item-permit-reproduction')
+    expect(result.evidenceInventory[1]?.itemId).toBe('item-tally-debt-instrument')
+  })
+})
+
 describe('useItem — invalid / edge cases', () => {
   it('returns unchanged state when instanceId does not exist', () => {
     const result = useItem(initialStateWithIda, { instanceId: 'nonexistent', action: 'consume' })

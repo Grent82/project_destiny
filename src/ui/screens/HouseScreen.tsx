@@ -3,6 +3,7 @@ import {
   gameActions,
   selectAssignableHouseRooms,
   selectDebtStatus,
+  selectFiledEvidence,
   selectHouseHeirs,
   selectLastDomesticRelationshipBeat,
   selectHouseRepairSummary,
@@ -53,6 +54,7 @@ export function HouseScreen() {
   const pairingPolicy = useAppSelector((state) => state.game.house.npcPairingPolicy)
   const vaultUnlocked = useAppSelector((state) => state.game.house.vaultUnlocked)
   const lastDomesticBeat = useAppSelector(selectLastDomesticRelationshipBeat)
+  const filedEvidence = useAppSelector(selectFiledEvidence)
   const [justSearchedId, setJustSearchedId] = useState<string | null>(null)
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>('room-entrance-hall')
 
@@ -211,6 +213,25 @@ export function HouseScreen() {
                     {heir.originStory}
                   </p>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="house-wards-section">
+        <h2>Evidence Filed</h2>
+        <p className="summary">Documents spent as evidence against a claim, a person, or a case.</p>
+        {filedEvidence.length === 0 ? (
+          <p className="quest-briefing">No evidence has been filed, presented, or burned yet.</p>
+        ) : (
+          <div className="mission-list">
+            {filedEvidence.map((entry) => (
+              <div key={entry.instanceId} className="mission-row">
+                <div className="mission-row-header">
+                  <strong>{entry.itemName}</strong>
+                  <span className="badge">{entry.disposition}</span>
+                </div>
               </div>
             ))}
           </div>

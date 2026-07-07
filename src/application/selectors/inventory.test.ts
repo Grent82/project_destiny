@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { selectItemsByLocation, selectItemActions } from './inventory'
+import { selectItemsByLocation, selectItemActions, selectFiledEvidence } from './inventory'
 import { createGameStore } from '../store/gameStore'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import type { GameState } from '../../domain/game/contracts'
@@ -188,5 +188,28 @@ describe('moveItem action', () => {
     store.dispatch({ type: 'game/moveItem', payload: { instanceId: 'inst-tonic-01', location: 'inventory' } })
     const after = selectItemsByLocation(store.getState(), 'inventory')
     expect(after).toHaveLength(1)
+  })
+})
+
+describe('selectFiledEvidence (destiny-23qg)', () => {
+  it('returns an empty array when nothing has been filed', () => {
+    const store = createGameStore(initialGameStateSnapshot)
+    expect(selectFiledEvidence(store.getState())).toEqual([])
+  })
+
+  it('resolves the real item name for each filed evidence entry', () => {
+    const store = createGameStore({
+      ...initialGameStateSnapshot,
+      evidenceInventory: [
+        { instanceId: 'inst-1', itemId: 'item-tally-debt-instrument', disposition: 'filed' as const },
+        { instanceId: 'inst-2', itemId: 'item-papers-false-citizen', disposition: 'burned' as const },
+      ],
+    })
+
+    const result = selectFiledEvidence(store.getState())
+    expect(result).toEqual([
+      { instanceId: 'inst-1', itemName: 'Debt Instrument (Tally, Bearer-Payable)', disposition: 'filed' },
+      { instanceId: 'inst-2', itemName: 'False Citizen Papers (Compact Seal Forgery)', disposition: 'burned' },
+    ])
   })
 })

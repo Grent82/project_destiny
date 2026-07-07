@@ -29,7 +29,7 @@ export function useItem(state: GameState, payload: UseItemPayload): GameState {
 
   switch (action) {
     case 'consume':
-      return applyConsume(state, instance.instance.uniqueId, targetNpcId, itemDef.name, itemDef.typedEffects ?? [])
+      return applyConsume(state, instance.instance.uniqueId, actualItemId, targetNpcId, itemDef.name, itemDef.typedEffects ?? [])
     case 'present':
     case 'archive':
       return applyDocumentDisposition(state, instance.instance.uniqueId, action, itemDef.name, itemDef.typedEffects ?? [])
@@ -41,6 +41,7 @@ export function useItem(state: GameState, payload: UseItemPayload): GameState {
 function applyConsume(
   state: GameState,
   instanceId: string,
+  itemId: string,
   targetNpcId: string | undefined,
   itemName: string,
   effects: ItemEffect[],
@@ -83,7 +84,7 @@ function applyConsume(
         break
 
       case 'evidence_use':
-        next = applyEvidenceUseEffect(next, effect.disposition, itemName)
+        next = applyEvidenceUseEffect(next, effect.disposition, itemName, itemId, instanceId)
         break
 
       // These effects are handled elsewhere (equip, install, present)
@@ -317,13 +318,20 @@ function applyEvidenceUseEffect(
   state: GameState,
   disposition: 'filed' | 'presented' | 'burned' | undefined,
   itemName: string,
+  itemId: string,
+  instanceId: string,
 ): GameState {
-  // Evidence can be used for investigations - for now just log it
-  const message = disposition
-    ? `Used ${itemName} as evidence (${disposition}).`
-    : `Used ${itemName} as evidence.`
+  const resolvedDisposition = disposition ?? 'filed'
+  const message = `Used ${itemName} as evidence (${resolvedDisposition}).`
 
-  return appendActivityLogEntry(state, 'system', message)
+  return appendActivityLogEntry(
+    {
+      ...state,
+      evidenceInventory: [...state.evidenceInventory, { instanceId, itemId, disposition: resolvedDisposition }],
+    },
+    'system',
+    message,
+  )
 }
 
 function applyDocumentDisposition(

@@ -263,3 +263,26 @@ describe('HouseScreen — room occupancy', () => {
     expect(screen.getAllByText(/Marion Vale/).length).toBeGreaterThanOrEqual(2)
   })
 })
+
+describe('HouseScreen — evidence filed (destiny-23qg)', () => {
+  it('shows the empty-state message when no evidence has been filed', () => {
+    renderHouseScreen()
+    expect(screen.getByRole('heading', { name: 'Evidence Filed' })).toBeInTheDocument()
+    expect(screen.getByText(/No evidence has been filed, presented, or burned yet\./i)).toBeInTheDocument()
+  })
+
+  it('lists filed evidence with its item name and disposition badge', () => {
+    renderHouseScreen({
+      ...initialGameStateSnapshot,
+      evidenceInventory: [
+        { instanceId: 'inst-1', itemId: 'item-tally-debt-instrument', disposition: 'filed' },
+        { instanceId: 'inst-2', itemId: 'item-papers-false-citizen', disposition: 'burned' },
+      ],
+    })
+
+    expect(screen.getByText('Debt Instrument (Tally, Bearer-Payable)')).toBeInTheDocument()
+    expect(screen.getByText('False Citizen Papers (Compact Seal Forgery)')).toBeInTheDocument()
+    expect(screen.getByText('filed')).toBeInTheDocument()
+    expect(screen.getByText('burned')).toBeInTheDocument()
+  })
+})

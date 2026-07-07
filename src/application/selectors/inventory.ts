@@ -129,6 +129,17 @@ export const selectGiftInventoryItems = createSelector(
   },
 )
 
+/** Documents the player has used as evidence (filed/presented/burned) via the evidence_use item effect. */
+export const selectFiledEvidence = createSelector(
+  [(state: RootState) => state.game.evidenceInventory],
+  (evidenceInventory) =>
+    evidenceInventory.map((entry) => ({
+      instanceId: entry.instanceId,
+      itemName: contentCatalog.itemsById.get(entry.itemId)?.name ?? entry.itemId,
+      disposition: entry.disposition ?? 'filed',
+    })),
+)
+
 /** Returns all available actions for a given owned item instance */
 export function selectItemActions(state: RootState, instanceId: string): ItemAction[] {
   const inventoryState = state.game.inventoryState
