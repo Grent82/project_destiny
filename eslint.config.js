@@ -24,4 +24,9 @@ export default defineConfig([globalIgnores(['dist', 'coverage', '.tmp-vite', '.c
       ...globals.node,
     },
   },
+  rules: {
+    // Intentionally-unused params (e.g. not-yet-implemented stub signatures) are prefixed with `_`
+    // by convention; don't flag those specifically, while still catching real unused-var mistakes.
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+  },
 }, ...storybook.configs["flat/recommended"]])

@@ -201,7 +201,6 @@ async function main() {
   if (listOnly) {
     console.log('\n📋 NPCs that need portraits:')
     targetNpcs.forEach(npc => {
-      const portraitId = npc.id.replace(/^npc-/, '')
       const prompt = getPromptForNpc(npc)
       console.log(`\n  ${npc.id}`)
       console.log(`    Sex: ${npc.sex}, Status: ${npc.status}`)

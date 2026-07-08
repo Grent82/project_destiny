@@ -236,7 +236,8 @@ export function sellWeaponFromHouseStorage(state: GameState, weaponId: string): 
   updatedSharedContainers[storageContainerIndex] = { ...container, slots: updatedSlots }
 
   // Remove from item registry
-  const { [foundInstanceId]: _, ...updatedItemRegistry } = state.inventoryState.itemRegistry
+  const updatedItemRegistry = { ...state.inventoryState.itemRegistry }
+  delete updatedItemRegistry[foundInstanceId]
 
   const nextState = {
     ...state,
@@ -303,7 +304,8 @@ export function sellArmorFromHouseStorage(state: GameState, armorId: string): Ga
   updatedSharedContainers[storageContainerIndex] = { ...container, slots: updatedSlots }
 
   // Remove from item registry
-  const { [foundInstanceId]: _, ...updatedItemRegistry } = state.inventoryState.itemRegistry
+  const updatedItemRegistry = { ...state.inventoryState.itemRegistry }
+  delete updatedItemRegistry[foundInstanceId]
 
   const nextState = {
     ...state,

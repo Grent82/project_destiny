@@ -69,7 +69,6 @@ function resolveEventId(baseId: string, stageFlags: Record<string, boolean>): st
 }
 
 /** Step 9c: Check arc stage transitions for all NPCs that have an active arc. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function checkNpcArcTransitions(state: GameState, _rng?: () => number): GameState {
   const arcNpcs = state.npcRuntimeStates.filter((npc) => npc.npcArc != null)
   if (arcNpcs.length === 0) return state

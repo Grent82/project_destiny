@@ -94,7 +94,7 @@ function createMockTask(overrides?: Partial<TimeSlotTask>): TimeSlotTask {
     timeSlot: 'morning',
     priority: 3,
     dependencies: [],
-    handler: (_s: GameState, _rng: Rng) => _s, // eslint-disable-line @typescript-eslint/no-unused-vars
+    handler: (_s: GameState, _rng: Rng) => _s,
     createdAtDay: 1,
     ...overrides,
   }
