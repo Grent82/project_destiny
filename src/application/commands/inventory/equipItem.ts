@@ -129,7 +129,7 @@ function equipItemToPlayer(state: GameState, itemInstanceId: string, slot: Equip
 
   const itemName = getItemName(itemInstanceId)
 
-  // Check for skillBonus effects (for tool items)
+  // Check for skillBonus/enableAction effects (for tool items)
   const itemDef = contentCatalog.itemsById.get(itemInstanceId)
   let finalState = newState
   if (itemDef && itemDef.category === 'tool') {
@@ -145,6 +145,11 @@ function equipItemToPlayer(state: GameState, itemInstanceId: string, slot: Equip
               value: effect.value,
             },
           ],
+        }
+      } else if (effect.type === 'enableAction' && !finalState.enabledActions.includes(effect.action)) {
+        finalState = {
+          ...finalState,
+          enabledActions: [...finalState.enabledActions, effect.action],
         }
       }
     }

@@ -125,6 +125,16 @@ describe('useItem — document disposition', () => {
     expect(result.inventoryState.player.bagContainers).toHaveLength(0)
     expect(result.activityLog[0]?.message).toContain('presented')
   })
+
+  // destiny-1g74: item-form-ward-petition's enableAction effect used to live only in the legacy
+  // 'effects' field, invisible to applyDocumentDisposition (which reads typedEffects) -- archiving
+  // it never unlocked 'file-ward-petition'. Moved into typedEffects alongside its existing
+  // evidence_use effect.
+  it('unlocks file-ward-petition when item-form-ward-petition is archived (destiny-1g74)', () => {
+    const state = stateWithItem('item-form-ward-petition')
+    const result = useItem(state, { instanceId: 'test-inst-item-form-ward-petition', action: 'archive' })
+    expect(result.enabledActions).toContain('file-ward-petition')
+  })
 })
 
 describe('useItem — evidence use (destiny-23qg)', () => {

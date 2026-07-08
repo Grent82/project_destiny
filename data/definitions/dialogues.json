@@ -968,8 +968,8 @@
             "label": "Show her the crest ring from the house.",
             "nextNodeId": "maret-node-ring",
             "condition": {
-              "type": "hasItem",
-              "value": "item-ring-unfamiliar-crest"
+              "type": "hasEnabledAction",
+              "value": "examine-crest-ring"
             }
           },
           {

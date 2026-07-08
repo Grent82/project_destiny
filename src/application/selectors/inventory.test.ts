@@ -214,6 +214,19 @@ describe('selectItemActions', () => {
     expect(types).toContain('file-evidence')
     expect(types).not.toContain('archive')
   })
+
+  // destiny-1g74: item-ring-unfamiliar-crest was recategorized from 'gift' to 'document' --
+  // 'give it away' and 'examine it yourself' were contradictory actions for one item. It should
+  // now behave like any other enableAction-bearing document: open/archive, no give.
+  it('returns open + archive (not give) for the recategorized crest ring', () => {
+    const state = stateWithPlayerItems([{ instanceId: 'inst-ring-01', itemId: 'item-ring-unfamiliar-crest', quantity: 1 }])
+    const store = createGameStore(state)
+    const actions = selectItemActions(store.getState(), 'inst-ring-01')
+    const types = actions.map((a) => a.type)
+    expect(types).toContain('open')
+    expect(types).toContain('archive')
+    expect(types).not.toContain('give')
+  })
 })
 
 describe('moveItem action', () => {

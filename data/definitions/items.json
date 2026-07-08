@@ -546,7 +546,12 @@
     ],
     "description": "A shuttered oil lantern with a mirrored back-plate and a hand-operated baffles for coded light signaling — standard equipment for expedition teams operating beyond wall-sight distance.",
     "shopPrice": 25,
-    "typedEffects": []
+    "typedEffects": [
+      {
+        "type": "enableAction",
+        "action": "long-range-signal"
+      }
+    ]
   },
   {
     "id": "item-permit-reproduction",
@@ -659,6 +664,10 @@
     "typedEffects": [
       {
         "type": "evidence_use"
+      },
+      {
+        "type": "enableAction",
+        "action": "file-ward-petition"
       }
     ]
   },
@@ -1175,7 +1184,7 @@
   {
     "id": "item-ring-unfamiliar-crest",
     "name": "Unfamiliar Crest Ring",
-    "category": "gift",
+    "category": "document",
     "tier": 1,
     "value": 55,
     "weight": 0.2,
@@ -1188,11 +1197,6 @@
     ],
     "effects": [
       {
-        "type": "affinityBonus",
-        "target": "any-npc",
-        "value": 5
-      },
-      {
         "type": "enableAction",
         "action": "examine-crest-ring"
       }
@@ -1201,9 +1205,8 @@
     "shopPrice": 0,
     "typedEffects": [
       {
-        "type": "relationship_gift",
-        "target": "any-npc",
-        "value": 5
+        "type": "enableAction",
+        "action": "examine-crest-ring"
       }
     ]
   },

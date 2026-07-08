@@ -64,6 +64,21 @@ describe('equipItem — player equip/unequip (bug fix regression, found during d
     expect(result.equippedTools).toEqual([])
   })
 
+  // destiny-1g74: item-lamp-signal-expedition's enableAction effect was never processed by any
+  // equip/give path -- equipItemToPlayer only handled skillBonus. Wired the same tool-effect loop
+  // to also process enableAction, populating enabledActions on equip.
+  it('populates enabledActions when equipping a tool with an enableAction effect (destiny-1g74)', () => {
+    const state = stateWithPlayerBagItem(TOOL_WITHOUT_SKILL_BONUS_ID)
+    const result = equipItem(state, { ownerId: 'player', itemInstanceId: TOOL_WITHOUT_SKILL_BONUS_ID, slot: 'weapon' })
+    expect(result.enabledActions).toContain('long-range-signal')
+  })
+
+  it('does not add the same enabledAction twice if the tool is unequipped and re-equipped', () => {
+    const state = { ...stateWithPlayerBagItem(TOOL_WITHOUT_SKILL_BONUS_ID), enabledActions: ['long-range-signal'] }
+    const result = equipItem(state, { ownerId: 'player', itemInstanceId: TOOL_WITHOUT_SKILL_BONUS_ID, slot: 'weapon' })
+    expect(result.enabledActions).toEqual(['long-range-signal'])
+  })
+
   it('adds to equippedTools when equipping a tool with a skillBonus effect (previously discarded: the finalState computed here was thrown away, the function returned newState instead)', () => {
     const state = stateWithPlayerBagItem(TOOL_WITH_SKILL_BONUS_ID)
     const result = equipItem(state, { ownerId: 'player', itemInstanceId: TOOL_WITH_SKILL_BONUS_ID, slot: 'weapon' })

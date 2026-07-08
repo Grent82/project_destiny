@@ -149,6 +149,25 @@ describe('dialogue consequence resolution', () => {
     expect(state.activeDialogueNodeId).toBe('marion-node-early-intro')
   })
 
+  it('gates the crest-ring choice with Old Maret on hasEnabledAction, not hasItem (destiny-1g74)', () => {
+    // item-ring-unfamiliar-crest was recategorized from 'gift' to 'document' so its enableAction
+    // effect (examine-crest-ring) actually fires on Archive. That made it reachable by the same
+    // "archive destroys the item" lockout trap destiny-4d1u fixed for the other 5 documents: a
+    // hasItem gate would have permanently hidden this choice the moment the ring is archived,
+    // even for a player who never showed it to Maret yet.
+    const withoutAction = makeStore({ enabledActions: [] })
+    withoutAction.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-old-maret', nodeId: 'maret-node-1' }))
+    expect(
+      selectVisibleDialogueChoices('maret-node-1')(withoutAction.getState()).map((c) => c.id),
+    ).not.toContain('maret-choice-ring')
+
+    const withAction = makeStore({ enabledActions: ['examine-crest-ring'] })
+    withAction.dispatch(gameActions.startDialogue({ dialogueId: 'dialogue-old-maret', nodeId: 'maret-node-1' }))
+    expect(
+      selectVisibleDialogueChoices('maret-node-1')(withAction.getState()).map((c) => c.id),
+    ).toContain('maret-choice-ring')
+  })
+
   it('consumes Marion one-shot clue topics after the first discussion', () => {
     // marion-choice-ledger-chit/arrangement-below require hasEnabledAction, not hasItem
     // (destiny-4d1u) -- the document may already be archived by the time these are shown.
