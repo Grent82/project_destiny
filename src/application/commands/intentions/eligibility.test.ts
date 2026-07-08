@@ -68,13 +68,11 @@ describe('intentionTypesForNpc', () => {
     expect(intentionTypesForNpc(npc({ npcType: 'enemy' })).size).toBe(0)
   })
 
-  it('captives are eligible for exactly escape-attempt, regardless of npcType (destiny-ap3s carve-out)', () => {
+  it('captives get nothing even if their npcType would otherwise allow it (defense-in-depth)', () => {
     const captiveRoster = npc({
       npcType: 'roster',
       captivityState: { ...(idaRhysRosterEntry.captivityState ?? ({} as NonNullable<NpcRuntimeState['captivityState']>)), status: 'captive' } as NpcRuntimeState['captivityState'],
     })
-    const result = intentionTypesForNpc(captiveRoster)
-    expect(result.size).toBe(1)
-    expect(result.has('escape-attempt')).toBe(true)
+    expect(intentionTypesForNpc(captiveRoster).size).toBe(0)
   })
 })

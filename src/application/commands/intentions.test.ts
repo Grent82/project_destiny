@@ -12,7 +12,7 @@ import {
   resolveTravelDestination,
   npcHasStaticPoiLink,
 } from './intentions'
-import { ALL_INTENTION_TYPES, WORLD_ELIGIBLE_INTENTION_TYPES } from './intentions/eligibility'
+import { WORLD_ELIGIBLE_INTENTION_TYPES } from './intentions/eligibility'
 import type { GameState, NpcRuntimeState, NpcIntentionType } from '../../domain'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { NPC_IDS } from '../content/ids'
@@ -180,7 +180,7 @@ describe('intentions', () => {
       expect(intention).toBeNull()
     })
 
-    it('returns exactly escape-attempt for a captive NPC (destiny-ap3s carve-out) -- not blocked entirely, and not routed through the normal pipeline', () => {
+    it('returns null for captive NPC', () => {
       const state = createTestState({
         npcRuntimeStates: [
           {
@@ -210,8 +210,7 @@ describe('intentions', () => {
       })
 
       const intention = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
-      expect(intention).not.toBeNull()
-      expect(intention!.type).toBe('escape-attempt')
+      expect(intention).toBeNull()
     })
   })
 
@@ -491,16 +490,35 @@ describe('intentions', () => {
   })
 
   describe('processAllowlistedNpcIntentions (destiny-mbju)', () => {
-    it('every intention type in the schema is now wired (escape-attempt, the last holdout, was wired by destiny-ap3s)', () => {
-      // This used to be exercised by finding a naturally-generated-but-unwired intention (escape-attempt,
-      // via an agility/perception-maxed NPC) and asserting processAllowlistedNpcIntentions discarded it.
-      // Now that every type is wired there is no such example left to construct, so the discard branch
-      // (`if (!WIRED_INTENTION_TYPES.has(intention.type)) continue`) is defensive-only -- this test
-      // instead pins down the invariant that made the old example impossible to build.
-      expect(WIRED_INTENTION_TYPES.size).toBe(ALL_INTENTION_TYPES.size)
-      for (const type of ALL_INTENTION_TYPES) {
-        expect(WIRED_INTENTION_TYPES.has(type)).toBe(true)
-      }
+    it('discards a naturally-generated intention outside the wired allowlist', () => {
+      const state = createTestState({
+        npcRuntimeStates: [
+          {
+            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
+            assignment: 'idle',
+            currentDirectiveId: null,
+            currentIntention: null,
+            factionRelationships: [],
+            // escape-attempt is the sole remaining unwired type (destiny-nid0 wired the last 4
+            // group intentions). Its trait score is agility+perception only (pipeline.ts); zero
+            // every other attribute/trait/skill so no other >130-threshold candidate can compete,
+            // and keep needs low so basic-needs candidates (eat-meal/rest/sleep) don't fire either.
+            attributes: { might: 10, agility: 90, endurance: 10, intellect: 10, perception: 90, presence: 10, resolve: 10 },
+            traits: { discipline: 10, ambition: 10, empathy: 10, ruthlessness: 10, prudence: 10, curiosity: 10, dominance: 10, loyalty: 10, vanity: 10, zeal: 10 },
+            skills: { melee: 10, ranged: 10, medicine: 10, administration: 10, engineering: 10, negotiation: 10, survival: 10, security: 10, crafting: 10, performance: 10, academics: 10, intrigue: 10 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, hunger: 10, fatigue: 10, stress: 10, hygiene: 10 },
+          },
+        ],
+      })
+
+      // Sanity check: this state really does produce a non-allowlisted intention via the real pipeline.
+      const natural = calculateNpcIntention(state, NPC_IDS.MARION_VALE)
+      expect(natural).not.toBeNull()
+      expect(WIRED_INTENTION_TYPES.has(natural!.type)).toBe(false)
+
+      const result = processAllowlistedNpcIntentions(state)
+
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
     it('never assigns a currentIntention outside the wired allowlist, across a varied roster', () => {
@@ -703,7 +721,7 @@ describe('intentions', () => {
       expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
 
-    it('generates exactly escape-attempt for a captive person, regardless of npcType (destiny-ap3s carve-out)', () => {
+    it('never generates an intention for a captive person, regardless of npcType', () => {
       const state = createTestState({
         npcRuntimeStates: [
           {
@@ -737,50 +755,7 @@ describe('intentions', () => {
       })
 
       const result = processAllowlistedNpcIntentions(state)
-      expect(result.npcRuntimeStates[0]!.currentIntention?.type).toBe('escape-attempt')
-    })
-
-    it('end-to-end: a capable captive generates escape-attempt, canExecute passes, and executing it changes captivityState (destiny-ap3s)', () => {
-      const state = createTestState({
-        npcRuntimeStates: [
-          {
-            ...initialGameStateSnapshot.npcRuntimeStates[0]!,
-            assignment: 'idle',
-            currentDirectiveId: null,
-            currentIntention: null,
-            factionRelationships: [],
-            attributes: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.attributes, agility: 80, perception: 80 },
-            captivityState: {
-              status: 'captive',
-              condition: 'healthy',
-              compliance: 'resistant',
-              bondType: 'none',
-              regime: 'unknown',
-              holderId: null,
-              siteId: null,
-              roomId: null,
-              timeHeldDays: 3,
-              lastTransferDay: null,
-              questTag: null,
-              confiscatedItems: [],
-              confiscatedMoney: null,
-              confiscatedEquipment: { weapon: null, armor: null, accessory: [] },
-            },
-          },
-        ],
-      })
-
-      const generated = processAllowlistedNpcIntentions(state)
-      expect(generated.npcRuntimeStates[0]!.currentIntention?.type).toBe('escape-attempt')
-
-      const executed = executeAllowlistedNpcIntentions(generated)
-
-      // The intention always clears after execution, regardless of the RNG-determined outcome.
-      expect(executed.npcRuntimeStates[0]!.currentIntention).toBeNull()
-      // Both outcomes append a captivity-related log line; asserting on that (rather than the
-      // specific success/failure branch) keeps this test independent of the RNG seed.
-      expect(executed.activityLog[0]!.message).toContain('captivity')
-      expect(['missing', 'captive']).toContain(executed.npcRuntimeStates[0]!.captivityState?.status)
+      expect(result.npcRuntimeStates[0]!.currentIntention).toBeNull()
     })
   })
 
@@ -865,12 +840,8 @@ describe('intentions', () => {
     })
 
     it('does not execute or clear an intention outside the wired allowlist', () => {
-      // Every real NpcIntentionType is wired now (escape-attempt, the last holdout, was wired by
-      // destiny-ap3s) -- so there is no genuine type left to construct this scenario from. The
-      // discard branch (`!WIRED_INTENTION_TYPES.has(...)`) is still real defensive code, exercised
-      // here with a synthetic type that can never appear in WIRED_INTENTION_TYPES by construction.
       const intention = {
-        type: 'not-a-real-intention-type' as unknown as NpcIntentionType,
+        type: 'escape-attempt' as const,
         targetId: 'district-the-pale',
         targetType: 'district' as const,
         priority: 3,
