@@ -3,6 +3,7 @@ import type { IntimacyStage } from '../../domain/relationships/contracts'
 import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
+import { createRng, type Rng } from './seededRng'
 
 const PLAYER_ID = 'player'
 
@@ -17,6 +18,7 @@ type ContraceptionItem = {
 type EngagePhysicalIntimacyOptions = {
   contraceptionItemId: string | null // Item ID or null for no contraception
   intent: IntimacyIntent
+  consentGiven: boolean
 }
 
 // Base pregnancy risk per encounter (about 20% without contraception)
@@ -103,7 +105,7 @@ function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: Eng
   }
 
   // Check if explicit consent required
-  if (consentPreferences.requiresExplicitConsent && !contraceptionItem) {
+  if (consentPreferences.requiresExplicitConsent && !options.consentGiven) {
     return {
       npc,
       consent: { allowed: false, reason: 'explicit-consent-required' },
@@ -169,10 +171,10 @@ function getPregnancyAftermath(
   pregnancyRisk: number,
   intent: IntimacyIntent,
   contraceptionItem: ContraceptionItem | null,
+  rng: Rng,
 ): { message: string; pregnancyOccurred: boolean } {
   // Determine if pregnancy occurred based on risk
-  const rng = Math.random()
-  const pregnancyOccurred = rng < pregnancyRisk
+  const pregnancyOccurred = rng() < pregnancyRisk
 
   let message: string
 
@@ -328,13 +330,16 @@ export function engagePhysicalIntimacy(
 
   // Calculate pregnancy risk and outcome
   const pregnancyRisk = calculatePregnancyRisk(contraceptionItem, npc.npcId)
+  const { rng, getSeed } = createRng(state.rngSeed)
   const { message: pregnancyMessage, pregnancyOccurred } = getPregnancyAftermath(
     currentStage,
     opennessLevel,
     pregnancyRisk,
     options.intent,
     contraceptionItem,
+    rng,
   )
+  next = { ...next, rngSeed: getSeed() }
 
   // Build aftermath message
   const toneMessage = getAftermathTone(currentStage, opennessLevel, false)

@@ -3,6 +3,13 @@ import { buildRelationshipKey } from '../../domain/relationships/contracts'
 import type { GameState } from '../../domain'
 import { engagePhysicalIntimacy } from './engagePhysicalIntimacy'
 import { initialStateWithIda } from './testFixtures'
+import { contentCatalog } from '../content/contentCatalog'
+
+// Deterministic seeds (mulberry32, matches createRng in seededRng.ts): seed 7's first roll is
+// ~0.0117 (below the 0.20 base pregnancy risk -> pregnancy occurs); seed 100's first roll is
+// ~0.2044 (above it -> no pregnancy). Verified directly against createRng, not assumed.
+const SEED_TRIGGERS_PREGNANCY = 7
+const SEED_AVOIDS_PREGNANCY = 100
 
 const NPC_ID = 'npc-ida-rhys'
 const PLAYER_ID = 'player'
@@ -56,7 +63,7 @@ describe('engagePhysicalIntimacy', () => {
   it('returns state unchanged when intimacy stage is too low (none < committed)', () => {
     const state = stateWithRelationship({ trust: 50, affinity: 50, intimacyStage: 'none' })
 
-    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog).toEqual(state.activityLog)
   })
@@ -64,7 +71,7 @@ describe('engagePhysicalIntimacy', () => {
   it('allows intimacy at committed stage', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
 
-    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog[0]?.id.startsWith(`intimacy::${NPC_ID}::`)).toBe(true)
     expect(result.activityLog[0]?.message).toMatch(/Ida Rhys/)
@@ -76,7 +83,7 @@ describe('engagePhysicalIntimacy', () => {
   it('applies relationship gains at committed stage', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
 
-    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
     // Committed stage: affinity +5, trust +4, loyalty +3
@@ -91,7 +98,7 @@ describe('engagePhysicalIntimacy', () => {
     // allows attachment-stage intimacy. For this test, we use 'committed' stage to match Ida's default.
     const state = stateWithRelationship({ trust: 70, affinity: 70, intimacyStage: 'committed', bondType: 'romantic' })
 
-    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     const edge = result.relationships[buildRelationshipKey(PLAYER_ID, NPC_ID)]!
     // Committed stage: affinity +5, trust +4, loyalty +3 (with moderate openness, no modifier)
@@ -104,7 +111,7 @@ describe('engagePhysicalIntimacy', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
     const awayState = { ...state, currentDistrictId: 'district-tangle' }
 
-    const result = engagePhysicalIntimacy(awayState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(awayState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog).toEqual(state.activityLog)
   })
@@ -116,7 +123,7 @@ describe('engagePhysicalIntimacy', () => {
       npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, assignment: 'deployed' as const }],
     }
 
-    const result = engagePhysicalIntimacy(deployedState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(deployedState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog).toEqual(state.activityLog)
   })
@@ -128,7 +135,7 @@ describe('engagePhysicalIntimacy', () => {
       npcRuntimeStates: [{ ...state.npcRuntimeStates[0]!, status: 'ward' as const }],
     }
 
-    const result = engagePhysicalIntimacy(wardState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(wardState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog).toEqual(state.activityLog)
   })
@@ -162,125 +169,83 @@ describe('engagePhysicalIntimacy', () => {
       ),
     }
 
-    const result = engagePhysicalIntimacy(captiveState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(captiveState, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog).toEqual(state.activityLog)
   })
 
-  it('sets pregnancy state when pregnancy occurs', () => {
-    // Use a deterministic seed by setting high trust/affinity and using contraception=false
-    // Note: This test may flake due to Math.random() - in production, use seeded RNG
-    const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
-
-    // Mock Math.random to force pregnancy
-    const originalRandom = Math.random
-    let callCount = 0
-    Math.random = () => {
-      callCount++
-      return callCount === 1 ? 0.1 : 0.5 // First call (pregnancy check) returns 0.1 (< 0.20 base risk)
-    }
+  it('blocks intimacy when the NPC requires explicit consent and it was not given', () => {
+    // Ida's content definition does not set requiresExplicitConsent, so we temporarily flip it
+    // for this test only, restoring the original definition afterwards.
+    const original = contentCatalog.npcsById.get(NPC_ID)!
+    contentCatalog.npcsById.set(NPC_ID, {
+      ...original,
+      consentPreferences: { ...original.consentPreferences, requiresExplicitConsent: true },
+    })
 
     try {
-      const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
-      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
-      expect(npc?.pregnancyState?.context).toBe('consensual')
-      expect(npc?.pregnancyState?.daysElapsed).toBe(0)
-      expect(npc?.pregnancyState?.wanted).toBe(null)
+      const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
+
+      const blocked = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral', consentGiven: false })
+      expect(blocked.activityLog).toEqual(state.activityLog)
+
+      // Bringing contraception must NOT substitute for consent (the bug this fix removes).
+      const stillBlocked = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: 'item-contraceptive-herbal', intent: 'neutral', consentGiven: false })
+      expect(stillBlocked.activityLog).toEqual(state.activityLog)
+
+      const allowed = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral', consentGiven: true })
+      expect(allowed.activityLog).not.toEqual(state.activityLog)
     } finally {
-      Math.random = originalRandom
+      contentCatalog.npcsById.set(NPC_ID, original)
     }
+  })
+
+  it('sets pregnancy state when pregnancy occurs (deterministic seed, no Math.random)', () => {
+    const state = { ...stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' }), rngSeed: SEED_TRIGGERS_PREGNANCY }
+
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral', consentGiven: true })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
+    expect(npc?.pregnancyState?.context).toBe('consensual')
+    expect(npc?.pregnancyState?.daysElapsed).toBe(0)
+    expect(npc?.pregnancyState?.wanted).toBe(null)
+    // Determinism: the seed must actually advance, not stay fixed.
+    expect(result.rngSeed).not.toBe(SEED_TRIGGERS_PREGNANCY)
   })
 
   it('sets wanted=true when intent is want-pregnancy and pregnancy occurs', () => {
-    const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
+    const state = { ...stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' }), rngSeed: SEED_TRIGGERS_PREGNANCY }
 
-    const originalRandom = Math.random
-    let callCount = 0
-    Math.random = () => {
-      callCount++
-      return callCount === 1 ? 0.1 : 0.5
-    }
-
-    try {
-      const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'want-pregnancy' })
-      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
-      expect(npc?.pregnancyState?.wanted).toBe(true)
-      expect(result.activityLog[0]?.message).toMatch(/This was what you hoped for/)
-    } finally {
-      Math.random = originalRandom
-    }
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'want-pregnancy', consentGiven: true })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
+    expect(npc?.pregnancyState?.wanted).toBe(true)
+    expect(result.activityLog[0]?.message).toMatch(/This was what you hoped for/)
   })
 
   it('sets wanted=false when intent is avoid-pregnancy and pregnancy occurs', () => {
-    const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
+    const state = { ...stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' }), rngSeed: SEED_TRIGGERS_PREGNANCY }
 
-    const originalRandom = Math.random
-    let callCount = 0
-    Math.random = () => {
-      callCount++
-      return callCount === 1 ? 0.1 : 0.5
-    }
-
-    try {
-      const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'avoid-pregnancy' })
-      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
-      expect(npc?.pregnancyState?.wanted).toBe(false)
-      expect(result.activityLog[0]?.message).toMatch(/This was not what you planned/)
-    } finally {
-      Math.random = originalRandom
-    }
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'avoid-pregnancy', consentGiven: true })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
+    expect(npc?.pregnancyState?.wanted).toBe(false)
+    expect(result.activityLog[0]?.message).toMatch(/This was not what you planned/)
   })
 
-  it('reduces pregnancy risk with contraception', () => {
-    const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
-
-    // Mock Math.random to test contraception effect
-    // Without contraception, risk is 0.20
-    // With contraception (efficacy 0.75), risk is 0.20 * (1 - 0.75) = 0.05
-    // So 0.10 should NOT trigger pregnancy without contraception either (0.10 > 0.20 is false, so it WOULD trigger)
-    // Use 0.15 which is > 0.05 (with contraception) but < 0.20 (without)
-    // Since we can't load the item in tests, we test with null contraception
-    const originalRandom = Math.random
-    Math.random = () => 0.15
-
-    try {
-      // Without contraception item (item not loaded in test environment)
-      const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
-      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
-      // With random 0.15 < risk 0.20, pregnancy SHOULD occur without contraception
-      expect(npc?.pregnancyState).toBeDefined()
-    } finally {
-      Math.random = originalRandom
-    }
-  })
-
-  it('applies age band fertility modifier', () => {
+  it('applies age band fertility modifier (no pregnancy when roll exceeds risk)', () => {
     // Note: ageBand is read from NPC definition (contentCatalog), not runtime state.
-    // Ida Rhys has ageBand 'adult' (fertility modifier 1.0).
-    // This test verifies that the pregnancy risk calculation uses the NPC's age band.
-    // With contraception=false and base risk 0.20, we mock random to be just above threshold.
-    const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
+    // Ida Rhys has ageBand 'adult' (fertility modifier 1.0), so risk = 0.20 * 1.0 = 0.20.
+    // Seed 100's first roll (~0.2044) is just above that risk, so no pregnancy should occur.
+    const state = { ...stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' }), rngSeed: SEED_AVOIDS_PREGNANCY }
 
-    // Mock Math.random to return a value that's above the adjusted risk threshold
-    // For adult NPC without contraception: risk = 0.20 * 1.0 = 0.20
-    const originalRandom = Math.random
-    Math.random = () => 0.25 // Higher than 0.20, so no pregnancy
-
-    try {
-      const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
-      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
-      // With random=0.25 > risk=0.20, no pregnancy should occur
-      expect(npc?.pregnancyState).toBeUndefined()
-    } finally {
-      Math.random = originalRandom
-    }
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral', consentGiven: true })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)
+    expect(npc?.pregnancyState).toBeUndefined()
   })
 
   it('includes tone-appropriate message based on stage and openness', () => {
     const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
 
     // Ida has default 'moderate' openness
-    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral' })
+    const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: "item-contraceptive-herbal", intent: 'neutral', consentGiven: true })
 
     expect(result.activityLog[0]?.message).toMatch(/Ida Rhys/)
     // Should contain aftermath tone message

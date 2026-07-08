@@ -1165,7 +1165,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
       {showIntimacyModal && (
         <IntimacyOptionsModal
           npcName={detail.name}
-          requiresConsent={false}
+          requiresConsent={detail.requiresExplicitConsent}
           onConfirm={(options) => {
             // Map boolean contraception to item ID (simplified - in future, select specific item)
             const contraceptionItemId = options.contraception ? 'item-contraceptive-tonic' : null
@@ -1174,6 +1174,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
                 npcId: detail.npcId,
                 contraceptionItemId,
                 intent: options.intent,
+                consentGiven: options.consentGiven,
               }),
             )
             setShowIntimacyModal(false)

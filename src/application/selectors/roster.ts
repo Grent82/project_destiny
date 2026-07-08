@@ -207,6 +207,7 @@ function buildRosterDetail(root: RootState, npcId: string) {
     signature: definition ? selectCharacterSignature(root, npcId) : '',
     isPrimary: definition?.isPrimary ?? false,
     hasHouseSeal: definition?.hasHouseSeal ?? false,
+    requiresExplicitConsent: definition?.consentPreferences.requiresExplicitConsent ?? false,
   }
 }
 
