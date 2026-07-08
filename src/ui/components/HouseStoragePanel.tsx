@@ -59,6 +59,9 @@ export function HouseStoragePanel() {
 
   function dispatchAction(action: ItemAction, instanceId: string, targetNpcId: string | undefined) {
     switch (action.type) {
+      case 'use':
+        dispatch(gameActions.useItem({ instanceId, action: 'consume', targetNpcId }))
+        break
       case 'install':
         dispatch(gameActions.installModuleItem({ instanceId }))
         break

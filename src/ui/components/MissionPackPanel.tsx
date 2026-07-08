@@ -40,6 +40,10 @@ export function MissionPackPanel() {
     }
     if (action.type === 'unpack') {
       dispatch(gameActions.moveItem({ instanceId, location: 'inventory' }))
+      return
+    }
+    if (action.type === 'use') {
+      dispatch(gameActions.useItem({ instanceId, action: 'consume' }))
     }
   }
 
@@ -103,6 +107,8 @@ export function MissionPackPanel() {
           onSelect={(npcId) => {
             if (pendingAction.action.type === 'give') {
               dispatch(gameActions.giveItemToNpc({ instanceId: pendingAction.instanceId, npcId }))
+            } else if (pendingAction.action.type === 'use') {
+              dispatch(gameActions.useItem({ instanceId: pendingAction.instanceId, action: 'consume', targetNpcId: npcId }))
             }
             setPendingAction(null)
           }}

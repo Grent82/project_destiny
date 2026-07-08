@@ -8,7 +8,15 @@ import type { ItemInstance, InventoryContainer, InventorySlot } from '../../../d
 import { contentCatalog } from '../../content/contentCatalog'
 
 /**
- * Find an item instance by its uniqueId in player inventory.
+ * Find an item instance by its uniqueId across every location that owns instance slots:
+ * the player's own bag containers, and shared containers (house_storage, mission_pack).
+ * The real itemId is resolved from itemRegistry when a registry entry exists (the canonical
+ * shape for real gameplay data); it falls back to the instanceId itself only when no registry
+ * entry exists, preserving the older test-fixture convention of instanceId === itemId.
+ *
+ * destiny-yiqa: this used to search only player.bagContainers, so Use/Sell/Gift silently
+ * no-op'd (returned state unchanged, no error) for any item actually sitting in House Storage
+ * or Mission Pack -- exactly the two locations HouseStoragePanel/MissionPackPanel manage.
  */
 export function findPlayerItem(state: GameState, uniqueId: string): {
   instance: ItemInstance
@@ -16,14 +24,17 @@ export function findPlayerItem(state: GameState, uniqueId: string): {
   slot: InventorySlot
   containerIndex: number
   slotIndex: number
+  location: 'player' | 'shared'
 } | null {
+  const registryItemId = state.inventoryState.itemRegistry[uniqueId]?.itemId
+
   for (const [containerIndex, container] of state.inventoryState.player.bagContainers.entries()) {
     for (const [slotIndex, slot] of container.slots.entries()) {
       if (slot.itemInstanceId === uniqueId) {
         return {
           instance: {
             uniqueId: slot.itemInstanceId,
-            itemId: slot.itemInstanceId,
+            itemId: registryItemId ?? slot.itemInstanceId,
             quantity: slot.quantity,
             locationType: 'player_inventory',
             locationId: 'player',
@@ -34,47 +45,100 @@ export function findPlayerItem(state: GameState, uniqueId: string): {
           slot,
           containerIndex,
           slotIndex,
+          location: 'player',
         }
       }
     }
   }
+
+  for (const [containerIndex, container] of state.inventoryState.sharedContainers.entries()) {
+    for (const [slotIndex, slot] of container.slots.entries()) {
+      if (slot.itemInstanceId === uniqueId) {
+        return {
+          instance: {
+            uniqueId: slot.itemInstanceId,
+            itemId: registryItemId ?? slot.itemInstanceId,
+            quantity: slot.quantity,
+            locationType: 'container',
+            locationId: container.containerId,
+            acquiredDay: 1,
+            flags: [],
+          },
+          container,
+          slot,
+          containerIndex,
+          slotIndex,
+          location: 'shared',
+        }
+      }
+    }
+  }
+
   return null
 }
 
 /**
- * Remove an item from player inventory.
+ * Remove an item from wherever findPlayerItem locates it (player bag or a shared container),
+ * and clean up its itemRegistry entry (decrementing quantity, or deleting once it hits zero)
+ * so removal never leaves an orphaned registry entry behind (destiny-yiqa).
  */
 export function removePlayerItem(state: GameState, uniqueId: string, quantity = 1): GameState {
-  const newContainers = state.inventoryState.player.bagContainers.map((container) => {
-    const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === uniqueId)
-    if (slotIndex === -1) return container
+  const found = findPlayerItem(state, uniqueId)
+  if (!found) return state
 
-    const slot = container.slots[slotIndex]
-    const newSlots = [...container.slots]
-
-    if (slot.quantity <= quantity) {
-      newSlots.splice(slotIndex, 1)
+  const registryEntry = state.inventoryState.itemRegistry[uniqueId]
+  const updatedItemRegistry = { ...state.inventoryState.itemRegistry }
+  if (registryEntry) {
+    if (registryEntry.quantity <= quantity) {
+      delete updatedItemRegistry[uniqueId]
     } else {
-      newSlots[slotIndex] = {
-        ...slot,
-        quantity: slot.quantity - quantity,
-      }
+      updatedItemRegistry[uniqueId] = { ...registryEntry, quantity: registryEntry.quantity - quantity }
     }
+  }
 
-    return { ...container, slots: newSlots }
-  }).filter((c) => c.slots.length > 0)
+  function removeFromSlots(slots: InventorySlot[]): InventorySlot[] {
+    const slotIndex = slots.findIndex((s) => s.itemInstanceId === uniqueId)
+    if (slotIndex === -1) return slots
+    const slot = slots[slotIndex]
+    if (slot.quantity <= quantity) {
+      return slots.filter((_, i) => i !== slotIndex)
+    }
+    const newSlots = [...slots]
+    newSlots[slotIndex] = { ...slot, quantity: slot.quantity - quantity }
+    return newSlots
+  }
 
-  const usedSlots = newContainers.reduce((sum, c) => sum + c.slots.length, 0)
+  if (found.location === 'player') {
+    const newContainers = state.inventoryState.player.bagContainers
+      .map((container) => ({ ...container, slots: removeFromSlots(container.slots) }))
+      .filter((c) => c.slots.length > 0)
+    const usedSlots = newContainers.reduce((sum, c) => sum + c.slots.length, 0)
+
+    return {
+      ...state,
+      inventoryState: {
+        ...state.inventoryState,
+        itemRegistry: updatedItemRegistry,
+        player: {
+          ...state.inventoryState.player,
+          bagContainers: newContainers,
+          usedBagSlots: usedSlots,
+        },
+      },
+    }
+  }
+
+  const newSharedContainers = state.inventoryState.sharedContainers.map((container) => ({
+    ...container,
+    slots: removeFromSlots(container.slots),
+  }))
 
   return {
     ...state,
     inventoryState: {
       ...state.inventoryState,
-      player: {
-        ...state.inventoryState.player,
-        bagContainers: newContainers,
-        usedBagSlots: usedSlots,
-      },
+      itemRegistry: updatedItemRegistry,
+      sharedContainers: newSharedContainers,
     },
   }
 }

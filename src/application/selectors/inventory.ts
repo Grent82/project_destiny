@@ -238,7 +238,25 @@ export function selectItemActions(state: RootState, instanceId: string): ItemAct
 
   const actions: ItemAction[] = []
   const primary = CATEGORY_PRIMARY_ACTION[def.category]
-  if (primary) actions.push(primary)
+  if (primary) {
+    if (primary.type === 'use') {
+      // Only offer 'Use' when the item has an effect useItem's applyConsume actually processes.
+      // Consumables whose only typedEffect is 'contraception' (handled exclusively by the intimacy
+      // proposal flow, not the generic consume path) would otherwise be destroyed by
+      // removePlayerItem for zero effect if 'Use' were offered unconditionally per category.
+      const consumeEffectTypes = new Set([
+        'heal', 'stat_mod', 'reduceStat', 'boostStat', 'addStatus', 'removeStatus', 'training_bonus',
+      ])
+      const hasConsumeEffect = def.typedEffects?.some((effect) => consumeEffectTypes.has(effect.type)) ?? false
+      if (hasConsumeEffect) {
+        // heal/stat_mod are the only effect types applyConsume actually routes through targetNpcId.
+        const needsTarget = def.typedEffects?.some((effect) => effect.type === 'heal' || effect.type === 'stat_mod') ?? false
+        actions.push({ ...primary, requiresTarget: needsTarget })
+      }
+    } else {
+      actions.push(primary)
+    }
+  }
 
   // Documents that unlock a follow-up action or serve as evidence need an explicit
   // disposal action -- 'open' alone only previews them and never writes enabledActions/evidenceInventory.

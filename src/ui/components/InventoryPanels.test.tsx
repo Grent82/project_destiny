@@ -80,6 +80,39 @@ describe('HouseStoragePanel', () => {
     expect(within(preview).getByText('House Debt Ledger')).toBeInTheDocument()
     expect(within(preview).getByText(/not the missing bureau evidence/i)).toBeInTheDocument()
   })
+
+  // destiny-yiqa: clicking 'Use' on a consumable previously dispatched nothing at all.
+  it('opens a target picker for Use on a heal consumable and applies the heal on the chosen NPC', async () => {
+    const user = userEvent.setup()
+    const stateWithMedkit = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseStorageItem('inst-medkit-01', 'item-medkit-field'),
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, states: { ...npc.states, health: 60 } } : npc,
+      ),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithMedkit)
+
+    await user.click(screen.getByRole('button', { name: 'Use' }))
+    expect(screen.getByRole('dialog', { name: 'Choose a target' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Marion Vale' }))
+
+    const marion = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')!
+    expect(marion.states.health).toBeGreaterThan(60)
+    // The item is consumed: no longer present in house storage.
+    expect(store.getState().game.inventoryState.itemRegistry['inst-medkit-01']).toBeUndefined()
+  })
+
+  it('does not offer a Use button for a contraception-only item (destiny-yiqa)', () => {
+    const stateWithContraceptive = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseStorageItem('inst-contra-01', 'item-contraceptive-tonic'),
+    }
+    renderWithStore(<HouseStoragePanel />, stateWithContraceptive)
+
+    expect(screen.queryByRole('button', { name: 'Use' })).not.toBeInTheDocument()
+  })
 })
 
 describe('MissionPackPanel', () => {
@@ -97,5 +130,28 @@ describe('MissionPackPanel', () => {
     const preview = screen.getByRole('dialog', { name: 'House Debt Ledger preview' })
     expect(within(preview).getByText('House Debt Ledger')).toBeInTheDocument()
     expect(within(preview).getByText(/not the missing bureau evidence/i)).toBeInTheDocument()
+  })
+
+  // destiny-yiqa: a packed consumable's 'Use' action (reached via the secondary "More actions"
+  // menu, since MissionPackPanel's primary slot is reserved for open/unpack) previously did nothing.
+  it('dispatches Use from the secondary menu and applies the heal on the chosen NPC', async () => {
+    const user = userEvent.setup()
+    const packedMedkitState = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithMissionPackItem('inst-medkit-01', 'item-medkit-field'),
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc) =>
+        npc.npcId === 'npc-marion-vale' ? { ...npc, states: { ...npc.states, health: 60 } } : npc,
+      ),
+    }
+    const store = renderWithStore(<MissionPackPanel />, packedMedkitState)
+
+    await user.click(screen.getByRole('button', { name: 'More actions' }))
+    await user.click(screen.getByRole('menuitem', { name: 'Use' }))
+    expect(screen.getByRole('dialog', { name: 'Choose a target' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Marion Vale' }))
+
+    const marion = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')!
+    expect(marion.states.health).toBeGreaterThan(60)
   })
 })

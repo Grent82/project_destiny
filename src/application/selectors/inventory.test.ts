@@ -162,6 +162,28 @@ describe('selectItemActions', () => {
     expect(types).toContain('pack')
   })
 
+  // destiny-yiqa: 'Use' was previously never dispatched anywhere. Wiring it required deciding,
+  // per item, whether applyConsume actually processes an effect for it (heal/stat_mod need a
+  // target NPC; contraception is a no-op there, handled only by the intimacy proposal flow).
+  it('marks Use as requiring a target for a heal-effect consumable (item-medkit-field)', () => {
+    const state = stateWithPlayerItems([{ instanceId: 'inst-medkit-01', itemId: 'item-medkit-field', quantity: 1 }])
+    const store = createGameStore(state)
+    const actions = selectItemActions(store.getState(), 'inst-medkit-01')
+    const use = actions.find((a) => a.type === 'use')
+    expect(use).toBeDefined()
+    expect(use?.requiresTarget).toBe(true)
+  })
+
+  it('does not offer a Use action for a contraception-only consumable (destiny-yiqa)', () => {
+    const state = stateWithPlayerItems([{ instanceId: 'inst-contra-01', itemId: 'item-contraceptive-tonic', quantity: 1 }])
+    const store = createGameStore(state)
+    const actions = selectItemActions(store.getState(), 'inst-contra-01')
+    const types = actions.map((a) => a.type)
+    // Using it here would call applyConsume, which unconditionally removes the item and has no
+    // effect for 'contraception' -- the real use path is the intimacy modal's own item picker.
+    expect(types).not.toContain('use')
+  })
+
   it('returns unpack action for mission_pack item', () => {
     const state = stateWithMissionPackItems([{ instanceId: packedToolInstanceId, itemId: packedToolItemId, quantity: 1 }])
     const store = createGameStore(state)

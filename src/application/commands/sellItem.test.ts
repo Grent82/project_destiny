@@ -122,4 +122,36 @@ describe('sellItem', () => {
       .find((s) => s.itemInstanceId === 'item-mechanism-pre-breach')
     expect(item).toBeDefined()
   })
+
+  // destiny-yiqa: sellItem calls findPlayerItem/removePlayerItem (inventoryHelpers.ts), which
+  // used to only search player.bagContainers -- selling an item sitting in House Storage (the
+  // exact location HouseStoragePanel's own 'Sell' button operates on) silently did nothing.
+  // currentDistrictId is null here specifically to exercise sellItem's own no-shop-found
+  // fallback branch (the one that calls findPlayerItem/removePlayerItem directly) rather than
+  // its separate shop-transfer branch, which has its own unrelated fromType:'player_inventory'
+  // hardcoding bug -- out of scope for this fix, filed as a follow-up.
+  it('sells an item sitting in house_storage, not just the player bag', () => {
+    const stateWithHouseStorageItem: GameState = {
+      ...BASE_STATE,
+      currentDistrictId: null,
+      inventoryState: {
+        ...BASE_STATE.inventoryState,
+        sharedContainers: [{
+          containerId: 'container-house-storage',
+          containerType: 'vault',
+          ownerId: 'house_storage',
+          maxSlots: 50,
+          slots: [{ slotId: 'slot-stored', itemInstanceId: 'inst-stored-parts', quantity: 1 }],
+          locked: false,
+        }],
+        itemRegistry: { 'inst-stored-parts': { uniqueId: 'inst-stored-parts', itemId: 'item-spare-parts', quantity: 1, locationType: 'container', acquiredDay: 1, flags: [] } },
+      },
+    }
+
+    const result = sellItem(stateWithHouseStorageItem, 'inst-stored-parts')
+
+    expect(result.money).toBeGreaterThan(stateWithHouseStorageItem.money)
+    expect(result.inventoryState.sharedContainers[0]!.slots).toHaveLength(0)
+    expect(result.activityLog[0]?.message).toMatch(/Sold/)
+  })
 })
