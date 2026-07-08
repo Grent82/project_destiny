@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { GameState } from '../../domain/game/contracts'
 import { proposeDateWithPlayer } from './proposeDate'
+import { contentCatalog } from '../content/contentCatalog'
 
 const baseGameState: GameState = {
   day: 10,
@@ -490,6 +491,50 @@ describe('proposeDate', () => {
 
     expect(result.pendingDateProposals).toHaveLength(0)
     expect(result.activityLog[0].message).toContain('hesitant')
+  })
+})
+
+describe('proposeDate — required intimacy stage sourced from contentCatalog (destiny-7vpu)', () => {
+  const STAGE_ORDER = ['none', 'affinity', 'attachment', 'committed'] as const
+
+  it('resolves eligibility for every date template using contentCatalog.datesById.requiredIntimacyStage, not a parallel hardcoded map', () => {
+    for (const date of contentCatalog.dates) {
+      const requiredIndex = STAGE_ORDER.indexOf(date.requiredIntimacyStage)
+
+      // One stage below the requirement must be rejected.
+      const tooLowStage = STAGE_ORDER[Math.max(0, requiredIndex - 1)]
+      const rejected = proposeDateWithPlayer(
+        {
+          ...baseGameState,
+          npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', tooLowStage, 'idle')],
+          relationships: createRelationshipWithIntimacy('npc-test', tooLowStage),
+        },
+        { targetNpcId: 'npc-test', dateTemplateId: date.id, proposedDay: 15, proposedTimeSlot: 'evening', proposedLocation: null },
+      )
+      if (requiredIndex > 0) {
+        expect(rejected.pendingDateProposals, `${date.id} should reject below ${date.requiredIntimacyStage}`).toHaveLength(0)
+      }
+
+      // Exactly at the required stage (with sufficient affinity) must be accepted.
+      const met = proposeDateWithPlayer(
+        {
+          ...baseGameState,
+          npcRuntimeStates: [createRosterNpc('npc-test', 'Test NPC', date.requiredIntimacyStage, 'idle')],
+          relationships: {
+            'player-to-npc-test': {
+              affinity: 80,
+              respect: 40,
+              fear: 0,
+              trust: 70,
+              loyalty: 60,
+              intimacyStage: date.requiredIntimacyStage,
+            },
+          },
+        },
+        { targetNpcId: 'npc-test', dateTemplateId: date.id, proposedDay: 15, proposedTimeSlot: 'evening', proposedLocation: null },
+      )
+      expect(met.pendingDateProposals, `${date.id} should accept at ${date.requiredIntimacyStage}`).toHaveLength(1)
+    }
   })
 })
 

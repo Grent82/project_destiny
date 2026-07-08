@@ -4,6 +4,7 @@ import type {
   GameState,
 } from '../../domain/game/contracts'
 import { getRelationship } from '../../domain/relationships/contracts'
+import { contentCatalog } from '../content/contentCatalog'
 
 export interface DateProposalParams {
   proposerNpcId: string
@@ -22,15 +23,6 @@ export interface ProposeDateResult {
 }
 
 const COOLDOWN_DAYS_AFTER_DATE = 2
-const MIN_INTIMACY_FOR_PROPOSAL: Record<string, number> = {
-  'date-quiet-walk': 1, // affinity
-  'date-shared-meal': 1,
-  'date-music-night': 2, // attachment
-  'date-workshop-project': 1,
-  'date-private-ritual': 3, // committed
-  'date-district-exploration': 2,
-  'date-quiet-morning': 2,
-}
 
 function getIntimacyStageIndex(stage: string): number {
   const stages = ['none', 'affinity', 'attachment', 'committed']
@@ -55,7 +47,7 @@ function checkProposalEligibility(
   // proposedTimeSlot reserved for future time-based availability checks
   void proposedTimeSlot
   const targetIntimacy = getNpcIntimacyStage(state, targetId)
-  const requiredStage = MIN_INTIMACY_FOR_PROPOSAL[dateTemplateId] ?? 1
+  const requiredStage = getIntimacyStageIndex(contentCatalog.datesById.get(dateTemplateId)?.requiredIntimacyStage ?? 'affinity')
   const currentStageIndex = getIntimacyStageIndex(targetIntimacy)
 
   if (currentStageIndex < requiredStage) {
