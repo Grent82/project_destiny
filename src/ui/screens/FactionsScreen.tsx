@@ -2,7 +2,7 @@ import type React from 'react'
 import { useState } from 'react'
 import { EmptyState } from '../components/EmptyState'
 
-import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions, selectFactionAgendas, getCouncilVoteTemplates } from '../../application'
+import { selectAllFactions, selectCityDials, selectCouncilSeats, selectInstitutionalStanding, selectCityStability, selectActiveCouncilVotes, selectRenownLevel, gameActions, selectFactionAgendas, getCouncilVoteTemplates, getFactionStandingTier } from '../../application'
 import type { InstitutionalTier } from '../../domain'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 
@@ -26,14 +26,6 @@ const TIER_DESCRIPTIONS: Record<InstitutionalTier, string> = {
   watched: 'Noted. Some doors are closed without explanation.',
   hostile: 'Institutional arm actively obstructs. Fines and harassment.',
   blacklisted: 'Active enforcement. Arrests and asset seizure may follow.',
-}
-
-function standingTier(standing: number): string {
-  if (standing <= -60) return 'Hostile'
-  if (standing <= -20) return 'Cold'
-  if (standing <= 20) return 'Neutral'
-  if (standing <= 60) return 'Warm'
-  return 'Allied'
 }
 
 function standingBarStyle(standing: number): React.CSSProperties {
@@ -122,7 +114,7 @@ export function FactionsScreen() {
 
       <div className="overview-grid">
         {factions.map((faction) => {
-          const tier = standingTier(faction.standing)
+          const tier = getFactionStandingTier(faction.standing)
           const agendaData = factionAgendas.find((a) => a.factionId === faction.factionId)
           return (
             <article key={faction.factionId}>

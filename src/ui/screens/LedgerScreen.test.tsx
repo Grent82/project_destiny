@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { LedgerScreen } from './LedgerScreen'
 import { createGameStore } from '../../application'
 import { initialGameStateSnapshot } from '../../application/store/initialGameState'
@@ -29,5 +29,11 @@ describe('LedgerScreen', () => {
   it('renders the summary text', () => {
     renderLedgerScreen()
     expect(screen.getByText(/The founding legal record/i)).toBeInTheDocument()
+  })
+
+  it('labels Civic Compact (standing +10) as Neutral, matching FactionsScreen (destiny-09wr)', () => {
+    renderLedgerScreen()
+    const compactRow = screen.getByText('Civic Compact').closest('tr')!
+    expect(within(compactRow).getByText(/Neutral/)).toBeInTheDocument()
   })
 })

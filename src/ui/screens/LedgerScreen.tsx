@@ -1,4 +1,4 @@
-import { gameActions, selectFactionSummaries, selectLedgerSummary, selectDailyIncomeBreakdown } from '../../application'
+import { gameActions, selectFactionSummaries, selectLedgerSummary, selectDailyIncomeBreakdown, getFactionStandingTier } from '../../application'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { formatMarks, formatMarksPerDay } from '../../domain/game/currency'
 import { EmptyState } from '../components/EmptyState'
@@ -13,16 +13,6 @@ function formatQuestStageLabel(stageId: string): string {
   return stageId
     .replace(/-/g, ' ')
     .replace(/\b\w/g, (match) => match.toUpperCase())
-}
-
-function standingLabel(standing: number): string {
-  if (standing >= 60) return 'Allied'
-  if (standing >= 30) return 'Friendly'
-  if (standing >= 10) return 'Warm'
-  if (standing >= -10) return 'Neutral'
-  if (standing >= -30) return 'Cool'
-  if (standing >= -60) return 'Cold'
-  return 'Hostile'
 }
 
 function standingClass(standing: number): string {
@@ -167,7 +157,7 @@ export function LedgerScreen() {
               <tr key={f.factionId}>
                 <td>{f.name}</td>
                 <td className={`ledger-table__value ${standingClass(f.standingWithPlayer)}`}>
-                  {standingLabel(f.standingWithPlayer)} ({f.standingWithPlayer > 0 ? '+' : ''}
+                  {getFactionStandingTier(f.standingWithPlayer)} ({f.standingWithPlayer > 0 ? '+' : ''}
                   {f.standingWithPlayer})
                 </td>
               </tr>

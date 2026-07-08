@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 import { createGameStore } from '../../application'
@@ -32,6 +32,12 @@ describe('FactionsScreen', () => {
     renderFactions()
     expect(screen.getByText(/The Institutional Arm/i)).toBeInTheDocument()
     expect(screen.getByText(/Civic Compact/i)).toBeInTheDocument()
+  })
+
+  it('labels Civic Compact (standing +10) as Neutral, matching LedgerScreen (destiny-09wr)', () => {
+    renderFactions()
+    const compactCard = screen.getByText(/Civic Compact/i).closest('article')!
+    expect(within(compactCard).getByText(/Neutral/)).toBeInTheDocument()
   })
 
   it('shows standing tier for at least one faction', () => {

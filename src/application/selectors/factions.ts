@@ -19,6 +19,19 @@ export const selectFactionSummaries = createSelector(
     })),
 )
 
+/**
+ * Canonical faction standing tier label (destiny-09wr). FactionsScreen and LedgerScreen each used
+ * to compute this independently with different boundaries, disagreeing on the same standing value
+ * (e.g. +10 was 'Neutral' on one screen, 'Warm' on the other). This is the single source of truth.
+ */
+export function getFactionStandingTier(standing: number): string {
+  if (standing <= -60) return 'Hostile'
+  if (standing <= -20) return 'Cold'
+  if (standing <= 20) return 'Neutral'
+  if (standing <= 60) return 'Warm'
+  return 'Allied'
+}
+
 export const selectFactionStandings = (state: RootState) => state.game.factionStandings
 
 export const selectFactionStanding =
