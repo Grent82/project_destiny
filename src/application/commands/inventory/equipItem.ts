@@ -470,9 +470,52 @@ function unequipItemFromNpc(state: GameState, npcId: string, slot: EquipmentSlot
       ? npc.equipment.accessory?.[1] ?? null
       : (npc.equipment[slot as 'weapon' | 'armor'] as string) ?? null
 
-  if (!itemInstanceId) return state
+  if (!itemInstanceId) {
+    // Defensive fallback: some NPCs (world/enemy/story persons hydrated via
+    // createRuntimeStateFromDefinition, which has no state.inventoryState access to register a real
+    // instance) can have loadout.armorId/primaryWeaponId/secondaryWeaponId set from authored
+    // startingEquipment with no backing equipment[slot]/itemRegistry entry -- the UI still displays
+    // them as equipped (EquipmentSection reads loadout, not equipment). Without this, clicking
+    // Unequip on such an item silently did nothing: no error, no state change, item stays displayed
+    // as equipped. There's no real item instance to return anywhere, so just clear the loadout field.
+    return clearUnbackedLoadoutSlot(state, npcIndex, npc, slot)
+  }
 
   return unequipItemFromNpcInternal(state, npcId, slot, itemInstanceId)
+}
+
+/**
+ * Clears a loadout field that has no backing equipment[slot]/itemRegistry instance (unbacked
+ * starting gear -- see unequipItemFromNpc's fallback branch above). Only weapon/armor/accessory_1
+ * map 1:1 onto a single loadout field; accessory_2 folds into the accessoryIds array and isn't
+ * reachable from this fallback (not part of the reported bug, and ambiguous which id to drop).
+ */
+function clearUnbackedLoadoutSlot(state: GameState, npcIndex: number, npc: NpcRuntimeState, slot: EquipmentSlotType): GameState {
+  let clearedItemId: string | null = null
+  let updatedLoadout = npc.loadout
+
+  if (slot === 'weapon' && npc.loadout.primaryWeaponId) {
+    clearedItemId = npc.loadout.primaryWeaponId
+    updatedLoadout = { ...updatedLoadout, primaryWeaponId: null }
+  } else if (slot === 'armor' && npc.loadout.armorId) {
+    clearedItemId = npc.loadout.armorId
+    updatedLoadout = { ...updatedLoadout, armorId: null }
+  } else if (slot === 'accessory_1' && npc.loadout.secondaryWeaponId) {
+    clearedItemId = npc.loadout.secondaryWeaponId
+    updatedLoadout = { ...updatedLoadout, secondaryWeaponId: null }
+  }
+
+  if (!clearedItemId) return state
+
+  const itemName = contentCatalog.itemsById.get(clearedItemId)?.name ?? clearedItemId
+  const updatedRoster = [...state.npcRuntimeStates]
+  updatedRoster[npcIndex] = { ...npc, loadout: updatedLoadout }
+
+  return appendActivityLogEntry(
+    { ...state, npcRuntimeStates: updatedRoster },
+    'system',
+    `${npc.name} unequipped ${itemName} from ${formatSlotName(slot)}`,
+  )
 }
 
 /**

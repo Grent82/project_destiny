@@ -233,6 +233,73 @@ describe('recruitNpc', () => {
 
     expect(next).toBe(stateWithAlreadyRostered)
   })
+
+  // User-reported live bug (2026-07-09): recruited NPCs always appeared and fought completely
+  // unarmored regardless of npcs.json's authored startingEquipment. Root cause: this function
+  // already computed the correct `armor`/`clothing` variables from startingEquipment, then
+  // hardcoded loadout.armorId/equipment.armor to null anyway when building the roster entry.
+  // npc-verek-holst's startingEquipment.armor.lightTorso authors 'armor-light-waste-runner-vest'
+  // (verified against npcs.json).
+  it('seeds loadout.armorId from the definition\'s startingEquipment on recruitment', () => {
+    const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
+    const recruited = next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')!
+    expect(recruited.loadout.armorId).toBe('armor-light-waste-runner-vest')
+  })
+
+  it('registers a real itemRegistry instance backing equipment.armor, so Unequip actually works', () => {
+    const next = recruitNpc(stateWithOffers, 'npc-verek-holst')
+    const recruited = next.npcRuntimeStates.find((r) => r.npcId === 'npc-verek-holst')!
+    expect(recruited.equipment.armor).toBe('npc-verek-holst:starting-armor')
+    const registryEntry = next.inventoryState.itemRegistry[recruited.equipment.armor!]
+    expect(registryEntry).toBeDefined()
+    expect(registryEntry!.itemId).toBe('armor-light-waste-runner-vest')
+  })
+
+  it('leaves loadout.armorId null for an NPC with no armor-category item in startingEquipment', () => {
+    // npc-cress-aldmoor's armor sub-object is fully null and clothing.torso is a plain clothing
+    // item, not armor (verified against npcs.json) -- must not be mistaken for starting armor.
+    const next = recruitNpc(stateWithOffers, 'npc-cress-aldmoor')
+    const recruited = next.npcRuntimeStates.find((r) => r.npcId === 'npc-cress-aldmoor')!
+    expect(recruited.loadout.armorId).toBeNull()
+    expect(recruited.equipment.armor).toBeNull()
+  })
+
+  it('does not double-register the starting-armor instance when upserting an existing world-person entry', () => {
+    // Mirrors the existing "preserves world-person clothing/injury" upsert test above, but for the
+    // itemRegistry side: recruiting a person who already has a hydrated world entry (with its own
+    // armor already registered under the same deterministic id) must not clobber that entry.
+    const worldEntry = {
+      ...idaRhysRosterEntry,
+      npcId: 'npc-verek-holst',
+      npcType: 'world' as const,
+      playerRosterMember: false,
+      armor: { lightTorso: 'armor-light-waste-runner-vest', lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+    }
+    const preRegisteredInstanceId = 'npc-verek-holst:starting-armor'
+    const stateWithHydratedWorldNpc = {
+      ...stateWithOffers,
+      npcRuntimeStates: [...stateWithOffers.npcRuntimeStates, worldEntry],
+      inventoryState: {
+        ...stateWithOffers.inventoryState,
+        itemRegistry: {
+          ...stateWithOffers.inventoryState.itemRegistry,
+          [preRegisteredInstanceId]: {
+            uniqueId: preRegisteredInstanceId,
+            itemId: 'armor-light-waste-runner-vest',
+            quantity: 1,
+            locationType: 'equipment' as const,
+            locationId: 'npc-verek-holst',
+            acquiredDay: 3,
+            flags: ['pre-existing-marker'],
+          },
+        },
+      },
+    }
+
+    const next = recruitNpc(stateWithHydratedWorldNpc, 'npc-verek-holst')
+
+    expect(next.inventoryState.itemRegistry[preRegisteredInstanceId]?.flags).toEqual(['pre-existing-marker'])
+  })
 })
 
 describe('deriveBondTermsFromHireOffer', () => {

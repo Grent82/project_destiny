@@ -306,6 +306,73 @@ describe('transferItem', () => {
     })
   })
 
+  // Item-duplication bug, live-reproduced (2026-07-09) via the NPC equip/unequip UI: removeFromEquipment
+  // used to both clear the equipment slot AND re-add the item to inventory itself, while transferItem's
+  // own generic "add to destination" step (driven by toType) ALSO added it -- doubling quantity on
+  // every single equipment -> npc_inventory / equipment -> player_inventory transfer. No existing test
+  // in this file exercised the 'equipment' source type at all before this fix.
+  describe('Equipment transfer (item-duplication regression)', () => {
+    const EQUIPPED_ITEM_ID = 'item-equipped-dagger'
+
+    function stateWithNpcEquippedItem(): GameState {
+      return {
+        ...baseState,
+        npcRuntimeStates: baseState.npcRuntimeStates.map((n) =>
+          n.npcId === NPC_ID_1 ? { ...n, equipment: { weapon: EQUIPPED_ITEM_ID, armor: null, accessory: [] } } : n,
+        ),
+      }
+    }
+
+    test('moving an item from NPC equipment to NPC inventory adds it exactly once, not twice', () => {
+      const state = stateWithNpcEquippedItem()
+      const result = transferItem(state, {
+        fromType: 'equipment',
+        fromId: NPC_ID_1,
+        toType: 'npc_inventory',
+        toId: NPC_ID_1,
+        itemInstanceId: EQUIPPED_ITEM_ID,
+        quantity: 1,
+      })
+
+      const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID_1)!
+      expect(npc.equipment.weapon).toBeNull()
+
+      const containers = result.inventoryState.npcInventories[NPC_ID_1] ?? []
+      const matchingSlots = containers.flatMap((c) => c.slots.filter((s) => s.itemInstanceId === EQUIPPED_ITEM_ID))
+      expect(matchingSlots).toHaveLength(1)
+      expect(matchingSlots[0]?.quantity).toBe(1)
+    })
+
+    test('moving an item from player equipment to player inventory adds it exactly once, not twice', () => {
+      const state: GameState = {
+        ...baseState,
+        inventoryState: {
+          ...baseState.inventoryState,
+          player: {
+            ...baseState.inventoryState.player,
+            equipmentSlots: { weapon: EQUIPPED_ITEM_ID, armor: null, accessory_1: null, accessory_2: null },
+          },
+        },
+      }
+
+      const result = transferItem(state, {
+        fromType: 'equipment',
+        fromId: 'player',
+        toType: 'player_inventory',
+        toId: 'player',
+        itemInstanceId: EQUIPPED_ITEM_ID,
+        quantity: 1,
+      })
+
+      expect(result.inventoryState.player.equipmentSlots.weapon).toBeNull()
+      const matchingSlots = result.inventoryState.player.bagContainers.flatMap((c) =>
+        c.slots.filter((s) => s.itemInstanceId === EQUIPPED_ITEM_ID),
+      )
+      expect(matchingSlots).toHaveLength(1)
+      expect(matchingSlots[0]?.quantity).toBe(1)
+    })
+  })
+
   describe('Activity log', () => {
     test('logs transfer in activity log', () => {
       const result = transferItem(baseState, {

@@ -342,3 +342,43 @@ describe('equipItem — equipping from the House Storage panel container, not ju
     expect(npc.equipment.armor).toBeNull()
   })
 })
+
+// User-reported live bug (2026-07-09): NPCs hydrated with authored startingEquipment but no backing
+// equipment[slot]/itemRegistry instance (world/enemy/story persons via createRuntimeStateFromDefinition,
+// which has no state.inventoryState access to register one) displayed loadout.armorId as equipped
+// (EquipmentSection reads loadout, not equipment) but clicking "Unequip" silently did nothing --
+// unequipItemFromNpc read npc.equipment.armor (null), found no instance, and no-op'd, leaving the
+// item still shown as equipped. Same failure shape as every other bug fixed this session.
+describe('unequipItem — defensive fallback for loadout-only armor with no backing instance', () => {
+  function stateWithLoadoutOnlyArmor(): GameState {
+    const npcIndex = initialGameStateSnapshot.npcRuntimeStates.findIndex((n) => n.npcId === NPC_ID)
+    return {
+      ...initialGameStateSnapshot,
+      npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((n, i) =>
+        i === npcIndex
+          ? { ...n, loadout: { ...n.loadout, armorId: 'armor-light-tallow-work-coat' }, equipment: { weapon: null, armor: null, accessory: [] } }
+          : n,
+      ),
+    }
+  }
+
+  it('clears loadout.armorId when unequipping armor with no backing equipment instance', () => {
+    const state = stateWithLoadoutOnlyArmor()
+    const result = unequipItem(state, { ownerId: NPC_ID, slot: 'armor' })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(npc.loadout.armorId).toBeNull()
+  })
+
+  it('logs the unequip so the player gets feedback instead of a silent no-op', () => {
+    const state = stateWithLoadoutOnlyArmor()
+    const result = unequipItem(state, { ownerId: NPC_ID, slot: 'armor' })
+    expect(result.activityLog[0]?.message).toContain('unequipped')
+    expect(result.activityLog[0]?.message).toContain('Tallow Ring Work Coat')
+  })
+
+  it('is a true no-op when there is nothing in the slot at all (not even a loadout id)', () => {
+    const state = initialGameStateSnapshot
+    const result = unequipItem(state, { ownerId: NPC_ID, slot: 'armor' })
+    expect(result).toBe(state)
+  })
+})

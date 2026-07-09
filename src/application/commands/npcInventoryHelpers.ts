@@ -1,6 +1,7 @@
 import type { GameState } from '../../domain/game/contracts'
 import type { ItemDefinition } from '../../domain/items/contracts'
 import type { ItemInstance } from '../../domain/inventory/contracts'
+import type { NpcArmor, NpcClothing } from '../../domain/npc/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 
 /**
@@ -145,6 +146,75 @@ export function resolveItemStatEffect(itemDef: ItemDefinition, stat: string): nu
 export function resolveItemHealEffect(itemDef: ItemDefinition): number | null {
   const effect = itemDef.typedEffects.find((e) => e.type === 'heal')
   return effect && effect.type === 'heal' ? effect.value : null
+}
+
+/**
+ * Resolves the single "effective" starting armor item id out of an NPC's granular armor/clothing
+ * slots, for use as `loadout.armorId` (the field combat.ts/combatants.ts and the roster UI actually
+ * read -- see equipItem.ts's destiny-mv8n comment).
+ *
+ * NpcDefinition.startingEquipment (and the matching runtime `armor`/`clothing` fields it seeds) is
+ * a granular, per-body-part schema (armor.lightTorso/heavyTorso/lightLegs/heavyLegs/shield,
+ * clothing.head/torso/arms/legs/feet/full/undergarments) with NO reader anywhere in the codebase --
+ * confirmed via a repo-wide search before writing this. Authoring is also inconsistent about which
+ * of the two sub-objects a given NPC's actual protective armor lives in: most put it in
+ * `armor.lightTorso`/`heavyTorso`, but at least one (npc-sable-wrent) puts a real armor-category
+ * item in `clothing.torso` instead. This resolves both, checking each candidate slot against the
+ * item catalog and picking the first one that is actually `category:'armor'` (clothing items like
+ * 'cloth-tunic-simple' never match, so they're safely skipped).
+ */
+export function resolveStartingArmorItemId(armor: NpcArmor, clothing: NpcClothing): string | null {
+  const candidates = [
+    armor.heavyTorso, armor.lightTorso, armor.heavyLegs, armor.lightLegs, armor.shield,
+    clothing.torso, clothing.legs, clothing.full,
+  ]
+  for (const candidate of candidates) {
+    if (!candidate) continue
+    const itemDef = contentCatalog.itemsById.get(candidate)
+    if (itemDef?.category === 'armor') return candidate
+  }
+  return null
+}
+
+/**
+ * Registers a fresh, real itemRegistry entry for a resolved starting-armor item so it behaves
+ * exactly like any other equipped item (findable by unequip, resolvable back to its real
+ * definition) instead of being a bare, unbacked loadout.armorId with nothing behind it. Idempotent:
+ * a no-op if an entry for this instance id already exists (covers recruitment upserting a
+ * previously-hydrated world/story person whose armor instance may already be registered).
+ */
+export function registerStartingArmorInstance(
+  state: GameState,
+  npcId: string,
+  armorItemId: string | null,
+): GameState {
+  if (!armorItemId) return state
+  const instanceId = `${npcId}:starting-armor`
+  if (state.inventoryState.itemRegistry[instanceId]) return state
+
+  return {
+    ...state,
+    inventoryState: {
+      ...state.inventoryState,
+      itemRegistry: {
+        ...state.inventoryState.itemRegistry,
+        [instanceId]: {
+          uniqueId: instanceId,
+          itemId: armorItemId,
+          quantity: 1,
+          locationType: 'equipment',
+          locationId: npcId,
+          acquiredDay: state.day,
+          flags: [],
+        },
+      },
+    },
+  }
+}
+
+/** The deterministic instance id registerStartingArmorInstance uses for a given NPC. */
+export function startingArmorInstanceId(npcId: string): string {
+  return `${npcId}:starting-armor`
 }
 
 /**

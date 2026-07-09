@@ -8,6 +8,7 @@ import { initializeRosterRelationships } from './initializeRosterRelationships'
 import { createRng } from './seededRng'
 import { transferBondedNpc } from './bondTransfer'
 import { convertAuthoredMemoryToEntry } from './initializeNpcAuthoredMemories'
+import { resolveStartingArmorItemId, registerStartingArmorInstance, startingArmorInstanceId as startingArmorInstanceIdFor } from './npcInventoryHelpers'
 
 export type OutcomeContext = { npcId?: string | null; contextId?: string | null }
 type OutcomeRngState = ReturnType<typeof createRng>
@@ -339,6 +340,17 @@ export function applyOutcomes(
               const initialMemories = authoredMemories.map((authored) =>
                 convertAuthoredMemoryToEntry(authored, next.day)
               )
+              // Same startingEquipment wiring as recruitment.ts's buildRosterEntryFromOffer -- this
+              // was the third independent hand-rolled roster-entry builder found to hardcode
+              // loadout.armorId/equipment.armor to null regardless of what npcDef.startingEquipment
+              // specifies, so an NPC granted straight to the roster via a story event (not hired
+              // through the market) also always appeared and fought completely unarmored.
+              const clothing = npcDef.startingEquipment?.clothing
+                ?? { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] }
+              const armor = npcDef.startingEquipment?.armor
+                ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }
+              const startingArmorId = resolveStartingArmorItemId(armor, clothing)
+              const startingArmorInstanceId = startingArmorId ? startingArmorInstanceIdFor(addNpcId) : null
               const newEntry = {
                 npcId: addNpcId,
                 name: npcDef.name,
@@ -361,12 +373,12 @@ export function applyOutcomes(
                 skills: { ...npcDef.startingSkills },
                 traits: { ...npcDef.startingTraits },
                 states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 70 },
-                loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
-                equipment: { weapon: null, armor: null, accessory: [] },
+                loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: startingArmorId, accessoryIds: [], consumableIds: [] },
+                equipment: { weapon: null, armor: startingArmorInstanceId, accessory: [] },
                 inventory: [],
                 personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
-                clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
-                armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
+                clothing,
+                armor,
                 npcMemory: initialMemories,
                 bondStatus: null,
                 npcArc,
@@ -379,6 +391,7 @@ export function applyOutcomes(
                 wardPersonalAllowance: { allowancePerWeek: 2, personalSavings: 0, lastAllowanceDay: null, allowedItems: [], restrictedItems: [] },
               }
               next = { ...next, npcRuntimeStates: [...next.npcRuntimeStates, newEntry] }
+              next = registerStartingArmorInstance(next, addNpcId, startingArmorId)
               const seeded = getSeeded()
               next = initializeRosterRelationships(next, seeded.rng)
               next = { ...next, rngSeed: seeded.getSeed() }

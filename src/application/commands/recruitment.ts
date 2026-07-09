@@ -10,6 +10,7 @@ import { createRng } from './seededRng'
 import { publishEvent } from './events/publishEvent'
 import npcArcsData from '../../../data/definitions/npc-arcs.json'
 import { npcArcDefinitionSchema } from '../../domain/npc/contracts'
+import { resolveStartingArmorItemId, registerStartingArmorInstance, startingArmorInstanceId as startingArmorInstanceIdFor } from './npcInventoryHelpers'
 
 const npcArcDefs = npcArcDefinitionSchema.array().parse(npcArcsData)
 const npcArcDefsById = new Map(npcArcDefs.map((a) => [a.arcId, a]))
@@ -64,6 +65,9 @@ function buildRosterEntryFromOffer(
     ?? npcDef.startingEquipment?.armor
     ?? { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null }
 
+  const startingArmorId = resolveStartingArmorItemId(armor, clothing)
+  const startingArmorInstanceId = startingArmorId ? startingArmorInstanceIdFor(npcId) : null
+
   return {
     npcId,
     name: npcDef.name,
@@ -105,11 +109,20 @@ function buildRosterEntryFromOffer(
     loadout: {
       primaryWeaponId: null,
       secondaryWeaponId: null,
-      armorId: null,
+      // startingArmorId, resolved just above from `armor`/`clothing` (the "existing world-state >
+      // startingEquipment > defaults" values), was previously discarded here -- computed correctly,
+      // then hardcoded to null on write. combat.ts/combatants.ts and the roster UI's Arms & Armor
+      // panel read loadout.armorId, not the granular armor{}/clothing{} fields above (which have no
+      // reader anywhere), so every recruited NPC always appeared and fought completely unarmored
+      // regardless of what content authors specified in startingEquipment.
+      armorId: startingArmorId,
       accessoryIds: [],
       consumableIds: [],
     },
-    equipment: { weapon: null, armor: null, accessory: [] },
+    // startingArmorInstanceId backs armorId with a real, registered item instance (registered by
+    // recruitNpc/acquireBoundHireOffer below, which have state.inventoryState access this builder
+    // doesn't) so Unequip finds and returns a real item instead of silently no-op'ing on a bare id.
+    equipment: { weapon: null, armor: startingArmorInstanceId, accessory: [] },
     personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },
     arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
     npcMemory: worldNpcState?.npcMemory ?? [],
@@ -166,6 +179,11 @@ export function recruitNpc(state: GameState, npcId: string): GameState {
     npcRuntimeStates,
     availableForHire: state.availableForHire.filter((o) => o.npcId !== npcId),
   }
+
+  // Register a real itemRegistry entry backing newRosterEntry.equipment.armor, so it behaves like
+  // any other equipped item (Unequip finds it) rather than a bare loadout.armorId with nothing
+  // behind it. Idempotent -- no-ops if this npcId's starting-armor instance is already registered.
+  next = registerStartingArmorInstance(next, npcId, newRosterEntry.loadout.armorId)
 
   // Seed Tier 1 authored bonds and compatibility-derived edges for new NPC vs existing roster
   const { rng } = createRng(state.rngSeed)
@@ -242,6 +260,8 @@ export function acquireBoundHireOffer(state: GameState, npcId: string): GameStat
     npcRuntimeStates,
     availableForHire: state.availableForHire.filter((entry) => entry.npcId !== npcId),
   }
+
+  next = registerStartingArmorInstance(next, npcId, newRosterEntry.loadout.armorId)
 
   const { rng } = createRng(state.rngSeed)
   next = initializeRosterRelationships(next, rng)

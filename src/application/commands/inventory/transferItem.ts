@@ -441,6 +441,15 @@ function removeFromShopStock(state: GameState, shopId: string, itemInstanceId: s
 /**
  * Remove items from equipment slot.
  */
+// Item-duplication bug, live-reproduced (2026-07-09): this function used to both clear the
+// equipment slot AND re-add the item to inventory itself (via addToPlayerInventory/addToNpcInventory)
+// -- but transferItem's main body ALSO adds to the destination afterward based on `toType`, exactly
+// like every sibling removeFromX function expects. Every unequipItemFromNpcInternal call (the only
+// real caller, fromType:'equipment' -> toType:'npc_inventory') was therefore adding the unequipped
+// item to the NPC's personal inventory TWICE, silently doubling its quantity on every single NPC
+// unequip and every equip-that-swaps-out-an-existing-item. Fixed by making this function ONLY clear
+// the slot, matching removeFromNpcInventory/removeFromPlayerInventory/removeFromContainer/
+// removeFromShopStock, which never add anywhere -- the generic "add to destination" step handles it.
 function removeFromEquipment(state: GameState, ownerId: string, itemInstanceId: string, quantity: number): GameState {
   void quantity
   if (ownerId === 'player') {
@@ -458,13 +467,7 @@ function removeFromEquipment(state: GameState, ownerId: string, itemInstanceId: 
       [slotName]: null,
     }
 
-    // Add item back to player inventory
-    return addToPlayerInventory(
-      { ...state, inventoryState: { ...state.inventoryState, player: { ...state.inventoryState.player, equipmentSlots: updatedEquipment } } },
-      itemInstanceId,
-      itemInstanceId,
-      1
-    )
+    return { ...state, inventoryState: { ...state.inventoryState, player: { ...state.inventoryState.player, equipmentSlots: updatedEquipment } } }
   }
 
   // NPC equipment removal - use equipment structure (not loadout)
@@ -488,11 +491,7 @@ function removeFromEquipment(state: GameState, ownerId: string, itemInstanceId: 
   const updatedRoster = [...state.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
-  // Add item back to NPC inventory
-  let result = { ...state, npcRuntimeStates: updatedRoster }
-  result = addToNpcInventory(result, ownerId, itemInstanceId, itemInstanceId, 1)
-
-  return result
+  return { ...state, npcRuntimeStates: updatedRoster }
 }
 
 /**

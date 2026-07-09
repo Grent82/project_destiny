@@ -557,6 +557,21 @@ describe('applyOutcomes', () => {
     expect(next.rngSeed).not.toBe(state.rngSeed)
   })
 
+  // User-reported live bug (2026-07-09): an NPC granted straight to the roster via a story event
+  // (this outcome, not the market/recruitNpc path) always appeared and fought completely unarmored
+  // regardless of npcs.json's authored startingEquipment -- this builder hardcoded loadout.armorId
+  // and equipment.armor to null unconditionally. npc-elyn's startingEquipment.armor.lightTorso
+  // authors 'armor-medium-compact-chainmail' (verified against npcs.json).
+  it('addNpcToRoster seeds loadout.armorId and a registered equipment.armor instance from startingEquipment', () => {
+    const state = makeState()
+    const next = applyOutcomes(state, [{ type: 'addNpcToRoster', npcId: 'npc-elyn' }])
+    const elyn = next.npcRuntimeStates.find((r) => r.npcId === 'npc-elyn')!
+    expect(elyn.loadout.armorId).toBe('armor-medium-compact-chainmail')
+    expect(elyn.equipment.armor).toBe('npc-elyn:starting-armor')
+    const registryEntry = next.inventoryState.itemRegistry[elyn.equipment.armor!]
+    expect(registryEntry?.itemId).toBe('armor-medium-compact-chainmail')
+  })
+
   it('createBond adds bondStatus to NPC with correct entry reason', () => {
     const state = makeState({ npcRuntimeStates: [{ ...initialGameStateSnapshot.npcRuntimeStates[0]!, bondStatus: null }] })
     const next = applyOutcomes(state, [

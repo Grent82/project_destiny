@@ -40,14 +40,42 @@ describe('createRuntimeStateFromDefinition', () => {
     expect(result.states.health).toBe(100)
     expect(result.states.hygiene).toBe(70)
     expect(result.states.hunger).toBe(0)
+    // npc-dalen-morke's startingEquipment.armor.lightTorso authors 'armor-medium-compact-chainmail'
+    // (verified against npcs.json) -- primaryWeaponId/secondaryWeaponId stay null since no weapon is
+    // authored in startingEquipment for this def.
     expect(result.loadout).toEqual({
       primaryWeaponId: null,
       secondaryWeaponId: null,
-      armorId: null,
+      armorId: 'armor-medium-compact-chainmail',
       accessoryIds: [],
       consumableIds: [],
     })
     expect(result.assignment).toBe('idle')
+  })
+
+  // User-reported live bug (2026-07-09): every NPC appeared and fought completely unarmored
+  // regardless of authored content, because loadout.armorId (the only field combat.ts/combatants.ts
+  // and every "Arms & Armor" UI actually read) was always left null here -- startingEquipment was
+  // computed nowhere in this factory at all. Fixed by seeding clothing/armor (granular) from
+  // def.startingEquipment and resolving loadout.armorId from them via resolveStartingArmorItemId.
+  it('seeds loadout.armorId and the granular armor/clothing fields from startingEquipment (destiny)', () => {
+    const def = contentCatalog.npcsById.get(STORY_NO_ARC)!
+    const result = createRuntimeStateFromDefinition(STORY_NO_ARC)
+    expect(def.startingEquipment?.armor?.lightTorso).toBe('armor-medium-compact-chainmail')
+    expect(result.loadout.armorId).toBe('armor-medium-compact-chainmail')
+    expect(result.armor).toEqual(def.startingEquipment!.armor)
+    expect(result.clothing).toEqual(def.startingEquipment!.clothing)
+    // equipment.armor deliberately stays null here -- no state.inventoryState access in this pure
+    // function to register a real itemRegistry instance; recruitment.ts does that at hire time.
+    expect(result.equipment.armor).toBeNull()
+  })
+
+  it('produces no starting armor when neither armor{} nor clothing{} resolves to an armor item', () => {
+    // npc-garet-doyle's armor sub-object is fully null and clothing.torso is 'cloth-tunic-simple'
+    // (category 'clothing', not 'armor') per npcs.json's authored data -- confirms the resolver
+    // correctly returns null rather than mistaking a plain clothing item for armor.
+    const result = createRuntimeStateFromDefinition('npc-garet-doyle')
+    expect(result.loadout.armorId).toBeNull()
   })
 
   it('applies overrides last, winning over the defaults (incl. playerRosterMember)', () => {
