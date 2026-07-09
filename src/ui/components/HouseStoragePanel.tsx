@@ -12,7 +12,7 @@ import { ItemActionMenu } from './ItemActionMenu'
 import { TargetPickerModal } from './TargetPickerModal'
 import { DocumentPreviewModal } from './DocumentPreviewModal'
 import { ConfirmationModal } from './ConfirmationModal'
-import type { ItemAction } from '../../application/selectors/inventory'
+import { equipSlotForCategory, type ItemAction } from '../../application/selectors/inventory'
 import { gameActions } from '../../application/store/gameSlice'
 import { formatMarksAbbrev } from '../../domain/game/currency'
 
@@ -83,6 +83,19 @@ export function HouseStoragePanel() {
       case 'sell':
         dispatch(gameActions.sellItem({ instanceId }))
         break
+      case 'equip': {
+        // Tools equip onto the player (no NPC choice, requiresTarget:false so targetNpcId is
+        // undefined here); weapons/armor/accessories equip onto whichever NPC the target picker
+        // returned. 'player' as the reducer's `npcId` field routes through equipItemCommand's own
+        // ownerId==='player' branch (equipItemToPlayer), which is where tool skillBonus/enableAction
+        // effects are actually applied -- see equipSlotForCategory / CATEGORY_PRIMARY_ACTION.
+        const instanceDef = store.getState().game.inventoryState.itemRegistry[instanceId]
+        const def = instanceDef ? contentCatalog.itemsById.get(instanceDef.itemId) : null
+        if (!def) break
+        const slot = equipSlotForCategory(def.category)
+        dispatch(gameActions.equipItem({ npcId: targetNpcId ?? 'player', slot, itemId: instanceId }))
+        break
+      }
       default:
         break
     }

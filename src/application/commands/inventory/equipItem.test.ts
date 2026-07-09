@@ -309,4 +309,36 @@ describe('equipItem — equipping from the House Storage panel container, not ju
     expect(npc.loadout.armorId).toBe('armor-light-tallow-work-coat')
     expect(result.activityLog[0]?.message).toContain('equipped')
   })
+
+  // User report, live-reproduced: a roster NPC set to "Recovering" (the duty button whose own
+  // panel text reads "Resting in proper quarters" -- i.e. physically still in the house) could not
+  // equip anything from House Storage. Root cause: isHouseholdMember's allowlist omitted
+  // 'recovering', so getAccessibleContainersForNpc granted no access to shared containers and the
+  // equip silently no-op'd with zero UI feedback -- exactly "items are visible but equip does
+  // nothing." 'deployed'/'transferred' correctly stay excluded (those NPCs are not in the house).
+  it('equips armor from household storage onto an NPC whose assignment is "recovering"', () => {
+    const instanceId = 'inst-work-coat-panel-002'
+    const state = stateWithArmorInPanelHouseStorage(instanceId)
+    const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === NPC_ID)
+    const recoveringState = {
+      ...state,
+      npcRuntimeStates: state.npcRuntimeStates.map((n, i) => i === npcIndex ? { ...n, assignment: 'recovering' as const } : n),
+    }
+    const result = equipItem(recoveringState, { ownerId: NPC_ID, itemInstanceId: instanceId, slot: 'armor' })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(npc.equipment.armor).toBe(instanceId)
+  })
+
+  it('still denies household storage access to an NPC whose assignment is "deployed"', () => {
+    const instanceId = 'inst-work-coat-panel-003'
+    const state = stateWithArmorInPanelHouseStorage(instanceId)
+    const npcIndex = state.npcRuntimeStates.findIndex((n) => n.npcId === NPC_ID)
+    const deployedState = {
+      ...state,
+      npcRuntimeStates: state.npcRuntimeStates.map((n, i) => i === npcIndex ? { ...n, assignment: 'deployed' as const } : n),
+    }
+    const result = equipItem(deployedState, { ownerId: NPC_ID, itemInstanceId: instanceId, slot: 'armor' })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(npc.equipment.armor).toBeNull()
+  })
 })

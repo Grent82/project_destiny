@@ -34,6 +34,50 @@ function createInventoryWithHouseStorageItem(instanceId: string, itemId: string)
   }
 }
 
+// Shop-purchased weapons/armor land here (equipmentPurchase.ts), a container distinct from the
+// generic ownerId:'house_storage' one used by createInventoryWithHouseStorageItem above.
+function createInventoryWithHouseholdStorageContainerItem(instanceId: string, itemId: string) {
+  return {
+    ...initialGameStateSnapshot.inventoryState,
+    player: {
+      ...initialGameStateSnapshot.inventoryState.player,
+      bagContainers: [],
+      usedBagSlots: 0,
+      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+    },
+    sharedContainers: [{
+      containerId: 'household:house-blackthorn:storage',
+      containerType: 'chest' as ContainerType,
+      ownerId: 'household:house-blackthorn:storage',
+      maxSlots: 50,
+      slots: [{ slotId: `slot-${instanceId}`, itemInstanceId: instanceId, quantity: 1 }],
+      locked: false,
+    }],
+    itemRegistry: { [instanceId]: { itemId, uniqueId: instanceId, quantity: 1, locationType: 'container' as const, acquiredDay: 1, flags: [] } },
+  }
+}
+
+function createInventoryWithPlayerBagItem(instanceId: string, itemId: string) {
+  return {
+    ...initialGameStateSnapshot.inventoryState,
+    player: {
+      ...initialGameStateSnapshot.inventoryState.player,
+      bagContainers: [{
+        containerId: 'container-player-bag',
+        containerType: 'backpack' as ContainerType,
+        ownerId: 'player',
+        maxSlots: 20,
+        slots: [{ slotId: `slot-${instanceId}`, itemInstanceId: instanceId, quantity: 1 }],
+        locked: false,
+      }],
+      usedBagSlots: 1,
+      equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+    },
+    sharedContainers: [],
+    itemRegistry: { [instanceId]: { itemId, uniqueId: instanceId, quantity: 1, locationType: 'player_inventory' as const, acquiredDay: 1, flags: [] } },
+  }
+}
+
 function createInventoryWithMissionPackItem(instanceId: string, itemId: string) {
   return {
     ...initialGameStateSnapshot.inventoryState,
@@ -113,6 +157,59 @@ describe('HouseStoragePanel', () => {
 
     expect(screen.queryByRole('button', { name: 'Use' })).not.toBeInTheDocument()
   })
+
+  // User report, live-reproduced (2026-07-09): a weapon bought via the shop's Equipment Stash was
+  // visible in this panel but the "Equip" button did nothing. Root cause: selectItemActions never
+  // recognized the HOUSEHOLD_STORAGE_CONTAINER_ID container as house storage, so `owned` stayed
+  // null and the item got zero actions at all -- not just a broken Equip, no button rendered.
+  it('opens a target picker for Equip on a shop-purchased weapon and equips it on the chosen NPC', async () => {
+    const user = userEvent.setup()
+    const stateWithWeapon = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseholdStorageContainerItem('inst-knife-01', 'weapon-dagger-wasterunner'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithWeapon)
+
+    await user.click(screen.getByRole('button', { name: 'Equip' }))
+    expect(screen.getByRole('dialog', { name: 'Choose a target' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Marion Vale' }))
+
+    const marion = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')!
+    expect(marion.equipment.weapon).toBe('inst-knife-01')
+    expect(marion.loadout.primaryWeaponId).toBe('weapon-dagger-wasterunner')
+  })
+
+  it('opens a target picker for Equip on shop-purchased armor and equips it on the chosen NPC', async () => {
+    const user = userEvent.setup()
+    const stateWithArmor = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseholdStorageContainerItem('inst-coat-01', 'armor-light-tallow-work-coat'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithArmor)
+
+    await user.click(screen.getByRole('button', { name: 'Equip' }))
+    await user.click(screen.getByRole('button', { name: 'Marion Vale' }))
+
+    const marion = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')!
+    expect(marion.equipment.armor).toBe('inst-coat-01')
+  })
+
+  // Tools equip onto the player, not a roster NPC (equipItemToPlayer is the only path that applies
+  // typedEffects skillBonus/enableAction, destiny-1g74) -- no target picker should appear.
+  it('equips a tool directly onto the player with no target picker', async () => {
+    const user = userEvent.setup()
+    const stateWithTool = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithPlayerBagItem('inst-lockpick-01', 'item-lockpick-ringcut'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithTool)
+
+    await user.click(screen.getByRole('button', { name: 'Equip' }))
+
+    expect(screen.queryByRole('dialog', { name: 'Choose a target' })).not.toBeInTheDocument()
+    expect(store.getState().game.inventoryState.player.equipmentSlots.accessory_1).toBe('inst-lockpick-01')
+  })
 })
 
 describe('MissionPackPanel', () => {
@@ -153,5 +250,20 @@ describe('MissionPackPanel', () => {
 
     const marion = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')!
     expect(marion.states.health).toBeGreaterThan(60)
+  })
+
+  // A packed weapon must be unpacked to House Storage before it can be equipped -- 'equip' must
+  // not leak into the secondary "..." menu here (its own TargetPickerModal.onSelect doesn't handle
+  // 'equip' at all, so it would silently no-op, same shape as the House Storage bug just fixed).
+  it('does not offer Equip for a packed weapon, only Remove from Pack', () => {
+    const packedWeaponState = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithMissionPackItem('inst-knife-01', 'weapon-dagger-wasterunner'),
+    }
+    renderWithStore(<MissionPackPanel />, packedWeaponState)
+
+    expect(screen.queryByRole('button', { name: 'Equip' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'Equip' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Remove from Pack' })).toBeInTheDocument()
   })
 })

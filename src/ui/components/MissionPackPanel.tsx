@@ -72,7 +72,11 @@ export function MissionPackPanel() {
           const primary =
             actions.find((action) => action.type === 'open') ??
             actions.find((action) => action.type === 'unpack')
-          const secondary = actions.filter((action) => action.type !== primary?.type)
+          // 'equip' is intentionally excluded here, not just deprioritized: a packed weapon/armor
+          // item must be unpacked to House Storage first. This panel's own TargetPickerModal.onSelect
+          // below only handles 'give'/'use' -- surfacing 'equip' in the "..." menu would be a dead
+          // click identical in shape to the House Storage bug just fixed (destiny, 2026-07-09).
+          const secondary = actions.filter((action) => action.type !== primary?.type && action.type !== 'equip')
 
           return (
             <div key={owned.instanceId}>

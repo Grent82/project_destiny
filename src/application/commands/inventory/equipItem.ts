@@ -41,9 +41,14 @@ function getAccessibleContainersForNpc(state: GameState, npcId: string): { conta
   // Always allow personal inventory
   containers.push({ containerType: 'npc_inventory', containerId: npcId })
 
-  // Check if NPC is in player household (roster and assigned to household work)
-  // Valid household assignments: 'working', 'assigned_title', 'idle', 'training', 'defense'
-  const isHouseholdMember = npc.assignment === 'working' || npc.assignment === 'assigned_title' || npc.assignment === 'idle' || npc.assignment === 'training' || npc.assignment === 'defense'
+  // Check if NPC is in player household (roster and physically present at the house).
+  // Valid household assignments: 'working', 'assigned_title', 'idle', 'training', 'defense',
+  // and 'recovering' -- a recovering NPC is "resting in proper quarters" (see NpcDetailPanel's own
+  // status text), i.e. still in the house. Excluding it from this list meant every roster NPC set
+  // to Recovering could see items in House Storage but equip silently no-op'd on them with zero
+  // feedback -- reported live as "House Storage has items but equipping still does nothing."
+  // 'deployed' and 'transferred' correctly stay excluded: those NPCs are not physically at the house.
+  const isHouseholdMember = npc.assignment === 'working' || npc.assignment === 'assigned_title' || npc.assignment === 'idle' || npc.assignment === 'training' || npc.assignment === 'defense' || npc.assignment === 'recovering'
   if (isHouseholdMember) {
     // destiny (house-storage split, 2026-07-09): weapons/armor bought via equipmentPurchase.ts
     // land in the HOUSEHOLD_STORAGE_CONTAINER_ID container, but items routed through moveItem's

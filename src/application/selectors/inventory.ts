@@ -24,14 +24,28 @@ const CATEGORY_PRIMARY_ACTION: Record<string, ItemAction> = {
   consumable: { type: 'use', label: 'Use', requiresTarget: false },
   document: { type: 'open', label: 'Open', requiresTarget: false },
   gift: { type: 'give', label: 'Give', requiresTarget: true },
+  // Tools equip onto the player (self) -- equipItemToPlayer is the only equip path that applies
+  // typedEffects skillBonus/enableAction (destiny-1g74); equipItemToNpc never grants those. No NPC
+  // choice needed, so requiresTarget stays false; the panel dispatches ownerId:'player' directly.
   tool: { type: 'equip', label: 'Equip', requiresTarget: false },
   householdModule: { type: 'install', label: 'Install in House', requiresTarget: false },
   module: { type: 'install', label: 'Install in House', requiresTarget: false },
   tradeGood: { type: 'sell', label: 'Sell', requiresTarget: false },
   material: { type: 'sell', label: 'Sell', requiresTarget: false },
-  weapon: { type: 'equip', label: 'Equip', requiresTarget: false },
-  armor: { type: 'equip', label: 'Equip', requiresTarget: false },
-  accessory: { type: 'equip', label: 'Equip', requiresTarget: false },
+  // Weapons/armor/accessories equip onto a roster NPC, so which NPC must be chosen -- this was
+  // marked requiresTarget:false with no NPC picker ever wired to it, and no dispatchAction case
+  // handled 'equip' at all, so the House Storage panel's "Equip" button silently did nothing
+  // (user report: item visibly in House Storage, Equip button had zero effect).
+  weapon: { type: 'equip', label: 'Equip', requiresTarget: true },
+  armor: { type: 'equip', label: 'Equip', requiresTarget: true },
+  accessory: { type: 'equip', label: 'Equip', requiresTarget: true },
+}
+
+/** Maps an item's content category to the UI equip-slot name equipItem's reducer expects. */
+export function equipSlotForCategory(category: string): 'primaryWeaponId' | 'secondaryWeaponId' | 'armorId' {
+  if (category === 'weapon') return 'primaryWeaponId'
+  if (category === 'armor') return 'armorId'
+  return 'secondaryWeaponId'
 }
 
 /** Helper to flatten all player bag slots into a list of ItemRef objects */
@@ -201,10 +215,15 @@ export function selectItemActions(state: RootState, instanceId: string): ItemAct
     if (owned) break
   }
 
-  // Check house storage
+  // Check house storage. Must match both container variants -- weapons/armor bought via
+  // equipmentPurchase.ts land in the container keyed by HOUSEHOLD_STORAGE_CONTAINER_ID, while
+  // items routed through moveItem's 'house_storage' location (pack/unpack) use ownerId:'house_storage'.
+  // This previously only matched the latter, so shop-purchased items -- visibly shown in the House
+  // Storage panel via selectItemsByLocation/getHouseStorageItems, which already matched both -- got
+  // `owned` staying null here and fell through with zero actions: no Equip, no Sell, no Add to Pack.
   if (!owned) {
     for (const container of inventoryState.sharedContainers) {
-      if (container.ownerId === 'house_storage') {
+      if (container.ownerId === 'house_storage' || container.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID) {
         for (const slot of container.slots) {
           if (slot.itemInstanceId === instanceId) {
             const instanceDef = inventoryState.itemRegistry[instanceId]
@@ -273,11 +292,13 @@ export function selectItemActions(state: RootState, instanceId: string): ItemAct
     actions.push({ type: 'file-evidence', label: 'File as Evidence', requiresTarget: false })
   }
 
-  // Secondary: pack/unpack between inventory and mission_pack
+  // Secondary: pack/unpack between inventory and mission_pack. Same both-container match as above
+  // -- omitting HOUSEHOLD_STORAGE_CONTAINER_ID here silently denied 'Add to Pack' to every
+  // shop-purchased item even after the primary-action fix, since this check gates independently.
   const isInInventoryOrHouseStorage = inventoryState.player.bagContainers.some((c) =>
     c.slots.some((s) => s.itemInstanceId === instanceId)
   ) || inventoryState.sharedContainers.some((c) =>
-    c.ownerId === 'house_storage' && c.slots.some((s) => s.itemInstanceId === instanceId)
+    (c.ownerId === 'house_storage' || c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID) && c.slots.some((s) => s.itemInstanceId === instanceId)
   )
   const isInMissionPack = inventoryState.sharedContainers.some((c) =>
     c.ownerId === 'mission_pack' && c.slots.some((s) => s.itemInstanceId === instanceId)

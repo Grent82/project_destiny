@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { selectItemsByLocation, selectItemActions, selectFiledEvidence, selectUnlockedActions } from './inventory'
+import { selectItemsByLocation, selectItemActions, selectFiledEvidence, selectUnlockedActions, equipSlotForCategory } from './inventory'
 import { createGameStore } from '../store/gameStore'
 import { initialGameStateSnapshot } from '../store/initialGameState'
+import { HOUSEHOLD_STORAGE_CONTAINER_ID } from '../commands/inventory/householdStorage'
 import type { GameState } from '../../domain/game/contracts'
 import type { ContainerType } from '../../domain/inventory/contracts'
 
@@ -108,6 +109,36 @@ function stateWithMissionPackItems(items: Array<{ instanceId: string; itemId: st
   return {
     ...initialGameStateSnapshot,
     inventoryState: createInventoryWithMissionPackItems(items),
+  }
+}
+
+// User report, live-reproduced (2026-07-09): a weapon/armor item bought via the shop's Equipment
+// Stash (equipmentPurchase.ts's purchaseWeaponToHouseStorage/purchaseArmorToHouseStorage) lands in
+// the container keyed by HOUSEHOLD_STORAGE_CONTAINER_ID, NOT ownerId:'house_storage' -- the panel
+// still displayed these items (selectItemsByLocation already matched both), but selectItemActions
+// only ever checked ownerId:'house_storage' here, so `owned` stayed null and every such item got
+// zero actions: no Equip button, no Sell, no Add to Pack, nothing clickable but rendered as if normal.
+function stateWithHouseholdStorageContainerItems(items: Array<{ instanceId: string; itemId: string; quantity: number }>): GameState {
+  return {
+    ...initialGameStateSnapshot,
+    inventoryState: {
+      ...initialGameStateSnapshot.inventoryState,
+      player: {
+        ...initialGameStateSnapshot.inventoryState.player,
+        bagContainers: [],
+        usedBagSlots: 0,
+        equipmentSlots: { weapon: null, armor: null, accessory_1: null, accessory_2: null },
+      },
+      sharedContainers: [{
+        containerId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+        containerType: 'chest' as ContainerType,
+        ownerId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+        maxSlots: 50,
+        slots: items.map((item) => ({ slotId: `slot-${item.instanceId}`, itemInstanceId: item.instanceId, quantity: item.quantity })),
+        locked: false,
+      }],
+      itemRegistry: Object.fromEntries(items.map((item) => [item.instanceId, { itemId: item.itemId, uniqueId: item.instanceId, quantity: item.quantity, locationType: 'container' as const, acquiredDay: 1, flags: [] }])),
+    },
   }
 }
 
@@ -226,6 +257,52 @@ describe('selectItemActions', () => {
     expect(types).toContain('open')
     expect(types).toContain('archive')
     expect(types).not.toContain('give')
+  })
+
+  // User report, live-reproduced: shop-purchased weapon/armor sat visibly in the House Storage
+  // panel but had literally no action buttons -- root cause traced to this gap.
+  describe('items in the HOUSEHOLD_STORAGE_CONTAINER_ID container (shop-purchased weapons/armor)', () => {
+    it('returns an Equip action requiring a target for a weapon', () => {
+      const state = stateWithHouseholdStorageContainerItems([{ instanceId: 'inst-knife-01', itemId: 'weapon-dagger-wasterunner', quantity: 1 }])
+      const store = createGameStore(state)
+      const actions = selectItemActions(store.getState(), 'inst-knife-01')
+      const equip = actions.find((a) => a.type === 'equip')
+      expect(equip).toBeDefined()
+      expect(equip?.requiresTarget).toBe(true)
+      expect(actions.map((a) => a.type)).toContain('pack')
+    })
+
+    it('returns an Equip action requiring a target for armor', () => {
+      const state = stateWithHouseholdStorageContainerItems([{ instanceId: 'inst-coat-01', itemId: 'armor-light-tallow-work-coat', quantity: 1 }])
+      const store = createGameStore(state)
+      const actions = selectItemActions(store.getState(), 'inst-coat-01')
+      const equip = actions.find((a) => a.type === 'equip')
+      expect(equip).toBeDefined()
+      expect(equip?.requiresTarget).toBe(true)
+      expect(actions.map((a) => a.type)).toContain('pack')
+    })
+
+    it('previously returned zero actions for these items (regression guard)', () => {
+      const state = stateWithHouseholdStorageContainerItems([{ instanceId: 'inst-coat-02', itemId: 'armor-light-tallow-work-coat', quantity: 1 }])
+      const store = createGameStore(state)
+      const actions = selectItemActions(store.getState(), 'inst-coat-02')
+      expect(actions.length).toBeGreaterThan(0)
+    })
+  })
+})
+
+describe('equipSlotForCategory', () => {
+  it('maps weapon to primaryWeaponId', () => {
+    expect(equipSlotForCategory('weapon')).toBe('primaryWeaponId')
+  })
+
+  it('maps armor to armorId', () => {
+    expect(equipSlotForCategory('armor')).toBe('armorId')
+  })
+
+  it('maps accessory and tool to secondaryWeaponId', () => {
+    expect(equipSlotForCategory('accessory')).toBe('secondaryWeaponId')
+    expect(equipSlotForCategory('tool')).toBe('secondaryWeaponId')
   })
 })
 
