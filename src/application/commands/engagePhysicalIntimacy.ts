@@ -56,7 +56,6 @@ type ConsentCheck =
   | { allowed: true }
   | { allowed: false; reason: 'relationship-too-new'; requiredStage: IntimacyStage; currentStage: IntimacyStage }
   | { allowed: false; reason: 'boundary-violation'; boundary: string }
-  | { allowed: false; reason: 'explicit-consent-required' }
 
 function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: EngagePhysicalIntimacyOptions): { npc: NonNullable<GameState['npcRuntimeStates'][0]>; consent: ConsentCheck; contraceptionItem: ContraceptionItem | null } | null {
   const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
