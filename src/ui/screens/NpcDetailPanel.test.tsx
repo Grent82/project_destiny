@@ -587,3 +587,72 @@ describe('NpcDetailPanel — cooldown countdown feedback on Talk Deeply / Court 
     expect(screen.getByRole('button', { name: 'Talk Deeply' })).toBeEnabled()
   })
 })
+
+// User-reported live bug (2026-07-09): unequipping an item correctly returns it to the NPC's own
+// personal inventory (npcInventories[npcId] -- verified via Playwright: no data loss, no
+// duplication), but nothing in the UI ever displayed that data, so the item looked like it had
+// vanished. PersonalEffectsSection is the fix: the only UI surface for that data, with a "Store in
+// House" action moving the item into House Storage.
+describe('NpcDetailPanel — Personal Effects (unequipped items were invisible)', () => {
+  const ITEM_INSTANCE_ID = 'npc-ida-rhys:starting-armor'
+
+  function stateWithIdaCarryingUnequippedArmor() {
+    return {
+      ...initialStateWithIda,
+      inventoryState: {
+        ...initialStateWithIda.inventoryState,
+        npcInventories: {
+          'npc-ida-rhys': [{
+            containerId: 'npc-container-ida-rhys',
+            containerType: 'backpack' as const,
+            ownerId: 'npc-ida-rhys',
+            maxSlots: 20,
+            slots: [{ slotId: `slot-${ITEM_INSTANCE_ID}`, itemInstanceId: ITEM_INSTANCE_ID, quantity: 1 }],
+            locked: false,
+          }],
+        },
+        itemRegistry: {
+          ...initialStateWithIda.inventoryState.itemRegistry,
+          [ITEM_INSTANCE_ID]: {
+            uniqueId: ITEM_INSTANCE_ID,
+            itemId: 'armor-medium-compact-chainmail',
+            quantity: 1,
+            locationType: 'npc_inventory' as const,
+            locationId: 'npc-ida-rhys',
+            acquiredDay: 1,
+            flags: [],
+          },
+        },
+      },
+    }
+  }
+
+  it('shows an item sitting in the NPC\'s personal inventory with a Store action', () => {
+    renderIdaPanel(stateWithIdaCarryingUnequippedArmor())
+    expect(screen.getByText('Personal Effects')).toBeInTheDocument()
+    // Separate content bug found while writing this test (filed, not fixed here -- out of scope):
+    // armor.json and armor-items.json both define 'armor-medium-compact-chainmail' with DIFFERENT
+    // names ("Compact Watchman's Chainmail Vest" vs "Compact Watch Chainmail"). contentCatalog.itemsById
+    // (used here and by equipItem.ts's activity log) resolves the armor-items.json version; the
+    // Roster screen's getArmorName (equipmentCatalog.ts) resolves a separate armor.json-only map instead.
+    expect(screen.getByText(/Compact Watch Chainmail/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Store in House' })).toBeInTheDocument()
+  })
+
+  it('moves the item into House Storage and removes it from the section when Store is clicked', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel(stateWithIdaCarryingUnequippedArmor())
+
+    await user.click(screen.getByRole('button', { name: 'Store in House' }))
+
+    expect(screen.queryByText('Personal Effects')).not.toBeInTheDocument()
+    const sharedContainers = store.getState().game.inventoryState.sharedContainers
+    const stored = sharedContainers.flatMap((c) => c.slots).find((s) => s.itemInstanceId === ITEM_INSTANCE_ID)
+    expect(stored?.quantity).toBe(1)
+  })
+
+  it('does not render the section at all when the NPC is carrying nothing unequipped', () => {
+    renderIdaPanel()
+    expect(screen.queryByText('Personal Effects')).not.toBeInTheDocument()
+  })
+})

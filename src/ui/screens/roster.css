@@ -389,6 +389,28 @@
   font-size: 0.85rem;
 }
 
+.muster-personal-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.muster-personal-effect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 2px;
+  padding: 0.45rem 0.6rem;
+}
+
+.muster-personal-effect-name {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
 .bond-status-copy {
   margin: 0.2rem 0;
   font-size: 0.82rem;

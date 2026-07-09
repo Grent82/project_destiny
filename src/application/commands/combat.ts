@@ -687,20 +687,6 @@ export function concludeCombatEncounter(state: GameState): GameState {
     (combatant) => combatant.combatantId === 'player',
   )
   if (playerCombatant) {
-    const currentPlayerCombatState = nextState.playerCharacter.combatState ?? {
-      health: PLAYER_MAX_HEALTH,
-      morale: Math.max(
-        30,
-        Math.min(
-          100,
-          Math.round(
-            nextState.playerCharacter.attributes.resolve * 0.7 +
-              nextState.playerCharacter.attributes.presence * 0.3,
-          ),
-        ),
-      ),
-     
-    }
     const playerHealth = Math.max(0, Math.min(PLAYER_MAX_HEALTH, playerCombatant.health))
     const playerWasKO = playerHealth <= 0
     nextState = {

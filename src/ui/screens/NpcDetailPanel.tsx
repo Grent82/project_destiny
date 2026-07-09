@@ -8,7 +8,7 @@ import { selectRelationshipWithPlayer, selectKnownAssociates, selectTitleEligibi
 import { gameActions } from '../../application/store/gameSlice'
 import { contentCatalog } from '../../application/content/contentCatalog'
 import { NPC_STATE_THRESHOLDS } from '../../domain/npcStateThresholds'
-import { selectGiftInventoryItems } from '../../application/selectors/inventory'
+import { selectGiftInventoryItems, selectNpcInventoryItems } from '../../application/selectors/inventory'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { getWeaponDurabilityMax, getArmorDurabilityMax, getWeaponName, getArmorName } from '../../application/content/equipmentCatalog'
 import { ConfirmationModal } from '../components/ConfirmationModal'
@@ -613,6 +613,48 @@ function EquipmentSection({ detail, onOpenSlot }: { detail: NpcDetail; onOpenSlo
   )
 }
 
+/**
+ * User-reported live bug (2026-07-09): unequipping an item correctly returns it to the NPC's own
+ * personal inventory (npcInventories[npcId] -- verified via Playwright: no data loss, no
+ * duplication), but nothing anywhere displayed that data, so from the player's perspective the item
+ * "just disappears" the moment it's unequipped. This section closes that gap: it's the only UI
+ * surface for npcInventories[npcId], with a "Store" action moving each item into House Storage
+ * (moveNpcItemToHouseStorage), where it becomes visible and re-assignable like any other item.
+ */
+function PersonalEffectsSection({ detail }: { detail: NpcDetail }) {
+  const dispatch = useAppDispatch()
+  const items = useAppSelector((state) => selectNpcInventoryItems(state, detail.npcId))
+
+  if (items.length === 0) return null
+
+  return (
+    <>
+      <h3 className="muster-section-title">Personal Effects</h3>
+      <p className="summary">Items {detail.name} is carrying but not wearing — store them in House Storage to reassign elsewhere.</p>
+      <div className="muster-personal-effects">
+        {items.map((item) => {
+          const def = contentCatalog.itemsById.get(item.itemId)
+          return (
+            <div key={item.instanceId} className="muster-personal-effect">
+              <span className="muster-personal-effect-name">
+                {def?.name ?? item.itemId}
+                {item.quantity > 1 ? ` ×${item.quantity}` : ''}
+              </span>
+              <button
+                className="action-button"
+                type="button"
+                onClick={() => dispatch(gameActions.moveNpcItemToHouseStorage({ npcId: detail.npcId, instanceId: item.instanceId }))}
+              >
+                Store in House
+              </button>
+            </div>
+          )
+        })}
+      </div>
+    </>
+  )
+}
+
 function TitlePanel({ detail }: { detail: NpcDetail }) {
   const [showList, setShowList] = useState(false)
   const [confirmRevoke, setConfirmRevoke] = useState(false)
@@ -1155,6 +1197,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
       <BondStatusSection detail={detail} />
       <CaptivitySection detail={detail} />
       <EquipmentSection detail={detail} onOpenSlot={setEquipSlot} />
+      <PersonalEffectsSection detail={detail} />
       {equipSlot && (
         <ItemSelectionModal
           npcId={detail.npcId}
