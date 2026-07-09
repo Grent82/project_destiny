@@ -164,6 +164,37 @@ describe('installModule — baseImprovement + rest_quality_bonus effects (destin
   })
 })
 
+describe('installModule — house_storage lookup (destiny-ancc)', () => {
+  it('installs a module sitting in House Storage, not just the player direct bag', () => {
+    const instanceId = 'inst-lock-bar-stored'
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        sharedContainers: [{
+          containerId: 'container-house-storage',
+          containerType: 'vault',
+          ownerId: 'house_storage',
+          maxSlots: 40,
+          slots: [{ slotId: `slot-${instanceId}`, itemInstanceId: instanceId, quantity: 1 }],
+          locked: false,
+        }],
+        itemRegistry: {
+          [instanceId]: { uniqueId: instanceId, itemId: MODULE_ITEM_ID, quantity: 1, locationType: 'container', acquiredDay: 1, flags: [] },
+        },
+      },
+    }
+
+    const result = installModule(state, instanceId)
+
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.state.installedHouseModules.some((m) => m.moduleItemId === MODULE_ITEM_ID)).toBe(true)
+    expect(result.state.inventoryState.sharedContainers.find((c) => c.ownerId === 'house_storage')?.slots).toHaveLength(0)
+    expect(result.state.inventoryState.itemRegistry[instanceId]).toBeUndefined()
+  })
+})
+
 describe('selectHouseStorageInfo', () => {
   it('reports correct base capacity', () => {
     // Note: This test still uses the selector which may need migration

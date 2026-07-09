@@ -16,7 +16,7 @@
 import type { GameState } from '../../domain/game/contracts'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
-import { removePlayerItem } from './inventory/inventoryHelpers'
+import { findPlayerItem, removePlayerItem } from './inventory/inventoryHelpers'
 
 const BASE_IMPROVEMENT_LOG_LABELS: Record<string, string> = {
   waterQuality: 'Water Quality',
@@ -32,13 +32,15 @@ export function installModule(
   state: GameState,
   instanceId: string,
 ): InstallModuleResult {
-  // Find item in player inventory by instanceId
-  // In the new system, instanceId is stored as itemInstanceId in the slot
-  const playerItem = state.inventoryState.player.bagContainers.flatMap(c => c.slots).find(s => s.itemInstanceId === instanceId)
-  if (!playerItem || !playerItem.itemInstanceId) return { success: false, reason: 'item_not_found' }
+  // destiny-ancc: previously searched only player.bagContainers directly, so a household
+  // module sitting in House Storage (exactly where HouseStoragePanel's "Install in House"
+  // button is clicked from) silently failed as item_not_found. findPlayerItem covers both
+  // the player's bag and shared containers (house_storage, mission_pack) and resolves the
+  // real itemId via itemRegistry instead of assuming instanceId === itemId.
+  const found = findPlayerItem(state, instanceId)
+  if (!found) return { success: false, reason: 'item_not_found' }
 
-  // The itemInstanceId is the itemId (for items without unique instances)
-  const itemId = playerItem.itemInstanceId
+  const itemId = found.instance.itemId
   const def = contentCatalog.itemsById.get(itemId)
   if (!def || def.category !== 'householdModule') return { success: false, reason: 'not_a_module' }
 
@@ -47,7 +49,7 @@ export function installModule(
   )
   if (alreadyInstalled) return { success: false, reason: 'already_installed' }
 
-  let next: GameState = removePlayerItem(state, itemId)
+  let next: GameState = removePlayerItem(state, instanceId)
 
   // Apply storage_expand effects to houseStorageCapacity directly
   const storageExpansion = def.typedEffects
