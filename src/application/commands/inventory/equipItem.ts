@@ -323,7 +323,31 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
     }
   }
 
-  const updatedNpc: NpcRuntimeState = { ...npcToUpdate, equipment: updatedEquipment, attributes: updatedAttributes }
+  // destiny-mv8n follow-up: combat.ts/combatants.ts and selectors/roster.ts read npc.loadout
+  // (primaryWeaponId/secondaryWeaponId/armorId), NOT npc.equipment -- they were never migrated to
+  // the newer container-based equipment field. Writing only to `equipment` (as this function did)
+  // left the roster display and combat damage/soak calculations completely unaffected: the player
+  // could equip an item and see zero change anywhere else, which is exactly the reported bug.
+  // transferItem's own addToEquipment ALSO tries to update loadout as a side effect of the
+  // toType:'equipment' transfer above, but it resolves the item definition from
+  // findItemInSource's itemId (which is hard-coded to equal the instance id for npc_inventory/
+  // container sources, never resolved through itemRegistry) -- so it silently no-ops for any item
+  // with a real, distinct instance id and only "worked" by accident when tests used
+  // instanceId === itemId. Setting loadout explicitly here, from the itemDef this function already
+  // correctly resolved via itemRegistry, replaces reliance on that broken side effect.
+  const updatedLoadout = { ...npcToUpdate.loadout }
+  if (slot === 'weapon') {
+    updatedLoadout.primaryWeaponId = itemDef.id
+  } else if (slot === 'accessory_1') {
+    updatedLoadout.secondaryWeaponId = itemDef.id
+  } else if (slot === 'armor') {
+    updatedLoadout.armorId = itemDef.id
+  } else if (slot === 'accessory_2') {
+    const others = updatedLoadout.accessoryIds.filter((id) => id !== itemDef.id)
+    updatedLoadout.accessoryIds = [...others, itemDef.id].slice(-2)
+  }
+
+  const updatedNpc: NpcRuntimeState = { ...npcToUpdate, equipment: updatedEquipment, attributes: updatedAttributes, loadout: updatedLoadout }
   const updatedRoster = [...nextState.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
@@ -390,11 +414,24 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
     updatedAttributes.endurance = Math.max(0, updatedAttributes.endurance - Math.floor(armor.soak / 20))
   }
 
+  // Mirror the loadout write in equipItemToNpc -- combat/roster read loadout, not equipment.
+  const updatedLoadout = { ...updatedNpc.loadout }
+  if (slot === 'weapon') {
+    updatedLoadout.primaryWeaponId = null
+  } else if (slot === 'accessory_1') {
+    updatedLoadout.secondaryWeaponId = null
+  } else if (slot === 'armor') {
+    updatedLoadout.armorId = null
+  } else if (slot === 'accessory_2') {
+    updatedLoadout.accessoryIds = updatedLoadout.accessoryIds.filter((id) => id !== itemDef.id)
+  }
+
   const updatedRoster = [...nextState.npcRuntimeStates]
   updatedRoster[npcIndex] = {
     ...updatedNpc,
     equipment: updatedEquipment,
     attributes: updatedAttributes,
+    loadout: updatedLoadout,
   }
 
   return appendActivityLogEntry(
@@ -508,7 +545,14 @@ function isValidSlotForItem(item: import('../../../domain/items/contracts').Item
   if (slot === 'armor') {
     return item.category === 'armor'
   }
-  if (slot === 'accessory_1' || slot === 'accessory_2') {
+  if (slot === 'accessory_1') {
+    // itemsReducers.ts's UI slot mapping treats accessory_1 as the NPC "secondary weapon" slot
+    // (ItemSelectionModal's 'secondaryWeaponId' -> equipItemToNpc's 'accessory_1'), so weapons
+    // must be allowed here -- rejecting them made equipping a secondary weapon on any roster NPC
+    // silently no-op regardless of the loadout-sync fix (destiny-mv8n). Still not valid for armor.
+    return item.category !== 'armor'
+  }
+  if (slot === 'accessory_2') {
     return item.category !== 'weapon' && item.category !== 'armor'
   }
   return false
