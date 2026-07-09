@@ -68,7 +68,7 @@ export interface FullNpcProfile {
   }
   states: {
     health: number; fatigue: number; stress: number; morale: number
-    fear: number; anger: number; hunger: number; injury: number
+    fear: number; anger: number; hunger: number;
     intoxication: number; hygiene: number
   }
   loadout: { primaryWeaponId: string | null; secondaryWeaponId: string | null; armorId: string | null }

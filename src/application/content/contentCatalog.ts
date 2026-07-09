@@ -244,7 +244,7 @@ const outcomeRequiredFields: Record<string, { required: string[]; enumTarget?: s
 }
 
 const npcAxes = ['affinity', 'respect', 'fear', 'trust', 'loyalty'] as const
-const npcStateAxes = ['health', 'fatigue', 'stress', 'morale', 'fear', 'anger', 'hunger', 'injury', 'intoxication', 'hygiene', 'loyalty'] as const
+const npcStateAxes = ['health', 'fatigue', 'stress', 'morale', 'fear', 'anger', 'hunger', 'intoxication', 'hygiene', 'loyalty'] as const
 
 function validateCatalogIntegrity(): void {
   const errors: string[] = []

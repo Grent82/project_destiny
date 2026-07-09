@@ -669,20 +669,14 @@ export function concludeCombatEncounter(state: GameState): GameState {
       if (newHealth < 30 && !isKO) {
         newStress = Math.min(100, newStress + 5)
       }
-
-      const newInjury = isKO
-        ? Math.min(100, npc.states.injury + 30)
-        : Math.min(100, npc.states.injury + Math.max(0, npc.states.health - newHealth))
-
       return {
         ...npc,
-        assignment: isKO || isSeriousInjury(newInjury) ? 'recovering' : 'idle',
+        assignment: isKO || isSeriousInjury(newHealth) ? 'recovering' : 'idle',
         states: {
           ...npc.states,
           health: isKO ? 10 : newHealth,
           morale: newMorale,
           stress: newStress,
-          injury: newInjury,
         },
       }
     }),
@@ -705,7 +699,7 @@ export function concludeCombatEncounter(state: GameState): GameState {
           ),
         ),
       ),
-      injury: 0,
+     
     }
     const playerHealth = Math.max(0, Math.min(PLAYER_MAX_HEALTH, playerCombatant.health))
     const playerWasKO = playerHealth <= 0
@@ -716,13 +710,6 @@ export function concludeCombatEncounter(state: GameState): GameState {
         combatState: {
           health: playerWasKO ? 10 : playerHealth,
           morale: Math.max(0, Math.min(100, playerCombatant.morale + (isVictory ? 5 : -8))),
-          injury: playerWasKO
-            ? Math.min(100, currentPlayerCombatState.injury + 30)
-            : Math.min(
-                100,
-                currentPlayerCombatState.injury +
-                  Math.max(0, currentPlayerCombatState.health - playerHealth),
-              ),
         },
       },
     }

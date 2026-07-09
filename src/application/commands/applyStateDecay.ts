@@ -12,7 +12,6 @@ import {
   getNpcRecoverySupport,
   getPlayerRecoverySupport,
   getPlayerOvernightHealthGain,
-  getRecoveringInjuryRelief,
   describeRecoverySupportTier,
 } from './recovery'
 
@@ -154,12 +153,7 @@ export function applyStateDecay(state: GameState): GameState {
       npc.states.health +
         Math.round((15 + (hasLodging ? 2 : 0) + (hasInfirmary ? 3 : 0) + (hasMedic ? 10 : 0)) * ageMod.recovery),
     )
-    const newInjury = Math.max(
-      0,
-      npc.states.injury -
-        Math.round((1 + (hasLodging ? 1 : 0) + (hasInfirmary ? 2 : 0) + (hasMedic ? 2 : 0)) * ageMod.recovery),
-    )
-    const fullyRecovered = isReadyForDuty(newHealth, newInjury)
+    const fullyRecovered = isReadyForDuty(newHealth)
 
     next = {
       ...next,
@@ -168,7 +162,7 @@ export function applyStateDecay(state: GameState): GameState {
           ? {
               ...r,
               assignment: fullyRecovered ? ('idle' as const) : r.assignment,
-              states: { ...r.states, health: newHealth, injury: newInjury },
+              states: { ...r.states, health: newHealth },
             }
           : r,
       ),
@@ -176,7 +170,7 @@ export function applyStateDecay(state: GameState): GameState {
 
     if (fullyRecovered) {
       next = appendActivityLogEntry(next, 'system', `${npcName} is recovered. Back on roster.`)
-    } else if (newHealth > npc.states.health || newInjury < npc.states.injury) {
+    } else if (newHealth > npc.states.health) {
       const tier = getNpcRecoverySupport(next, npc)
       next = appendActivityLogEntry(
         next,
@@ -198,23 +192,18 @@ export function applyStateDecay(state: GameState): GameState {
 
   // Step 2c: The player rests through the house's lodging/treatment support each night.
   const playerCombatState = next.playerCharacter.combatState
-  if (playerCombatState && (playerCombatState.health < PLAYER_MAX_HEALTH || playerCombatState.injury > 0)) {
-    const supportTier = getPlayerRecoverySupport(next, playerCombatState.injury)
+  if (playerCombatState && (playerCombatState.health < PLAYER_MAX_HEALTH)) {
+    const supportTier = getPlayerRecoverySupport(next, playerCombatState.health)
     const healthGain = getPlayerOvernightHealthGain(supportTier)
-    const injuryRelief =
-      supportTier === 'treatment' || supportTier === 'treatment-plus-medic'
-        ? getRecoveringInjuryRelief(supportTier)
-        : 0
 
     const newHealth = Math.min(PLAYER_MAX_HEALTH, playerCombatState.health + healthGain)
-    const newInjury = Math.max(0, playerCombatState.injury - injuryRelief)
 
-    if (newHealth !== playerCombatState.health || newInjury !== playerCombatState.injury) {
+    if (newHealth !== playerCombatState.health) {
       next = {
         ...next,
         playerCharacter: {
           ...next.playerCharacter,
-          combatState: { ...playerCombatState, health: newHealth, injury: newInjury },
+          combatState: { ...playerCombatState, health: newHealth },
         },
       }
       next = appendActivityLogEntry(next, 'system', PLAYER_REST_MESSAGE_BY_TIER[supportTier])

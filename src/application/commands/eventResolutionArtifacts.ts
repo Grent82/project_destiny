@@ -33,7 +33,6 @@ const npcStateLabels = {
   fear: 'fear',
   anger: 'anger',
   hunger: 'hunger',
-  injury: 'injury',
   intoxication: 'intoxication',
   hygiene: 'hygiene',
   loyalty: 'loyalty',

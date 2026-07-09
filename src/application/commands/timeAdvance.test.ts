@@ -135,7 +135,6 @@ describe('sleepToMorning', () => {
         combatState: {
           health: 32,
           morale: 64,
-          injury: 28,
         },
       },
     }
@@ -143,7 +142,6 @@ describe('sleepToMorning', () => {
     const result = sleepToMorning(s)
 
     expect(result.playerCharacter.combatState?.health).toBeGreaterThan(32)
-    expect(result.playerCharacter.combatState?.injury).toBe(28)
   })
 
   it('does not restore player combat health above the player maximum', () => {
@@ -154,7 +152,7 @@ describe('sleepToMorning', () => {
         combatState: {
           health: 79,
           morale: 64,
-          injury: 0,
+         
         },
       },
     }

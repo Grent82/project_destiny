@@ -142,10 +142,10 @@ describe('npcSleep', () => {
   })
 
   it('does not touch injury — sleep does not treat wounds, only treatment does (destiny-i8nc contract)', () => {
-    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80, injury: 20 })
+    const state = withNpcStates(initialStateWithIda, NPC_ID, { fatigue: 80})
     const result = npcSleep(state, NPC_ID)
     const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
-    expect(npc.states.injury).toBe(20)
+    expect(npc.states.health).toBe(20)
   })
 })
 
@@ -219,7 +219,7 @@ describe('npcMeditate', () => {
       ...state,
       playerCharacter: {
         ...state.playerCharacter,
-        combatState: { health: 50, injury: 0, morale: 50 },
+        combatState: { health: 50, morale: 50 },
       },
     }
 

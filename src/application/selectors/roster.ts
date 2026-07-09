@@ -192,7 +192,6 @@ function buildRosterDetail(root: RootState, npcId: string) {
       fear: runtime.states.fear,
       anger: runtime.states.anger,
       hunger: runtime.states.hunger,
-      injury: runtime.states.injury,
       intoxication: runtime.states.intoxication,
       hygiene: runtime.states.hygiene,
     },

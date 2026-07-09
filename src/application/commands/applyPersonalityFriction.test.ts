@@ -41,7 +41,7 @@ function makeNpc(partial: Partial<NpcRuntimeState> & { npcId: string; name: stri
     traits: { ...baseTraits, ...partial.traits },
     states: {
       health: 80, fatigue: 20, stress: 20, morale: 60,
-      fear: 10, anger: 10, hunger: 20, injury: 0,
+      fear: 10, anger: 10, hunger: 20,
       intoxication: 0, hygiene: 60,
     },
     loadout: {

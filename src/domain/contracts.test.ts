@@ -87,7 +87,7 @@ describe('npcRuntimeStateSchema', () => {
         fear: 10,
         anger: 8,
         hunger: 22,
-        injury: 0,
+       
         intoxication: 0,
         hygiene: 76,
       },
@@ -165,7 +165,7 @@ describe('npcRuntimeStateSchema', () => {
         fear: 10,
         anger: 8,
         hunger: 22,
-        injury: 0,
+       
         intoxication: 0,
         hygiene: 76,
       },

@@ -137,7 +137,6 @@ describe('LocalSaveSnapshotStore', () => {
         intimacyStage: 'none',
         pregnancyState: null,
         health: 80,
-        injury: 10,
         recovering: true,
         clothing: { head: null, torso: 'cloth-doublet-noble', arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
         armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
@@ -151,7 +150,7 @@ describe('LocalSaveSnapshotStore', () => {
         intimacyStage: 'none',
         pregnancyState: null,
         health: 100,
-        injury: 0,
+       
         recovering: false,
         clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
         armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
@@ -183,7 +182,6 @@ describe('LocalSaveSnapshotStore', () => {
     expect(dalen!.locationOverride).toBe('poi-test-location')
     expect(dalen!.flags).toEqual(['mira-custody-handler'])
     expect(dalen!.states.health).toBe(80)
-    expect(dalen!.states.injury).toBe(10)
     expect(dalen!.assignment).toBe('recovering')
     expect(dalen!.clothing.torso).toBe('cloth-doublet-noble')
 
@@ -215,7 +213,6 @@ describe('LocalSaveSnapshotStore', () => {
             intimacyStage: 'none',
             pregnancyState: null,
             health: 50,
-            injury: 50,
             recovering: false,
             clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
             armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
@@ -360,7 +357,6 @@ describe('LocalSaveSnapshotStore', () => {
           intimacyStage: 'none',
           pregnancyState: null,
           health: 80,
-          injury: 10,
           recovering: true,
           clothing: { head: null, torso: 'cloth-doublet-noble', arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
           armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },

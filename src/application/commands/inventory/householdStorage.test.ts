@@ -6,6 +6,7 @@ import {
   storeInSiteContainer,
   getHouseStorageItems,
   hasHouseStorageSpace,
+  moveNpcInventoryItemToHouseStorage,
   HOUSEHOLD_STORAGE_CONTAINER_ID,
 } from './householdStorage'
 import type { GameState } from '../../../domain/game/contracts'
@@ -118,6 +119,83 @@ describe('depositToHouseStorage', () => {
       entry.message.includes('Deposited') && entry.message.includes('house storage')
     )
     expect(logEntry).toBeDefined()
+  })
+})
+
+// User-reported live bug (2026-07-09): unequipping an item from an NPC correctly returns it to
+// that NPC's own personal inventory (npcInventories[npcId] -- verified via Playwright: no data
+// loss, no duplication) -- but nothing in the UI ever displayed that data, so the item looked like
+// it had vanished. This function is the fix: it lets the player move it into House Storage instead.
+describe('moveNpcInventoryItemToHouseStorage', () => {
+  const NPC_ID = 'npc-marion-vale'
+  const ITEM_ID_STARTING_ARMOR = 'npc-marion-vale:starting-armor'
+
+  function stateWithNpcOwnedItem(): GameState {
+    return {
+      ...baseState,
+      inventoryState: {
+        ...baseState.inventoryState,
+        npcInventories: {
+          [NPC_ID]: [createContainer(`npc-container-${NPC_ID}`, NPC_ID, [{ itemInstanceId: ITEM_ID_STARTING_ARMOR, quantity: 1 }], 20)],
+        },
+        itemRegistry: {
+          ...baseState.inventoryState.itemRegistry,
+          [ITEM_ID_STARTING_ARMOR]: {
+            uniqueId: ITEM_ID_STARTING_ARMOR,
+            itemId: 'armor-light-tallow-work-coat',
+            quantity: 1,
+            locationType: 'npc_inventory',
+            locationId: NPC_ID,
+            acquiredDay: 1,
+            flags: [],
+          },
+        },
+      },
+    }
+  }
+
+  test('moves the item out of the NPC\'s own inventory into house storage', () => {
+    const state = stateWithNpcOwnedItem()
+    const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, ITEM_ID_STARTING_ARMOR)
+
+    const npcContainer = result.inventoryState.npcInventories[NPC_ID]?.[0]
+    expect(npcContainer?.slots.find((s) => s.itemInstanceId === ITEM_ID_STARTING_ARMOR)).toBeUndefined()
+
+    const storageContainer = result.inventoryState.sharedContainers.find((c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID)
+    const storageSlot = storageContainer?.slots.find((s) => s.itemInstanceId === ITEM_ID_STARTING_ARMOR)
+    expect(storageSlot?.quantity).toBe(1)
+  })
+
+  test('updates the itemRegistry location to the house storage container', () => {
+    const state = stateWithNpcOwnedItem()
+    const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, ITEM_ID_STARTING_ARMOR)
+    const registryEntry = result.inventoryState.itemRegistry[ITEM_ID_STARTING_ARMOR]
+    expect(registryEntry?.locationType).toBe('container')
+    expect(registryEntry?.locationId).toBe(HOUSEHOLD_STORAGE_CONTAINER_ID)
+  })
+
+  test('logs the move with the NPC name and item name', () => {
+    const state = stateWithNpcOwnedItem()
+    const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, ITEM_ID_STARTING_ARMOR)
+    const logEntry = result.activityLog.find((e) => e.message.includes('House Storage'))
+    expect(logEntry?.message).toContain('Marion Vale')
+    expect(logEntry?.message).toContain('Tallow Ring Work Coat')
+  })
+
+  test('creates the house storage container if it does not exist yet', () => {
+    const state: GameState = {
+      ...stateWithNpcOwnedItem(),
+      inventoryState: { ...stateWithNpcOwnedItem().inventoryState, sharedContainers: [] },
+    }
+    const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, ITEM_ID_STARTING_ARMOR)
+    const storageContainer = result.inventoryState.sharedContainers.find((c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID)
+    expect(storageContainer?.slots.find((s) => s.itemInstanceId === ITEM_ID_STARTING_ARMOR)?.quantity).toBe(1)
+  })
+
+  test('returns state unchanged when the item is not in that NPC\'s inventory', () => {
+    const state = stateWithNpcOwnedItem()
+    const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, 'item-nonexistent')
+    expect(result).toBe(state)
   })
 })
 

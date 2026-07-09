@@ -1350,7 +1350,7 @@ describe('intentions', () => {
         ...state,
         npcRuntimeStates: [
           { ...state.npcRuntimeStates[0]!, traits: { ...state.npcRuntimeStates[0]!.traits, empathy: 60 } },
-          { ...state.npcRuntimeStates[1]!, states: { ...state.npcRuntimeStates[1]!.states, injury: 20, health: 60 } },
+          { ...state.npcRuntimeStates[1]!, states: { ...state.npcRuntimeStates[1]!.states, health: 60 } },
         ],
       }
 

@@ -102,7 +102,6 @@ function buildRosterEntryFromOffer(
       fear: 0,
       anger: 0,
       hunger: 0,
-      injury: worldNpcState?.states.injury ?? 0,
       intoxication: 0,
       hygiene: 70,
     },

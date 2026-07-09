@@ -151,7 +151,7 @@ describe('generateDistrictHireOffers', () => {
               attributes: { might: 38, agility: 47, endurance: 44, intellect: 63, perception: 58, presence: 66, resolve: 61 },
               skills: { melee: 22, ranged: 19, medicine: 14, administration: 61, engineering: 18, negotiation: 68, survival: 20, security: 25, crafting: 12, performance: 10, academics: 24, intrigue: 41 },
               traits: { discipline: 62, ambition: 71, empathy: 43, ruthlessness: 34, prudence: 67, curiosity: 48, dominance: 56, loyalty: 52, vanity: 31, zeal: 22 },
-              states: { health: 100, fatigue: 0, stress: 0, morale: 80, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 100 },
+              states: { health: 100, fatigue: 0, stress: 0, morale: 80, fear: 0, anger: 0, hunger: 0, intoxication: 0, hygiene: 100 },
               loadout: { primaryWeaponId: null, sidearmId: null, armorId: null },
               relationships: {},
             },

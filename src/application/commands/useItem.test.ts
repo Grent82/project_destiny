@@ -97,7 +97,7 @@ describe('useItem — consume heal', () => {
         combatState: {
           health: 79,
           morale: 64,
-          injury: 0,
+         
         },
       },
     }

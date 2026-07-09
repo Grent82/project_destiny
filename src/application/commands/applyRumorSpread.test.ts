@@ -402,7 +402,7 @@ describe('applyRumorSpread', () => {
         clothing: { head: null, torso: null, arms: null, legs: null, feet: null, full: null, undergarments: null, accessories: [] },
         armor: { lightTorso: null, lightLegs: null, heavyTorso: null, heavyLegs: null, shield: null },
         arousalState: { level: 0, lastTriggerDay: null, triggerSource: null, cooldownUntilDay: null },
-        states: { health: 100, morale: 80, stress: 20, fatigue: 10, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 80 },
+        states: { health: 100, morale: 80, stress: 20, fatigue: 10, fear: 0, anger: 0, hunger: 0, intoxication: 0, hygiene: 80 },
         loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
         npcMemory: [],
         bondStatus: null,

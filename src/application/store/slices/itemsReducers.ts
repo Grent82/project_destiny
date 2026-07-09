@@ -15,6 +15,7 @@ import {
   sellWeaponFromHouseStorage,
   sellArmorFromHouseStorage,
 } from '../../commands/equipmentPurchase'
+import { moveNpcInventoryItemToHouseStorage } from '../../commands/inventory/householdStorage'
 
 /** Simple item reference for internal use */
 type ItemRef = {
@@ -133,6 +134,17 @@ export const itemsReducers = {
       : 'armor'
 
     const result = equipItemCommand(state, { ownerId: npcId, itemInstanceId: itemId, slot: equipmentSlot })
+    Object.assign(state, result)
+  },
+
+  /**
+   * Moves an item sitting in an NPC's own personal inventory (npcInventories[npcId] -- where
+   * unequipping something lands it) into House Storage, where it's visible and re-assignable.
+   * Closes the "unequip makes the item disappear" gap: nothing displayed npcInventories[npcId]
+   * anywhere before this, so an unequipped item was correctly saved but invisible to the player.
+   */
+  moveNpcItemToHouseStorage(state: GameState, action: PayloadAction<{ npcId: string; instanceId: string }>) {
+    const result = moveNpcInventoryItemToHouseStorage(current(state) as GameState, action.payload.npcId, action.payload.instanceId)
     Object.assign(state, result)
   },
 

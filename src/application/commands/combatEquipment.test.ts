@@ -75,7 +75,7 @@ const BASE_NPC_STATE = {
     fear: 5,
     anger: 10,
     hunger: 20,
-    injury: 0,
+   
     intoxication: 0,
     hygiene: 80,
   },

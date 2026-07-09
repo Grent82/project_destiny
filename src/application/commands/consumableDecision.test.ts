@@ -49,7 +49,7 @@ describe('consumable mission use', () => {
             ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             npcId: 'npc-test',
             name: 'Mara',
-            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 60, injury: 20 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 60},
             loadout: {
               primaryWeaponId: null,
               secondaryWeaponId: null,
@@ -64,7 +64,6 @@ describe('consumable mission use', () => {
           npcName: 'Mara',
           instanceId: 'inst-salve-001',
           itemName: 'Field Medkit',
-          injuryContext: 'Combat encounter',
         },
       }
       const store2 = createGameStore(stateWithDecision)
@@ -89,7 +88,7 @@ describe('consumable mission use', () => {
             ...initialGameStateSnapshot.npcRuntimeStates[0]!,
             npcId: 'npc-test',
             name: 'Mara',
-            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 60, injury: 20 },
+            states: { ...initialGameStateSnapshot.npcRuntimeStates[0]!.states, health: 60},
             loadout: {
               primaryWeaponId: null,
               secondaryWeaponId: null,
@@ -104,15 +103,12 @@ describe('consumable mission use', () => {
           npcName: 'Mara',
           instanceId: 'inst-salve-001',
           itemName: 'Field Medkit',
-          injuryContext: 'Combat encounter',
         },
       }
 
       const store = createGameStore(stateWithDecision)
       store.dispatch(gameActions.resolveConsumableUse())
 
-      const npc = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-test')
-      expect(npc!.states.injury).toBe(20)
     })
 
     it('does nothing if pendingConsumableDecision is null', () => {
@@ -132,7 +128,6 @@ describe('consumable mission use', () => {
           npcName: 'Mara',
           instanceId: 'inst-salve-001',
           itemName: 'Field Medkit',
-          injuryContext: 'Combat encounter',
         },
       }
       const store = createGameStore(stateWithDecision)
@@ -159,7 +154,6 @@ describe('consumable mission use', () => {
           npcName: 'Mara',
           instanceId: 'inst-salve-001',
           itemName: 'Field Medkit',
-          injuryContext: 'Combat encounter',
         },
       }
       const store = createGameStore(stateWithDecision)

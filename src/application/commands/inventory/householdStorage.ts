@@ -114,6 +114,104 @@ export function depositToHouseStorage(state: GameState, itemInstanceId: string):
 }
 
 /**
+ * Move an item out of an NPC's own personal inventory (npcInventories[npcId]) into shared
+ * household storage.
+ *
+ * User-reported live bug (2026-07-09): unequipping an item from an NPC correctly returns it to
+ * that NPC's OWN personal inventory (unequipItemFromNpcInternal, verified via Playwright: no data
+ * loss, no duplication) -- but nothing in the UI has ever displayed npcInventories[npcId], so from
+ * the player's perspective the item "just disappears" the moment it's unequipped. This function is
+ * the other half of closing that loop: the NpcDetailPanel's new "Personal Effects" section lets the
+ * player move an item sitting in an NPC's own bag into House Storage, where it becomes visible and
+ * re-assignable to any other roster member, exactly like this session's own destiny-fbsy/destiny-o97l
+ * equip fixes already handle for shop-purchased items.
+ */
+export function moveNpcInventoryItemToHouseStorage(state: GameState, npcId: string, itemInstanceId: string): GameState {
+  const npcContainers = state.inventoryState.npcInventories[npcId] ?? []
+  let sourceContainerIndex = -1
+  let sourceSlotIndex = -1
+  for (const [containerIndex, container] of npcContainers.entries()) {
+    const slotIndex = container.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
+    if (slotIndex !== -1) {
+      sourceContainerIndex = containerIndex
+      sourceSlotIndex = slotIndex
+      break
+    }
+  }
+  if (sourceContainerIndex === -1) return state
+
+  const sourceContainer = npcContainers[sourceContainerIndex]
+  const slot = sourceContainer.slots[sourceSlotIndex]
+
+  const itemInstance = state.inventoryState.itemRegistry[itemInstanceId]
+  if (!itemInstance) return state
+
+  const itemDef = contentCatalog.itemsById.get(itemInstance.itemId)
+  const itemName = itemDef?.name ?? itemInstance.itemId
+  const npcName = state.npcRuntimeStates.find((n) => n.npcId === npcId)?.name ?? npcId
+
+  // Remove from the NPC's own inventory
+  const updatedSlots = [...sourceContainer.slots]
+  if (slot.quantity <= 1) {
+    updatedSlots.splice(sourceSlotIndex, 1)
+  } else {
+    updatedSlots[sourceSlotIndex] = { ...slot, quantity: slot.quantity - 1 }
+  }
+  const updatedNpcContainers = [...npcContainers]
+  updatedNpcContainers[sourceContainerIndex] = { ...sourceContainer, slots: updatedSlots }
+
+  // Add to household storage, creating the container if it doesn't exist yet (same lazy-creation
+  // pattern as depositToHouseStorage above).
+  let storageContainerIndex = state.inventoryState.sharedContainers.findIndex(
+    (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+  )
+  const updatedSharedContainers = [...state.inventoryState.sharedContainers]
+  if (storageContainerIndex === -1) {
+    storageContainerIndex = updatedSharedContainers.length
+    updatedSharedContainers.push({
+      containerId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+      containerType: 'chest',
+      ownerId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+      name: 'House Storage',
+      maxSlots: 50,
+      slots: [],
+      locked: false,
+    })
+  }
+  const storageContainer = updatedSharedContainers[storageContainerIndex]
+  const storageSlotIndex = storageContainer.slots.findIndex((s) => s.itemInstanceId === itemInstanceId)
+  const updatedStorageSlots = [...storageContainer.slots]
+  if (storageSlotIndex !== -1) {
+    updatedStorageSlots[storageSlotIndex] = { ...updatedStorageSlots[storageSlotIndex], quantity: updatedStorageSlots[storageSlotIndex].quantity + 1 }
+  } else if (storageContainer.slots.length < storageContainer.maxSlots) {
+    updatedStorageSlots.push({ slotId: `slot-${itemInstanceId}-${Date.now()}`, itemInstanceId, quantity: 1 })
+  } else {
+    // Storage full -- leave the NPC's own inventory untouched rather than losing the item.
+    return state
+  }
+  updatedSharedContainers[storageContainerIndex] = { ...storageContainer, slots: updatedStorageSlots }
+
+  const nextState: GameState = {
+    ...state,
+    inventoryState: {
+      ...state.inventoryState,
+      npcInventories: { ...state.inventoryState.npcInventories, [npcId]: updatedNpcContainers },
+      sharedContainers: updatedSharedContainers,
+      itemRegistry: {
+        ...state.inventoryState.itemRegistry,
+        [itemInstanceId]: { ...itemInstance, locationType: 'container' as const, locationId: HOUSEHOLD_STORAGE_CONTAINER_ID },
+      },
+    },
+  }
+
+  return appendActivityLogEntry(
+    nextState,
+    'system',
+    `Moved ${itemName} from ${npcName}'s personal effects into House Storage.`,
+  )
+}
+
+/**
  * Withdraw an item from household storage into player inventory.
  *
  * @param state - Current game state

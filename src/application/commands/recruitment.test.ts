@@ -200,7 +200,7 @@ describe('recruitNpc', () => {
       npcType: 'world' as const,
       playerRosterMember: false,
       clothing: { ...idaRhysRosterEntry.clothing, torso: 'cloth-tunic-worn' },
-      states: { ...idaRhysRosterEntry.states, health: 63, injury: 12 },
+      states: { ...idaRhysRosterEntry.states, health: 63},
       npcMemory: [
         { day: 4, event: 'Scraped by in a street brawl.', eventType: 'custom' as const, visibility: 'open' as const, sentiment: 'negative' as const },
       ],
@@ -218,7 +218,6 @@ describe('recruitNpc', () => {
     expect(recruited.playerRosterMember).toBe(true)
     expect(recruited.clothing.torso).toBe('cloth-tunic-worn')
     expect(recruited.states.health).toBe(63)
-    expect(recruited.states.injury).toBe(12)
     expect(recruited.npcMemory).toEqual(worldEntry.npcMemory)
   })
 
@@ -265,7 +264,7 @@ describe('recruitNpc', () => {
   })
 
   it('does not double-register the starting-armor instance when upserting an existing world-person entry', () => {
-    // Mirrors the existing "preserves world-person clothing/injury" upsert test above, but for the
+    // Mirrors the existing "preserves world-person clothing" upsert test above, but for the
     // itemRegistry side: recruiting a person who already has a hydrated world entry (with its own
     // armor already registered under the same deterministic id) must not clobber that entry.
     const worldEntry = {
@@ -352,7 +351,7 @@ describe('acquireBoundHireOffer', () => {
       npcId: 'npc-cress-aldmoor',
       npcType: 'world' as const,
       playerRosterMember: false,
-      states: { ...idaRhysRosterEntry.states, health: 71, injury: 5 },
+      states: { ...idaRhysRosterEntry.states, health: 71 },
       npcMemory: [
         { day: 2, event: 'Lost a wager at the docks.', eventType: 'custom' as const, visibility: 'open' as const, sentiment: 'negative' as const },
       ],
@@ -370,7 +369,6 @@ describe('acquireBoundHireOffer', () => {
     expect(recruited.playerRosterMember).toBe(true)
     expect(recruited.bondStatus?.entryReason).toBe('debt-settlement')
     expect(recruited.states.health).toBe(71)
-    expect(recruited.states.injury).toBe(5)
     expect(recruited.npcMemory).toEqual(worldEntry.npcMemory)
   })
 

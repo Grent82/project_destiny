@@ -6,7 +6,7 @@ import { SERIOUS_INJURY_THRESHOLD } from '../recovery'
 /**
  * World NPC harm sources (destiny-s97u/destiny-m916.1).
  *
- * destiny-629x scaffolded health/injury/assignment:'recovering' onto every NpcRuntimeState
+ * destiny-629x scaffolded health/assignment:'recovering' onto every NpcRuntimeState
  * (world/story included), and the recovery runtime already processes them correctly -- but
  * nothing set a world NPC's injury above 0 until this module. See
  * docs/analysis/world-npc-harm-source-design-2026-07-06.md for why this is a new module rather
@@ -44,10 +44,10 @@ function isEligibleWorldPerson(npc: { npcType: string; assignment: string; capti
  * a small daily chance of a "close call" scaled by that district's current tension (already read
  * and drained by patrol-district, already raised by incidentAgency/feud escalation -- a signal the
  * player can already see and act on). Deliberately gated to tension > 40 so calm districts carry
- * zero ambient risk, and the injury roll (3..10) is deliberately weak so a single hit essentially
+ * zero ambient risk, and the health roll (3..10) is deliberately weak so a single hit essentially
  * never alone crosses SERIOUS_INJURY_THRESHOLD -- it takes sustained exposure to a genuinely
  * dangerous district over multiple days to escalate that far. Routine sub-threshold hits are not
- * logged (BACKGROUND) to avoid log spam for every random citizen's scrape; only the moment injury
+ * logged (BACKGROUND) to avoid log spam for every random citizen's scrape; only the moment health
  * actually crosses into assignment:'recovering' is worth a MOMENT-level log line -- applyStateDecay.ts's
  * own Step 2b only logs *ongoing* recovery/completion for people already recovering, not this
  * initial transition, so it belongs here.
@@ -62,7 +62,7 @@ export function applyWorldNpcDistrictDangerExposure(state: GameState, rng: Rng):
     const chance = Math.max(0, tension - DANGER_TENSION_THRESHOLD) / DANGER_CHANCE_DIVISOR
     if (chance <= 0 || rng() >= chance) continue
 
-    const newInjury = clampPercent(npc.states.injury + rollBetween(rng, DANGER_INJURY_MIN, DANGER_INJURY_MAX))
+    const newInjury = clampPercent(npc.states.health + rollBetween(rng, DANGER_INJURY_MIN, DANGER_INJURY_MAX))
     const entersRecovering = newInjury >= SERIOUS_INJURY_THRESHOLD
 
     next = {
@@ -71,7 +71,7 @@ export function applyWorldNpcDistrictDangerExposure(state: GameState, rng: Rng):
         n.npcId === npc.npcId
           ? {
               ...n,
-              states: { ...n.states, injury: newInjury },
+              states: { ...n.states, health: newInjury },
               assignment: entersRecovering ? ('recovering' as const) : n.assignment,
             }
           : n,
@@ -133,8 +133,8 @@ export function applyWorldNpcFeudViolence(state: GameState, rng: Rng): GameState
 
     if (rng() >= FEUD_VIOLENCE_CHANCE) continue
 
-    const npcNewInjury = clampPercent(npc.states.injury + rollBetween(rng, FEUD_INJURY_MIN, FEUD_INJURY_MAX))
-    const targetNewInjury = clampPercent(target.states.injury + rollBetween(rng, FEUD_INJURY_MIN, FEUD_INJURY_MAX))
+    const npcNewInjury = clampPercent(npc.states.health + rollBetween(rng, FEUD_INJURY_MIN, FEUD_INJURY_MAX))
+    const targetNewInjury = clampPercent(target.states.health + rollBetween(rng, FEUD_INJURY_MIN, FEUD_INJURY_MAX))
 
     next = {
       ...next,
@@ -142,14 +142,14 @@ export function applyWorldNpcFeudViolence(state: GameState, rng: Rng): GameState
         if (n.npcId === npc.npcId) {
           return {
             ...n,
-            states: { ...n.states, injury: npcNewInjury },
+            states: { ...n.states, health: npcNewInjury },
             assignment: npcNewInjury >= SERIOUS_INJURY_THRESHOLD ? ('recovering' as const) : n.assignment,
           }
         }
         if (n.npcId === targetId) {
           return {
             ...n,
-            states: { ...n.states, injury: targetNewInjury },
+            states: { ...n.states},
             assignment: targetNewInjury >= SERIOUS_INJURY_THRESHOLD ? ('recovering' as const) : n.assignment,
           }
         }

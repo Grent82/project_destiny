@@ -89,7 +89,6 @@ export const statesSchema = z
     fear: percentageSchema,
     anger: percentageSchema,
     hunger: percentageSchema,
-    injury: percentageSchema,
     intoxication: percentageSchema,
     hygiene: percentageSchema,
   })

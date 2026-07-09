@@ -30,7 +30,6 @@ const startingState = {
           states: {
             ...npc.states,
             health: 25, // critically low
-            injury: 40,
             stress: 70,
             morale: 30,
           },

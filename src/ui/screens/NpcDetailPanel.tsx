@@ -1040,7 +1040,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
         {activeTab === 'States' &&
           Object.entries(detail.states).map(([key, val]) => {
             const warn = isNpcStateCritical(key, val)
-            const negativePolarity = ['fatigue', 'stress', 'hunger', 'fear', 'anger', 'injury', 'intoxication'].includes(key)
+            const negativePolarity = ['fatigue', 'stress', 'hunger', 'fear', 'anger', 'intoxication'].includes(key)
             return (
               <StateStatRow
                 key={key}

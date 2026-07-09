@@ -28,10 +28,6 @@ export function syncRosterFromCombat(
           ...npc.states,
           health: Math.max(0, Math.min(100, combatant.health)),
           morale: combatant.morale,
-          injury: Math.min(
-            100,
-            npc.states.injury + Math.max(0, npc.states.health - combatant.health),
-          ),
         },
       }
     }),

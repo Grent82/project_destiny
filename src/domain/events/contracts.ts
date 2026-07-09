@@ -41,7 +41,6 @@ export const eventOutcomeSchema = z
         'morale',
         'anger',
         'hunger',
-        'injury',
         'intoxication',
         'hygiene',
       ])

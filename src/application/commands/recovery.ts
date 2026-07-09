@@ -2,7 +2,6 @@ import type { GameState, NpcRuntimeState } from '../../domain'
 import { ROOM_IDS, TITLE_IDS } from '../content/ids'
 import { MIN_DEPLOYABLE_HEALTH } from './combatConsts'
 
-export const READY_INJURY_THRESHOLD = 15
 export const SERIOUS_INJURY_THRESHOLD = 30
 
 export type RecoverySupportTier = 'none' | 'lodging' | 'treatment' | 'treatment-plus-medic'
@@ -36,12 +35,12 @@ export function hasInfirmarySupport(state: GameState): boolean {
   return hasIntactRoom(state, 'infirmary')
 }
 
-export function isSeriousInjury(injury: number): boolean {
-  return injury >= SERIOUS_INJURY_THRESHOLD
+export function isSeriousInjury(health: number): boolean {
+  return health >= SERIOUS_INJURY_THRESHOLD
 }
 
-export function isReadyForDuty(health: number, injury: number): boolean {
-  return health >= MIN_DEPLOYABLE_HEALTH && injury < READY_INJURY_THRESHOLD
+export function isReadyForDuty(health: number): boolean {
+  return health >= SERIOUS_INJURY_THRESHOLD
 }
 
 export function getNpcRecoverySupport(
@@ -61,13 +60,13 @@ export function getNpcRecoverySupport(
   return 'none'
 }
 
-export function getPlayerRecoverySupport(state: GameState, injury: number): RecoverySupportTier {
+export function getPlayerRecoverySupport(state: GameState, health: number): RecoverySupportTier {
   const hasMedic = hasMedicSupport(state)
   const hasInfirmary = hasInfirmarySupport(state)
   const hasLodging = hasAnyIntactResidentialRoom(state)
 
-  if (isSeriousInjury(injury) && hasMedic && hasInfirmary) return 'treatment-plus-medic'
-  if (isSeriousInjury(injury) && (hasMedic || hasInfirmary)) return 'treatment'
+  if (isSeriousInjury(health) && hasMedic && hasInfirmary) return 'treatment-plus-medic'
+  if (isSeriousInjury(health) && (hasMedic || hasInfirmary)) return 'treatment'
   if (hasLodging) return 'lodging'
   return 'none'
 }
@@ -132,11 +131,10 @@ export interface RecoveryStatus {
 
 export function describeRecoveryStatus(
   health: number,
-  injury: number,
   tier: RecoverySupportTier,
 ): RecoveryStatus {
   const supportLabel = describeRecoverySupportTier(tier)
-  const ready = isReadyForDuty(health, injury)
+  const ready = isReadyForDuty(health)
 
   if (ready) {
     return {
@@ -146,7 +144,7 @@ export function describeRecoveryStatus(
     }
   }
 
-  if (isSeriousInjury(injury)) {
+  if (isSeriousInjury(health)) {
     const message =
       tier === 'none'
         ? 'Badly hurt and getting only makeshift rest — recovery will be slow without an infirmary or medic.'

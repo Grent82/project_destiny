@@ -28,7 +28,7 @@ function createNpcWithIntention(
     attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception, presence, resolve: 50 },
     skills: { melee: 30, ranged: 30, medicine: 30, administration: 40, engineering: 30, negotiation: 30, survival, security, crafting: 30, performance, academics: 30, intrigue },
     traits: { discipline: 40, ambition: 50, empathy: 50, ruthlessness: 20, prudence: 40, curiosity: 50, dominance: 30, loyalty: 50, vanity: 20, zeal: 20 },
-    states: { health: 80, fatigue: 20, stress, morale: 70, fear: 10, anger: 15, hunger: 20, injury: 0, intoxication: 0, hygiene: 60 },
+    states: { health: 80, fatigue: 20, stress, morale: 70, fear: 10, anger: 15, hunger: 20, intoxication: 0, hygiene: 60 },
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
     equipment: { weapon: null, armor: null, accessory: [] },
     personalFunds: { savings: 0, carriedCash: 0, lastWagePaymentDay: null, lastTipAmount: 0 },

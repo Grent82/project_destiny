@@ -38,7 +38,7 @@ describe('EventLogScreen', () => {
       ...initialGameStateSnapshot,
       playerCharacter: {
         ...initialGameStateSnapshot.playerCharacter,
-        combatState: { health: 50, morale: 64, injury: 0 },
+        combatState: { health: 50, morale: 64 },
       },
     })
 

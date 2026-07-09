@@ -158,7 +158,6 @@
         "fear": 8,
         "anger": 10,
         "hunger": 18,
-        "injury": 0,
         "intoxication": 0,
         "hygiene": 72
       },
@@ -281,7 +280,6 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
         "intoxication": 0,
         "hygiene": 70
       },
@@ -405,7 +403,6 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
         "intoxication": 0,
         "hygiene": 70
       },
@@ -529,7 +526,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -649,7 +646,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -789,7 +786,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -909,7 +906,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1029,7 +1026,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1149,7 +1146,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1269,7 +1266,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1389,7 +1386,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1509,7 +1506,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1629,7 +1626,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1749,7 +1746,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1869,7 +1866,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -1989,7 +1986,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -2109,7 +2106,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -2229,7 +2226,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -2349,7 +2346,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },
@@ -2469,7 +2466,7 @@
         "fear": 0,
         "anger": 0,
         "hunger": 0,
-        "injury": 0,
+        
         "intoxication": 0,
         "hygiene": 70
       },

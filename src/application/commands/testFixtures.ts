@@ -81,7 +81,6 @@ export const idaRhysRosterEntry: NpcRuntimeState = {
     fear: 9,
     anger: 14,
     hunger: 20,
-    injury: 4,
     intoxication: 0,
     hygiene: 68,
   },

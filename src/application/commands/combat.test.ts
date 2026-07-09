@@ -54,7 +54,6 @@ describe('combat commands', () => {
         combatState: {
           health: 57,
           morale: 66,
-          injury: 18,
         },
       },
     }

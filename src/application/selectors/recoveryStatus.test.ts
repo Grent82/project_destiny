@@ -53,7 +53,7 @@ describe('selectNpcRecoveryStatus', () => {
   it('describes a seriously injured NPC with no support as slow and unsupported', () => {
     const store = storeWithIda({
       assignment: 'recovering',
-      states: { ...idaRhysRosterEntry.states, health: 50, injury: 40 },
+      states: { ...idaRhysRosterEntry.states, health: 50},
     })
     const result = selectNpcRecoveryStatus(idaRhysRosterEntry.npcId)(store.getState())
     expect(result.ready).toBe(false)
@@ -65,7 +65,7 @@ describe('selectNpcRecoveryStatus', () => {
     const store = storeWithIda({
       assignment: 'recovering',
       roomAssignment: ROOM_IDS.QUARTERS,
-      states: { ...idaRhysRosterEntry.states, health: 50, injury: 40 },
+      states: { ...idaRhysRosterEntry.states, health: 50},
     })
     store.dispatch({
       type: 'game/replaceGameState',
@@ -80,7 +80,7 @@ describe('selectNpcRecoveryStatus', () => {
   it('describes a seriously injured NPC with infirmary treatment as progressing steadily', () => {
     const store = storeWithIda({
       assignment: 'recovering',
-      states: { ...idaRhysRosterEntry.states, health: 50, injury: 40 },
+      states: { ...idaRhysRosterEntry.states, health: 50},
     })
     store.dispatch({
       type: 'game/replaceGameState',
@@ -92,10 +92,10 @@ describe('selectNpcRecoveryStatus', () => {
     expect(result.statusMessage).toMatch(/progressing steadily/i)
   })
 
-  it('still reports a non-generic message once health is capped but injury remains above the ready threshold (silent-stall regression)', () => {
+  it('still reports a non-generic message once health is capped but health remains above the ready threshold (silent-stall regression)', () => {
     const store = storeWithIda({
       assignment: 'recovering',
-      states: { ...idaRhysRosterEntry.states, health: 100, injury: 20 },
+      states: { ...idaRhysRosterEntry.states, health: 100 },
     })
     const result = selectNpcRecoveryStatus(idaRhysRosterEntry.npcId)(store.getState())
     expect(result.ready).toBe(false)
@@ -116,7 +116,7 @@ describe('selectPlayerRecoveryStatus / selectPlayerIsWounded', () => {
       house: houseWithNoResidentialSupport(),
       playerCharacter: {
         ...initialGameStateSnapshot.playerCharacter,
-        combatState: { health: PLAYER_MAX_HEALTH - 20, morale: 70, injury: 35 },
+        combatState: { health: PLAYER_MAX_HEALTH - 20, morale: 70 },
       },
     })
     expect(selectPlayerIsWounded(store.getState())).toBe(true)
@@ -131,7 +131,7 @@ describe('selectPlayerRecoveryStatus / selectPlayerIsWounded', () => {
       house: houseWithIntactRoom(ROOM_IDS.VAULT, 'infirmary'),
       playerCharacter: {
         ...initialGameStateSnapshot.playerCharacter,
-        combatState: { health: PLAYER_MAX_HEALTH - 20, morale: 70, injury: 35 },
+        combatState: { health: PLAYER_MAX_HEALTH - 20, morale: 70},
       },
     })
     const result = selectPlayerRecoveryStatus(store.getState())

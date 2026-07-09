@@ -9,9 +9,9 @@ import { SERIOUS_INJURY_THRESHOLD } from '../recovery'
 import type { GameState } from '../../../domain/game/contracts'
 import type { Rng } from '../seededRng'
 
-function withInjury(npcId: string, injury: number, overrides: Parameters<typeof worldNpcRuntimeEntry>[1] = {}) {
+function withInjury(npcId: string, health: number, overrides: Parameters<typeof worldNpcRuntimeEntry>[1] = {}) {
   return worldNpcRuntimeEntry(npcId, {
-    states: { ...worldNpcRuntimeEntry(npcId).states, injury },
+    states: { ...worldNpcRuntimeEntry(npcId).states, health },
     ...overrides,
   })
 }
@@ -28,7 +28,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
       districtTension: { 'district-the-pale': 40 },
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-safe')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-safe')!.states.health).toBe(0)
   })
 
   it('can fire when district tension is above the threshold, with a forced hit', () => {
@@ -40,8 +40,8 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
     const actor = result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-hit')!
-    expect(actor.states.injury).toBeGreaterThan(0)
-    expect(actor.states.injury).toBeLessThanOrEqual(10)
+    expect(actor.states.health).toBeGreaterThan(0)
+    expect(actor.states.health).toBeLessThanOrEqual(10)
   })
 
   it('caps the chance at exactly 15% at maximum tension (100) -- a roll just at or above 0.15 must not fire', () => {
@@ -53,7 +53,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
     }
     const justAtCeiling: Rng = () => 0.15
     const result = applyWorldNpcDistrictDangerExposure(state, justAtCeiling)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-boundary')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-boundary')!.states.health).toBe(0)
   })
 
   it('a single hit never alone crosses SERIOUS_INJURY_THRESHOLD from a clean baseline', () => {
@@ -65,7 +65,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
     const actor = result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-single')!
-    expect(actor.states.injury).toBeLessThan(SERIOUS_INJURY_THRESHOLD)
+    expect(actor.states.health).toBeLessThan(SERIOUS_INJURY_THRESHOLD)
     expect(actor.assignment).toBe('idle')
   })
 
@@ -77,7 +77,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
       districtTension: { 'district-the-pale': 100 },
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysMiss)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-miss')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-miss')!.states.health).toBe(0)
   })
 
   it('accumulates across repeated exposure into assignment:recovering once injury crosses the serious threshold, and logs the transition', () => {
@@ -91,7 +91,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
     state = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
 
     const actor = state.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-accumulate')!
-    expect(actor.states.injury).toBeGreaterThanOrEqual(SERIOUS_INJURY_THRESHOLD)
+    expect(actor.states.health).toBeGreaterThanOrEqual(SERIOUS_INJURY_THRESHOLD)
     expect(actor.assignment).toBe('recovering')
     expect(state.activityLog[0]?.message).toContain('needs to recover')
   })
@@ -117,7 +117,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
       districtTension: { 'district-the-pale': 100 },
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-enemy')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-enemy')!.states.health).toBe(0)
   })
 
   it('excludes NPCs whose assignment is not idle', () => {
@@ -128,7 +128,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
       districtTension: { 'district-the-pale': 100 },
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-working')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-working')!.states.health).toBe(0)
   })
 
   it('excludes captives even if their assignment would otherwise read as idle (defense-in-depth)', () => {
@@ -147,7 +147,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
       districtTension: { 'district-the-pale': 100 },
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-captive')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-captive')!.states.health).toBe(0)
   })
 
   it('does not fire for an NPC with no assignedDistrictId', () => {
@@ -158,7 +158,7 @@ describe('applyWorldNpcDistrictDangerExposure (destiny-s97u/destiny-m916.1)', ()
       districtTension: { 'district-the-pale': 100 },
     }
     const result = applyWorldNpcDistrictDangerExposure(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-nodistrict')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-danger-nodistrict')!.states.health).toBe(0)
   })
 })
 
@@ -174,8 +174,8 @@ describe('applyWorldNpcFeudViolence (destiny-s97u/destiny-m916.1)', () => {
     const b = withInjury('npc-nofeud-b', 0, { assignedDistrictId: 'district-the-pale' })
     const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [a, b] }
     const result = applyWorldNpcFeudViolence(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-nofeud-a')!.states.injury).toBe(0)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-nofeud-b')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-nofeud-a')!.states.health).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-nofeud-b')!.states.health).toBe(0)
   })
 
   it('injures both feuding parties and raises their shared district tension when the roll hits', () => {
@@ -188,10 +188,10 @@ describe('applyWorldNpcFeudViolence (destiny-s97u/destiny-m916.1)', () => {
     const result = applyWorldNpcFeudViolence(state, alwaysHit)
     const resultA = result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-a')!
     const resultB = result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-b')!
-    expect(resultA.states.injury).toBeGreaterThanOrEqual(10)
-    expect(resultA.states.injury).toBeLessThanOrEqual(20)
-    expect(resultB.states.injury).toBeGreaterThanOrEqual(10)
-    expect(resultB.states.injury).toBeLessThanOrEqual(20)
+    expect(resultA.states.health).toBeGreaterThanOrEqual(10)
+    expect(resultA.states.health).toBeLessThanOrEqual(20)
+    expect(resultB.states.health).toBeGreaterThanOrEqual(10)
+    expect(resultB.states.health).toBeLessThanOrEqual(20)
     expect(result.districtTension['district-the-pale']).toBe(24)
   })
 
@@ -212,7 +212,7 @@ describe('applyWorldNpcFeudViolence (destiny-s97u/destiny-m916.1)', () => {
     const [a, b] = feudingPair('district-the-pale', 'district-the-pale')
     const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [a, b] }
     const result = applyWorldNpcFeudViolence(state, alwaysMiss)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-a')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-a')!.states.health).toBe(0)
   })
 
   it('does not process the same feuding pair twice in one pass', () => {
@@ -230,8 +230,8 @@ describe('applyWorldNpcFeudViolence (destiny-s97u/destiny-m916.1)', () => {
       districtTension: { 'district-the-pale': 20, 'district-harbor': 20 },
     }
     const result = applyWorldNpcFeudViolence(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-a')!.states.injury).toBe(0)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-b')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-a')!.states.health).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-b')!.states.health).toBe(0)
   })
 
   it('excludes a target who is not idle even if the initiator has a feud flag', () => {
@@ -239,7 +239,7 @@ describe('applyWorldNpcFeudViolence (destiny-s97u/destiny-m916.1)', () => {
     const b = withInjury('npc-feud-busy-b', 0, { assignedDistrictId: 'district-the-pale', assignment: 'recovering', flags: ['feud-with:npc-feud-busy-a'] })
     const state: GameState = { ...initialStateWithIda, npcRuntimeStates: [a, b] }
     const result = applyWorldNpcFeudViolence(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-busy-a')!.states.injury).toBe(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-feud-busy-a')!.states.health).toBe(0)
   })
 })
 
@@ -254,7 +254,7 @@ describe('applyWorldNpcDangerExposure (composition)', () => {
       districtTension: { 'district-the-pale': 100, 'district-harbor': 20 },
     }
     const result = applyWorldNpcDangerExposure(state, alwaysHit)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-combined-danger')!.states.injury).toBeGreaterThan(0)
-    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-combined-feud-a')!.states.injury).toBeGreaterThan(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-combined-danger')!.states.health).toBeGreaterThan(0)
+    expect(result.npcRuntimeStates.find((n) => n.npcId === 'npc-combined-feud-a')!.states.health).toBeGreaterThan(0)
   })
 })

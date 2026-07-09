@@ -330,7 +330,7 @@ describe('BrokerageScreen', () => {
         npc.npcId === 'npc-ida-rhys'
           ? {
               ...npc,
-              states: { health: 60, fatigue: 20, stress: 30, morale: 50, fear: 10, anger: 15, hunger: 30, injury: 0, intoxication: 0, hygiene: 70 },
+              states: { health: 60, fatigue: 20, stress: 30, morale: 50, fear: 10, anger: 15, hunger: 30, intoxication: 0, hygiene: 70 },
               bondStatus: npc.bondStatus
                 ? { ...npc.bondStatus, contractValue: 90, marketValue: 120 }
                 : npc.bondStatus,
@@ -351,7 +351,7 @@ describe('BrokerageScreen', () => {
         {
           ...initialGameStateSnapshot.npcRuntimeStates[0],
           npcId: 'npc-marion-vale',
-          states: { health: 80, fatigue: 10, stress: 15, morale: 60, fear: 5, anger: 10, hunger: 20, injury: 0, intoxication: 0, hygiene: 80 },
+          states: { health: 80, fatigue: 10, stress: 15, morale: 60, fear: 5, anger: 10, hunger: 20, intoxication: 0, hygiene: 80 },
           bondStatus: {
             holderId: 'player',
             contractValue: 40,
@@ -369,7 +369,7 @@ describe('BrokerageScreen', () => {
         {
           ...initialGameStateSnapshot.npcRuntimeStates[1],
           npcId: 'npc-ida-rhys',
-          states: { health: 75, fatigue: 15, stress: 20, morale: 55, fear: 8, anger: 12, hunger: 25, injury: 0, intoxication: 0, hygiene: 75 },
+          states: { health: 75, fatigue: 15, stress: 20, morale: 55, fear: 8, anger: 12, hunger: 25, intoxication: 0, hygiene: 75 },
           bondStatus: {
             holderId: 'player',
             contractValue: 50,

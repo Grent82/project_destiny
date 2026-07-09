@@ -372,7 +372,6 @@ export const gameStateSchema = z
       npcName: z.string(),
       instanceId: z.string(),
       itemName: z.string(),
-      injuryContext: z.string(),
     }).nullable().default(null),
     lastFiredDay: z.record(z.string(), z.number()).default({}),
     rivalOrgActions: z.array(z.object({
@@ -472,7 +471,6 @@ export const gameStateSchema = z
       combatState: z.object({
         health: z.number().int().min(0).max(100).default(80),
         morale: z.number().int().min(0).max(100).default(70),
-        injury: z.number().int().min(0).max(100).default(0),
       }).optional(),
       level: z.number().int().default(1),
       renown: z.number().int().min(0).default(0),

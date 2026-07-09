@@ -21,7 +21,6 @@ type AdjustNpcStateAxis =
   | 'fear'
   | 'anger'
   | 'hunger'
-  | 'injury'
   | 'intoxication'
   | 'hygiene'
   | 'loyalty'
@@ -372,7 +371,7 @@ export function applyOutcomes(
                 attributes: { ...npcDef.baseAttributes },
                 skills: { ...npcDef.startingSkills },
                 traits: { ...npcDef.startingTraits },
-                states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0, injury: 0, intoxication: 0, hygiene: 70 },
+                states: { health: 100, fatigue: 0, stress: 0, morale: 50, fear: 0, anger: 0, hunger: 0,  intoxication: 0, hygiene: 70 },
                 loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: startingArmorId, accessoryIds: [], consumableIds: [] },
                 equipment: { weapon: null, armor: startingArmorInstanceId, accessory: [] },
                 inventory: [],

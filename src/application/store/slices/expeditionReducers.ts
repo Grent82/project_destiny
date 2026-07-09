@@ -161,7 +161,6 @@ export const expeditionReducers = {
       if (squadNpcs.length > 0) {
         const target = squadNpcs[Math.floor(Math.random() * squadNpcs.length)]!
         target.states.health = Math.max(0, target.states.health - 15)
-        target.states.injury = Math.min(100, target.states.injury + 10)
         const healInstance = findHealConsumable(state.inventoryState, target.loadout)
         if (healInstance) {
           const def = contentCatalog.itemsById.get(healInstance.itemId)!
@@ -170,7 +169,6 @@ export const expeditionReducers = {
             npcName: target.name,
             instanceId: healInstance.instanceId,
             itemName: def.name,
-            injuryContext: encounter.label,
           }
         }
       }

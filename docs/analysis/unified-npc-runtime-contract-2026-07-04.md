@@ -132,7 +132,6 @@ locationOverride: z.string().nullable().default(null),
 | `intimacyStage` | *(dropped, verified dead)* | grepped: never read anywhere except at construction (always defaulted to `'none'`, never queried) — real intimacy already lives on `state.relationships` (pair-keyed) for every population. Confirmed no data loss. |
 | `pregnancyState` | `pregnancyState` | already on runtime state (:806); **note the nullability differs** — the old field was `.nullable()`, the new one is `.optional()` (no `null`). Migration code must omit the key entirely for an absent pregnancy, not pass `null`. |
 | `health` | `states.health` | |
-| `injury` | `states.injury` | |
 | `recovering` | `assignment:'recovering'` | **decided**: folding the separate world-recovery loop (Step 2b' in `applyStateDecay.ts`) into the existing roster recovery loop (Step 2b), since both now key off the same `assignment === 'recovering'` gate on the same unified list — keeping them as two separate loops would double-process any world person with that assignment (double health gain per day). |
 | `clothing` | `clothing` | already on runtime state (:801) |
 | `armor` | `armor` | already on runtime state (:802) |

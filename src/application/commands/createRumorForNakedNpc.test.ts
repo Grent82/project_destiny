@@ -114,7 +114,7 @@ function createNakedNpc(npcId: string, name: string): NpcRuntimeState {
       fear: 0,
       anger: 0,
       hunger: 0,
-      injury: 0,
+     
       intoxication: 0,
       hygiene: 0,
     },

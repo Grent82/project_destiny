@@ -74,7 +74,7 @@ export function formalizeHeir(
       fear: 3,
       anger: 3,
       hunger: 10,
-      injury: 0,
+     
       intoxication: 0,
       hygiene: 75,
     },

@@ -271,7 +271,7 @@ function createRosterNpc(
       fear: 10,
       anger: 15,
       hunger: 20,
-      injury: 0,
+     
       intoxication: 0,
       hygiene: 60,
     },

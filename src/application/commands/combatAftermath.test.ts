@@ -97,7 +97,7 @@ describe('concludeCombatEncounter — injury persistence', () => {
     const rosterEntry = nextState.npcRuntimeStates.find((r) => r.npcId === ally.sourceNpcId!)!
 
     expect(rosterEntry.assignment).toBe('recovering')
-    expect(rosterEntry.states.injury).toBeGreaterThanOrEqual(30)
+    expect(rosterEntry.states.health).toBeGreaterThanOrEqual(30)
   })
 
   it('clears selectedSquadNpcIds after combat resolves', () => {
@@ -119,7 +119,6 @@ describe('concludeCombatEncounter — injury persistence', () => {
         combatState: {
           health: 80,
           morale: 70,
-          injury: 6,
         },
       },
       activeCombat: {
@@ -137,7 +136,6 @@ describe('concludeCombatEncounter — injury persistence', () => {
     expect(nextState.playerCharacter.combatState).toEqual({
       health: 49,
       morale: 66,
-      injury: 37,
     })
   })
 })

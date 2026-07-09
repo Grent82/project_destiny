@@ -106,7 +106,6 @@ function migrateWorldNpcStatesIntoNpcRuntimeStates(raw: unknown): unknown {
         fear: 0,
         anger: 0,
         hunger: 0,
-        injury: (legacyEntry.injury as number | undefined) ?? 0,
         intoxication: 0,
         hygiene: 70,
       },

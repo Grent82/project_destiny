@@ -26,7 +26,7 @@ const createNpcWithItems = (captivityStatus?: 'captive' | 'missing' | 'rescued' 
   attributes: { might: 50, agility: 50, endurance: 50, intellect: 50, perception: 50, presence: 50, resolve: 50 },
   skills: { melee: 40, ranged: 30, medicine: 20, administration: 25, engineering: 15, negotiation: 35, survival: 25, security: 20, crafting: 15, performance: 10, academics: 20, intrigue: 30 },
   traits: { discipline: 50, ambition: 40, empathy: 60, ruthlessness: 30, prudence: 55, curiosity: 45, dominance: 35, loyalty: 70, vanity: 20, zeal: 25 },
-  states: { health: 80, fatigue: 30, stress: 25, morale: 60, fear: 20, anger: 15, hunger: 30, injury: 10, intoxication: 0, hygiene: 70 },
+  states: { health: 80, fatigue: 30, stress: 25, morale: 60, fear: 20, anger: 15, hunger: 30, intoxication: 0, hygiene: 70 },
   loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },
   equipment: { weapon: 'weapon-unique-001', armor: null, accessory: [] },
   personalFunds: { savings: 100, carriedCash: 50, lastWagePaymentDay: null, lastTipAmount: 0 },

@@ -152,7 +152,7 @@ describe('house room function bonuses', () => {
         ...initialStateWithIda,
         npcRuntimeStates: initialStateWithIda.npcRuntimeStates.map((npc) =>
           npc.npcId === recoveringNpcId
-            ? { ...npc, assignment: 'recovering' as const, states: { ...npc.states, health: 100, injury: 20 } }
+            ? { ...npc, assignment: 'recovering' as const, states: { ...npc.states, health: 100} }
             : npc,
         ),
       }
@@ -304,12 +304,12 @@ describe('house room function bonuses', () => {
 })
 
 describe('player rest', () => {
-  function stateWithPlayerInjury(health: number, injury: number) {
+  function stateWithPlayerInjury(health: number) {
     return {
       ...initialStateWithIda,
       playerCharacter: {
         ...initialStateWithIda.playerCharacter,
-        combatState: { health, morale: 64, injury },
+        combatState: { health, morale: 64 },
       },
     }
   }
@@ -325,23 +325,21 @@ describe('player rest', () => {
   }
 
   it('gives a small health gain with no lodging or treatment support', () => {
-    const state = withNoResidentialRooms(stateWithPlayerInjury(50, 0))
+    const state = withNoResidentialRooms(stateWithPlayerInjury(50))
     const result = applyStateDecay(state)
 
     expect(result.playerCharacter.combatState?.health).toBe(53)
-    expect(result.playerCharacter.combatState?.injury).toBe(0)
   })
 
   it('gives a larger health gain when intact quarters are available', () => {
-    const state = stateWithPlayerInjury(50, 0) // initialStateWithIda has intact room-quarters by default
+    const state = stateWithPlayerInjury(50) // initialStateWithIda has intact room-quarters by default
     const result = applyStateDecay(state)
 
     expect(result.playerCharacter.combatState?.health).toBe(55)
-    expect(result.playerCharacter.combatState?.injury).toBe(0)
   })
 
   it('reduces injury and gives the largest health gain with infirmary and medic support while seriously injured', () => {
-    const state = withRoom(stateWithPlayerInjury(50, 32), 'room-bureau', 'infirmary')
+    const state = withRoom(stateWithPlayerInjury(50), 'room-bureau', 'infirmary')
     const withMedic = {
       ...state,
       npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
@@ -351,11 +349,10 @@ describe('player rest', () => {
     const result = applyStateDecay(withMedic)
 
     expect(result.playerCharacter.combatState?.health).toBe(60)
-    expect(result.playerCharacter.combatState?.injury).toBe(27)
   })
 
   it('does not reduce injury from infirmary/medic support when the player is not seriously injured', () => {
-    const state = withRoom(stateWithPlayerInjury(50, 10), 'room-bureau', 'infirmary')
+    const state = withRoom(stateWithPlayerInjury(50), 'room-bureau', 'infirmary')
     const withMedic = {
       ...state,
       npcRuntimeStates: state.npcRuntimeStates.map((npc) =>
@@ -364,25 +361,25 @@ describe('player rest', () => {
     }
     const result = applyStateDecay(withMedic)
 
-    expect(result.playerCharacter.combatState?.injury).toBe(10)
+    expect(result.playerCharacter.combatState?.health).toBe(10)
   })
 
   it('does not restore health above the player maximum', () => {
-    const state = stateWithPlayerInjury(79, 0)
+    const state = stateWithPlayerInjury(79)
     const result = applyStateDecay(state)
 
     expect(result.playerCharacter.combatState?.health).toBe(80)
   })
 
   it('logs a player-facing rest message describing the house support received', () => {
-    const state = stateWithPlayerInjury(50, 0)
+    const state = stateWithPlayerInjury(50)
     const result = applyStateDecay(state)
 
     expect(result.activityLog[0]?.message).toMatch(/quarters/i)
   })
 
   it('does not log or change anything when the player is already fully healthy', () => {
-    const state = stateWithPlayerInjury(80, 0)
+    const state = stateWithPlayerInjury(80)
     const result = applyStateDecay(state)
 
     expect(result.activityLog).toEqual(state.activityLog)
@@ -392,31 +389,30 @@ describe('player rest', () => {
 describe('World NPC recovery (destiny-629x scaffolding, folded into the unified list in destiny-rama.8)', () => {
   const recoveringWorldNpcId = 'npc-scaffolding-test-world-npc'
 
-  function stateWithRecoveringWorldNpc(health: number, injury: number) {
+  function stateWithRecoveringWorldNpc(health: number) {
     return {
       ...initialStateWithIda,
       npcRuntimeStates: [
         ...initialStateWithIda.npcRuntimeStates,
         worldNpcRuntimeEntry(recoveringWorldNpcId, {
           assignment: 'recovering',
-          states: { ...idaRhysRosterEntry.states, health, injury },
+          states: { ...idaRhysRosterEntry.states, health },
         }),
       ],
     }
   }
 
   it('regains health and sheds injury each day, same math as roster NPCs with no support', () => {
-    const state = stateWithRecoveringWorldNpc(50, 40)
+    const state = stateWithRecoveringWorldNpc(50)
     const result = applyStateDecay(state)
 
     const worldNpc = result.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
     expect(worldNpc!.states.health).toBeGreaterThan(50)
-    expect(worldNpc!.states.injury).toBeLessThan(40)
     expect(worldNpc!.assignment).toBe('recovering')
   })
 
   it('gets infirmary treatment the same way roster NPCs do', () => {
-    const baseState = stateWithRecoveringWorldNpc(50, 40)
+    const baseState = stateWithRecoveringWorldNpc(50)
     const withInfirmary = withRoom(baseState, 'room-bureau', 'infirmary')
 
     const baseline = applyStateDecay(baseState)
@@ -425,11 +421,11 @@ describe('World NPC recovery (destiny-629x scaffolding, folded into the unified 
     const baselineNpc = baseline.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
     const bonusNpc = withBonus.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
 
-    expect(bonusNpc!.states.injury).toBeLessThan(baselineNpc!.states.injury)
+    expect(bonusNpc!.states.health).toBeLessThan(baselineNpc!.states.health)
   })
 
   it('flips assignment back to idle once health and injury both clear the ready threshold', () => {
-    const state = stateWithRecoveringWorldNpc(90, 10)
+    const state = stateWithRecoveringWorldNpc(90)
     const result = applyStateDecay(state)
 
     const worldNpc = result.npcRuntimeStates.find((w) => w.npcId === recoveringWorldNpcId)
@@ -450,7 +446,6 @@ describe('World NPC recovery (destiny-629x scaffolding, folded into the unified 
     // gated to assignment === 'recovering'.
     expect(worldNpc!.assignment).toBe('idle')
     expect(worldNpc!.states.health).toBe(idaRhysRosterEntry.states.health)
-    expect(worldNpc!.states.injury).toBe(idaRhysRosterEntry.states.injury)
   })
 })
 

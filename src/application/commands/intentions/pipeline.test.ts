@@ -49,7 +49,7 @@ describe('Intention Generation Pipeline', () => {
       ...traitsOverrides,
     },
     states: {
-      health: 100, fatigue: 30, stress: 30, morale: 60, fear: 20, anger: 20, hunger: 30, injury: 0, intoxication: 0, hygiene: 70,
+      health: 100, fatigue: 30, stress: 30, morale: 60, fear: 20, anger: 20, hunger: 30, intoxication: 0, hygiene: 70,
       ...statesOverrides,
     },
     loadout: { primaryWeaponId: null, secondaryWeaponId: null, armorId: null, accessoryIds: [], consumableIds: [] },

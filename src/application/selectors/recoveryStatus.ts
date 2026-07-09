@@ -30,7 +30,7 @@ export const selectNpcRecoveryStatus = (npcId: string) => {
           return { ready: true, supportLabel: '', statusMessage: '' }
         }
         const tier = getNpcRecoverySupport(game, npc)
-        return describeRecoveryStatus(npc.states.health, npc.states.injury, tier)
+        return describeRecoveryStatus(npc.states.health, tier)
       },
     )
     recoveryStatusSelectorCache.set(npcId, selector)
@@ -45,8 +45,8 @@ export const selectPlayerRecoveryStatus = createSelector(
     if (!combatState) {
       return { ready: true, supportLabel: '', statusMessage: '' }
     }
-    const tier = getPlayerRecoverySupport(game, combatState.injury)
-    return describeRecoveryStatus(combatState.health, combatState.injury, tier)
+    const tier = getPlayerRecoverySupport(game, combatState.health)
+    return describeRecoveryStatus(combatState.health, tier)
   },
 )
 
@@ -54,6 +54,6 @@ export const selectPlayerIsWounded = createSelector(
   [(state: RootState) => state.game.playerCharacter.combatState],
   (combatState): boolean => {
     if (!combatState) return false
-    return combatState.health < PLAYER_MAX_HEALTH || combatState.injury > 0
+    return combatState.health < PLAYER_MAX_HEALTH
   },
 )
