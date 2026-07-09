@@ -210,6 +210,23 @@ describe('HouseStoragePanel', () => {
     expect(screen.queryByRole('dialog', { name: 'Choose a target' })).not.toBeInTheDocument()
     expect(store.getState().game.inventoryState.player.equipmentSlots.accessory_1).toBe('inst-lockpick-01')
   })
+
+  // Confirmed live (2026-07-09, destiny-yx750): items carried in the player's own bag were rendered
+  // in this same list under the "House Storage" heading, but the "Stored: X/40" badge only counted
+  // the real house-storage container -- so the count and the visible list disagreed. Split into two
+  // labeled sections so what's counted and what's shown always match.
+  it('renders personal-inventory items under a separate "Carried" section, not counted as House Storage', () => {
+    const stateWithCarriedItem = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithPlayerBagItem('inst-lockpick-01', 'item-lockpick-ringcut'),
+    }
+    renderWithStore(<HouseStoragePanel />, stateWithCarriedItem)
+
+    expect(screen.getByText('Stored: 0 / 50')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Carried' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Carried items' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Stored items' })).toHaveTextContent('House Storage is empty')
+  })
 })
 
 describe('MissionPackPanel', () => {

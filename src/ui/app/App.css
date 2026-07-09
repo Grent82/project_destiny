@@ -3453,6 +3453,12 @@ a:focus-visible,
   color: var(--text-secondary);
 }
 
+.house-storage-panel__title--secondary {
+  font-size: var(--size-sm);
+  margin-top: 1rem;
+  color: var(--text-secondary);
+}
+
 .capacity-bar {
   flex: 1;
   height: 4px;

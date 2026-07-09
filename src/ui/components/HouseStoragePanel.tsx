@@ -22,7 +22,6 @@ export function HouseStoragePanel() {
   const storageInfo = useAppSelector(selectHouseholdStorageInfo)
   const storedItems = useAppSelector((s) => selectItemsByLocation(s, 'house_storage'))
   const inventoryItems = useAppSelector((s) => selectItemsByLocation(s, 'inventory'))
-  const allVisible = [...storedItems, ...inventoryItems]
 
   const [menuForInstance, setMenuForInstance] = useState<string | null>(null)
   const [pendingAction, setPendingAction] = useState<{ action: ItemAction; instanceId: string } | null>(null)
@@ -103,6 +102,35 @@ export function HouseStoragePanel() {
 
   const pct = storageInfo.total > 0 ? (storageInfo.used / storageInfo.total) * 100 : 0
 
+  function renderItem(owned: (typeof storedItems)[number]) {
+    const def = contentCatalog.itemsById.get(owned.itemId)
+    const actions = selectItemActions(store.getState(), owned.instanceId)
+    const primary = actions[0]
+    const secondary = actions.slice(1)
+
+    return (
+      <div key={owned.instanceId}>
+        <ItemCard
+          instanceId={owned.instanceId}
+          name={def?.name ?? owned.itemId}
+          category={def?.category ?? '—'}
+          description={def?.description}
+          quantity={owned.quantity}
+          primaryAction={primary}
+          onAction={(a) => handleAction(a, owned.instanceId)}
+          onOpenMenu={secondary.length > 0 ? () => setMenuForInstance(owned.instanceId) : undefined}
+        />
+        {menuForInstance === owned.instanceId && (
+          <ItemActionMenu
+            actions={secondary}
+            onAction={(a) => { handleAction(a, owned.instanceId); setMenuForInstance(null) }}
+            onClose={() => setMenuForInstance(null)}
+          />
+        )}
+      </div>
+    )
+  }
+
   return (
     <section className="house-storage-panel" aria-label="House Storage">
       <h2 className="house-storage-panel__title">House Storage</h2>
@@ -115,38 +143,18 @@ export function HouseStoragePanel() {
       </div>
 
       <div className="house-storage-panel__items" role="list" aria-label="Stored items">
-        {allVisible.length === 0 && (
+        {storedItems.length === 0 && (
           <p className="house-storage-panel__empty">House Storage is empty. Items deposited here can be accessed by all household members.</p>
         )}
-        {allVisible.map((owned) => {
-          const def = contentCatalog.itemsById.get(owned.itemId)
-          const actions = selectItemActions(store.getState(), owned.instanceId)
-          const primary = actions[0]
-          const secondary = actions.slice(1)
+        {storedItems.map(renderItem)}
+      </div>
 
-          return (
-            <div key={owned.instanceId}>
-              <ItemCard
-                instanceId={owned.instanceId}
-                name={def?.name ?? owned.itemId}
-                category={def?.category ?? '—'}
-                description={def?.description}
-                quantity={owned.quantity}
-                primaryAction={primary}
-                onAction={(a) => handleAction(a, owned.instanceId)}
-                onOpenMenu={secondary.length > 0 ? () => setMenuForInstance(owned.instanceId) : undefined}
-                sourceLabel={storedItems.some((i) => i.instanceId === owned.instanceId) ? 'House Storage' : undefined}
-              />
-              {menuForInstance === owned.instanceId && (
-                <ItemActionMenu
-                  actions={secondary}
-                  onAction={(a) => { handleAction(a, owned.instanceId); setMenuForInstance(null) }}
-                  onClose={() => setMenuForInstance(null)}
-                />
-              )}
-            </div>
-          )
-        })}
+      <h3 className="house-storage-panel__title house-storage-panel__title--secondary">Carried</h3>
+      <div className="house-storage-panel__items" role="list" aria-label="Carried items">
+        {inventoryItems.length === 0 && (
+          <p className="house-storage-panel__empty">Nothing carried on your person right now.</p>
+        )}
+        {inventoryItems.map(renderItem)}
       </div>
 
       {pendingAction && (

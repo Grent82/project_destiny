@@ -4,6 +4,8 @@ import type { ContainerType } from '../../domain/inventory/contracts'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { resolveShopPricingBreakdown } from '../content/shopPricing'
 import { purchaseItemFromShop } from './purchase'
+import { equipItem } from './inventory/equipItem'
+import { HOUSEHOLD_STORAGE_CONTAINER_ID } from './inventory/householdStorage'
 
 // Use a rich starting state so purchase tests are independent of starting balance
 const richState = { ...initialGameStateSnapshot, money: 500 }
@@ -142,5 +144,52 @@ describe('purchaseItemFromShop', () => {
     )
 
     expect(nextState).toEqual(richState)
+  })
+
+  it('routes weapon/armor purchases from an ordinary shop into House Storage, not player inventory (destiny-yx750)', () => {
+    const stateWithDistrict = { ...richState, currentDistrictId: 'district-the-pale' as const }
+
+    const nextState = purchaseItemFromShop(stateWithDistrict, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+
+    // Not stranded in the player's personal bag -- this was the reported bug: an equipped-looking
+    // item that no NPC equip path could ever find.
+    const playerSlots = nextState.inventoryState.player.bagContainers.flatMap((c) => c.slots)
+    expect(playerSlots.some((s) => {
+      const def = nextState.inventoryState.itemRegistry[s.itemInstanceId!]
+      return def?.itemId === 'armor-light-tallow-work-coat'
+    })).toBe(false)
+
+    const storageContainer = nextState.inventoryState.sharedContainers.find(
+      (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID,
+    )
+    expect(storageContainer).toBeDefined()
+    const storedInstanceId = storageContainer!.slots.find((s) => {
+      const def = nextState.inventoryState.itemRegistry[s.itemInstanceId!]
+      return def?.itemId === 'armor-light-tallow-work-coat'
+    })?.itemInstanceId
+    expect(storedInstanceId).toBeTruthy()
+
+    expect(nextState.activityLog[0]?.message).toMatch(/Added to House Storage\.$/)
+
+    // The whole point: the purchased armor must now actually be equippable on a roster NPC.
+    const equippedState = equipItem(nextState, {
+      ownerId: 'npc-marion-vale',
+      itemInstanceId: storedInstanceId!,
+      slot: 'armor',
+    })
+    const marion = equippedState.npcRuntimeStates.find((n) => n.npcId === 'npc-marion-vale')
+    expect(marion?.equipment.armor).toBe(storedInstanceId)
+    expect(marion?.loadout.armorId).toBe('armor-light-tallow-work-coat')
+  })
+
+  it('leaves non-gear purchases routed to player inventory unchanged (regression guard)', () => {
+    const nextState = purchaseItemFromShop(richState, 'shop-pale-provisions', 'item-ration-compact-brick')
+
+    expect(nextState.activityLog[0]?.message).not.toMatch(/House Storage/)
+    const playerSlots = nextState.inventoryState.player.bagContainers.flatMap((c) => c.slots)
+    expect(playerSlots.some((s) => {
+      const def = nextState.inventoryState.itemRegistry[s.itemInstanceId!]
+      return def?.itemId === 'item-ration-compact-brick'
+    })).toBe(true)
   })
 })

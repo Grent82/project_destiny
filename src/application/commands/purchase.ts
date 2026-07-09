@@ -4,6 +4,7 @@ import { resolveShopPricingBreakdown } from '../content/shopPricing'
 import { contentCatalog } from '../content/contentCatalog'
 import { appendActivityLogEntry } from './activityLog'
 import { transferItem } from './inventory/transferItem'
+import { HOUSEHOLD_STORAGE_CONTAINER_ID } from './inventory/householdStorage'
 import type { TransferItemParams } from '../../domain/inventory/contracts'
 
 export function purchaseItemFromShop(
@@ -58,17 +59,53 @@ export function purchaseItemFromShop(
   }
 
   const itemInstanceId = availableSlot.itemInstanceId
-  const itemName = contentCatalog.itemsById.get(itemId)?.name ?? itemId
+  const itemDef = contentCatalog.itemsById.get(itemId)
+  const itemName = itemDef?.name ?? itemId
 
   // Deduct money
   let nextState: GameState = { ...state, money: state.money - purchasePrice }
 
-  // Transfer item from shop stock to player inventory using canonical transfer
+  // Weapons and armor bought from an ordinary shop's `offers` catalog (as opposed to the district
+  // arms-dealer catalog, which uses purchaseWeaponToHouseStorage/purchaseArmorToHouseStorage) must
+  // land in the same shared House Storage container that equipItem.ts's
+  // getAccessibleContainersForNpc actually searches. Routing them to player_inventory like every
+  // other shop good silently stranded them forever: no NPC equip path ever looks at
+  // state.inventoryState.player.bagContainers, so the player could buy armor and never be able to
+  // equip it on anyone, with zero error feedback (user report, 2026-07-09; destiny-yx750).
+  const isGearItem = itemDef?.category === 'weapon' || itemDef?.category === 'armor'
+
+  if (isGearItem) {
+    const hasStorageContainer = nextState.inventoryState.sharedContainers.some(
+      (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID,
+    )
+    if (!hasStorageContainer) {
+      nextState = {
+        ...nextState,
+        inventoryState: {
+          ...nextState.inventoryState,
+          sharedContainers: [
+            ...nextState.inventoryState.sharedContainers,
+            {
+              containerId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+              containerType: 'chest',
+              ownerId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+              name: 'House Storage',
+              maxSlots: 50,
+              slots: [],
+              locked: false,
+            },
+          ],
+        },
+      }
+    }
+  }
+
+  // Transfer item from shop stock to its destination using canonical transfer
   const transferParams: TransferItemParams = {
     fromType: 'shop_stock',
     fromId: shopStockContainerId,
-    toType: 'player_inventory',
-    toId: 'player',
+    toType: isGearItem ? 'container' : 'player_inventory',
+    toId: isGearItem ? HOUSEHOLD_STORAGE_CONTAINER_ID : 'player',
     itemInstanceId,
     quantity: 1,
   }
@@ -78,6 +115,8 @@ export function purchaseItemFromShop(
   return appendActivityLogEntry(
     nextState,
     'economy',
-    `Purchased ${itemName} from ${shop.name} for ${formatMarks(purchasePrice)}.`,
+    isGearItem
+      ? `Purchased ${itemName} from ${shop.name} for ${formatMarks(purchasePrice)}. Added to House Storage.`
+      : `Purchased ${itemName} from ${shop.name} for ${formatMarks(purchasePrice)}.`,
   )
 }
