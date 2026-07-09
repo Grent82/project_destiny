@@ -83,16 +83,29 @@ export function sellItem(state: GameState, instanceId: string): GameState {
     }
   }
 
-  // Transfer item to shop stock using canonical transfer
+  // Transfer item to shop stock using canonical transfer. fromType/fromId must reflect
+  // wherever findPlayerItem actually located the item -- hardcoding player_inventory here
+  // silently failed (transferItem returns state unchanged) for items sitting in House
+  // Storage/Mission Pack (destiny-sqyd).
   const shopStockContainerId = `shop:${shopId}:stock`
-  const transferParams: TransferItemParams = {
-    fromType: 'player_inventory',
-    fromId: 'player',
-    toType: 'shop_stock',
-    toId: shopStockContainerId,
-    itemInstanceId: instanceId,
-    quantity: 1,
-  }
+  const transferParams: TransferItemParams =
+    item.location === 'player'
+      ? {
+          fromType: 'player_inventory',
+          fromId: 'player',
+          toType: 'shop_stock',
+          toId: shopStockContainerId,
+          itemInstanceId: instanceId,
+          quantity: 1,
+        }
+      : {
+          fromType: 'container',
+          fromId: item.container.containerId,
+          toType: 'shop_stock',
+          toId: shopStockContainerId,
+          itemInstanceId: instanceId,
+          quantity: 1,
+        }
 
   let nextState = transferItem(state, transferParams)
   if (nextState === state) {

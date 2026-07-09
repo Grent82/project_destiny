@@ -154,4 +154,39 @@ describe('sellItem', () => {
     expect(result.inventoryState.sharedContainers[0]!.slots).toHaveLength(0)
     expect(result.activityLog[0]?.message).toMatch(/Sold/)
   })
+
+  // destiny-sqyd: when a shop in the current district DOES buy the item (the transfer branch,
+  // as opposed to the no-shop-found fallback covered above), sellItem hardcoded
+  // fromType:'player_inventory'/fromId:'player' regardless of where findPlayerItem actually
+  // located the item. transferItem silently failed for house_storage/mission_pack items --
+  // no crash, no error, just a no-op sale. district-ironworks's shop-ironworks-supply (Foundry
+  // Supply Cage) genuinely offers item-spare-parts, so this exercises the real transfer path.
+  it('sells a shop-matched item sitting in house_storage via the shop-transfer branch (destiny-sqyd)', () => {
+    const stateWithHouseStorageItem: GameState = {
+      ...BASE_STATE,
+      currentDistrictId: 'district-ironworks',
+      inventoryState: {
+        ...BASE_STATE.inventoryState,
+        sharedContainers: [{
+          containerId: 'container-house-storage',
+          containerType: 'vault',
+          ownerId: 'house_storage',
+          maxSlots: 50,
+          slots: [{ slotId: 'slot-stored', itemInstanceId: 'inst-stored-parts', quantity: 1 }],
+          locked: false,
+        }],
+        itemRegistry: { 'inst-stored-parts': { uniqueId: 'inst-stored-parts', itemId: 'item-spare-parts', quantity: 1, locationType: 'container', acquiredDay: 1, flags: [] } },
+      },
+    }
+
+    const result = sellItem(stateWithHouseStorageItem, 'inst-stored-parts')
+
+    expect(result.money).toBeGreaterThan(stateWithHouseStorageItem.money)
+    expect(result.inventoryState.sharedContainers.find((c) => c.ownerId === 'house_storage')?.slots).toHaveLength(0)
+    const soldIntoShopStock = result.inventoryState.sharedContainers.some(
+      (c) => c.containerId === 'shop:shop-ironworks-supply:stock' && c.slots.some((s) => s.itemInstanceId === 'inst-stored-parts'),
+    )
+    expect(soldIntoShopStock).toBe(true)
+    expect(result.activityLog[0]?.message).toMatch(/Sold/)
+  })
 })
