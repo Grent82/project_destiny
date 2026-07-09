@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { equipItem } from './equipItem'
+import { equipItem, unequipItem } from './equipItem'
 import type { GameState } from '../../../domain/game/contracts'
 import type { InventoryContainer } from '../../../domain/inventory/contracts'
 import { initialGameStateSnapshot } from '../../store/initialGameState'
+
+const NPC_ID = 'npc-marion-vale'
 
 const WEAPON_ID = 'weapon-dagger-wasterunner'
 const TOOL_WITHOUT_SKILL_BONUS_ID = 'item-lamp-signal-expedition'
@@ -33,6 +35,28 @@ function stateWithPlayerBagItems(itemIds: string[]): GameState {
 
 function stateWithPlayerBagItem(itemId: string): GameState {
   return stateWithPlayerBagItems([itemId])
+}
+
+function stateWithNpcInventoryItem(itemId: string): GameState {
+  return {
+    ...initialGameStateSnapshot,
+    inventoryState: {
+      ...initialGameStateSnapshot.inventoryState,
+      npcInventories: {
+        [NPC_ID]: [{
+          containerId: `container-${NPC_ID}`,
+          containerType: 'backpack',
+          ownerId: NPC_ID,
+          maxSlots: 20,
+          slots: [{ slotId: `slot-${itemId}`, itemInstanceId: itemId, quantity: 1 }],
+          locked: false,
+        }],
+      },
+      itemRegistry: {
+        [itemId]: { uniqueId: itemId, itemId, quantity: 1, locationType: 'npc_inventory', locationId: NPC_ID, acquiredDay: 1, flags: [] },
+      },
+    },
+  }
 }
 
 describe('equipItem — player equip/unequip (bug fix regression, found during destiny-y7jx)', () => {
@@ -92,5 +116,88 @@ describe('equipItem — player equip/unequip (bug fix regression, found during d
     const result = equipItem(equipped, { ownerId: 'player', itemInstanceId: WEAPON_ID, slot: 'weapon' })
     // Swapping the slot forces an unequip of the lockpick set first.
     expect(result.equippedTools).toEqual([])
+  })
+})
+
+// Found while investigating a user question about whether the inventory fixes made elsewhere
+// this session also cover NPC-owned inventories: equipItemToNpc/unequipItemFromNpcInternal are
+// the LIVE code path (wired via itemsReducers.ts's equipItem reducer for ownerId !== 'player');
+// a separate, entirely unreferenced economy/npcEquipItem.ts has the same discard bug but is dead
+// code (zero importers), not reachable from any UI.
+describe('equipItem — NPC equip/unequip (bug fix regression, found investigating destiny-i08x follow-up)', () => {
+  it('moves the item into the NPC equipment slot and out of their personal inventory', () => {
+    const state = stateWithNpcInventoryItem(WEAPON_ID)
+    const result = equipItem(state, { ownerId: NPC_ID, itemInstanceId: WEAPON_ID, slot: 'weapon' })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(npc.equipment.weapon).toBe(WEAPON_ID)
+    expect(result.inventoryState.npcInventories[NPC_ID]?.flatMap((c) => c.slots)).toHaveLength(0)
+  })
+
+  it('records an activity log entry for the NPC equip (previously discarded: appendActivityLogEntry return value was never applied)', () => {
+    const state = stateWithNpcInventoryItem(WEAPON_ID)
+    const result = equipItem(state, { ownerId: NPC_ID, itemInstanceId: WEAPON_ID, slot: 'weapon' })
+    expect(result.activityLog[0]?.message).toContain('Marion Vale')
+    expect(result.activityLog[0]?.message).toContain('equipped')
+  })
+
+  it('records an activity log entry when unequipping from an NPC (previously missing entirely, not just discarded)', () => {
+    const equipped = equipItem(stateWithNpcInventoryItem(WEAPON_ID), { ownerId: NPC_ID, itemInstanceId: WEAPON_ID, slot: 'weapon' })
+    const result = unequipItem(equipped, { ownerId: NPC_ID, slot: 'weapon' })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(npc.equipment.weapon).toBeNull()
+    expect(result.activityLog[0]?.message).toContain('Marion Vale')
+    expect(result.activityLog[0]?.message).toContain('unequipped')
+  })
+
+  it('logs both the unequip and the equip when swapping an NPC weapon slot', () => {
+    const firstInstanceId = 'inst-flicker-001'
+    const secondInstanceId = WEAPON_ID
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        npcInventories: {
+          [NPC_ID]: [{
+            containerId: `container-${NPC_ID}`,
+            containerType: 'backpack',
+            ownerId: NPC_ID,
+            maxSlots: 20,
+            slots: [
+              { slotId: `slot-${firstInstanceId}`, itemInstanceId: firstInstanceId, quantity: 1 },
+              { slotId: `slot-${secondInstanceId}`, itemInstanceId: secondInstanceId, quantity: 1 },
+            ],
+            locked: false,
+          }],
+        },
+        itemRegistry: {
+          [firstInstanceId]: { uniqueId: firstInstanceId, itemId: 'weapon-dagger-ring-flicker', quantity: 1, locationType: 'npc_inventory', locationId: NPC_ID, acquiredDay: 1, flags: [] },
+          [secondInstanceId]: { uniqueId: secondInstanceId, itemId: WEAPON_ID, quantity: 1, locationType: 'npc_inventory', locationId: NPC_ID, acquiredDay: 1, flags: [] },
+        },
+      },
+    }
+    const equipped = equipItem(state, { ownerId: NPC_ID, itemInstanceId: firstInstanceId, slot: 'weapon' })
+    const result = equipItem(equipped, { ownerId: NPC_ID, itemInstanceId: secondInstanceId, slot: 'weapon' })
+
+    // Two equipItem calls happened (one per weapon), so two "equipped" entries are expected in
+    // total across the whole log -- only the second call's internal swap produces an "unequipped"
+    // entry, since the first call had nothing in the slot to unequip.
+    // Two equipItem calls happened (one per weapon), so two "equipped" entries are expected in
+    // total across the whole log -- only the second call's internal swap produces an "unequipped"
+    // entry, since the first call had nothing in the slot to unequip.
+    const unequipEntries = result.activityLog.filter((entry) => entry.message.includes('unequipped'))
+    const equipEntries = result.activityLog.filter((entry) => entry.message.includes('equipped') && !entry.message.includes('unequipped'))
+    expect(unequipEntries).toHaveLength(1)
+    expect(equipEntries).toHaveLength(2)
+  })
+
+  it('does not mutate the input state npc object (equipItemToNpc used to write updatedNpc.equipment[slot] in place)', () => {
+    const state = stateWithNpcInventoryItem(WEAPON_ID)
+    const npcBefore = state.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    const equipmentSnapshotBefore = { ...npcBefore.equipment }
+
+    equipItem(state, { ownerId: NPC_ID, itemInstanceId: WEAPON_ID, slot: 'weapon' })
+
+    // The exact same npc object reference from the ORIGINAL state must be untouched.
+    expect(state.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!.equipment).toEqual(equipmentSnapshotBefore)
   })
 })

@@ -1,5 +1,6 @@
 import { appendActivityLogEntry } from '../activityLog'
 import { type GameState } from '../../../domain/game/contracts'
+import { type NpcRuntimeState } from '../../../domain/npc/contracts'
 import { type EquipItemParams, type EquipmentSlotType, type TransferItemParams } from '../../../domain/inventory/contracts'
 import { contentCatalog } from '../../content/contentCatalog'
 import { transferItem } from './transferItem'
@@ -279,49 +280,58 @@ function equipItemToNpc(state: GameState, npcId: string, itemInstanceId: string,
     return state
   }
 
-  // Update NPC equipment slots directly (transferItem handles the inventory side)
-  const updatedNpc = nextState.npcRuntimeStates.find((n) => n.npcId === npcId)!
+  // Update NPC equipment slots. Builds a fresh npc object rather than mutating the one found
+  // via .find() -- that object is the same reference living in nextState.npcRuntimeStates (and,
+  // when this command is called directly rather than through an Immer-wrapped reducer, the same
+  // reference the caller's own state still points to), so mutating it in place corrupted shared
+  // state instead of producing a new immutable state (confirmed via cross-test pollution: a
+  // mutation from one test's NPC equip call was still visible in a later test sharing the same
+  // base fixture object).
+  const npcToUpdate = nextState.npcRuntimeStates.find((n) => n.npcId === npcId)!
+  let updatedEquipment = { ...npcToUpdate.equipment }
 
   if (slot === 'accessory_1') {
-    const currentAccessories = updatedNpc.equipment.accessory || []
-    updatedNpc.equipment.accessory = [...currentAccessories.slice(0, 1), itemInstanceId]
+    const currentAccessories = npcToUpdate.equipment.accessory || []
+    updatedEquipment = { ...updatedEquipment, accessory: [...currentAccessories.slice(0, 1), itemInstanceId] }
   } else if (slot === 'accessory_2') {
-    const currentAccessories = updatedNpc.equipment.accessory || []
-    if (currentAccessories.length >= 2) {
-      updatedNpc.equipment.accessory = [...currentAccessories.slice(1), itemInstanceId]
-    } else {
-      updatedNpc.equipment.accessory = [...currentAccessories, itemInstanceId]
+    const currentAccessories = npcToUpdate.equipment.accessory || []
+    updatedEquipment = {
+      ...updatedEquipment,
+      accessory: currentAccessories.length >= 2
+        ? [...currentAccessories.slice(1), itemInstanceId]
+        : [...currentAccessories, itemInstanceId],
     }
   } else {
     const equipSlot: 'weapon' | 'armor' = slot === 'weapon' || slot === 'armor' ? slot : 'weapon'
-    updatedNpc.equipment[equipSlot] = itemInstanceId
+    updatedEquipment = { ...updatedEquipment, [equipSlot]: itemInstanceId }
   }
 
   // Calculate stat bonuses for new equipment
+  let updatedAttributes = npcToUpdate.attributes
   if (itemDef.category === 'weapon') {
     const weapon = itemDef as import('../../../domain/items/contracts').WeaponDefinition
-    updatedNpc.attributes = {
-      ...updatedNpc.attributes,
-      might: Math.min(100, updatedNpc.attributes.might + Math.floor((weapon.damageMin + weapon.damageMax) / 20)),
-      agility: Math.min(100, updatedNpc.attributes.agility + Math.floor(weapon.accuracy / 20)),
+    updatedAttributes = {
+      ...updatedAttributes,
+      might: Math.min(100, updatedAttributes.might + Math.floor((weapon.damageMin + weapon.damageMax) / 20)),
+      agility: Math.min(100, updatedAttributes.agility + Math.floor(weapon.accuracy / 20)),
     }
   } else if (itemDef.category === 'armor') {
     const armor = itemDef as import('../../../domain/items/contracts').ArmorDefinition
-    updatedNpc.attributes = {
-      ...updatedNpc.attributes,
-      endurance: Math.min(100, updatedNpc.attributes.endurance + Math.floor(armor.soak / 20)),
+    updatedAttributes = {
+      ...updatedAttributes,
+      endurance: Math.min(100, updatedAttributes.endurance + Math.floor(armor.soak / 20)),
     }
   }
 
+  const updatedNpc: NpcRuntimeState = { ...npcToUpdate, equipment: updatedEquipment, attributes: updatedAttributes }
   const updatedRoster = [...nextState.npcRuntimeStates]
   updatedRoster[npcIndex] = updatedNpc
 
-  appendActivityLogEntry(nextState, 'system', `${npc.name} equipped ${itemDef.name} in ${formatSlotName(slot)}`)
-
-  return {
-    ...nextState,
-    npcRuntimeStates: updatedRoster,
-  }
+  return appendActivityLogEntry(
+    { ...nextState, npcRuntimeStates: updatedRoster },
+    'system',
+    `${npc.name} equipped ${itemDef.name} in ${formatSlotName(slot)}`,
+  )
 }
 
 /**
@@ -387,10 +397,11 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
     attributes: updatedAttributes,
   }
 
-  return {
-    ...nextState,
-    npcRuntimeStates: updatedRoster,
-  }
+  return appendActivityLogEntry(
+    { ...nextState, npcRuntimeStates: updatedRoster },
+    'system',
+    `${state.npcRuntimeStates[npcIndex].name} unequipped ${itemDef.name} from ${formatSlotName(slot)}`,
+  )
 }
 
 /**
