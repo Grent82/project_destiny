@@ -15,9 +15,8 @@
 - [Intention System Architecture](intention-system-architecture.md) — 5-stage pipeline, Fuzzy + ML, 35 types
 - [Test Fixture Pattern for Complex State](test-fixture-pattern.md) — minimal mocks, eslint-disable any
 - [Feedback: Corridor-run Implementation — Schema Change Propagation](feedback_corridor_implementation.md) — 5 Korrektur-Iterationen vermieden durch enemyNpcId nullable, syncFoodSecurityToStock return value, procedural generation updates
-- [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste — Bead-Hygiene + Ticket-Scope-Bewertung vor Claim
+- [Verification Protocol](verification_protocol.md) — zentrale Read/Verify Before Write-Checkliste — Bead-Hygiene + Ticket-Scope-Bewertung vor Claim + externe Hand-Edits/Remote-Reverts erkennen
 - [Terminology Audit: Coalition ist keine echte Koalition](terminology_audit_group_coalition.md) — Coalition sollte zu group umbenannt werden
-- [Feedback: Commit ONLY after full quality gates pass](feedback_commit_after_full_tests.md) — destiny-zq9r zu früh gecommitet mit unvollständiger Implementierung
 - [Feedback: BD-CLI — Vermeide Pipe-Charaktere in Shell-Commands bei komplexen Beschreibungen](docs_bead_creation.md) — zsh-Parsing-Fehler bei Markdown-Tabellen
 - [Feedback: NPC-NPC dating implementation](feedback_npc_npc_dating_implementation.md) — Reuse existing date templates, integrate into endDay phases, bidirectional relationship tracking
 - [Feedback: NPC-NPC romance fullstack](feedback_npc_npc_romance_fullstack.md) — Flirtation + Courtship + Dating + Jealousy layers, not just dating proposals

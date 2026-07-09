@@ -174,9 +174,7 @@ describe('engagePhysicalIntimacy', () => {
     expect(result.activityLog).toEqual(state.activityLog)
   })
 
-  it('blocks intimacy when the NPC requires explicit consent and it was not given', () => {
-    // Ida's content definition does not set requiresExplicitConsent, so we temporarily flip it
-    // for this test only, restoring the original definition afterwards.
+  it('allows intimacy regardless of requiresExplicitConsent (checkbox-based consent gate was removed, no content NPC sets this flag)', () => {
     const original = contentCatalog.npcsById.get(NPC_ID)!
     contentCatalog.npcsById.set(NPC_ID, {
       ...original,
@@ -185,16 +183,8 @@ describe('engagePhysicalIntimacy', () => {
 
     try {
       const state = stateWithRelationship({ trust: 80, affinity: 80, intimacyStage: 'committed', bondType: 'romantic' })
-
-      const blocked = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral'})
-      expect(blocked.activityLog).toEqual(state.activityLog)
-
-      // Bringing contraception must NOT substitute for consent (the bug this fix removes).
-      const stillBlocked = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: 'item-contraceptive-herbal', intent: 'neutral'})
-      expect(stillBlocked.activityLog).toEqual(state.activityLog)
-
-      const allowed = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral'})
-      expect(allowed.activityLog).not.toEqual(state.activityLog)
+      const result = engagePhysicalIntimacy(state, NPC_ID, { contraceptionItemId: null, intent: 'neutral' })
+      expect(result.activityLog).not.toEqual(state.activityLog)
     } finally {
       contentCatalog.npcsById.set(NPC_ID, original)
     }

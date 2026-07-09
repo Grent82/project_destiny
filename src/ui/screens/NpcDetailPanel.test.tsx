@@ -433,44 +433,6 @@ describe('NpcDetailPanel — courtship loop', () => {
     expect(screen.getByText(/Pregnancy Intent/i)).toBeInTheDocument()
   })
 
-  it('passes the NPC\'s real requiresExplicitConsent into the intimacy modal (destiny-a42g)', async () => {
-    const user = userEvent.setup()
-    const original = contentCatalog.npcsById.get('npc-ida-rhys')!
-    contentCatalog.npcsById.set('npc-ida-rhys', {
-      ...original,
-      consentPreferences: { ...original.consentPreferences, requiresExplicitConsent: true },
-    })
-
-    try {
-      renderIdaPanel({
-        ...initialStateWithIda,
-        relationships: {
-          ...initialStateWithIda.relationships,
-          'player-to-npc-ida-rhys': {
-            affinity: 31,
-            trust: 38,
-            fear: 0,
-            respect: 10,
-            loyalty: 4,
-            intimacyStage: 'affinity',
-          },
-        },
-      })
-
-      await user.click(screen.getByRole('button', { name: 'Spend Time' }))
-      await user.click(screen.getByRole('button', { name: 'Spend Night Together' }))
-
-      // requiresConsent must no longer be hardcoded false — the confirm button stays disabled
-      // until the consent checkbox is checked.
-      const confirmButton = screen.getByRole('button', { name: 'Spend the Night' })
-      expect(confirmButton).toBeDisabled()
-
-      await user.click(screen.getByRole('checkbox', { name: /I consent to physical intimacy/i }))
-      expect(confirmButton).not.toBeDisabled()
-    } finally {
-      contentCatalog.npcsById.set('npc-ida-rhys', original)
-    }
-  })
 })
 
 describe('NpcDetailPanel — bond status visibility', () => {

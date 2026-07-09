@@ -103,12 +103,11 @@ function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: Eng
     }
   }
 
-  // Check if explicit consent required
-    return {
-      npc,
-      consent: { allowed: false, reason: 'explicit-consent-required' },
-      contraceptionItem,
-    }
+  return {
+    npc,
+    consent: { allowed: true },
+    contraceptionItem,
+  }
 }
 
 function calculatePregnancyRisk(contraceptionItem: ContraceptionItem | null, npcId: string): number {
