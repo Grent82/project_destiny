@@ -18,7 +18,6 @@ type ContraceptionItem = {
 type EngagePhysicalIntimacyOptions = {
   contraceptionItemId: string | null // Item ID or null for no contraception
   intent: IntimacyIntent
-  consentGiven: boolean
 }
 
 // Base pregnancy risk per encounter (about 20% without contraception)
@@ -105,19 +104,11 @@ function canEngagePhysicalIntimacy(state: GameState, npcId: string, options: Eng
   }
 
   // Check if explicit consent required
-  if (consentPreferences.requiresExplicitConsent && !options.consentGiven) {
     return {
       npc,
       consent: { allowed: false, reason: 'explicit-consent-required' },
       contraceptionItem,
     }
-  }
-
-  return {
-    npc,
-    consent: { allowed: true },
-    contraceptionItem,
-  }
 }
 
 function calculatePregnancyRisk(contraceptionItem: ContraceptionItem | null, npcId: string): number {

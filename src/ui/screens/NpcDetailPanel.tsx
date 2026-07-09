@@ -1173,8 +1173,7 @@ export function NpcDetailPanel({ detail }: NpcDetailPanelProps) {
               gameActions.engagePhysicalIntimacy({
                 npcId: detail.npcId,
                 contraceptionItemId,
-                intent: options.intent,
-                consentGiven: options.consentGiven,
+                intent: options.intent
               }),
             )
             setShowIntimacyModal(false)

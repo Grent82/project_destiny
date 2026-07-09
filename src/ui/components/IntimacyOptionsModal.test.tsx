@@ -57,7 +57,7 @@ describe('IntimacyOptionsModal (destiny-w5tv)', () => {
     expect(confirmButton).toBeEnabled()
 
     await user.click(confirmButton)
-    expect(onConfirm).toHaveBeenCalledWith({ contraception: false, intent: 'neutral', consentGiven: true })
+    expect(onConfirm).toHaveBeenCalledWith({ contraception: false, intent: 'neutral'})
   })
 
   it('passes the selected contraception and pregnancy intent through to onConfirm', async () => {
@@ -76,7 +76,7 @@ describe('IntimacyOptionsModal (destiny-w5tv)', () => {
     await user.click(screen.getByRole('radio', { name: /avoid pregnancy/i }))
     await user.click(screen.getByRole('button', { name: /spend the night/i }))
 
-    expect(onConfirm).toHaveBeenCalledWith({ contraception: true, intent: 'avoid-pregnancy', consentGiven: false })
+    expect(onConfirm).toHaveBeenCalledWith({ contraception: true, intent: 'avoid-pregnancy'})
   })
 
   it('always keeps Cancel enabled and calls onCancel when clicked', async () => {

@@ -1,6 +1,7 @@
 - [Feedback: Beads Child-Schließung bei offenem Parent-Epic](feedback_beads-child-close.md)
 - [Feedback: Destruktive CLI-Writes nie aus ungeprüften Pipelines](feedback_destructive-cli-pipelines.md) — 8 Bead-Beschreibungen durch leeren Pipeline-Output gelöscht
-- [Feedback: Gestaltungs-Richtungsfragen mit 2–4 Optionen + Empfehlung stellen](feedback_design-decision-questions.md) — 4× ohne Korrekturrunde bestätigt
+- [Feedback: Gestaltungs-Richtungsfragen mit 2–4 Optionen + Empfehlung stellen](feedback_design-decision-questions.md) — 5× ohne Korrekturrunde bestätigt
+- [Feedback: UI-Zurückhaltung bei Farben und exakten Zahlen](feedback_ui_restraint_colors_and_numbers.md) — 3 Tickets reverted: "zu bunt" + Beziehungs-Deltas als "too much"
 - [Feedback: Modellwahl pro Aufgabe selbst entscheiden](feedback_model-selection.md) — Nutzer-Direktive 2026-06-11, Kriterien im lower-model-playbook
 - [Feedback: Enemy NPCs müssen in npcs.json UND enemy-npcs.json existieren](feedback_npc-content-validation.md) — contentCatalog validiert enemyNpcId gegen npcsById, nicht enemyNpcsById
 - [Feedback: JSON-Dateien nie mit Bash-Heredocs editieren](feedback_avoid_bash_json_manipulation.md) — Immer Read → Edit workflow verwenden

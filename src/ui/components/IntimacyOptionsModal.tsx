@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 interface IntimacyOptionsModalProps {
   npcName: string
   requiresConsent: boolean
-  onConfirm: (options: { contraception: boolean; intent: 'want-pregnancy' | 'avoid-pregnancy' | 'neutral'; consentGiven: boolean }) => void
+  onConfirm: (options: { contraception: boolean; intent: 'want-pregnancy' | 'avoid-pregnancy' | 'neutral'}) => void
   onCancel: () => void
 }
 
@@ -11,7 +11,6 @@ const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:
 
 export function IntimacyOptionsModal({
   npcName,
-  requiresConsent,
   onConfirm,
   onCancel,
 }: IntimacyOptionsModalProps) {
@@ -19,7 +18,6 @@ export function IntimacyOptionsModal({
   const dialogRef = useRef<HTMLDivElement>(null)
   const [contraception, setContraception] = useState(false)
   const [intent, setIntent] = useState<'want-pregnancy' | 'avoid-pregnancy' | 'neutral'>('neutral')
-  const [consentGiven, setConsentGiven] = useState(false)
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -56,8 +54,7 @@ export function IntimacyOptionsModal({
   }, [])
 
   function handleConfirm() {
-    if (requiresConsent && !consentGiven) return
-    onConfirm({ contraception, intent, consentGiven })
+    onConfirm({ contraception, intent })
   }
 
   return (
@@ -73,27 +70,6 @@ export function IntimacyOptionsModal({
       >
         <p className="event-modal-kicker">Physical Intimacy</p>
         <h2 id={headingId} className="event-modal-title">Spend the Night with {npcName}</h2>
-
-        <section className={`intimacy-section${consentGiven ? ' intimacy-section--checked' : ''}`}>
-          <h3 className="intimacy-section-heading">Consent</h3>
-          <p className="intimacy-section-copy">
-            Both of you should want this. Confirm before continuing.
-          </p>
-          <label className="intimacy-checkbox-row">
-            <input
-              type="checkbox"
-              checked={consentGiven}
-              onChange={(e) => setConsentGiven(e.target.checked)}
-              aria-describedby={`${headingId}-consent-copy`}
-            />
-            <span>I consent to physical intimacy</span>
-          </label>
-          {requiresConsent && (
-            <p id={`${headingId}-consent-copy`} className="intimacy-section-note">
-              {npcName} asked that this be confirmed explicitly &mdash; the option below stays locked until you do.
-            </p>
-          )}
-        </section>
 
         <section className="intimacy-section">
           <h3 className="intimacy-section-heading">
@@ -166,8 +142,6 @@ export function IntimacyOptionsModal({
             className="action-button action-button--primary"
             type="button"
             onClick={handleConfirm}
-            disabled={requiresConsent && !consentGiven}
-            title={requiresConsent && !consentGiven ? 'Consent must be confirmed above first.' : undefined}
           >
             Spend the Night
           </button>
