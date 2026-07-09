@@ -49,29 +49,36 @@ describe('equipItem reducer', () => {
     }
   }
 
-  it('equips weapon from NPC inventory to primaryWeapon slot', () => {
+  it('equips weapon from NPC inventory to primaryWeapon slot and keeps loadout in sync (destiny-x27g)', () => {
     const state = createStateWithNpcItem('weapon-dagger-wasterunner', 'inst-weapon-dagger-wasterunner-001')
     const action = gameActions.equipItem({ npcId, slot: 'primaryWeaponId', itemId: 'inst-weapon-dagger-wasterunner-001' })
     const next = gameSliceReducer(state, action)
     const npc = next.npcRuntimeStates.find((r) => r.npcId === npcId)
-    // The equip command updates equipment, not loadout directly
     expect(npc?.equipment.weapon).toBe('inst-weapon-dagger-wasterunner-001')
+    // destiny-x27g: combat.ts/combatants.ts and the Roster screen read loadout, not equipment --
+    // this used to stay null forever, so equipping via the UI had no visible effect anywhere.
+    // Previously this test only checked `equipment` and its own comment rationalized the gap
+    // ("updates equipment, not loadout directly") instead of treating it as the bug it was.
+    expect(npc?.loadout.primaryWeaponId).toBe('weapon-dagger-wasterunner')
   })
 
-  it('equips armor from NPC inventory to armor slot', () => {
+  it('equips armor from NPC inventory to armor slot and keeps loadout in sync (destiny-x27g)', () => {
     const state = createStateWithNpcItem('armor-light-tallow-work-coat', 'inst-armor-light-tallow-work-coat-001')
     const action = gameActions.equipItem({ npcId, slot: 'armorId', itemId: 'inst-armor-light-tallow-work-coat-001' })
     const next = gameSliceReducer(state, action)
     const npc = next.npcRuntimeStates.find((r) => r.npcId === npcId)
     expect(npc?.equipment.armor).toBe('inst-armor-light-tallow-work-coat-001')
+    expect(npc?.loadout.armorId).toBe('armor-light-tallow-work-coat')
   })
 
-  it('unequips weapon from primaryWeapon slot', () => {
+  it('unequips weapon from primaryWeapon slot and clears loadout (destiny-x27g)', () => {
     const instanceId = 'inst-weapon-dagger-wasterunner-001'
     const stateWithWeapon = {
       ...initialGameStateSnapshot,
       npcRuntimeStates: initialGameStateSnapshot.npcRuntimeStates.map((npc, i) =>
-        i === 0 ? { ...npc, equipment: { ...npc.equipment, weapon: instanceId } } : npc,
+        i === 0
+          ? { ...npc, equipment: { ...npc.equipment, weapon: instanceId }, loadout: { ...npc.loadout, primaryWeaponId: 'weapon-dagger-wasterunner' } }
+          : npc,
       ),
       inventoryState: {
         ...initialGameStateSnapshot.inventoryState,
@@ -108,6 +115,7 @@ describe('equipItem reducer', () => {
     const next = gameSliceReducer(stateWithWeapon, action)
     const npc = next.npcRuntimeStates.find((r) => r.npcId === npcId)
     expect(npc?.equipment.weapon).toBeNull()
+    expect(npc?.loadout.primaryWeaponId).toBeNull()
   })
 
   it('does nothing when npcId is not found', () => {

@@ -24,6 +24,8 @@
 - [questSettlement architecture inconsistency](questsettlement-architecture-inconsistency.md) — functions mutate but callers expect immutable returns
 - [Feedback: Quest Discovery Debugging — Read data flow before Playwright](feedback_quest_discovery_debugging.md) — 30+ Playwright clicks wasted investigating "missing quests" that were actually data/trigger issues
 - [Schema Change Hygiene](schema_change_hygiene.md) — Konsolidierte Schema-Change Checklist (5 Files zusammengeführt 2026-06-30)
+- [Feedback: GameState-Fixtures brauchen alle Pflichtfelder](feedback_test_fixture_requirements.md) — clothing/armor fehlten, TS-Fehler
+- [Feedback: Item-Fixtures brauchen realistische, unterschiedliche instanceId/itemId](feedback_item_fixture_realism.md) — destiny-x27g: instanceId===itemId versteckte den NPC-Equip-Loadout-Bug in JEDEM Test
 
 ### Economy & Lore
 
