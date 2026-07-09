@@ -111,6 +111,25 @@ describe('useItem — consume heal', () => {
   })
 })
 
+describe('useItem — boostStat effects (destiny-p8sb content fix)', () => {
+  it('using item-stimulant-combat sets a tempStatBoosts entry for the might attribute', () => {
+    const state = stateWithItem('item-stimulant-combat')
+    const result = useItem(state, { instanceId: 'test-inst-item-stimulant-combat', action: 'consume' })
+    // Previously authored as 'strength', which matches no attribute in attributesSchema, and
+    // had a redundant, permanently-dead stat_mod entry alongside the working boostStat one.
+    expect(result.tempStatBoosts).toEqual([{ stat: 'might', value: 8, expiresDay: state.day + 3 }])
+    expect(result.playerStatuses.some((s) => s.statusId === 'combat-stimulated')).toBe(true)
+  })
+
+  it('using item-ring-stimulant-rush sets a tempStatBoosts entry for the agility attribute', () => {
+    const state = stateWithItem('item-ring-stimulant-rush')
+    const result = useItem(state, { instanceId: 'test-inst-item-ring-stimulant-rush', action: 'consume' })
+    // Previously authored as a stat_mod effect (an npc.states key), but 'agility' is not a
+    // states field -- the item had no working effect at all until this was changed to boostStat.
+    expect(result.tempStatBoosts).toEqual([{ stat: 'agility', value: 20, expiresDay: state.day + 1 }])
+  })
+})
+
 describe('useItem — stat_mod effects (destiny-q6vx)', () => {
   it('using item-waterskin-filled reduces both hunger and intoxication', () => {
     const targetId = 'npc-ida-rhys'

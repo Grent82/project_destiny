@@ -327,7 +327,7 @@
     "effects": [
       {
         "type": "boostStat",
-        "stat": "strength",
+        "stat": "might",
         "value": 8,
         "duration": 3
       },
@@ -340,14 +340,8 @@
     "shopPrice": 25,
     "typedEffects": [
       {
-        "type": "stat_mod",
-        "stat": "strength",
-        "value": 8,
-        "duration": 3
-      },
-      {
         "type": "boostStat",
-        "stat": "strength",
+        "stat": "might",
         "value": 8,
         "duration": 3
       },
@@ -1319,7 +1313,7 @@
     ],
     "effects": [
       {
-        "type": "stat_mod",
+        "type": "boostStat",
         "stat": "agility",
         "value": 20,
         "duration": 1
@@ -1329,7 +1323,7 @@
     "shopPrice": 45,
     "typedEffects": [
       {
-        "type": "stat_mod",
+        "type": "boostStat",
         "stat": "agility",
         "value": 20,
         "duration": 1
