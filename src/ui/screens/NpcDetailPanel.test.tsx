@@ -656,3 +656,58 @@ describe('NpcDetailPanel — Personal Effects (unequipped items were invisible)'
     expect(screen.queryByText('Personal Effects')).not.toBeInTheDocument()
   })
 })
+
+// User report (2026-07-09): the equip picker only ever queried House Storage, so an item sitting in
+// an NPC's own personal inventory (e.g. from Personal Effects above, or starting gear) could not be
+// chosen from the picker at all -- even though equipItem.ts's getAccessibleContainersForNpc already
+// treats the NPC's own npc_inventory as equippable. This was a picker/selector gap, not a command
+// bug: the fix is listing that NPC's personal items in the picker alongside House Storage ones.
+describe('NpcDetailPanel — equip picker includes the NPC\'s own personal inventory', () => {
+  const ITEM_INSTANCE_ID = 'npc-ida-rhys:starting-armor'
+
+  function stateWithIdaCarryingUnequippedArmor() {
+    return {
+      ...initialStateWithIda,
+      inventoryState: {
+        ...initialStateWithIda.inventoryState,
+        npcInventories: {
+          'npc-ida-rhys': [{
+            containerId: 'npc-container-ida-rhys',
+            containerType: 'backpack' as const,
+            ownerId: 'npc-ida-rhys',
+            maxSlots: 20,
+            slots: [{ slotId: `slot-${ITEM_INSTANCE_ID}`, itemInstanceId: ITEM_INSTANCE_ID, quantity: 1 }],
+            locked: false,
+          }],
+        },
+        itemRegistry: {
+          ...initialStateWithIda.inventoryState.itemRegistry,
+          [ITEM_INSTANCE_ID]: {
+            uniqueId: ITEM_INSTANCE_ID,
+            itemId: 'armor-medium-compact-chainmail',
+            quantity: 1,
+            locationType: 'npc_inventory' as const,
+            locationId: 'npc-ida-rhys',
+            acquiredDay: 1,
+            flags: [],
+          },
+        },
+      },
+    }
+  }
+
+  it('lists the personal-inventory armor labeled "(Personal)" and equips it on selection', async () => {
+    const user = userEvent.setup()
+    const store = renderIdaPanel(stateWithIdaCarryingUnequippedArmor())
+
+    await user.click(screen.getByRole('button', { name: /^Armor/ }))
+    const option = screen.getByRole('button', { name: /\(Personal\)/ })
+    expect(option).toBeInTheDocument()
+
+    await user.click(option)
+
+    const ida = store.getState().game.npcRuntimeStates.find((n) => n.npcId === 'npc-ida-rhys')!
+    expect(ida.equipment.armor).toBe(ITEM_INSTANCE_ID)
+    expect(ida.loadout.armorId).toBe('armor-medium-compact-chainmail')
+  })
+})
