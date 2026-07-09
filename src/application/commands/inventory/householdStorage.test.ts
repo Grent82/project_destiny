@@ -267,6 +267,55 @@ describe('getHouseStorageItems', () => {
     const items = getHouseStorageItems(stateWithoutStorage)
     expect(items.length).toBe(0)
   })
+
+  // destiny (house-storage split): weapons/armor bought via equipmentPurchase.ts land in the
+  // HOUSEHOLD_STORAGE_CONTAINER_ID container, but the House Storage panel's pack/unpack actions
+  // (moveItem's 'house_storage' location) use a separate container with ownerId:'house_storage'.
+  // ItemSelectionModal (NPC equip picker) reads this function -- it used to only see the former,
+  // so an item visibly sitting in the House Storage panel showed as "No weapons/armor in House
+  // Storage" in the equip picker. Live-reproduced via Playwright before this fix.
+  test('aggregates items across both the HOUSEHOLD_STORAGE_CONTAINER_ID container and any ownerId:house_storage container', () => {
+    const otherInstanceId = 'inst-work-coat-panel-001'
+    const stateWithBothContainers: GameState = {
+      ...baseState,
+      inventoryState: {
+        ...baseState.inventoryState,
+        sharedContainers: [
+          createContainer(HOUSEHOLD_STORAGE_CONTAINER_ID, HOUSEHOLD_STORAGE_CONTAINER_ID, [
+            { itemInstanceId: ITEM_ID_IRON_SWORD, quantity: 1 },
+          ]),
+          createContainer('house-storage-main', 'house_storage', [
+            { itemInstanceId: otherInstanceId, quantity: 1 },
+          ]),
+        ],
+        itemRegistry: {
+          [ITEM_ID_IRON_SWORD]: {
+            uniqueId: ITEM_ID_IRON_SWORD,
+            itemId: ITEM_ID_IRON_SWORD,
+            quantity: 1,
+            locationType: 'container',
+            locationId: HOUSEHOLD_STORAGE_CONTAINER_ID,
+            acquiredDay: 1,
+            acquiredFrom: 'test',
+            flags: [],
+          },
+          [otherInstanceId]: {
+            uniqueId: otherInstanceId,
+            itemId: 'armor-light-tallow-work-coat',
+            quantity: 1,
+            locationType: 'container',
+            locationId: 'house-storage-main',
+            acquiredDay: 1,
+            acquiredFrom: 'test',
+            flags: [],
+          },
+        },
+      },
+    }
+
+    const items = getHouseStorageItems(stateWithBothContainers)
+    expect(items.map((i) => i.instanceId).sort()).toEqual([ITEM_ID_IRON_SWORD, otherInstanceId].sort())
+  })
 })
 
 describe('hasHouseStorageSpace', () => {

@@ -239,27 +239,36 @@ export function getHouseStorageItems(state: Pick<GameState, 'inventoryState'>): 
   quantity: number
   name: string
 }> {
-  const storageContainer = state.inventoryState.sharedContainers.find(
-    (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+  // destiny (house-storage split, 2026-07-09): weapons/armor bought via equipmentPurchase.ts land
+  // in the container keyed by HOUSEHOLD_STORAGE_CONTAINER_ID, while items routed through
+  // moveItem's 'house_storage' location (the House Storage panel's pack/unpack actions) live in a
+  // separate container with ownerId:'house_storage'. Players experience both as one "House
+  // Storage" -- e.g. ItemSelectionModal (NPC equip picker) used to only read the former, so an
+  // item visibly sitting in the House Storage panel (the latter) showed as "No weapons/armor in
+  // House Storage" here. Aggregate both.
+  const storageContainers = state.inventoryState.sharedContainers.filter(
+    (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID || c.ownerId === 'house_storage'
   )
 
-  if (!storageContainer) {
+  if (storageContainers.length === 0) {
     return []
   }
 
   const items: Array<{ instanceId: string; itemId: string; quantity: number; name: string }> = []
 
-  for (const slot of storageContainer.slots) {
-    if (slot.itemInstanceId) {
-      const itemInstance = state.inventoryState.itemRegistry[slot.itemInstanceId]
-      if (itemInstance) {
-        const itemDef = contentCatalog.itemsById.get(itemInstance.itemId)
-        items.push({
-          instanceId: slot.itemInstanceId,
-          itemId: itemInstance.itemId,
-          quantity: slot.quantity,
-          name: itemDef?.name ?? itemInstance.itemId,
-        })
+  for (const storageContainer of storageContainers) {
+    for (const slot of storageContainer.slots) {
+      if (slot.itemInstanceId) {
+        const itemInstance = state.inventoryState.itemRegistry[slot.itemInstanceId]
+        if (itemInstance) {
+          const itemDef = contentCatalog.itemsById.get(itemInstance.itemId)
+          items.push({
+            instanceId: slot.itemInstanceId,
+            itemId: itemInstance.itemId,
+            quantity: slot.quantity,
+            name: itemDef?.name ?? itemInstance.itemId,
+          })
+        }
       }
     }
   }

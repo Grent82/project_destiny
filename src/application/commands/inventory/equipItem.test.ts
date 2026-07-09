@@ -272,3 +272,41 @@ describe('equipItem — loadout sync for combat/roster (destiny-mv8n root cause)
     expect(npc.loadout.primaryWeaponId).toBeNull()
   })
 })
+
+// User report, live-reproduced via Playwright: an armor item visibly offered by the equip picker
+// (ItemSelectionModal, backed by selectHouseStorageArmors) still silently failed to equip. Root
+// cause: the item lived in a container with ownerId:'house_storage' (the House Storage panel's
+// pack/unpack path), but getAccessibleContainersForNpc only ever exposed the fixed
+// HOUSEHOLD_STORAGE_CONTAINER_ID container as accessible -- so findNpcAccessibleItem could never
+// locate it, and equipItemToNpc silently returned state unchanged.
+describe('equipItem — equipping from the House Storage panel container, not just HOUSEHOLD_STORAGE_CONTAINER_ID', () => {
+  function stateWithArmorInPanelHouseStorage(instanceId: string): GameState {
+    return {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        sharedContainers: [{
+          containerId: 'house-storage-main',
+          containerType: 'vault' as const,
+          ownerId: 'house_storage',
+          maxSlots: 40,
+          slots: [{ slotId: `slot-${instanceId}`, itemInstanceId: instanceId, quantity: 1 }],
+          locked: false,
+        }],
+        itemRegistry: {
+          [instanceId]: { uniqueId: instanceId, itemId: 'armor-light-tallow-work-coat', quantity: 1, locationType: 'container', locationId: 'house-storage-main', acquiredDay: 1, flags: [] },
+        },
+      },
+    }
+  }
+
+  it('equips armor sitting in the ownerId:house_storage container onto an NPC', () => {
+    const instanceId = 'inst-work-coat-panel-001'
+    const state = stateWithArmorInPanelHouseStorage(instanceId)
+    const result = equipItem(state, { ownerId: NPC_ID, itemInstanceId: instanceId, slot: 'armor' })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === NPC_ID)!
+    expect(npc.equipment.armor).toBe(instanceId)
+    expect(npc.loadout.armorId).toBe('armor-light-tallow-work-coat')
+    expect(result.activityLog[0]?.message).toContain('equipped')
+  })
+})

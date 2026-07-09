@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../store/gameStore'
 import { contentCatalog } from '../content/contentCatalog'
 import type { GameState } from '../../domain'
+import { HOUSEHOLD_STORAGE_CONTAINER_ID } from '../commands/inventory/householdStorage'
 
 /**
  * Local item reference type for selectors - uses instanceId for consistency
@@ -57,7 +58,12 @@ function getPlayerItemsFromInventory(inventoryState: GameState['inventoryState']
 function getHouseStorageItems(inventoryState: GameState['inventoryState']): ItemRef[] {
   const items: ItemRef[] = []
   for (const container of inventoryState.sharedContainers) {
-    if (container.ownerId === 'house_storage') {
+    // destiny (house-storage split, 2026-07-09): weapons/armor bought via equipmentPurchase.ts
+    // land in a container keyed by HOUSEHOLD_STORAGE_CONTAINER_ID, while everything routed
+    // through moveItem's 'house_storage' location (pack/unpack) uses ownerId:'house_storage' --
+    // two disconnected containers players experience as one "House Storage". Match both so items
+    // from either path show up here.
+    if (container.ownerId === 'house_storage' || container.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID) {
       for (const slot of container.slots) {
         if (slot.itemInstanceId) {
           const instanceDef = inventoryState.itemRegistry[slot.itemInstanceId]

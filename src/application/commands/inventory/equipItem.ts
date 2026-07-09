@@ -4,6 +4,7 @@ import { type NpcRuntimeState } from '../../../domain/npc/contracts'
 import { type EquipItemParams, type EquipmentSlotType, type TransferItemParams } from '../../../domain/inventory/contracts'
 import { contentCatalog } from '../../content/contentCatalog'
 import { transferItem } from './transferItem'
+import { HOUSEHOLD_STORAGE_CONTAINER_ID } from './householdStorage'
 
 /**
  * Equip an item instance on player or NPC.
@@ -44,13 +45,20 @@ function getAccessibleContainersForNpc(state: GameState, npcId: string): { conta
   // Valid household assignments: 'working', 'assigned_title', 'idle', 'training', 'defense'
   const isHouseholdMember = npc.assignment === 'working' || npc.assignment === 'assigned_title' || npc.assignment === 'idle' || npc.assignment === 'training' || npc.assignment === 'defense'
   if (isHouseholdMember) {
-    // Allow household storage access
-    const householdStorageId = `household:house-blackthorn:storage`
-    const householdContainer = state.inventoryState.sharedContainers.find(
-      (c) => c.containerId === householdStorageId || c.ownerId === householdStorageId
+    // destiny (house-storage split, 2026-07-09): weapons/armor bought via equipmentPurchase.ts
+    // land in the HOUSEHOLD_STORAGE_CONTAINER_ID container, but items routed through moveItem's
+    // 'house_storage' location (the House Storage panel's pack/unpack) live in a SEPARATE
+    // container with ownerId:'house_storage'. This used to only expose the former as accessible,
+    // so an item visibly offered by the equip picker (once the selector-side fix landed) still
+    // silently failed to equip -- findNpcAccessibleItem could never locate it. Push an access
+    // entry per real matching container (using its own containerId) so both are searchable.
+    const householdContainers = state.inventoryState.sharedContainers.filter(
+      (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+        || c.ownerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+        || c.ownerId === 'house_storage'
     )
-    if (householdContainer) {
-      containers.push({ containerType: 'container', containerId: householdStorageId })
+    for (const householdContainer of householdContainers) {
+      containers.push({ containerType: 'container', containerId: householdContainer.containerId })
     }
   }
 

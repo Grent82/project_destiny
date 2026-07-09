@@ -87,11 +87,16 @@ export const selectHasHouseStorageSpace = createSelector([selectGame], (game) =>
  * For the legacy house storage selector, use selectHouseStorageInfo from ./house
  */
 export const selectHouseholdStorageInfo = createSelector([selectGame], (game) => {
-  const storageContainer = game.inventoryState.sharedContainers.find(
-    (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID || c.ownerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+  // destiny (house-storage split, 2026-07-09): aggregate both the HOUSEHOLD_STORAGE_CONTAINER_ID
+  // container (equipmentPurchase.ts weapon/armor buys) and any ownerId:'house_storage' container
+  // (moveItem's pack/unpack) -- see getHouseStorageItems in householdStorage.ts for the same fix.
+  const storageContainers = game.inventoryState.sharedContainers.filter(
+    (c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+      || c.ownerId === HOUSEHOLD_STORAGE_CONTAINER_ID
+      || c.ownerId === 'house_storage'
   )
 
-  if (!storageContainer) {
+  if (storageContainers.length === 0) {
     return {
       used: 0,
       total: 50, // Default capacity for canonical storage
@@ -100,10 +105,10 @@ export const selectHouseholdStorageInfo = createSelector([selectGame], (game) =>
     }
   }
 
-  const used = storageContainer.slots.length
-  const total = storageContainer.maxSlots
+  const used = storageContainers.reduce((sum, c) => sum + c.slots.length, 0)
+  const total = storageContainers.reduce((sum, c) => sum + c.maxSlots, 0)
   const available = total - used
-  const percentageUsed = Math.round((used / total) * 100)
+  const percentageUsed = total > 0 ? Math.round((used / total) * 100) : 0
 
   return {
     used,
