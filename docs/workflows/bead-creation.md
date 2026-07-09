@@ -286,6 +286,25 @@ When a list of findings is turned into Beads:
 
 Never close an audit with unmapped findings.
 
+### Before creating Beads from a multi-chapter document
+
+Read the whole document first, not just the chapter that prompted the session. A forensic
+analysis or design doc with multiple chapters (e.g. NPC intentions, economy, item effects)
+must be triaged as a whole before any Bead gets created — creating Beads only for the
+chapter that was top of mind silently drops the others (destiny-x125: only NPC-intention
+Beads were created from a forensic analysis; economy and item-effects chapters were
+overlooked entirely).
+
+1. Read every chapter/table in the source document, not only the obviously relevant one.
+2. Categorize every gap found, per chapter — not just the one the session started with.
+3. Roughly estimate the Bead count per category before creating any of them.
+4. Confirm the category breakdown and rough count with the user before mass-creating
+   Beads — a one-line summary ("~6 NPC-intention Beads, ~4 economy Beads, ~3 item-effects
+   Beads") is enough; do not silently create 20+ Beads from a single pass.
+5. After creating each batch, spot-check `bd show <id>` on a few to confirm `--type` and
+   `--priority` actually match intent (task vs. bug vs. feature) — `bd create` does not
+   validate that a Bead's stated content matches its declared type.
+
 ## Fresh-eyes playthrough evidence (player-facing beads)
 
 **Requirement**: Any bead that changes player-facing behavior (events, quests, UI, dialogue, NPC interactions) must include playthrough evidence before closure.

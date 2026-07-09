@@ -28,3 +28,4 @@
 ### Economy & Lore
 
 - [Economy Lore Consistency](economy_lore_consistency.md) — Wirtschaftssystem muss lore-konsistent sein, keine abstrakten Einkommen
+- [Feedback: Analyse vor Vorschlag bei Economy-Themen](feedback_economy_analysis_before_proposal.md) — erst bestehende Commands/Schemas/Content lesen, dann Lücken füllen statt neue Systeme vorschlagen
