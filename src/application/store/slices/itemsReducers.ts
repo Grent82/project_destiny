@@ -23,6 +23,52 @@ type ItemRef = {
   quantity: number
 }
 
+type InventoryContainerList = GameState['inventoryState']['player']['bagContainers']
+
+/**
+ * Adds an item into the first non-full container owned by `ownerId`, creating a fresh
+ * container from `template` if none exist yet or all existing ones are full.
+ *
+ * destiny-inventory-mission-pack-delete: the previous inline version of this logic only wrote
+ * the updated container list back to state inside the "no container exists yet" fallback branch.
+ * Once a player had a single non-full container (the common case after day 1), the "add succeeded"
+ * branch computed a correct new array but never assigned it back -- the item vanished from every
+ * container while its itemRegistry entry lived on as an orphan, invisible in any panel.
+ */
+function addItemToContainerByOwner(
+  containers: InventoryContainerList,
+  ownerId: string,
+  template: () => InventoryContainerList[number],
+  instanceId: string,
+  quantity: number,
+): InventoryContainerList {
+  let added = false
+  const updated = containers.map((container) => {
+    if (added || container.ownerId !== ownerId) return container
+    if (container.slots.length < container.maxSlots) {
+      added = true
+      return {
+        ...container,
+        slots: [
+          ...container.slots,
+          { slotId: `slot-${instanceId}-${Date.now()}`, itemInstanceId: instanceId, quantity },
+        ],
+      }
+    }
+    return container
+  })
+
+  if (added) return updated
+
+  return [
+    ...updated,
+    {
+      ...template(),
+      slots: [{ slotId: `slot-${instanceId}-new`, itemInstanceId: instanceId, quantity }],
+    },
+  ]
+}
+
 /** Helper to find an item in any container by instanceId */
 function findItemByInstanceId(inventoryState: GameState['inventoryState'], instanceId: string): ItemRef | null {
   // Check player bag
@@ -166,133 +212,52 @@ export const itemsReducers = {
 
     // Add to new location
     if (location === 'inventory') {
-      // Add to player bag - find first container with space
-      let added = false
-      const newContainers = state.inventoryState.player.bagContainers.map((container) => {
-        if (added) return container
-        if (container.slots.length < container.maxSlots) {
-          added = true
-          return {
-            ...container,
-            slots: [
-              ...container.slots,
-              {
-                slotId: `slot-${instanceId}-${Date.now()}`,
-                itemInstanceId: instanceId,
-                quantity: found.quantity,
-              },
-            ],
-          }
-        }
-        return container
-      })
-
-      if (!added) {
-        // Create new container
-        state.inventoryState.player.bagContainers = [
-          ...newContainers,
-          {
-            containerId: `bag-${Date.now()}`,
-            containerType: 'backpack' as ContainerType,
-            ownerId: 'player',
-            maxSlots: 20,
-            slots: [
-              {
-                slotId: `slot-${instanceId}-new`,
-                itemInstanceId: instanceId,
-                quantity: found.quantity,
-              },
-            ],
-            locked: false,
-          },
-        ]
-      }
+      state.inventoryState.player.bagContainers = addItemToContainerByOwner(
+        state.inventoryState.player.bagContainers,
+        'player',
+        () => ({
+          containerId: `bag-${Date.now()}`,
+          containerType: 'backpack' as ContainerType,
+          ownerId: 'player',
+          maxSlots: 20,
+          slots: [],
+          locked: false,
+        }),
+        instanceId,
+        found.quantity,
+      )
       const usedSlots = state.inventoryState.player.bagContainers.reduce((sum, c) => sum + c.slots.length, 0)
       state.inventoryState.player.usedBagSlots = usedSlots
     } else if (location === 'house_storage') {
-      // Add to house_storage container
-      const newSharedContainers = state.inventoryState.sharedContainers.map((container) => {
-        if (container.ownerId !== 'house_storage') return container
-        if (container.slots.length < container.maxSlots) {
-          return {
-            ...container,
-            slots: [
-              ...container.slots,
-              {
-                slotId: `slot-${instanceId}-${Date.now()}`,
-                itemInstanceId: instanceId,
-                quantity: found.quantity,
-              },
-            ],
-          }
-        }
-        return container
-      })
-
-      const hasHouseStorage = newSharedContainers.some((c) => c.ownerId === 'house_storage')
-      if (!hasHouseStorage) {
-        state.inventoryState.sharedContainers = [
-          ...newSharedContainers,
-          {
-            containerId: 'house-storage-main',
-            containerType: 'vault' as ContainerType,
-            ownerId: 'house_storage',
-            maxSlots: state.houseStorageCapacity,
-            slots: [
-              {
-                slotId: `slot-${instanceId}-new`,
-                itemInstanceId: instanceId,
-                quantity: found.quantity,
-              },
-            ],
-            locked: false,
-          },
-        ]
-      } else {
-        state.inventoryState.sharedContainers = newSharedContainers
-      }
+      state.inventoryState.sharedContainers = addItemToContainerByOwner(
+        state.inventoryState.sharedContainers,
+        'house_storage',
+        () => ({
+          containerId: 'house-storage-main',
+          containerType: 'vault' as ContainerType,
+          ownerId: 'house_storage',
+          maxSlots: state.houseStorageCapacity,
+          slots: [],
+          locked: false,
+        }),
+        instanceId,
+        found.quantity,
+      )
     } else if (location === 'mission_pack') {
-      // Add to mission_pack container
-      const newSharedContainers = state.inventoryState.sharedContainers.map((container) => {
-        if (container.ownerId !== 'mission_pack') return container
-        if (container.slots.length < container.maxSlots) {
-          return {
-            ...container,
-            slots: [
-              ...container.slots,
-              {
-                slotId: `slot-${instanceId}-${Date.now()}`,
-                itemInstanceId: instanceId,
-                quantity: found.quantity,
-              },
-            ],
-          }
-        }
-        return container
-      })
-
-      const hasMissionPack = newSharedContainers.some((c) => c.ownerId === 'mission_pack')
-      if (!hasMissionPack) {
-        state.inventoryState.sharedContainers = [
-          ...newSharedContainers,
-          {
-            containerId: 'mission-pack-main',
-            containerType: 'supply_pack' as ContainerType,
-            ownerId: 'mission_pack',
-            maxSlots: 20,
-            slots: [
-              {
-                slotId: `slot-${instanceId}-new`,
-                itemInstanceId: instanceId,
-                quantity: found.quantity,
-              },
-            ],
-            locked: false,
-          },
-        ]
-      } else {
-        state.inventoryState.sharedContainers = newSharedContainers
-      }
+      state.inventoryState.sharedContainers = addItemToContainerByOwner(
+        state.inventoryState.sharedContainers,
+        'mission_pack',
+        () => ({
+          containerId: 'mission-pack-main',
+          containerType: 'supply_pack' as ContainerType,
+          ownerId: 'mission_pack',
+          maxSlots: 20,
+          slots: [],
+          locked: false,
+        }),
+        instanceId,
+        found.quantity,
+      )
     }
   },
 
