@@ -111,6 +111,40 @@ describe('useItem — consume heal', () => {
   })
 })
 
+describe('useItem — stat_mod effects (destiny-q6vx)', () => {
+  it('using item-waterskin-filled reduces both hunger and intoxication', () => {
+    const targetId = 'npc-ida-rhys'
+    const state = stateWithItem('item-waterskin-filled')
+    const s = {
+      ...state,
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
+        n.npcId === targetId ? { ...n, states: { ...n.states, hunger: 50, intoxication: 40 } } : n,
+      ),
+    }
+    const result = useItem(s, { instanceId: 'test-inst-item-waterskin-filled', action: 'consume', targetNpcId: targetId })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === targetId)!
+    expect(npc.states.hunger).toBe(40) // 50 - 10
+    // Previously silently dropped: statMap had no 'intoxication' key (item authored stat:'intoxication'
+    // instead of the statMap's 'toxin' key), so this effect never applied.
+    expect(npc.states.intoxication).toBe(20) // 40 - 20
+  })
+
+  it('using item-soap-bar-plain reduces hygiene', () => {
+    const targetId = 'npc-ida-rhys'
+    const state = stateWithItem('item-soap-bar-plain')
+    const s = {
+      ...state,
+      npcRuntimeStates: state.npcRuntimeStates.map((n) =>
+        n.npcId === targetId ? { ...n, states: { ...n.states, hygiene: 68 } } : n,
+      ),
+    }
+    // Previously silently dropped entirely: statMap had no 'hygiene' key at all.
+    const result = useItem(s, { instanceId: 'test-inst-item-soap-bar-plain', action: 'consume', targetNpcId: targetId })
+    const npc = result.npcRuntimeStates.find((n) => n.npcId === targetId)!
+    expect(npc.states.hygiene).toBe(38) // 68 - 30
+  })
+})
+
 describe('useItem — document disposition', () => {
   it('archives a document (filed) and removes it from inventory', () => {
     const state = stateWithItem('item-ledger-bureau')

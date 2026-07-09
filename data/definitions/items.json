@@ -1498,7 +1498,7 @@
       },
       {
         "type": "reduceStat",
-        "stat": "intoxication",
+        "stat": "toxin",
         "value": -20
       }
     ],
@@ -1512,7 +1512,7 @@
       },
       {
         "type": "stat_mod",
-        "stat": "intoxication",
+        "stat": "toxin",
         "value": -20
       }
     ]

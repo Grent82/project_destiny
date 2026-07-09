@@ -170,6 +170,7 @@ function applyStatModEffect(
         fear: 'fear',
         anger: 'anger',
         toxin: 'intoxication',
+        hygiene: 'hygiene',
       }
       const statKey = statMap[stat]
       if (statKey) {
