@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { selectItemsByLocation, selectItemActions, selectFiledEvidence, selectUnlockedActions, equipSlotForCategory } from './inventory'
+import { selectItemsByLocation, selectItemActions, selectFiledEvidence, selectUnlockedActions, equipSlotForCategory, selectNpcInventoryItems } from './inventory'
 import { createGameStore } from '../store/gameStore'
 import { initialGameStateSnapshot } from '../store/initialGameState'
 import { HOUSEHOLD_STORAGE_CONTAINER_ID } from '../commands/inventory/householdStorage'
@@ -175,6 +175,112 @@ describe('selectItemsByLocation', () => {
     const store = createGameStore(state)
     const result = selectItemsByLocation(store.getState(), 'inventory')
     expect(result).toHaveLength(2)
+  })
+})
+
+// Test-quality pass (destiny-ukh4e): selectNpcInventoryItems is the exact selector
+// ItemSelectionModal.tsx now depends on to merge an NPC's own personal inventory into the Roster
+// equip picker (the second bug fixed this session) -- it had zero direct test coverage anywhere.
+describe('selectNpcInventoryItems', () => {
+  const NPC_ID = 'npc-marion-vale'
+  const OTHER_NPC_ID = 'npc-ida-rhys'
+
+  function stateWithNpcItems(npcId: string, items: Array<{ instanceId: string; itemId: string; quantity: number }>): GameState {
+    return {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        npcInventories: {
+          [npcId]: items.length > 0 ? [{
+            containerId: `container-${npcId}`,
+            containerType: 'backpack' as ContainerType,
+            ownerId: npcId,
+            maxSlots: 20,
+            slots: items.map((item) => ({ slotId: `slot-${item.instanceId}`, itemInstanceId: item.instanceId, quantity: item.quantity })),
+            locked: false,
+          }] : [],
+        },
+        itemRegistry: Object.fromEntries(items.map((item) => [item.instanceId, { itemId: item.itemId, uniqueId: item.instanceId, quantity: item.quantity, locationType: 'npc_inventory' as const, acquiredDay: 1, flags: [] }])),
+      },
+    }
+  }
+
+  it('returns the items sitting in the given NPC\'s own personal inventory', () => {
+    const state = stateWithNpcItems(NPC_ID, [{ instanceId: 'inst-coat-01', itemId: 'armor-light-tallow-work-coat', quantity: 1 }])
+    const store = createGameStore(state)
+    const items = selectNpcInventoryItems(store.getState(), NPC_ID)
+    expect(items).toHaveLength(1)
+    expect(items[0]).toMatchObject({ instanceId: 'inst-coat-01', itemId: 'armor-light-tallow-work-coat', quantity: 1 })
+  })
+
+  it('returns an empty array for an NPC with no personal inventory entry at all', () => {
+    const state = stateWithNpcItems(NPC_ID, [])
+    const store = createGameStore(state)
+    expect(selectNpcInventoryItems(store.getState(), OTHER_NPC_ID)).toEqual([])
+  })
+
+  it('returns an empty array when the NPC has a container but it is empty', () => {
+    const state = stateWithNpcItems(NPC_ID, [])
+    const store = createGameStore(state)
+    expect(selectNpcInventoryItems(store.getState(), NPC_ID)).toEqual([])
+  })
+
+  it('does not return another NPC\'s items', () => {
+    const state = stateWithNpcItems(NPC_ID, [{ instanceId: 'inst-coat-01', itemId: 'armor-light-tallow-work-coat', quantity: 1 }])
+    const store = createGameStore(state)
+    expect(selectNpcInventoryItems(store.getState(), OTHER_NPC_ID)).toEqual([])
+  })
+
+  it('aggregates items across multiple containers belonging to the same NPC', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        npcInventories: {
+          [NPC_ID]: [
+            { containerId: `container-${NPC_ID}-a`, containerType: 'backpack' as ContainerType, ownerId: NPC_ID, maxSlots: 20, slots: [{ slotId: 'slot-a', itemInstanceId: 'inst-coat-01', quantity: 1 }], locked: false },
+            { containerId: `container-${NPC_ID}-b`, containerType: 'backpack' as ContainerType, ownerId: NPC_ID, maxSlots: 20, slots: [{ slotId: 'slot-b', itemInstanceId: 'inst-dagger-01', quantity: 1 }], locked: false },
+          ],
+        },
+        itemRegistry: {
+          'inst-coat-01': { itemId: 'armor-light-tallow-work-coat', uniqueId: 'inst-coat-01', quantity: 1, locationType: 'npc_inventory', acquiredDay: 1, flags: [] },
+          'inst-dagger-01': { itemId: 'weapon-dagger-wasterunner', uniqueId: 'inst-dagger-01', quantity: 1, locationType: 'npc_inventory', acquiredDay: 1, flags: [] },
+        },
+      },
+    }
+    const store = createGameStore(state)
+    const items = selectNpcInventoryItems(store.getState(), NPC_ID)
+    expect(items).toHaveLength(2)
+    expect(items.map((i) => i.instanceId).sort()).toEqual(['inst-coat-01', 'inst-dagger-01'])
+  })
+
+  it('reports the real stack quantity for a stacked consumable', () => {
+    const state = stateWithNpcItems(NPC_ID, [{ instanceId: 'inst-medkit-01', itemId: 'item-medkit-field', quantity: 3 }])
+    const store = createGameStore(state)
+    const items = selectNpcInventoryItems(store.getState(), NPC_ID)
+    expect(items[0]?.quantity).toBe(3)
+  })
+
+  it('skips a slot whose itemInstanceId has no itemRegistry entry rather than throwing', () => {
+    const state: GameState = {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        npcInventories: {
+          [NPC_ID]: [{
+            containerId: `container-${NPC_ID}`,
+            containerType: 'backpack' as ContainerType,
+            ownerId: NPC_ID,
+            maxSlots: 20,
+            slots: [{ slotId: 'slot-orphan', itemInstanceId: 'inst-orphan-no-registry-entry', quantity: 1 }],
+            locked: false,
+          }],
+        },
+      },
+    }
+    const store = createGameStore(state)
+    expect(() => selectNpcInventoryItems(store.getState(), NPC_ID)).not.toThrow()
+    expect(selectNpcInventoryItems(store.getState(), NPC_ID)).toEqual([])
   })
 })
 

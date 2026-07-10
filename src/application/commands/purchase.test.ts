@@ -192,4 +192,145 @@ describe('purchaseItemFromShop', () => {
       return def?.itemId === 'item-ration-compact-brick'
     })).toBe(true)
   })
+
+  // Test-quality pass (destiny-ukh4e): edge cases the original test set didn't cover.
+  describe('edge cases', () => {
+    function stateWithLimitedStock(quantity: number) {
+      return {
+        ...richState,
+        inventoryState: {
+          ...richState.inventoryState,
+          sharedContainers: [
+            ...richState.inventoryState.sharedContainers.filter((c) => c.containerId !== 'shop:shop-pale-provisions:stock'),
+            {
+              containerId: 'shop:shop-pale-provisions:stock',
+              containerType: 'vault' as const,
+              ownerId: 'shop-pale-provisions',
+              maxSlots: 50,
+              slots: [{ slotId: 'slot-limited-coat', itemInstanceId: 'inst-limited-coat', quantity }],
+              locked: false,
+            },
+          ],
+          itemRegistry: {
+            ...richState.inventoryState.itemRegistry,
+            'inst-limited-coat': { uniqueId: 'inst-limited-coat', itemId: 'armor-light-tallow-work-coat', quantity, locationType: 'shop_stock' as const, acquiredDay: 1, flags: [] },
+          },
+        },
+      }
+    }
+
+    it('logs "out of stock" and makes no money/inventory change once the last unit has been bought', () => {
+      const oneLeft = stateWithLimitedStock(1)
+      const afterFirstBuy = purchaseItemFromShop(oneLeft, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+      // Confirm the first purchase actually succeeded and consumed the last unit.
+      const stockAfterFirst = afterFirstBuy.inventoryState.sharedContainers.find((c) => c.containerId === 'shop:shop-pale-provisions:stock')
+      expect(stockAfterFirst?.slots).toHaveLength(0)
+
+      const secondAttempt = purchaseItemFromShop(afterFirstBuy, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+      expect(secondAttempt.money).toBe(afterFirstBuy.money)
+      expect(secondAttempt.activityLog[0]?.message).toMatch(/out of stock/i)
+    })
+
+    it('succeeds at the exact money-equals-price boundary', () => {
+      const oneLeft = stateWithLimitedStock(1)
+      const price = resolveShopPricingBreakdown(oneLeft, 'shop-pale-provisions', 'armor-light-tallow-work-coat')?.finalPrice
+      expect(price).toBeGreaterThan(0)
+      const exactState = { ...oneLeft, money: price! }
+
+      const result = purchaseItemFromShop(exactState, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+      expect(result.money).toBe(0)
+      const storage = result.inventoryState.sharedContainers.find((c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID)
+      expect(storage?.slots).toHaveLength(1)
+    })
+
+    it('returns state unchanged when money is exactly one Mark short of the price', () => {
+      const oneLeft = stateWithLimitedStock(1)
+      const price = resolveShopPricingBreakdown(oneLeft, 'shop-pale-provisions', 'armor-light-tallow-work-coat')?.finalPrice
+      const shortState = { ...oneLeft, money: price! - 1 }
+
+      const result = purchaseItemFromShop(shortState, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+      expect(result).toBe(shortState)
+    })
+
+    it('adds a second gear purchase into the SAME already-existing House Storage container rather than recreating it', () => {
+      const oneLeft = stateWithLimitedStock(2)
+      const firstBuy = purchaseItemFromShop(oneLeft, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+      const storageAfterFirst = firstBuy.inventoryState.sharedContainers.filter((c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID)
+      expect(storageAfterFirst).toHaveLength(1)
+
+      const secondBuy = purchaseItemFromShop(firstBuy, 'shop-pale-provisions', 'armor-light-tallow-work-coat')
+      const storageAfterSecond = secondBuy.inventoryState.sharedContainers.filter((c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID)
+      expect(storageAfterSecond).toHaveLength(1)
+      // Shop stock is a fixed, pre-registered instance whose quantity represents "units left" --
+      // purchase.ts never mints a new instance id per sale (unlike equipmentPurchase.ts's
+      // Date.now()-suffixed ids). Buying the same shop-stock item twice transfers the SAME
+      // registered instance id both times, so the destination correctly recognizes "already have
+      // this exact instance" and merges quantity into one slot rather than creating a second one.
+      expect(storageAfterSecond[0]!.slots).toHaveLength(1)
+      expect(storageAfterSecond[0]!.slots[0]!.quantity).toBe(2)
+    })
+
+    it('routes a document-category purchase to player inventory, same as any other non-gear item', () => {
+      const nextState = purchaseItemFromShop(richState, 'shop-warrens-supply', 'item-form-ward-petition')
+      const playerSlots = nextState.inventoryState.player.bagContainers.flatMap((c) => c.slots)
+      expect(playerSlots.some((s) => {
+        const def = nextState.inventoryState.itemRegistry[s.itemInstanceId!]
+        return def?.itemId === 'item-form-ward-petition'
+      })).toBe(true)
+      expect(nextState.activityLog[0]?.message).not.toMatch(/House Storage/)
+    })
+
+    it('routes a tool-category purchase to player inventory, same as any other non-gear item', () => {
+      const nextState = purchaseItemFromShop(richState, 'shop-pale-provisions', 'item-lockpick-ringcut')
+      const playerSlots = nextState.inventoryState.player.bagContainers.flatMap((c) => c.slots)
+      expect(playerSlots.some((s) => {
+        const def = nextState.inventoryState.itemRegistry[s.itemInstanceId!]
+        return def?.itemId === 'item-lockpick-ringcut'
+      })).toBe(true)
+      expect(nextState.activityLog[0]?.message).not.toMatch(/House Storage/)
+    })
+
+    // Documents a real gap, not a hypothesis: purchaseItemFromShop has no minStanding/faction-gating
+    // check at all (confirmed by reading the full function -- only selectors/shops.ts's UI-facing
+    // offer list and npcSpecialActions.ts's NPC-agency path enforce minStanding; the command itself
+    // does not). shop-pale-provisions' 'item-restored-compound-healing' offer has minStanding: 75 in
+    // shops.json -- calling this command directly with a standing far below that still succeeds
+    // today. Filed as a follow-up (destiny-47a6o is unrelated; a new bead is more appropriate) rather
+    // than silently adding a guard, since enforcing it might be a deliberate simplification (e.g. an
+    // NPC-agency purchase path that's meant to bypass player-facing standing gates).
+    it('does not enforce minStanding at the command layer today (known gap, documented not fixed)', () => {
+      // item-restored-compound-healing's real shop-pale-provisions offer (minStanding: 75 in
+      // shops.json) has no pre-seeded stock in the default initial state at all, which would mask
+      // this test behind an unrelated "out of stock" result -- constructing dedicated stock here
+      // isolates the minStanding question from that separate, real seeding gap.
+      const belowStandingState = {
+        ...richState,
+        factionStandings: { ...richState.factionStandings, 'faction-restored': -50 },
+        inventoryState: {
+          ...richState.inventoryState,
+          sharedContainers: [
+            ...richState.inventoryState.sharedContainers.filter((c) => c.containerId !== 'shop:shop-pale-provisions:stock'),
+            {
+              containerId: 'shop:shop-pale-provisions:stock',
+              containerType: 'vault' as const,
+              ownerId: 'shop-pale-provisions',
+              maxSlots: 50,
+              slots: [{ slotId: 'slot-healing-compound', itemInstanceId: 'inst-healing-compound', quantity: 1 }],
+              locked: false,
+            },
+          ],
+          itemRegistry: {
+            ...richState.inventoryState.itemRegistry,
+            'inst-healing-compound': { uniqueId: 'inst-healing-compound', itemId: 'item-restored-compound-healing', quantity: 1, locationType: 'shop_stock' as const, acquiredDay: 1, flags: [] },
+          },
+        },
+      }
+      const result = purchaseItemFromShop(belowStandingState, 'shop-pale-provisions', 'item-restored-compound-healing')
+      const playerSlots = result.inventoryState.player.bagContainers.flatMap((c) => c.slots)
+      expect(playerSlots.some((s) => {
+        const def = result.inventoryState.itemRegistry[s.itemInstanceId!]
+        return def?.itemId === 'item-restored-compound-healing'
+      })).toBe(true)
+    })
+  })
 })

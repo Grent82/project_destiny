@@ -227,6 +227,98 @@ describe('HouseStoragePanel', () => {
     expect(screen.getByRole('list', { name: 'Carried items' })).toBeInTheDocument()
     expect(screen.getByRole('list', { name: 'Stored items' })).toHaveTextContent('House Storage is empty')
   })
+
+  // Test-quality pass (destiny-ukh4e): capacity badge previously only tested at 0/N (empty) --
+  // never at the exact maxSlots boundary.
+  it('shows the capacity badge at exactly maxSlots when House Storage is full', () => {
+    const fullState = {
+      ...initialGameStateSnapshot,
+      inventoryState: {
+        ...initialGameStateSnapshot.inventoryState,
+        sharedContainers: [{
+          containerId: 'household:house-blackthorn:storage',
+          containerType: 'chest' as ContainerType,
+          ownerId: 'household:house-blackthorn:storage',
+          maxSlots: 1,
+          slots: [{ slotId: 'slot-existing', itemInstanceId: 'inst-existing', quantity: 1 }],
+          locked: false,
+        }],
+        itemRegistry: { 'inst-existing': { itemId: 'item-lockpick-ringcut', uniqueId: 'inst-existing', quantity: 1, locationType: 'container' as const, acquiredDay: 1, flags: [] } },
+      },
+    }
+    renderWithStore(<HouseStoragePanel />, fullState)
+    expect(screen.getByText('Stored: 1 / 1')).toBeInTheDocument()
+  })
+
+  it('opens a target picker for Give on a gift-category item and dispatches it to the chosen NPC', async () => {
+    const user = userEvent.setup()
+    const stateWithGift = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseStorageItem('inst-ink-01', 'item-gift-fine-ink'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithGift)
+
+    await user.click(screen.getByRole('button', { name: 'Give' }))
+    expect(screen.getByRole('dialog', { name: 'Choose a target' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Marion Vale' }))
+
+    // Item leaves House Storage and lands with the chosen NPC once given.
+    const stillInAnyHouseStorage = store.getState().game.inventoryState.sharedContainers.some((c) => c.slots.some((s) => s.itemInstanceId === 'inst-ink-01'))
+    expect(stillInAnyHouseStorage).toBe(false)
+    expect(store.getState().game.inventoryState.itemRegistry['inst-ink-01']?.locationType).toBe('npc_inventory')
+  })
+
+  it('sells a tradeGood item via the confirmation modal and credits money', async () => {
+    const user = userEvent.setup()
+    const stateWithTradeGood = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseStorageItem('inst-parts-01', 'item-spare-parts'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithTradeGood)
+    const moneyBefore = store.getState().game.money
+
+    await user.click(screen.getByRole('button', { name: 'Sell' }))
+    expect(screen.getByRole('heading', { name: /^Sell/ })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Sell item' }))
+
+    expect(store.getState().game.money).toBeGreaterThan(moneyBefore)
+    expect(store.getState().game.inventoryState.itemRegistry['inst-parts-01']).toBeUndefined()
+  })
+
+  it('cancelling the sell confirmation leaves the item and money untouched', async () => {
+    const user = userEvent.setup()
+    const stateWithTradeGood = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseStorageItem('inst-parts-01', 'item-spare-parts'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithTradeGood)
+    const moneyBefore = store.getState().game.money
+
+    await user.click(screen.getByRole('button', { name: 'Sell' }))
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(store.getState().game.money).toBe(moneyBefore)
+    expect(store.getState().game.inventoryState.itemRegistry['inst-parts-01']).toBeDefined()
+  })
+
+  it('moves a House Storage item into the Mission Pack via the "Add to Pack" secondary action', async () => {
+    const user = userEvent.setup()
+    const stateWithTool = {
+      ...initialGameStateSnapshot,
+      inventoryState: createInventoryWithHouseStorageItem('inst-lockpick-01', 'item-lockpick-ringcut'),
+    }
+    const store = renderWithStore(<HouseStoragePanel />, stateWithTool)
+
+    await user.click(screen.getByRole('button', { name: 'More actions' }))
+    await user.click(screen.getByRole('menuitem', { name: 'Add to Pack' }))
+
+    const registryEntry = store.getState().game.inventoryState.itemRegistry['inst-lockpick-01']
+    expect(registryEntry?.locationType).toBe('container')
+    const missionPackContainer = store.getState().game.inventoryState.sharedContainers.find((c) => c.ownerId === 'mission_pack')
+    expect(missionPackContainer?.slots.some((s) => s.itemInstanceId === 'inst-lockpick-01')).toBe(true)
+  })
 })
 
 describe('MissionPackPanel', () => {

@@ -163,4 +163,56 @@ describe('giftItemToNpc', () => {
     const next = giftItemToNpc(state, { instanceId: 'item-gift-pressed-flower-fold', npcId: TARGET_NPC_ID })
     expect(next).toEqual(state)
   })
+
+  // Test-quality pass (destiny-ukh4e): found live via a HouseStoragePanel component test. Gifting
+  // an item that's sitting in House Storage (a shared container) rather than the player's own bag
+  // was a silent no-op -- findPlayerItem (used to LOCATE the item) already searches both the
+  // player's bag and sharedContainers, but the transfer step that follows always hard-coded
+  // fromType:'player_inventory'/fromId:'player' regardless of where the item was actually found,
+  // so transferItem's own findItemInSource (which only checks player.bagContainers for that
+  // fromType) came up empty and the whole gift silently failed.
+  it('transfers a gift item sitting in a shared House Storage container, not just the player\'s own bag', () => {
+    const itemId = 'item-gift-pressed-flower-fold'
+    const instanceId = 'inst-flower-house-storage'
+    const state: GameState = {
+      ...withGiftState(itemId),
+      inventoryState: {
+        ...withGiftState(itemId).inventoryState,
+        player: {
+          ...withGiftState(itemId).inventoryState.player,
+          bagContainers: [],
+        },
+        sharedContainers: [
+          {
+            containerId: 'household:house-blackthorn:storage',
+            containerType: 'chest',
+            ownerId: 'household:house-blackthorn:storage',
+            maxSlots: 40,
+            slots: [{ slotId: `slot-${instanceId}`, itemInstanceId: instanceId, quantity: 1 }],
+            locked: false,
+          },
+        ],
+        itemRegistry: {
+          [instanceId]: {
+            uniqueId: instanceId,
+            itemId,
+            quantity: 1,
+            locationType: 'container',
+            locationId: 'household:house-blackthorn:storage',
+            acquiredDay: 1,
+            flags: [],
+          },
+        },
+      },
+    }
+
+    const next = giftItemToNpc(state, { instanceId, npcId: TARGET_NPC_ID })
+
+    const storageContainer = next.inventoryState.sharedContainers.find((c) => c.containerId === 'household:house-blackthorn:storage')
+    expect(storageContainer?.slots.some((s) => s.itemInstanceId === instanceId)).toBe(false)
+
+    const npcContainers = next.inventoryState.npcInventories[TARGET_NPC_ID] || []
+    const giftedSlot = npcContainers.flatMap((c) => c.slots).find((s) => s.itemInstanceId === instanceId)
+    expect(giftedSlot?.quantity).toBe(1)
+  })
 })

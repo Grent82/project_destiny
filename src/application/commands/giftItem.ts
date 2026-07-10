@@ -141,15 +141,30 @@ export function giftItemToNpc(state: GameState, payload: { instanceId: string; n
   const npc = state.npcRuntimeStates.find((entry) => entry.npcId === npcId)
   if (!npc || !isNpcColocatedForGift(state, npc)) return state
 
-  // Transfer item from player inventory to NPC inventory using canonical transfer
-  const transferParams: TransferItemParams = {
-    fromType: 'player_inventory',
-    fromId: 'player',
-    toType: 'npc_inventory',
-    toId: npcId,
-    itemInstanceId: instanceId,
-    quantity: 1,
-  }
+  // Transfer item to NPC inventory using canonical transfer. findPlayerItem (above) already
+  // searches both the player's own bag AND shared containers (House Storage) -- but this always
+  // hard-coded fromType:'player_inventory'/fromId:'player' regardless of itemInstance.location,
+  // so transferItem's own findItemInSource (which only checks player.bagContainers for that
+  // fromType) silently failed to find anything actually sitting in House Storage. Gifting a stored
+  // gift item was a silent no-op: found here, then "not found" one function call later. Test-quality
+  // pass, destiny-ukh4e.
+  const transferParams: TransferItemParams = itemInstance.location === 'shared'
+    ? {
+        fromType: 'container',
+        fromId: itemInstance.container.containerId,
+        toType: 'npc_inventory',
+        toId: npcId,
+        itemInstanceId: instanceId,
+        quantity: 1,
+      }
+    : {
+        fromType: 'player_inventory',
+        fromId: 'player',
+        toType: 'npc_inventory',
+        toId: npcId,
+        itemInstanceId: instanceId,
+        quantity: 1,
+      }
 
   let next: GameState = transferItem(state, transferParams)
   if (next === state) {

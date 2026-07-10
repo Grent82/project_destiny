@@ -400,21 +400,18 @@ function unequipItemFromNpcInternal(state: GameState, npcId: string, slot: Equip
     return state
   }
 
-  // Update NPC equipment
+  // Update NPC equipment. `transferItem` (fromType:'equipment', called above) already ran
+  // removeFromEquipment, which correctly clears exactly the one slot/array-entry matching
+  // itemInstanceId -- updatedNpc.equipment (re-fetched from nextState below) already reflects that.
+  // A prior version of this function re-sliced the accessory array here on top of that, assuming
+  // the pre-removal shape: for a 2-entry array, removeFromEquipment already shifts index1 down to
+  // index0, so re-slicing "index0 out" a second time silently dropped the SURVIVING accessory too
+  // (found via test-quality pass, destiny-ukh4e -- confirmed via real test run, not just tracing).
+  // Currently unreachable from the live UI (accessory_2 has no dispatchable slot name in
+  // itemsReducers.ts), so no player has hit this, but a future accessory_2 UI wiring would have
+  // silently lost the other equipped accessory on every accessory_1 re-equip/unequip.
   const updatedNpc = nextState.npcRuntimeStates.find((n) => n.npcId === npcId)!
   const updatedEquipment = { ...updatedNpc.equipment }
-
-  if (slot.startsWith('accessory')) {
-    const currentAccessories = updatedNpc.equipment.accessory || []
-    if (slot === 'accessory_1' && currentAccessories.length > 0) {
-      updatedEquipment.accessory = currentAccessories.slice(1)
-    } else if (slot === 'accessory_2' && currentAccessories.length > 1) {
-      updatedEquipment.accessory = currentAccessories.slice(0, 1)
-    }
-  } else {
-    const equipSlot: 'weapon' | 'armor' = slot === 'weapon' || slot === 'armor' ? slot : 'weapon'
-    updatedEquipment[equipSlot] = null
-  }
 
   // Remove stat bonuses
   const updatedAttributes = { ...updatedNpc.attributes }

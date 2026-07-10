@@ -32,7 +32,7 @@ export function transferItem(state: GameState, params: TransferItemParams): Game
   }
 
   // Validate destination exists and has capacity
-  const destCheck = validateDestination(state, toType, toId)
+  const destCheck = validateDestination(state, toType, toId, itemInstanceId)
   if (!destCheck) {
     return state
   }
@@ -203,7 +203,21 @@ function findItemInSource(state: GameState, type: ItemLocationType, id: string, 
 /**
  * Validate destination can receive items.
  */
-function validateDestination(state: GameState, type: ItemLocationType, id: string): boolean {
+// Item-loss bug, found and confirmed via test (destiny-ukh4e, 2026-07-10): the 'container' branch
+// only checked that the container EXISTS, never whether it has space. addToContainer (the actual
+// add step) DOES check capacity and correctly no-ops when full -- but by the time it runs, the
+// source removal (removeFromNpcInventory/removeFromPlayerInventory/etc.) has ALREADY happened, and
+// updateItemRegistryLocation + the "Transferred" activity log entry run unconditionally afterward
+// regardless of whether the add actually succeeded. Net effect when a 'container' destination was
+// full: the item vanished from its source, the registry claimed it was now in the destination
+// container, and the log said "Transferred" -- but the destination's own slots array never
+// received it. Silently lost, not just blocked. (addToNpcInventory/addToPlayerInventory don't have
+// this failure mode: they overflow into a freshly created container instead of ever refusing, so
+// they were never at risk of this -- only the plain 'container' type, used by e.g. purchase.ts's
+// weapon/armor-to-House-Storage path and equipItem.ts's equip-from-storage path, has a true
+// capacity ceiling.) Fixed by checking capacity here, up front, before any removal happens -- the
+// same principle already applied to insufficient source quantity via findItemInSource.
+function validateDestination(state: GameState, type: ItemLocationType, id: string, itemInstanceId: string): boolean {
   if (type === 'npc_inventory') {
     return state.npcRuntimeStates.some((n) => n.npcId === id)
   }
@@ -215,8 +229,10 @@ function validateDestination(state: GameState, type: ItemLocationType, id: strin
   }
 
   if (type === 'container') {
-    const container = findContainer(state, id)
-    return container !== null
+    const found = findContainer(state, id)
+    if (!found) return false
+    const alreadyStacked = found.container.slots.some((s) => s.itemInstanceId === itemInstanceId)
+    return alreadyStacked || found.container.slots.length < found.container.maxSlots
   }
 
   if (type === 'shop_stock') {

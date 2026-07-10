@@ -5,6 +5,13 @@ import { initialGameStateSnapshot } from '../store/initialGameState'
 import { gameSliceReducer, gameActions } from '../store/gameSlice'
 import { endDay } from './endDay'
 
+// Test-quality pass (destiny-ukh4e): this describe block overlaps in subject matter with
+// inventory/equipItem.test.ts's "loadout sync" describe block -- both assert that equipping syncs
+// npc.loadout. Intentionally NOT consolidated: this file exercises the REDUCER layer
+// (gameSliceReducer + gameActions.equipItem, the actual Redux wiring a real dispatch goes through),
+// while equipItem.test.ts exercises the bare COMMAND function directly. A bug in the reducer's own
+// payload mapping (e.g. itemsReducers.ts's slot-name translation) would only be caught here; a bug
+// in the command's own logic would only be caught there. Keep both.
 describe('equipItem reducer', () => {
   const npcId = initialGameStateSnapshot.npcRuntimeStates[0]?.npcId ?? 'npc-marion-vale'
 

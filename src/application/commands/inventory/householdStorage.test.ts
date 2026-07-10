@@ -120,6 +120,33 @@ describe('depositToHouseStorage', () => {
     )
     expect(logEntry).toBeDefined()
   })
+
+  // Test-quality pass (destiny-ukh4e): baseState always pre-seeds a HOUSEHOLD_STORAGE_CONTAINER_ID
+  // container, so the lazy-creation branch (storageContainerIndex === -1) was never exercised by
+  // this describe block -- only by moveNpcInventoryItemToHouseStorage's own test below.
+  test('creates the house storage container if none exists yet', () => {
+    const stateWithNoStorage: GameState = {
+      ...baseState,
+      inventoryState: { ...baseState.inventoryState, sharedContainers: [] },
+    }
+    const result = depositToHouseStorage(stateWithNoStorage, ITEM_ID_IRON_SWORD)
+    const storageContainer = result.inventoryState.sharedContainers.find((c) => c.containerId === HOUSEHOLD_STORAGE_CONTAINER_ID)
+    expect(storageContainer?.slots.find((s) => s.itemInstanceId === ITEM_ID_IRON_SWORD)?.quantity).toBe(1)
+  })
+
+  test('returns state unchanged when house storage is already at capacity', () => {
+    const fullState: GameState = {
+      ...baseState,
+      inventoryState: {
+        ...baseState.inventoryState,
+        sharedContainers: [
+          createContainer(HOUSEHOLD_STORAGE_CONTAINER_ID, HOUSEHOLD_STORAGE_CONTAINER_ID, [{ itemInstanceId: 'inst-existing', quantity: 1 }], 1),
+        ],
+      },
+    }
+    const result = depositToHouseStorage(fullState, ITEM_ID_IRON_SWORD)
+    expect(result).toBe(fullState)
+  })
 })
 
 // User-reported live bug (2026-07-09): unequipping an item from an NPC correctly returns it to
@@ -196,6 +223,34 @@ describe('moveNpcInventoryItemToHouseStorage', () => {
     const state = stateWithNpcOwnedItem()
     const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, 'item-nonexistent')
     expect(result).toBe(state)
+  })
+
+  // Test-quality pass (destiny-ukh4e): distinct from the test above -- that one has an entry for
+  // NPC_ID in npcInventories (just missing the specific item), this one has NO entry at all,
+  // exercising the `npcInventories[npcId] ?? []` fallback specifically.
+  test('returns state unchanged for an npcId with no npcInventories entry at all', () => {
+    const state: GameState = {
+      ...baseState,
+      inventoryState: { ...baseState.inventoryState, npcInventories: {} },
+    }
+    const result = moveNpcInventoryItemToHouseStorage(state, 'npc-with-no-inventory-record', ITEM_ID_STARTING_ARMOR)
+    expect(result).toBe(state)
+  })
+
+  test('leaves the NPC\'s own inventory untouched when house storage is already at capacity (does not lose the item)', () => {
+    const state: GameState = {
+      ...stateWithNpcOwnedItem(),
+      inventoryState: {
+        ...stateWithNpcOwnedItem().inventoryState,
+        sharedContainers: [
+          createContainer(HOUSEHOLD_STORAGE_CONTAINER_ID, HOUSEHOLD_STORAGE_CONTAINER_ID, [{ itemInstanceId: 'inst-existing', quantity: 1 }], 1),
+        ],
+      },
+    }
+    const result = moveNpcInventoryItemToHouseStorage(state, NPC_ID, ITEM_ID_STARTING_ARMOR)
+    expect(result).toBe(state)
+    const npcContainer = result.inventoryState.npcInventories[NPC_ID]?.[0]
+    expect(npcContainer?.slots.find((s) => s.itemInstanceId === ITEM_ID_STARTING_ARMOR)?.quantity).toBe(1)
   })
 })
 
